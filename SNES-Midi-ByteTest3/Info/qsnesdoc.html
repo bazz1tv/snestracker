@@ -1,0 +1,1232 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="Author" CONTENT="David Piepgrass">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.03 [en] (Win95; I) [Netscape]">
+   <TITLE>SNES Graphics Information</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#A8F0FF" LINK="#003300" VLINK="#000099" ALINK="#990000">
+
+<CENTER><FONT FACE="Comic Sans MS"><FONT SIZE=+2>Qwertie's SNES Documentation</FONT></FONT></CENTER>
+
+<CENTER><FONT FACE="Comic Sans MS">Plus DMA</FONT></CENTER>
+
+<CENTER><FONT FACE="Comic Sans MS">Revision 6 <FONT SIZE=-1>(2.1)</FONT></FONT></CENTER>
+
+
+<P>I've almost reached a point where my doc is a total drop-in replacement
+for Yoshi's v2.30 document, which hasn't been updated in years.&nbsp; It's
+a shame that we emu authors have had to put up with that document and it
+was no small task to write something better.
+
+<P>This repeats most everything contained in Yoshi's doc, but expands on
+it in much greater detail, in better and less ambiguous English.&nbsp;
+Since it is in HTML, it's got plenty of cross-references.&nbsp; I, myself,
+read this document when I can't remember something about the SNES.&nbsp;
+It is designed as a sort of compromise, intended to be read by both SNES
+developers and emulator authors.
+
+<P>It used to cover only graphics, but now also covers DMA, HDMA, Indirect
+HDMA, joypad registers (including the old-style reading method, which is
+not covered by Yoshi's doc), and Windowing.
+
+<P>Note: Unless otherwise stated, all 16-bit number values in this document
+should be assumed to be in big-endian (is that what it's called?) format,
+where the least significant byte occupies the lower memory location and
+the high byte occupies the following memory location.
+
+<P><FONT FACE="Arial,Helvetica"><FONT SIZE=+3>Table of Contents</FONT></FONT>
+
+<P>&nbsp;&nbsp;&nbsp; 1. <A HREF="#Terminology">SNES Graphics Terminology</A>
+<BR>&nbsp;&nbsp;&nbsp; 2. <A HREF="#PPUMemoryTypes">Types of PPU memory</A>
+<BR>&nbsp;&nbsp;&nbsp; 3. <A HREF="#GraphicsOrganization">How basic SNES
+graphics are organized in the PPU</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.1. <A HREF="#BGBasics">BG
+Basics</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.2. <A HREF="#SpriteBasics">Sprite
+Basics</A>
+<BR>&nbsp;&nbsp;&nbsp; 4. <A HREF="#GraphicsFormat">The SNES graphics format</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4.2 <A HREF="#Mode7GrFormat">Mode
+7 Graphics Format</A>
+<BR>&nbsp;&nbsp;&nbsp; 5. <A HREF="#RegisterReference">Register Reference</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5.1 <A HREF="#RegOAM">OAM
+Registers</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5.2 <A HREF="#RegColor">Color
+Registers</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5.3 <A HREF="#RegVRAM">VRAM
+Transfer Control Registers</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5.4 <A HREF="#RegVideo">Video
+Registers</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5.5 <A HREF="#RegCounter">Counter/IRQ/VBL/NMI
+registers</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5.6 <A HREF="#RegWindows">Windowing
+registers</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5.7 <A HREF="RegJoypad">Joypad
+registers</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5.8 <A HREF="#RegDMA">DMA
+Registers</A>
+<BR>&nbsp;&nbsp;&nbsp; 6. <A HREF="#DMATransfers">DMA/HDMA tutorial and
+reference</A>
+<CENTER>&nbsp;</CENTER>
+
+<CENTER><A NAME="Terminology"></A><FONT SIZE=+2>SNES Graphics Terminology</FONT></CENTER>
+
+<UL>
+<LI>
+PPU: Picture processing unit. It is the thing that takes your SNES graphics
+data and turns it into an image on the TV screen.</LI>
+
+<LI>
+VRAM: Video RAM. 64K of memory where tiles and tile maps are stored</LI>
+
+<LI>
+Registers: Memory-mapped I/O ports used for sending data and commands to
+the PPU.</LI>
+
+<LI>
+OAM (also known as OBJ, object, or sprite info): Information about the
+sprites on the screen, or the memory that contains this information. OAM
+stands for "Object Attribute Memory".</LI>
+
+<LI>
+CG: Color palette data, or the memory that stores it. There are 256 palette
+entries which contain the 15-bit absolute color levels.</LI>
+
+<LI>
+SC: Screen. Usually refers to the tile map for a BG, which is stored in
+VRAM.</LI>
+
+<LI>
+BG: Background. There are up to 4 BGs, or "layers", of tiles that form
+the basis of SNES graphics. These BGs can be scrolled, and a special type
+of BG, in "Mode 7", can be scaled and rotated and stuff to look 3-D.&nbsp;
+Sometimes the term "plane" (scrolling plane, as opposed to color plane)
+is used (BG1=Plane 0, BG2=Plane 1, etc.)</LI>
+
+<LI>
+Sprites: Everybody knows what these are, come on. They are the little (well,
+they can be up to 64x64 pixels on the SNES) graphics usually used for individual
+moving objects in a game.</LI>
+
+<LI>
+Tile map (a.k.a. BG Matrix): A BG is made up of hundreds of tiles, which
+are simply little graphics of a certain size (8x8, and 16x16 which is made
+of 4 8x8 tiles) placed end-to-end. A tile map is a two-dimensional array
+which contains a tile number and other properties for each square on the
+BG. Note that, depending on the context, the word "tile" may refer to the
+two-byte entry in the tile map, or else data for an 8x8 graphic character.</LI>
+
+<LI>
+Character: the graphic data (pixels) for a tile.</LI>
+
+<LI>
+Priority: Attribute that determines, or helps to determine, the order in
+which BGs and sprites are drawn on the screen.</LI>
+</UL>
+
+<CENTER><A NAME="PPUMemoryTypes"></A><FONT SIZE=+2>Types of PPU Memory</FONT></CENTER>
+
+
+<P>There are three memory areas where different kinds of graphics data
+are stored, as well as the registers (located in the reserved 65816 address
+space between $2000 and $5FFF) which set certain screen parameters.
+
+<P>The main data area is the VRAM, a 64 KB memory space that can be accessed
+with registers <A HREF="#Reg2115">$2115</A>, $<A HREF="#Reg2116">2116</A>,
+$<A HREF="#Reg2118">2118</A>, and $<A HREF="#Reg2139">2139</A>.&nbsp; This
+area is used for storing all the tiles used in your game, as well as the
+tile maps.
+
+<P>The second data area, the OAM, is used to store properties of the sprites.
+It includes information about position, size, priority, etc. There can
+be 128 objects maximum, and the memory is 544 bytes: the first 512 bytes
+have four bytes of information per sprite, and the last 32 bytes have two
+more bits of information.&nbsp; Two or more sprites can share the same
+set of tiles.
+
+<P>The third area is the CGRAM, where the palette data is stored. It is
+512 bytes: two bytes, and fifteen bits, for each of the 256 on-screen colors.
+There are five bits for each primary color (red, green, and blue).
+<CENTER>&nbsp;</CENTER>
+
+<CENTER><A NAME="GraphicsOrganization"></A><FONT SIZE=+3>The SNES PPU Graphics
+Organization</FONT></CENTER>
+
+
+<P><A NAME="BGBasics"></A><FONT SIZE=+1>Basics of BGs</FONT>
+
+<P>In <A HREF="#PPUMemoryTypes">VRAM</A> there is a two-dimensional array
+that is a <A HREF="#Terminology">map</A> of the tiles on the screen. Depending
+on the setting of <A HREF="#Reg2107">registers $2107 to $210A</A>, this
+map may be 32x32, 32x64, 64x32 or 64x64 tiles in size (see a note in the
+register description about the format of maps larger than 32 tiles wide
+or high).&nbsp; Each of the entries in this map contain the following data:
+<PRE>High&nbsp;&nbsp;&nbsp;&nbsp; Low&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Legend->&nbsp; c: Starting character (tile) number
+vhopppcc cccccccc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; h: horizontal flip&nbsp; v: vertical flip
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; p: palette number&nbsp;&nbsp; o: priority bit</PRE>
+The character number indexes into an "array of tiles" starting at a base
+VRAM location selected by <A HREF="#Reg210B">registers $210B or $210C</A>.
+The byte address in VRAM where the character data starts can be found using
+the following calculation:
+<BR>&nbsp;&nbsp;&nbsp; address_of_character = (base_location_bits &lt;&lt;
+13) + (8 * color_depth * character_number);
+<BR>This formula works in both 8x8 and <A HREF="#Reg2107">16x16 tile mode</A>.&nbsp;
+For example, if base location 1 is selected, the color depth for the tile
+map is 4 bits (16 colors), and character number 1 is selected, the address
+will be (1&lt;&lt;13)+8*4*1 = 8224.
+<BR>Note that the word address entered into the <A HREF="#Reg2116">VRAM
+address register</A> will be half of that, or 4112.
+
+<P>Except when using 256-color <A HREF="#Terminology">BGs</A>, the palette
+bits determine what colors in the <A HREF="#Terminology">CGRAM</A> will
+be mapped to the colors in the character. The number formed by the palette
+bits is multiplied by the number of colors in the BG to get the starting
+index in the color palette. For example, if palette 3 is selected in 16
+color mode, the tile's colors will range from CG entries 48 to 63.&nbsp;
+However, entry #48 will be unused since this is mapped from color 0, which
+is always the 'transparent color'.&nbsp; Notice that, except in a 256-color
+mode, it is not possible to select colors above 127.&nbsp; That's okay;
+the sprites use these colors.&nbsp; Also, except in Mode 0 (see <A HREF="#Reg2105">register
+$2105</A>), four color BGs may only use colors 1 to 31.
+
+<P>The horizontal and vertical flip bits, if set to 1, will cause the characters
+to be mirrored when shown on the screen, so that they are facing the opposite
+direction. When in 16x16 tile mode, the entire tile is flipped (pixel 0
+is swapped with pixel 15) rather than the individual 8x8 sub tiles being
+flipped.
+
+<P>The <A HREF="#Terminology">priority</A> bit has the effect of deciding
+whether a given tile is 'on top of' or behind other BGs and sprites.&nbsp;
+For more information on the drawing order, see bit 3 of <A HREF="#Reg2105">register
+$2105</A>.
+
+<P><A NAME="SpriteBasics"></A><FONT SIZE=+1>Basics of sprites</FONT>
+
+<P>All SNES <A HREF="#Terminology">sprites</A> are 16 colors.&nbsp; The
+SNES can have two sizes of sprites on the screen at once; the two sizes
+are selected with bits 5-7 of <A HREF="#Reg2101">register $2101</A>.&nbsp;
+The <A HREF="#Terminology">character data</A> for sprites is stored in
+<A HREF="#PPUMemoryTypes">VRAM</A>, in the same format as <A HREF="#Terminology">BG</A>
+tiles.&nbsp; Two or more sprites can share the same set of tiles.&nbsp;
+When the sprites are larger than 8x8, they are arranged in columns, followed
+by rows of 8x8 tiles.&nbsp; For example, a 32x32 sprite is stored like
+this:
+<PRE>Byte Offset&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 32&nbsp;&nbsp;&nbsp; 64&nbsp;&nbsp;&nbsp;&nbsp; 96&nbsp;&nbsp;&nbsp;&nbsp; 128&nbsp;&nbsp; 160&nbsp;&nbsp; 192&nbsp;&nbsp;&nbsp; 224&nbsp;&nbsp;&nbsp; 256&nbsp;&nbsp;&nbsp; ... et cetera.
+Tile Coord&nbsp;&nbsp; (0,0) (8,0) (16,0) (24,0) (0,8) (8,8) (16,8) (24,8) (0,16) ... and so on.</PRE>
+Now that you've consumed the above information, realize that it is not
+completely correct.&nbsp; The SNES has one more display quirk that is thrown
+into the mix: all of the rows must be stored 16 tiles apart (i.e. 512 bytes,
+or 256 words.)&nbsp; This means that, if there was one 32x32 sprite in
+VRAM, it would have to be stored like this:
+<PRE>Offset&nbsp; Y-coord. Tile Coord
+0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0-7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (0, 0) (8, 0) (16, 0) (24, 0) &lt;Unused--room for 12 more tiles>
+512&nbsp;&nbsp;&nbsp;&nbsp; 8-15&nbsp;&nbsp;&nbsp;&nbsp; (0, 8) (8, 8) (16, 8) (24, 8) &lt;Unused--room for 12 more tiles>
+1024&nbsp;&nbsp;&nbsp; 16-23&nbsp;&nbsp;&nbsp; (0,16) (8,16) (16,16) (24,16) &lt;Unused--room for 12 more tiles>
+1536&nbsp;&nbsp;&nbsp; 24-31&nbsp;&nbsp;&nbsp; (0,24) (8,24) (16,24) (24,24) &lt;Unused></PRE>
+In practice, the sprites are interleaved.&nbsp; In other words, when using
+32x32 tiles, there would be 3 more sprites stored in that "unused" space.&nbsp;
+If the first sprite, shown in the above table, started at offset 0, the
+next sprite would start at offset 128 (the <A HREF="#SpriteBasics_CharNum">Character
+Number</A>, in <A HREF="#PPUMemoryTypes">OAM</A>, would be 4); the third
+sprite would start at offset 256 (Character #8), and the fourth sprite
+would start at offset 384 (Character #12).&nbsp; If a fifth sprite was
+desired, the pattern would repeat and it would be located at offset 2048
+(Character #64).
+
+<P>Similarly, when using 16x16 sprites, there will be 8 sprites interleaved,
+and the ninth sprite will have to start after them at offset 1024.&nbsp;
+Finally, 64x64 sprites have only two sprites interleaved.&nbsp; It is also
+possible to format it such that larger sprites can be interleaved with
+smaller sprites, but that is somewhat confusing to try to explain.
+
+<P>In OAM there are two tables which control the position, size, mirroring,
+palette, and priority of sprites.&nbsp; This table has room for 128 entries;
+thus, the SNES can display up to 128 sprites on the screen at once (although
+I think a real SNES will overload and screw up its display when there are
+too many large sprites.)&nbsp; The first table has four bytes per sprite,
+and is formatted like this:
+<PRE>Byte 1&nbsp;&nbsp;&nbsp; xxxxxxxx&nbsp;&nbsp;&nbsp; x: X coordinate
+Byte 2&nbsp;&nbsp;&nbsp; yyyyyyyy&nbsp;&nbsp;&nbsp; y: Y coordinate
+Byte 3&nbsp;&nbsp;&nbsp; cccccccc&nbsp;&nbsp;&nbsp; c: starting character (tile) number&nbsp;&nbsp;&nbsp; p: palette number
+Byte 4&nbsp;&nbsp;&nbsp; vhoopppc&nbsp;&nbsp;&nbsp; v: vertical flip&nbsp;&nbsp; h: horizontal flip&nbsp; o: priority bits
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Note: the 'c' in byte 4 is the MOST significant bit in the 9-bit char #.</PRE>
+The second table is 32 bytes and has 2 bits for each sprite (each byte
+contains information for 4 sprites.)&nbsp; The lowest significant bits
+hold the information for the lower object numbers (for example, the least
+significant two bits of the first byte are for object #0.)&nbsp; Bit 0
+(and 2, 4, 6) is the size toggle bit (see bits 5-7 of <A HREF="#Reg2101">register
+$2101</A>) and bit 1 (3, 5, 7) is the most ignificant bit of the X coordinate.
+
+<P>The vertical and horizontal flips work similarly to flips in the BGs;
+the entire sprite is flipped so that the leftmost pixel is swapped with
+the rightmost pixel, etc.&nbsp; To see the effect of the priority bits,
+see the description of <A HREF="#Reg2105">register $2105</A>.&nbsp; The
+palettes start at CG entry 128, so that palette 0 is colors 128 to 143,
+and palette 1 consists of colors 144 to 159.
+
+<P><A NAME="SpriteBasics_CharNum"></A>The character number indexes into
+an array of 8x8 tiles starting at a base VRAM location selected by bits
+0-2 of <A HREF="#Reg2101">register $2101</A>. The byte address in VRAM
+where the character data starts can be found using the following calculation:
+<BR>&nbsp;&nbsp;&nbsp; address_of_character = (base_location_bits &lt;&lt;
+14) + (32 * character_number);
+<BR>For example, if base location 1 is selected, and character number 1
+is selected, the address will be 16384+32*1 = 16416.&nbsp; Note that the
+word address entered into the <A HREF="#Reg2116">VRAM address register</A>
+will be half of that, or 8208.
+
+<P>Notice that two or more sprites in the OAM table may have the same character
+number; if this is the case, they will look the same except that they can
+be mirrored independently and have different palettes.
+
+<P><A NAME="ColorPalettes"></A><FONT SIZE=+1>Color palettes</FONT>
+
+<P>Once the final color value is derived from the character data and 'palette
+number' for the sprite or <A HREF="#Terminology">BG</A>, it is indexed
+into the <A HREF="#PPUMemoryTypes">CGRAM</A> color palette array.&nbsp;
+There are 512 bytes of CGRAM, with each of the 256 colors using two bytes.&nbsp;
+Each of the palette entries is formatted like this:
+<PRE>?bbbbbgg gggrrrrr&nbsp;&nbsp;&nbsp; ?: Unused and ignored&nbsp; b: Blue intensity
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g: Green intensity&nbsp;&nbsp;&nbsp;&nbsp; r: Red intensity</PRE>
+(Notice this is backwards to the conventional RGB format.)&nbsp; To upload
+palette entries to CGRAM, select the color with register $2121, and then
+begin sending the bytes to <A HREF="#Reg2122">register $2122</A>.
+<BR>&nbsp;
+<CENTER><A NAME="GraphicsFormat"></A><FONT SIZE=+3>The SNES Graphics Format</FONT></CENTER>
+
+
+<P>All SNES graphics (except in <A HREF="#Terminology">BG</A>1 of Mode
+7) are made up of <A HREF="#Terminology">Tiles</A>, also called character
+data.&nbsp; The basic tile is 8x8 in size, and larger bitmaps are stored
+in the form of two-dimensional arrays of these small tiles.&nbsp; On most
+computers, bitmaps are stored in a packed format: the color bits are grouped
+together in the same byte (or word, or dword, for high-color displays.)&nbsp;
+However, SNES graphics are planar; that is, the each of the color bits
+are stored separately.&nbsp; Each color plane of the tile is stored like
+this:
+<PRE>byte 0:&nbsp;&nbsp; top scanline&nbsp;&nbsp; 01234567
+byte 2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 01234567&nbsp;&nbsp;&nbsp;&nbsp; right
+byte 4:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 01234567&nbsp;&nbsp;&nbsp;&nbsp; side
+byte 6:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; side&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 01234567&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of
+byte 8:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 01234567&nbsp;&nbsp;&nbsp;&nbsp; tile
+byte 10:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 01234567&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+byte 12:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 01234567&nbsp; Note that left/right and top/bottom can
+byte 14: bottom scanline 01234567&nbsp; be reversed using the BG/sprite flip bits.</PRE>
+Planes 0 and 1 are stored first, followed by planes 2 and 3, etc.&nbsp;
+As you can see, the bytes in each plane are two bytes apart; the byte "in
+between" is the following plane.&nbsp; In other words, byte 0 stores the
+first eight pixels of plane 0 and byte 1 stores the first eight pixels
+of plane 1.&nbsp; If using more than 4 colors, the pattern repeats; byte
+16 stores the first eight pixels of plane 2 and byte 17 stores the first
+eight pixels of plane 3.
+
+<P>When the tile is to be displayed on the screen, a bit is taken from
+each of the planes to form a 2-, 4-, or 8-bit value to index into the <A HREF="#ColorPalettes">color
+palette</A>.&nbsp; The first tile (plane 0) contains the least significant
+bit of the color, and the last tile contains the most significant bit.
+
+<P><A NAME="Mode7GrFormat"></A><FONT SIZE=+1>Mode 7 Graphics Representation</FONT>
+
+<P>In Mode 7, both the tile map and the tiles themselves are stored differently.&nbsp;
+In fact, the tile data and the graphic data are interleaved.&nbsp; The
+first byte (low byte) is an element of the tile map, and the second byte
+(high byte) is the color value of a pixel.
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; First Byte&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Second Byte
+Bits&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7&nbsp; 6&nbsp; 5&nbsp; 4&nbsp; 3&nbsp; 2&nbsp; 1&nbsp; 0&nbsp; 15 14 13 12 11 10 9&nbsp; 8
+Contains&nbsp; Tile Number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Graphics data</PRE>
+The Mode 7 screen data occupies all of the first 32 KB of VRAM: 16K is
+for graphics data, and 16K is for the tile numbers.&nbsp; The tile map
+format is simply the tile number with no other information, and takes one
+byte.&nbsp; The dimensions of the tile map are 128x128 (=16384 bytes).&nbsp;
+Unlike all other screen modes, the graphics data is a packed, linear format
+and each color value directly indexes into CGRAM.&nbsp; The tiles are still
+8x8 pixels, and thus take 64 bytes per tile.&nbsp; There are 256 characters
+in total.&nbsp; The calculation to find which character to display is simply
+64 * Tile_Number.
+
+<P>A variation of Mode 7, EXTBG (see bit 6 of register $2133), cuts the
+colors down to 128 and uses the most significant color bit as a priority
+bit.
+<CENTER><A NAME="RegisterReference"></A><FONT SIZE=+3>Register Reference</FONT></CENTER>
+
+
+<P>This section may not be quite accurate.&nbsp; Please tell me if you
+find an error.&nbsp; W means writeable; R means readable.&nbsp; 2b means
+the register is one word in size;&nbsp; Db means that it is a one-byte
+register that must be written or read twice.&nbsp; In contrast to the Y0shi
+Doc, auto-incrementing registers such as <A HREF="#Reg2122">$2122</A> are
+not considered Db registers, because they can be written any number of
+times (writing one byte will work just as well as writing two, or writing
+a hundred.)
+
+<P>Can anyone tell me what is supposed to happen when you read from a write
+register?
+<CENTER>&nbsp;</CENTER>
+
+<CENTER><A NAME="RegOAM"></A><FONT SIZE=+2>OAM Registers</FONT></CENTER>
+
+
+<P><A NAME="Reg2101"></A><B><FONT FACE="Lucida Console">Register $2101:
+OAM Size (1b/W)</FONT></B>
+<PRE>sssnnbbb&nbsp;&nbsp; s: Object size&nbsp; n: name selection&nbsp; b: base selection
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Size bit in OAM table:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 1
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Bits of object size:&nbsp;&nbsp;&nbsp; 000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8x8&nbsp;&nbsp; 16x16
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 001&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8x8&nbsp;&nbsp; 32x32
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 010&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8x8&nbsp;&nbsp; 64x64
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 011&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16x16 32x32
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16x16 64x64
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 101&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32x32 64x64
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 110,111&nbsp; Unknown behavior</PRE>
+This register selects the location in VRAM where the character data is
+stored, and the size of sprites on the screen.&nbsp; The byte location
+of the character data can be found by shifting the b (base selection) bits
+left by 14.&nbsp; Note that this allows only four different locations in
+VRAM to put the sprite data; the high bit of the base selection should
+always be zero since only 64K of VRAM can be addressed.
+
+<P>I have no information on the name selection bits.
+
+<P><A NAME="Reg2102"></A><B><FONT FACE="Lucida Console">Register $2102/$2103:
+Address for accessing OAM (2b/W)</FONT></B>
+<PRE>aaaaaaaa r??????m&nbsp; a: low byte of OAM address
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r: OAM priority rotation&nbsp; m: OAM address MSB</PRE>
+This register selects the byte location to begin uploading (or downloading)
+data to OAM.
+
+<P>I'm sorta guessing, but I think that the priority rotation thing is
+applied by SNES games to keep sprites on the screen.&nbsp; That is, when
+there are too many sprites on the screen at once I believe the SNES will
+turn certain sprites off in order to reduce the load on the PPU.&nbsp;
+So I think the SNES takes the "a" bits, shifts them right one and the result
+is which sprite to re-activate.&nbsp; In the process another sprite gets
+turned off.&nbsp; Another possibility is that it doesn't matter what address
+you select, it simply picks any sprite that is off and turns it on, perhaps
+simultaneously turning off a sprite that has been on for a while.
+
+<P><A NAME="Reg2104"></A><B><FONT FACE="Lucida Console">Register $2104:
+Data write to OAM (1b/W)</FONT></B>
+<PRE>dddddddd&nbsp; d: byte to write to VRAM</PRE>
+This register writes a byte to OAM.&nbsp; After the byte is stored, the
+OAM address is incremented so that the next write or read will be to the
+following address.
+
+<P><A NAME="Reg2138"></A><B><FONT FACE="Lucida Console">Register $2138:
+Data read from OAM (1b/R)</FONT></B>
+<PRE>dddddddd&nbsp; d: byte that was read from OAM</PRE>
+After the byte is read, the OAM address is incremented so that the next
+write or read will be to the following byte.
+<CENTER>&nbsp;</CENTER>
+
+<CENTER><A NAME="RegColor"></A><FONT SIZE=+2>Color Registers</FONT></CENTER>
+
+
+<P><A NAME="Reg2121"></A><B><FONT FACE="Lucida Console">Register $2121:
+Address for accessing CGRAM (1b/W)</FONT></B>
+<PRE>aaaaaaaa a: CGRAM word address</PRE>
+This register selects the&nbsp; word location (byte address * 2) to begin
+uploading (or downloading) data to CGRAM. Click <A HREF="#ColorPalettes">HERE</A>
+for more information on color palettes.
+
+<P><A NAME="Reg2122"></A><B><FONT FACE="Lucida Console">Register $2122:
+Data write to CGRAM (1b/W)</FONT></B>
+<PRE>dddddddd&nbsp; d: byte to write to CGRAM</PRE>
+This register writes a byte to CGRAM.&nbsp; After the byte is stored, the
+CGRAM address is incremented so that the next write or read will be to
+the following byte.
+
+<P><A NAME="Reg213B"></A><B><FONT FACE="Lucida Console">Register $213B:
+Data read from CGRAM (1b/R)</FONT></B>
+<PRE>dddddddd&nbsp; d: byte that was read from CGRAM</PRE>
+After the byte is read, the CGRAM address is incremented so that the next
+write or read will be to the following byte.
+<CENTER>&nbsp;</CENTER>
+
+<CENTER><A NAME="RegVRAM"></A><FONT SIZE=+2>VRAM Transfer/Address Registers</FONT></CENTER>
+
+
+<P><A NAME="Reg2107"></A><B><FONT FACE="Lucida Console">Register $2107-$210A:
+Tile map location (4*1B/W)</FONT></B>
+<PRE>Bits in each of the registers:
+aaaaaass&nbsp; a: Tile map address&nbsp; s: SC size: 00=32x32 01=64x32
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10=32x64 11=64x64</PRE>
+To calculate the byte location where the tile map starts, shift the a (address)
+bits left by 11 (multiply by 2048.)&nbsp; The SC size is the dimensions
+of the tile map; if using 8x8 tile mode, this allows BG dimensions of 256
+or 512 pixels; if in 16x16 mode, the dimensions can be 512 or 1024 pixels.&nbsp;
+Note that, since there is only 64K of VRAM, the most significant bit must
+be zero.
+
+<P>When using a screen size wider than 32 tiles, the format is a little
+different than you might expect.&nbsp; When the width is 64 tiles, then
+rather than each line in the tile map extending to 128 bytes (instead of
+64), there will actually be <I>two</I> tile maps, stored one right after
+the other in memory.&nbsp; The first tile map will contain the left 32
+tiles (x coordinates 0 to 255, when using 8x8 tiles), and the next tile
+map will contain the right 32 tiles (x coordinates 256 to 511, when using
+8x8 tiles. Setting the scroll register to 512, then, will be the same at
+setting it to zero.)
+
+<P>A note about using 16x16 tiles:&nbsp; These are stored in exactly the
+same way as 16x16 sprites; that is, the first and second rows have 14 ignored
+tiles between them.&nbsp; (At least that's how it works when in 16-color
+mode; I haven't figured out if it's the same for 4 or 256 colors but it's
+very likely.)
+
+<P>For more information on the tile map format, see <A HREF="#BGBasics">BG
+Basics</A>.
+
+<P><A NAME="Reg210B"></A><B><FONT FACE="Lucida Console">Register $210B/$210C:
+Character location (2*1B/W)</FONT></B>
+<PRE>$210B(low) $210C(high)&nbsp; a: BG1 address&nbsp; c: BG3 address
+bbbbaaaa&nbsp;&nbsp; ddddcccc&nbsp;&nbsp;&nbsp;&nbsp; b: BG2 address&nbsp; d: BG4 address</PRE>
+This register selects the location in VRAM where the tile map starts.&nbsp;
+The byte address is calculated by shifting the four bits left by 13 (multiplying
+by 8192).&nbsp; Note that, since there is only 64K of VRAM, the highest
+of the four bits must be set to 0.
+
+<P>For more information on storing characters, see <A HREF="#GraphicsFormat">The
+SNES Graphics Format</A>.
+
+<P><A NAME="Reg2115"></A><B><FONT FACE="Lucida Console">Register $2115:
+Video Port Control (1b/W)</FONT></B>
+<PRE>i---ffrr&nbsp; i: 0=increment when $2118 or $2139 is accessed
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1=increment when $2119 or $213A is accessed
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f: full graphic (?)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r: increment rate:&nbsp; 00=Increment by 2 bytes&nbsp;&nbsp; (1x1)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 01=Increment by 64 bytes&nbsp; (32x32)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10=Increment by 128 bytes (64x64)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11=Increment by 256 bytes (128x128)</PRE>
+This register controls the way data is uploaded to VRAM.&nbsp; The bits
+in here are a bit weird, but can be useful.&nbsp; When you want to change
+only the high byte of a series of VRAM locations (register $2116 * 2 +
+1), you should set i to 1.&nbsp; When you want to change just the low byte,
+set i to 0.&nbsp; When you want to write a whole word, you should set i
+to 0; otherwise, if i=1, writing a word will cause the high byte of the
+first location to be changed, followed by the low byte of the next location.
+
+<P>The r bits control the number of bytes by which the VRAM address pointer
+gets incremented upon a read or write (see table.)
+
+<P><A NAME="Reg2116"></A><B><FONT FACE="Lucida Console">Register $2116/$2117:
+VRAM Address (2b/W)</FONT></B>
+<PRE>aaaaaaaa aaaaaaaa&nbsp; a: word address for accessing VRAM</PRE>
+This register is used to set the initial address for a VRAM upload or download.&nbsp;
+Multiply by two to get the byte address.&nbsp; Note that, since there is
+only 64K of VRAM, the most significant bit must be set to 0 (If the MSB
+is set, it must be ignored.)
+
+<P>When reading from VRAM, a "dummy read" must be performed after writing
+to this register; the first value read is supposed to be meaningless.&nbsp;
+No "dummy write" is required, however.
+
+<P><A NAME="Reg2118"></A><B><FONT FACE="Lucida Console">Register $2118/$2119:
+VRAM data write (2b/W)</FONT></B>
+<PRE>dddddddd dddddddd&nbsp; d: data to write to VRAM</PRE>
+When written, this register writes a byte or word to VRAM.&nbsp; The address
+is incremented (or not, as the case may be) according to <A HREF="#Reg2115">register
+$2115</A>.
+
+<P><A NAME="Reg2139"></A><B><FONT FACE="Lucida Console">Register $2139/$213A:
+VRAM data read (2b/R)</FONT></B>
+<PRE>dddddddd dddddddd&nbsp; d: data read from VRAM</PRE>
+When read from, this register downloads a byte or word from VRAM.&nbsp;
+The address is incremented according to the settings of <A HREF="#Reg2115">register
+$2115</A>.
+<CENTER>&nbsp;</CENTER>
+
+<CENTER><A NAME="RegVideo"></A><FONT SIZE=+2>Video Control Registers</FONT></CENTER>
+
+
+<P><A NAME="Reg2100"></A><B><FONT FACE="Lucida Console">Register $2100:
+Screen display register (1b/W)</FONT></B>
+<PRE>d---bbbb&nbsp; d: disable screen (if 1, nothing should be displayed?)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b: brightness. (0=almost black, 15=normal brightness)</PRE>
+This register is used for screen fades.
+
+<P><A NAME="Reg2105"></A><B><FONT FACE="Lucida Console">Register $2105:
+Screen mode register (1b/W)</FONT></B>
+<PRE>dcbapmmm&nbsp; d: BG4 tile size&nbsp; c: BG3 tile size&nbsp; b: BG2 tile size
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a: BG1 tile size&nbsp; Sizes are: 0=8x8; 1=16x16. (See <A HREF="#Reg2107">reg. $2107</A>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; p: order of BG priorities&nbsp; m: General screen mode</PRE>
+This register determines the size of tile represented by one entry in the
+tile map array, the order that BGs are drawn on the screen, and the screen
+mode.&nbsp; The screen modes are:
+<PRE>MODE&nbsp;&nbsp; # of BGs&nbsp; Max Colors/Tile&nbsp;&nbsp; Palettes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Colors Total
+0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 32 (8 per BG)&nbsp; 128 (32 per BG*4 BGs)
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG1/BG2:16 BG3:4&nbsp; 8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG1/BG2:128 BG3:32
+2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 128
+3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG1:256 BG2:16&nbsp;&nbsp;&nbsp; BG1:1 BG2:8&nbsp;&nbsp;&nbsp; BG1:256 BG2:128
+4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG1:256 BG2:4&nbsp;&nbsp;&nbsp;&nbsp; BG1:1 BG2:8&nbsp;&nbsp;&nbsp; BG1:256 BG2:32
+5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG1:16 BG2:4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG1:128 BG2:32 (Interlaced mode)
+6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 128 (Interlaced mode)
+7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 256&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 256</PRE>
+Notice that Mode 7 has only one BG.&nbsp; All games which appear to have
+a Mode 7 screen but more than one BG either use sprites to simulate a BG,
+or switch video modes midframe via HDMA.
+
+<P>The p (priority bit) affects the order in which BGs are drawn on the
+screen, as follows ("o" refers to the setting of bit 13 of the <A HREF="#BGBasics">tile
+map</A>):
+<PRE>p (Priority) 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1
+Drawn first&nbsp; BG4, o=0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG4, o=0
+&nbsp;&nbsp; (Behind)&nbsp; BG3, o=0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG3, o=0
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sprites with OAM priority 0 (%00)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG4, o=1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG4, o=1
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG3, o=1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OAM pri. 1
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OAM pri. 1&nbsp;&nbsp;&nbsp; BG2, o=0
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG2, o=0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG1, o=0
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG1, o=0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG2, o=1
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sprites with OAM priority 2 (%10)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG2, o=1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BG1, o=1
+Drawn last&nbsp;&nbsp; BG1, o=1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OAM pri. 3
+&nbsp; (in front) OAM pri. 3&nbsp;&nbsp;&nbsp; BG3, o=1</PRE>
+The p bit only works in Mode 1.&nbsp; In all other modes, it is ignored
+(drawing is performed as if this bit were clear.)
+
+<P><A NAME="Reg210D"></A><B><FONT FACE="Lucida Console">Register $210D
+to $2114: Scroll Registers (Db/W)</FONT></B>
+<PRE>210D: BG1 Horizontal Scroll&nbsp;&nbsp; 210E: BG1 Vertical Scroll
+210F: BG2 Horizontal Scroll&nbsp;&nbsp; 2110: BG2 Vertical Scroll
+2111: BG3 Horizontal Scroll&nbsp;&nbsp; 2112: BG3 Vertical Scroll
+2113: BG4 Horizontal Scroll&nbsp;&nbsp; 2114: BG4 Vertical Scroll
+
+mmmmmaaa aaaaaaaa&nbsp; a: Horizontal/Vertical offset m: Mode 7 only</PRE>
+This register must be written twice to write the complete value; every
+time the register is written to, an internal pointer alternates between
+changing the high and low bytes.&nbsp; The first time you write to the
+register, the low byte will be changed.&nbsp; There are 11 bits for the
+offset; when these bits are set to 0, you will see tile map location 0
+on the left/top of the screen.&nbsp; The offset is a pixel value, so adding
+one will scroll the screen right by one pixel.&nbsp; When the screen is
+scrolled right (or down) from 0, the rightmost (or bottommost) elements
+of the tile map will come on from the left (top) of the screen.
+
+<P>If a pixel value is placed in this register that is larger than the
+width of the BG, a modulus can be performed to determine what the actual
+pixel will be that is displayed.&nbsp; For example, if the BG1 horizontal
+pixel value is set to 257, but the width of the BG is 256 pixels, the result
+will be the same as if it was set to 1.
+
+<P>The m bits are used in Mode 7 only; I don't know what they are for.&nbsp;
+The only thing I've determined is that the scroll register seems to cause
+pixel-based scrolling: that is, increasing this register by one will make
+the screen scroll a slight amount right or down.&nbsp; (256/224 would be
+one screenful.)
+
+<P>Since there is only one BG in Mode 7, the 'm' bits apply only to registers
+$210D and $210E.
+
+<P><A NAME="Reg212C"></A><B><FONT FACE="Lucida Console">Register $212C
+&amp; $212D: Main/Sub Screen Designation (2*1b/W)</FONT></B>
+<PRE>210D: Main Screen Designation
+210F: Sub Screen Designation
+
+---sdcba&nbsp; s: sprites enable&nbsp; d: BG4 enable&nbsp; c: BG3 enable
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b: BG2 enable&nbsp; a: BG1 enable</PRE>
+The main screen designation is a way to toggle the BGs through software.&nbsp;
+I think the Sub Screen designation has something to do with color add/subtract.
+
+<P>&nbsp;
+<CENTER><A NAME="RegWindows"></A><FONT SIZE=+2>Windowing Registers</FONT></CENTER>
+
+
+<P>The SNES' Windowing registers are used for clipping; that is, cutting
+off portions of the screen.&nbsp; If you run Mario World, you'll notice
+a "circular opening" on the opening screen.&nbsp; This is done using windowing,
+which clips off the parts of the screen outside of the window.&nbsp; The
+clipping is only applied to BG1, BG2 and sprites, so that the big letters
+"Mario World" (BG3) are always visible.&nbsp; Windowing has only a left
+and right value, so what Mario World and many other games do is constantly
+vary the left and right values using HDMA.
+
+<P><A NAME="Reg2123"></A><B><FONT FACE="Lucida Console">Register $2123/$2124:
+Window mask settings (2*1b/W)</FONT></B>
+
+<P><TT>High Byte Low Byte&nbsp; 4: Settings for BG4&nbsp; 3: Settings for
+BG3</TT>
+<BR><TT>44443333&nbsp; 22221111&nbsp; 2: Settings for BG2&nbsp; 1: Settings
+for BG1</TT>
+
+<P><TT>Each BG has four bits, which have the following meanings:</TT>
+<BR><TT>dcba&nbsp;&nbsp;&nbsp; d: Enable Window 2&nbsp; c: Clip Window
+2 in or out&nbsp; (0=in,</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b: Enable Window 1&nbsp;
+a: Clip Window 1 in or out&nbsp;&nbsp; 1=out)</TT>
+
+<P>These registers determine which Windows to apply to which BGs, and whether
+clipping should be performed inside or outside the window.&nbsp; To enable
+windowing, the appropriate bits in <A HREF="#Reg212E">registers $212E and
+$212F</A> must be set in addition to the bits in these registers.
+
+<P><A NAME="Reg2125"></A><B><FONT FACE="Lucida Console">Register $2125:
+Window mask settings #2 (1b/W)</FONT></B>
+
+<P><TT>ccccssss&nbsp; c: Settings for "color windows"&nbsp; s: Settings
+for sprite windows</TT>
+
+<P><TT>Both of these sets of four bits are formatted the same as <A HREF="#Reg2123">registers
+$2123 and $2124</A>.</TT>
+
+<P>This is like the last set of registers except it is for sprites and
+"color windows".&nbsp; I don't know what color windows are; won't someone
+explain it?
+
+<P><A NAME="Reg2126"></A><B><FONT FACE="Lucida Console">Register $2126
+to $2129: Window position designations (4*1b/W)</FONT></B>
+
+<P><TT>$2126&nbsp; Window 1 left&nbsp; position</TT>
+<BR><TT>$2127&nbsp; Window 1 right position</TT>
+<BR><TT>$2128&nbsp; Window 2 left&nbsp; position</TT>
+<BR><TT>$2129&nbsp; Window 2 right position</TT>
+
+<P><TT>For each of these bytes:</TT>
+<BR><TT>xxxxxxxx&nbsp; x: pixel position of window left or right position.</TT>
+
+<P>These regs simply tell the range of the window.&nbsp; The window range
+is inclusive, so if clipping is IN, and the window range is from pixels
+3 to 6, all four pixels will be clipped rather than just pixels 4 and 5.&nbsp;
+If clipping is out, however, clipping will be from pixels 0 to 2 and 7
+to 255 inclusive.
+
+<P><A NAME="Reg212A"></A><B><FONT FACE="Lucida Console">Register $212A
+and $212B: Mask Logic settings (2*1B/W)</FONT></B>
+
+<P><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Parameters for:</TT>
+<BR><TT>$212A&nbsp; 44332211&nbsp; 4: BG4&nbsp; 3: BG3&nbsp; 2: BG2&nbsp;
+1: BG1</TT>
+<BR><TT>$212B&nbsp; ????ccss&nbsp; c: Color windows&nbsp;&nbsp;&nbsp; s:
+Sprites</TT>
+
+<P><TT>Each of the two bits for each BG and sprites determines the mask
+logic as follows:</TT>
+
+<P><TT>00&nbsp; OR&nbsp;&nbsp;&nbsp;&nbsp; 10 XOR</TT>
+<BR><TT>01&nbsp; AND&nbsp;&nbsp;&nbsp; 11 XNOR</TT>
+
+<P>Apparently, these registers apply only for BGs and sprites that have
+both windows enabled at the same time.&nbsp; If only one window is enabled,
+these bits should be ignored.&nbsp; I'm not sure whether the logic is applied
+to the visible regions or the clipped regions.&nbsp; For example, if pixels
+10-20 and 50-60 are clipped, I don't know whether OR or AND would be used
+to clip both regions and which would clip neither.
+
+<P><A NAME="Reg212E"></A><B><FONT FACE="Lucida Console">Register $212E
+and $212F: Window designation (2*1b/W)</FONT></B>
+
+<P><TT>$212E&nbsp; Main-screen window designation</TT>
+<BR><TT>$212F&nbsp;&nbsp; Sub-screen window designation</TT>
+<BR><TT>For each of these:</TT>
+<BR><TT>---sdcba&nbsp; s: sprites enable&nbsp; d: BG4 enable&nbsp; c: BG3
+enable</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+b: BG2 enable&nbsp; a: BG1 enable</TT>
+
+<P>These registers are formatted the same as the visibility designation
+<A HREF="#Reg212C">registers $212C and $212D</A>.&nbsp; A bit must be set
+in both $212C and $212E or $212D or $212E in order for windows to be enabled
+for that layer (BG or sprites).
+<BR>&nbsp;
+<CENTER><A NAME="RegCounter"></A><FONT SIZE=+2>Counter/IRQ/NMI Registers</FONT></CENTER>
+
+<CENTER>&nbsp;</CENTER>
+
+
+<P><A NAME="Reg2137"></A><B><FONT FACE="Lucida Console">Register $2137:
+Software latch for h/v counter (1b/R)</FONT></B>
+
+<P>This register does not return a useful value.&nbsp; Apparently, though,
+you have to read from this register before attempting to read $213C or
+$213D.
+
+<P><A NAME="Reg213C"></A><B><FONT FACE="Lucida Console">Register $213C
+&amp; $213D: Horizontal/Vertical scan location (Db/R)</FONT></B>
+<PRE>For each of the registers:
+-------l llllllll&nbsp; l: scanline number ($213C) or horizontal position ($213D)
+* vertical range is 0 to 261, 0=top of screen (values over 0-223/0-238 are in the vblank)
+* horizontal range is from 0 to 339, 0=far-left of screen.</PRE>
+This register tells where exactly on the screen the SNES is sending data
+to the TV. For the horizontal counter, apparently, zSNES always alternates
+between sending a strange value (most often 8) and 1, respectively, in
+register $213C, but only after $2137 has been read once.&nbsp; For the
+vertical counter, the low byte of the scanline is sent, followed by the
+high byte, and afterwards nothing but zeros (until $2137 is read again.)&nbsp;
+One doc suggests register $213F is related to this register, but I don't
+know how so.
+
+<P><A NAME="Reg4200"></A><B><FONT FACE="Lucida Console">Register $4200:
+Counter Enable (1b/W)</FONT></B>
+<PRE>n-vh---j&nbsp; n: NMI Interrupt enable&nbsp; v: vertical counter enable
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; h: horizontal counter enable&nbsp; j: joypad enable</PRE>
+n and j must be set to enable NMI interrupts and the joypad.&nbsp; Not
+sure of the exact effects of bits 4 and 5, but they probably must be set
+to enable IRQ interrupts.
+
+<P><A NAME="Reg4207"></A><A NAME="Reg4209"></A><B><FONT FACE="Lucida Console">Register
+$4207/$4208 &amp; $4209/$420A: Horizontal/Vertical IRQ trigger counters
+(2*2b/W)</FONT></B>
+<PRE>For each register:
+???????l llllllll&nbsp; l: location to trigger IRQ</PRE>
+When IRQs are enabled and the PPU starts drawing at the specified location,
+an IRQ is generated.&nbsp; Horizontal IRQs are rarely used, because of
+the high frequency (every scanline) of the interrupts.
+
+<P><A NAME="Reg4210"></A><B><FONT FACE="Lucida Console">Register $4210:
+NMI Register (1b/R)</FONT></B>
+<PRE>n---vvvv&nbsp; n: nmi flag&nbsp; v: version number</PRE>
+The full behavior of these bits is not known (at least, I don't know).&nbsp;
+Yoshi doc lists "$5A22" for the v bits, whatever that means.&nbsp; Mario
+World reads this register at the beginning of its NMI procedure and then
+discards the value read.&nbsp; zSNES apparently returns a 1 in the n bit
+when NMIs are enabled AND a vblank is in progress.
+
+<P><A NAME="Reg4211"></A><B><FONT FACE="Lucida Console">Register $4211:
+IRQ Register (1b/RW?)</FONT></B>
+<PRE>i-------&nbsp; i: irq flag</PRE>
+The full behavior of these bits is not known (at least, I don't know),
+so take this description with a big grain of salt.&nbsp; If bits 4/5 of
+<A HREF="#Reg4200">register $4200</A> are set, then as soon as the H/V
+counter timer becomes the count value set in <A HREF="#Reg4207">registers
+$4207 to $420A</A>, then an IRQ will be "applied" (unless the CPU interrupt
+flag is enabled.&nbsp; If this is the case, then the interrupt will be
+called as soon as the flag is cleared.)&nbsp; The IRQ routine must immediately
+use SEI to prevent recursive calling, then read from this register to "un-apply"
+the interrupt.&nbsp; The first read will return 1 in the i bit, then subsequent
+reads will return 0.&nbsp; What happens to this register when bits 4/5
+of <A HREF="#Reg4200">register $4200</A> are <I>not</I> set is unclear.
+Some SNES programs use a loop to read this register (in emu's, often getting
+stuck in this loop) but why a loop is used is unknown.
+
+<P><A NAME="Reg4212"></A><B><FONT FACE="Lucida Console">Register $4212:
+Status register IRQ Register (1b/RW?)</FONT></B>
+<PRE>vh-----j&nbsp; v: whether in vblank state&nbsp; h: whether in hblank state
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; j: whether joypad is ready to be read</PRE>
+This register is pretty simple; it returns whether in a vertical/horizontal
+blank period (1=yes) and whether the joypad is ready to be read from registers
+$4218 to $421F.&nbsp; The horizontal blank time lasts from "pixels" 256
+to 339. (Not really pixels, since nothing is being drawn.)&nbsp; In zSNES,
+<I>apparently</I>, the joypad becomes ready to be read once every frame,
+and more specifically, scanline 227 (might not be a constant.)&nbsp; How
+this bit gets cleared to 0, however, is unknown.
+
+<P>A loop in the "leftover" demo suggests that the joypad bit is backwards;
+that is, a value of 1 indicates the joypad is <I>not</I> ready.&nbsp; I
+think some other demos suggest the opposite is true, though.&nbsp; Interestingly
+enough, the demos still work regardless of their treatment of the bit.&nbsp;
+Hmmm...
+<CENTER>&nbsp;</CENTER>
+
+<CENTER><A NAME="RegJoypad"></A><FONT SIZE=+2>Joypad Registers</FONT></CENTER>
+
+
+<P><A NAME="Reg4218"></A><B><FONT FACE="Lucida Console">Register $4218
+to $421F: Joypad registers(2*1b/R)</FONT></B>
+
+<P><TT>$4218/$4219&nbsp; Joypad 1 data</TT>
+<BR><TT>$421A/$421B&nbsp; Joypad 2 data</TT>
+<BR><TT>$421C/$421D&nbsp; Joypad 3 data</TT>
+<BR><TT>$421E/$421F&nbsp; Joypad 4 data</TT>
+
+<P><TT>The two registers for each joypad contain the following:</TT>
+
+<P><TT>Low Byte&nbsp;&nbsp;&nbsp;&nbsp; B: B button&nbsp; Y: Y button&nbsp;
+S: Select button T: Start button</TT>
+<BR><TT>BYSTudlr&nbsp;&nbsp;&nbsp;&nbsp; u: Up&nbsp; d: Down&nbsp; l: Left&nbsp;
+r: Right</TT>
+<BR><TT>High Byte&nbsp;&nbsp;&nbsp; A: A button&nbsp; X: X button&nbsp;
+L: Top-left button R: Top-right button</TT>
+<BR><TT>AXLR????</TT>
+
+<P>This is the easy way to read the joypad.&nbsp; Simply set bit 0 of <A HREF="#Reg4200">register
+$4200</A>, and the SNES will automatically read the state of all the buttons
+(probably once every frame) into these registers.&nbsp; These registers
+may be read more than once; that is, reading these registers does not destroy
+their values.&nbsp; It is best to wait for bit 0 of <A HREF="#Reg4212">register
+$4212</A> to be set (set or cleared?&nbsp; I'm not sure) before reading
+from these registers.
+
+<P>Although there are only two joypad ports, two extra joypads can be accessed
+through $421C-$421F using a multitap device.
+
+<P><A NAME="Reg4016"></A><B><FONT FACE="Lucida Console">Registers $4016/$4217:
+Old-style Joypad registers (2*1B/R/W)</FONT></B>
+
+<P><TT>On read:&nbsp;&nbsp; $4016 is for Player 1; $4017 is for Player
+2.</TT>
+<BR><TT>???????b&nbsp;&nbsp; b: button state</TT>
+<BR><TT>On write:</TT>
+<BR><TT>????????&nbsp;&nbsp; ?: strobe activation value</TT>
+
+<P>These are called the "old-style" joypad registers because they are used
+like the NES used them.&nbsp; First of all, to use these registers, bit
+0 of $4200 must be clear (I suppose to prevent conflict between the SNES's
+automatic read mechanism and the manual method.)&nbsp; If this bit is set,
+then these registers simply return whether the joypad is connected (0=Not
+connected.)&nbsp; Based on what commercial games do, it may be neccessary
+to write a 0 before this function works.
+
+<P>To use the old-style reading method, bit 0 of register $4200 must be
+clear (probably to prevent conflict between the manual reading and the
+SNES' automatic reading.)&nbsp; Like on the NES, two values should be written
+before reading starts: a 1 followed by a 0.&nbsp; This "activates a strobe
+in the joypad circuitry."&nbsp; Apparently, but not for certain, it is
+only necessary to do this with $4016; that is, writing to one register
+resets both joypads. Once the writing is done, each read from each register
+will return the state of one button, in the following order:
+
+<P><TT>Read # Button&nbsp; Read # Button</TT>
+<BR><TT>&nbsp; 1&nbsp;&nbsp;&nbsp; B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+9&nbsp;&nbsp;&nbsp; A</TT>
+<BR><TT>&nbsp; 2&nbsp;&nbsp;&nbsp; Y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+10&nbsp;&nbsp; X</TT>
+<BR><TT>&nbsp; 3&nbsp;&nbsp;&nbsp; Select&nbsp;&nbsp;&nbsp; 11&nbsp;&nbsp;
+L (Top-left)</TT>
+<BR><TT>&nbsp; 4&nbsp;&nbsp;&nbsp; Start&nbsp;&nbsp;&nbsp;&nbsp; 12&nbsp;&nbsp;
+R (Top-right)</TT>
+<BR><TT>&nbsp; 5&nbsp;&nbsp;&nbsp; Up&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+13&nbsp;&nbsp; -</TT>
+<BR><TT>&nbsp; 6&nbsp;&nbsp;&nbsp; Down&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 14&nbsp;&nbsp;
+-</TT>
+<BR><TT>&nbsp; 7&nbsp;&nbsp;&nbsp; Left&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 15&nbsp;&nbsp;
+-</TT>
+<BR><TT>&nbsp; 8&nbsp;&nbsp;&nbsp; Right&nbsp;&nbsp;&nbsp;&nbsp; 16&nbsp;&nbsp;
+-</TT>
+
+<P>1 is returned if the button is currently pressed.
+
+<P>If the pattern was similar to that of the NES, reads 17 to 32 would
+return the state of joypads 3 and 4.&nbsp; However, zsKnight says that
+read #17 returns whether or not the joypad is connected (0 if not connected.)
+<BR>&nbsp;
+<CENTER><A NAME="RegDMA"></A><FONT SIZE=+2>DMA Registers</FONT></CENTER>
+
+<CENTER>See also <A HREF="#DMATransfers">DMA Transfer Information</A>.</CENTER>
+&nbsp;
+<BR><A NAME="Reg420B"></A><B><FONT FACE="Lucida Console">Register $420B:
+Start DMA transfer (1b/W)</FONT></B>
+<PRE>76543210&nbsp; Bits indicate which DMA transfer(s) to initiate
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (1=Transfer, 0=Do not transfer)</PRE>
+After setting up a DMA transfer, a 1 should be written to the bit corresponding
+to the channel you want to use for the transfer.&nbsp; After the 1 is written,
+the CPU is paused while the DMA transfer takes place; each byte transferred
+takes one clock cycle.&nbsp; Note that a DMA and HDMA transfer cannot be
+done on the same channel: if a DMA transfer is initiated while a HDMA channel
+is enabled, nothing will happen.
+
+<P><A NAME="Reg420C"></A><B><FONT FACE="Lucida Console">Register $420C:
+Enable H-DMA transfer (1b/W)</FONT></B>
+<PRE>76543210&nbsp; Bits indicate which HDMA channel(s) to enable
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (1=Enable transfers, 0=Disable transfers)</PRE>
+After setting up the HDMA transfer(s), a 1 should be written to all the
+bits corresponding to the channels you want enabled.&nbsp; Every scanline,
+HDMA transfers will occur automatically.
+
+<P><A NAME="Reg43x0"></A><B><FONT FACE="Lucida Console">Register $43?0:
+DMA control register (1b/W)</FONT></B>
+<PRE>da-fittt&nbsp; d:(DMA only)&nbsp; 0=read from CPU memory, write to $21?? registers
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1=read from $21?? registers, write to CPU memory
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a:(HDMA only) 0=Absolute addressing
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1=Indirect addressing
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i:fixed CPU memory address (1=fixed; 0=inc/dec depending on bit i)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f:0=increment CPU memory pointer by 1 after every read/write 1=decrement
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t:DMA/HDMA transfer type</PRE>
+The 'i' and 'f' bits I had mixed up for quite some time... actually they
+were backwards in another doc, and so my emu's graphics were screwed for
+a long time...&nbsp; Bit 3 means a fixed address, so that the same byte
+is transferred every time.
+<BR>This register controls the way DMA transfers take place.&nbsp; The
+t bits decide the 'mode' of the transfer.&nbsp; To describe how this works,
+suppose the bytes of data to be transferred are $01 $23 $45 $67 $89, and
+the register to write to is $2118.&nbsp; Assuming f=0 and i=0:
+<PRE>Transfer Type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Order of transfer
+000: 1 reg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $01->$2118 $23->$2118 $45->$2118 $67->$2118 $89->$2118
+001: 2 regs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $01->$2118 $23->$211<B>9</B> $45->$2118 $67->$211<B>9</B> $89->$2118
+010: 1 reg write twice&nbsp; $01->$2118 $23->$2118 $45->$2118 $67->$2118 $89->$2118
+011: 2 regs write twice $01->$2118 $23->$2118 $45->$211<B>9</B> $67->$211<B>9</B> $89->$2118
+100: 4 regs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $01->$2118 $23->$211<B>9</B> $45->$211<B>A</B> $67->$211<B>B</B> $89->$2118
+101, 110, 111&nbsp; unknown behavior</PRE>
+Transfer modes 0 and 2 appear to be the same, but are different in HDMA
+mode.&nbsp; I may have modes 0 and 2 backwards (i.e. 0=1 reg write twice.).
+
+<P><A NAME="Reg43x1"></A><B><FONT FACE="Lucida Console">Register $43?1:
+DMA Destination Address (1b/W)</FONT></B>
+<PRE>bbbbbbbb&nbsp; Add this value to $2100 to get the destination address
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (Notice that this restricts what registers you can send to)</PRE>
+This is where data will be sent to during a DMA transfer, unless register
+$43?0 bit 7 is 1, in which case this will be the source register.&nbsp;
+In an HDMA transfer, this is <I>always</I> the source address.
+
+<P><A NAME="Reg43x2"></A><B><FONT FACE="Lucida Console">Register $43?2/$43?3/$43?4:
+DMA Source Address (3b/W)</FONT></B>
+<PRE>aaaaaaaa aaaaaaaa aaaaaaaa&nbsp; Full 24-bit address of DMA transfer source address</PRE>
+This is where data will be read from during a DMA transfer, unless register
+$43?0 bit 7 is 1, in which case this will be the destination address.&nbsp;
+In an HDMA transfer, this is <I>always</I> the source address, since HDMA
+is unidirectional.
+
+<P>Qwertie's horror story: I fixed tons of graphics glitches when I figured
+this out:&nbsp; you must increment the value in this register after a DMA
+transfer.&nbsp; That is, transferring $10 bytes forward starting at $00E000
+would cause this register to be $00E010 afterward.&nbsp; Also, zsKnight
+has implied that DMA transfers wrap on a bank boundary; i.e. $43?4 is not
+changed during a transfer.
+
+<P><A NAME="Reg43x5"></A><B><FONT FACE="Lucida Console">Register $43?5/$43?6/$43?7:
+Bytes to Transfer (2b or 3b/W)</FONT></B>
+<PRE>???????? aaaaaaaa aaaaaaaa&nbsp; a: amount of bytes to transfer (DMA only)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In HDMA, purpose is unknown.</PRE>
+When using DMA, set this to the number of bytes you want transferred.&nbsp;
+Note: if set to 0, 65536 bytes of data will be transferred.&nbsp; I am
+not sure whether this register should be set to 0 after the transfer.
+
+<P>In HDMA, it is not neccessary for a SNES programmer to write to this
+register.&nbsp; This register probably contains a pointer the next or previous
+value written.&nbsp; Based on circumstantial evidence from one game, this
+register may contain the value pointer minus one in regular HDMA (e.g.
+if this register contained $123456, it would mean that the next value to
+be written was contained in $123457.)&nbsp; In indirect HDMA, this register
+probably contains the pointer to the value after indirection.
+
+<P>When using regular HDMA, either the bank is copied to this register
+or the bank stored here is ignored.&nbsp; In Indirect HDMA, however, the
+bank address has to be set manually, and the SNES will automatically determine
+the offset.
+
+<P><A NAME="Reg43x8"></A><B><FONT FACE="Lucida Console">Register $43?8/$43?9:
+HDMA count pointer (2b/RW?)</FONT></B>
+
+<P>This register does not have to be directly written by the programmer;
+the SNES updates it automatically.
+
+<P>I'm calling this register a count pointer because it probably points
+to the byte in the HDMA table that contains the count value until the next
+segment of the HDMA table is executed.&nbsp; This applies to both HDMA
+and Indirect HDMA.&nbsp; (In Indirect HDMA, this register could also be
+called the "pointer before indirection".)
+
+<P>Since this is a two and not three-byte register, the bank value should
+be taken from <A HREF="#Reg43x2">$43?4</A>.
+
+<P><A NAME="Reg43xA"></A><B><FONT FACE="Lucida Console">Register $43?A:
+Scanlines left (1b/RW?)</FONT></B>
+
+<P>This register does not have to be directly written by the programmer.
+
+<P>This register is a countdown that contains the number of scanlines remaining
+until the next segment of a HDMA table is executed.&nbsp; When this counter
+reaches 0, the pointer contained in <A HREF="#Reg43x8">register $43?8</A>
+is advanced to the next count value in the HDMA table, and this register
+is loaded with the count value for the next segment of the table.
+
+<P><A NAME="Reg43xA"></A><B><FONT FACE="Lucida Console">Register $2180/$2181/$2182/$2183:
+WRAM access (4b/RW)</FONT></B>
+
+<P><TT>$2180&nbsp; dddddddd&nbsp; d: Data byte</TT>
+<BR><TT>$2181&nbsp; ???????x xxxxxxxx xxxxxxxx&nbsp; x: address</TT>
+
+<P>This isn't a DMA register at all, but is often used in conjunction with
+DMA to do memory-to-memory or memory-fill operations.&nbsp; This is a fairly
+simple register, but I'm documenting it here because it's not fully covered
+anywhere else.&nbsp; A write or a read to this register causes a read/write
+to the specified address, and every time a read/write occurs, the address
+part of the register is incremented by one, including the MSB.
+
+<P>Important: The x bits (address) seem to actually form a RAM address,
+NOT a CPU address.&nbsp; Therefore, the highest 7 bits of the register
+are ignored, since the SNES has only 128 KB of RAM.
+
+<P><A NAME="DMATransfers"></A><FONT SIZE=+3>DMA Transfer Basics</FONT>
+<BR>&nbsp;
+<BR>First of all, here's a list of DMA (Direct Memory Access) registers:
+
+<P>$43?0: DMA control register
+<BR>$43?1: DMA destination register ($21xx)
+<BR>$43?2/$43?3/$43?4: DMA source address
+<BR>$43?5/$43?6: Number of bytes to transfer
+<BR>$420B: Start DMA transfer
+<BR>$420C: Enable HDMA transfers
+
+<P>There are 8 DMA channels, numbered 0 to 7.&nbsp; Simply replace the
+question mark with the number of the channel you want to use.&nbsp; Each
+channel can be used independently of the others.
+
+<P>There are two basic types of DMA: DMA and HDMA.&nbsp; Normal DMA is
+quite straightforward. The SNES program simply puts a source address into
+$43?2, a destination address into $43?1 and the number of bytes to copy
+into $43?5.&nbsp; The reason $43?1 is only a one-byte register is because
+the high byte is always $21; e.g. if you set it to $18, the transfer destination
+will be $2118.&nbsp; The <A HREF="#Reg43x0">DMA control register</A> controls
+how the bytes will be transferred.&nbsp; Using the previous example, setting
+it to one(1) will cause bytes written to alternate between $2118 and $2119.&nbsp;
+Use $43?0 to start a transfer.&nbsp; For instance, if you were using DMA
+channel 1 ($4310, etc.), you would set bit one in that register. (e.g.
+LDA #$2 \ STA $420B.)
+
+<P>HDMA is a powerful, and largely undocumented, tool for generating special
+effects. It is used often by commercial games and demos alike.&nbsp; Its
+most common use is to change one or more of the scroll registers mid-frame;
+some games also change the video mode or palette mid-frame with it.&nbsp;
+It is set up similar to DMA, except that $43?5 is ignored and probably,
+bits 3, 4, 5 and 7 of $43?0 are ignored.
+
+<P><B>Normal HDMA</B>
+
+<P>There are two types of HDMA, controlled by bit 6 of register $43?0.&nbsp;
+"Normal" HDMA is the simplest.
+
+<P>The source address register points to an "HDMA table".&nbsp; Such a
+table consists of a list of "delay counts" and "write values".&nbsp; For
+example, consider the following HDMA table, which is an abridgement of
+what I use in my demo QwertEmu.smc.&nbsp; It the destination is the BG1
+scroll register.
+
+<P><TT>hdma_table:</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 3 : .dcw 1&nbsp;&nbsp;&nbsp;
+; This makes the cool wavey BG effect.</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 4 : .dcw 2</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 6 : .dcw 3</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 7 : .dcw 4</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 6 : .dcw 3</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 4 : .dcw 2</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 3 : .dcw 1</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 2 : .dcw 0</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 3 : .dcw 511</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 4 : .dcw 510</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 6 : .dcw 509</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 7 : .dcw 508</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 6 : .dcw 509</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 4 : .dcw 510</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 3 : .dcw 511</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 2 : .dcw 0</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 0</TT>
+
+<P>The first value is the scanline count, and the second is the value to
+write.&nbsp; So, after I set up the addresses and set $420C to 1 to enable
+the HDMA transfer, the SNES (I think) will wait until the beginning of
+the next frame before executing this transfer.&nbsp; In the example above,
+two bytes are written, because the transfer is using mode 2 (i.e. 1 reg
+write twice, which is the proper way to set a scroll register.)&nbsp; The
+first byte written is the LSByte (1) followed by the MSByte (0).&nbsp;
+The first value is written in scanline 0; the first value is written at
+scanline 0 regardless of the count value.&nbsp; After this, the SNES waits
+three more scanlines (according to the count value of 3) before writing
+a $0002 to the scroll register.&nbsp; Eventually, the SNES will come across
+the wait value of $0, which indicates to the SNES that the table is over
+and the transfering should stop.&nbsp; The SNES will automatically restart
+the HDMA transfer at the beginning of the table next frame.
+
+<P>Note:&nbsp; Transfers probably do not stop at the VBlank period.&nbsp;
+That is, if the table is so long that it lasts into the VBlank period,
+transferring will still continue (this is unconfirmed though).&nbsp; If
+the table is so long that the next frame starts before a $0 has been encountered,
+the SNES will reset the transfer from the beginning anyway.
+
+<P><B>Indirect HDMA</B>
+
+<P>Most of the properties of regular HDMA also apply to Indirect HDMA:
+Indirect HDMA has a count value, the transfer modes are the same, and Indirect
+HDMA tables are also reset to the beginning at the beginning of each frame.
+
+<P>An Indirect HDMA table is formatted like this:
+
+<P>Count Byte/Address Offset/Count Byte/Address Offset/Count Byte/Address
+Offset...
+
+<P>So, instead of having the values to write directly located in the HDMA
+table, they are accessed via the Address Offset pointer.&nbsp; Let's go
+through an example.&nbsp; If register $43?2 is set to $1289AB, and register
+$43?1 is set to $05, here is the table (this is similar to a table used
+by Metroid 3 in the opening level):
+
+<P><TT>Memory at $1289AB (Hex)</TT>
+<BR><TT>1F 01 03 57 02 03 00</TT>
+
+<P>The second and third bytes are used as pointers to values to write.&nbsp;
+The bank value after indirection must be set manually by the SNES program
+via register $4307.&nbsp; Metroid 3 uses a bank value of $12 so the table
+points to $120301 and $120302, respectively.&nbsp; If the memory contained
+at $120301 is (Hex):
+
+<P><TT>09 07</TT>
+
+<P>The $9 will be written at the beginning of scanline 0, and after $1F
+(31) scanlines, $7 will be written. This makes sense when you run the game;
+the status bar at the top is shown in video mode 1, while below it is a
+mode 7 screen.
+
+<P>If you think using HDMA in this way is rather useless, you are correct.&nbsp;
+There's no reason this couldn't be done using normal HDMA, but many games
+use indirect HDMA anyway.&nbsp; The nice thing about it is that you can
+store the count values and pointers in ROM, and the actual values to write
+(which may be variable) in RAM.&nbsp; Thus the same basic ROM table can
+be re-used with different data sets.
+
+<P><B>Continuous Mode</B>
+
+<P>This mode adds an extremely annoying twist to the job of writing an
+emulator.&nbsp; It can be used in both normal and indirect HDMA.&nbsp;
+To use this mode, set bit 7 of the count value to 1.*
+
+<P>Continuous mode means that a value is written every single scanline
+rather than waiting for the count value to expire.&nbsp; I'll provide two
+examples, one for normal and one for indirect HDMA.&nbsp; Assume the transfer
+mode is 1 (One byte write once.)&nbsp; If your count value is 4, then in
+normal HDMA, a segment of your table would look something like this:
+
+<P><TT>84 01 02 03 04</TT>
+<BR><TT>^&nbsp; ^^-^^-^^-^^--These are the values to write</TT>
+<BR><TT>&nbsp;--This is the count value with a continuous mode flag</TT>
+
+<P>But in an Indirect HDMA version of this, the table segment would look
+something like:
+
+<P><TT>84 34 12</TT>
+
+<P>And the memory at $1234 would contain:
+
+<P><TT>01 02 03 04</TT>
+
+<P>* There may be an exception.&nbsp; If the count value is exactly $80,
+it may not mean to use continuous mode, but rather have a count value of
+128.
+
+<P><B>HDMA Priorities</B>
+
+<P>Lower HDMA channel numbers have a high priority.&nbsp; That is, if you
+have two tables running at the same time:
+
+<P><TT>hdma_table_channel_0:</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 10 : .dcb 1&nbsp;&nbsp;&nbsp;
+; Suppose that this table is used to set the</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+; palette index ($2121) to 1 using mode 0</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+; N.B.: depending on the mode used, the value</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+; to transfer may be a byte, word or dword.&nbsp; In</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+; mode 0, only a byte is transferred at once.</TT>
+<BR><TT>hdma_table_channel_1:</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 10 :.dcw $8FFF
+; Suppose that this table is used to set the</TT>
+<BR><TT>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .dcb 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+; palette value ($2122) using mode 2</TT>
+
+<P>In this example, at scanline #9, the palette index register will be
+set <I>before</I> the palette value is written.&nbsp; If you reversed the
+channel numbers, however, the transfer might not occur correctly.
+
+<P>Please note that some of the HDMA information is inaccurate, as evidenced
+by the fact that my emu doesn't emulate it properly!
+
+<P>
+<HR ALIGN=LEFT SIZE=3 WIDTH="100%">
+
+<P>Gad! That took long enough to write.
+
+<P><FONT SIZE=-2>Copyright (c) 1998 by David Piepgrass.&nbsp; This document
+may be freely distributed, but is for non-profit use only.</FONT>
+
+<P>Check out my page!&nbsp; http://www.sixtyfour.com/Qwertie or something.
+</BODY>
+</HTML>

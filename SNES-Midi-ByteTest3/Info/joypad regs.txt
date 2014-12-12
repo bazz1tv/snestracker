@@ -1,0 +1,43 @@
+***
+I added this file because I believe the original file describing the
+SNES Registers had buttons A/B/X/Y messed up.
+ -kevin (Neviksti)
+***
+
+ADDRESS  : $4218/$4219/$421a/$421b/$421c/$421d/$421e/$421f
+NAME     : joy1l/joy1h/joy2l/joy2h/joy3l/joy3h/joy4l/joy4h
+CONTENTS : data for joy controller i, ii, iii & iv
+
+	d7	a button					low
+	d6	x button
+	d5	tl button
+	d4	tr button
+	d3-d0	----
+
+	d7	b button					high
+	d6	y button
+	d5	select button
+	d4	start button
+	d3	up
+	d2	down
+	d1	left
+	d0	right
+
+	Registers <4016h><4017h> can be used the same as the family
+	computer.
+
+	4016h-rd
+		d0 : data for controller i
+		d1 : data for controller iii
+	4016h-wr
+		out0,out1,out2
+	4017h-rd
+		d0 : data for controller ii
+		d1 : data for controller iv
+
+	Note:	Whether the standard joy controllers are connected to the
+	~~~~~	sfx or not can be reffered by reading 17th bit of <4016h>
+		and <4017h> (see page 22).
+			0: connected
+			1: not connected
+

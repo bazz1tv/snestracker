@@ -1,0 +1,2080 @@
+*FIXED "picture" describing x/y (3 MSB) opcode appreviations
+were wrong
+
+*FIXED opcode for "ASL !labs" was wrong
+
+*ADDED the description for bit D7 of the control register
+
+*NOTE all 64k of the memory space IS usable regardless of what the 
+document claims
+
+-neviksti
+
+======================================================================
+APU MANUAL IN TXT BY LEDI. (1997)
+======================================================================
+
+TABLE OF CONTENTS
+
+1. SFX Sound Source Outline
+
+1.1. SFX Sound Source Outline
+1.2. System Outline
+1.3. Memory Mapping
+1.4. Signal Flow.
+
+2. I/O Ports
+
+2.1. Peripheral Function Registers
+2.2. Functions
+
+3. Control Register
+
+3.1. Port Clearing
+3.2. Timer Control
+
+4. Timers
+
+4.1. Explantion of Functions
+4.2. Timer Action
+4.3. Related Registers
+
+5. DSP Interface Register
+
+6. DSP Registers
+
+6.1. Register RAM Map
+6.2. Register Functions
+6.3. Source Specifications
+
+7. CPU Organization
+
+7.1. CPU Registers
+7.2. Memory Space
+
+8. Appendix No.1. Support Tools
+
+9. Appendix No.2. Summary of SPC700 Commands
+
+SFX SOUND SOURCE OUTLINE
+
+1.1. OUTLINE
+
+The SFX sound source is composed of a Sound-CPU-IC  a single chip in which
+are integrated an 8 bit CPU, IPL ROM, I/O ports and timers, and DSP-IC and
+peripheral apparatus.
+
+CHARACTERISTICS
+
+* CPU                            : Sony SPC700 series CMOS 8-bit CPU core
+
+* Minimum Command Execution Time : 1.953 microS/2.048MHz when active
+
+* Intenal ROM                    : 64 byte (IPL ROM)
+
+* Memory Space                   : 64K byte
+
+* Peripheral Functions
+
+  * I/O Ports                    : SCPU Interface I/O Ports 8 bit x4
+                                   Universal I/O Ports 8 bit x 2
+
+  * Timers                       : (8 bit timer + 4 bit counter) x3 sets
+
+
+* Output Sound Production        : 4-bit ADPCM sampling sound x 8 tones
+                                   (simultaneous production)
+
+1.2. SYSTEM OUTLINE
+
+( Un dibujo sobre la consola, la APU y
+  el DSP. )
+
+Designation & Role of Each Section:
+
+Sound-CPU: SFX sound source CPU. Program an tone color dato are read into
+RAM from the casstte through the SCPU. consequently controlling the game
+music.
+In addition, provided with an internal IPL-ROM which is activated upon
+rest transmission of dato though the SCPU initial settings of the SPX 
+sound source etc, are carried out.
+
+DSP: Digital signal processor. Reproduces tone quality data in RAM.
+Possesses various functions for the purpose of musical expression.
+
+256K RAM : Shared on a time basis by the Sound-CPU and the DSP.
+
+SPCU     : CPU for SFX use. Carries out progression of the game in
+           confomity with the cassette program.
+
+SPPU     : PPU for SFX use. Creates imaging through CPU control.
+
+
+1.3. MEMORY MAPPING
+
+
+          0000H --------------------
+                |                  |
+                |     External     |
+                |     Memory       |
+                |     Region       |
+  0-Page  00EFH |                  |
+                --------------------
+          00F0H |                  |
+                |   Pheripheral    |
+                |    Function      |
+                |   Registers      |
+                |                  |
+          00FFH |                  |
+                -------------------|
+          0100H |                  |
+                |     External     |
+                |     Memory       |
+  1-Page        |     Region       |
+                |                  |
+          01FFH |                  |
+                -------------------|
+          0200H |                  |
+                |                  |
+                |                  |
+                |                  |
+                |     External     |
+                |                  |
+                |     Memory       |
+                |                  |
+                |     Region       |
+                |                  |
+                |                  |
+                |                  |
+          7FFFH |                  |
+                -------------------|
+                |                  |
+                |                  |
+                |                  |
+                |     Unusable     |
+                |                  |
+                |                  |
+          FFBFH |                  |
+                -------------------|
+          FFC0H |                  |
+                |  IPL ROM 64 bytes|
+                |      (*)         |
+          FFFFH |                  |
+                --------------------
+
+* The initial hardware setting program is installed in the IPL ROM.
+
+
+(Un Dibujo sobre el flujo de datos.)
+
+2. I/O PORTS
+
+2.1. PERIPHERAL FUNCTIONS REGISTERS
+
+Peripheral Function Registers
+
+Address  Function Register  R/W  When Reset          Remarks
+
+00F0H     (test)            ---  ------             Installed in sound-CPU
+00F1H     Control            W   Control = "1-00-000"
+00F2H    Register Add.      R/W  Indeterminate      Installed in DSP
+00F3H    Register Data      R/W  Indeterminate      Installed in DSP
+00F4H    Port-0             R/W  Port0r = "00"      Installed in sound-CPU
+                                 Port0w = "00"
+00F5H    Port-1             R/W  Port1r = "00"      Installed in sound-CPU
+                                 Port1w = "00"
+00F6H    Port-2             R/W  Port2r = "00"      Installed in sound-CPU
+                                 Port2w = "00"
+00F7H    Port-3             R/W  Port3r = "00"      Installed in sound-CPU
+                                 Port3w = "00"
+00F8H    ------             ---  ----------         -------------------
+00F9H    ------             ---  ----------         -------------------
+00FAH    Timer-0             W   Indeterminate      Installed in sound-CPU
+00FBH    Timer-1             W   Indeterminate      Installed in sound-CPU
+00FCH    Timer-2             W   Indeterminate      Installed in sound-CPU
+00FDH    Counter-0           W   Indeterminate      Installed in sound-CPU
+00FEH    Counter-1           W   Indeterminate      Installed in sound-CPU 
+00FFH    Counter-2           W   Indeterminate      Installed in sound-CPU
+
+
+
+2.2 APU I/O PORTS
+
+Ports 0-3 are ports which carry out data transmission to the SPCU through
+the SPX bus and are composed of four 8-bit inport registers and four 8-bit
+outport registers. Port nr registers can only write from the SPCU section
+and can only read from the Sound-CPU section. The opposite is true of the
+port nw registers. Since the composition of each of these ports is 
+identical, an explanation will be made using Port Or and Port Ow as
+examples.
+
+1. Data is input into Port Or when the SCPU writes data into 2140H. Then
+the contents of Ports Or are read when the Sound-CPU reads the data in 
+00F4H ( this is also true of Ports 1r - 3r).
+
+2. Data is written into Port Ow when the Sound-CPU writes data into the APU
+I/O port (00F4H). Then the contents of Port OW are read when the SCPU reads
+2140H ( this is also true of Ports 1w-3w).
+
+3. When reset is carried out, the contents of Port nr registesr and Port nw
+registers become "00" (n=0-3)
+
+Table 2.1.1. Port0 - Port3 Registers
+
+Address Seen    Address Seen   Register Name  W/R  Function Seen From
+From Sound-CPU  From SCPU                          Sound-CPU Section
+
+00F4H            2140H         Port0r          R   Read content of Port0r reg.
+                               Port0w          W   Write to Port0w reg
+
+00F5H            2141H         Port1r          R   Read content of Port1r reg.
+                               Port1w          W   Write to Port1w reg 
+
+00F6H            2142H         Port2r          R   Read content of Port2r reg.
+                               Port2w          W   Write to Port2w reg 
+
+00F7H            2143H         Port3r          R   Read content of Port3r reg.
+                               Port3w          W   Write to Port3w reg 
+Fig 2.2.1. I/O Diagram
+   
+
+         from SCPU                          to SCPU
+
+            |                                  |
+   Port nr  |                         Port nw  |
+
+    -----------------                 -----------------
+    | | | | | | | | |                 | | | | | | | | |
+    -----------------                 -----------------
+            |                                  |
+            |                                  |
+      to Sound-CPU                      from Sound CPU
+
+3. CONTROL REGISTER
+
+3.1. THE PORT CLEAR FUNCTION BY MEANS OF THE CONTROL REG.
+
+The ports are cleared to 00 when 1 is written into the Control register
+port clear control bits PC32 PC10. When 0 is written in, they are not cleared.
+When 1 is written into the port clear control bit PC10, both the port 0r
+register and the port 1r register are cleared to 00. In the same manner, when
+1 is written in PC32 both the port 2r register and the port 3r register are
+cleared to 00.
+
+Control Register
+
+           D7   D6   D5   D4   D3   D2   D1   D0
+         -----------------------------------------
+Control  | ROM| -- |PC32|PC10| -- | ST2| ST1| ST0| (W)
+(00F1H)  -----------------------------------------
+                    |     |             1 Port Reset
+                    -------------------
+                                        0 No Clear
+
+                            When Reset: "1-00-000"
+
+*NOTE : D7 is used to control whether the top 64 bytes are mapped to the
+onchip ROM or the external RAM.
+
+Note : Clear Timing
+Port clear is executed during the machine cycle following that in which
+1 is written into the port clear control bit.
+When port clear timings conflicts with write timing to the port in question
+from the SFX bus, there are cases in which the contents of the register
+in question become indeterminate.
+
+            | Machine Cycle | Machine Cycle |
+             --------------- ---------------
+            |             / |               |
+                        /
+Clear Pulse ----------/----------    --------
+                    /            |  |
+                                 ----
+
+Timings when 1 is written into the port clear control bit.
+
+
+
+3.2. TIMER CONTROL BY MEANS OF THE CONTROL REG
+
+Control Register
+
+           D7   D6   D5   D4   D3   D2   D1   D0
+         -----------------------------------------
+Control  | ROM| -- |PC32|PC10| -- | ST2| ST1| ST0| (W)
+(00F1H)  -----------------------------------------
+                    |     |             1 Port Reset
+                    -------------------
+                                        0 No Clear
+
+                            When Reset: "1-00-000"       
+
+
+ST0 is the Timer TO start/stop control bit the timer stops with 0 and
+starts with 1. At this timer, it is necesary to input 1 into ST0 once
+it has been changed to 0.
+ST1 and ST2 are respectively the start/stop control bits of timers 
+T1 and T2. Their function is identical to that of ST0.
+
+NOTE : In regard to the timers, please see next section.
+
+
+4. TIMERS
+
+4.1. FUNCTION OF TIMERS T0, T1, T2
+
+The SFX sound source is provided with three timers T0, T1 and T2.
+
+Clock
+2.048Mhz ----> Prescaler 8 bits
+                  |        |
+                  |        |
+                  |        | 8KHz  Lower level 8-bit   Upper level 4-bit
+                  |        ------  programmable        up counter         T0
+                  |        |       interval timer. 
+                  |        |
+                  |        | 8KHz 
+                  |        ------  Save as above       Same as above      T1
+                  |        
+                  |         64KHz
+                  ---------------  Save as above       Same as above      T2
+
+Fig. 4.1. Timer Section
+
+The timers T0, T1 and T2 are each composed of a lower level 8-bit 
+programmable interval timer connected to a upper level 4-bit up counter.
+The 8-bit timer is made up of an 8-bit binary up counter, comparator, 
+timer register and control circuit; and each of the timers T0, T1 and T2
+is independently programmable.
+The clock input to timers T0 and T1 from the prescaler is 8KHz ( 125 microS)
+and that to timer T2 from the prescaler is 64KHz (15.6 microS).
+
+Table 4.1. Timer Function
+
+-------------------------------------------------------------------
+             |       8-bit Timer                | 4-bit Up Counter |
+             ------------------------------------------------------
+             |   Resolution  | Max. Count Value | Max Count Value  |
+-------------------------------------------------------------------
+Timer T0, T1 |   125 microS  |   32miliS        |   512miliS       |
+------------------------------------------------------------------
+Timer T2     |   15.6 microS |   4miliS         |    64miliS       |
+-------------------------------------------------------------------
+
+4.2. TIMER ACTION
+
+Since each timer T0, T1 and T2 is structured identically, explanation
+will be made taking timer T0 as an example.
+The lower level 8-bit timer of timer T0 is composed principally of
+a binary up counter, which is incremented at each count clock input.
+When its value corresponds to the contents of the timer register.
+it is cleared to 00H. Simultaneously a pulse is generated to the
+4-bit up counter.
+The 4-bit up counter is composed principally of a binary up counter,
+which increments at each input of a lower level pulse.
+The action of the counter of timer T0 is controlled by the 0 bit of
+the control register. When bit ST0 is 0 count up is suspended. Count
+up commences when both upper level and lower level counters are cleared
+by "1". Consequestly, in order to clear the counters, it is necessary
+to set bit ST0 to "1" after having once set it to "0".
+Writing into the timer register is carried out while the counter is
+stopped. At this time, the minimun value of the write values is 01H
+and the maximun values is 00H. Though it is not possible to read the
+value of the timer register, it is possible to read the 4-bit values
+CN0 at any time. When the values of CN0 is read, only the 4-bit up
+counter section is cleared to "00".
+
+
+    Upper Level 4-bit Counter Timing
+
+
+                4-bit Counter
+              -----------------
+              |               |
+   Pulse -----|     CN        |
+   CK    -----|               |
+              -----------------
+                     |  -
+                     | | |
+                     | -  -----
+                     |
+                     |---------- Read Clear Pulse
+                                                            ---
+Action of timer T0 is stopped by means of the reset input ( POR = "1").
+At this time of reset ST0 of the control register is "0", and CN0 and
+TN0 of the timer register are indeterminate.
+when CN is read, the 4-bit up counter alone is cleared through ..
+internal timing, but the read clear pulse and the pulse to the 4-bit
+up counter do not conflict with each other.
+Consequently, when the pulse is input to the 4-bit up counter, the
+values of CN will necessarily be incremented or when value of CN is
+read. CN will be cleared and CN will become "0".
+
+
+Internal Signal   -   ------   ------   -- // -   ------   ---
+                   | |      | |      | |       | |      | |
+                    -        -  -     -         -        -
+                               | |
+Read Clear Pulse --|--------|---   --|---- // -|--------|------
+                                                                       
+                            |      - |         |      - |
+                                  | |                | |
+Pulse to 4 bit   --|--------|-----   |---- // -|-----   |------
+Counter                                                /
+                   |        |        |         |      /
+                                                     /
+                            |                       /|
+Value of CN      ----- 4 --------|0 |--------------/-| 2
+                            |                     /  |
+                            |                    /
+                        Read Value of CN     Read Value de CN
+                        Value is 1.          Value is 2.
+
+4.3 TIMER RELATED REGISTERS
+
+Control Register
+
+
+                D7   D6   D5   D4   D3   D2   D1    D0
+     Control  -------------------------------------------
+     (00F1H)  | ROM| -- |PC32|PC10| --| ST2 | ST1 | ST0 | (W)
+              -------------------------------------------
+                                         |     |     |
+                                         |     |     |  1 Timer Start
+                                         |     |     |
+                                         ----------------
+                                                        0 Timer Stop
+
+                                                When Reset: "1-0-000"
+
+
+     Timer Register
+
+              D7  D6  D5  D4  D3  D2  D1  D0
+             ---------------------------------
+     Timer-0 |            TM0                | (W)
+     (00FAH) ---|---|---|---|---|---|---|-----
+     Timer-1 |            TM1                | (W)
+     (00FBH) ---|---|---|---|---|---|---|-----
+     Timer-2 |            TM2                | (W)
+     (00FCH) ---|---|---|---|---|---|---|-----
+
+
+
+     Counter Register
+
+
+                 D7  D6  D5  D4  D3  D2  D1  D0
+               ---------------------------------
+     Counter-0 |  -----------  |     CN0       | (R)
+     (00FDH)   |               |               |
+               |---|---|---|---|---|---|---|---|
+     Counter-1 |  -----------  |     CN1       | (R)
+     (00FEH)   |               |               |
+               |---|---|---|---|---|---|---|---|
+     Counter-2 |  -----------  |     CN2       | (R)
+     (00FFH)   |               |               |
+               |---|---|---|---|---|---|---|---|
+
+                                          Indeterminate
+                                          when Reset
+
+
+5. DSP INTERFACE REGISTER.
+
+   Interface register
+
+                     D7  D6  D5  D4  D3  D2  D1  D0
+                    -------------------------------
+      Register Add.|        Register Address       | (R/W)
+       (00F2H)     |                               |
+                    ---|---|---|---|---|---|---|---
+
+
+                     D7  D6  D5  D4  D3  D2  D1  D0
+                    -------------------------------
+      Register Add.|        Register Address       | (R/W)
+       (00F3H)     |                               |
+                    ---|---|---|---|---|---|---|---
+
+                                        Indeterminate
+                                        When Reset
+
+   This is the register which sets data into the registers within
+   DSP. Values are set the designated register in accordiadance
+   with the course of the flow-chart below.
+
+
+      i)  The DSP addess to be set is written into 00F2H.
+      ii) Data is written intro 00F3H.
+
+   When the content of the register data is to be read, it also
+   follows the flow-chart below
+
+      i)  The address to be read if set in 00F2H.
+      ii) The content of 00F3H is seen.
+
+
+            Setting data into            Reading data in
+            DSP registers                DSP registers
+
+           /--------------\              /--------------\
+           | Address is   |              | Address is   |
+           | set on 00F2H |              | set on 00F2H |
+           \--------------/              \--------------/
+                  |                             |
+                  |                             |
+                  |                             |
+                  |                             |
+                 \|/                           \|/
+            /-------------\               /-------------\
+            | Data is set |               | Address is  |
+            | in 00F3H    |               |seen in 00F3H|
+            \-------------/               \-------------/
+                  |                             |
+                 \|/                           \|/
+
+              Secondary                      Secondary
+              Processing                     Processing
+
+6. REGISTER USED
+
+6.1. DSP REGISTER MAP.
+
+
+Address   Register              Explanation of Function
+--------------------------------------------------------------------
+00          VOL (L)   \ left and right volume
+01          VOL (R)   /
+02           P (L)    \ The total 14 bits of P(H) & P(L) express
+03           P (H)    / pitch height
+04      Voice 0 SRCN    Designates source number from 0-256
+05         ADSR (1)   \ Address is designated by D7 = 1 of ADSR(1):
+06         ADSR (2)   / when D7= 0 GAIN is operative.
+07         GAIN         Envelope can be freely designated by the program.
+08         *ENVX        Present value of evelope which DSP rewrittes at
+                        each Ts.
+09         *OUTX        Value after envelope multiplication & before
+                        VOL multiplication (present wave height value)
+-----------------------------------------------------------------------
+10-19   Voice 1 :     \
+20-29   Voice 2 :     |
+30-39   Voice 3 :     |
+40-49   Voice 4 :     | Same as Voice 0
+50-59   Voice 5 :     |
+60-69   Voice 6 :     |
+70-79   Voice 7 :     /
+-----------------------------------------------------------------------
+0c         MVOL (L)     Main Volume (L)
+1c         MVOL (R)     Main Volume (R)
+2c         EVOL (L)     Echo Volume (L)
+3c         EVOL (R)     Echo Volume (R)
+4c         KON          Key On. D0-D7 correspond to Voice0-Voice7
+5c         KOF          key Off.
+6c         FLG          Designated on/off of reset, mute, echo and noise
+                        clock.
+7c         *ENDX        Indicates source end block.
+----------------------------------------------------------------------
+0d         EFB          Echo Feed-Back
+1d         ---          Not Used
+2d         PMON         Pitch modulation of Voice i with OUTX of Voice
+                        (i=1) as modulated wave.
+3d         NOV          Noise on/off. D0-D7 correspond to Voice0-Voice7
+4d         EOV          Echo On/Off
+5d         DIR          Off-set address of source directory
+6d         ESA          Off-set address of echo region. Echo Start Address
+7d         EDL          Echo Delay. Only lower 4 bits operative.
+-----------------------------------------------------------------------
+0f                C0  \
+1f                C1  |
+2f   Filter       C2  |
+3f   Coefficients C3  | Echo Filter coefficients
+4f                C4  | Makes up an 8 tap FIR Filter
+5f                C5  | (Both L & R have the same filter ).
+6f                C6  |
+7f                C7  /
+----------------------------------------------------------------------
+
+* Register intro which DSP writes in conditions of activity.
+
+6.2. REGISTER FUNCTION
+
+6.2.1. Register of each Voice ( Addresses indicated are those of Voice0)
+
+     (1) VOL(L), VOL(R)
+
+                  D7   D6  D5  D4  D3  D2  D1  D0
+                ---------------------------------
+      VOL(L)    |sign|       VOL (L)             |
+      (00H)     |    |                           |
+                |----|---|---|---|---|---|---|---|
+      VOL(R)    |sign|       VOL (R)             |
+      (01H)     |    |                           |
+                |----|---|---|---|---|---|---|---
+
+      Each is a volume multiplied by Lch and Rch, and is in a 2's
+      complement form. making D7 the sign bit. When a negative value
+      is entered phases reverse.
+
+     (2) P(L), P(H)
+
+                  D7  D6  D5  D4  D3  D2  D1  D0
+                --------------------------------
+       P(H)     |(0) (0)|        P(H)           |
+      (02H)     |       |                       |
+                |---|---|---|---|---|---|---|---|
+       P(L)     |            P(L)               |
+      (03H)     |                               |
+                |---|---|---|---|---|---|---|----
+
+      Pitch is expressed by the total fouteen bits combining six
+      lower level bits of P(H) and eight bits of P(L). At this time
+      two upper bits of P(H) are invalid. ( Considered to be "0" at all
+      times ).
+
+      With f as the frequency of the reproduced sound, f0 ( f sub zero ) 
+      as the frequency of the original sound (sound at the time of 
+      recording), and p as the value expressed by the upper level 
+      fourteen bits of P(H) and P(L), the following formula is formed :
+
+                                P
+                      f = f0 * ----
+                                 12
+                                2
+
+      The diagram below illustrates the relationship between p and the
+      octaval ratio of the reproduced sound and the original sound.
+      There are theoretically no limitations in the practical range so
+      long as the original sound is converted lower, however, when
+      converted higher, only up to approximately four times the
+      frequency of the original sound can be accomodated.
+
+      Interval:  -2oct   -1oct   original   +1oct   +2oct (approx)
+
+              -----|--------|-------|----------|-------|
+
+                 0400H   0800H    1000H     2000H    3FFFH
+
+      In terms of tone quality, the lower level 4 bits of P(L) should
+      be set at 0 when possible in cases where pitch aberrations are
+      not of concern.
+
+   (3) ADSR(1), ADSR(2)
+                  
+                  D7    D6  D5  D4  D3  D2  D1  D0
+                ----------------------------------
+      ADSR(1)   |ADSR |    DR     |     AR        |    
+      (05H)     |/GAIN|           |               |
+                |-----|---|---|---|---|---|---|---|
+      ADRS(2)   |       SL               SR       |    
+      (06H)     |                                 |
+                |-----|---|---|---|---|---|---|----
+
+    When D7 of ADSR(1) =1, these two bytes become operable ( ADSR mode)
+    AR is multiplied by the fixed value 1/64 and DR, SR by the fixed
+    value 1-1/256. When in the state of "key off". the "click" sound
+    is prevented by the addition of the fixed value 1/256 (GAIN mode 
+    is identical).
+
+                        TABLE 6.2. ADSR parameters
+
+    |AR Time 0 to 1|DR|Time 1 to SL|SL|Ratio| SR Time 1to 1/10|
+---------------------------------------------------------------------     
+    |0 |  4.1 sec  | 0|   1.2 sec  | 0| 1/8 |  0| INF         |10|1.2 sec
+    |1 |  2.6      | 1| 740  msec  | 1| 2/8 |  1| 38          |11|880 msec
+    |2 |  1.5      | 2| 440        | 2| 3/8 |  2| 28          |12|740
+    |3 |  1.0      | 3| 290        | 3| 4/8 |  3| 24          |13|590
+    |4 |640 msec   | 4| 180        | 4| 5/8 |  4| 19          |14|440
+    |5 |380        | 5| 110        | 5| 6/8 |  5| 14          |15|370
+    |6 |260        | 6|  74        | 6| 7/8 |  6| 12          |16|290
+    |7 |160        | 7|  37        | 7| 1   |  7|  9.4        |17|220
+    |8 | 96        --------------------------  8|  7.1        |18|180
+    |9 | 64        |                        |  9|  5.9        |19|150
+    |A | 40        |                        |  A|  4.7        |1A|110
+    |B | 24        |                        |  B|  3.5        |1B| 92
+    |C | 16        |                        |  C|  2.9        |1C| 74
+    |D | 10        |                        |  D|  2.4        |1D| 55
+    |E |  6        |                        |  E|  1.8        |1E| 37
+    |F |  0        |                        |  F|  1.5        |1F| 28
+    ---------------                         ---------------------------
+
+                 (There is a possibility that parameter values muy vary)
+
+     |
+     |
+   1 |--------
+     |       /\
+     |      /| \
+     |     / |  \
+     |    /  |   \
+   SL|---/---|-----\ 
+     |  /    |    |   \ \    
+     | /     |    |       \ \  \  \ \ \ \   \
+     |/AR    | DR |           SR            | \ t
+     |-------------------------------------------
+     0                                      |
+
+     key on                                Key off
+
+
+    (4) GAIN
+
+     This becomes operable when D7 of ADSR(1) = 0. The following five
+     modes are available.
+
+                  
+                           D7  D6  D5  D4  D3  D2  D1  D0
+                          --------------------------------
+      Direct Designation |   |                           |
+      (07H)              | 0 |                           |
+                         |---|---|---|---|---|---|---|---|
+      
+                          --------------------------------
+      Increase Mode      |   |   |   |                   |
+      (linear ) (07H)    | 1 | 1 | 0 |                   |
+                         |---|---|---|---|---|---|---|---|
+
+                          --------------------------------
+      Increase Mode      |   |   |   |                   |
+      (Bent line ) (07H) | 1 | 1 | 1 |                   |
+                         |---|---|---|---|---|---|---|---|
+
+                          --------------------------------
+      Decrease Mode      |   |   |   |                   |
+      (linear ) (07H)    | 1 | 0 | 0 |                   |
+                         |---|---|---|---|---|---|---|---|
+
+                          --------------------------------
+      Decrease Mode      |   |   |   |                   |
+      (exponential)(07H) | 1 | 0 | 1 |                   |
+                         |---|---|---|---|---|---|---|---|
+
+       * Direct Designation  : The value of GAIN is set directly by
+                               the values of D0-D6
+
+       * Increase (linear)   : Addition of the fixed value 1/64.
+       * Increase (bent line): Addition of the constant 1/64 up to 0.75
+                               of the constaint 1/256 from 0.75 to 1.
+
+       * Decrease (linear)   : Subtraction of the fixed value 1/64.
+       * Drecrease (exponential) : Multiplication by the fixed value
+                                   1-1/256.
+
+
+       In all cases present envelope values (values indicatdby ENVX) 
+       are utilized for initial values.
+
+
+     1.00 |- - - - - - ------------------------
+          |        /   /
+          |       /  /
+          |      / /
+     0.75 |- - -//
+          |   / /             x
+          |  / /  Curve = 1-ke
+          | / /
+          |/ /
+          |----------------------------------------
+                                x
+            Increase Mode : 1-ke  is approximated with bent lines.
+
+           The various parameter values are indictad on the next page.
+
+GAIN PARAMETERS
+
+Parameter Increase Mode  Increase Mode   Decrease Mode  Decrease Mode
+Values    linear (0->1)  bentline (0->1) linear (1->0) exponential (0->1/10)
+------------------------------------------------------------------------
+  00        INF              INF             INF             INF
+  01        4.1              7.2             4.1              38
+  02        3.1              5.4             3.1              28
+  03        2.6              4.6             2.6              24
+  04        2.0              3.5             2.0              19
+  05        1.5              2.6             1.5              14
+  06        1.3              2.3             1.3              12
+  07        1.0              1.8             1.0              9.4
+-------------------------------------------------------------------------  
+  08       770 msec          1.3            770 msec          7.1
+  09       640               1.1            640               5.9
+  0A       510               900 msec       510               4.7
+  0B       380               670            380               3.5
+  0C       320               580            320               2.9
+  0D       260               450            260               2.4
+  0E       190               340            190               1.8
+  0F       160               280            160               1.5
+-------------------------------------------------------------------------
+  10       130               220            130               1.2
+  11        96               170             96              880  msec
+  12        80               140             80              740
+  13        64               110             64              590
+  14        48                84             48              440
+  15        40                70             40              370
+  16        32                56             32              290
+  17        24                42             24              220
+-------------------------------------------------------------------------
+  18        20                35             20              180
+  19        16                28             16              150
+  1A        12                21             12              110
+  1B        10                18             10               92
+  1C         8                14              8               74
+  1D         6                11              6               55
+  1E         4                 7              4               37
+  1F         2                 3.5            2               18
+-------------------------------------------------------------------------
+
+  (5) SRCN
+   
+   Refers to Source Number. It is the sequence of tone color within
+   the hexa-file of tones produced by means of a separate tool.
+   (0-255).
+
+                           
+               D7  D6  D5  D4  D3  D2  D1  D0
+               --------------------------------
+      SCN      |                              |
+      (07H)    |                              |
+               |---|---|---|---|---|---|---|---|
+
+
+  (6) ENVX
+
+   The present value of the ADSR/GAIN envelope constant. The DSP
+   section rewrites this at each Ts (31.25 microseg). Seven bits
+   without a sign bit. (D7 is always 0)
+
+
+               D7  D6  D5  D4  D3  D2  D1  D0
+               --------------------------------
+      ENVX     |   |                           |
+      (08H)    | 0 |                           |
+               |---|---|---|---|---|---|---|---|
+
+
+   (7) OUTX
+    
+    The present value of the wave height after envelope multiplication
+    and prior to VOL multiplication. DSP section rewrites this at each
+    Ts (31.25 microseg). 8 bits with sign bit, its value is utilized
+    as the modulated wave of pitch modulation.
+
+
+               D7   D6  D5  D4  D3  D2  D1  D0
+               ---------------------------------
+      OUTX     |    |                           |
+      (09H)    |Sign|                           |
+               |----|---|---|---|---|---|---|---|
+
+6.2.2. COMPLETE VOICE REGISTERS
+(1) KON, KOF
+"Key on" and "Key off". D0-D7 correspond to Voice 0-7. When "1", key
+on or key off are carried out ; when "0", neither is carried out.
+These two registers need not be reset. With KOF, in regard to any
+Voice in which "1" is written, whether in the ADSR mode or GAIN mode,
+1 to 0 decreases at the rate of 8 nsec by means of the addition of the
+fixed value 1/256. In writing in a succession of KON and KOF. two
+Ts (62.4 microsec) or more should be released. (In writing in a
+sucession of various data in less than two Ts, the data written in
+may not be operable later.)
+
+         D7       D6      D5      D4      D3      D2      D1      D0
+      -----------------------------------------------------------------
+KON   |Voice 7|Voice 6|Voice 5|Voice 4|Voice 3|Voice 2|Voice 1|Voice 0|
+(4CH) -----------------------------------------------------------------
+
+
+         D7       D6      D5      D4      D3      D2      D1      D0
+      -----------------------------------------------------------------
+KOF   |Voice 7|Voice 6|Voice 5|Voice 4|Voice 3|Voice 2|Voice 1|Voice 0|
+(5CH) -----------------------------------------------------------------
+
+(2) PMOD
+
+Pitch modulation is imposed on Voice i with OUTX of Voice(i-1) (i=1-7)
+as a modulated wave. When Di = 1 it becomes modulation OX. ( For
+example when D1=1, a modulated tone issues from Voice 1). However
+modulation does no affect Voice0. Therefore, the bit D0 is not
+operable. In regard to the method of pitch modulation, when y0 ( y sub
+zero ), is the wave height value of the modulated wave and P is the
+value of P(H) and P(L), then :
+
+     x
+    P   = P (t+y )
+                0
+
+               x 
+The values of P  as above takes the place of P and is utilized as the
+values of the picth at that time.
+
+
+         D7       D6      D5      D4      D3      D2      D1      D0
+      -----------------------------------------------------------------
+PMOD  |Voice 7|Voice 6|Voice 5|Voice 4|Voice 3|Voice 2|Voice 1| ----- |
+(2BH) -----------------------------------------------------------------
+
+
+(3) NON
+
+Noise on/off. D0-7 correspond to Voice 0-7. When on noise is issued
+instead of sound source data. At this time, if sound source data of 
+formants only is designated through the previous SRCN, then noise
+is produced only for the length of time of the sound source data.
+When reproduction for random lengths of time is desired, sound
+source data incorporating a loop must necessarily be designated
+through SRCN. In Addition even though two o more voices may be on,
+the source of noise is the same.
+
+Note : modulation can not be imposed on this noise.
+
+
+         D7       D6      D5      D4      D3      D2      D1      D0
+      -----------------------------------------------------------------
+NON   |Voice 7|Voice 6|Voice 5|Voice 4|Voice 3|Voice 2|Voice 1|Voice 0|
+(3DH) -----------------------------------------------------------------
+
+(4) EON
+
+Echo on/off. On with "1". D0-7 correspond to Voice0-7.
+
+
+         D7       D6      D5      D4      D3      D2      D1      D0
+      -----------------------------------------------------------------
+EON   |Voice 7|Voice 6|Voice 5|Voice 4|Voice 3|Voice 2|Voice 1|Voice 0|
+(4DH) -----------------------------------------------------------------
+
+(5) FLG
+
+         D7       D6      D5      D4      D3      D2      D1      D0
+      -----------------------------------------------------------------
+      |       |       | ----   |                NCK                    |
+FLG   |  RES  | MUTE  | ECEN   |       |       |       |       |       |
+(6CH) -----------------------------------------------------------------
+
+RES: Soft reset is turned on when D7=1. At this time, all voices are in
+a state of "key on" suspension and Muted on. it becomes ="1" with
+power on.
+
+MUTE: Mute is turned on in all voices when D6 = 1. Becomes 1 with power on.
+
+----
+ECEN: Becomes possible to write into external memory through Echo. When
+D5=0. (Echo Enable). After power on. read out data is indeterminate
+until initial write in is carried out by the CPU.
+
+NCK: Designates the clock of the noise generator.
+
+
+                 Table 6.2.2. Noise Generator Clock
+
+     ----------------------------------------------------------------
+     | NCK | Freq   | NCK |   Freq   | NCK |   Freq  | NCK |   Freq  |
+     ----------------------------------------------------------------
+     |  00 |  0 Hz  |  08 |   83     |  10 |  500Hz  |  18 |   3.2   |
+     ----------------------------------------------------------------
+     |  01 |  16    |  09 |  100     |  11 |  667    |  19 |   4.0   |
+     ----------------------------------------------------------------
+     |  02 |  21    |  0A |  125     |  12 |  800    |  1A |   5.3   |
+     ----------------------------------------------------------------
+     |  03 |  25    |  0B |  107     |  13 |  1.0khz |  1B |   6.4   |
+     ----------------------------------------------------------------
+     |  04 |  31    |  0C |  200     |  14 |  1.3    |  1C |   8.0   |
+     ----------------------------------------------------------------
+     |  05 |  42    |  0D |  250     |  15 |  1.6    |  1D |  10.7   |
+     ----------------------------------------------------------------
+     |  06 |  50    |  0E |  333     |  16 |  2.0    |  1E |  16     |
+     ----------------------------------------------------------------
+     |  07 |  63    |  0F |  400     |  17 |  2.7    |  1F |  32     |
+     ----------------------------------------------------------------
+
+it is only possible to write into these registers from the CPU section.
+
+
+(6) ENDX
+
+When BRR decode of the block having the Source en flag is completed.
+the DSP section sets up a "1" 00-7 correspond to Voice0-7. If there
+is a voice which has been keyed on, the bit corresponding to this
+is reset. In addition, when the CPU section writes into this register,
+all bits are reset.
+         
+         D7       D6      D5      D4      D3      D2      D1      D0
+      -----------------------------------------------------------------
+ENDX  |Voice 7|Voice 6|Voice 5|Voice 4|Voice 3|Voice 2|Voice 1|Voice 0|
+(7CH) -----------------------------------------------------------------
+
+(7) MVOL(L), MVOL(R), EVOL(L), EVOL(R)
+
+Refer to Main Volume (Lch, Rch). Echo Volume (Lch, Rch). Main volume
+(echo volume) of each channel is added to echo volume (main volume)
+and output.
+
+                       D7    D6   D5   D4   D3   D2   D1  D0
+MVOL(Lch, Rch)      -------------------------------------------
+EVOL(Lch, Rch)      | Sign |    |    |    |    |    |    |    |
+(0CH)               -------------------------------------------
+(1CH)
+
+(8) ESA
+Echo Start Address, Issues the off-set address of the Echo region.
+[ESA] x 100H becomes the lead-off address of the Echo region.
+
+(9) EDL
+Echo Delay. Only the lower level four bits are operable. Delay time
+is an interval of 16msec, and is variable within a range of 
+0-240msec. If this time is considered to be 1, the necessary external
+memory region is (21)Kbytes (maximum 30Kbyte). However, when EDL = 0,
+the four-byte memory region of ESA -ESA+3 becomes necessary.
+
+            D7   D6   D5   D4   D3   D2   D1  D0
+EDL      -----------------------------------------
+(7DH)    |  --------------   |    |    |    |    |
+         -----------------------------------------
+
+(10) EFB
+
+Refers to Echo Feed-Back. Eight bits with sign.
+
+            D7    D6   D5   D4   D3   D2   D1  D0
+EFB     -------------------------------------------
+(0DH)   | Sign |    |    |    |    |    |    |    |
+        -------------------------------------------
+
+(11) DIR
+
+Issues the off-set address of the source directory.
+DIRx100 is the lead-off address of the directory.
+(DIRx100 or DIRxYYYY, I can't be sure, the picture isn't
+good ).
+
+
+(12) C0-C7
+
+Issues the echo filter coefficient. Eight bits with sign. Makes up
+an eight tap FIR filter (filter identical with that of Lch. Rch.)
+
+               D7    D6   D5   D4   D3   D2   D1  D0
+C0-C7       -------------------------------------------
+(0FH>-(7FH) | Sign |    |    |    |    |    |    |    |
+            -------------------------------------------
+
+Filter Setting Example 1: when a low bass filter is imposed on the
+echo sound.
+
+            -------------------------------  
+            | Register |  Numerical Value |
+            -------------------------------
+            |    C0    |       FF         |
+            -------------------------------
+            |    C1    |       08         |
+            -------------------------------
+            |    C2    |       17         |
+            -------------------------------
+            |    C3    |       24         |
+            -------------------------------
+            |    C4    |       24         |
+            -------------------------------
+            |    C5    |       17         |
+            -------------------------------
+            |    C6    |       08         |
+            -------------------------------
+            |    C7    |       FF         |
+            -------------------------------
+
+Filter Setting Example 2: When the echo sound is given the same tone 
+color as the original sound.
+
+            -------------------------------  
+            | Register |  Numerical Value |
+            -------------------------------
+            |    C0    |       7F         |
+            -------------------------------
+            |    C1    |       00         |
+            -------------------------------
+            |    C2    |       00         |
+            -------------------------------
+            |    C3    |       00         |
+            -------------------------------
+            |    C4    |       00         |
+            -------------------------------
+            |    C5    |       00         |
+            -------------------------------
+            |    C6    |       00         |
+            -------------------------------
+            |    C7    |       00         |
+            -------------------------------
+
+6.3. SOUND SOURCE DATA (SOURCE) SPECIFICATIONS.
+
+Sound source data is produced according to the following specifications
+by means of specialized tolls.
+
+6.3.1. Source Directory
+
+(1) SA(H), SA(L)
+The source atari address, 16 bits, The address is the lead-off addres
+of the lead-off block.
+
+(2) LSA(H), LSA(L)
+Source loop start address 16 bits. The address is the lead-off of the
+loop start block.
+
+Table 5.3.1. source Directory
+
+----------------------------
+Memory Address | Directory |
+----------------------------
+     n+0       |   SA(L)   |  SA : Source Start Address
+     n+1       |   SA(H)   | 
+     n+2       |  LSA(L)   |  LSA : Source Loop Start Address
+     n+3       |  LDA(H)   |
+----------------------------
+
+
+n = (DIR) x 100H + (SRCN)x4
+
+                    A              A   A               A
+                     15             8   7               0
+                    -------------------------------------
+                    |     DIR         | 0 0 0 0 0 0 0 0 |
+                    -------------------------------------
+                              |    SRCN           | 0 0 |
+                              ---------------------------
+
+                     +)
+
+                    --------------------------------------
+                    --------------------------------------
+                    |                n                   |
+                    --------------------------------------
+
+
+
+6.3.2. SOURCE DATA
+
+(1) BLOCK FORMAT
+
+The sound, sampled at 32Khz, undergoes BRR (bit rate reduction)
+processing and the data is condensed from 16 bits to four bits.
+The four-bit data is arranged into sixteen portions an together
+with the RF register, is formed into one block of nine bytes.
+
+Table 6.3.2. Block Format.
+
+
+            D7   D6   D5   D4   D3   D2    D1     D0
+            ------------------------------------------
+      RF   |          BRR DATA           |Loop  | END|
+           |                             |on/off|    |
+           -------------------------------------------
+    D      |      D   H        |       D   L         |
+     A,0   |       A,0         |        A,0          |
+           -------------------------------------------
+    D      |      D   H        |       D   L         |
+     H,0   |       H,0         |        H,0          |
+           -------------------------------------------
+    D      |      D   H        |       D   L         |
+     A,1   |       A,1         |        A,1          |
+           -------------------------------------------
+    D      |      D   H        |       D   L         |
+     H,1   |       H,1         |        H,1          |
+           -------------------------------------------
+    D      |      D   H        |       D   L         |
+     A,2   |       A,2         |        A,2          |
+           -------------------------------------------
+    D      |      D   H        |       D   L         |
+     H,2   |       H,2         |        H,2          |
+           -------------------------------------------
+    D      |      D   H        |       D   L         |
+     A,3   |       A,3         |        A,3          |
+           -------------------------------------------
+    D      |      D   H        |       D   L         |
+     H,3   |       H,3         |        H,3          |
+           -------------------------------------------
+
+
+D7-D2 is data relating to BRR. When D1=1 it indicates that it is a
+source having a loop, and when D0=1 it indicates that the block
+is the clock with the final data.
+
+
+
+7. CPU ORGANIZATION.
+
+A Sony SPC700 series is used in the CPU core of the SFX sound source.
+it is possible to access and address space of 64K bytes in the SPC
+series CPU. Address classification of the memory space is made
+according to purpose: and addresses 0000 - 00ff are called page 0
+and addresses 0100 - 01ff are called page 1.
+In regard to the data in this region, when direct page designation
+is carried out by direct page flaq (P) within the program status
+word, it is possible to carry out data processing in wide-ranging
+addresing modes with a small number of cycles.
+
+Within the CPU there are the universal registers A,X and Y, program
+status ward (PSW) of the varius flags, program counter (PC), and
+stack pointer (SP).
+
+The A register is operable by the greatest number of commands,
+and becomes and 8-bit operation accumulator. When 16-bit 
+operations are carried out, it becomes paired with Y register
+and becomes the lower lever 8-bit register of the 16-bit
+accumulator.
+The X and Y registers, in addition to their function as universal
+registers, are used in various operations, such as the function
+as index register of various index addressing modes, the function
+as dual-address command source, destination address register, etc.
+
+In the command set there are single address commands which carry
+out arithmetic and logical operations centered in the A register
+and dual address commands which can designate random address
+within the direct page as source address and destination addresses.
+
+In regard to bit processing diversified by control purpose. Boolean
+bit operation commands are applicable to the 8K byte range of
+data of addresses 0000 - 1fff. Morever, in regard to the bits
+within the total space of the 64K bytes, commads of multiple bit
+test and set, test and reset are provided for. For the purpose of
+data which must be systematized or in order to carry out data
+processing rapidly. It is possible to operate 16-bit data with a
+single commad. Addition, subtraction, comparison and transferrance
+are possible between two byte of continuous 16-bit data within the
+direct page and the paired Y register and A register. In addition
+increment and decrement of continuous 16-bit data within the
+direct page are possible.
+
+There are multiplication and division commands for the purpose
+of rapid data processing and processing of data ina variety of
+forms. Multiplication is 8-bit x 8-bit with no sign and is
+carried out with the multiplicand stored in the Y register and
+the multiplier stored in the A register; the result is entered
+into the Y, A 16-bit accumulator. Division is 16bits/8bits with
+no sign and carried out with the divident stored in the Y, A 16
+bit accumulator and the divisor stored in the X register : the
+resulting quotient is entered into the A register and the
+remainder is entered intro the Y register.
+In the processing of decimal data, there are decimal (addition,
+subtraction) correcting commands in regard to the results of
+both addition and subtraction.
+
+In regard to branched commands, there are relative branched
+commands according to the conditions of the various status
+flags, branched commands according to the conditions of set
+or reset of random bits with the direct page, etc. In addition,
+in regard to looped branched commands, there are comparision
+branched commands and subraction branched commands, and for
+these there are two types of addressing modes.
+
+In regard to subroutine call commands, there are subroutine
+address direct designation three-byte call commands within
+the 64K bytes. two-byte call commands for calling subroutines
+of specific areas, and 16 portion one-byte call commands using
+call table: it is possible to improve byte efficiency through
+proper useage in response to the frequency of subroutine use.
+
+
+
+1. CPU REGISTERS
+
+
+Withing the CPU are the registers necessary for the execution of
+the various commands. These are an A register (note : functions
+as an 8-bit accumulator). X register, Y register (8-bit universal
+register which can also be used as index register). PSW ( program
+status ward). SP (stack pointer), etc. These are all 8-bit 
+registersm but the PC (program counter) is made up of 16 bits.
+
+
+------------------------------
+            P|C               |   Program Counter      (16 bits)
+------------------------------
+              ----------------
+             |        A       |   A Register           (8  bits)
+              ----------------
+------------------------------
+      Y      |        A       |   (Y,A Paired 16-bit Acumulator)
+------------------------------                         (16 bits)
+              ----------------
+             |        X       |   X Register           (8  bits)
+              ----------------
+              ----------------
+             |        Y       |   Y Register           (8  bits)
+              ----------------
+              ----------------
+             |       SP       |   Stack Pointer        (8  bits)
+              ----------------
+              ----------------
+             |       PSW      |   Program Status Ward  (8  bits)
+              ----------------
+            /              /
+           ---------------
+          |N|V|P|-|H|-|Z|C|
+           ---------------
+
+           N = Negative Flag
+           V = Overflow Flag
+           P = Direct Page Flag
+           H = Half Carry Flag
+           Z = Zero Flag
+           C = Carry Flag (Bit Accumulator)
+
+
+
+(1) A REGISTER
+
+This register is used as an 8-bit accumulator.
+At times of 16-bit operation commands. it becomes a register for
+retaining low byte data in the 16-bit accumulator made up of this
+paired with the Y register. When operation commands are issued, it
+becomes the multiplier register and low byte data of the product is
+entered. When divison commands are issued, paired with the Y register
+it formulates the dividend and the resulting quotient is entered.
+
+(2) X REGISTER
+
+In addition to its role as a universal data register, it also
+functions as an index register when index addressing is being
+carried out. In addition, it is also used as a two-address command
+destination address register and X register indirect address register.
+In division commands, it vecomes the divisor register.
+
+
+(3) Y REGISTER
+
+In additon to its role as a universal data register, it also functions
+as an index register when index addressing is being carried out, In
+addition, it is also used as a two-address command source address
+register.
+When carrying out 16-bit operation commands, it becomes the register
+which retains the high byte data of the 16-bit accumulator which is
+made up of the pairing of this with the A register. When
+multiplication commads are being carried out, it becomes the dividend
+register and the product high byte data is entered.
+When carrying out division commands, paired with the A register it
+formulates the dividend, and the resulting remained is entered.
+
+(4) PROGRAM COUNTER (PC)
+
+The program counter is made up of 16 bits and has an address region
+of 64K bytes. The upper level 8 bits are called PCH and the lower
+level 8 bits are referred to as PCL-
+Normally, it would have the address to be executed next and would
+be incremented only the number of bytes necessary fo the command
+fetched.
+When there is a branching commad in the oidst of the program the address
+of the branch destination would be stored in the program counter. When
+there is a reset (negative POR) input, reset vector which are in
+addresses FFFF and FFFE enter respectively PCH and PCL and branching
+takes place.
+
+
+(5) STACK POINTER (SP)
+
+The stack pointer is used to send data to RAM or to recover from
+RAM when subroutine call, push (PUSH), pop (POP), or return (RET)
+commands are being carried out. The address region indicated by
+the stack pointer is within page 1 (addresses 0100-01ff)
+
+
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+--------------------------------------
+ 0  0  0  0  0  0 0 1|   SP Values    |
+--------------------------------------
+ Fixed by Hardware     Determined by the Program.
+
+
+
+When sending data to RAM, the stack pointer decreases by one
+after sending data (post decrement) and increases by one prior
+to restoring data (pre-increment).
+The diversified activites of the stack pointer are summarized below:
+
+SUB-ROUTINE CALLS
+
+        --------------------------------------------------------
+       |Stack Address|    Activity     |  SP Value after sending|
+        --------------------------------------------------------
+       |    SP       |  sending to PCH |       SP-1             |
+       |    SP-1     |  sending to PCL |       SP-2             |
+        --------------------------------------------------------
+
+
+RESTORING FROM SUB-ROUTINE
+
+        --------------------------------------------------------
+       |Stack Address|    Activity     |  SP Value after sending|
+        --------------------------------------------------------
+       |    SP+1     |  sending to PCH |       SP+1             |
+       |    SP+1     |  sending to PCL |       SP+2             |
+        --------------------------------------------------------
+
+To send to A register, X register, Y register, PSW to and from
+the stack, the commands PUSH and POP can be used.
+
+PUSH A (X,Y, PSW)
+
+        ---------------------------------------------------------
+       |Stack Address|    Activity      |  SP Value after sending|
+        ---------------------------------------------------------
+       |    SP       |sending of A (X..)|       SP-1             |
+        ---------------------------------------------------------
+
+POP A (X,Y, PSW)
+
+        ---------------------------------------------------------
+       |Stack Address|    Activity      |  SP Value after sending|
+        ---------------------------------------------------------
+       |    SP+1     |sending of A (X..)|       SP+1             |
+        ---------------------------------------------------------
+
+(6) PROGRAM STATUS WARD (PSW)
+
+The program status ward is made up of the various flags which are
+set and reset according to the results of the execution of 8-bit
+register commads and the various flags which determine the
+activities of the CPU. When reset it veocnes "000-0-00".
+
+    7    6     5     4     3     2     1     0
+  -----------------------------------------------
+ |   N    V     P     -     H     -     Z     C  |
+  ----------------------------------------------
+
+Carry Flag (C).
+
+After operation execution, this is set when there has been a carry
+from the uppermost bit of the arithmetic logic unit (ALU) or when
+there has been no borrow. It is even altered with shift or rotate
+commands. It also acts as an bit accumulator of Boolean bit operation
+commands. It is set at the SETC commads and reset at the CLRC commads.
+In addition, the carry flag inverts at the NOTC commads.
+
+Zero Flag (Z)
+
+Alter operation execution, this flag is set when the result is
+zero and is reset whens the result is not zero. Even with 16-bity
+operation commands, zero detection is carried out. It is possible
+to carry out tests with conditional branching commands.
+
+Half Carry Flag (H)
+
+After operation execution, this flag is set when there has been
+a carry from form bit 3 of the ALU to bit 4, or when there has
+not been any borrow. There is no command to set, however, it is
+reset by reset by means of the CLRV commad. At his time, the
+overflow flag is also set.
+
+Direct Page Flag (P)
+
+This is the flaq which designates the direct page to which many
+addressing mode are applicable, such as direct page addressing
+etc. When 0, the direct page becomes the addresses of the
+region 0000-00ff and when 1, it becomes the addresses of the
+region 0100-01ff. It is set by the STEP command and reset by the
+CLRP command.
+
+Overflow Flag (V).
+
+After arithmetic operation execution, this flag is set when
+overflow or underflow has been produced. At this time, influence
+is extended simultaneously to the H flag.
+It is possible to carry out tests with conditional branching 
+commads.
+
+Negative Flag (N)
+
+After operation execution, this flag is set when the values of
+the result of MSD is 1 and reset when that values is 0. It is
+possible to carry out tests with conditinal branching commads.
+
+7.2. MEMORY SPACE.
+
+It is possible for the Sound-CPU to address 64K bytes of memory.
+Memory space is divide up according to purpose. From address
+0000, 512 bytes are divided into two pages of 256-bytes units,
+called zero page and page one. It is possible to access data
+within these regions by means of numerous address modes, such
+as direct page addresing, etc.
+Page one is taken up by the stack.
+
+
+7.2.1. Direct Pages (Zero Page, Page One)
+
+By means of setting or resetting the direct page (P) flag
+within the program status ward. it is possible to disignate 
+whether zero page or page one is to be made the direct page.
+it is set up such that the data within this page can be treated
+with fewer bytes, at highter speed and with more numerous types
+of commands and addressing modes.
+
+   Stack Area
+   ----------
+
+   The stack region is established in the RAM region within page
+   one. The uppermost byte of the stack address is fixed at 01.
+   The lowermost byte of the stack address must be given its
+   initial setting by the program.
+
+7.2.2. Uppermost Page
+
+Internal ROM Region
+
+A mask ROM is installed within the Sound-CPU from FFC0H- FFFF. There
+is a program in it which transmits data from the ROM cassette to the
+256K bit RAM throuh the SCPU. This region is used by means of reset.
+
+7.2.3. Area of Applicable Bit Operation Commads.
+
+(i)   The commads SET1 (set memory bit) and CLR1 (clear memory bit)
+      are applicable to one-bit data with the direct page.
+
+(ii)  The commands TSET1 (test and set bit) and TCLR1 ( test and
+      clear bit) are applicable to the total 64K byte region.
+
+(iii) The Boolean operation commands (AND1, OR1, EOR1, MOV1, NOT1)
+      are applicable to the 8K byte region of 0000 - 1FFF.
+
+
+        Fig. 7.2.3. Region of Applicable Bit Operation Commands.
+
+     ----------------------------------------------------------
+0000 |  |             |   |                |     |             |
+     |  |  SET1, CLR1 |   | AND1,OR1,EOR1, |     | TSET1,TCLR1 |
+     |  |  applicable |   | MOV1,NOT1      |     |             |
+     |  |  to direct  |   |                |     |             |
+00FF |  |  page.      |   |                |     |             |
+     |  |             |   |                |     |             |
+     |  |             |   |                |     |             |
+     |  |             |   |                |     |             |
+     |  |             |   |                |     |             |
+01FF |   -------------    |                |     |             |
+     |                    |                |     |             |
+     |                    |                |     |             |
+     |                    |                |     |             |
+     |                    |                |     |             |
+     |                    |                |     |             |
+     |                    |                |     |             |
+1FFF |                    ------------------     |             |
+     |                                           |             |
+     |                                           |             |
+     |                                           |             |
+     |                                           |             |
+     |                                           |             |
+     |                                           |             |
+7FFF |                                            -------------
+     |                                           |             |
+     |                                           |  Unusuable  |
+FFBF |                                           |             |
+FFC0 |                                            -------------
+     |                                           |             |
+     |                                           |   IPL-ROM   |
+     |                                           |             |
+FFFF |                                           |             |
+     ----------------------------------------------------------
+
+
+7.2.4. Direct Page Addressing
+
+Since all of the addressing modes indicated in Table 7.2.4 are
+applicable to the data of the direct page (P=0: addresses 
+0000-00FF P=1: address 0000 - 01FF) designated by the direct page
+(P) flag. it is possible to manipulate the data in various ways.
+In additon byte efficiency also improves due to the fact that
+direct address designation is possible by one-byte data within
+the command words. Moreover, since effective commad cycles also
+decrease data can be accessed more rapidly.
+
+
+        Table 7.2.4. Memory Access Addressing Effective Address
+
+--------------------------------------------------------------------
+                                        #of   Effective Addr. Region
+Simbol  |    Addressing    
+                                        Bytes  0000-01FF  1FFF  1FFF
+--------------------------------------------------------------------
+  dp       Direct Page                    2        X        X
+
+  dp+X     X-Indexed Direct Page          2        X        X
+
+  dp+Y     Y-Indexed Direct Page          2        X        X
+
+  (X)      Indirect                       1        X        X
+
+  (X)+     Indirect Auto-increment        1        X        X
+
+  dp,dp    Direct Page to D.P.            3        X        X
+
+  (X),(Y)  Indirect Page to I.P.          1        X        X
+
+  dp Inm   Inmediate Data to D.P.         3        X        X
+
+  dp, bit  Direct Page Bit                2        X        X
+
+dp,bit,rel Direct Page Bit Relative       3        X        X
+
+ mem, bit  Absolute Boolean Bit           3        X        X     
+                                                   
+   labs    Absolute                       3        X        X     X
+
+  labs+X   X-indexed Absolute             3        X        X     X
+
+  labs+Y   Y-indexed Absolute             3        X        X     X
+
+  (dp+X)   X-indexed Indirect             2        X        X     X
+
+  (dp)+Y   Indirect Y-indexed Indirect    2        X        X     X
+
+--------------------------------------------------------------------
+
+9. SUMMARY OF SPC700 COMMANDS.
+
+An SPC700 series is used for the SFX sound source CPU. However,
+standby and sleep modes can not be used.
+
+The command set operand notation and explanation of command activity
+are indicated in the table below. The upper portion of the table are
+symbols necesary to operand description. These are symbols necessary
+assembler description. In the lower portion of the table, the values
+of the various operand are expressed as symbols. Assembler 
+descriptions are given as numerical values or labels.
+
+Table 9.1. Command Operand Symbols and Meaning
+
+Symbol
+-----------------------------------------------
+  A       A register
+  X       X register
+  Y       Y register
+ PSW      Program status ward
+ YA       Y, A paired 16-bit register
+ PC       Program counter
+ SP       Stack pointer
+
+ ( )      Indirect expression
+( )+      Indirect auto-increment expression
+  #       Inmediate data
+  |       Absolute address
+  /       Bit reversal
+  .       Bit position indicator
+ ( )      Indexed Indirect expression
+  H       Hexadecial notation
+------------------------------------------------
+ inm      8-bit inmediate data
+ dp       Offset address within direct page
+ abs      16-bit absolute address
+ rel      Relative offset complement value of 2
+ mem      Boolean bit operation address
+ bit      Bit location
+
+          MSB
+          -----------------
+  x       | | | |0|.|.|.|.|
+          -----------------
+          \--X--/
+
+
+          MSB
+          -----------------
+  y       | | | |1|.|.|.|.|
+          -----------------
+          \--Y--/
+
+upage     Offset within U page
+  n       Vector call number.
+
+
+In giving an explanation of opertaions, in addition to the notations
+and simbols above, the following symbols are also used.
+
+Table 9.2. Symbols and Meaning of Operation Explanation
+
+
+Symbol      Meaging
+---------------------------------------
+  N        Negative flag
+  V        Overflow flag
+  P        Direct page flag
+  B        Break flag
+  H        Half carry flag
+  I        Indirect master enable flag
+  Z        Zero flag
+  C        Carry flag
+
+  +        Addition
+  -        Subtraction
+  :        Comparison
+ AND       Logic product
+  OR       Logic sun
+ EOR       Exclusive logic sun
+  *        Multiplication
+  /        Division
+
+  Q        Division quotient
+  R        Division remainer
+ (d)       Destination
+ (S)       Source
+ ---       Direction of data transmision
+ - -       Data decrement
+ + +       Data increment
+ < <       1 bit shift left
+ > >       1 bit shift right
+------------------------------
+Note : The number of cycles of conditional branching commands are
+appreorite to cases when there is no branching to the left side 
+and when theree is branching tothe right side.
+
+Table 9.3.  Explanation of Symbols in the Status Flag Column
+
+-----------------------------------------------
+ Symbol         Meaning
+-----------------------------------------------
+  .          No change
+  0          Cleared to 0
+  1          Set to 1
+Flag name    Set or cleared depending on result
+-----------------------------------------------
+
+
+1. 8-bit Data Transmission Commands. Group I
+
+------------------------------------------------------------------------
+Mnemonic  Operand  Code Bytes Cycles Operation                    Flag
+------------------------------------------------------------------------
+  MOV    A, #inm    E8    2     2     A <- inm                  N......Z
+  MOV    A, (X)     E6    1     3     A <- (X)                  N......Z
+  MOV    A, (X)+    BF    1     4     A <- (X) with auto inc    N......Z
+  MOV    A, dp      E4    2     3     A <- (dp)                 N......Z
+  MOV    A, dp+X    F4    2     4     A <- (dp+X)               N......Z
+  MOV    A, labs    E5    3     4     A <- (abs)                N......Z
+  MOV    A, labs+X  F5    3     5     A <- (abs+X)              N......Z
+  MOV    A, labs+Y  F6    3     5     A <- (abs+Y)              N......Z
+  MOV    A, (dp+X)  E7    2     6     A <- ((dp+X+1)(dp+X))     N......Z
+  MOV    A, (dp)+Y  F7    2     6     A <- ((dp+1)(dp)+Y)       N......Z
+  MOV    X, #inm    CD    2     2     X <- inm                  N......Z
+  MOV    X, dp      F8    2     3     X <- (dp)                 N......Z
+  MOV    X, dp+Y    F9    2     4     X <- (dp+Y)               N......Z
+  MOV    X, labs    E9    3     4     X <- (abs)                N......Z
+  MOV    Y, #inm    8D    2     2     Y <- inm                  N......Z
+  MOV    Y, dp      EB    2     3     Y <- (dp)                 N......Z
+  MOV    Y, dp+X    FB    2     4     Y <- (dp+X)               N......Z
+  MOV    Y, labs    EC    3     4     Y <- (abs)                N......Z
+------------------------------------------------------------------------
+
+2. 8-BIT DATA TRANSMISSION COMMANDS. GROUP 2.
+
+------------------------------------------------------------------------
+Mnemonic  Operand  Code Bytes Cycles Operation                    Flag
+------------------------------------------------------------------------
+  MOV    (X),A      C6    1     4     A -> (X)                  ........
+  MOV    (X)+,A     AF    1     4     A -> (X) with auto inc    ........
+  MOV    dp,A       C4    2     4     A -> (dp)                 ........
+  MOV    dp+X,A     D4    2     5     A -> (dp+X)               ........
+  MOV    labs,A     C5    3     5     A -> (abs)                ........
+  MOV    labs+X,A   D5    3     6     A -> (abs+X)              ........
+  MOV    labs+Y,A   D6    3     6     A -> (abs+Y)              ........
+  MOV    (dp+X),A   C7    2     7     A -> ((dp+X+1)(dp+X))     ........
+  MOV    (dp)+Y,A   D7    2     7     A -> ((dp+1)(dp)+Y)       ........
+  MOV    dp,X       D8    2     4     X -> (dp)                 ........
+  MOV    dp+Y,X     D9    2     5     X -> (dp+Y)               ........
+  MOV    labs,X     C9    3     5     X -> (abs)                ........
+  MOV    dp,Y       CB    2     4     X -> (dp)                 ........
+  MOV    dp+X,Y     DB    2     5     X -> (dp+X)               ........
+  MOV    labs,Y     CC    3     5     X -> (abs)                ........
+------------------------------------------------------------------------
+
+3. 8-BIT DATA TRANSMISSIN COMMANDS, GROUP 3.
+
+------------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                    Flag
+------------------------------------------------------------------------
+  MOV    A, X        7D    1     2     A <- X                   N......Z
+  MOV    A, Y        DD    1     2     A <- Y                   N......Z
+  MOV    X, A        5D    1     2     X <- A                   N......Z
+  MOV    Y, A        FD    1     2     Y <- A                   N......Z
+  MOV    X, SP       9D    1     2     X <- SP                  N......Z
+  MOV    SP, X       BD    1     2    SP <- X                   ........
+  MOV    dp(d),dp(s) FA    3     5    (dp(d)) <- (dp(s))        ........
+  MOV    dp,#inm     8F    3     5    (dp) <- inm               ........
+------------------------------------------------------------------------
+
+4. 8-BIT ARITHMETIC OPERATION COMMANDS.
+
+------------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                    Flag
+------------------------------------------------------------------------
+  ADC    A,#inm      88    2     2     A <- A+inm+C            NV..H..ZC
+  ADC    A,(X)       86    1     3     A <- A+(X)+C            NV..H..ZC
+  ADC    A,dp        84    2     3     A <- A+(dp)+C           NV..H..ZC
+  ADC    A,dp+X      94    2     4     A <- A+(dp+X)+C         NV..H..ZC
+  ADC    A,labs      85    3     4     A <- A+(abs)+C          NV..H..ZC
+  ADC    A,labs+X    95    3     5     A <- A+(abs+X)+C        NV..H..ZC
+  ADC    A,labs+Y    96    3     5     A <- A+(abs+Y)+C        NV..H..ZC
+  ADC    A,(dp+X)    87    2     6     A <- A+((dp+X+1)(dp+X)) NV..H..ZC
+  ADC    A,(dp)+Y    97    2     6     A <- A+((dp+1)(dp)+Y)   NV..H..ZC
+  ADC    (X),(Y)     99    1     5   (X) <- (X)+(Y)+C          NV..H..ZC
+  ADC    dp(d),dp(s) 89    3     6 (dp(d))<-(dp(d))+(dp(s))+C  NV..H..ZC
+  ADC    dp,#inm     98    3     5  (dp) <- (dp)+inm+C         NV..H..ZC
+------------------------------------------------------------------------
+  SBC    A,#inm      A8    2     2     A <- A-inm-!C           NV..H..ZC
+  SBC    A,(X)       A6    1     3     A <- A-(X)-!C           NV..H..ZC
+  SBC    A,dp        A4    2     3     A <- A-(dp)-!C          NV..H..ZC
+  SBC    A,dp+X      B4    2     4     A <- A-(dp+X)-!C        NV..H..ZC
+  SBC    A,labs      A5    3     4     A <- A-(abs)-!C         NV..H..ZC
+  SBC    A,labs+X    B5    3     5     A <- A-(abs+X)-!C       NV..H..ZC
+  SBC    A,labs+Y    B6    3     5     A <- A-(abs+Y)-!C       NV..H..ZC
+  SBC    A,(dp+X)    A7    2     6  A <- A-((dp+X+1)(dp+X))-!C NV..H..ZC
+  SBC    A,(dp)+Y    B7    2     6  A <- A-((dp+1)(dp)+Y)-!C   NV..H..ZC
+  SBC    (X),(Y)     B9    1     5   (X) <- (X)-(Y)-!C         NV..H..ZC
+  SBC    dp(d),dp(s) A9    3     6 (dp(d))<-(dp(d))-(dp(s))-!C NV..H..ZC
+  SBC    dp,#inm     B8    3     5  (dp) <- (dp)-inm-!C        NV..H..ZC
+------------------------------------------------------------------------
+  CMP    A,#inm      68    2     2     A-inm                   N......ZC
+  CMP    A,(X)       66    1     3     A-(X)                   N......ZC
+  CMP    A,dp        64    2     3     A-(dp)                  N......ZC
+  CMP    A,dp+X      74    2     4     A-(dp+X)                N......ZC
+  CMP    A,labs      65    3     4     A-(abs)                 N......ZC
+  CMP    A,labs+X    75    3     5     A-(abs+X)               N......ZC
+  CMP    A,labs+Y    76    3     5     A-(abs+Y)               N......ZC
+  CMP    A,(dp+X)    67    2     6     A-((dp+X+1)(dp+X))      N......ZC
+  CMP    A,(dp)+Y    77    2     6     A-((dp+1)(dp)+Y)        N......ZC
+  CMP    (X),(Y)     79    1     5     (X)-(Y)                 N......ZC
+  CMP    dp(d),dp(s) 69    3     6     (dp(d))-(dp(s))         N......ZC
+  CMP    dp,#inm     78    3     5     (dp)-inm                N......ZC
+  CMP    X,#inm      C8    2     2     X-inm                   N......ZC
+  CMP    X,dp        3E    2     3     X-(dp)                  N......ZC
+  CMP    X,labs      1E    3     4     X-(abs)                 N......ZC
+  CMP    Y,#inm      AD    2     2     Y-inm                   N......ZC
+  CMP    Y,dp        7E    2     3     Y-(dp)                  N......ZC
+  CMP    Y,labs      5E    3     4     Y-(abs)                 N......ZC
+------------------------------------------------------------------------
+
+5. 8-BIT LOGIC OPERATION COMMANDS.
+
+------------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                    Flag
+------------------------------------------------------------------------
+  AND    A,#inm      28    2     2     A <- A AND inm           N......Z.
+  AND    A,(X)       26    1     3     A <- A AND (X)           N......Z.
+  AND    A,dp        24    2     3     A <- A AND (dp)          N......Z.
+  AND    A,dp+X      34    2     4     A <- A AND (dp+X)        N......Z.
+  AND    A,labs      25    3     4     A <- A AND (abs)         N......Z.
+  AND    A,labs+X    35    3     5     A <- A AND (abs+X)       N......Z.
+  AND    A,labs+Y    36    3     5     A <- A AND (abs+Y)       N......Z.
+  AND    A,(dp+X)    27    2     6  A <- A AND ((dp+X+1)(dp+X)) N......Z.
+  AND    A,(dp)+Y    37    2     6   A <- A AND ((dp+1)(dp)+Y)  N......Z.
+  AND    (X),(Y)     39    1     5   (X) <- (X) AND (Y)         N......Z.
+  AND    dp(d),dp(s) 29    3     6 (dp(d))<-(dp(d)) AND (dp(s)) N......Z.
+  AND    dp,#inm     38    3     5  (dp) <- (dp) AND inm        N......Z.
+------------------------------------------------------------------------
+  OR     A,#inm      08    2     2     A <- A OR inm            N......Z.
+  OR     A,(X)       06    1     3     A <- A OR (X)            N......Z.
+  OR     A,dp        04    2     3     A <- A OR (dp)           N......Z.
+  OR     A,dp+X      14    2     4     A <- A OR (dp+X)         N......Z.
+  OR     A,labs      05    3     4     A <- A OR (abs)          N......Z.
+  OR     A,labs+X    15    3     5     A <- A OR (abs+X)        N......Z.
+  OR     A,labs+Y    16    3     5     A <- A OR (abs+Y)        N......Z.
+  OR     A,(dp+X)    07    2     6  A <- A OR ((dp+X+1)(dp+X))  N......Z.
+  OR     A,(dp)+Y    17    2     6   A <- A OR ((dp+1)(dp)+Y)   N......Z.
+  OR     (X),(Y)     19    1     5   (X) <- (X) OR (Y)          N......Z.
+  OR     dp(d),dp(s) 09    3     6 (dp(d))<-(dp(d)) OR (dp(s))  N......Z.
+  OR     dp,#inm     18    3     5  (dp) <- (dp) OR inm         N......Z.
+------------------------------------------------------------------------
+  EOR    A,#inm      48    2     2     A <- A EOR inm           N......Z.
+  EOR    A,(X)       46    1     3     A <- A EOR (X)           N......Z.
+  EOR    A,dp        44    2     3     A <- A EOR (dp)          N......Z.
+  EOR    A,dp+X      54    2     4     A <- A EOR (dp+X)        N......Z.
+  EOR    A,labs      45    3     4     A <- A EOR (abs)         N......Z.
+  EOR    A,labs+X    55    3     5     A <- A EOR (abs+X)       N......Z.
+  EOR    A,labs+Y    56    3     5     A <- A EOR (abs+Y)       N......Z.
+  EOR    A,(dp+X)    47    2     6  A <- A EOR ((dp+X+1)(dp+X)) N......Z.
+  EOR    A,(dp)+Y    57    2     6   A <- A EOR ((dp+1)(dp)+Y)  N......Z.
+  EOR    (X),(Y)     59    1     5   (X) <- (X) EOR (Y)         N......Z.
+  EOR    dp(d),dp(s) 49    3     6 (dp(d))<-(dp(d)) EOR (dp(s)) N......Z.
+  EOR    dp,#inm     58    3     5  (dp) <- (dp) EOR inm        N......Z.
+------------------------------------------------------------------------
+
+6. ADDITION & SUBTRACTION COMMANDS.
+
+------------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                  Flag
+------------------------------------------------------------------------
+  INC      A         BC    1     2      ++ A                  N......Z.
+  INC      dp        AB    2     4      ++ (dp)               N......Z.
+  INC     dp+X       BB    2     5      ++ (dp+X)             N......Z.
+  INC     labs       AC    3     5      ++ (abs)              N......Z.
+  INC      X         3D    1     2      ++ X                  N......Z.
+  INC      Y         FC    1     2      ++ Y                  N......Z.
+-----------------------------------------------------------------------
+  DEC      A         9C    1     2      -- A                  N......Z.
+  DEC      dp        8B    2     4      -- (dp)               N......Z.
+  DEC     dp+X       9B    2     5      -- (dp+X)             N......Z.
+  DEC     labs       8C    3     5      -- (abs)              N......Z.
+  DEC      X         1D    1     2      -- X                  N......Z.
+  DEC      Y         DC    1     2      -- Y                  N......Z.
+-----------------------------------------------------------------------
+
+7. SHIFT, ROTATION COMMANDS
+
+------------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                  Flag
+------------------------------------------------------------------------
+  ASL      A         1C    1     2      C << A      <<0       N......ZC
+  ASL      dp        0B    2     4      C << (dp)   <<0       N......ZC
+  ASL     dp+X       1B    2     5      C << (dp+X) <<0       N......ZC
+  ASL     labs       0C    3     5      C << (abs)  <<0       N......ZC
+-----------------------------------------------------------------------
+  LSR      A         5C    1     2      0 >> A      <<C       N......ZC
+  LSR      dp        4B    2     4      0 >> (dp)   <<C       N......ZC
+  LSR     dp+X       5B    2     5      0 >> (dp+X) <<C       N......ZC
+  LSR     labs       4C    3     5      0 >> (abs)  <<C       N......ZC
+-----------------------------------------------------------------------
+  ROL      A         3C    1     2      C << A      <<C       N......ZC
+  ROL      dp        2B    2     4      C << (dp)   <<C       N......ZC
+  ROL     dp+X       3B    2     5      C << (dp+X) <<C       N......ZC
+  ROL     labs       2C    3     5      C << (abs)  <<C       N......ZC
+-----------------------------------------------------------------------
+  ROR      A         7C    1     2      C >> A      <<C       N......ZC
+  ROR      dp        6B    2     4      C >> (dp)   <<C       N......ZC
+  ROR     dp+X       7B    2     5      C >> (dp+X) <<C       N......ZC
+  ROR     labs       6C    3     5      C >> (abs)  <<C       N......ZC
+-----------------------------------------------------------------------
+  XCN      A         9F    1     5      A(7-1) <-> A(3-0)     N......Z.
+-----------------------------------------------------------------------
+  
+  8. 16-BIT TRANSMISION COMMANDS
+
+------------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                  Flag
+------------------------------------------------------------------------
+  MOVW     YA,dp     BA    2     5     YA  - (dp+1)(dp)       N......Z.
+  MOVW     dp,YA     DA    2     4    (dp+1)(dp) - YA         .........
+-----------------------------------------------------------------------
+
+9. 16-BIT OPERATION COMMANDS.
+
+-----------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                  Flag
+-----------------------------------------------------------------------
+  INCW     dp        3A    2     6  Increment dp memory pair  N......Z.
+  DECW     dp        1A    2     6  Decrement dp memory pair  N......Z.
+  ADDW    YA,dp      7A    2     5   YA  <- YA + (dp+1)(dp)   NV..H..ZC
+  SUBW    YA,dp      9A    2     5   YA  <- YA - (dp+1)(dp)   NV..H..ZC
+  CMPW    YA,dp      5A    2     4     YA - (dp+1)(dp)        N......Z.
+-----------------------------------------------------------------------
+
+10. MULTIPLICATION & DIVISON COMMANDS.
+
+-----------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                  Flag
+-----------------------------------------------------------------------
+  MUL      YA        CF    1     9    YA(16 bits) <- Y * A    N......Z.
+  DIV      YA,X      9E    1    12    Q:A B:Y <- YA / X       NV..H..Z.
+-----------------------------------------------------------------------  
+  
+11. DECIMAL COMPENSATION COMMANDS.
+  
+-----------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                  Flag
+-----------------------------------------------------------------------
+  DAA       A        DF    1     3    decimal adjust for add  N......ZC
+  DAS       A        BE    1     3    decimal adjust for sub  N......ZC
+-----------------------------------------------------------------------
+
+12. BRANCHING COMMANDS.            
+  
+-----------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                  Flag
+-----------------------------------------------------------------------
+  BRA     rel        2F    2     4   branch always                  ...
+  BEQ     rel        F0    2    2/4  branch on Z=1                  ...
+  BNE     rel        D0    2    2/4  branch on Z=0                  ...
+  BCS     rel        B0    2    2/4  branch on C=1                  ... 
+  BCC     rel        90    2    2/4  branch on C=0                  ...
+  BVS     rel        70    2    2/4  branch on V=1                  ...
+  BVC     rel        50    2    2/4  branch on V=0                  ...
+  BMI     rel        30    2    2/4  branch on N=1                  ...
+  BPL     rel        10    2    2/4  branch on N=0                  ...
+  BBS   dp.bit,rel   x3    3    5/7  branch on dp.bit=1             ...
+  BBC   dp.bit,rel   y3    3    5/7  branch on dp.bit=0             ...
+  CBNE   dp,rel      2E    3    5/7  compare A with (dp) then BNE   ...
+  CBNE  dp+X,rel     DE    3    6/8  compare A with (dp+X) then BNE ...
+  DBNZ   dp,rel      6E    3    5/7  decrement memory (dp) then JNZ ...
+  DBNZ    Y,rel      FE    2    4/6  decrement Y then JNZ           ...
+  JMP     labs       5F    3     3   jump to new location           ...
+  JMP    (labs+X)    1F    3     6   PC <- (abs+X+1)(abs+X)         ...
+-----------------------------------------------------------------------
+
+13. SUB-ROUTINE CALL RETURN COMMANDS.
+
+-----------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation               NVPBHIZC   
+-----------------------------------------------------------------------
+  CALL     labs      3F    3     8   subroutine call          ........ 
+  PCALL   upage      4F    2     6   upage call               ........ 
+  TCALL     n        n1    1     8   table call               ........ 
+  BRK                0F    1     8   software interrupt       ...1.0.. 
+                                                                       
+  RET                6F    1     5   return from subroutine   ........ 
+  RET1               7F    1     6   return from interrupt   (Restored)
+-----------------------------------------------------------------------
+
+14. STACK OPERATION COMMANDS.
+
+-----------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                  Flag
+-----------------------------------------------------------------------
+  PUSH      A        2D    1     4    push A to stack         .........
+  PUSH      X        4D    1     4    push X to stack         .........
+  PUSH      Y        6D    1     4    push Y to stack         .........
+  PUSH     PSW       0D    1     4    push PSW to stack       .........
+-----------------------------------------------------------------------  
+  POP       A        AE    1     4    pop A from stack        .........
+  POP       X        CE    1     4    pop X from stack        .........
+  POP       Y        EE    1     4    pop Y from stack        .........
+  POP      PSW       8E    1     4    pop PSW from stack     (Restored)
+-----------------------------------------------------------------------  
+  
+15. BIT OPERATION COMMANDS.
+  
+-----------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                  Flag
+-----------------------------------------------------------------------
+  SET1    dip.bit    x2    2     4  set direct page bit       .........
+  CLR1    dip.bit    y2    2     4  clear direct page bit     .........
+  
+  TSET1    labs      0E    3     6 test and set bits with A   N......Z.
+  TCLR1    labs      4E    3     6 test and clear bits with A N......Z.
+  
+  AND1   C,mem.bit   4A    3     4  C <- C AND (mem.bit)      ........C
+  AND1   C,/mem.bit  6A    3     4  C <- C AND !(mem.bit)     ........C                 
+  OR1    C,mem.bit   0A    3     5  C <- C OR  (mem.bit)      ........C               
+  OR1    C,/mem.bit  2A    3     5  C <- C OR  !(mem.bit)     ........C                
+  EOR1   C,mem.bit   8A    3     5  C <- C EOR (mem.bit)      ........C               
+  NOT1   mem.bit     EA    3     5  complement (mem.bit)      .........                     
+  MOV1   C,mem.bit   AA    3     4  C <- (mem.bit)            ........C          
+  MOV1   mem.bit,C   CA    3     6  C -> (mem.bit)            ......... 
+-----------------------------------------------------------------------
+
+16. PROGRAM STATUS FLAG OPERATION COMMANDS.
+
+-----------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                NVPBHIZC   
+-----------------------------------------------------------------------
+  CLRC               60    1     2   clear carry flag          .......0 
+  SETC               80    1     2   set carry flag            .......1 
+  NOTC               ED    1     3   complement carry flag     .......C 
+  CLRV               E0    1     2   clear V and H             .0..0... 
+  CLRP               20    1     2   clear direct page flag    ..0..... 
+  SETP               40    1     2   set dorect page flag      ..1..0..
+  EI                 A0    1     3  set interrup enable flag   .....1.. 
+  DI                 C0    1     3  clear interrup enable flag .....0..
+-----------------------------------------------------------------------
+  
+17. OTHER COMMANDS.
+
+-----------------------------------------------------------------------
+Mnemonic  Operand   Code Bytes Cycles Operation                  Flag
+-----------------------------------------------------------------------
+  NOP                00    1     2    no operation            .........
+  SLEEP              EF    1     3    standby SLEEP mode      .........
+  STOP               FF    1     3    standby STOP mode       .........
+-----------------------------------------------------------------------
+
+

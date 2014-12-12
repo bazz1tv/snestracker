@@ -1,0 +1,8 @@
+A PCX can have greater color depth than is actually possible on the SNES.
+
+If you're tired of transfering stuff back and forth to see what looks good, try this.
+This program will modify the palette in a PCX so that you can see what it would
+look like on the SNES before transferring it over.
+
+I know, not exetremely useful...
+-kevin (Neviksti)

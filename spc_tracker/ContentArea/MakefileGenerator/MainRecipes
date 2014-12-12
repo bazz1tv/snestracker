@@ -1,0 +1,26 @@
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# MAIN GOALS / RECIPES
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+$(ROMTITLE): $(CPU_OFILES) Makefile
+	echo "" > linkfile.tmp
+	echo "[objects]" >> linkfile.tmp
+	echo "$(CPU_OBJS)" >> linkfile.tmp
+	sed y/" "/"\n"/ linkfile.tmp > linkfile
+	echo "" >> linkfile
+	rm linkfile.tmp
+	$(LD) $(LDFLAGS) linkfile $(ROMTITLE)
+	rm linkfile
+#--	
+apu/spc.bin: $(APU_OFILES) Makefile
+	echo "" > linkfile_spc.tmp
+	echo "[objects]" >> linkfile_spc.tmp
+	echo "$(APU_OBJS)" >> linkfile_spc.tmp
+	sed y/" "/"\n"/ linkfile_spc.tmp > linkfile_spc
+	echo "" >> linkfile_spc
+	rm linkfile_spc.tmp
+	$(LD) $(APU_LDFLAGS) linkfile_spc $(OBJDIR)/$@
+	cp $(OBJDIR)/$@ $@
+	mv $(APU_OBJDIR)/spc.sym .
+	size $@
+	rm linkfile_spc
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

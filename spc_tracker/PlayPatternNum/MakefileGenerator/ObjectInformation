@@ -1,0 +1,14 @@
+# Object Information
+OBJDIR = obj
+
+CPU_OBJDIR = $(OBJDIR)/cpu
+CPU_OBJS = $(addprefix $(OBJDIR)/,$(CPU_OFILES))
+APU_OBJDIR = $(OBJDIR)/apu
+APU_OBJS = $(addprefix $(OBJDIR)/,$(APU_OFILES))
+
+OFILES = $(CPU_OFILES)
+OFILES += $(APU_OFILES)
+
+OBJS = $(CPU_OBJS)
+OBJS += $(APU_OBJS)
+# --

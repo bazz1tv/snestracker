@@ -1,0 +1,4 @@
+*.o
+*.sym
+.DS_Store
+*.srm

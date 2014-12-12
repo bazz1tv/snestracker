@@ -1,0 +1,581 @@
+0001   0000             control 	.equ 	$f1		; Timer Control, SNES reg clear
+0002   0000             
+0003   0000             TIMERBASE	.equ	$fa
+0004   0000             timer0		.equ	$fa
+0005   0000             timer1		.equ	$fb
+0006   0000             timer2		.equ	$fc
+0007   0000             
+0008   0000             COUNTERBASE	.equ	$fd
+0009   0000             counter0	.equ	$fd
+0010   0000             counter1	.equ	$fe
+0011   0000             counter2	.equ	$ff
+0012   0000             
+0013   0000             kon			.equ	$4c
+0014   0000             dspaddr		.equ	$f2
+0015   0000             dspval		.equ	$f3
+0016   0000             
+0017   0000             v0pl		.equ	$02
+0018   0000             v0ph		.equ	$03
+0019   0000             
+0020   0000             v1pl		.equ	$12
+0021   0000             v1ph		.equ	$13
+0022   0000             
+0023   0000             PATTERNPTR			.EQU	$00
+0024   0000             PATTERNS			.EQU	$02
+0025   0000             PATTERN0LEN			.EQU	PATTERNS
+0026   0000             PATTERN0PTR			.EQU 	PATTERNS+1 ; $02
+0027   0000             PATTERN0PTRLO		.EQU	PATTERNS+2
+0028   0000             PATTERN0PTRHI		.EQU	PATTERNS+2
+0029   0000             
+0030   0000             PATTERN1LEN			.EQU	PATTERNS+3
+0031   0000             PATTERN1PTR			.EQU 	PATTERNS+4 ; $02
+0032   0000             PATTERN1PTRLO		.EQU	PATTERNS+4
+0033   0000             PATTERN1PTRHI		.EQU	PATTERNS+5
+0034   0000             
+0035   0000             INVERSEPATTERNENTRYCOUNTER	.EQU	$70
+0036   0000             PATTERNLISTNUMBERSCURRENTENTRY		.EQU	$71
+0037   0000             
+0038   0000             TIMERSELECT			.EQU	$80
+0039   0000             TIMERVALUE			.EQU	$81
+0040   0000             TIMERCOUNTVALUE		.EQU	$82 ; -$03
+0041   0000             bplayanote			.EQU 	$85
+0042   0000             bkeyoffnote			.equ	$86
+0043   0000             firstpitchwasnot0	.equ	$87
+0044   0000             lowpitchtemp		.equ	$88
+0045   0000             highpitchtemp		.equ	$89
+0046   0000             
+0047   0000             voiceenable			.equ	$8a
+0048   0000             
+0049   0000             ; PATTERN LIST ABSOLUTE RAM
+0050   0000             PATTERNLISTNUMBERS			.EQU	$90
+0051   0000             PATTERNLISTNUMBERSLENGTH	.EQU	$8F
+0052   0000             
+0053   0000             
+0054   0000             
+0055   0000             
+0056   0200             .org $200
+0057   0200             
+0058   0200             
+0059   0200             	
+0060   0200             	
+0061   0200             Main:
+0062   0200 20          	clrp
+0063   0201                 
+0064   0201 8F 7D F2    	mov $f2, #$7D
+0065   0204 8F 00 F3    	mov $f3, #0
+0066   0207             
+0067   0207 8F 00 F2        mov $F2, #$00       ; left volume = 127
+0068   020A 8F 7F F3        mov $F3, #127
+0069   020D 8F 01 F2        mov $F2, #$01       ; right volume = 127 
+0070   0210 8F 7F F3        mov $F3, #127
+0071   0213                 
+0072   0213                 
+0073   0213                 ; DIR
+0074   0213 8F 5D F2        mov $F2, #$5D   ; starting address = $9000
+0075   0216 8F 90 F3        mov $F3, #$90
+0076   0219                 
+0077   0219             	; DIR
+0078   0219             	; for piano
+0079   0219 8F 04 F2        mov $F2, #$04       ; source number = 0 
+0080   021C 8F 00 F3        mov $F3, #$00
+0081   021F E8 00           mov a, #$00
+0082   0221 C5 00 90        mov !$9000, a
+0083   0224 E8 10           mov a, #$10
+0084   0226 C5 01 90        mov !$9001, a
+0085   0229 E8 00           mov a, #$00 ;#$91
+0086   022B C5 02 90        mov !$9002, a
+0087   022E E8 10           mov a, #$10    ; #$16
+0088   0230 C5 03 90        mov !$9003, a
+0089   0233             	
+0090   0233             	; for bass
+0091   0233 8F 14 F2        mov $F2, #$14       ; source number = 1
+0092   0236 8F 01 F3        mov $F3, #$01
+0093   0239 E8 00           mov a, #$00
+0094   023B C5 04 90        mov !$9004, a
+0095   023E E8 40           mov a, #$40
+0096   0240 C5 05 90        mov !$9005, a
+0097   0243 E8 00           mov a, #$00 ;#$91
+0098   0245 C5 06 90        mov !$9006, a
+0099   0248 E8 40           mov a, #$40    ; #$16
+0100   024A C5 07 90        mov !$9007, a
+0101   024D                 
+0102   024D                 ; Voice 0 Piano
+0103   024D 8F 05 F2        mov $F2, #$05 
+0104   0250 8F 00 F3        mov $F3, #$00 
+0105   0253 8F 07 F2        mov $F2, #$07 
+0106   0256 8F 1F F3        mov $F3, #$1F ;#127   ; set GAIN, direct mode (bit7=0), full volume
+0107   0259                 ; Voice 1 Bass
+0108   0259 8F 15 F2        mov $F2, #$15 
+0109   025C 8F 00 F3        mov $F3, #$00
+0110   025F 8F 17 F2        mov $F2, #$17 
+0111   0262 8F 1F F3        mov $F3, #$1F ;#127   ; set GAIN, direct mode (bit7=0), full volume
+0112   0265             	
+0113   0265 8F 0C F2        mov $F2, #$0C 
+0114   0268 8F 7F F3        mov $F3, #127   ; L/R vol 100% both voices 
+0115   026B 8F 1C F2        mov $F2, #$1C
+0116   026E 8F 7F F3        mov $F3, #127
+0117   0271                 
+0118   0271 8F 6C F2        mov $F2, #$6C   ; turn off mute
+0119   0274 8F 20 F3        mov $F3, #00100000b
+0120   0277             	
+0121   0277             	; this wasn't used in the pattern Demo
+0122   0277             	; INITIALIZE THE PATTERNLISTNUMBERS
+0123   0277 8F 04 8F    	MOV PATTERNLISTNUMBERSLENGTH, #4
+0124   027A CD 00       	MOV X, #0
+0125   027C E8 00       	MOV A, #0
+0126   027E D4 90       	MOV PATTERNLISTNUMBERS+X, A
+0127   0280 3D          	INC X
+0128   0281 E8 01       	MOV A, #1
+0129   0283 D4 90       	MOV PATTERNLISTNUMBERS+X, A
+0130   0285 3D          	INC X
+0131   0286 E8 01       	MOV A, #1
+0132   0288 D4 90       	MOV PATTERNLISTNUMBERS+X, A
+0133   028A 3D          	INC X
+0134   028B E8 01       	MOV A, #1
+0135   028D D4 90       	MOV PATTERNLISTNUMBERS+X, A
+0136   028F             	; LENGTH 3, PATTERN 0, 1 ,1
+0137   028F             	;MOV PATTERNLISTNUMBERSCURRENTENTRY, #0
+0138   028F             	
+0139   028F             	
+0140   028F             	
+0141   028F             	
+0142   028F             	; INIT PATTERN 0 VOICE 0
+0143   028F             	; LETS PLAY SOMETHING AT 0 AND NOTHING FOR ANYTHING ELSE
+0144   028F             	; PATTERN FORMAT: NOTE, INSTRUMENT, VOLUME	; 4 BYTES
+0145   028F             	; LOOK-UP TABLE FOR KEYBOARD KEYS 0-88
+0146   028F             	
+0147   028F             	; INIT PATTERN 0 TABLE ENTRY
+0148   028F E8 08       	MOV A, #8
+0149   0291 C4 02       	mov PATTERN0LEN, A
+0150   0293 E8 00       	MOV A, #00
+0151   0295 C4 04       	MOV PATTERN0PTRLO, A
+0152   0297 E8 82       	mov a, #$82
+0153   0299 C4 04       	MOV PATTERN0PTRHI, A
+0154   029B             	
+0155   029B             	; INIT PATTERN 1 TABLE ENTRY
+0156   029B E8 08       	MOV A, #8
+0157   029D C4 05       	mov PATTERN1LEN, A
+0158   029F E8 00       	MOV A, #00
+0159   02A1 C4 06       	MOV PATTERN1PTRLO, A
+0160   02A3 E8 83       	mov a, #$83
+0161   02A5 C4 07       	MOV PATTERN1PTRHI, A
+0162   02A7             	
+0163   02A7 3F 82 03    	CALL INITPATTERNS
+0164   02AA             	
+0165   02AA             	; ok the pattern is ready
+0166   02AA             	; LETS ITERATE THROUGH A PATTERN
+0167   02AA             	; 
+0168   02AA             	
+0169   02AA             	
+0170   02AA             	;===
+0171   02AA             	; Store some fake values for the timers
+0172   02AA E8 FA       	mov a, #TIMER0
+0173   02AC C4 80       	MOV TIMERSELECT, a
+0174   02AE E8 90       	mov a, #$90
+0175   02B0 C4 81       	MOV TIMERVALUE, a
+0176   02B2 E8 05       	mov a, #5
+0177   02B4 C4 82       	MOV TIMERCOUNTVALUE, a
+0178   02B6             	; These would normally be selected by the user in the GUI
+0179   02B6             	
+0180   02B6             	; Setup Timer
+0181   02B6 F8 80       	mov X, TIMERSELECT
+0182   02B8 E4 81       	MOV A,TIMERVALUE
+0183   02BA C6          	MOV (X),A
+0184   02BB             	; THAT WILL BE THE STANDARD CONVERSION CODE FOR TIMER SETUPS
+0185   02BB             	
+0186   02BB             	; START TIMER
+0187   02BB 8F 01 F1    	mov control, #$01	; this will destroy all other timers
+0188   02BE             
+0189   02BE             
+0190   02BE             	; timer is started
+0191   02BE             STARTOVER:
+0192   02BE 8F 00 71    	MOV PATTERNLISTNUMBERSCURRENTENTRY, #0
+0193   02C1             PATTERNLISTLOOP:
+0194   02C1             	; LOAD ENTRY(X) OF PATTERNLISTNUMBERS
+0195   02C1 F8 71       	MOV X, PATTERNLISTNUMBERSCURRENTENTRY
+0196   02C3 3E 8F       	CMP X, PATTERNLISTNUMBERSLENGTH
+0197   02C5 F0 F7       	BEQ STARTOVER	; NOT CODED YET
+0198   02C7 F4 90       	MOV A, PATTERNLISTNUMBERS+X
+0199   02C9             	; HOW TO CONVERT PATTERN NUMBER TO PATTERN TABLE LOCATION
+0200   02C9             	; PATTERNS START AT PATTERNS AND ARE 3 BYTES EACH
+0201   02C9 5D          	MOV X,A
+0202   02CA E8 00       	MOV A,#0
+0203   02CC             GETINDEX:
+0204   02CC C8 00       	CMP X,#0
+0205   02CE F0 06       	BEQ HAVEINDEXINA 
+0206   02D0 60          	CLRC
+0207   02D1 88 03       	ADC A,#3
+0208   02D3 1D          	DEC X
+0209   02D4 2F F6       	BRA GETINDEX
+0210   02D6             	
+0211   02D6             HAVEINDEXINA:
+0212   02D6 60          	CLRC 
+0213   02D7 88 02       	ADC A,#PATTERNS
+0214   02D9 5D          	MOV X,A
+0215   02DA             	
+0216   02DA             	
+0217   02DA BF          	mov a,(X)+	; PATTERN LENGTH
+0218   02DB C5 70 00    	MOV !INVERSEPATTERNENTRYCOUNTER, a
+0219   02DE BF          	MOV A,(X)+
+0220   02DF C4 00       	MOV PATTERNPTR, A
+0221   02E1 BF          	MOV A,(X)+
+0222   02E2 C4 01       	MOV PATTERNPTR+1, A
+0223   02E4             	
+0224   02E4 8D 00       	MOV Y, #0
+0225   02E6             	
+0226   02E6 3F ED 02    	CALL PATTERNLOOP
+0227   02E9 AB 71       	INC PATTERNLISTNUMBERSCURRENTENTRY
+0228   02EB 2F D4       	BRA PATTERNLISTLOOP
+0229   02ED             	
+0230   02ED             	; Do the Loop for Voices 0-7
+0231   02ED             PATTERNLOOP:
+0232   02ED 3F 5E 03    	CALL TIMERWAIT
+0233   02F0 E8 01       	mov a,#1
+0234   02F2 C4 85       	MOV bplayanote, a
+0235   02F4 E8 00       	mov a,#0
+0236   02F6 C4 86       	mov bkeyoffnote, a
+0237   02F8             	
+0238   02F8             	; Pitch Code
+0239   02F8 F7 00       	MOV A, [PATTERNPTR]+Y
+0240   02FA FC          	inc y
+0241   02FB C4 88       	mov lowpitchtemp, a
+0242   02FD F7 00       	MOV A, [PATTERNPTR]+Y
+0243   02FF FC          	INC Y
+0244   0300 C4 89       	mov highpitchtemp, a
+0245   0302             	
+0246   0302             	; compare for 0101
+0247   0302 68 01       	cmp a, #01
+0248   0304 D0 0B       	bne cmp2
+0249   0306 E4 88       	mov a, lowpitchtemp
+0250   0308 68 01       	cmp a, #01
+0251   030A D0 05       	bne cmp2
+0252   030C 8F 01 86    	mov bkeyoffnote, #1
+0253   030F 2F 1C       	bra p2
+0254   0311             cmp2:
+0255   0311 68 00       	cmp a, #00
+0256   0313 D0 0B       	bne setpitch
+0257   0315 E4 88       	mov a, lowpitchtemp
+0258   0317 68 00       	cmp a,#00
+0259   0319 D0 05       	bne setpitch
+0260   031B 8F 00 85    	mov bplayanote, #0
+0261   031E 2F 0D       	bra p2
+0262   0320             setpitch:
+0263   0320 E4 88       	mov a, lowpitchtemp
+0264   0322 CD 02       	mov x, #v0pl
+0265   0324 3F 6F 03    	call wdspx
+0266   0327 3D          	inc X
+0267   0328 E4 89       	mov a, highpitchtemp
+0268   032A 3F 6F 03    	call wdspx
+0269   032D             p2:
+0270   032D             	; Sample #
+0271   032D F7 00       	MOV A, [PATTERNPTR]+Y
+0272   032F FC          	INC Y
+0273   0330 CD 04       	MOV X,#$04
+0274   0332 3F 6F 03    	CALL WDSPx
+0275   0335             	
+0276   0335 F7 00       	MOV A, [PATTERNPTR]+Y
+0277   0337 FC          	INC Y
+0278   0338             	; Volume
+0279   0338 CD 00       	MOV x,#0
+0280   033A 3F 6F 03    	CALL WDSPx
+0281   033D CD 01       	MOV X,#1
+0282   033F 3F 6F 03    	CALL WDSPx
+0283   0342             	
+0284   0342 E4 86       	MOV A,bkeyoffnote
+0285   0344 F0 07       	BEQ checkforplayanote
+0286   0346 E8 01       	mov a, #1b	; play both
+0287   0348 3F 7C 03    	call keyoff
+0288   034B 2F 09       	bra _finishup
+0289   034D             checkforplayanote:	
+0290   034D E4 85       	mov a, bplayanote
+0291   034F F0 05       	beq _finishup
+0292   0351 E8 01       	mov a, #1
+0293   0353 3F 76 03    	call keyon
+0294   0356             _finishup:
+0295   0356 8B 70       	DEC INVERSEPATTERNENTRYCOUNTER
+0296   0358 F0 03       	Beq _done 
+0297   035A 5F ED 02    	jmp PATTERNLOOP
+0298   035D             _done:
+0299   035D 6F          	RET
+0300   035E             
+0301   035E             TIMERWAIT:
+0302   035E 60          	clrc
+0303   035F E8 00       	mov a, #0
+0304   0361             wait_for_tick:
+0305   0361             
+0306   0361 84 FD       	adc a,COUNTER0	; read counter
+0307   0363 64 82       	cmp a,timercountvalue
+0308   0365             						; 1 Second = 32Ms MAX timer value * 32 = 1024 ms = 1.024 s
+0309   0365 90 FA       	bcc wait_for_tick
+0310   0367 6F          	RET
+0311   0368                 
+0312   0368                 
+0313   0368             ; ====== Write a byte to the S-SDSP =========
+0314   0368             wdsp:
+0315   0368 CC F2 00        mov !$00F2,y
+0316   036B C5 F3 00        mov !$00F3,a
+0317   036E 6F              ret
+0318   036F             ; ====== Write a byte to the S-SDSP =========
+0319   036F             wdspx:
+0320   036F C9 F2 00        mov !$00F2,X
+0321   0372 C5 F3 00        mov !$00F3,a
+0322   0375 6F              ret
+0323   0376             	
+0324   0376             keyon:
+0325   0376             	; Key ON
+0326   0376 8F 4C F2    	mov $F2, #$4C
+0327   0379 C4 F3       	mov $F3, a
+0328   037B 6F          	ret
+0329   037C             	
+0330   037C             keyoff:
+0331   037C 8F 5C F2    	mov $f2, #$5c
+0332   037F C4 F3       	mov $f3, a
+0333   0381 6F          	ret
+0334   0382                 
+0335   0382             
+0336   0382             INITPATTERNS:
+0337   0382             	; INIT PATTERN 0 PATTERN DATA
+0338   0382             	
+0339   0382 8D 00       	MOV Y, #0
+0340   0384             	
+0341   0384             	; 1
+0342   0384 E8 10       	MOV A, #$10
+0343   0386 D7 03       	MOV [PATTERN0PTR]+Y,A
+0344   0388 FC          	INC Y
+0345   0389 E8 10       	MOV A, #$10
+0346   038B D7 03       	MOV [PATTERN0PTR]+Y,A
+0347   038D FC          	INC Y
+0348   038E E8 01       	MOV A,#01
+0349   0390 D7 03       	MOV [PATTERN0PTR]+Y,A
+0350   0392 FC          	INC Y
+0351   0393 E8 7F       	MOV A,#127
+0352   0395 D7 03       	MOV [PATTERN0PTR]+Y,A
+0353   0397 FC          	inc y
+0354   0398             	
+0355   0398             	; 2
+0356   0398 E8 00       	MOV A, #00
+0357   039A D7 03       	MOV [PATTERN0PTR]+Y,A
+0358   039C FC          	INC Y
+0359   039D D7 03       	MOV [PATTERN0PTR]+Y,A
+0360   039F FC          	INC Y
+0361   03A0 E8 01       	mov a, #01
+0362   03A2 D7 03       	MOV [PATTERN0PTR]+Y,A
+0363   03A4 FC          	INC Y
+0364   03A5 E8 7F       	MOV A,#127
+0365   03A7 D7 03       	MOV [PATTERN0PTR]+Y,A
+0366   03A9 FC          	INC Y
+0367   03AA             
+0368   03AA             	;3
+0369   03AA E8 10       	MOV A, #$10
+0370   03AC D7 03       	MOV [PATTERN0PTR]+Y,A
+0371   03AE FC          	INC Y
+0372   03AF             
+0373   03AF E8 18       	MOV A, #$18
+0374   03B1 D7 03       	MOV [PATTERN0PTR]+Y,A
+0375   03B3 FC          	INC Y
+0376   03B4             
+0377   03B4 E8 01       	MOV A,#01
+0378   03B6 D7 03       	MOV [PATTERN0PTR]+Y,A
+0379   03B8 FC          	INC Y
+0380   03B9             
+0381   03B9 E8 3C       	MOV A,#60
+0382   03BB D7 03       	MOV [PATTERN0PTR]+Y,A
+0383   03BD FC          	INC Y
+0384   03BE             
+0385   03BE             	;4
+0386   03BE E8 00       	MOV A, #00
+0387   03C0 D7 03       	MOV [PATTERN0PTR]+Y,A
+0388   03C2 FC          	INC Y
+0389   03C3 D7 03       	MOV [PATTERN0PTR]+Y,A
+0390   03C5 FC          	INC Y
+0391   03C6 E8 01       	mov a,#1
+0392   03C8 D7 03       	MOV [PATTERN0PTR]+Y,A
+0393   03CA FC          	INC Y
+0394   03CB E8 7F       	MOV A,#127
+0395   03CD D7 03       	MOV [PATTERN0PTR]+Y,A
+0396   03CF FC          	INC Y
+0397   03D0             
+0398   03D0             	;5
+0399   03D0 E8 10       	MOV A, #$10
+0400   03D2 D7 03       	MOV [PATTERN0PTR]+Y,A
+0401   03D4 FC          	INC Y
+0402   03D5             
+0403   03D5 E8 20       	MOV A, #$20
+0404   03D7 D7 03       	MOV [PATTERN0PTR]+Y,A
+0405   03D9 FC          	INC Y
+0406   03DA             
+0407   03DA E8 01       	MOV A,#01
+0408   03DC D7 03       	MOV [PATTERN0PTR]+Y,A
+0409   03DE FC          	INC Y
+0410   03DF             
+0411   03DF E8 7F       	MOV A,#127
+0412   03E1 D7 03       	MOV [PATTERN0PTR]+Y,A
+0413   03E3 FC          	INC Y
+0414   03E4             
+0415   03E4             	;6
+0416   03E4 E8 00       	MOV A, #00
+0417   03E6 D7 03       	MOV [PATTERN0PTR]+Y,A
+0418   03E8 FC          	INC Y
+0419   03E9 D7 03       	MOV [PATTERN0PTR]+Y,A
+0420   03EB FC          	INC Y
+0421   03EC E8 01       	mov a, #1
+0422   03EE D7 03       	MOV [PATTERN0PTR]+Y,A
+0423   03F0 FC          	INC Y
+0424   03F1 E8 7F       	MOV A,#127
+0425   03F3 D7 03       	MOV [PATTERN0PTR]+Y,A
+0426   03F5 FC          	INC Y
+0427   03F6             	
+0428   03F6             	;7
+0429   03F6 E8 10       	MOV A, #$10
+0430   03F8 D7 03       	MOV [PATTERN0PTR]+Y,A
+0431   03FA FC          	INC Y
+0432   03FB             
+0433   03FB E8 18       	MOV A, #$18
+0434   03FD D7 03       	MOV [PATTERN0PTR]+Y,A
+0435   03FF FC          	INC Y
+0436   0400             
+0437   0400 E8 01       	MOV A,#01
+0438   0402 D7 03       	MOV [PATTERN0PTR]+Y,A
+0439   0404 FC          	INC Y
+0440   0405             
+0441   0405 E8 3C       	MOV A,#60
+0442   0407 D7 03       	MOV [PATTERN0PTR]+Y,A
+0443   0409 FC          	INC Y
+0444   040A             	
+0445   040A             	;8
+0446   040A E8 00       	MOV A, #$00
+0447   040C D7 03       	MOV [PATTERN0PTR]+Y,A
+0448   040E FC          	INC Y
+0449   040F             
+0450   040F E8 01       	MOV A, #$01
+0451   0411 D7 03       	MOV [PATTERN0PTR]+Y,A
+0452   0413 FC          	INC Y
+0453   0414             
+0454   0414 E8 01       	MOV A,#01
+0455   0416 D7 03       	MOV [PATTERN0PTR]+Y,A
+0456   0418 FC          	INC Y
+0457   0419             
+0458   0419 E8 7F       	MOV A,#127
+0459   041B D7 03       	MOV [PATTERN0PTR]+Y,A
+0460   041D FC          	INC Y
+0461   041E             
+0462   041E 8D 00       	MOV Y,#0
+0463   0420             
+0464   0420             	; INIT PATTERN 1
+0465   0420             	
+0466   0420             	; 1
+0467   0420 8D 00       	MOV Y, #0
+0468   0422 E8 10       	MOV A, #$10
+0469   0424 D7 06       	MOV [PATTERN1PTR]+Y,A
+0470   0426 FC          	INC Y
+0471   0427 E8 10       	MOV A, #$10
+0472   0429 D7 06       	MOV [PATTERN1PTR]+Y,A
+0473   042B FC          	INC Y
+0474   042C E8 01       	MOV A,#01
+0475   042E D7 06       	MOV [PATTERN1PTR]+Y,A
+0476   0430 FC          	INC Y
+0477   0431 E8 7F       	MOV A,#127
+0478   0433 D7 06       	MOV [PATTERN1PTR]+Y,A
+0479   0435 FC          	inc y
+0480   0436             	
+0481   0436 E8 00       	MOV A, #00
+0482   0438 D7 06       	MOV [PATTERN1PTR]+Y,A
+0483   043A FC          	INC Y
+0484   043B D7 06       	MOV [PATTERN1PTR]+Y,A
+0485   043D FC          	INC Y
+0486   043E E8 01       	mov a,#1
+0487   0440 D7 06       	MOV [PATTERN1PTR]+Y,A
+0488   0442 FC          	INC Y
+0489   0443 E8 7F       	mov a, #127
+0490   0445 D7 06       	MOV [PATTERN1PTR]+Y,A
+0491   0447 FC          	INC Y
+0492   0448             
+0493   0448             
+0494   0448             
+0495   0448             
+0496   0448 E8 00       	MOV A, #00
+0497   044A D7 06       	MOV [PATTERN1PTR]+Y,A
+0498   044C FC          	INC Y
+0499   044D D7 06       	MOV [PATTERN1PTR]+Y,A
+0500   044F FC          	INC Y
+0501   0450 E8 01       	mov a,#1
+0502   0452 D7 06       	MOV [PATTERN1PTR]+Y,A
+0503   0454 FC          	INC Y
+0504   0455 E8 7F       	mov a, #127
+0505   0457 D7 06       	MOV [PATTERN1PTR]+Y,A
+0506   0459 FC          	INC Y
+0507   045A             
+0508   045A             
+0509   045A             
+0510   045A E8 00       	MOV A, #00
+0511   045C D7 06       	MOV [PATTERN1PTR]+Y,A
+0512   045E FC          	INC Y
+0513   045F D7 06       	MOV [PATTERN1PTR]+Y,A
+0514   0461 FC          	INC Y
+0515   0462 E8 01       	mov a, #1
+0516   0464 D7 06       	MOV [PATTERN1PTR]+Y,A
+0517   0466 FC          	INC Y
+0518   0467 E8 7F       	mov a, #127
+0519   0469 D7 06       	MOV [PATTERN1PTR]+Y,A
+0520   046B FC          	INC Y
+0521   046C             
+0522   046C E8 10       	MOV A, #$10
+0523   046E D7 06       	MOV [PATTERN1PTR]+Y,A
+0524   0470 FC          	INC Y
+0525   0471             
+0526   0471 E8 18       	MOV A, #$18
+0527   0473 D7 06       	MOV [PATTERN1PTR]+Y,A
+0528   0475 FC          	INC Y
+0529   0476             
+0530   0476 E8 01       	MOV A,#01
+0531   0478 D7 06       	MOV [PATTERN1PTR]+Y,A
+0532   047A FC          	INC Y
+0533   047B             
+0534   047B E8 14       	MOV A,#20
+0535   047D D7 06       	MOV [PATTERN1PTR]+Y,A
+0536   047F FC          	INC Y
+0537   0480             
+0538   0480 E8 00       	mov a,#0
+0539   0482 D7 06       	MOV [PATTERN1PTR]+Y,A
+0540   0484 FC          	INC Y
+0541   0485 D7 06       	MOV [PATTERN1PTR]+Y,A
+0542   0487 FC          	INC Y
+0543   0488 E8 01       	mov a, #1
+0544   048A D7 06       	MOV [PATTERN1PTR]+Y,A
+0545   048C FC          	INC Y
+0546   048D E8 7F       	mov a, #127
+0547   048F D7 06       	MOV [PATTERN1PTR]+Y,A
+0548   0491 FC          	INC Y
+0549   0492             
+0550   0492             
+0551   0492             
+0552   0492             
+0553   0492 E8 00       	MOV A, #00
+0554   0494 D7 06       	MOV [PATTERN1PTR]+Y,A
+0555   0496 FC          	INC Y
+0556   0497 D7 06       	MOV [PATTERN1PTR]+Y,A
+0557   0499 FC          	INC Y
+0558   049A E8 01       	mov a,#1
+0559   049C D7 06       	MOV [PATTERN1PTR]+Y,A
+0560   049E FC          	INC Y
+0561   049F E8 7F       	mov a, #127
+0562   04A1 D7 06       	MOV [PATTERN1PTR]+Y,A
+0563   04A3 FC          	INC Y
+0564   04A4             
+0565   04A4             
+0566   04A4             
+0567   04A4 E8 00       	MOV A, #00
+0568   04A6 D7 06       	MOV [PATTERN1PTR]+Y,A
+0569   04A8 FC          	INC Y
+0570   04A9 D7 06       	MOV [PATTERN1PTR]+Y,A
+0571   04AB FC          	INC Y
+0572   04AC E8 01       	mov a, #1
+0573   04AE D7 06       	MOV [PATTERN1PTR]+Y,A
+0574   04B0 FC          	INC Y
+0575   04B1 E8 7F       	mov a, #127
+0576   04B3 D7 06       	MOV [PATTERN1PTR]+Y,A
+0577   04B5 FC          	INC Y
+0578   04B6 6F          	RET
+0579   04B7             
+0580   04B7             .END
+0581   04B7             EOFtasm: Number of errors = 0

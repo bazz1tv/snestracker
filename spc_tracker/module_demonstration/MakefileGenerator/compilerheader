@@ -1,0 +1,13 @@
+# Wla-65816 Compiler information (CPU SIDE)
+CPU_CC = wla-65816
+CPU_CFLAGS = -vo
+LD = wlalink
+LDFLAGS = -vS
+#--
+
+# Wla-spc700 Compiler information (APU SIDE)
+APU_CC = wla-spc700
+APU_CFLAGS = -ov
+APU_LDFLAGS = -bvS
+
+

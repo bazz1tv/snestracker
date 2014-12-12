@@ -1,0 +1,308 @@
+0001   0000             control 	.equ 	$f1
+0002   0000             timer0		.equ	$fa
+0003   0000             counter0	.equ	$fd
+0004   0000             kon			.equ	$4c
+0005   0000             dspaddr		.equ	$f2
+0006   0000             dspval		.equ	$f3
+0007   0000             
+0008   0000             v0pl		.equ	$02
+0009   0000             v0ph		.equ	$03
+0010   0000             
+0011   0000             v1pl		.equ	$12
+0012   0000             v1ph		.equ	$13
+0013   0000             
+0014   0000             
+0015   0200             .org $200
+0016   0200             
+0017   0200             
+0018   0200             	
+0019   0200             	
+0020   0200             Main:
+0021   0200 20          	clrp
+0022   0201 3F 22 03        call Init
+0023   0204             	
+0024   0204             	; Setup Timer
+0025   0204 8F 00 FA    	mov timer0,  #$00	; 32ms timing value, 00 for 256 iterations of 125 microseconds
+0026   0207 8F 01 F1    	mov control, #$01	; this will destroy all other timers
+0027   020A             infin:
+0028   020A             	; timer is started
+0029   020A             	
+0030   020A 60          	clrc
+0031   020B E8 00       	mov a, #0
+0032   020D             
+0033   020D             wait_for_tick:
+0034   020D 84 FD       	adc a,counter0	; read counter
+0035   020F 68 05       	cmp a,#5
+0036   0211             						; 1 Second = 32Ms MAX timer value * 32 = 1024 ms = 1.024 s
+0037   0211 90 FA       	bcc wait_for_tick
+0038   0213             	
+0039   0213             	; play C-4 Piano (sampled at C-4)
+0040   0213 8D 02       	mov y,#v0pl
+0041   0215 E8 00       	mov a,#$00
+0042   0217 3F 9F 03    	call wdsp
+0043   021A FC          	inc y
+0044   021B E8 10       	mov a,#$10
+0045   021D 3F 9F 03    	call wdsp
+0046   0220             	
+0047   0220             	
+0048   0220             	;Play C-2 Bass (sampled at C-2)
+0049   0220 8D 12       	mov y,#v1pl
+0050   0222 E8 00       	mov a,#$00
+0051   0224 3F 9F 03    	call wdsp
+0052   0227 FC          	inc y
+0053   0228 E8 10       	mov a,#$10
+0054   022A 3F 9F 03    	call wdsp
+0055   022D             	
+0056   022D E8 03       	mov a, #3	; play both
+0057   022F 3F A6 03    	call keyon
+0058   0232             	
+0059   0232 60          	clrc
+0060   0233 E8 00       	mov a, #0
+0061   0235             wait_for_tick2:
+0062   0235 84 FD       	adc a,counter0	; read counter
+0063   0237 68 05       	cmp a,#5
+0064   0239             						; 1 Second = 32Ms MAX timer value * 32 = 1024 ms = 1.024 s
+0065   0239 90 FA       	bcc wait_for_tick2
+0066   023B             	
+0067   023B             	; play D-4
+0068   023B 8D 02       	mov y,#v0pl
+0069   023D E8 00       	mov a,#$00
+0070   023F 3F 9F 03    	call wdsp
+0071   0242 FC          	inc y
+0072   0243 E8 12       	mov a,#$12
+0073   0245 3F 9F 03    	call wdsp
+0074   0248             	
+0075   0248             	
+0076   0248             	; if 2nd pattern
+0077   0248 E4 04       	mov a,$04
+notes.asm line 0078: Invalid token where value expected: (+)
+notes.asm line 0078: Range of relative branch exceeded. 
+0078   024A F0 00       	beq +
+0079   024C             	; play G-2
+0080   024C 8D 12       	mov y,#v1pl
+0081   024E E8 00       	mov a,#$00
+0082   0250 3F 9F 03    	call wdsp
+0083   0253 FC          	inc y
+0084   0254 E8 18       	mov a,#$18
+0085   0256 3F 9F 03    	call wdsp
+0086   0259 E8 03       	mov a,#11b
+0087   025B 3F A6 03    	call keyon
+notes.asm line 0088: Binary operator where a value expected: (+)
+notes.asm line 0088: Range of relative branch exceeded. 
+0088   025E 2F 00       	bra ++
+0089   0260             +
+notes.asm line 0089: unrecognized directive.            (+)
+0090   0260 E8 01       	mov a,#1b
+0091   0262 3F A6 03    	call keyon
+0092   0265             ++	
+notes.asm line 0092: unrecognized directive.            (++)
+0093   0265 60          	clrc
+0094   0266 E8 00       	mov a, #0
+0095   0268             wait_for_tick3:
+0096   0268 84 FD       	adc a,counter0	; read counter
+0097   026A 68 05       	cmp a,#5
+0098   026C             						; 1 Second = 32Ms MAX timer value * 32 = 1024 ms = 1.024 s
+0099   026C 90 FA       	bcc wait_for_tick3
+0100   026E             	
+0101   026E             	; play E-4
+0102   026E 8D 02       	mov y,#v0pl
+0103   0270 E8 00       	mov a,#$00
+0104   0272 3F 9F 03    	call wdsp
+0105   0275 FC          	inc y
+0106   0276 E8 14       	mov a,#$14
+0107   0278 3F 9F 03    	call wdsp
+0108   027B E8 01       	mov a,#1b
+0109   027D 3F A6 03    	call keyon
+0110   0280             	
+0111   0280 60          	clrc
+0112   0281 E8 00       	mov a, #0
+0113   0283             wait_for_tick4:
+0114   0283 84 FD       	adc a,counter0	; read counter
+0115   0285 68 05       	cmp a,#5
+0116   0287             						; 1 Second = 32Ms MAX timer value * 32 = 1024 ms = 1.024 s
+0117   0287 90 FA       	bcc wait_for_tick4
+0118   0289             		
+0119   0289             	; play F-4
+0120   0289 8D 02       	mov y,#v0pl
+0121   028B E8 55       	mov a,#$55
+0122   028D 3F 9F 03    	call wdsp
+0123   0290 FC          	inc y
+0124   0291 E8 15       	mov a,#$15
+0125   0293 3F 9F 03    	call wdsp
+0126   0296             	
+0127   0296             	;Play C-2 Bass (sampled at C-2)
+0128   0296 8D 12       	mov y,#v1pl
+0129   0298 E8 00       	mov a,#$00
+0130   029A 3F 9F 03    	call wdsp
+0131   029D FC          	inc y
+0132   029E E8 10       	mov a,#$10
+0133   02A0 3F 9F 03    	call wdsp
+0134   02A3             	
+0135   02A3 E8 03       	mov a,#11b
+0136   02A5 3F A6 03    	call keyon
+0137   02A8             	
+0138   02A8 60          	clrc
+0139   02A9 E8 00       	mov a, #0
+0140   02AB             wait_for_tick5:
+0141   02AB 84 FD       	adc a,counter0	; read counter
+0142   02AD 68 05       	cmp a,#5
+0143   02AF             						; 1 Second = 32Ms MAX timer value * 32 = 1024 ms = 1.024 s
+0144   02AF 90 FA       	bcc wait_for_tick5
+0145   02B1             		
+0146   02B1             	; play G-4
+0147   02B1 8D 02       	mov y,#v0pl
+0148   02B3 E8 00       	mov a,#$00
+0149   02B5 3F 9F 03    	call wdsp
+0150   02B8 FC          	inc y
+0151   02B9 E8 18       	mov a,#$18
+0152   02BB 3F 9F 03    	call wdsp
+0153   02BE E8 01       	mov a,#1b
+0154   02C0 3F A6 03    	call keyon
+0155   02C3             	
+0156   02C3 60          	clrc
+0157   02C4 E8 00       	mov a, #0
+0158   02C6             wait_for_tick6:
+0159   02C6 84 FD       	adc a,counter0	; read counter
+0160   02C8 68 05       	cmp a,#5
+0161   02CA             						; 1 Second = 32Ms MAX timer value * 32 = 1024 ms = 1.024 s
+0162   02CA 90 FA       	bcc wait_for_tick6
+0163   02CC             		
+0164   02CC             	; play A-4
+0165   02CC 8D 02       	mov y,#v0pl
+0166   02CE E8 AB       	mov a,#$ab
+0167   02D0 3F 9F 03    	call wdsp
+0168   02D3 FC          	inc y
+0169   02D4 E8 1A       	mov a,#$1a
+0170   02D6 3F 9F 03    	call wdsp
+0171   02D9 E8 01       	mov a,#1b
+0172   02DB 3F A6 03    	call keyon
+0173   02DE             	
+0174   02DE 60          	clrc
+0175   02DF E8 00       	mov a, #0
+0176   02E1             wait_for_tick7:
+0177   02E1 84 FD       	adc a,counter0	; read counter
+0178   02E3 68 05       	cmp a,#5
+0179   02E5             						; 1 Second = 32Ms MAX timer value * 32 = 1024 ms = 1.024 s
+0180   02E5 90 FA       	bcc wait_for_tick7
+0181   02E7             		
+0182   02E7             	; play B-4
+0183   02E7 8D 02       	mov y,#v0pl
+0184   02E9 E8 00       	mov a,#$00
+0185   02EB 3F 9F 03    	call wdsp
+0186   02EE FC          	inc y
+0187   02EF E8 1E       	mov a,#$1e
+0188   02F1 3F 9F 03    	call wdsp
+0189   02F4 E8 01       	mov a,#1b
+0190   02F6 3F A6 03    	call keyon
+0191   02F9             	
+0192   02F9 60          	clrc
+0193   02FA E8 00       	mov a, #0
+0194   02FC             wait_for_tick8:
+0195   02FC 84 FD       	adc a,counter0	; read counter
+0196   02FE 68 05       	cmp a,#5
+0197   0300             						; 1 Second = 32Ms MAX timer value * 32 = 1024 ms = 1.024 s
+0198   0300 90 FA       	bcc wait_for_tick8
+0199   0302             		
+0200   0302             	; play C-5
+0201   0302 8D 02       	mov y,#v0pl
+0202   0304 E8 00       	mov a,#$00
+0203   0306 3F 9F 03    	call wdsp
+0204   0309 FC          	inc y
+0205   030A E8 20       	mov a,#$20
+0206   030C 3F 9F 03    	call wdsp
+0207   030F E8 01       	mov a,#1b
+0208   0311 3F A6 03    	call keyon
+0209   0314             	
+0210   0314 E4 04       	mov a,$04
+0211   0316 F0 05       	beq upit
+0212   0318 8B 04       	dec $04
+0213   031A 5F 0A 02    	jmp infin
+0214   031D             upit:
+0215   031D AB 04       	inc $04 ;2457
+0216   031F             	
+0217   031F             
+0218   031F 5F 0A 02        jmp infin
+0219   0322                 
+0220   0322             Init:
+0221   0322 8F 00 F2        mov $F2, #$00       ; left volume = 127
+0222   0325 8F 7F F3        mov $F3, #127
+0223   0328 8F 01 F2        mov $F2, #$01       ; right volume = 127 
+0224   032B 8F 7F F3        mov $F3, #127
+0225   032E             	
+0226   032E 8F 10 F2        mov $F2, #$10       ; left volume = 127
+0227   0331 8F 7F F3        mov $F3, #127
+0228   0334 8F 11 F2        mov $F2, #$11       ; right volume = 127 
+0229   0337 8F 7F F3        mov $F3, #127
+0230   033A             
+0231   033A                 ;mov $F2, #$02       ; pitch (low byte) 
+0232   033A                 ;mov $F3, #$00
+0233   033A                 ;mov $F2, #$03       ; pitch (high byte) 
+0234   033A                 ;mov $F3, #$10
+0235   033A                 
+0236   033A                 
+0237   033A                 ; DIR
+0238   033A 8F 5D F2        mov $F2, #$5D   ; starting address = $9000
+0239   033D 8F 90 F3        mov $F3, #$90
+0240   0340                 
+0241   0340             	; DIR
+0242   0340             	; for piano
+0243   0340 8F 04 F2        mov $F2, #$04       ; source number = 0 
+0244   0343 8F 00 F3        mov $F3, #$00
+0245   0346 E8 00           mov a, #$00
+0246   0348 C5 00 90        mov !$9000, a
+0247   034B E8 10           mov a, #$10
+0248   034D C5 01 90        mov !$9001, a
+0249   0350 E8 00           mov a, #$00 ;#$91
+0250   0352 C5 02 90        mov !$9002, a
+0251   0355 E8 10           mov a, #$10    ; #$16
+0252   0357 C5 03 90        mov !$9003, a
+0253   035A             	
+0254   035A             	; for bass
+0255   035A 8F 14 F2        mov $F2, #$14       ; source number = 1
+0256   035D 8F 01 F3        mov $F3, #$01
+0257   0360 E8 00           mov a, #$00
+0258   0362 C5 04 90        mov !$9004, a
+0259   0365 E8 40           mov a, #$40
+0260   0367 C5 05 90        mov !$9005, a
+0261   036A E8 00           mov a, #$00 ;#$91
+0262   036C C5 06 90        mov !$9006, a
+0263   036F E8 40           mov a, #$40    ; #$16
+0264   0371 C5 07 90        mov !$9007, a
+0265   0374                 
+0266   0374                 ; Voice 0 Piano
+0267   0374 8F 05 F2        mov $F2, #$05 
+0268   0377 8F 00 F3        mov $F3, #$00 
+0269   037A 8F 07 F2        mov $F2, #$07 
+0270   037D 8F 1F F3        mov $F3, #$1F ;#127   ; set GAIN, direct mode (bit7=0), full volume
+0271   0380                 ; Voice 1 Bass
+0272   0380 8F 15 F2        mov $F2, #$15 
+0273   0383 8F 00 F3        mov $F3, #$00
+0274   0386 8F 17 F2        mov $F2, #$17 
+0275   0389 8F 1F F3        mov $F3, #$1F ;#127   ; set GAIN, direct mode (bit7=0), full volume
+0276   038C             	
+0277   038C 8F 0C F2        mov $F2, #$0C 
+0278   038F 8F 7F F3        mov $F3, #127   ; L/R vol 100% both voices 
+0279   0392 8F 1C F2        mov $F2, #$1C
+0280   0395 8F 7F F3        mov $F3, #127
+0281   0398                 
+0282   0398 8F 6C F2        mov $F2, #$6C   ; turn off mute
+0283   039B 8F 00 F3        mov $F3, #0
+0284   039E             	
+0285   039E 6F          	ret 
+0286   039F                 
+0287   039F                 
+0288   039F             ; ====== Write a byte to the S-SDSP =========
+0289   039F             wdsp:
+0290   039F CC F2 00        mov !$00F2,y
+0291   03A2 C5 F3 00        mov !$00F3,a
+0292   03A5 6F              ret
+0293   03A6             	
+0294   03A6             keyon:
+0295   03A6             	; Key ON
+0296   03A6 8F 4C F2    	mov $F2, #$4C
+0297   03A9 C4 F3       	mov $F3, a
+0298   03AB 6F          	ret
+0299   03AC                 
+0300   03AC             
+0301   03AC             .END
+0302   03AC             EOFtasm: Number of errors = 6

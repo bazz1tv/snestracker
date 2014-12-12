@@ -1,0 +1,9 @@
+#------------------------------
+# UTILITY Directory Creators	
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+$(CPU_OBJDIR):
+	mkdir -p $(CPU_OBJDIR)
+$(APU_OBJDIR):
+	mkdir -p $(APU_OBJDIR)
+#------------------------------

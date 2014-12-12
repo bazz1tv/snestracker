@@ -1,0 +1,143 @@
+This program eases the conversion process for creating backgrounds and 
+sprites on the PC and inserting them into your SNES programs.
+
+Remember that all sprites or tiles in a particular file must be of the 
+same size.
+
+Things like a 'border' and such will be more obvious if you check out
+the example PCX that should be bundled with the program.
+
+The code is very messy, and the program still outputs some debug lines...
+but it works and has come in handy many times.
+
+If you use this for your projects, I only have two stipulations:
+
+[1] Remember that I made this for myself ... 
+        so don't expect something polished.
+[2] If you make anything neat with it, let me know! ... 
+        I'm always curious to find out :)
+
+That's all.
+
+Enjoy,
+-kevin (Neviksti)
+
+------------------------------------------------------------------------------
+
+Example usage:
+
+pcx2snes dwarf -c16 -o128
+
+This takes the file DWARF.PCX and assumes that the picture is 16 color
+(meaning, only the lower 4 bits of the color number is used).
+
+By default it will autodetect the size of the 'frames' by looking at the 
+'border' around each frame.  The border can be any color, as long as it 
+is constant and probably shouldn't be used in the pictures themselves so
+that the 'auto-sizing' isn't confused.
+
+The program will convert the pictures to standard SNES format, and also
+output the first 128 colors of the palette in standard SNES format.
+
+output:
+    DWARF.PIC      <--- 16 color characters, ready to be loaded into VRAM
+    DWARF.CLR      <--- palette entries, ready to be entered into CGRAM
+
+------------------------------------------------------------------------------
+
+parameters:
+
+FILENAME	
+    only the 'base' name is needed
+    "FILENAME.pcx" is openned as the picture
+    this file MUST be a 256 color, RLE encoded, PCX file containing a palette
+
+-p  packed pixel format (for mode 7)   ---> output picture data is "FILENAME.pc7"
+    default is bitplane   ---> output picture data is "FILENAME.pic"
+
+-n  no border
+    default is that between each picture is a one pixel separator
+        a 'border' around each picture
+
+-s# size (valid sizes are -s8, -s16, -s32, -s64, -screen, -screen7)
+    if -n is specified, then this MUST be supplied
+    default is 'autosize'... uses border to try to find the correct
+    picture size
+
+    -s8    makes normal characters
+
+    -s16    \
+    -s32     > outputs 8x8 tiles in 'sprite' character order
+    -s64    /	
+
+    -screen	
+        Border is forced off (no need to specify -n).
+        For full screen PCX should be a 225x256 picture.
+        If longer than 256, then it assumes 64 tile high map.
+        If wider than 256, then it assumes 64 tile wide map.
+		
+        If the picture is not big enough, any portion of the map
+        not covered by the picture is filled with color 0.
+
+        It converts the picture into normal 8x8 characters
+        optimizes such that characters are not repeated. 
+        (not hflip/vflip optimized)
+
+        An additional file is saved: 
+        FILENAME.map (hi and low bytes of map data)
+
+        Defaults to 256 colors.
+
+    -screen7	
+        Border is forced off (no need to specify -n).
+        Turns on packed pixel format.
+
+        For a full Mode 7 map,the PCX can be a 
+        1024x1024 picture.
+
+        If the picture is not big enough, any portion of the map
+        not covered by the picture is filled with color 0.
+
+        Makes 8x8 characters with packed pixel format
+        optimizes such that characters are not repeated 
+        (not hflip/vflip optimized).
+
+        If more than 256 characters are needed an error will be printed.
+
+        An additional file is saved: 
+        FILENAME.mp7 (only low bytes of map data).
+
+        Defaults to 256 colors.
+
+-c#     If not a screen mode, this is REQUIRED.  It specifies the
+        number of colors (valid inputs are -c4, -c16, -c128, -c256)
+	
+        After border detection, autosizing, and border deletion...
+        the color numbers of the pixels are then truncated 
+        accordingly before conversion.
+
+-o#     The first # palette entries will be saved to a file in SNES format.
+        Valid numbers are 0-256,
+        the default is to save all 256 colors.
+
+        output: FILENAME.clr
+
+-r      re-arrange palette, and preserve palette numbers in the tilemap
+        This only affects screen mode.  Instead of just using the one 
+        'truncated palette'.  It will try to re-arrange the colors into 8 palettes
+        to allow (colors-1)*8 total colors (+ 1 transparent color) in your picture.
+        This doesn't help alot, because you're still only allowed to have 
+        a maximum of 8 different combinations of these colors 
+        (in an 8x8 tile) to exists.
+	
+        This is handy for trying to get those slightly greater than 16 color 
+        pictures to display on a 16 color background without having to physically
+        mess with the picture.  Its not always possible to do... but when it works.
+        Sweet! :)
+
+        -o# is not over-riden, but anything beyond the 8 palettes won't mean much
+        after all the colors are re-arranged.  So the default is just to output the 8 
+        palettes in this case.
+
+        -c256 will over-ride -r
+

@@ -1,0 +1,81 @@
+
+C4,	0x1000		 to 
+C♯4, 0x10f4		 UP HALF STEP
+D4,  	0x11f6		 UP WHOLE STEP
+D♯4, 0x1307		 UP MINOR THIRD
+E4,	0x1429		 UP MAJ THIRD
+F4,	0x155b		 UP P4
+F♯4,	0x16a1		 UP AUG4
+G4,	0x17f9		 UP P5
+G♯4,	0x1966		 UP A5
+A4,	0x1ae9		 UP MAJ 6
+A♯4,	0x1c82		 UP m7
+B4,	0x1e34		 UP M7
+
+<table class="ts2" style=" ">
+			<tbody class="ts2">
+			<tr class="ts2">
+				<th class="ts2" colspan="3">SNES Pitch Interval Table</th>	
+			</tr>
+			<tr class="ts2">
+				<th class="ts2">Pitch Value</th>
+				<th class="ts2">Interval</th>
+			</tr>
+			<tr class="ts2">
+				<td class="ts2" style="background-color:#ACD1E9;">0x1000</td>
+				<td class="ts2" style="background-color:#ACD1E9;">Root</td>
+			</tr>
+			<tr class="ts2">
+				
+				<td class="ts2" style="background-color:#E8D0A9;">0x10f4</td>
+				<td class="ts2" style="background-color:#E8D0A9;">m2</td>
+			</tr>
+			<tr class="ts2">
+			
+				<td class="ts2" style="background-color:#ACD1E9;">0x11f6</td>
+				<td class="ts2" style="background-color:#ACD1E9;">M2</td>
+			</tr>
+			<tr class="ts2">
+				<td class="ts2" style="background-color:#E8D0A9;">0x1307</td>
+				<td class="ts2" style="background-color:#E8D0A9;">m3</td>
+			</tr>
+			<tr class="ts2">
+				
+				<td class="ts2" style="background-color:#ACD1E9;">0x1429</td>
+				<td class="ts2" style="background-color:#ACD1E9;">M3</td>
+			</tr>
+			<tr class="ts2">
+				
+				<td class="ts2" style="background-color:#E8D0A9;">0x155b</td>
+				<td class="ts2" style="background-color:#E8D0A9;">P4</td>
+			</tr>
+			<tr class="ts2">
+				
+				<td class="ts2" style="background-color:#ACD1E9;">0x16a1</td>
+				<td class="ts2" style="background-color:#ACD1E9;">Aug4</td>
+			</tr>
+			<tr class="ts2">
+				
+				<td class="ts2" style="background-color:#E8D0A9;">0x17f9</td>
+				<td class="ts2" style="background-color:#E8D0A9;">P5</td>
+			</tr>
+			<tr class="ts2">
+				
+				<td class="ts2" style="background-color:#ACD1E9;">0x1966</td>
+				<td class="ts2" style="background-color:#ACD1E9;">Aug5</td>
+			</tr>
+			<tr class="ts2">
+				<td class="ts2" style="background-color:#E8D0A9;">0x1ae9</td>
+				<td class="ts2" style="background-color:#E8D0A9;">M6</td>
+			</tr>
+			<tr class="ts2">
+				<td class="ts2" style="background-color:#ACD1E9;">0x1c82</td>
+				<td class="ts2" style="background-color:#ACD1E9;">m7</td>
+			</tr>
+			<tr class="ts2">
+				<td class="ts2" style="background-color:#E8D0A9;">0x1e34</td>
+				<td class="ts2" style="background-color:#E8D0A9;">M7</td>
+			</tr>
+			
+		</tbody>
+	</table>

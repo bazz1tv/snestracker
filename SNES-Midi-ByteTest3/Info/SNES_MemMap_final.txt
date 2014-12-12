@@ -1,0 +1,317 @@
+NOTE: If you don't want to read / double check how I
+came about this info ... skip to the line of "****".
+Everything you want is below that.
+
+Here's the information on the SNES memory map 
+and the MAD-1 chip 'truth table' that I've researched.
+I've only taken apart LoRom cartridges... I got HiRom
+connection info from TheDumper.
+
+I wrote this in WordPad with no-wrap.  I suggest you
+view it in the same.
+-kevin (Neviksti)
+
+------------------------------------------------
+the MAD-1 chip 
+pin#, connection 
+01 /HI <--- if two ROM chips, this selects the upper one 
+02 SRAM /CS
+03 NC <--- could be used in HiRom mode to put the SRAM at ($00-$1F):(6000-7FFF)
+04 ROM /OE 
+05 SRAM Vcc 
+06 Vcc 
+07 resistor to +3V of battery 
+08 GND 
+
+16 /LOW <--- if two ROM chips, this selects the lower one 
+15 A15 (LoRom), A13 (HiRom) 
+14 BA4 (LoRom), A14 (HiRom) 
+13 BA5 
+12 Vcc or BA6 (LoRom), A15 or BA6(HiRom)... 
+11 /ROM (pad 49 on cartridge edge) 
+10 GND=LoRom, Vcc=HiRom 
+09 RAM (pad 26 on cartridge edge) 
+
+------------------------------------------------
+The "Truth Table"
+
+LoRom
+pin 10 = low
+			BA6 
+			or					ROM		SRAM
+RAM	/ROM 		Vcc	BA5	BA4	A15		/OE	???	/CS
+pin9	pin11		pin12	pin13	pin14	pin15		pin4	pin3	pin2
+0	0		x	x	x	x		1	1	1
+0	1		x	x	x	x		1	1	1
+1	0		0	0	0	0		1	1	1
+			0	0	1	0		1	1	1
+			0	1	0	0		1	1	1
+			0	1	1	0		1	0	1
+			1	0	0	0		1	1	1
+			1	0	1	0		1	1	1
+			1	1	0	0		1	1	1
+			1	1	1	0		1	1	0
+			x	x	x	1		0	1	1
+1	1		x	x	x	x		1	1	1
+
+
+
+
+HiRom
+pin 10 = high
+			BA6 
+			or					ROM		SRAM
+RAM	/ROM 		A15	BA5	A14	A13		/OE	???	/CS
+pin9	pin11		pin12	pin13	pin14	pin15		pin4	pin3	pin2
+0	0		x	x	x	x		1	1	1
+0	1		x	x	x	x		1	1	1
+1	0		x	x	x	x		0	1	1
+1	1		0	0	0	0		1	1	1
+			0	0	0	1		1	1	1
+			0	0	1	0		1	1	1
+			0	0	1	1		1	0	1
+			0	1	0	0		1	1	1
+			0	1	0	1		1	1	1
+			0	1	1	0		1	1	1
+			0	1	1	1		1	1	0
+			1	x	x	x		1	1	1
+
+------------------------------------------------
+
+HiRom
+
+Connection scheme #1:
+	A15,BA5,A14,A13
+	low, hi, hi, hi	<- required to enable SRAM
+
+	addresses that fit this:
+	($20-$3F):(6000-7FFF)
+	($60-$7F):(6000-7FFF)
+	($A0-$BF):(6000-7FFF)
+	($E0-$FF):(6000-7FFF)
+
+Connection scheme #2:
+	BA6,BA5,A14,A13
+	low, hi, hi, hi	<- required to enable SRAM
+
+	addresses that fit this:
+	($20-$3F):(6000-7FFF)
+	($20-$3F):(E000-FFFF)
+	($A0-$BF):(6000-7FFF)
+	($A0-$BF):(E000-FFFF)
+
+After adding the remaining requirement:
+RAM = high, /ROM = high
+	SRAM addresses:
+	($20-$3F):(6000-7FFF)
+	($A0-$BF):(6000-7FFF)
+
+So, the two connections schemes are the same...
+
+---------------------------------------------------
+
+LoRom
+
+Connection scheme #1:
+	Vcc,BA5,BA4,A15
+	 hi, hi, hi,low	<- required to enable SRAM
+
+	addresses that fit this:
+	($30-$3F):(0000-7FFF)
+	($70-$7F):(0000-7FFF)
+	($B0-$BF):(0000-7FFF)
+	($F0-$FF):(0000-7FFF)
+
+Connection scheme #2:
+	BA6,BA5,BA4,A15
+	 hi, hi, hi,low	<- required to enable SRAM
+
+	addresses that fit this:
+	($70-$7F):(0000-7FFF)
+	($F0-$FF):(0000-7FFF)
+
+After adding the remaining requirement:
+RAM = high, /ROM = low
+	SRAM addresses:
+	($70-$7D):(0000-7FFF)
+	($F0-$FF):(0000-7FFF)
+
+So, the two connections schemes are the same...
+
+---------------------------------------------------
+
+Notice /ROM must be low during ($70-$7F):(0000-7FFF) for the cartridge to have SRAM
+activated.  So I think this line is better defined as /CARTRIDGE... the SNES maps
+certain areas to the cartridge and it is the cartridge that decides what to put in 
+those areas.
+
+
+I was hoping that this would also help solve what the pad 26 on cartridge edge 
+actually is (I've been calling it RAM, because the documentation I found did).
+
+The pad IS high whenever SRAM is activated... but that is just a co-incidence.
+It is also high whenever the ROM is accessed.
+
+OK, since this was still debateable I used my multimeter to figure this one out.
+The multimeter can tell changes up to 9Mhz... so I believe it is accurate. 
+It was able to tell that /pad49 was changing very rapidly.... and /pad26 registered 
+as 0.0 Hz. I held down the Reset button and /pad26 still registered as 0 Hz. 
+Pressed it several times real fast, and /pad26 registered as several Hz. 
+For the voltage reading: normally /pad26 = +5V, with Reset pressed /pad26 = about 400 mV. 
+The 400mV is kinda high for a low signal, but it does fit in the < 0.5V spec of 
+most digital chips. 
+
+So if you believe my multimeter readings, we have finally figured this one out. 
+Pad 26 should be called /RESET. 
+
+---------------------------------------------------------------
+***************************************************************
+---------------------------------------------------------------
+
+So Now, what I believe to be...
+
+The SNES Hardware Memory Map
+
+Bank:	Address:	Purpose:
+-----	--------	--------
+00-3F	0000-1FFF	First 8k of System RAM
+	2000-5FFF	Hardware Registers
+	6000-7FFF	Expansion Memory (Not mapped to anything)
+	8000-FFFF	CARTRIDGE
+40-7D	0000-FFFF	CARTRIDGE
+7E-7F	0000-FFFF	128k System RAM
+
+80-BF	0000-1FFF	First 8k of System RAM
+	2000-5FFF	Hardware Registers
+	6000-7FFF	Expansion Memory (Not mapped to anything)
+	8000-FFFF	CARTRIDGE
+C0-FF	0000-FFFF	CARTRIDGE
+
+The SNES provides the Cartridges with all 24 address lines.
+And asserts /RD, /WR  and /CARTRIDGE, /RESET
+which is up to the cartridge to decode.
+
+This is how the SNES works, it has no clue how the Cartridge works.
+It justs follows these rules and expects the Cartridge to respond
+accordingly. So this IS the SNES memory map, everything else is
+cartridge specific.
+
+-----------------------------------------------------------------------
+
+It is up to the cartridge to take the address lines and map its 
+ROM and SRAM chips how it sees fit, and respond accordingly when 
+the SNES asserts the control lines 
+
+LoRom and HiRom are names for the two most common ways cartridges
+map ROM and SRAM into the cartridge regions.
+
+
+LoRom
+	uses 32k ROM banks (ignores AddressLine15)
+	also, it ignores AddressLine23... 
+	thereby mirroring banks 00-7F onto 80-FF
+
+	NOTE:
+	LoRom can have several variations.  
+	There are only three regions that really vary:
+	1) what is mapped into addresses 0000-7FFF in banks 40-6F (and the corresponding banks C0-EF)
+	2) what is mapped into addresses 0000-7FFF in banks 70-7D (and banks F0-FF... notice the extra two banks)
+	3) what is mapped into addresses 8000-FFFF in banks 70-7D (and banks F0-FF... notice the extra two banks)
+
+	If it uses the MAD-1 chip:
+		region #1 is not mapped to anything (just like the expansion memory)
+		region #2 will be mapped to SRAM if the cartridge has it, 
+			otherwise it will not be mapped to anything
+		region #3 will be mapped to the ROM
+	
+	If it doesn't use a MAD-1 chip:
+		well the cartridge can be laid out several ways.  It could be like the MAD-1 mapping,
+		or something completely different.
+		But the most common way to do it without the MAD-1 chip is:
+		
+		region #1 is mapped to ROM
+		region #2,#3
+			if the cartridge has SRAM these are mapped to SRAM
+			otherwise they are mapped to ROM
+
+	so, the memory map is like this:
+	
+	SNES 00:8000-FFFF	<---	ROM 000000-007FFF
+	SNES 01:8000-FFFF <---	ROM 008000-00FFFF
+	SNES 02:8000-FFFF <---	ROM 010000-017FFF
+	SNES 03:8000-FFFF <---	ROM 018000-01FFFF
+	...
+	SNES 3E:8000-FFFF <---	ROM 1F0000-1F7FFF
+	SNES 3F:8000-FFFF <---	ROM 1F8000-1FFFFF
+
+	SNES 40:0000-7FFF	<---	ROM 200000-207FFF (if the MAD-1 chip is used, nothing is mapped here)
+	SNES 40:8000-FFFF	<---	ROM 200000-207FFF
+	SNES 41:0000-7FFF <---	ROM 208000-20FFFF (if the MAD-1 chip is used, nothing is mapped here)
+	SNES 41:8000-FFFF <---	ROM 208000-20FFFF
+	SNES 42:0000-7FFF <---	ROM 210000-217FFF (if the MAD-1 chip is used, nothing is mapped here)
+	SNES 42:8000-FFFF <---	ROM 210000-217FFF
+	SNES 43:0000-7FFF <---	ROM 218000-21FFFF (if the MAD-1 chip is used, nothing is mapped here)
+	SNES 43:8000-FFFF <---	ROM 218000-21FFFF
+	... etc
+
+	SNES 70:0000-7FFF	<---	SRAM 0000-7FFF	(repeats accordingly.. 16kbit SRAM repeats 16 times)
+	SNES 70:8000-FFFF	<---	ROM 380000-387FFF	(might contain SRAM instead... read above)
+	SNES 71:0000-7FFF	<---	SRAM 0000-7FFF	(repeats accordingly.. 16kbit SRAM repeats 16 times)
+	SNES 71:8000-FFFF	<---	ROM 388000-38FFFF	(might contain SRAM instead... read above)
+	SNES 72:0000-7FFF	<---	SRAM 0000-7FFF	(repeats accordingly.. 16kbit SRAM repeats 16 times)
+	SNES 72:8000-FFFF	<---	ROM 390000-397FFF	(might contain SRAM instead... read above)
+	...
+	SNES 7D:0000-7FFF	<---	SRAM 0000-7FFF	(repeats accordingly.. 16kbit SRAM repeats 16 times)
+	SNES 7D:8000-FFFF	<---	ROM 3E8000-3EFFFF	(might contain SRAM instead... read above)
+
+	SNES 7E:0000-FFFF	<---	System RAM
+	SNES 7F:0000-FFFF	<---	System RAM
+
+	same thing in banks 80-FF
+	except FE-FF holds more SRAM and ROM instead of System RAM
+
+
+HiRom
+	uses 64k banks (uses AddressLine15)
+	also, it ignores AddressLine23 and AddressLine22... 
+	thereby mirroring banks 00-3F onto 
+		40-7F,80-BF, and C0-FF
+
+	so, into the ROM regions go:
+	
+	SNES 00:8000-FFFF	<---	ROM 008000-00FFFF
+	SNES 01:8000-FFFF	<---	ROM 018000-01FFFF
+	SNES 02:8000-FFFF	<---	ROM 028000-02FFFF
+	SNES 03:8000-FFFF	<---	ROM 038000-03FFFF
+	...
+	SNES 3E:8000-FFFF <---	ROM 3E8000-3EFFFF
+	SNES 3F:8000-FFFF <---	ROM 3F8000-3FFFFF
+
+	SNES 40:0000-FFFF	<---	ROM 000000-00FFFF
+	SNES 41:0000-FFFF	<---	ROM 010000-01FFFF
+	SNES 42:0000-FFFF	<---	ROM 020000-02FFFF
+	SNES 43:0000-FFFF	<---	ROM 030000-03FFFF
+	... etc
+
+	SNES 7E:0000-FFFF	<---	System RAM
+	SNES 7F:0000-FFFF	<---	System RAM
+
+	same thing in banks 80-FF
+	except FE-FF holds more ROM instead of System RAM
+
+	This leaves no room for SRAM... were is that put?
+	In the ExpansionMemory region the SNES won't request anything from the 
+	Cartridge, but the address lines, /RD, and /WR of the bus are still asserted 
+	accordingly, as always.	Since the SNES didn't map anything to this region,
+	normally any writes would do nothing, and any reads would return nonsense
+	because nothing is responding.  So the Cartridge can recognize these address 
+	lines and respond accordingly with the SRAM without hurting any other 
+	circuitry that is on the bus. 	
+
+	The SRAM is mapped into
+	($20-$3F):(6000-7FFF)
+	($A0-$BF):(6000-7FFF)
+
+-----------------------------------------------------------------------
+
+
