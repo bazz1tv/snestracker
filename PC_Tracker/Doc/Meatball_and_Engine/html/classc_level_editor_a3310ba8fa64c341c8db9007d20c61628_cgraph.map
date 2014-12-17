@@ -1,0 +1,8 @@
+<map id="cLevelEditor::SetCopyObject" name="cLevelEditor::SetCopyObject">
+<area shape="rect" href="$classc_level_editor.html#a70117cddc85118e26f7088c264847347" title="Gets the Current Colliding Object types : the Objects which should be checked look at the Editor type..." alt="" coords="281,107,487,152"/>
+<area shape="rect" href="$enemy_8cpp.html#a4aea8b4c1726da681ac20abb12b939fc" title="Gets the first Collision if the rect overlaps." alt="" coords="539,5,733,32"/>
+<area shape="rect" href="$group___engine___misc.html#ga60f74ce4c80dac50bac04ba035e7f5eb" title="returns 1 if 1 or more points intersect" alt="" coords="813,56,928,83"/>
+<area shape="rect" href="$classc_level_data.html#a8aa8699eafb268cb0453ffe7ba28d905" title="Gets the first overlapping Collision." alt="" coords="536,107,736,152"/>
+<area shape="rect" href="$classc_m_vel_sprite.html#a63285b3980443306cdf8ba5ce9ce2795" title="Use SDL_TRUE to get the RECT with camera position coordinates calculated also." alt="" coords="785,176,956,203"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="1005,201,1083,228"/>
+</map>

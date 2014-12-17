@@ -1,0 +1,9 @@
+<map id="cLevel::Draw" name="cLevel::Draw">
+<area shape="rect" href="$classc_m_vel_sprite.html#a2eb88619ac4ca1f9fbe8d5c22ee1ac70" title="cMVelSprite::Draw" alt="" coords="175,5,324,32"/>
+<area shape="rect" href="$classc_m_vel_sprite.html#a0472c4eecda7bba06bef8bb5a8a2312f" title="cMVelSprite::Update" alt="" coords="165,56,333,83"/>
+<area shape="rect" href="$classc_velocity_sprite.html#a5d3eae34157edcd011641aaea67def14" title="cVelocitySprite::Update" alt="" coords="383,56,572,83"/>
+<area shape="rect" href="$classc_basic_sprite.html#a65779c476030c2463de8576fe1f67e39" title="cBasicSprite::Update" alt="" coords="621,31,792,57"/>
+<area shape="rect" href="$classc_basic_sprite.html#a8ef384a01431f3cff6dffe00df1df2d8" title="cBasicSprite::Move" alt="" coords="629,81,784,108"/>
+<area shape="rect" href="$group___engine___image.html#ga2b7097260a2531e03c8853d2b22be2bd" title="V 1.1.1." alt="" coords="891,5,1016,32"/>
+<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="840,56,1067,83"/>
+</map>

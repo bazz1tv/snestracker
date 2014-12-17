@@ -1,0 +1,11 @@
+<map id="cWeapon_Pistol::Fire" name="cWeapon_Pistol::Fire">
+<area shape="rect" href="$group___guns.html#ga3301e06816eeee0c45be015466ae596d" title="Adds an Bullet which gets controlled by the game just use Bullet type." alt="" coords="288,56,379,83"/>
+<area shape="rect" href="$classc_sound_manager.html#a13473964862648a84d60d20669cb6e23" title="cSoundManager::GetPointer" alt="" coords="221,107,445,133"/>
+<area shape="rect" href="$classc_audio.html#aa5e5c15b5915928533c02cb8a277081e" title="Plays an Sound chunk if channel is &#45;1 the sound will be played on the next free channel if volume is ..." alt="" coords="256,157,411,184"/>
+<area shape="rect" href="$classc_bullet.html#ae583bcd0a15e4f214be6160e9c621bb5" title="Initializes the Bullet with the given parameters Reinitializes all values." alt="" coords="493,56,595,83"/>
+<area shape="rect" href="$classc_image_manager.html#a71fec48cbbf5fbc3bf75b66fa8066cbf" title="cImageManager::GetPointer" alt="" coords="643,5,867,32"/>
+<area shape="rect" href="$classc_basic_sprite.html#ad2c10ff9164b58697bd987261f87c82e" title="cBasicSprite::SetImage" alt="" coords="661,56,848,83"/>
+<area shape="rect" href="$classc_velocity_sprite.html#acb4d562f26588d03e800a3aa9e597dff" title="cVelocitySprite::SetVelocity" alt="" coords="645,107,864,133"/>
+<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="915,31,1141,57"/>
+<area shape="rect" href="$classc_basic_sprite.html#ab14231b4170c136c10ccc75b910cb93e" title="cBasicSprite::SetAlpha" alt="" coords="937,81,1119,108"/>
+</map>

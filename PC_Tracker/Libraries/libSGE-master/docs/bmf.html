@@ -1,0 +1,100 @@
+<html>
+<!--------------------------------------------------->
+<!--               Docs/bmf - SGE                  -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - BMF</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Bitmap font rendering</H1>
+
+<P>
+<UL>
+<LI><A HREF="#bfstructure">The bitmap font structure</A>
+<LI><A HREF="#sge_BF_OpenFont">sge_BF_OpenFont</A>
+<LI><A HREF="#sge_BF_CreateFont">sge_BF_CreateFont</A>
+<LI><A HREF="#sge_BF_CloseFont">sge_BF_CloseFont</A>
+<LI><A HREF="#sge_BF_SetColor">sge_BF_SetColor</A>
+<LI><A HREF="#sge_BF_SetAlpha">sge_BF_SetAlpha</A>
+<LI><A HREF="#sge_BF_GetHeight">sge_BF_GetHeight</A>
+<LI><A HREF="#sge_BF_GetWidth">sge_BF_GetWidth</A>
+<LI><A HREF="#sge_BF_TextSize">sge_BF_TextSize</A>
+<LI><A HREF="#sge_BF_textout">sge_BF_textout</A>
+<LI><A HREF="#sge_BF_textoutf">sge_BF_textoutf</A>
+<LI><A HREF="#sge_BF_input">sge_BF_input</A>
+</UL>
+
+<B><a name="bfstructure">The bitmap font structure</a></B><BR>
+<PRE>typedef struct{
+   ...					
+} sge_bmpFont;</PRE>
+When working with BF functions you must give a pointer to the font structure. To open a new font (structure) use sge_BF_OpenFont() and when finished use sge_BF_CloseFont().<BR><BR><BR>
+
+<B>sge_bmpFont* <a name="sge_BF_OpenFont">sge_BF_OpenFont</a>(char *file, Uint8 flags)</B><BR>
+Opens the given font file. Returns a pointer to the new font.<BR>
+<B>Flags:</B> (may be ORed, eg. SGE_BFTRANSP|SGE_BFSFONT)<BR> 
+<I>SGE_BFTRANSP</I> - Transparent (should usually be set).<BR>
+<I>SGE_BFNOCONVERT</I> - Don't convert font surface to display format for faster blits.<BR> 
+<I>SGE_BFSFONT</I> - If you enabled support for SDL_img when compiling SGE you can also set the SGE_BFSFONT flag, this enables you to load Karl Bartel's SFont files.<BR>
+<I>SGE_BFPALETTE</I> - Converts the font surface to a palette surface (8bit). Don't do this on color fonts or SFonts! Blits from the font surface will be a bit slower but sge_BF_SetColor() will be faster (O(1) instead of O(n^2)).<BR>  
+<BR>
+
+<B>sge_bmpFont* <a name="sge_BF_CreateFont">sge_BF_CreateFont</a>(SDL_Surface *surface, Uint8 flags)</B><BR>
+Same as sge_BF_OpenFont() but reads the font data directly from a surface.<BR><BR>
+
+<B>void <a name="sge_BF_CloseFont">sge_BF_CloseFont</a>(sge_bmpFont *font)</B><BR>
+Removes font from memory.<BR><BR>
+
+<B>void <a name="sge_BF_SetColor">sge_BF_SetColor</a>(sge_bmpFont *font, Uint8 R, Uint8 G, Uint8 B)</B><BR>
+Changes the color of the font to (R,G,B). Doesn't work on 'color fonts' or SFonts. Use SGE_BFPALETTE when opening the font if you're going to use this function often.<BR><BR>
+
+<B>void <a name="sge_BF_SetAlpha">sge_BF_SetAlpha</a>(sge_bmpFont *font, Uint8 alpha)</B><BR>
+Sets the alpha level of the font. Doesn't work on SFonts with alpha channels.<BR><BR>
+
+<B>Sint16 <a name="sge_BF_GetHeight">sge_BF_GetHeight</a>(sge_bmpFont *font)</B><BR>
+Returns the height of the font.<BR><BR>
+
+<B>Sint16 <a name="sge_BF_GetWidth">sge_BF_GetWidth</a>(sge_bmpFont *font)</B><BR>
+Returns the width of one character in the specified font. Doesn't work on SFonts.<BR><BR>
+
+<B>SDL_Rect <a name="sge_BF_TextSize">sge_BF_TextSize</a>(sge_bmpFont *font, char *string)</B><BR>
+Returns the width (.w) and height (.h) of the string with the given font.<BR><BR>
+
+<B>SDL_Rect <a name="sge_BF_textout">sge_BF_textout</a>(SDL_Surface *surface, sge_bmpFont *font, char *string, Sint16 x, Sint16 y)</B><BR>
+Renders the given string on surface with the given font. (x,y) is the position of the left top corner. Does lock and update the surface. Returns the postion and size of the rendered string. Does lock and update the surface. Does respect clipping.<BR><BR>
+
+<B>SDL_Rect <a name="sge_BF_textoutf">sge_BF_textoutf</a>(SDL_Surface *surface, sge_bmpFont *font, Sint16 x, Sint16 y , char *format, ...)</B><BR>
+Just as sge_BF_textout() but with the same syntax as printf().<BR><BR><BR>
+
+
+<a name="sge_BF_input"><B>sge_BF_input</B></a><BR>
+<UL>
+<LI>int <B>sge_BF_input(</B>SDL_Surface *screen,sge_bmpFont *font, char *string, Uint8 flags, int pos, int len, Sint16 x, Sint16 y<B>)</B>
+<LI>int <B>sge_BF_inputAlpha(</B>SDL_Surface *screen,sge_bmpFont *font, char *string, Uint8 flags, int pos, int len, Sint16 x, Sint16 y, int Alpha<B>)</B>
+<LI>int <B>sge_BF_input_UNI(</B>SDL_Surface *screen,sge_bmpFont *font, Uint16 *string, Uint8 flags, int pos, int len, Sint16 x, Sint16 y<B>)</B>
+<LI>int <B>sge_BF_inputAlpha_UNI(</B>SDL_Surface *screen,sge_bmpFont *font, Uint16 *string, Uint8 flags, int pos, int len, Sint16 x, Sint16 y, int Alpha<B>)</B>
+</UL>
+These function handle keyboard input and shows the result on screen. Works in the same way as <A HREF="ttf-input.html#sge_tt_input">sge_tt_input()</A> but always preserves the background
+and (x,y) is the top left corner of the rendered text string.<BR>
+<B>Flags:</B> (may be ORed, eg. SGE_IDEL|SGE_INOKR)<BR>
+0 - Default<BR>
+<I>SGE_IDEL</I> - Delete text on exit.<BR>
+<I>SGE_INOKR</I> - No keyrepeat (you can then use SDL_EnableKeyRepeat() yourself).<BR>
+<B>Note:</B> This function will block your program! Use the <A HREF="text_classes.html">text classes</A> if you want more control (see
+the <A HREF="text_classes.html#example1">example</A>).
+<BR><BR>
+
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

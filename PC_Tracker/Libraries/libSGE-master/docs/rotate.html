@@ -1,0 +1,85 @@
+<html>
+<!--------------------------------------------------->
+<!--            Docs/rotatiom - SGE                -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Surface rotation and scaling</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Surface rotation and scaling</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_transform">sge_transform</A>
+<LI><A HREF="#sge_transform_surface">sge_transform_surface</A>
+</UL>
+<BR>
+
+<B>SDL_Rect <a name="sge_transform">sge_transform</a>(SDL_Surface *src, SDL_Surface *dst, float angle, float xscale, float yscale, Uint16 px, Uint16 py, Uint16 qx, Uint16 qy, Uint8 flags)</B><BR>
+Draws a rotated and scaled version of src on dest.
+<UL>
+<LI><B>SDL_Surface *src</B> - The surface to be rotated and scaled.
+<LI><B>SDL_Surface *dst</B> - The surface where the result should be drawn.
+<LI><B>float angle</B> - The rotation angle in degrees.
+<LI><B>float xscale / yscale</B> - The x and y scaling factor. Can be negative (mirroring). 1.0 is 1:1 scale.
+<LI><B>Uint16 px / py</B> - The pivot point to rotate around in the src surface.
+<LI><B>Uint16 qx / qy</B> - The destination point on dst surface.
+<LI><B>Uint8 flags</B> - See below.
+</UL>
+
+<B>Flags:</B> (may be ORed, eg. SGE_TAA|SGE_TSAFE)
+<UL> 
+<LI><I>0</I> - Default.
+<LI><I>SGE_TAA</I> - Use the interpolating renderer. Much slower but can look better.
+<LI><I>SGE_TSAFE</I> - Don't asume that the src and dst surfaces has the same pixel format. This is the default when the two surfaces 
+don't have the same BPP. This is slower but will render wierd pixel formats right.
+<LI><I>SGE_TTMAP</I> - Use texture mapping. This is a bit faster but the result isn't as nice as in the normal mode. This mode will also
+ignore the px/py coordinates and the other flags.
+</UL>
+
+To get optimal performance PLEASE make sure that the two surfaces has the same pixel format (color depth) and doesn't use 24-bpp.<BR>
+<br>
+<b>Note:</n>
+<UL>
+<LI>You can set source and destination clipping rectangles with SDL_SetClipRect(). 
+<LI>If you use the interpolated renderer the image will be clipped 1 pixel in hight and width (to optimize the performance). 
+<LI>If you want to transform a 32-bpp RGBA (alpha) surface with the interpolated renderer, please use the SGE_TSAFE flag. 
+<LI>This function will not do any alpha blending, but it will try to preserve the alpha channel. If you want to rotate and 
+alpha blend the result, please use sge_transform_surface() and then blit that
+surface to its destination.
+</UL>
+Does lock the surfaces.<BR>
+<BR>
+<B>Returns SDL_Rect</B>: The size and position (bounding box) of the rendered image on dst surface.<BR>
+<BR><BR>
+<HR>
+<BR>
+
+
+<B>SDL_Surface *<a name="sge_transform_surface">sge_transform_surface</a>(SDL_Surface *src, Uint32 bcol, float angle, float xscale, float yscale, Uint8 flags)</B><BR>
+Returns a rotated and scaled version of src. See sge_transform() for more information.
+<UL>
+<LI><B>Uint32 bcol</B> - What background color should the new surface have? This pixel value should be mapped with
+SDL_MapRGB/SDL_MapRGBA on the src surface.
+</UL>
+The new surface will have the same depth and pixel format as the src surface.<BR>
+<BR>
+<B>Returns SDL_Surface*</B>: A pointer to the new surface or NULL on failure. Don't forget to free this surface later
+with SDL_FreeSurface().<BR>
+<BR><BR>
+
+</P>
+
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+<map id="Playlist::musicover" name="Playlist::musicover">
+<area shape="rect" href="$classc_audio.html#a8169acfbe8b79cfc13a871ab16b2ffc9" title="if no forcing the file will be played after the current Music file if loops is &#45;1 music will be loope..." alt="" coords="209,5,356,32"/>
+<area shape="rect" href="$group___engine___misc.html#ga0be98eebd3a462ca4848592d68073919" title="Random float between min and max." alt="" coords="241,56,324,83"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="AddBullet" name="AddBullet">
+<area shape="rect" href="$classc_weapon___pistol.html#a721295c1a1e841a80fe8b24c30809ad3" title="Fires an Bullet." alt="" coords="157,5,325,32"/>
+<area shape="rect" href="$classc_weapon___machinegun.html#ad0455412b53fd76dcbd768041765a424" title="Fires an Bullet." alt="" coords="149,56,333,101"/>
+<area shape="rect" href="$classc_weapon___laser___x1.html#a9257307d7f8c8fb81231f23fe9e872ba" title="Fires an Bullet." alt="" coords="144,125,339,152"/>
+</map>

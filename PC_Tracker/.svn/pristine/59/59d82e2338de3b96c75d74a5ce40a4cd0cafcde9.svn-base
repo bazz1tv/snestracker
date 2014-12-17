@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'HelloSDL' target in the 'HelloSDL' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif

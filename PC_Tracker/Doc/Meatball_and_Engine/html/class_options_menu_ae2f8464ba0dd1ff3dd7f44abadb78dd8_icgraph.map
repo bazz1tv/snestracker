@@ -1,0 +1,7 @@
+<map id="OptionsMenu::Collisions" name="OptionsMenu::Collisions">
+<area shape="rect" href="$class_options_menu.html#a67ae8f7d97ad79cb34f0de644e4d6982" title="OptionsMenu::EventHandler" alt="" coords="249,5,471,32"/>
+<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="521,5,665,32"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="716,5,839,32"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="888,5,973,32"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1021,5,1080,32"/>
+</map>

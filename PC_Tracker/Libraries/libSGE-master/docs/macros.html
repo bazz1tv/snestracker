@@ -1,0 +1,52 @@
+<html>
+<!--------------------------------------------------->
+<!--              Docs/macros - SGE                -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Macros</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>SGE Macros</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_clip_">sge_clip</A>
+<LI><A HREF="#sge_RectUnion">sge_RectUnion</A>
+</UL>
+<BR>
+
+<B>Important!</B>
+<UL>
+<LI>The macros are presented as functions, but remember that they're really macros!
+</UL>
+<BR><BR>
+
+<a name="sge_clip_"><B>sge_clip</B></a><BR>
+<UL>
+<LI> Sint16 <B>sge_clip_xmin(</B>SDL_Surface *surface<B>)</B>
+<LI> Sint16 <B>sge_clip_xmax(</B>SDL_Surface *surface<B>)</B>
+<LI> Sint16 <B>sge_clip_ymin(</B>SDL_Surface *surface<B>)</B>
+<LI> Sint16 <B>sge_clip_ymax(</B>SDL_Surface *surface<B>)</B>
+</UL>
+Returns clipping boundaries for the surface. 
+<BR><BR><BR><BR>
+
+<B><a name="sge_RectUnion">void sge_RectUnion(SDL_Rect dst_rect, SDL_Rect rect1, SDL_Rect rect2)</a></B><BR>
+Put the smallest bounding rectangle that encloses both rect1 and rect2 in dst_rect. Note that dst_rect can't 
+be the same structure as rect1 or rect2!<BR><BR>
+
+</P>
+
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

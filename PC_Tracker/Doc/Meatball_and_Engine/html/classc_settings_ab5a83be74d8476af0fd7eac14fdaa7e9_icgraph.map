@@ -1,0 +1,12 @@
+<map id="cSettings::Apply" name="cSettings::Apply">
+<area shape="rect" href="$classc_preferences.html#a82383f70bf9e5667335affbd51abc0f2" title="Sets the Current Settings to the in&#45;game settings." alt="" coords="189,107,352,133"/>
+<area shape="rect" href="$class_controls_menu.html#acca9d246bc75edb0e0037b9cc5f496b2" title="ControlsMenu::Collisions" alt="" coords="400,5,597,32"/>
+<area shape="rect" href="$class_controls_menu.html#a8c0100408843df3ca976dc13121c7ac8" title="ControlsMenu::EventHandler" alt="" coords="645,56,872,83"/>
+<area shape="rect" href="$class_options_menu.html#ae2f8464ba0dd1ff3dd7f44abadb78dd8" title="OptionsMenu::Collisions" alt="" coords="403,107,595,133"/>
+<area shape="rect" href="$class_options_menu.html#a67ae8f7d97ad79cb34f0de644e4d6982" title="OptionsMenu::EventHandler" alt="" coords="648,132,869,159"/>
+<area shape="rect" href="$main_8cpp.html#a66c2b0f98868e33e780f996f1dbd84f1" title="initEngine" alt="" coords="947,204,1040,231"/>
+<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="921,132,1065,159"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="1116,144,1239,171"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="1288,148,1373,175"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1421,175,1480,201"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="cMultiSelect::GetAllCollidingObjects" name="cMultiSelect::GetAllCollidingObjects">
+<area shape="rect" href="$class_object_manager.html#abd00b75edcab4d19e93efacc12459f3e" title="ObjectManager::add" alt="" coords="548,5,716,32"/>
+<area shape="rect" href="$classc_level_data.html#aadf577575fcd0f7c9d648b8fcb209902" title="cLevelData::GetAllColliding\lSpriteNum" alt="" coords="279,91,495,136"/>
+<area shape="rect" href="$classc_m_vel_sprite.html#a63285b3980443306cdf8ba5ce9ce2795" title="Use SDL_TRUE to get the RECT with camera position coordinates calculated also." alt="" coords="547,85,717,112"/>
+<area shape="rect" href="$class_object_manager.html#ae57210f30e7309d8b8f060c6fe3a015b" title="ObjectManager::hasa" alt="" coords="544,140,720,167"/>
+<area shape="rect" href="$group___engine___misc.html#ga60f74ce4c80dac50bac04ba035e7f5eb" title="returns 1 if 1 or more points intersect" alt="" coords="575,200,689,227"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="768,85,845,112"/>
+</map>

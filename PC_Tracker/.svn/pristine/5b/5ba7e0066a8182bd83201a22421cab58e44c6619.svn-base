@@ -1,0 +1,5 @@
+This base folder contains Doxygen Meatball_and_Engine documentation files. This should be moved into a seperate folder Meatball_Doxygen. 
+
+XCode configuration needs to update its reference to this new folder. It would be simpler to use more environment variables to make changes easier to make. Let's consider this :) 
+
+Visual Studio does not even have Doxygen project to build :[

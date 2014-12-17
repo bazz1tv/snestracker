@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>0A2B560B-EABD-4C74-8FD2-2A85C964264D</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MeatBall</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>01895E0D-D8A1-4CA0-8560-74E7386CE70D</key>
+		<string>svn+ssh://svn.code.sf.net/p/meatball/code/trunk</string>
+		<key>2A2455848BB37273BB20F963ED20BE39962B432F</key>
+		<string>https://github.com/bazzinotti/SNES-Tracker.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>PC_Tracker/trunk/Src/XCode/MeatBall.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>01895E0D-D8A1-4CA0-8560-74E7386CE70D</key>
+		<string>../../../../../../../trunk</string>
+		<key>2A2455848BB37273BB20F963ED20BE39962B432F</key>
+		<string>../../../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>01895E0D-D8A1-4CA0-8560-74E7386CE70D</key>
+		<string>svn+ssh://svn.code.sf.net/p/meatball/code</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/bazzinotti/SNES-Tracker.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>2A2455848BB37273BB20F963ED20BE39962B432F</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2A2455848BB37273BB20F963ED20BE39962B432F</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SNES-Tracker</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryBranchesRelativeLocationKey</key>
+			<string>branches</string>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlRepositoryTagsRelativeLocationKey</key>
+			<string>tags</string>
+			<key>IDESourceControlRepositoryTrunkRelativeLocationKey</key>
+			<string>trunk</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>01895E0D-D8A1-4CA0-8560-74E7386CE70D</string>
+			<key>IDESourceControlWCCName</key>
+			<string>trunk</string>
+		</dict>
+	</array>
+</dict>
+</plist>

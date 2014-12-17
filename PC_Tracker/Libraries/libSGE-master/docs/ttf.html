@@ -1,0 +1,137 @@
+<html>
+<!--------------------------------------------------->
+<!--               Docs/ttf - SGE                  -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - TTF</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>TrueType font rendering</H1>
+
+<P>
+<UL>
+<LI><A HREF="#ttstructure">The TT font structure</A>
+<LI><A HREF="#sge_TTF_Init">sge_TTF_Init</A>
+<LI><A HREF="#sge_TTF_OpenFont">sge_TTF_OpenFont</A>
+<LI><A HREF="#sge_TTF_OpenFontIndex">sge_TTF_OpenFontIndex</A>
+<LI><A HREF="#sge_TTF_OpenFontRW">sge_TTF_OpenFontRW</A>
+<LI><A HREF="#sge_TTF_OpenFontIndexRW">sge_TTF_OpenFontIndexRW</A>
+<LI><A HREF="#sge_TTF_CloseFont">sge_TTF_CloseFont</A>
+<LI><A HREF="#sge_TTF_ByteSwappedUNICODE">sge_TTF_ByteSwappedUNICODE</A>
+<LI><A HREF="#sge_TTF_SetFontSize">sge_TTF_SetFontSize</A>
+<LI><A HREF="#sge_TTF_SetFontSizeDPI">sge_TTF_SetFontSizeDPI</A>
+<LI><A HREF="#sge_TTF_TextSize">sge_TTF_TextSize</A>
+<LI><A HREF="#sge_TTF_FontHeight">sge_TTF_FontHeight</A>
+<LI><A HREF="#sge_TTF_FontAscent">sge_TTF_FontAscent</A>
+<LI><A HREF="#sge_TTF_FontDescent">sge_TTF_FontDescent</A>
+<LI><A HREF="#sge_TTF_FontLineSkip">sge_TTF_FontLineSkip</A>
+<LI><A HREF="#sge_TTF_FontFaces">sge_TTF_FontFaces</A>
+<LI><A HREF="#sge_TTF_FontFaceIsFixedWidth">sge_TTF_FontFaceIsFixedWidth</A>
+<LI><A HREF="#sge_TTF_FontFaceFamilyName">sge_TTF_FontFaceFamilyName</A>
+<LI><A HREF="#sge_TTF_FontFaceStyleName">sge_TTF_FontFaceStyleName</A>
+<LI><A HREF="#sge_TTF_AAOn">sge_TTF_AAOn/Off/_Alpha</A>
+<LI><A HREF="#sge_TTF_SetFontStyle">sge_TTF_SetFontStyle</A>
+<LI><A HREF="#sge_TTF_GetFontStyle">sge_TTF_GetFontStyle</A>
+</UL>
+
+<A HREF="ttf-output.html"><B>To the sge_tt_textout() functions>><BR></A>
+<BR><BR>
+
+<B><a name="ttstructure">The TT font structure</a></B><BR>
+<PRE>typedef struct{
+  ...
+} sge_TTFont;</PRE>
+
+When working with TTF functions you must give a pointer to the font structure. To open a new font (structure) use sge_TTF_OpenFont() and when finished use sge_TTF_CloseFont().<BR><BR><BR>
+
+
+<B>int <a name="sge_TTF_Init">sge_TTF_Init</a>(void)</B><BR>
+Starts the FreeType engine, must be called before any of the other TTF functions. Returns 0 on success.<BR><BR>
+
+<B>sge_TTFont *<a name="sge_TTF_OpenFont">sge_TTF_OpenFont</a>(char *file, int ptsize)</B><BR>
+Opens the given ttf file and sets the font size to ptsize. Returns a pointer to the new font.<BR><BR>
+
+<B>sge_TTFont *<a name="sge_TTF_OpenFontIndex">sge_TTF_OpenFontIndex</a>(char *file, int ptsize, long index, int xdpi, int ydpi)</B><BR>
+Same as sge_TTF_OpenFont() but you can also set the font face index and the dpi used. Font face #0 and 96x96dpi is used 
+with sge_TTF_OpenFont().<BR><BR>
+
+<B>sge_TTFont *<a name="sge_TTF_OpenFontRW">sge_TTF_OpenFontRW</a>(SDL_RWops *src, int freesrc, int ptsize, int xdpi, int ydpi)</B><BR>
+Same as sge_TTF_OpenFont() but reads from a SDL_RWops stream. The stream is closed at sge_TTF_CloseFont() if
+freesrc > 0.<BR><BR>
+
+<B>sge_TTFont *<a name="sge_TTF_OpenFontIndexRW">sge_TTF_OpenFontIndexRW</a>(SDL_RWops *src, int freesrc, int ptsize, long index, int xdpi, int ydpi)</B><BR>
+Same as sge_TTF_OpenFontRW() but you can also set the font face index.<BR><BR>
+
+<B>void <a name="sge_TTF_CloseFont">sge_TTF_CloseFont</a>(sge_TTFont *font)</B><BR>
+Removes font from memory.<BR><BR>
+
+<B>void <a name="sge_TTF_ByteSwappedUNICODE">sge_TTF_ByteSwappedUNICODE</a>(int swapped)</B><BR>
+This function tells the library whether UNICODE text is generally byteswapped. A UNICODE BOM 
+character (UNICODE_BOM_NATIVE or UNICODE_BOM_SWAPPED) at the beginning of a string will override 
+this setting for that string.<BR><BR>
+
+<B>int <a name="sge_TTF_SetFontSize">sge_TTF_SetFontSize</a>(sge_TTFont *font, int ptsize)</B><BR>
+Change the size of the given font. Returns 0 on success.<BR><BR>
+
+<B>int <a name="sge_TTF_SetFontSizeDPI">sge_TTF_SetFontSizeDPI</a>(sge_TTFont *font, int ptsize, int xdpi, int ydpi)</B><BR>
+Same as sge_TTF_SetFontSize() but you can also set the dpi used.<BR><BR>
+
+<B>SDL_Rect <a name="sge_TTF_TextSize">sge_TTF_TextSize</a>(sge_TTFont *Font, char *Text)</B><BR>
+Returns the width (.w) and height (.h) of the text with the given font.<BR><BR>
+
+<B>int <a name="sge_TTF_FontHeight">sge_TTF_FontHeight</a>(sge_TTFont *font)</B><BR>
+Returns the distance between the fonts baseline and the top of the highest character.<BR><BR>
+
+<B>int <a name="sge_TTF_FontAscent">sge_TTF_FontAscent</a>(sge_TTFont *font)</B><BR>
+Returns the ascent of the font.<BR><BR>
+
+<B>int <a name="sge_TTF_FontDescent">sge_TTF_FontDescent</a>(sge_TTFont *font)</B><BR>
+Returns the descent of the font.<BR><BR>
+
+<B>int <a name="sge_TTF_FontLineSkip">sge_TTF_FontLineSkip</a>(sge_TTFont *font)</B><BR>
+Returns the recommended line skip for this font.<BR><BR>
+
+<B>long <a name="sge_TTF_FontFaces">sge_TTF_FontFaces</a>(sge_TTFont *font)</B><BR>
+Returns the number of font faces available for this font.<BR><BR>
+
+<B>int <a name="sge_TTF_FontFaceIsFixedWidth">sge_TTF_FontFaceIsFixedWidth</a>(sge_TTFont *font)</B><BR>
+Returns true if the used font face is fixed width.<BR><BR>
+
+<B>char *<a name="sge_TTF_FontFaceFamilyName">sge_TTF_FontFaceFamilyName</a>(sge_TTFont *font)</B><BR>
+Returns the family name of the selected font face.<BR><BR>
+
+<B>char *<a name="sge_TTF_FontFaceStyleName">sge_TTF_FontFaceStyleName</a>(sge_TTFont *font)</B><BR>
+Returns the style name of this font face.<BR><BR>
+
+<B>void <a name="sge_TTF_AAOn">sge_TTF_AAOn</a>(void)<BR>
+void sge_TTF_AAOff(void)<BR>
+void sge_TTF_AA_Alpha(void)</B><BR>
+Turns anti-aliasing for truetype output on/off. Defaults to ON. You can also enable alpha blending support (very nice but slow).<BR><BR>
+
+<B>void <a name="sge_TTF_SetFontStyle">sge_TTF_SetFontStyle</a>(sge_TTFont *font, Uint8 style)</B><BR>
+Sets the font style.<BR>
+<B>Flags:</B> (may be ORed, eg. SGE_TTF_BOLD|SGE_TTF_ITALIC)<BR>
+<I>SGE_TTF_NORMAL</I> - The default style.<BR>
+<I>SGE_TTF_BOLD</I> - Bold.<BR>
+<I>SGE_TTF_ITALIC</I> - Italic.<BR>
+<I>SGE_TTF_UNDERLINE</I> - Underlined.
+<BR><BR>
+
+<B>Uint8 <a name="sge_TTF_GetFontStyle">sge_TTF_GetFontStyle</a>(sge_TTFont *font)</B><BR>
+Returns the current font style.<BR><BR>
+
+<A HREF="ttf-output.html"><B>To the sge_tt_textout() functions>><BR></A>
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030803
+</SMALL></I></P>
+
+</body>
+</html>

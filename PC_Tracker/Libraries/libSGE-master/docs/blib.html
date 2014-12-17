@@ -1,0 +1,128 @@
+<html>
+<!--------------------------------------------------->
+<!--               Docs/blib - SGE                 -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Blib</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>SGE Blib</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_FadedLine">sge_FadedLine</A>
+<LI><A HREF="#sge_TexturedLine">sge_TexturedLine</A>
+<LI><A HREF="#sge_Trigon">sge_Trigon</A>
+<LI><A HREF="#sge_FilledTrigon">sge_FilledTrigon</A>
+<LI><A HREF="#sge_FadedTrigon">sge_FadedTrigon</A>
+<LI><A HREF="#sge_TexturedTrigon">sge_TexturedTrigon</A>
+<LI><A HREF="#sge_TexturedRect">sge_TexturedRect</A>
+<LI><A HREF="#sge_FilledPolygon">sge_FilledPolygon</A>
+<LI><A HREF="#sge_FadedPolygon">sge_FadedPolygon</A>
+</UL>
+<BR>
+
+<B>Important!</B>
+<UL>
+<LI>The clipping rectangle set by SDL_SetClipRect() will always be respected.
+<LI>These functions will lock the surface if necessary, but you can control this with <A HREF="surface.html#sge_Lock_ON">sge_Lock_ON/OFF()</A>.
+<LI>Functions marked as "Must be able to control surface locking" might use both SW (needs locked surfaces) and HW (SDL_FillRect() - 
+needs unlocked surfaces) access to the surface if a HW surface is used, so don't toy with sge_Lock_ON/OFF() or SDL_LockSurface()!
+<LI>The destination surface will be updated if necessary, but you should really do this yourself to avoid unnecessary updates; control this with <A HREF="surface.html#sge_Update_">sge_Update_ON/OFF()</A>.
+<LI>Most drawing primitives can blend with the background; use the Alpha version of the routine to do this.
+<LI>A few primitives also has an anti-aliasing mode; use the AA version of the routine to get this feature.
+</UL>
+<BR><BR><BR>
+
+
+<B>void <a name="sge_FadedLine">sge_FadedLine</a>(SDL_Surface *dest, Sint16 x1, Sint16 x2, Sint16 y, Uint8 r1, Uint8 g1, Uint8 b1, Uint8 r2, Uint8 g2, Uint8 b2)</B><BR>
+Draws a horizontal line from (x1,y) to (x2,y) with its color faded from (r1,g1,b1) to (r2,g2,b2).<BR><BR><BR>
+
+
+<B>void <a name="sge_TexturedLine">sge_TexturedLine</a>(SDL_Surface *dest, Sint16 x1, Sint16 x2, Sint16 y, SDL_Surface *source, Sint16 sx1, Sint16 sy1, Sint16 sx2, Sint16 sy2)</B><BR>
+Draws a horizontal line from (x1,y) to (x2,y) on dest with the texture from the line (sx1,sy1) to
+(sx2,sy2) in src.<BR><BR><BR>
+
+
+<a name="sge_Trigon"><B>sge_Trigon</B></a><BR>
+<UL>
+<LI>void <B>sge_Trigon(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint32 color<B>)</B>
+<LI>void <B>sge_Trigon(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_TrigonAlpha(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_TrigonAlpha(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AATrigon(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint32 color<B>)</B>
+<LI>void <B>sge_AATrigon(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_AATrigonAlpha(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AATrigonAlpha(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+</UL>
+Draws a triangle.<BR><BR><BR><BR>
+
+
+<a name="sge_FilledTrigon"><B>sge_FilledTrigon</B></a><BR>
+<UL>
+<LI>void <B>sge_FilledTrigon(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint32 color<B>)</B>
+<LI>void <B>sge_FilledTrigon(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_FilledTrigonAlpha(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_FilledTrigonAlpha(</B>SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+</UL>
+Draws a filled triangle. Note that if using sge_FilledTrigon() on a HW surface then the surface must be unlocked.<BR><BR><BR><BR>
+
+
+<B>void <a name="sge_FadedTrigon">sge_FadedTrigon</a>(SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Uint32 c1, Uint32 c2, Uint32 c3)</B><BR>
+Draws a gourand shaded triangle where c1, c2 and c3 are the colors of the three vertices.<BR><BR><BR>
+
+
+<B>void <a name="sge_TexturedTrigon">sge_TexturedTrigon</a>(SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, SDL_Surface *source, Sint16 sx1, Sint16 sy1, Sint16 sx2, Sint16 sy2, Sint16 sx3, Sint16 sy3)</B><BR>
+Draws a texture mapped triangle (p1,p2,p3) on dest with the texture from the triangle (sp1,sp2,sp3) on src.
+<BR><BR><BR>
+
+
+<B>void <a name="sge_TexturedRect">sge_TexturedRect</a>(SDL_Surface *dest, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3, Sint16 x4, Sint16 y4, SDL_Surface *source, Sint16 sx1, Sint16 sy1, Sint16 sx2, Sint16 sy2, Sint16 sx3, Sint16 sy3, Sint16 sx4, Sint16 sy4)</B><BR>
+Draws a texture mapped rectangle (p1,p2,p3,p4) on dest with the texture from the rectangle (sp1,sp2,sp3,sp4) 
+on src.<BR><BR><BR>
+
+<a name="sge_FilledPolygon"><B>sge_FilledPolygon</B></a><BR>
+<UL>
+<LI>int <B>sge_FilledPolygon(</B>SDL_Surface *dest, Uint16 n, Sint16 *x, Sint16 *y, Uint32 color<B>)</B>
+<LI>int <B>sge_FilledPolygon(</B>SDL_Surface *dest, Uint16 n, Sint16 *x, Sint16 *y, Uint8 r, Uint8 g, Uint8 b<B>)</B>
+<LI>int <B>sge_FilledPolygonAlpha(</B>SDL_Surface *dest, Uint16 n, Sint16 *x, Sint16 *y, Uint32 color, Uint8 alpha<B>)</B>
+<LI>int <B>sge_FilledPolygonAlpha(</B>SDL_Surface *dest, Uint16 n, Sint16 *x, Sint16 *y, Uint8 r, Uint8 g, Uint8 b, Uint8 alpha<B>)</B>
+<LI>int <B>sge_AAFilledPolygon(</B>SDL_Surface *dest, Uint16 n, Sint16 *x, Sint16 *y, Uint32 color<B>)</B>
+<LI>int <B>sge_AAFilledPolygon(</B>SDL_Surface *dest, Uint16 n, Sint16 *x, Sint16 *y, Uint8 r, Uint8 g, Uint8 b<B>)</B>
+</UL>
+Draws a filled polygon. Takes the arrays x[] and y[] with n elements as an argument where (x[i], y[i]) is the i:th vertex in the polygon.
+The last vertex, (x[n-1], y[n-1]), is automatically connected to the first, (x[0], y[0]), to close the polygon. Manages to fill most
+nonconvex, convex and complex polygons correctly but might be confused by extremly complex polygons, so don't push your luck. Note that
+sge_FilledPolygon() and sge_AAFilledPolygon() (and sge_FilledPolygonAlpha() if using opaque alpha value) must be able to control surface locking.<BR>
+<BR>
+<b>Returns int:</b><BR>
+Zero - Operation finished OK.<BR>
+-1 - Polygon rejected because n<3 or negative coords in arrays (the polygon might be halfdrawn).<BR>
+-2 - Unable to lock surface.<BR>
+<BR><BR><BR>
+
+
+<a name="sge_FadedPolygon"><B>sge_FadedPolygon</B></a><BR>
+<UL>
+<LI>int <B>sge_FadedPolygon(</B>SDL_Surface *dest, Uint16 n, Sint16 *x, Sint16 *y, Uint8 *R, Uint8 *G, Uint8 *B<B>)</B>
+<LI>int <B>sge_FadedPolygonAlpha(</B>SDL_Surface *dest, Uint16 n, Sint16 *x, Sint16 *y, Uint8 *R, Uint8 *G, Uint8 *B, Uint8 alpha<B>)</B>
+<LI>int <B>sge_AAFadedPolygon(</B>SDL_Surface *dest, Uint16 n, Sint16 *x, Sint16 *y, Uint8 *R, Uint8 *G, Uint8 *B<B>)</B>
+</UL>
+As sge_FilledPolygon() but draws a gourand shaded polygon where (R[i], G[i], B[i]) is the color of the i:th vertex. Note that the shading 
+is done on each y-line so some care is needed with the RGB values when working with complex polygons.
+
+</P>
+
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030806
+</SMALL></I></P>
+
+</body>
+</html>

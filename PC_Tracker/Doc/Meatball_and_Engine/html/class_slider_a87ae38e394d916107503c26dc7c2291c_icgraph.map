@@ -1,0 +1,7 @@
+<map id="Slider::Draw" name="Slider::Draw">
+<area shape="rect" href="$class_options_menu.html#a6f95309648c53dcc8cb5e896ab8ba64e" title="OptionsMenu::Draw" alt="" coords="161,5,321,32"/>
+<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="372,5,516,32"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="567,5,689,32"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="739,5,824,32"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="872,5,931,32"/>
+</map>

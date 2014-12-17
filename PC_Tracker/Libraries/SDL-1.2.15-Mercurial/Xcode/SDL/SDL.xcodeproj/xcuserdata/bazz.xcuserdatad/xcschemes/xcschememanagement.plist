@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>Developer Extras Package.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>Framework.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+		<key>Generate Doxygen DocSet.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
+		<key>Main Library.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>Standard DMG.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>Static Library.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>0032354F1070931700C76517</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BECDF5FE0761BA81005FE872</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BECDF66D0761BA81005FE872</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BECDF6B40761BA81005FE872</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BECDF6BB0761BA81005FE872</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BECDF6C00761BA81005FE872</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>

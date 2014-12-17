@@ -1,0 +1,7 @@
+<map id="cTCPNet::Server_DisconnectClient" name="cTCPNet::Server_DisconnectClient">
+<area shape="rect" href="$classc_t_c_p_net.html#a2bad3284360fbba4e9bd25520c8ebe20" title="Reads the Message Returns 0 if an error occured or not connected to anyone." alt="" coords="277,5,475,32"/>
+<area shape="rect" href="$classc_t_c_p_net.html#a6a7a00f0ac2b3c780d7acd2216574ef9" title="Sends an Message Returns 0 if an error occured or not connected to anyone." alt="" coords="277,56,475,83"/>
+<area shape="rect" href="$classc_t_c_p_net.html#acca79819b5441b3515cd8443de0b15f8" title="Checks for messages and closes the connection if the remote user disconnected The messages are handle..." alt="" coords="565,5,709,32"/>
+<area shape="rect" href="$classc_t_c_p_net.html#a2d6f0e395adc0b659ba66f6ebad1b4ee" title="Sends the Message to all Connections you have uses Send_message if you&#39;re an Client else Server_SenGl..." alt="" coords="800,87,1037,113"/>
+<area shape="rect" href="$classc_t_c_p_net.html#a8dd08049de84a7f33fcf6b1241a7ec96" title="Sends an Message to ervery Client." alt="" coords="524,107,751,152"/>
+</map>

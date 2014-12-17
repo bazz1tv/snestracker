@@ -1,0 +1,113 @@
+<html>
+<!--------------------------------------------------->
+<!--            Docs/surface - SGE                 -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Surface</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Surface operations</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_UpdateRect">sge_UpdateRect</A>
+<LI><A HREF="#sge_Update_">sge_Update_ON/OFF</A>
+<LI><A HREF="#sge_Lock_ON">sge_Lock_ON/OFF</A>
+<LI><A HREF="#sge_CreateAlphaSurface">sge_CreateAlphaSurface</A>
+<LI><A HREF="#sge_ClearSurface">sge_ClearSurface</A>
+<LI><A HREF="#sge_copy_surface">sge_copy_surface</A>
+<LI><A HREF="#sge_BlitTransparent">sge_BlitTransparent</A>
+<LI><A HREF="#sge_Blit">sge_Blit</A>
+<LI><A HREF="#sge_FloodFill">sge_FloodFill</A>
+</UL>
+
+<BR><BR>
+<CENTER>
+<table border="0" cellpadding="4">
+	<td valign="top" bgcolor="#D3D3D3"><b>Tip when you initialize the video in SDL (SDL_SetVideoMode()):</b>
+		<br><BR>
+		If you request SDL_SWSURFACE, then you get a video buffer allocated in
+		system memory, and you must call SDL_UpdateRects() or SDL_Flip() to update
+		the screen.  SDL_Flip() calls SDL_UpdateRects(the-whole-screen) in this
+		case.  All allocated surfaces will be in system memory for blit speed.
+		<BR><BR>
+		If you request SDL_HWSURFACE, then if possible SDL will give you access
+		to the actual video memory being displayed to the screen.  If this is
+		successful, the returned surface will have the SDL_HWSURFACE flag set,
+		and you will be able to allocate other surfaces in video memory, which
+		presumably can be blitted very fast.  The disadvantage is that video
+		memory tends to be much slower than system memory, so you don't want
+		to write directly to it in most cases.  In this case, SDL_UpdateRects()
+		and SDL_Flip() are inexpensive noops, as you are writing to memory
+		automatically being displayed.
+		<BR><BR>
+		If you request SDL_HWSURFACE, you may also request double-buffering
+		by adding the SDL_DOUBLEBUF flag.  If possible, SDL will set up two
+		buffers in video memory for double-buffered page flipping.  If this
+		is successfully set up, then you will be writing to the non-visible
+		back-buffer, and when you call SDL_Flip(), SDL will queue up a page
+		flip for the next vertical retrace, so that the current video surface
+		will then be displayed, and the front and back video buffers will be
+		swapped.  The next display surface lock will block until the flip has
+		completed.
+		<BR><BR>
+		<CENTER><B>Sam Lantinga</B></CENTER>
+	</td>
+</table>
+</CENTER>
+
+<BR><BR>
+<B>void <a name="sge_UpdateRect">sge_UpdateRect</a>(SDL_Surface *screen, Sint16 x, Sint16 y, Uint16 w, Uint16 h)</B><BR>
+Makes sure the given rectangle is updated on the given screen. Unlike SDL_UpdateRect() this function does work even
+if some part of the given rectangle is outside the surface. Use SDL_UpdateRect(surface,0,0,0,0) to update the entire 
+surface. Does not respect clipping.<BR><BR>
+
+<B>void <a name="sge_Update_">sge_Update_ON</a>(void)<BR>
+void sge_Update_OFF(void)</B><BR> 
+Most of SGE:s functions will call sge_UpdateRect() to update the destination screen when finished. But if you don't 
+want the result to be visible directly after the call (to avoid tearing) you can turn off this automatic update feature
+with sge_Update_OFF(), turn it on again with sge_Update_ON(). Default is ON. You can get the current
+mode with 'Uint8 sge_getUpdate(void)', returns 1 if updating is on or else 0.<BR><BR>
+
+<B>void <a name="sge_Lock_ON">sge_Lock_ON</a>(void)<BR>
+void sge_Lock_OFF(void)</B><BR>
+Most of SGE:s functions will lock the surface if necessary, but with these functions you can 
+control that behavior. Keep in mind that it's unwise to turn of locking and keep update on for 
+surfaces that requires locking! Default is ON. You can get the current
+mode with 'Uint8 sge_getLock(void)', returns 1 if locking is on or else 0.<BR><BR>
+
+<B>SDL_Surface *<a name="sge_CreateAlphaSurface">sge_CreateAlphaSurface</a>(Uint32 flags, int width, int height)</B><BR>
+Creates a 32bit alpha surface (RGBA - 8/8/8/8). The alpha channel is blended on blitting.<BR><BR>
+
+<B>void <a name="sge_ClearSurface">sge_ClearSurface</a>(SDL_Surface *Surface, Uint32 color)<BR>
+void sge_ClearSurface(SDL_Surface *Surface, Uint8 R, Uint8 G, Uint8 B)</B><BR>
+Clear surface to color. Does lock and update the surface.<BR><BR>
+
+<B>SDL_Surface *<a name="sge_copy_surface">sge_copy_surface</a>(SDL_Surface *src)</B><BR>
+Copies a surface to a new.<BR><BR>
+
+<B>int <a name="sge_BlitTransparent">sge_BlitTransparent</a>(SDL_Surface *Src, SDL_Surface *Dest, Sint16 SrcX, Sint16 SrcY, Sint16 DestX, Sint16 DestY, Sint16 W, Sint16 H, Uint32 Clear, Uint8 Alpha)</B><BR>
+This performs a blit from the source surface to the destination surface. Clear is the color key (transparent pixel) in the source surface. Alpha sets the transparency of the source surface (0-255). Note that the original alpha and color key is lost on the source surface. Only use this function if the surface will be blitted once, in other cases set the alpha and color key and use sge_Blit(). Does respect clipping on destination surface. Returns 0 on success.<BR><BR>
+
+<B>int <a name="sge_Blit">sge_Blit</a>(SDL_Surface *Src, SDL_Surface *Dest, Sint16 SrcX, Sint16 SrcY, Sint16 DestX, Sint16 DestY, Sint16 W, Sint16 H)</B><BR>
+This performs a blit from the source surface to the destination surface, without touching color key or alpha. Does respect clipping on destination surface. Returns 0 on success.<BR><BR>
+
+<B>void <a name="sge_FloodFill">sge_FloodFill</a>(SDL_Surface *dst, Sint16 x, Sint16 y, Uint32 color)<BR>
+void sge_FloodFill(SDL_Surface *dst, Sint16 x, Sint16 y, Uint8 R, Uint8 G, Uint8 B)</B><BR>
+Flood fills (with the specified color) all areas that connects to and has the same 
+color as the point (x,y). Use with care! Does respect clipping but doesn't update the surface.<BR><BR>
+
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

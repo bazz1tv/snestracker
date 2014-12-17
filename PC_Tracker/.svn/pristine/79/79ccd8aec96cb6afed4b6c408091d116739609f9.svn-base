@@ -1,0 +1,13 @@
+Notes on Compiling SDL2_Mixer
+---------------------------------
+
+ON MSVC
+-------
+SMPEG doesn't work since it's still configured for SDL1.2
+
+However, it's still included in the project...
+
+All you have to do is go into the project properties and change the preprocessor definitions
+Take out MP3_MUSIC or whatever alike definition is in there.
+
+Then it should compile just fine

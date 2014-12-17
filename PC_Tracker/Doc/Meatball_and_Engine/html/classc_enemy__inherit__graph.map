@@ -1,0 +1,6 @@
+<map id="cEnemy" name="cEnemy">
+<area shape="rect" href="$classc_a_f373.html" title="cAF373" alt="" coords="33,316,105,343"/>
+<area shape="rect" href="$classc_m_vel_sprite.html" title="cMVelSprite" alt="" coords="16,161,123,188"/>
+<area shape="rect" href="$classc_velocity_sprite.html" title="cVelocitySprite" alt="" coords="5,84,133,111"/>
+<area shape="rect" href="$classc_basic_sprite.html" title="cBasicSprite" alt="" coords="15,7,124,33"/>
+</map>

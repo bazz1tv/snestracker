@@ -1,0 +1,4 @@
+<map id="cAudio::SetSoundVolume" name="cAudio::SetSoundVolume">
+<area shape="rect" href="$group___console___commands.html#gab0d3b7a7354c23795d8daff20727a5a8" title="change the volume of a sound (0&#45;128)" alt="" coords="259,5,347,32"/>
+<area shape="rect" href="$classc_console.html#a30b719f98df2be1670f6e4e1055844a5" title="Gets the current working path, Loads the Background image to the Image Manager, Creates the console f..." alt="" coords="395,5,557,32"/>
+</map>

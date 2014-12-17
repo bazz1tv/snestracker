@@ -1,0 +1,588 @@
+TMeatBall
+v5
+r1
+cCheck dependencies
+cProcessInfoPlistFile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/Info.plist /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/HelloSDL-Info.plist
+cProcessPCH++ /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-hhlozotrfnstvzdiqglvbbodljug/HelloSDL-Prefix.pch.pth HelloSDL/HelloSDL-Prefix.pch normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cProcessPCH /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-ettrfhyopbszkwfxwuobbgwtdflu/HelloSDL-Prefix.pch.pth HelloSDL/HelloSDL-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
+c00000000503F1B7700000000000000AA
+t1346313079
+s170
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework/Cocoa
+c0000000050FF3A3400000000000025C8
+t1358903860
+s9672
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../../../../../../../Library/Frameworks/MeatballEngine.framework/MeatballEngine
+c00000000510188BE000000000002790C
+t1359055038
+s162060
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../../../../../../../Library/Frameworks/SDL.framework/SDL
+c0000000051018FFB0000000000186098
+t1359056891
+s1597592
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../../../../../../../Library/Frameworks/SDL_image.framework/SDL_image
+c00000000510160D000000000000212F8
+t1359044816
+s135928
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../../../../../../../Library/Frameworks/SDL_mixer.framework/SDL_mixer
+c00000000510161A700000000000919FC
+t1359045031
+s596476
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../../../../../../../Library/Frameworks/SDL_net.framework/SDL_net
+c00000000510162E0000000000000F080
+t1359045344
+s61568
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../../../../../../../Library/Frameworks/SDL_ttf.framework/SDL_ttf
+c000000005101626000000000000155BC
+t1359045216
+s87484
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../../../../../../../Library/Frameworks/SGE.framework/SGE
+c0000000051016C5700000000000486AC
+t1359047767
+s296620
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../AF-373.cpp
+c00000000510177AA00000000000017AD
+t1359050666
+s6061
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../ButtonObject.cpp
+c0000000051009FA50000000000000000
+t1358995365
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Camera.cpp
+c00000000510178050000000000000642
+t1359050757
+s1602
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Collision.cpp
+c00000000510178050000000000002859
+t1359050757
+s10329
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Game.cpp
+c00000000510196710000000000000FC0
+t1359058545
+s4032
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Globals.cpp
+c0000000051019A5A0000000000000EF2
+t1359059546
+s3826
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../MainMenu.cpp
+c00000000510178040000000000001B77
+t1359050756
+s7031
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Menu.cpp
+c0000000051009FA50000000000000011
+t1358995365
+s17
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Misc.cpp
+c0000000051009FA600000000000009C2
+t1358995366
+s2498
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../OptionsMenu.cpp
+c0000000051009FA50000000000002EEE
+t1358995365
+s12014
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Slider.cpp
+c0000000051009FA500000000000007C7
+t1358995365
+s1991
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../TextObject.cpp
+c0000000051009FA50000000000000B07
+t1358995365
+s2823
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../bullet.cpp
+c00000000510177AE00000000000019EE
+t1359050670
+s6638
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../console.cpp
+c00000000510178050000000000003AC8
+t1359050757
+s15048
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../effects.cpp
+c000000005101780400000000000035EB
+t1359050756
+s13803
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../enemy.cpp
+c0000000051017BE30000000000000B8D
+t1359051747
+s2957
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../level.cpp
+c00000000510199DD0000000000002D01
+t1359059421
+s11521
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../leveleditor.cpp
+c0000000051017BEB00000000000032CA
+t1359051755
+s13002
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../main.cpp
+c00000000510189080000000000000742
+t1359055112
+s1858
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../player.cpp
+c0000000051009FA600000000000021A3
+t1358995366
+s8611
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../playlist.cpp
+c0000000051017E1E00000000000003E0
+t1359052318
+s992
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../preferences.cpp
+c00000000510178050000000000001F7A
+t1359050757
+s8058
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../sprite.cpp
+c00000000510178040000000000000889
+t1359050756
+s2185
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../weapon.cpp
+c000000005101780400000000000009A2
+t1359050756
+s2466
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/AF-373.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/ButtonObject.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Camera.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Collision.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Game.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Globals.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/HelloSDLAppDelegate.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/MainMenu.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/MeatBall.LinkFileList
+c000000005101A0E60000000000000FFD
+t1359061222
+s4093
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Menu.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Misc.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/OptionsMenu.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/SDLMain.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Slider.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/TextObject.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/bullet.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/console.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/effects.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/enemy.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/level.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/leveleditor.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/main-14994AED322DB87.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/main-DD1E774F43BB99A2.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/player.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/playlist.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/preferences.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/sprite.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/weapon.o
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-ettrfhyopbszkwfxwuobbgwtdflu/HelloSDL-Prefix.pch.pth
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-hhlozotrfnstvzdiqglvbbodljug/HelloSDL-Prefix.pch.pth
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/Info.plist
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/MacOS/MeatBall
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/PkgInfo
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/Resources/en.lproj/Credits.rtf
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/Resources/en.lproj/InfoPlist.strings
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/Resources/en.lproj/MainMenu.nib
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/HelloSDL/HelloSDL-Prefix.pch
+c00000000000000000000000000000000
+t2
+s0
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/HelloSDL-Info.plist
+c0000000051019FA6000000000000043E
+t1359060902
+s1086
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/HelloSDLAppDelegate.m
+c000000005100916C0000000000000175
+t1358991724
+s373
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/SDLMain.m
+c00000000510189B60000000000002C48
+t1359055286
+s11336
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/en.lproj/Credits.rtf
+c000000005100916C00000000000001B4
+t1358991724
+s436
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/en.lproj/InfoPlist.strings
+c000000005100916C000000000000002D
+t1358991724
+s45
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/en.lproj/MainMenu.xib
+c000000005100916C000000000002BB76
+t1358991724
+s179062
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/main.cpp
+c0000000051018F01000000000000087F
+t1359056641
+s2175
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../AF-373.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../ButtonObject.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Camera.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Collision.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Game.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Globals.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../MainMenu.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Menu.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Misc.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../OptionsMenu.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Slider.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../TextObject.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../bullet.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../console.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../effects.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../enemy.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../level.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../leveleditor.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../main.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../player.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../playlist.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../preferences.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../sprite.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../weapon.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/HelloSDLAppDelegate.m
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/SDLMain.m
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/main.cpp
+r0
+
+CCheck dependencies
+r0
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependencies9b73d465d8b1b641^c7825e66d8b1b641^---0#1#0#--18"Check dependencies36"6CD857BC-A432-441F-8845-2B4D046BD10B-
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/AF-373.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../AF-373.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/ButtonObject.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../ButtonObject.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Camera.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Camera.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Collision.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Collision.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Game.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Game.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Globals.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Globals.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/HelloSDLAppDelegate.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/HelloSDLAppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/MainMenu.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../MainMenu.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Menu.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Menu.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Misc.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Misc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/OptionsMenu.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../OptionsMenu.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/SDLMain.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/SDLMain.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/Slider.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../Slider.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/TextObject.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../TextObject.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/bullet.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../bullet.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/console.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../console.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/effects.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../effects.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/enemy.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../enemy.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/level.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../level.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/leveleditor.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../leveleditor.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/main-14994AED322DB87.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/main.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/main-DD1E774F43BB99A2.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../main.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/player.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../player.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/playlist.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../playlist.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/preferences.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../preferences.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/sprite.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../sprite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileC Build/Intermediates/MeatBall.build/Debug/MeatBall.build/Objects-normal/x86_64/weapon.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/../weapon.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CCompileXIB /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/en.lproj/MainMenu.xib
+r0
+
+CCopyStringsFile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/Resources/en.lproj/InfoPlist.strings MacSDLFiles/en.lproj/InfoPlist.strings
+r0
+
+CCpResource MacSDLFiles/en.lproj/Credits.rtf Build/Products/Debug/MeatBall.app/Contents/Resources/en.lproj/Credits.rtf
+r0
+
+CLd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/MacOS/MeatBall normal x86_64
+r0
+
+CProcessInfoPlistFile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/Info.plist /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/HelloSDL-Info.plist
+s380754022.387121
+e380754022.391800
+r1
+xProcessInfoPlistFile
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/Info.plist
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/HelloSDL-Info.plist
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection101"Process /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/HelloSDL-Info.plistb62c6366d8b1b641^874d6466d8b1b641^---0#0#0#-19%DVTDocumentLocation2@109"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/HelloSDL-Info.plist0000000000000000^581"ProcessInfoPlistFile Build/Products/Debug/MeatBall.app/Contents/Info.plist MacSDLFiles/HelloSDL-Info.plist    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode    builtin-infoPlistUtility /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/MacSDLFiles/HelloSDL-Info.plist -genpkginfo /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/PkgInfo -expandbuildsettings -platform macosx -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app/Contents/Info.plist36"171FB244-FD3C-482C-AB83-86E7F46666FD-
+
+CProcessPCH /Users/bazz/Library/Developer/Xcode/DerivedData/MeatBall-dswrcamockrnqhbswmemmfealohg/Index/PrecompiledHeaders/HelloSDL-Prefix-bkbuygeadqfduqceqmalvvfejpww_ast/HelloSDL-Prefix.pch.pth HelloSDL/HelloSDL-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.astbuilder
+r0
+
+CProcessPCH /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-ettrfhyopbszkwfxwuobbgwtdflu/HelloSDL-Prefix.pch.pth HelloSDL/HelloSDL-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler
+s380754022.416400
+e380754022.457112
+r0
+xProcessPCH
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-ettrfhyopbszkwfxwuobbgwtdflu/HelloSDL-Prefix.pch.pth
+xHelloSDL/HelloSDL-Prefix.pch
+xnormal
+xx86_64
+xobjective-c
+xcom.apple.compilers.llvm.clang.1_0.compiler
+oclang: error: no such file or directory: '/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/HelloSDL/HelloSDL-Prefix.pch'
+oclang: error: no input files
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection39"Precompile HelloSDL/HelloSDL-Prefix.pchd8bc6a66d8b1b641^cd3c7566d8b1b641^-288"clang: error: no such file or directory: '/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/HelloSDL/HelloSDL-Prefix.pch'clang: error: no input filesCommand /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 11(21%IDEActivityLogMessage2@124"Command /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang failed with exit code 1-380754022#18446744073709551615#0#-2#--20"Clang LLVM 1.0 Error--0#0#0#-19%DVTDocumentLocation3@106"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/HelloSDL/HelloSDL-Prefix.pch000000000080d041^3308"ProcessPCH Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-ettrfhyopbszkwfxwuobbgwtdflu/HelloSDL-Prefix.pch.pth HelloSDL/HelloSDL-Prefix.pch normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c-header -arch x86_64 -fmessage-length=0 -std=gnu99 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-implicit-atomic-properties -Wno-receiver-is-weak -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wno-undeclared-selector -Wno-deprecated-implementations -DDEBUG -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wprotocol -Wdeprecated-declarations -mmacosx-version-min=10.8 -g -Wno-sign-conversion "-DIBOutlet=__attribute__((iboutlet))" "-DIBOutletCollection(ClassName)=__attribute__((iboutletcollection(ClassName)))" "-DIBAction=void)__attribute__((ibaction)" -iquote /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/MeatBall-generated-files.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/MeatBall-own-target-headers.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/MeatBall-all-target-headers.hmap -iquote /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/MeatBall-project-headers.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/include -I/opt/local/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/include -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug -F/Library/Frameworks --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-ettrfhyopbszkwfxwuobbgwtdflu/HelloSDL-Prefix.pch.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/HelloSDL/HelloSDL-Prefix.pch -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-ettrfhyopbszkwfxwuobbgwtdflu/HelloSDL-Prefix.pch.pth -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-ettrfhyopbszkwfxwuobbgwtdflu/HelloSDL-Prefix.pch.d36"BF59A454-F8C7-4BFF-96A2-2BF4249E9AC6-
+
+CProcessPCH++ /Users/bazz/Library/Developer/Xcode/DerivedData/MeatBall-dswrcamockrnqhbswmemmfealohg/Index/PrecompiledHeaders/HelloSDL-Prefix-amltukwvglkwurdsvfujtdalgaex_ast/HelloSDL-Prefix.pch.pth HelloSDL/HelloSDL-Prefix.pch normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.astbuilder
+r0
+
+CProcessPCH++ /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-hhlozotrfnstvzdiqglvbbodljug/HelloSDL-Prefix.pch.pth HelloSDL/HelloSDL-Prefix.pch normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380754022.408711
+e380754022.561239
+r0
+xProcessPCH++
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-hhlozotrfnstvzdiqglvbbodljug/HelloSDL-Prefix.pch.pth
+xHelloSDL/HelloSDL-Prefix.pch
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+oclang: error: no such file or directory: '/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/HelloSDL/HelloSDL-Prefix.pch'
+oclang: error: no input files
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection39"Precompile HelloSDL/HelloSDL-Prefix.pch6a886a66d8b1b641^f6ed9866d8b1b641^-163"clang: error: no such file or directory: '/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/HelloSDL/HelloSDL-Prefix.pch'clang: error: no input files-0#0#0#-19%DVTDocumentLocation2@106"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/HelloSDL/HelloSDL-Prefix.pch000000000080d041^3102"ProcessPCH++ Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-hhlozotrfnstvzdiqglvbbodljug/HelloSDL-Prefix.pch.pth HelloSDL/HelloSDL-Prefix.pch normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++-header -arch x86_64 -fmessage-length=0 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -iquote /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/MeatBall-generated-files.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/MeatBall-own-target-headers.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/MeatBall-all-target-headers.hmap -iquote /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/MeatBall-project-headers.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/include -I/opt/local/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/include -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/MeatBall.build/Debug/MeatBall.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug -F/Library/Frameworks --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-hhlozotrfnstvzdiqglvbbodljug/HelloSDL-Prefix.pch.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/HelloSDL/HelloSDL-Prefix.pch -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-hhlozotrfnstvzdiqglvbbodljug/HelloSDL-Prefix.pch.pth -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Intermediates/PrecompiledHeaders/HelloSDL-Prefix-hhlozotrfnstvzdiqglvbbodljug/HelloSDL-Prefix.pch.d36"AAEFC1AB-0F6B-47AC-AA71-B5C51FBAB2A7-
+
+CTouch /Users/bazz/Projects/newmeatball/meatball-code/Meatball/XCode/Build/Products/Debug/MeatBall.app
+r0
+

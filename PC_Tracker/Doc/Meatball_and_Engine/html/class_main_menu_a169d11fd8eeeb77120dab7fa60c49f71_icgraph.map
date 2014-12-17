@@ -1,0 +1,6 @@
+<map id="MainMenu::UpdateHardware" name="MainMenu::UpdateHardware">
+<area shape="rect" href="$class_main_menu.html#a23f9e84cda740d24402ee1695024e656" title="MainMenu::Update" alt="" coords="280,5,437,32"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="487,5,609,32"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="659,5,744,32"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="792,5,851,32"/>
+</map>

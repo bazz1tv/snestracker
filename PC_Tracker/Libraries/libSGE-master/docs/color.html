@@ -1,0 +1,56 @@
+<html>
+<!--------------------------------------------------->
+<!--              Docs/color - SGE                 -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Color</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Color manipulation</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_MapAlpha">sge_MapAlpha</A>
+<LI><A HREF="#sge_FillPaletteEntry">sge_FillPaletteEntry</A>
+<LI><A HREF="#sge_GetRGB">sge_GetRGB</A>
+<LI><A HREF="#sge_Fader">sge_Fader</A>
+<LI><A HREF="#sge_AlphaFader">sge_AlphaFader</A>
+<LI><A HREF="#sge_SetupRainbowPalette">sge_SetupRainbowPalette</A>
+<LI><A HREF="#sge_SetupBWPalette">sge_SetupBWPalette</A>
+</UL>
+
+<B>Uint32 <a name="sge_MapAlpha">sge_MapAlpha</a>(Uint8 R, Uint8 G, Uint8 B, Uint8 A)</B><BR>
+Use this function to map Uint32 color values (RGBA) for *32bit* alpha surfaces. The color value can then be used with any of SGEs functions.<BR><BR>
+
+<B>SDL_Color <a name="sge_FillPaletteEntry">sge_FillPaletteEntry</a>(Uint8 R, Uint8 G, Uint8 B)</B><BR>
+Fills a palette entry (SDL_Color) with R, G, B components.<BR><BR>
+
+<B>SDL_Color <a name="sge_GetRGB">sge_GetRGB</a>(SDL_Surface *Surface, Uint32 Color)</B><BR>
+Get the RGB of a color value.<BR><BR>
+
+<B>void <a name="sge_Fader">sge_Fader</a>(SDL_Surface *Surface, Uint8 sR,Uint8 sG,Uint8 sB, Uint8 dR,Uint8 dG,Uint8 dB,Uint32 *ctab,int start, int stop)</B><BR>
+Fades from (sR,sG,sB) to (dR,dG,dB), puts result (32-bit pixel format) in ctab[start] to ctab[stop].<BR><BR>
+
+<B>void <a name="sge_AlphaFader">sge_AlphaFader</a>(Uint8 sR,Uint8 sG,Uint8 sB,Uint8 sA, Uint8 dR,Uint8 dG,Uint8 dB,Uint8 dA, Uint32 *ctab,int start, int stop)</B><BR>
+Fades from (sR,sG,sB,sA) to (dR,dG,dB,dA), puts result (32-bit alpha pixel format) in ctab[start] to ctab[stop].<BR><BR>
+
+<B>void <a name="sge_SetupRainbowPalette">sge_SetupRainbowPalette</a>(SDL_Surface *Surface,Uint32 *ctab,int intensity, int start, int stop)</B><BR>
+Copies a nice rainbow palette to the color table (ctab[start] to ctab[stop]). You must also set the intensity of the palette (0-bright 255-dark)<BR><BR>
+
+<B>void <a name="sge_SetupBWPalette">sge_SetupBWPalette</a>(SDL_Surface *Surface,Uint32 *ctab,int start, int stop)</B><BR>
+Copies a B&W palette to the color table (ctab[start] to ctab[stop]).<BR><BR>
+
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

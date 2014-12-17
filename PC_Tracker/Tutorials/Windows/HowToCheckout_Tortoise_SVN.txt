@@ -1,0 +1,19 @@
+How to Checkout the Subversion Repo with TortoiseSVN |
+-----------------------------------------------------
+
+1) Make a Sourceforge Account
+2) Goto Meatball project code Page https://sourceforge.net/p/meatball/code
+3) Make sure it says Read/Write Access (there are buttons on the page for r/w and read-only access)
+4) Copy the command
+
+Create a meatball folder somewhere important on your local drive
+Go into the folder and right-click somewhere in the folder window
+
+
+Click TortoiseSVN->SVN Checkout
+
+Paste the command or you can use this template command : svn+ssh://[username]@svn.code.sf.net/p/meatball/code/trunk
+
+Make sure you change [username] to your sourceforge username
+
+Tah Dah!!

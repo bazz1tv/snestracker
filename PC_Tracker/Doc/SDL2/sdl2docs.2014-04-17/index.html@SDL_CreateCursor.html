@@ -1,0 +1,629 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - SDL_CreateCursor</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@SDL_CreateCursor.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@SDL_CreateCursor.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style=
+"&amp;quot; color: #FF0000; &amp;quot; ; text-align: center">
+<p class="line862">DRAFT</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-4"></span><span class="anchor" id=
+"line-5"></span>
+<p class="line867"></p>
+<h1 id="SDL_CreateCursor-1">SDL_CreateCursor</h1>
+<span class="anchor" id="line-6"></span>
+<p class="line874">Use this function to create a cursor using the
+specified bitmap data and mask (in MSB format). <span class=
+"anchor" id="line-7"></span><span class="anchor" id=
+"line-8"></span></p>
+<p class="line862">Note that, since SDL 2.0.0, <a href="index.html@SDL_CreateSystemCursor.html">SDL_CreateSystemCursor</a>() is
+available, which provides twelve readily available system cursors
+to pick from. <span class="anchor" id="line-9"></span><span class=
+"anchor" id="line-10"></span></p>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@SDL_CreateCursor.html#SDL_CreateCursor-1">SDL_CreateCursor</a>
+<ol>
+<li><a href="index.html@SDL_CreateCursor.html#Syntax">Syntax</a></li>
+<li><a href="index.html@SDL_CreateCursor.html#Function_Parameters">Function Parameters</a></li>
+<li><a href="index.html@SDL_CreateCursor.html#Return_Value">Return Value</a></li>
+<li><a href="index.html@SDL_CreateCursor.html#Code_Examples">Code Examples</a></li>
+<li><a href="index.html@SDL_CreateCursor.html#Remarks">Remarks</a></li>
+<li><a href="index.html@SDL_CreateCursor.html#Related_Functions">Related Functions</a></li>
+</ol>
+</li>
+</ol>
+</div>
+<span class="anchor" id="line-11"></span><span class="anchor" id=
+"line-12"></span>
+<p class="line867"></p>
+<h2 id="Syntax">Syntax</h2>
+<span class="anchor" id="line-13"></span>
+<p class="line867"><span class="anchor" id=
+"line-14"></span><span class="anchor" id=
+"line-15"></span><span class="anchor" id=
+"line-16"></span><span class="anchor" id=
+"line-17"></span><span class="anchor" id=
+"line-18"></span><span class="anchor" id=
+"line-19"></span><span class="anchor" id="line-20"></span></p>
+<div class="codearea" dir="ltr" lang="en"> 
+<pre dir="ltr" id="CA-pygments_362" lang="en">
+<span class="line"><span class="n">SDL_Cursor</span><span class=
+"o">*</span> <span class="n">SDL_CreateCursor</span><span class=
+"p">(</span><span class="k">const</span> <span class=
+"n">Uint8</span><span class="o">*</span> <span class=
+"n">data</span><span class="p">,</span>
+</span><span class="line">                             <span class=
+"k">const</span> <span class="n">Uint8</span><span class=
+"o">*</span> <span class="n">mask</span><span class="p">,</span>
+</span><span class="line">                             <span class=
+"kt">int</span>          <span class="n">w</span><span class=
+"p">,</span>
+</span><span class="line">                             <span class=
+"kt">int</span>          <span class="n">h</span><span class=
+"p">,</span>
+</span><span class="line">                             <span class=
+"kt">int</span>          <span class="n">hot_x</span><span class=
+"p">,</span>
+</span><span class="line">                             <span class=
+"kt">int</span>          <span class="n">hot_y</span><span class=
+"p">)</span>
+</span>
+</pre></div>
+<span class="anchor" id="line-21"></span><span class="anchor" id=
+"line-22"></span>
+<p class="line867"></p>
+<h2 id="Function_Parameters">Function Parameters</h2>
+<span class="anchor" id="line-23"></span>
+<div>
+<table>
+<tbody>
+<tr>
+<td>
+<p class="line891"><strong>data</strong></p>
+</td>
+<td>
+<p class="line862">the color value for each pixel of the cursor;
+see <a href="index.html@SDL_CreateCursor.html#Remarks">Remarks</a> for details</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-24"></span>
+<p class="line891"><strong>mask</strong></p>
+</td>
+<td>
+<p class="line862">the mask value for each pixel of the cursor; see
+<a href="index.html@SDL_CreateCursor.html#Remarks">Remarks</a> for details</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-25"></span>
+<p class="line891"><strong>w</strong></p>
+</td>
+<td>
+<p class="line862">the width of the cursor; see <a href="index.html@SDL_CreateCursor.html#Remarks">Remarks</a> for details</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-26"></span>
+<p class="line891"><strong>h</strong></p>
+</td>
+<td>
+<p class="line862">the height of the cursor <em>(same restrictions
+as w?)</em></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-27"></span>
+<p class="line891"><strong>hot_x</strong></p>
+</td>
+<td>
+<p class="line862">the X-axis location of the upper left corner of
+the cursor relative to the actual mouse position???</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-28"></span>
+<p class="line891"><strong>hot_y</strong></p>
+</td>
+<td>
+<p class="line862">the Y-axis location of the upper left corner of
+the cursor relative to the actual mouse position???</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-29"></span><span class="anchor" id=
+"line-30"></span>
+<p class="line867"></p>
+<h2 id="Return_Value">Return Value</h2>
+<span class="anchor" id="line-31"></span>
+<p class="line862">Returns a new cursor with the specified
+parameters on success or NULL on failure; call <a href="index.html@SDL_GetError.html">SDL_GetError</a>() for more information.
+<span class="anchor" id="line-32"></span><span class="anchor" id=
+"line-33"></span></p>
+<p class="line867"></p>
+<h2 id="Code_Examples">Code Examples</h2>
+<span class="anchor" id="line-34"></span><span class="anchor" id=
+"line-35"></span>
+<p class="line867"><span class="anchor" id=
+"line-36"></span><span class="anchor" id=
+"line-37"></span><span class="anchor" id=
+"line-38"></span><span class="anchor" id=
+"line-39"></span><span class="anchor" id=
+"line-40"></span><span class="anchor" id=
+"line-41"></span><span class="anchor" id=
+"line-42"></span><span class="anchor" id=
+"line-43"></span><span class="anchor" id=
+"line-44"></span><span class="anchor" id=
+"line-45"></span><span class="anchor" id=
+"line-46"></span><span class="anchor" id=
+"line-47"></span><span class="anchor" id=
+"line-48"></span><span class="anchor" id=
+"line-49"></span><span class="anchor" id=
+"line-50"></span><span class="anchor" id=
+"line-51"></span><span class="anchor" id=
+"line-52"></span><span class="anchor" id=
+"line-53"></span><span class="anchor" id=
+"line-54"></span><span class="anchor" id=
+"line-55"></span><span class="anchor" id=
+"line-56"></span><span class="anchor" id=
+"line-57"></span><span class="anchor" id=
+"line-58"></span><span class="anchor" id=
+"line-59"></span><span class="anchor" id=
+"line-60"></span><span class="anchor" id=
+"line-61"></span><span class="anchor" id=
+"line-62"></span><span class="anchor" id=
+"line-63"></span><span class="anchor" id=
+"line-64"></span><span class="anchor" id=
+"line-65"></span><span class="anchor" id=
+"line-66"></span><span class="anchor" id=
+"line-67"></span><span class="anchor" id=
+"line-68"></span><span class="anchor" id=
+"line-69"></span><span class="anchor" id=
+"line-70"></span><span class="anchor" id=
+"line-71"></span><span class="anchor" id=
+"line-72"></span><span class="anchor" id=
+"line-73"></span><span class="anchor" id=
+"line-74"></span><span class="anchor" id=
+"line-75"></span><span class="anchor" id=
+"line-76"></span><span class="anchor" id=
+"line-77"></span><span class="anchor" id=
+"line-78"></span><span class="anchor" id=
+"line-79"></span><span class="anchor" id=
+"line-80"></span><span class="anchor" id=
+"line-81"></span><span class="anchor" id=
+"line-82"></span><span class="anchor" id=
+"line-83"></span><span class="anchor" id=
+"line-84"></span><span class="anchor" id=
+"line-85"></span><span class="anchor" id=
+"line-86"></span><span class="anchor" id=
+"line-87"></span><span class="anchor" id=
+"line-88"></span><span class="anchor" id=
+"line-89"></span><span class="anchor" id=
+"line-90"></span><span class="anchor" id=
+"line-91"></span><span class="anchor" id=
+"line-92"></span><span class="anchor" id=
+"line-93"></span><span class="anchor" id=
+"line-94"></span><span class="anchor" id=
+"line-95"></span><span class="anchor" id=
+"line-96"></span><span class="anchor" id=
+"line-97"></span><span class="anchor" id=
+"line-98"></span><span class="anchor" id=
+"line-99"></span><span class="anchor" id=
+"line-100"></span><span class="anchor" id=
+"line-101"></span><span class="anchor" id=
+"line-102"></span><span class="anchor" id=
+"line-103"></span><span class="anchor" id=
+"line-104"></span><span class="anchor" id=
+"line-105"></span><span class="anchor" id=
+"line-106"></span><span class="anchor" id=
+"line-107"></span><span class="anchor" id=
+"line-108"></span><span class="anchor" id=
+"line-109"></span><span class="anchor" id=
+"line-110"></span><span class="anchor" id=
+"line-111"></span><span class="anchor" id=
+"line-112"></span><span class="anchor" id=
+"line-113"></span><span class="anchor" id=
+"line-114"></span><span class="anchor" id=
+"line-115"></span><span class="anchor" id=
+"line-116"></span><span class="anchor" id="line-117"></span></p>
+<div class="codearea" dir="ltr" lang="en">
+<pre dir="ltr" id="CA-pygments_363" lang="en">
+<span class="line"><span class=
+"cm">/* Stolen from the mailing list */</span>
+</span><span class="line"><span class=
+"cm">/* Creates a new mouse cursor from an XPM */</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="cm">/* XPM */</span>
+</span><span class="line"><span class=
+"k">static</span> <span class="k">const</span> <span class=
+"kt">char</span> <span class="o">*</span><span class=
+"n">arrow</span><span class="p">[]</span> <span class=
+"o">=</span> <span class="p">{</span>
+</span><span class="line">  <span class=
+"cm">/* width height num_colors chars_per_pixel */</span>
+</span><span class="line">  <span class=
+"s">"    32    32        3            1"</span><span class=
+"p">,</span>
+</span><span class="line">  <span class="cm">/* colors */</span>
+</span><span class="line">  <span class=
+"s">"X c #000000"</span><span class="p">,</span>
+</span><span class="line">  <span class=
+"s">". c #ffffff"</span><span class="p">,</span>
+</span><span class="line">  <span class=
+"s">"  c None"</span><span class="p">,</span>
+</span><span class="line">  <span class="cm">/* pixels */</span>
+</span><span class="line">  <span class=
+"s">"X                               "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"XX                              "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X.X                             "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X..X                            "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X...X                           "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X....X                          "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X.....X                         "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X......X                        "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X.......X                       "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X........X                      "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X.....XXXXX                     "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X..X..X                         "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X.X X..X                        "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"XX  X..X                        "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"X    X..X                       "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"     X..X                       "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"      X..X                      "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"      X..X                      "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"       XX                       "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class=
+"s">"                                "</span><span class=
+"p">,</span>
+</span><span class="line">  <span class="s">"0,0"</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line">
+</span><span class="line"><span class=
+"k">static</span> <span class="n">SDL_Cursor</span> <span class=
+"o">*</span><span class="nf">init_system_cursor</span><span class=
+"p">(</span><span class="k">const</span> <span class=
+"kt">char</span> <span class="o">*</span><span class=
+"n">image</span><span class="p">[])</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class=
+"kt">int</span> <span class="n">i</span><span class=
+"p">,</span> <span class="n">row</span><span class=
+"p">,</span> <span class="n">col</span><span class="p">;</span>
+</span><span class="line">  <span class=
+"n">Uint8</span> <span class="n">data</span><span class=
+"p">[</span><span class="mi">4</span><span class=
+"o">*</span><span class="mi">32</span><span class="p">];</span>
+</span><span class="line">  <span class=
+"n">Uint8</span> <span class="n">mask</span><span class=
+"p">[</span><span class="mi">4</span><span class=
+"o">*</span><span class="mi">32</span><span class="p">];</span>
+</span><span class="line">  <span class=
+"kt">int</span> <span class="n">hot_x</span><span class=
+"p">,</span> <span class="n">hot_y</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">i</span> <span class=
+"o">=</span> <span class="o">-</span><span class=
+"mi">1</span><span class="p">;</span>
+</span><span class="line">  <span class="k">for</span> <span class=
+"p">(</span><span class="n">row</span><span class=
+"o">=</span><span class="mi">0</span><span class=
+"p">;</span> <span class="n">row</span><span class=
+"o">&lt;</span><span class="mi">32</span><span class=
+"p">;</span> <span class="o">++</span><span class=
+"n">row</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class=
+"k">for</span> <span class="p">(</span><span class=
+"n">col</span><span class="o">=</span><span class=
+"mi">0</span><span class="p">;</span> <span class=
+"n">col</span><span class="o">&lt;</span><span class=
+"mi">32</span><span class="p">;</span> <span class=
+"o">++</span><span class="n">col</span><span class=
+"p">)</span> <span class="p">{</span>
+</span><span class="line">      <span class=
+"k">if</span> <span class="p">(</span><span class=
+"n">col</span> <span class="o">%</span> <span class=
+"mi">8</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class=
+"n">data</span><span class="p">[</span><span class=
+"n">i</span><span class="p">]</span> <span class=
+"o">&lt;&lt;=</span> <span class="mi">1</span><span class=
+"p">;</span>
+</span><span class="line">        <span class=
+"n">mask</span><span class="p">[</span><span class=
+"n">i</span><span class="p">]</span> <span class=
+"o">&lt;&lt;=</span> <span class="mi">1</span><span class=
+"p">;</span>
+</span><span class="line">      <span class=
+"p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class="line">        <span class=
+"o">++</span><span class="n">i</span><span class="p">;</span>
+</span><span class="line">        <span class=
+"n">data</span><span class="p">[</span><span class=
+"n">i</span><span class="p">]</span> <span class=
+"o">=</span> <span class="n">mask</span><span class=
+"p">[</span><span class="n">i</span><span class=
+"p">]</span> <span class="o">=</span> <span class=
+"mi">0</span><span class="p">;</span>
+</span><span class="line">      <span class="p">}</span>
+</span><span class="line">      <span class=
+"k">switch</span> <span class="p">(</span><span class=
+"n">image</span><span class="p">[</span><span class=
+"mi">4</span><span class="o">+</span><span class=
+"n">row</span><span class="p">][</span><span class=
+"n">col</span><span class="p">])</span> <span class="p">{</span>
+</span><span class="line">        <span class=
+"k">case</span> <span class="sc">'X'</span>:
+</span><span class="line">          <span class=
+"n">data</span><span class="p">[</span><span class=
+"n">i</span><span class="p">]</span> <span class=
+"o">|=</span> <span class="mh">0x01</span><span class="p">;</span>
+</span><span class="line">          <span class=
+"n">mask</span><span class="p">[</span><span class=
+"n">i</span><span class="p">]</span> <span class=
+"o">|=</span> <span class="mh">0x01</span><span class="p">;</span>
+</span><span class="line">          <span class=
+"k">break</span><span class="p">;</span>
+</span><span class="line">        <span class=
+"k">case</span> <span class="sc">'.'</span>:
+</span><span class="line">          <span class=
+"n">mask</span><span class="p">[</span><span class=
+"n">i</span><span class="p">]</span> <span class=
+"o">|=</span> <span class="mh">0x01</span><span class="p">;</span>
+</span><span class="line">          <span class=
+"k">break</span><span class="p">;</span>
+</span><span class="line">        <span class=
+"k">case</span> <span class="sc">' '</span>:
+</span><span class="line">          <span class=
+"k">break</span><span class="p">;</span>
+</span><span class="line">      <span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class=
+"n">sscanf</span><span class="p">(</span><span class=
+"n">image</span><span class="p">[</span><span class=
+"mi">4</span><span class="o">+</span><span class=
+"n">row</span><span class="p">],</span> <span class=
+"s">"%d,%d"</span><span class="p">,</span> <span class=
+"o">&amp;</span><span class="n">hot_x</span><span class=
+"p">,</span> <span class="o">&amp;</span><span class=
+"n">hot_y</span><span class="p">);</span>
+</span><span class="line">  <span class=
+"k">return</span> <span class=
+"n">SDL_CreateCursor</span><span class="p">(</span><span class=
+"n">data</span><span class="p">,</span> <span class=
+"n">mask</span><span class="p">,</span> <span class=
+"mi">32</span><span class="p">,</span> <span class=
+"mi">32</span><span class="p">,</span> <span class=
+"n">hot_x</span><span class="p">,</span> <span class=
+"n">hot_y</span><span class="p">);</span>
+</span><span class="line"><span class="p">}</span>
+</span>
+</pre></div>
+<span class="anchor" id="line-118"></span><span class="anchor" id=
+"line-119"></span>
+<p class="line867"></p>
+<h2 id="Remarks">Remarks</h2>
+<span class="anchor" id="line-120"></span>
+<p class="line862">The cursor width (<strong>w</strong>) must be a
+multiple of 8 bits. <span class="anchor" id=
+"line-121"></span><span class="anchor" id="line-122"></span></p>
+<p class="line874">The cursor is created in black and white
+according to the following: <span class="anchor" id=
+"line-123"></span></p>
+<div>
+<table>
+<tbody>
+<tr>
+<td style="text-align: center">
+<p class="line862"><strong>data</strong></p>
+</td>
+<td style="text-align: center">
+<p class="line862"><strong>mask</strong></p>
+</td>
+<td style="text-align: center">
+<p class="line862">Resulting Pixel on Screen</p>
+</td>
+</tr>
+<tr>
+<td style="text-align: center"><span class="anchor" id=
+"line-124"></span>
+<p class="line862">0</p>
+</td>
+<td style="text-align: center">
+<p class="line862">1</p>
+</td>
+<td style="text-align: center">
+<p class="line862">White</p>
+</td>
+</tr>
+<tr>
+<td style="text-align: center"><span class="anchor" id=
+"line-125"></span>
+<p class="line862">1</p>
+</td>
+<td style="text-align: center">
+<p class="line862">1</p>
+</td>
+<td style="text-align: center">
+<p class="line862">Black</p>
+</td>
+</tr>
+<tr>
+<td style="text-align: center"><span class="anchor" id=
+"line-126"></span>
+<p class="line862">0</p>
+</td>
+<td style="text-align: center">
+<p class="line862">0</p>
+</td>
+<td style="text-align: center">
+<p class="line862">Transparent</p>
+</td>
+</tr>
+<tr>
+<td style="text-align: center"><span class="anchor" id=
+"line-127"></span>
+<p class="line862">1</p>
+</td>
+<td style="text-align: center">
+<p class="line862">0</p>
+</td>
+<td style="text-align: center">
+<p class="line862">Inverted color if possible, black if not</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-128"></span><span class="anchor" id=
+"line-129"></span>
+<p class="line862">Cursors created with this function must be freed
+with <a href="index.html@SDL_FreeCursor.html">SDL_FreeCursor</a>(). <span class=
+"anchor" id="line-130"></span><span class="anchor" id=
+"line-131"></span></p>
+<p class="line862">If you want to have color cursor, then this
+function is not for you; instead, you must hide the normal system
+cursor (<a href="index.html@SDL_ShowCursor.html">SDL_ShowCursor</a>) and in your
+main loop, when you draw graphics, also draw a <a href="index.html@SDL_Surface.html">SDL_Surface</a> at the location of the mouse cursor.
+<span class="anchor" id="line-132"></span><span class="anchor" id=
+"line-133"></span></p>
+<p class="line867"><span style="color:green;"><span class="anchor"
+id="line-1-1"></span>Should the above comment about color cursors
+be rephrased to be less conversational? Example below:</span>
+<span class="anchor" id="line-134"></span><span class="anchor" id=
+"line-135"></span></p>
+<p class="line867"><sup>To create a color cursor hide the normal
+system cursor (use [[SDL_ShowCursor]] to find it???) and, along
+with your other graphics, draw an [[SDL_Surface]] at the location
+of the mouse cursor in your main loop.</sup> <span class="anchor"
+id="line-136"></span><span class="anchor" id="line-137"></span></p>
+<p class="line867"></p>
+<h2 id="Related_Functions">Related Functions</h2>
+<span class="anchor" id="line-138"></span>
+<ul>
+<li style="list-style-type:none">
+<p class="line891"><a href="index.html@SDL_FreeCursor.html">SDL_FreeCursor</a>
+<span class="anchor" id="line-139"></span></p>
+</li>
+<li style="list-style-type:none">
+<p class="line891"><a href="index.html@SDL_SetCursor.html">SDL_SetCursor</a>
+<span class="anchor" id="line-140"></span></p>
+</li>
+<li style="list-style-type:none">
+<p class="line891"><a href="index.html@SDL_ShowCursor.html">SDL_ShowCursor</a>
+<span class="anchor" id="line-141"></span><span class="anchor" id=
+"line-142"></span></p>
+</li>
+</ul>
+<p class="line867"></p>
+<hr/>
+<p class="line874"><span class="anchor" id=
+"line-143"></span><a href="index.html@CategoryAPI.html">CategoryAPI</a>, <a href="index.html@CategoryMouse.html">CategoryMouse</a> <span class="anchor" id=
+"line-144"></span><span class="anchor" id="bottom"></span></p>
+</div>
+</body></html>

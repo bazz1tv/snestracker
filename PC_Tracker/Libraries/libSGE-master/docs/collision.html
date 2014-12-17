@@ -1,0 +1,69 @@
+<html>
+<!--------------------------------------------------->
+<!--            Docs/collision - SGE               -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Collision detection</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Basic collision detection</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_make_cmap">sge_make_cmap</A>
+<LI><A HREF="#sge_bbcheck">sge_bbcheck</A>
+<LI><A HREF="#sge_bbcheck_shape">sge_bbcheck_shape</A>
+<LI><A HREF="#sge_cmcheck">sge_cmcheck</A>
+<LI><A HREF="#sge_get_cx/y">sge_get_cx/y</A>
+<LI><A HREF="#sge_unset_cdata">sge_unset_cdata</A>
+<LI><A HREF="#sge_set_cdata">sge_set_cdata</A>
+<LI><A HREF="#sge_destroy_cmap">sge_destroy_cmap</A>
+</UL>
+<BR>
+
+<B>sge_cdata *<a name="sge_make_cmap">sge_make_cmap</a>(SDL_Surface *img)</B><BR>
+Creates a new collision map. Use SDL_SetColorKey() before calling this function. Every non-transparent pixel is set
+to solid in the collision map. The collision map is bit encoded in a Uint8 array. Returns the collision map or NULL
+on error.<BR><BR>
+
+<B>int <a name="sge_bbcheck">sge_bbcheck</a>(sge_cdata *cd1,Sint16 x1,Sint16 y1, sge_cdata *cd2,Sint16 x2,Sint16 y2)<BR>
+int _sge_bbcheck(Sint16 x1,Sint16 y1,Sint16 w1,Sint16 h1, Sint16 x2,Sint16 y2,Sint16 w2,Sint16 h2)</B><BR>
+Checks if two rectangles (the bounding boxes) overlap. Returns 1 if so or else 0.<BR><BR>
+
+<B>int <a name="sge_bbcheck_shape">sge_bbcheck_shape</a>(sge_shape *shape1, sge_shape *shape2)</B><BR>
+Checks if two shapes (the bounding boxes) overlap. Returns 1 if so or else 0.<BR><BR>
+
+<B>int <a name="sge_cmcheck">sge_cmcheck</a>(sge_cdata *cd1,Sint16 x1,Sint16 y1, sge_cdata *cd2,Sint16 x2,Sint16 y2)<BR>
+int _sge_cmcheck(sge_cdata *cd1,Sint16 x1,Sint16 y1, sge_cdata *cd2,Sint16 x2,Sint16 y2);</B><BR>
+Does pixel perfect collision detection. The (x1,y1) and (x2,y2) coords are the positions of the upper left corners of the images.
+You MUST call sge_bbcheck() before using _sge_cmcheck(), sge_cmcheck() does this automatically. Returns 1 if any solid
+pixels of the two images overlap or else 0.<BR><BR>
+
+<B>Sint16 <a name="sge_get_cx/y">sge_get_cx</a>(void)<BR>
+Sint16 sge_get_cy(void)</B><BR>
+Returns the position of the last collision found by sge_cmcheck().<BR><BR>
+
+<B>void <a name="sge_unset_cdata">sge_unset_cdata</a>(sge_cdata *cd, Sint16 x, Sint16 y, Sint16 w, Sint16 h)</B><BR>
+Clears an area in the collision map from anything solid.<BR><BR>
+
+<B>void <a name="sge_set_cdata">sge_set_cdata</a>(sge_cdata *cd, Sint16 x, Sint16 y, Sint16 w, Sint16 h)</B><BR>
+Makes an area in the collision map solid.<BR><BR>
+
+<B>void <a name="sge_destroy_cmap">sge_destroy_cmap</a>(sge_cdata *cd)</B><BR>
+Removes collision map from memory.<BR><BR>
+
+</P>
+
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

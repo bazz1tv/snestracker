@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MeatBall", "MeatBall.vcxproj", "{45FEF0D4-9FFB-4B08-AA8A-81DE2DE46B36}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5C811A4-6B84-4003-98D2-A90A92394B09} = {C5C811A4-6B84-4003-98D2-A90A92394B09}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDL_ep", "..\Engine\MSVC6 DLL\SDL_ep.vcxproj", "{C5C811A4-6B84-4003-98D2-A90A92394B09}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release_MD|Win32 = Release_MD|Win32
+		Release_MT|Win32 = Release_MT|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{45FEF0D4-9FFB-4B08-AA8A-81DE2DE46B36}.Debug|Win32.ActiveCfg = Debug|Win32
+		{45FEF0D4-9FFB-4B08-AA8A-81DE2DE46B36}.Debug|Win32.Build.0 = Debug|Win32
+		{45FEF0D4-9FFB-4B08-AA8A-81DE2DE46B36}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
+		{45FEF0D4-9FFB-4B08-AA8A-81DE2DE46B36}.Release_MD|Win32.Build.0 = Release_MD|Win32
+		{45FEF0D4-9FFB-4B08-AA8A-81DE2DE46B36}.Release_MT|Win32.ActiveCfg = Release_MT|Win32
+		{45FEF0D4-9FFB-4B08-AA8A-81DE2DE46B36}.Release_MT|Win32.Build.0 = Release_MT|Win32
+		{45FEF0D4-9FFB-4B08-AA8A-81DE2DE46B36}.Release|Win32.ActiveCfg = Release|Win32
+		{45FEF0D4-9FFB-4B08-AA8A-81DE2DE46B36}.Release|Win32.Build.0 = Release|Win32
+		{C5C811A4-6B84-4003-98D2-A90A92394B09}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C5C811A4-6B84-4003-98D2-A90A92394B09}.Debug|Win32.Build.0 = Debug|Win32
+		{C5C811A4-6B84-4003-98D2-A90A92394B09}.Release_MD|Win32.ActiveCfg = Release_MD|Win32
+		{C5C811A4-6B84-4003-98D2-A90A92394B09}.Release_MD|Win32.Build.0 = Release_MD|Win32
+		{C5C811A4-6B84-4003-98D2-A90A92394B09}.Release_MT|Win32.ActiveCfg = Release_MT|Win32
+		{C5C811A4-6B84-4003-98D2-A90A92394B09}.Release_MT|Win32.Build.0 = Release_MT|Win32
+		{C5C811A4-6B84-4003-98D2-A90A92394B09}.Release|Win32.ActiveCfg = Release|Win32
+		{C5C811A4-6B84-4003-98D2-A90A92394B09}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

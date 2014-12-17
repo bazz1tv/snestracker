@@ -1,0 +1,8 @@
+<map id="cMVelSprite" name="cMVelSprite">
+<area shape="rect" href="$classc_bullet.html" title="cBullet" alt="" coords="5,239,75,265"/>
+<area shape="rect" href="$classc_enemy.html" title="cEnemy" alt="" coords="99,239,176,265"/>
+<area shape="rect" href="$classc_player.html" title="Keep track of the player." alt="" coords="200,239,272,265"/>
+<area shape="rect" href="$classc_velocity_sprite.html" title="cVelocitySprite" alt="" coords="73,84,201,111"/>
+<area shape="rect" href="$classc_basic_sprite.html" title="cBasicSprite" alt="" coords="83,7,192,33"/>
+<area shape="rect" href="$classc_a_f373.html" title="cAF373" alt="" coords="101,316,173,343"/>
+</map>

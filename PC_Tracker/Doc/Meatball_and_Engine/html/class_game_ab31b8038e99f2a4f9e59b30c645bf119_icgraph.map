@@ -1,0 +1,4 @@
+<map id="Game::TurnOnCollisionRects" name="Game::TurnOnCollisionRects">
+<area shape="rect" href="$class_game.html#a54a07333126e6dda45c114227b697499" title="Game::Keydown_Events" alt="" coords="280,5,472,32"/>
+<area shape="rect" href="$class_game.html#a7ee7ce6614bdabc3eecdf6ae8eaa94d6" title="Game::EventHandler" alt="" coords="520,5,691,32"/>
+</map>

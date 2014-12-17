@@ -1,0 +1,14 @@
+<map id="TextObject::Draw" name="TextObject::Draw">
+<area shape="rect" href="$class_controls_menu.html#aacf9c14ee8a65901d3ac54988a9e6636" title="ControlsMenu::Draw" alt="" coords="225,79,391,105"/>
+<area shape="rect" href="$class_options_menu.html#a6f95309648c53dcc8cb5e896ab8ba64e" title="OptionsMenu::Draw" alt="" coords="985,129,1145,156"/>
+<area shape="rect" href="$class_main_menu.html#aaab9c83ce39e7fc056bbde2c53a36b9d" title="MainMenu::UpdateGraphics" alt="" coords="199,180,417,207"/>
+<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="1228,104,1372,131"/>
+<area shape="rect" href="$class_controls_menu.html#a5b1621a48998b2ddf486f418b063a8af" title="ControlsMenu::GetInput" alt="" coords="467,79,659,105"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="1423,155,1545,181"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="1595,155,1680,181"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1728,155,1787,181"/>
+<area shape="rect" href="$class_controls_menu.html#acca9d246bc75edb0e0037b9cc5f496b2" title="ControlsMenu::Collisions" alt="" coords="707,79,904,105"/>
+<area shape="rect" href="$class_controls_menu.html#a8c0100408843df3ca976dc13121c7ac8" title="ControlsMenu::EventHandler" alt="" coords="952,79,1179,105"/>
+<area shape="rect" href="$class_main_menu.html#ab5a1fff4e5e628329bcfefa1a81751b0" title="MainMenu::FadeOutBG" alt="" coords="469,180,656,207"/>
+<area shape="rect" href="$class_main_menu.html#a23f9e84cda740d24402ee1695024e656" title="MainMenu::Update" alt="" coords="727,217,884,244"/>
+</map>

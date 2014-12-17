@@ -1,0 +1,249 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - FAQDevelopment</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@FAQDevelopment.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@FAQDevelopment.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span>
+<p class="line867"></p>
+<h2 id="FAQ:_Development">FAQ: Development</h2>
+<span class="anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@FAQDevelopment.html#FAQ:_Development">FAQ: Development</a></li>
+<li><a href="index.html@FAQDevelopment.html#Is_SDL_multi-threaded.3F">Is SDL
+multi-threaded?</a></li>
+<li><a href=
+"index.html@FAQDevelopment.html#Can_I_call_SDL_video_functions_from_multiple_threads.3F">Can I
+call SDL video functions from multiple threads?</a></li>
+<li><a href="index.html@FAQDevelopment.html#Does_SDL_support_3D_acceleration.3F">Does SDL support
+3D acceleration?</a></li>
+<li><a href="index.html@FAQDevelopment.html#Does_SDL_support_networking.3F">Does SDL support
+networking?</a></li>
+<li><a href="index.html@FAQDevelopment.html#Does_SDL_support_PCX.2C_JPG.2C_PNG.2C_etc...">Does
+SDL support PCX, JPG, PNG, etc...</a></li>
+<li><a href="index.html@FAQDevelopment.html#Does_SDL_support_MP3.2C_Ogg_Vorbis.2C_etc...">Does
+SDL support MP3, Ogg Vorbis, etc...</a></li>
+<li><a href="index.html@FAQDevelopment.html#Does_SDL_have_text_drawing_support.3F">Does SDL have
+text drawing support?</a></li>
+<li><a href="index.html@FAQDevelopment.html#What_kind_of_GUIs_are_there_for_SDL.3F">What kind of
+GUIs are there for SDL?</a></li>
+<li><a href=
+"index.html@FAQDevelopment.html#Do_I_.23include_.3CSDL.h.3E_or_.3CSDL.2FSDL.h.3E.3F">Do I
+#include &lt;SDL.h&gt; or &lt;SDL/SDL.h&gt;?</a></li>
+<li><a href="index.html@FAQDevelopment.html#I_get_the_SDL_DUMMY_ENUM_assertion_in_SDL_types.h">I
+get the SDL_DUMMY_ENUM assertion in SDL_types.h</a></li>
+<li><a href=
+"index.html@FAQDevelopment.html#I_have_an_accelerated_video_card.2C_but_SDL_tells_me_that_that_I_have_zero_video_memory_and_no_acceleration.21">
+I have an accelerated video card, but SDL tells me that that I have
+zero video memory and no acceleration!</a></li>
+<li><a href=
+"index.html@FAQDevelopment.html#I.27m_using_SDL_DOUBLEBUF_and_I_still_get_tearing.">I'm using
+SDL_DOUBLEBUF and I still get tearing.</a></li>
+<li><a href=
+"index.html@FAQDevelopment.html#My_mouse_cursor_disappears_when_in_fullscreen_mode.21">My mouse
+cursor disappears when in fullscreen mode!</a></li>
+</ol>
+</div>
+<span class="anchor" id="line-4"></span><span class="anchor" id=
+"line-5"></span>
+<p class="line867"></p>
+<h2 id="Is_SDL_multi-threaded.3F">Is SDL multi-threaded?</h2>
+<span class="anchor" id="line-6"></span>
+<p class="line874">SDL provides simple cross-platform functions for
+the creation of threads and synchronization using mutexes. These
+are used internally by SDL for some implementations of the audio
+subsystem and input handling. <span class="anchor" id=
+"line-7"></span><span class="anchor" id="line-8"></span></p>
+<p class="line867"></p>
+<h2 id="Can_I_call_SDL_video_functions_from_multiple_threads.3F">
+Can I call SDL video functions from multiple threads?</h2>
+<span class="anchor" id="line-9"></span>
+<p class="line874">No, most graphics back ends are not thread-safe,
+so you should only call SDL video functions from the main thread of
+your application. <span class="anchor" id=
+"line-10"></span><span class="anchor" id="line-11"></span></p>
+<p class="line867"></p>
+<h2 id="Does_SDL_support_3D_acceleration.3F">Does SDL support 3D
+acceleration?</h2>
+<span class="anchor" id="line-12"></span>
+<p class="line874">Yes, SDL supports 3D acceleration: <span class=
+"anchor" id="line-13"></span></p>
+<ul>
+<li>You can use the OpenGL API or the Direct3D API in combination
+with SDL, for 2D and 3D graphics. <span class="anchor" id=
+"line-14"></span></li>
+<li>
+<p class="line862">Alternatively, you can use <a href="index.html@CategoryRender.html">SDL's 2D accelerated render API</a> using
+<a href="index.html@SDL_Texture.html">SDL_Texture</a> for pure 2D graphics which
+itself uses either OpenGL or Direct3D for acceleration (but it is
+easier to use than OpenGL/Direct3D directly and you get support for
+both for free). <span class="anchor" id=
+"line-15"></span><span class="anchor" id="line-16"></span></p>
+</li>
+</ul>
+<p class="line867"></p>
+<h2 id="Does_SDL_support_networking.3F">Does SDL support
+networking?</h2>
+<span class="anchor" id="line-17"></span>
+<p class="line874">Networking is outside of the scope of SDL, but
+due to popular demand a simple cross-platform sockets wrapper
+called "SDL_net" is available at the SDL libraries page. A simple
+chat client/server is included which makes use of an example GUI
+library as well. <span class="anchor" id=
+"line-18"></span><span class="anchor" id="line-19"></span></p>
+<p class="line867"></p>
+<h2 id="Does_SDL_support_PCX.2C_JPG.2C_PNG.2C_etc...">Does SDL
+support PCX, JPG, PNG, etc...</h2>
+<span class="anchor" id="line-20"></span>
+<p class="line874">The BMP and WAV file loaders included with SDL
+are simple examples demonstrating how to load an image and sound
+format. You should be able to write your own reader for any format.
+The main library is supposed to be fast and small, and so does not
+include any additional loaders. <span class="anchor" id=
+"line-21"></span>A sample image loader library called "SDL_image"
+is available from the SDL libraries page which supports loading
+BMP, PCX, GIF, JPG, PNG and TGA images to SDL surfaces.
+<span class="anchor" id="line-22"></span><span class="anchor" id=
+"line-23"></span></p>
+<p class="line867"></p>
+<h2 id="Does_SDL_support_MP3.2C_Ogg_Vorbis.2C_etc...">Does SDL
+support MP3, Ogg Vorbis, etc...</h2>
+<span class="anchor" id="line-24"></span>
+<p class="line874">The BMP and WAV file loaders included with SDL
+are simple examples demonstrating how to load an image and sound
+format. You should be able to write your own reader for any format.
+The main library is supposed to be fast and small, and so does not
+include any additional loaders. A sample sound library called
+"SDL_sound" is available from the SDL libraries page which supports
+loading many different audio formats. <span class="anchor" id=
+"line-25"></span><span class="anchor" id="line-26"></span></p>
+<p class="line867"></p>
+<h2 id="Does_SDL_have_text_drawing_support.3F">Does SDL have text
+drawing support?</h2>
+<span class="anchor" id="line-27"></span>
+<p class="line874">Games and operating systems vary widely in the
+type and availability of text drawing facilities. Instead of trying
+to deal with this in the core SDL library, there are several text
+drawing libraries designed for use with SDL on the SDL libraries
+page. Common techniques include using bitmap fonts, truetype fonts,
+and custom images for text. <span class="anchor" id=
+"line-28"></span><span class="anchor" id="line-29"></span></p>
+<p class="line867"></p>
+<h2 id="What_kind_of_GUIs_are_there_for_SDL.3F">What kind of GUIs
+are there for SDL?</h2>
+<span class="anchor" id="line-30"></span>
+<p class="line874">There are several GUI libraries available from
+the SDL libraries page. <span class="anchor" id=
+"line-31"></span>There is also a demo on the SDL demos page of
+using GTk natively with SDL, which works really well for graphics
+output. <span class="anchor" id="line-32"></span>Also on the demos
+page is a hack written by Kent Mein using Tcl/Tk with SDL.
+<span class="anchor" id="line-33"></span>You may also be able to
+get other GUIs to work with SDL. Many of them have documentation on
+how to get the toolkits to work with other applications.
+<span class="anchor" id="line-34"></span><span class="anchor" id=
+"line-35"></span></p>
+<p class="line867"></p>
+<h2 id="Do_I_.23include_.3CSDL.h.3E_or_.3CSDL.2FSDL.h.3E.3F">Do I
+#include &lt;SDL.h&gt; or &lt;SDL/SDL.h&gt;?</h2>
+<span class="anchor" id="line-36"></span>
+<p class="line874">The most portable way to include SDL headers is
+to use quotes around the header name: <span class="anchor" id=
+"line-37"></span><span class="anchor" id="line-38"></span></p>
+<p class="line874">#include "SDL.h" <span class="anchor" id=
+"line-39"></span><span class="anchor" id="line-40"></span></p>
+<p class="line867"></p>
+<h2 id="I_get_the_SDL_DUMMY_ENUM_assertion_in_SDL_types.h">I get
+the SDL_DUMMY_ENUM assertion in SDL_types.h</h2>
+<span class="anchor" id="line-41"></span>
+<p class="line874">You need to turn on the "enums as ints" option
+for your compiler: <span class="anchor" id=
+"line-42"></span><span class="anchor" id="line-43"></span></p>
+<ul>
+<li>For the free Borland compiler, add this command line option: -b
+<span class="anchor" id="line-44"></span></li>
+<li>For Watcom C/C++, add this command line option: -ei
+<span class="anchor" id="line-45"></span></li>
+<li>For Apple's MPW environment, add this command line option:
+-enum int <span class="anchor" id="line-46"></span></li>
+<li>
+<p class="line862">For <a class="nonexistent" href="index.html@CodeWarrior.html">CodeWarrior</a>, go to the C/C++ Language settings
+menu for your project and check the "Enums Always Int" box.
+<span class="anchor" id="line-47"></span><span class="anchor" id=
+"line-48"></span></p>
+</li>
+</ul>
+<p class="line867"></p>
+<h2 id=
+"I_have_an_accelerated_video_card.2C_but_SDL_tells_me_that_that_I_have_zero_video_memory_and_no_acceleration.21">
+I have an accelerated video card, but SDL tells me that that I have
+zero video memory and no acceleration!</h2>
+<span class="anchor" id="line-49"></span>
+<p class="line874">Not all display targets can make use of hardware
+acceleration. In particular, this is the case for the X11 target
+which always presents you with a software framebuffer. Your video
+memory will always be reported to be zero if no acceleration is
+available. <span class="anchor" id="line-50"></span>Note that this
+has nothing to do with 3D acceleration, just 2D hardware
+acceleration support in the underlying operating system video
+drivers. <span class="anchor" id="line-51"></span><span class=
+"anchor" id="line-52"></span></p>
+<p class="line874">If you want hardware acceleration on Linux, you
+can use the DGA driver (fullscreen-only, under X11) or the
+framebuffer console driver (fullscreen-only, under the console).
+See the Linux FAQ for more information on using these drivers.
+<span class="anchor" id="line-53"></span><span class="anchor" id=
+"line-54"></span></p>
+<p class="line874">If you want hardware acceleration on Windows,
+make sure SDL is built with DirectX support and run your program in
+fullscreen mode. <span class="anchor" id=
+"line-55"></span><span class="anchor" id="line-56"></span></p>
+<p class="line874">An excellent article by Bob Pendleton covering
+SDL hardware surfaces is available at the O'Reilly Network
+<span class="anchor" id="line-57"></span><span class="anchor" id=
+"line-58"></span><span class="anchor" id="line-59"></span></p>
+<p class="line867"></p>
+<h2 id="I.27m_using_SDL_DOUBLEBUF_and_I_still_get_tearing.">I'm
+using SDL_DOUBLEBUF and I still get tearing.</h2>
+<span class="anchor" id="line-60"></span>
+<p class="line874">If you are in windowed mode, you need to run in
+fullscreen mode. If you are in fullscreen mode, the system drivers
+probably do not support synchronizing with the vertical retrace. If
+you are using OpenGL with the NVidia drivers, you can enable
+retrace synchronized flipping using an external control panel or
+environment variable. <span class="anchor" id=
+"line-61"></span><span class="anchor" id="line-62"></span></p>
+<p class="line874">An excellent article by Bob Pendleton covering
+SDL hardware surfaces is available at the O'Reilly Network
+<span class="anchor" id="line-63"></span><span class="anchor" id=
+"line-64"></span></p>
+<p class="line867"></p>
+<h2 id="My_mouse_cursor_disappears_when_in_fullscreen_mode.21">My
+mouse cursor disappears when in fullscreen mode!</h2>
+<span class="anchor" id="line-65"></span>
+<p class="line874">This happens because you're directly accessing
+the video memory, and the video driver doesn't support hardware
+cursor overlays. Simply create the cursor as a sprite and blit it
+onto the screen where the mouse cursor coordinates are.
+<span class="anchor" id="line-66"></span><span class="anchor" id=
+"bottom"></span></p>
+</div>
+</body></html>

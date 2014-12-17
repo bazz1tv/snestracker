@@ -1,0 +1,4 @@
+<map id="playSoundEffect" name="playSoundEffect">
+<area shape="rect" href="$classc_sound_manager.html#a13473964862648a84d60d20669cb6e23" title="cSoundManager::GetPointer" alt="" coords="195,5,419,32"/>
+<area shape="rect" href="$classc_audio.html#aa5e5c15b5915928533c02cb8a277081e" title="Plays an Sound chunk if channel is &#45;1 the sound will be played on the next free channel if volume is ..." alt="" coords="229,56,384,83"/>
+</map>

@@ -1,0 +1,529 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		9C93E39613942B5A0096FAB3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C93E39513942B5A0096FAB3 /* Cocoa.framework */; };
+		E9CFA3E816B1D54D00B3919F /* AF-373.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3CF16B1D54D00B3919F /* AF-373.cpp */; };
+		E9CFA3E916B1D54D00B3919F /* bullet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3D016B1D54D00B3919F /* bullet.cpp */; };
+		E9CFA3EA16B1D54D00B3919F /* ButtonObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3D116B1D54D00B3919F /* ButtonObject.cpp */; };
+		E9CFA3EB16B1D54D00B3919F /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3D216B1D54D00B3919F /* Camera.cpp */; };
+		E9CFA3EC16B1D54D00B3919F /* Collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3D316B1D54D00B3919F /* Collision.cpp */; };
+		E9CFA3ED16B1D54D00B3919F /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3D416B1D54D00B3919F /* console.cpp */; };
+		E9CFA3EE16B1D54D00B3919F /* effects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3D516B1D54D00B3919F /* effects.cpp */; };
+		E9CFA3EF16B1D54D00B3919F /* enemy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3D616B1D54D00B3919F /* enemy.cpp */; };
+		E9CFA3F016B1D54D00B3919F /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3D716B1D54D00B3919F /* Game.cpp */; };
+		E9CFA3F116B1D54D00B3919F /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3D816B1D54D00B3919F /* Globals.cpp */; };
+		E9CFA3F216B1D54D00B3919F /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3D916B1D54D00B3919F /* level.cpp */; };
+		E9CFA3F316B1D54D00B3919F /* leveleditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3DA16B1D54D00B3919F /* leveleditor.cpp */; };
+		E9CFA3F416B1D54D00B3919F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3DB16B1D54D00B3919F /* main.cpp */; };
+		E9CFA3F516B1D54D00B3919F /* MainMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3DC16B1D54D00B3919F /* MainMenu.cpp */; };
+		E9CFA3F716B1D54D00B3919F /* Menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3DE16B1D54D00B3919F /* Menu.cpp */; };
+		E9CFA3F816B1D54D00B3919F /* Misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3DF16B1D54D00B3919F /* Misc.cpp */; };
+		E9CFA3F916B1D54D00B3919F /* OptionsMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3E016B1D54D00B3919F /* OptionsMenu.cpp */; };
+		E9CFA3FA16B1D54D00B3919F /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3E116B1D54D00B3919F /* player.cpp */; };
+		E9CFA3FB16B1D54D00B3919F /* playlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3E216B1D54D00B3919F /* playlist.cpp */; };
+		E9CFA3FC16B1D54D00B3919F /* preferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3E316B1D54D00B3919F /* preferences.cpp */; };
+		E9CFA3FD16B1D54D00B3919F /* Slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3E416B1D54D00B3919F /* Slider.cpp */; };
+		E9CFA3FE16B1D54D00B3919F /* sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3E516B1D54D00B3919F /* sprite.cpp */; };
+		E9CFA3FF16B1D54D00B3919F /* TextObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3E616B1D54D00B3919F /* TextObject.cpp */; };
+		E9CFA40016B1D54D00B3919F /* weapon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA3E716B1D54D00B3919F /* weapon.cpp */; };
+		E9CFA43A16B1D63800B3919F /* MeatballEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CFA43316B1D63700B3919F /* MeatballEngine.framework */; };
+		E9CFA43B16B1D63800B3919F /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CFA43416B1D63700B3919F /* SDL_image.framework */; };
+		E9CFA43C16B1D63800B3919F /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CFA43516B1D63700B3919F /* SDL_mixer.framework */; };
+		E9CFA43D16B1D63800B3919F /* SDL_net.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CFA43616B1D63700B3919F /* SDL_net.framework */; };
+		E9CFA43E16B1D63800B3919F /* SDL_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CFA43716B1D63700B3919F /* SDL_ttf.framework */; };
+		E9CFA43F16B1D63800B3919F /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CFA43816B1D63700B3919F /* SDL.framework */; };
+		E9CFA44016B1D63800B3919F /* SGE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CFA43916B1D63700B3919F /* SGE.framework */; };
+		E9CFA46416B1D90700B3919F /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E9CFA45816B1D90700B3919F /* Credits.rtf */; };
+		E9CFA46516B1D90700B3919F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E9CFA45A16B1D90700B3919F /* InfoPlist.strings */; };
+		E9CFA46616B1D90700B3919F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CFA45C16B1D90700B3919F /* MainMenu.xib */; };
+		E9CFA46916B1D90700B3919F /* MeatBallAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA46316B1D90700B3919F /* MeatBallAppDelegate.m */; };
+		E9CFA46C16B1DBFA00B3919F /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CFA46B16B1DBFA00B3919F /* SDLMain.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		9C93E39113942B5A0096FAB3 /* MeatBall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeatBall.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C93E39513942B5A0096FAB3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		9C93E39813942B5A0096FAB3 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		9C93E39913942B5A0096FAB3 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		9C93E39A13942B5A0096FAB3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E9CFA3CF16B1D54D00B3919F /* AF-373.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "AF-373.cpp"; path = "../AF-373.cpp"; sourceTree = "<group>"; };
+		E9CFA3D016B1D54D00B3919F /* bullet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bullet.cpp; path = ../bullet.cpp; sourceTree = "<group>"; };
+		E9CFA3D116B1D54D00B3919F /* ButtonObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ButtonObject.cpp; path = ../ButtonObject.cpp; sourceTree = "<group>"; };
+		E9CFA3D216B1D54D00B3919F /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../Camera.cpp; sourceTree = "<group>"; };
+		E9CFA3D316B1D54D00B3919F /* Collision.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Collision.cpp; path = ../Collision.cpp; sourceTree = "<group>"; };
+		E9CFA3D416B1D54D00B3919F /* console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = console.cpp; path = ../console.cpp; sourceTree = "<group>"; };
+		E9CFA3D516B1D54D00B3919F /* effects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = effects.cpp; path = ../effects.cpp; sourceTree = "<group>"; };
+		E9CFA3D616B1D54D00B3919F /* enemy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = enemy.cpp; path = ../enemy.cpp; sourceTree = "<group>"; };
+		E9CFA3D716B1D54D00B3919F /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Game.cpp; path = ../Game.cpp; sourceTree = "<group>"; };
+		E9CFA3D816B1D54D00B3919F /* Globals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Globals.cpp; path = ../Globals.cpp; sourceTree = "<group>"; };
+		E9CFA3D916B1D54D00B3919F /* level.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = level.cpp; path = ../level.cpp; sourceTree = "<group>"; };
+		E9CFA3DA16B1D54D00B3919F /* leveleditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = leveleditor.cpp; path = ../leveleditor.cpp; sourceTree = "<group>"; };
+		E9CFA3DB16B1D54D00B3919F /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../main.cpp; sourceTree = "<group>"; };
+		E9CFA3DC16B1D54D00B3919F /* MainMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainMenu.cpp; path = ../MainMenu.cpp; sourceTree = "<group>"; };
+		E9CFA3DE16B1D54D00B3919F /* Menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Menu.cpp; path = ../Menu.cpp; sourceTree = "<group>"; };
+		E9CFA3DF16B1D54D00B3919F /* Misc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Misc.cpp; path = ../Misc.cpp; sourceTree = "<group>"; };
+		E9CFA3E016B1D54D00B3919F /* OptionsMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OptionsMenu.cpp; path = ../OptionsMenu.cpp; sourceTree = "<group>"; };
+		E9CFA3E116B1D54D00B3919F /* player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = player.cpp; path = ../player.cpp; sourceTree = "<group>"; };
+		E9CFA3E216B1D54D00B3919F /* playlist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = playlist.cpp; path = ../playlist.cpp; sourceTree = "<group>"; };
+		E9CFA3E316B1D54D00B3919F /* preferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = preferences.cpp; path = ../preferences.cpp; sourceTree = "<group>"; };
+		E9CFA3E416B1D54D00B3919F /* Slider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Slider.cpp; path = ../Slider.cpp; sourceTree = "<group>"; };
+		E9CFA3E516B1D54D00B3919F /* sprite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sprite.cpp; path = ../sprite.cpp; sourceTree = "<group>"; };
+		E9CFA3E616B1D54D00B3919F /* TextObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextObject.cpp; path = ../TextObject.cpp; sourceTree = "<group>"; };
+		E9CFA3E716B1D54D00B3919F /* weapon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = weapon.cpp; path = ../weapon.cpp; sourceTree = "<group>"; };
+		E9CFA40216B1D56300B3919F /* AF-373.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AF-373.h"; sourceTree = "<group>"; };
+		E9CFA40316B1D56300B3919F /* boost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boost.h; sourceTree = "<group>"; };
+		E9CFA40416B1D56300B3919F /* bullet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bullet.h; sourceTree = "<group>"; };
+		E9CFA40516B1D56300B3919F /* ButtonObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonObject.h; sourceTree = "<group>"; };
+		E9CFA40616B1D56300B3919F /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
+		E9CFA40716B1D56300B3919F /* Collision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collision.h; sourceTree = "<group>"; };
+		E9CFA40816B1D56300B3919F /* console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = console.h; sourceTree = "<group>"; };
+		E9CFA40916B1D56300B3919F /* defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defines.h; sourceTree = "<group>"; };
+		E9CFA40A16B1D56300B3919F /* effects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = effects.h; sourceTree = "<group>"; };
+		E9CFA40B16B1D56300B3919F /* enemy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = enemy.h; sourceTree = "<group>"; };
+		E9CFA40C16B1D56300B3919F /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
+		E9CFA40D16B1D56300B3919F /* Globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Globals.h; sourceTree = "<group>"; };
+		E9CFA40E16B1D56300B3919F /* GraphicsObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsObject.h; sourceTree = "<group>"; };
+		E9CFA40F16B1D56300B3919F /* level.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = level.h; sourceTree = "<group>"; };
+		E9CFA41016B1D56300B3919F /* leveleditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = leveleditor.h; sourceTree = "<group>"; };
+		E9CFA41116B1D56300B3919F /* MainMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenu.h; sourceTree = "<group>"; };
+		E9CFA41216B1D56300B3919F /* Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Menu.h; sourceTree = "<group>"; };
+		E9CFA41316B1D56300B3919F /* Misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Misc.h; sourceTree = "<group>"; };
+		E9CFA41416B1D56300B3919F /* ObjectManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectManager.h; sourceTree = "<group>"; };
+		E9CFA41516B1D56300B3919F /* OptionsMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsMenu.h; sourceTree = "<group>"; };
+		E9CFA41616B1D56300B3919F /* player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = player.h; sourceTree = "<group>"; };
+		E9CFA41716B1D56300B3919F /* playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playlist.h; sourceTree = "<group>"; };
+		E9CFA41816B1D56300B3919F /* preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = preferences.h; sourceTree = "<group>"; };
+		E9CFA41916B1D56300B3919F /* Slider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Slider.h; sourceTree = "<group>"; };
+		E9CFA41A16B1D56300B3919F /* sprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sprite.h; sourceTree = "<group>"; };
+		E9CFA41B16B1D56300B3919F /* TextObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextObject.h; sourceTree = "<group>"; };
+		E9CFA41C16B1D56300B3919F /* weapon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = weapon.h; sourceTree = "<group>"; };
+		E9CFA43316B1D63700B3919F /* MeatballEngine.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MeatballEngine.framework; path = ../../../../../../../Library/Frameworks/MeatballEngine.framework; sourceTree = "<group>"; };
+		E9CFA43416B1D63700B3919F /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = ../../../../../../../Library/Frameworks/SDL_image.framework; sourceTree = "<group>"; };
+		E9CFA43516B1D63700B3919F /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_mixer.framework; path = ../../../../../../../Library/Frameworks/SDL_mixer.framework; sourceTree = "<group>"; };
+		E9CFA43616B1D63700B3919F /* SDL_net.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_net.framework; path = ../../../../../../../Library/Frameworks/SDL_net.framework; sourceTree = "<group>"; };
+		E9CFA43716B1D63700B3919F /* SDL_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_ttf.framework; path = ../../../../../../../Library/Frameworks/SDL_ttf.framework; sourceTree = "<group>"; };
+		E9CFA43816B1D63700B3919F /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
+		E9CFA43916B1D63700B3919F /* SGE.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SGE.framework; path = ../../../../../../../Library/Frameworks/SGE.framework; sourceTree = "<group>"; };
+		E9CFA45916B1D90700B3919F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		E9CFA45B16B1D90700B3919F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E9CFA45D16B1D90700B3919F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		E9CFA45F16B1D90700B3919F /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
+		E9CFA46016B1D90700B3919F /* MeatBall-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MeatBall-Info.plist"; sourceTree = "<group>"; };
+		E9CFA46116B1D90700B3919F /* MeatBall-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MeatBall-Prefix.pch"; sourceTree = "<group>"; };
+		E9CFA46216B1D90700B3919F /* MeatBallAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeatBallAppDelegate.h; sourceTree = "<group>"; };
+		E9CFA46316B1D90700B3919F /* MeatBallAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeatBallAppDelegate.m; sourceTree = "<group>"; };
+		E9CFA46A16B1DBFA00B3919F /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
+		E9CFA46B16B1DBFA00B3919F /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9C93E38E13942B5A0096FAB3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9C93E39613942B5A0096FAB3 /* Cocoa.framework in Frameworks */,
+				E9CFA43A16B1D63800B3919F /* MeatballEngine.framework in Frameworks */,
+				E9CFA43B16B1D63800B3919F /* SDL_image.framework in Frameworks */,
+				E9CFA43C16B1D63800B3919F /* SDL_mixer.framework in Frameworks */,
+				E9CFA43D16B1D63800B3919F /* SDL_net.framework in Frameworks */,
+				E9CFA43E16B1D63800B3919F /* SDL_ttf.framework in Frameworks */,
+				E9CFA43F16B1D63800B3919F /* SDL.framework in Frameworks */,
+				E9CFA44016B1D63800B3919F /* SGE.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9C93E38613942B590096FAB3 = {
+			isa = PBXGroup;
+			children = (
+				E9CFA45716B1D90700B3919F /* MacSDLFiles */,
+				E9CFA40116B1D56300B3919F /* include */,
+				E9CFA3CE16B1D52800B3919F /* Source */,
+				9C93E39413942B5A0096FAB3 /* Frameworks */,
+				9C93E39213942B5A0096FAB3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9C93E39213942B5A0096FAB3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9C93E39113942B5A0096FAB3 /* MeatBall.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9C93E39413942B5A0096FAB3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E9CFA43316B1D63700B3919F /* MeatballEngine.framework */,
+				E9CFA43416B1D63700B3919F /* SDL_image.framework */,
+				E9CFA43516B1D63700B3919F /* SDL_mixer.framework */,
+				E9CFA43616B1D63700B3919F /* SDL_net.framework */,
+				E9CFA43716B1D63700B3919F /* SDL_ttf.framework */,
+				E9CFA43816B1D63700B3919F /* SDL.framework */,
+				E9CFA43916B1D63700B3919F /* SGE.framework */,
+				9C93E39513942B5A0096FAB3 /* Cocoa.framework */,
+				9C93E39713942B5A0096FAB3 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9C93E39713942B5A0096FAB3 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9C93E39813942B5A0096FAB3 /* AppKit.framework */,
+				9C93E39913942B5A0096FAB3 /* CoreData.framework */,
+				9C93E39A13942B5A0096FAB3 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		E9CFA3CE16B1D52800B3919F /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				E9CFA3CF16B1D54D00B3919F /* AF-373.cpp */,
+				E9CFA3D016B1D54D00B3919F /* bullet.cpp */,
+				E9CFA3D116B1D54D00B3919F /* ButtonObject.cpp */,
+				E9CFA3D216B1D54D00B3919F /* Camera.cpp */,
+				E9CFA3D316B1D54D00B3919F /* Collision.cpp */,
+				E9CFA3D416B1D54D00B3919F /* console.cpp */,
+				E9CFA3D516B1D54D00B3919F /* effects.cpp */,
+				E9CFA3D616B1D54D00B3919F /* enemy.cpp */,
+				E9CFA3D716B1D54D00B3919F /* Game.cpp */,
+				E9CFA3D816B1D54D00B3919F /* Globals.cpp */,
+				E9CFA3D916B1D54D00B3919F /* level.cpp */,
+				E9CFA3DA16B1D54D00B3919F /* leveleditor.cpp */,
+				E9CFA3DB16B1D54D00B3919F /* main.cpp */,
+				E9CFA3DC16B1D54D00B3919F /* MainMenu.cpp */,
+				E9CFA3DE16B1D54D00B3919F /* Menu.cpp */,
+				E9CFA3DF16B1D54D00B3919F /* Misc.cpp */,
+				E9CFA3E016B1D54D00B3919F /* OptionsMenu.cpp */,
+				E9CFA3E116B1D54D00B3919F /* player.cpp */,
+				E9CFA3E216B1D54D00B3919F /* playlist.cpp */,
+				E9CFA3E316B1D54D00B3919F /* preferences.cpp */,
+				E9CFA3E416B1D54D00B3919F /* Slider.cpp */,
+				E9CFA3E516B1D54D00B3919F /* sprite.cpp */,
+				E9CFA3E616B1D54D00B3919F /* TextObject.cpp */,
+				E9CFA3E716B1D54D00B3919F /* weapon.cpp */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		E9CFA40116B1D56300B3919F /* include */ = {
+			isa = PBXGroup;
+			children = (
+				E9CFA40216B1D56300B3919F /* AF-373.h */,
+				E9CFA40316B1D56300B3919F /* boost.h */,
+				E9CFA40416B1D56300B3919F /* bullet.h */,
+				E9CFA40516B1D56300B3919F /* ButtonObject.h */,
+				E9CFA40616B1D56300B3919F /* Camera.h */,
+				E9CFA40716B1D56300B3919F /* Collision.h */,
+				E9CFA40816B1D56300B3919F /* console.h */,
+				E9CFA40916B1D56300B3919F /* defines.h */,
+				E9CFA40A16B1D56300B3919F /* effects.h */,
+				E9CFA40B16B1D56300B3919F /* enemy.h */,
+				E9CFA40C16B1D56300B3919F /* Game.h */,
+				E9CFA40D16B1D56300B3919F /* Globals.h */,
+				E9CFA40E16B1D56300B3919F /* GraphicsObject.h */,
+				E9CFA40F16B1D56300B3919F /* level.h */,
+				E9CFA41016B1D56300B3919F /* leveleditor.h */,
+				E9CFA41116B1D56300B3919F /* MainMenu.h */,
+				E9CFA41216B1D56300B3919F /* Menu.h */,
+				E9CFA41316B1D56300B3919F /* Misc.h */,
+				E9CFA41416B1D56300B3919F /* ObjectManager.h */,
+				E9CFA41516B1D56300B3919F /* OptionsMenu.h */,
+				E9CFA41616B1D56300B3919F /* player.h */,
+				E9CFA41716B1D56300B3919F /* playlist.h */,
+				E9CFA41816B1D56300B3919F /* preferences.h */,
+				E9CFA41916B1D56300B3919F /* Slider.h */,
+				E9CFA41A16B1D56300B3919F /* sprite.h */,
+				E9CFA41B16B1D56300B3919F /* TextObject.h */,
+				E9CFA41C16B1D56300B3919F /* weapon.h */,
+			);
+			name = include;
+			path = ../include;
+			sourceTree = "<group>";
+		};
+		E9CFA45716B1D90700B3919F /* MacSDLFiles */ = {
+			isa = PBXGroup;
+			children = (
+				E9CFA46A16B1DBFA00B3919F /* SDLMain.h */,
+				E9CFA46B16B1DBFA00B3919F /* SDLMain.m */,
+				E9CFA45816B1D90700B3919F /* Credits.rtf */,
+				E9CFA45A16B1D90700B3919F /* InfoPlist.strings */,
+				E9CFA45C16B1D90700B3919F /* MainMenu.xib */,
+				E9CFA45F16B1D90700B3919F /* main.h */,
+				E9CFA46016B1D90700B3919F /* MeatBall-Info.plist */,
+				E9CFA46116B1D90700B3919F /* MeatBall-Prefix.pch */,
+				E9CFA46216B1D90700B3919F /* MeatBallAppDelegate.h */,
+				E9CFA46316B1D90700B3919F /* MeatBallAppDelegate.m */,
+			);
+			path = MacSDLFiles;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9C93E39013942B5A0096FAB3 /* MeatBall */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9C93E3AF13942B5A0096FAB3 /* Build configuration list for PBXNativeTarget "MeatBall" */;
+			buildPhases = (
+				9C93E38D13942B5A0096FAB3 /* Sources */,
+				9C93E38E13942B5A0096FAB3 /* Frameworks */,
+				9C93E38F13942B5A0096FAB3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MeatBall;
+			productName = HelloSDL;
+			productReference = 9C93E39113942B5A0096FAB3 /* MeatBall.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9C93E38813942B590096FAB3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0450;
+				ORGANIZATIONNAME = Student;
+			};
+			buildConfigurationList = 9C93E38B13942B590096FAB3 /* Build configuration list for PBXProject "MeatBall" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9C93E38613942B590096FAB3;
+			productRefGroup = 9C93E39213942B5A0096FAB3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9C93E39013942B5A0096FAB3 /* MeatBall */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9C93E38F13942B5A0096FAB3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9CFA46416B1D90700B3919F /* Credits.rtf in Resources */,
+				E9CFA46516B1D90700B3919F /* InfoPlist.strings in Resources */,
+				E9CFA46616B1D90700B3919F /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9C93E38D13942B5A0096FAB3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9CFA3E816B1D54D00B3919F /* AF-373.cpp in Sources */,
+				E9CFA3E916B1D54D00B3919F /* bullet.cpp in Sources */,
+				E9CFA3EA16B1D54D00B3919F /* ButtonObject.cpp in Sources */,
+				E9CFA3EB16B1D54D00B3919F /* Camera.cpp in Sources */,
+				E9CFA3EC16B1D54D00B3919F /* Collision.cpp in Sources */,
+				E9CFA3ED16B1D54D00B3919F /* console.cpp in Sources */,
+				E9CFA3EE16B1D54D00B3919F /* effects.cpp in Sources */,
+				E9CFA3EF16B1D54D00B3919F /* enemy.cpp in Sources */,
+				E9CFA3F016B1D54D00B3919F /* Game.cpp in Sources */,
+				E9CFA3F116B1D54D00B3919F /* Globals.cpp in Sources */,
+				E9CFA3F216B1D54D00B3919F /* level.cpp in Sources */,
+				E9CFA3F316B1D54D00B3919F /* leveleditor.cpp in Sources */,
+				E9CFA3F416B1D54D00B3919F /* main.cpp in Sources */,
+				E9CFA3F516B1D54D00B3919F /* MainMenu.cpp in Sources */,
+				E9CFA3F716B1D54D00B3919F /* Menu.cpp in Sources */,
+				E9CFA3F816B1D54D00B3919F /* Misc.cpp in Sources */,
+				E9CFA3F916B1D54D00B3919F /* OptionsMenu.cpp in Sources */,
+				E9CFA3FA16B1D54D00B3919F /* player.cpp in Sources */,
+				E9CFA3FB16B1D54D00B3919F /* playlist.cpp in Sources */,
+				E9CFA3FC16B1D54D00B3919F /* preferences.cpp in Sources */,
+				E9CFA3FD16B1D54D00B3919F /* Slider.cpp in Sources */,
+				E9CFA3FE16B1D54D00B3919F /* sprite.cpp in Sources */,
+				E9CFA3FF16B1D54D00B3919F /* TextObject.cpp in Sources */,
+				E9CFA40016B1D54D00B3919F /* weapon.cpp in Sources */,
+				E9CFA46916B1D90700B3919F /* MeatBallAppDelegate.m in Sources */,
+				E9CFA46C16B1DBFA00B3919F /* SDLMain.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		E9CFA45816B1D90700B3919F /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E9CFA45916B1D90700B3919F /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		E9CFA45A16B1D90700B3919F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E9CFA45B16B1D90700B3919F /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		E9CFA45C16B1D90700B3919F /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E9CFA45D16B1D90700B3919F /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9C93E3AD13942B5A0096FAB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lboost_system-mt",
+					"-lboost_filesystem-mt",
+				);
+				PRELINK_LIBS = "";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9C93E3AE13942B5A0096FAB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /opt/local/include;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_LDFLAGS = (
+					"-lboost_system-mt",
+					"-lboost_filesystem-mt",
+				);
+				PRELINK_LIBS = "";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		9C93E3B013942B5A0096FAB3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LIBRARY = "libstdc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MacSDLFiles/MeatBall-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					/opt/local/include,
+					/usr/include,
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/MacSDLFiles/MeatBall-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					/opt/local/lib/,
+					/usr/lib,
+				);
+				LINK_WITH_STANDARD_LIBRARIES = YES;
+				OTHER_LDFLAGS = (
+					"-lboost_system-mt",
+					"-lboost_filesystem-mt",
+				);
+				PRELINK_LIBS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		9C93E3B113942B5A0096FAB3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_CXX_LIBRARY = "libstdc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MacSDLFiles/MeatBall-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					/opt/local/include,
+					/usr/include,
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/MacSDLFiles/MeatBall-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					/opt/local/lib/,
+					/usr/lib,
+				);
+				LINK_WITH_STANDARD_LIBRARIES = YES;
+				OTHER_LDFLAGS = (
+					"-lboost_system-mt",
+					"-lboost_filesystem-mt",
+				);
+				PRELINK_LIBS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9C93E38B13942B590096FAB3 /* Build configuration list for PBXProject "MeatBall" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9C93E3AD13942B5A0096FAB3 /* Debug */,
+				9C93E3AE13942B5A0096FAB3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9C93E3AF13942B5A0096FAB3 /* Build configuration list for PBXNativeTarget "MeatBall" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9C93E3B013942B5A0096FAB3 /* Debug */,
+				9C93E3B113942B5A0096FAB3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9C93E38813942B590096FAB3 /* Project object */;
+}

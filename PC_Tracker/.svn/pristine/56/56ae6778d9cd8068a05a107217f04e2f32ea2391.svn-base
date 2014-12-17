@@ -1,0 +1,24 @@
+http://www.boost.org/users/news/a_special_note_for_boost_1_52_0_and_higher.html
+This special note tells me to stay away from Boost 1.52
+
+Let's work with 1.51 (like I have on my machine)
+
+I use http://www.boostpro.com/download/
+
+This is convenient, they have 1.51 anyways as their latest build. and in both 64bit and 32 bit formats.
+
+I am running a 32 windows. so i get the 32 bit version
+
+Get the BoostPro_1.51.0 Installer.
+
+You will only need to install minimal components, that is
+System and FileSystem.
+
+Although I am really debating completely not using Boost at all and simply writing my own Directory Traversal functions.
+Anyways get the static and dynamic release and debugging versions of those 2 libraries.
+
+That's it.. you need to add a BOOST_DIR environment variable to your Environment Variables...
+mine is Set to C:\Program Files\boost\boost_1_51
+
+You add this so that Meatball Project automatically uses it. So it actually makes your life easier :) 
+Environment Variables FTW!

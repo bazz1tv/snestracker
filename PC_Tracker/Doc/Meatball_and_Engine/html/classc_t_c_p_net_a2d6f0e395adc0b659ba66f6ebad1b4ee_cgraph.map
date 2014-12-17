@@ -1,0 +1,9 @@
+<map id="cTCPNet::Send_Message_Auto" name="cTCPNet::Send_Message_Auto">
+<area shape="rect" href="$classc_t_c_p_net.html#a6a7a00f0ac2b3c780d7acd2216574ef9" title="Sends an Message Returns 0 if an error occured or not connected to anyone." alt="" coords="568,65,765,92"/>
+<area shape="rect" href="$classc_t_c_p_net.html#a8dd08049de84a7f33fcf6b1241a7ec96" title="Sends an Message to ervery Client." alt="" coords="292,85,519,131"/>
+<area shape="rect" href="$classc_t_c_p_net.html#aae423bb92891dc62a6ebd443cbfa9755" title="1.8" alt="" coords="853,5,997,32"/>
+<area shape="rect" href="$classc_t_c_p_net.html#a2afbf5d90c709a6f1192e27779862249" title="Disconnects an specific Client Connected Server Only." alt="" coords="813,56,1037,101"/>
+<area shape="rect" href="$classc_t_c_p_net.html#a227063acbfe3f006c8519786e7a41fab" title="Closes every Connection returns 0 if there were no connections or opened sockets." alt="" coords="1336,75,1499,101"/>
+<area shape="rect" href="$classc_t_c_p_net.html#a66e58d6a4c7a67d6e501384e73b99a42" title="Allocates an Socketset for buffer message checking used internally." alt="" coords="1085,24,1288,51"/>
+<area shape="rect" href="$classc_t_c_p_net.html#a8940d4bdd34ad6d2110e6d098de699fc" title="Frees the Socketset." alt="" coords="1547,49,1747,76"/>
+</map>

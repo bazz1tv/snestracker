@@ -1,0 +1,40 @@
+<map id="cLevelEditor::EventHandler" name="cLevelEditor::EventHandler">
+<area shape="rect" href="$classc_level_editor.html#a79bcddada39f11382b1231d12f8a4ab3" title="Delete&#39;s an Object." alt="" coords="277,240,491,267"/>
+<area shape="rect" href="$classc_level_editor.html#a70117cddc85118e26f7088c264847347" title="Gets the Current Colliding Object types : the Objects which should be checked look at the Editor type..." alt="" coords="841,225,1047,271"/>
+<area shape="rect" href="$class_object_manager.html#ae57210f30e7309d8b8f060c6fe3a015b" title="ObjectManager::hasa" alt="" coords="1392,537,1568,564"/>
+<area shape="rect" href="$classc_multi_select.html#a82bbb1b4c4adb63e57e8f7d5e0e5ac67" title="cMultiSelect::InitTiles" alt="" coords="297,765,471,792"/>
+<area shape="rect" href="$classc_multi_select.html#a1c6e56d973a3fe228e15e014ba5522ac" title="Releases any MultiSelect_ selected object." alt="" coords="575,715,748,741"/>
+<area shape="rect" href="$class_object_manager.html#a13f219a1b5fc3c2cfe4f81a3dbd38458" title="Remove from OM but don&#39;t delete from memory." alt="" coords="835,685,1053,731"/>
+<area shape="rect" href="$classc_camera.html#ac5f6fa72fab83344d26dc27886a5cdd1" title="Moves the Camera." alt="" coords="317,816,451,843"/>
+<area shape="rect" href="$classc_level_editor.html#acfd849dfe4d7bb530bae57070b43cfba" title="Paste&#39;s an Object if SetCopyObject was set." alt="" coords="283,917,485,944"/>
+<area shape="rect" href="$classc_multi_select.html#a3b9b12f6265e283a69a0aae16ad3c598" title="cMultiSelect::PrepareToMove" alt="" coords="269,968,499,995"/>
+<area shape="rect" href="$classc_level_editor.html#a665be4b34d4ab1cedbadec57db08267d" title="Releases every command." alt="" coords="297,1019,471,1064"/>
+<area shape="rect" href="$classc_level.html#ac73a29116c6d48a559dee99af531f3b4" title="Saves the Current Level." alt="" coords="328,1088,440,1115"/>
+<area shape="rect" href="$classc_level_editor.html#a3310ba8fa64c341c8db9007d20c61628" title="cLevelEditor::SetCopyObject" alt="" coords="548,341,775,368"/>
+<area shape="rect" href="$classc_level_editor.html#a3c4121e2556c4a8317efb6ebf7844f07" title="cLevelEditor::SetFastCopy\lObject" alt="" coords="280,392,488,437"/>
+<area shape="rect" href="$classc_level_editor.html#a28f18b6d20e3539f9b8c320a0e21e9e9" title="cLevelEditor::SetMoveObject" alt="" coords="548,409,775,436"/>
+<area shape="rect" href="$classc_multi_select.html#a0be15625d81777ae537d540e12c61075" title="Add to OM array." alt="" coords="1127,613,1316,640"/>
+<area shape="rect" href="$classc_multi_select.html#a2426fe2bf6c20cf4b97fea2c4793a3b7" title="cMultiSelect::SetObjects" alt="" coords="287,512,481,539"/>
+<area shape="rect" href="$classc_camera.html#aeb6f3d85a5cd1e57d37f9ffe15dfd5b8" title="Sets the Camera Position." alt="" coords="312,867,456,893"/>
+<area shape="rect" href="$include_2misc_8h.html#a2208b21211193f0e04cc18739d07f799" title="The Universal Event Handler handles some events that should be handled in ANY event handler..." alt="" coords="292,1189,476,1216"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="1629,155,1707,181"/>
+<area shape="rect" href="$group___engine___misc.html#ga60f74ce4c80dac50bac04ba035e7f5eb" title="returns 1 if 1 or more points intersect" alt="" coords="1423,180,1537,207"/>
+<area shape="rect" href="$classc_m_vel_sprite.html#a63285b3980443306cdf8ba5ce9ce2795" title="Use SDL_TRUE to get the RECT with camera position coordinates calculated also." alt="" coords="1395,291,1565,317"/>
+<area shape="rect" href="$classc_level_data.html#a8aa8699eafb268cb0453ffe7ba28d905" title="Gets the first overlapping Collision." alt="" coords="1121,171,1321,216"/>
+<area shape="rect" href="$enemy_8cpp.html#a4aea8b4c1726da681ac20abb12b939fc" title="Gets the first Collision if the rect overlaps." alt="" coords="1124,120,1319,147"/>
+<area shape="rect" href="$classc_camera.html#ac2db0486ff63c0e69aad872393c4c706" title="Checks the Left/Right/Up/Down boundaries  Currently No Up boundary is set Currently The down boundary..." alt="" coords="567,841,756,868"/>
+<area shape="rect" href="$_globals_8cpp.html#af38b5f4efeeaf7ca41eb85294f0f1ec5" title="Checks if the file exists." alt="" coords="620,936,703,963"/>
+<area shape="rect" href="$classc_level.html#a8bc529e49ff2f16e973cc7f3cc6b227e" title="cLevel::PrintSaveHeader" alt="" coords="563,987,760,1013"/>
+<area shape="rect" href="$classc_level.html#a264d96f8ea49972b5d7be7b1300d0427" title="cLevel::SavePlayerPos" alt="" coords="572,1037,751,1064"/>
+<area shape="rect" href="$classc_level.html#a396eb68126a56446b704baece0672a47" title="cLevel::SaveMusicFile" alt="" coords="573,1088,749,1115"/>
+<area shape="rect" href="$classc_level.html#a2ec54a3896de3018d4d614a670308dc0" title="cLevel::SaveMapObjects" alt="" coords="563,1139,760,1165"/>
+<area shape="rect" href="$classc_level.html#a869a494d6a9627ac70180a3195437a9d" title="cLevel::SaveMapEnemies" alt="" coords="560,1189,763,1216"/>
+<area shape="rect" href="$group___engine___misc.html#ga5346c8ec7e8830e38c727cd1b299045f" title="Get_Curr_Date" alt="" coords="881,987,1007,1013"/>
+<area shape="rect" href="$classc_image_manager.html#ae5fbcb0a2b3e289bc1f5afc415d2918b" title="cImageManager::GetIdentifier" alt="" coords="825,1139,1063,1165"/>
+<area shape="rect" href="$class_object_manager.html#abd00b75edcab4d19e93efacc12459f3e" title="ObjectManager::add" alt="" coords="1396,461,1564,488"/>
+<area shape="rect" href="$class_object_manager.html#acbdaf481824f315550980ea8f0641f8a" title="ObjectManager::Remove" alt="" coords="1380,613,1580,640"/>
+<area shape="rect" href="$classc_multi_select.html#adf55b266ea5da16f249ea59af5785463" title="cMultiSelect::GetAllColliding\lObjects" alt="" coords="832,421,1056,467"/>
+<area shape="rect" href="$classc_level_data.html#aadf577575fcd0f7c9d648b8fcb209902" title="cLevelData::GetAllColliding\lSpriteNum" alt="" coords="1113,392,1329,437"/>
+<area shape="rect" href="$include_2misc_8h.html#af5bc71130f33f466ff560fa4a023763d" title="Toggle fullScreen." alt="" coords="600,1240,723,1267"/>
+<area shape="rect" href="$misc_8cpp.html#a9a19d17f4e5833b1f911829b6bdda983" title="Queries the Screen to see if it&#39;s set to Fullscreen or Not." alt="" coords="891,1240,997,1267"/>
+</map>

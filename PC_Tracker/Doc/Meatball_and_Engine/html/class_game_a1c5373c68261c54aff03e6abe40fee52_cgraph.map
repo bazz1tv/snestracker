@@ -1,0 +1,49 @@
+<map id="Game::Update" name="Game::Update">
+<area shape="rect" href="$class_mini_engine.html#a0c9a95fa39e44cd6455a1d14ee658d2f" title="MiniEngine::PostUpdate" alt="" coords="183,297,372,324"/>
+<area shape="rect" href="$class_mini_engine.html#a472ffe9383db39a1c4f358f20b22a7bd" title="Does general things." alt="" coords="421,81,605,108"/>
+<area shape="rect" href="$classc_level.html#a8d2f8db27146af4302c78a94eaea5024" title="Updates the Level." alt="" coords="213,611,341,637"/>
+<area shape="rect" href="$group___guns.html#gaef41c9344f33dc8d04962193e18ce0a3" title="Updates all Bullets." alt="" coords="452,500,575,527"/>
+<area shape="rect" href="$enemy_8cpp.html#a21dd784b11de99a5946acb55bd1a8b12" title="Updates all Enemies." alt="" coords="209,449,345,476"/>
+<area shape="rect" href="$effects_8cpp.html#a2d0aefe8c17bdfa8b07ad984ae3e2e70" title="Updates all Particle Emitter." alt="" coords="188,556,367,583"/>
+<area shape="rect" href="$group___player.html#gab3a456d791fc2bd6c2bd0b1bc44fd6c6" title="UpdatePlayer" alt="" coords="455,399,572,425"/>
+<area shape="rect" href="$classc_framerate.html#a526a4eb7f2f5f5894aebc47654be6573" title="cFramerate::SetSpeedFactor" alt="" coords="653,56,883,83"/>
+<area shape="rect" href="$classc_camera.html#af833211717b296a7ae641bc54640f41b" title="Update the Camera." alt="" coords="693,5,843,32"/>
+<area shape="rect" href="$classc_mouse_cursor.html#a19df312e71e7672f891dda410d4ef489" title="cMouseCursor::Update" alt="" coords="676,107,860,133"/>
+<area shape="rect" href="$classc_camera.html#ac2db0486ff63c0e69aad872393c4c706" title="Checks the Left/Right/Up/Down boundaries  Currently No Up boundary is set Currently The down boundary..." alt="" coords="971,5,1160,32"/>
+<area shape="rect" href="$classc_basic_sprite.html#abab9b223fef9a6875313718719866ccc" title="cBasicSprite::SetPos" alt="" coords="983,107,1148,133"/>
+<area shape="rect" href="$classc_basic_sprite.html#a65779c476030c2463de8576fe1f67e39" title="cBasicSprite::Update" alt="" coords="1532,360,1703,387"/>
+<area shape="rect" href="$group___engine___image.html#ga2b7097260a2531e03c8853d2b22be2bd" title="V 1.1.1." alt="" coords="1821,360,1947,387"/>
+<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="1771,233,1997,260"/>
+<area shape="rect" href="$classc_audio.html#a8169acfbe8b79cfc13a871ab16b2ffc9" title="if no forcing the file will be played after the current Music file if loops is &#45;1 music will be loope..." alt="" coords="440,620,587,647"/>
+<area shape="rect" href="$_collision_8cpp.html#a9b31fb28e326660cc99493d8dfcaeddf" title="Returns the Collision data if a Collision happened." alt="" coords="713,488,823,515"/>
+<area shape="rect" href="$classc_bullet.html#a19e5203aca92a91dbb4ebf64a15c28f1" title="Updates the Bullet." alt="" coords="703,565,833,592"/>
+<area shape="rect" href="$_collision_8cpp.html#a269c12dda4ca1e0abb17da6e04f45419" title="Checks if the given position is valid if the Position is not valid it returns the direction..." alt="" coords="1004,461,1127,488"/>
+<area shape="rect" href="$_collision_8cpp.html#a332c2344cba3fda8e66c629a2d9c82f5" title="Returns the collision direction." alt="" coords="1308,411,1404,437"/>
+<area shape="rect" href="$group___engine___misc.html#ga60f74ce4c80dac50bac04ba035e7f5eb" title="returns 1 if 1 or more points intersect" alt="" coords="1299,461,1413,488"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="1317,512,1395,539"/>
+<area shape="rect" href="$classc_bullet.html#a6d05cddff73865d428b26f19813fa1f8" title="Dish out Damage." alt="" coords="985,565,1145,592"/>
+<area shape="rect" href="$classc_bullet.html#a4f6f99e05a7a1d60a877558c00538988" title="Finds the coordinates to place the explosion, adds the particle emmiter, and makes invisible the bull..." alt="" coords="997,717,1133,744"/>
+<area shape="rect" href="$classc_m_vel_sprite.html#a0472c4eecda7bba06bef8bb5a8a2312f" title="cMVelSprite::Update" alt="" coords="981,515,1149,541"/>
+<area shape="rect" href="$classc_bullet.html#aba6375d9b8fa42e9b9dcde7aef8b9fc8" title="cBullet::Windows_BoundsChecking" alt="" coords="931,616,1200,643"/>
+<area shape="rect" href="$effects_8cpp.html#a326a6d2bafcf0e93d01f40244ca7012a" title="Adds an Particle Emitter Power : Amount of Particles Randomness : Amount of Random Movement  if Fixed..." alt="" coords="1279,719,1433,745"/>
+<area shape="rect" href="$group___engine___misc.html#ga0be98eebd3a462ca4848592d68073919" title="Random float between min and max." alt="" coords="1843,724,1925,751"/>
+<area shape="rect" href="$classc_m_particle_emitter.html#ac766da0ffb80ce34aecf980341b65ee4" title="cMParticleEmitter::\lInitParticles" alt="" coords="1540,715,1695,760"/>
+<area shape="rect" href="$classc_velocity_sprite.html#a5d3eae34157edcd011641aaea67def14" title="cVelocitySprite::Update" alt="" coords="1261,563,1451,589"/>
+<area shape="rect" href="$classc_basic_sprite.html#a8ef384a01431f3cff6dffe00df1df2d8" title="cBasicSprite::Move" alt="" coords="1540,588,1695,615"/>
+<area shape="rect" href="$classc_m_particle_emitter.html#a532c3cedb373d1a74a9811f271892ab7" title="cMParticleEmitter::\lUpdate" alt="" coords="436,551,591,596"/>
+<area shape="rect" href="$classc_m_particle.html#a51a5aef9295c60549d64fdf87aa06524" title="cMParticle::Update" alt="" coords="691,835,845,861"/>
+<area shape="rect" href="$classc_angle_sprite.html#ab0a9e4ec6a72b43734778939b5627a5c" title="cAngleSprite::AddDirection" alt="" coords="1249,936,1463,963"/>
+<area shape="rect" href="$classc_angle_sprite.html#ad21bfe3eef5aab3d347a2d9b0a1f041f" title="cAngleSprite::SetDirection" alt="" coords="1512,936,1723,963"/>
+<area shape="rect" href="$classc_angle_sprite.html#a12613016a1db1eacca5e5982bc50f33e" title="cAngleSprite::AddSpeed" alt="" coords="1259,885,1453,912"/>
+<area shape="rect" href="$classc_m_particle.html#a3b2f0d5efe396abb2d2c299883ae1c2b" title="cMParticle::HandleCollision" alt="" coords="957,885,1173,912"/>
+<area shape="rect" href="$classc_m_angle_sprite.html#a42facb500fb312966e8babe1e9f00956" title="cMAngleSprite::Update" alt="" coords="972,667,1159,693"/>
+<area shape="rect" href="$classc_angle_sprite.html#a839c7d3c2b047f3e20fea4776eb28df0" title="cAngleSprite::Update" alt="" coords="1269,613,1443,640"/>
+<area shape="rect" href="$_collision_8cpp.html#aa23fb39e4288c47a643a3a68a2be8661" title="CollideMove_Meatball" alt="" coords="679,412,857,439"/>
+<area shape="rect" href="$classc_player.html#a28a14211f3f36ed0ef550fc973ab1858" title="Updates the Player." alt="" coords="701,309,835,336"/>
+<area shape="rect" href="$classc_velocity_sprite.html#ac35a2d125dd91d232da192c40e3ae13a" title="cVelocitySprite::AddVelocity" alt="" coords="955,208,1176,235"/>
+<area shape="rect" href="$classc_player.html#a739e0557508704c44f6c6f6a69ef914b" title="Jump with the given Power." alt="" coords="1007,259,1124,285"/>
+<area shape="rect" href="$classc_basic_sprite.html#ad2c10ff9164b58697bd987261f87c82e" title="cBasicSprite::SetImage" alt="" coords="972,157,1159,184"/>
+<area shape="rect" href="$classc_velocity_sprite.html#acb4d562f26588d03e800a3aa9e597dff" title="cVelocitySprite::SetVelocity" alt="" coords="956,309,1175,336"/>
+<area shape="rect" href="$classc_weapon.html#a9b2117eb3f699f86617ffc47dc72e9e4" title="Updates the Weapon." alt="" coords="991,360,1140,387"/>
+<area shape="rect" href="$classc_basic_sprite.html#ab14231b4170c136c10ccc75b910cb93e" title="cBasicSprite::SetAlpha" alt="" coords="1265,208,1447,235"/>
+</map>

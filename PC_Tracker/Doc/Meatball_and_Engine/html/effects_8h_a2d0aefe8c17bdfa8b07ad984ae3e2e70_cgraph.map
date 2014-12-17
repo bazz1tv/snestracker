@@ -1,0 +1,20 @@
+<map id="UpdateParticleEmitter" name="UpdateParticleEmitter">
+<area shape="rect" href="$classc_m_particle_emitter.html#a532c3cedb373d1a74a9811f271892ab7" title="cMParticleEmitter::\lUpdate" alt="" coords="235,180,389,225"/>
+<area shape="rect" href="$_collision_8cpp.html#a9b31fb28e326660cc99493d8dfcaeddf" title="Returns the Collision data if a Collision happened." alt="" coords="461,132,571,159"/>
+<area shape="rect" href="$classc_m_particle.html#a51a5aef9295c60549d64fdf87aa06524" title="cMParticle::Update" alt="" coords="439,245,593,272"/>
+<area shape="rect" href="$_collision_8cpp.html#a269c12dda4ca1e0abb17da6e04f45419" title="Checks if the given position is valid if the Position is not valid it returns the direction..." alt="" coords="689,68,812,95"/>
+<area shape="rect" href="$_collision_8cpp.html#a332c2344cba3fda8e66c629a2d9c82f5" title="Returns the collision direction." alt="" coords="967,5,1063,32"/>
+<area shape="rect" href="$group___engine___misc.html#ga60f74ce4c80dac50bac04ba035e7f5eb" title="returns 1 if 1 or more points intersect" alt="" coords="957,56,1072,83"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="976,107,1053,133"/>
+<area shape="rect" href="$classc_m_angle_sprite.html#a42facb500fb312966e8babe1e9f00956" title="cMAngleSprite::Update" alt="" coords="657,144,844,171"/>
+<area shape="rect" href="$classc_m_particle.html#a3b2f0d5efe396abb2d2c299883ae1c2b" title="cMParticle::HandleCollision" alt="" coords="643,245,859,272"/>
+<area shape="rect" href="$classc_angle_sprite.html#a12613016a1db1eacca5e5982bc50f33e" title="cAngleSprite::AddSpeed" alt="" coords="917,245,1112,272"/>
+<area shape="rect" href="$classc_angle_sprite.html#ad21bfe3eef5aab3d347a2d9b0a1f041f" title="cAngleSprite::SetDirection" alt="" coords="1171,296,1381,323"/>
+<area shape="rect" href="$classc_angle_sprite.html#ab0a9e4ec6a72b43734778939b5627a5c" title="cAngleSprite::AddDirection" alt="" coords="908,296,1121,323"/>
+<area shape="rect" href="$group___engine___misc.html#ga0be98eebd3a462ca4848592d68073919" title="Random float between min and max." alt="" coords="709,397,792,424"/>
+<area shape="rect" href="$classc_angle_sprite.html#a839c7d3c2b047f3e20fea4776eb28df0" title="cAngleSprite::Update" alt="" coords="928,157,1101,184"/>
+<area shape="rect" href="$classc_basic_sprite.html#a65779c476030c2463de8576fe1f67e39" title="cBasicSprite::Update" alt="" coords="1191,132,1361,159"/>
+<area shape="rect" href="$classc_basic_sprite.html#a8ef384a01431f3cff6dffe00df1df2d8" title="cBasicSprite::Move" alt="" coords="1199,183,1353,209"/>
+<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="1429,107,1656,133"/>
+<area shape="rect" href="$group___engine___image.html#ga2b7097260a2531e03c8853d2b22be2bd" title="V 1.1.1." alt="" coords="1480,157,1605,184"/>
+</map>

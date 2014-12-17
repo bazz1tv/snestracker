@@ -1,0 +1,224 @@
+This is a list of important changes in SGE's version history.
+
+030809:
+-Better Makefiles (autodetects SDL, Freetype & SDL_Image).
+-Better library numbering (thanks Sam!).
+-Fixed a problem with newer version of g++ and c-linkage.
+-Better C support (thanks Ippei!). 
+ SGE is now configured to support C and C++ with the same 
+ library file (set C_COMP=n in Makefile.conf to disable).
+-Resynced the TTF code with SDL_ttf 2.0.6 (.fon and stream support).
+-Added filled and gourand shaded polygons.
+-Removed some harmless warning with MS Visual C++.
+-Added multicolored lines.
+-Cleaned up the text input functions (the return value has changed a bit).
+-Fixed some bitmap rendering bugs in sge_Text.
+-Some minor updates and bugfixes.
+ 
+
+020904:
+-Corrected some errors in the documentation.
+-Fixed problems with Visual C++.
+-Fixed line clipping.
+-Resynced the TTF code with SDL_ttf 2.0.5, some functions added.
+-Fixed alpha levels with the TTF renderer (thanks Marco!).
+-Fixed small error in rotate clipping logic. 
+
+
+020104:
+-Added sge_FloodFill(), a fast non-recursive flood fill function.
+-Fixed a problem with the example 'speedtest' with gcc v3.
+-Some portability fixes.
+-Some small changes to the makefiles.
+-Added a "Beginners guide to SGE" to the documentation.
+-Added anti-aliased ellipses and circles.
+-Better alpha blending in AA lines.
+-Fixed a problem when AA rotating 32bit surfaces.
+
+
+010629:
+-Many, many optimizations.
+-Split sge_draw into sge_surface and sge_primitives.
+-Fixed some bugs with hardware surfaces.
+-Fixed bugs with 24 bpp.
+-Added sge_PutPixelAlpha() - put pixel with blending.
+-Most drawing primitives now have an 'Alpha' version too.
+-Added anti-aliased lines (from SDL_gfxPrimitives).
+-Added anti-aliased bezier curves.
+-Added anti-aliased triangles.
+-Texture mapped rotation/scaling is back! It's a bit faster than normal
+ rotation but not as nice and it can't do interpolation. Use the flag 
+ 'SGE_TTMAP' to select this renderer with sge_transform().
+-A new example is included: 'speedtest', benchmarks most of SGEs 
+ primitives. Inspired by the example from SDL_gfxPrimitives.
+-Synced the TTF code with SDL_ttf 2.0.3; SGE now uses FreeType 2!
+ Changed the makefile to use the new freetype-config tool.
+ Note that FreeType2 can load more font formats than just truetype.
+
+
+010606:
+-Small fix in sge_draw.h.
+-Fixed sge_Lock_ON(). Added sge_getUpdate() & sge_getLock() to get the 
+ current mode. 
+-Fixed a signed-cast in sge_tt_text.cpp. 
+-New rotation/scaling engine! Much faster and can do interpolated
+ rendering. Use sge_transform()/sge_transform_surface() to access the new 
+ features. See documentation for more info. 
+
+
+010224:
+-Fixed errors with SDL_VERSIONNUM for older versions of SDL.
+-Synced the TTF code with SDL_ttf 1.2.2.
+ New functions:
+   sge_TTF_FontAscent() returns ascent
+   sge_TTF_FontDescent() returns descent
+   sge_TTF_FontLineSkip() returns recommended line skip
+   sge_TTF_SetFontStyle() sets font style (SGE_TTF_NORMAL|SGE_TTF_BOLD|
+     SGE_TTF_ITALIC|SGE_TTF_UNDERLINE)
+   sge_TTF_GetFontStyle() returns the current style.
+ Thanks to Idigoras Inaki (IIdigoras@ikerlan.es) for betatesting this!  
+-Fixed more problems with MSVC. Should work now.
+-Added sge_BF_TextSize().
+-Exorcised the old and horrible sge_tt_input_object class! 
+ New classes for text handling and rendering:
+   sge_TextEditor  - edits textstrings
+   sge_text        - render and buffers text
+   sge_TextSurface - same as sge_surface (but with text)
+   sge_TextSsprite - same as sge_ssprite (      "      )
+   sge_TextSprite  - same as sge_sprite  (      "      ).
+-Minor changes to the sge_shape classes (mostly bugfixes).
+-Added border_warp() in sge_ssprite.
+-New flag for sge_BF_OpenFont(): SGE_BFPALETTE. sge_BF_OpenFont() will
+ use an 8bit surface for the font if this flag is set, this makes 
+ sge_BF_SetColor() much faster (~O(1)), but makes bliting a bit slower.
+-Replaced font.bmp with a new font from Garrett Banuk's SDL Console
+ (http://www.wpi.edu/~mongoose/SDL_Console).
+-Better Makefile ('install' is possible now).
+-Added sge_Bezier(), draws a bezier curve.
+-Updated documentation.
+
+
+010101:
+-Clipping now also works in newer versions of SDL, but stay away from SDL 1.1.5!
+-Fix for MDK7.2 include error.
+-Some fixes for RedHat7 (the infamous gcc 2.96) from Chuck (clc@alum.mit.edu). 
+-Cleaned up the makefiles, everything is now configured in Makefile.conf.
+-Some fixes for MS VisC/C++ from Seung Chan Lim (limsc@maya.com or slim@djslim.com).
+-Updated SFont support.
+
+
+000930:
+-This is a hack to get SGE working with SDL 1.1.5. When using the new version of
+SDL SGE will not perform pixel clipping (for now). The "Big Alpha Flip" in SDL 
+also changes how SGE handles alpha!!! SDL_ALPHA_OPAQUE and SDL_ALPHA_TRANSPARENT
+is always set to the correct values (even under old versions of SDL).
+* THIS VERSION OF SGE IS NOT WELL TESTED! * Use SGE000714 if you don't have SDL
+1.1.5 and don't feel lucky (this version of SGE should work with older versions of
+SDL - I think...). The documentation is not yet updated. I think you need a new 
+version of SDL_img if you want SFont support.
+	
+
+000714:
+-Improved performance in sge_HLine().
+-Changed all Sint32 coords to Sint16 (SDL uses Sint16).
+-Added delay functions: sge_CalibrateDelay() and sge_Delay() [sge_misc].
+-Johan E. Thélin has contributed a new part to SGE: [sge_blib] (Tadaa!).
+-Nuked the old sge_sprite class and did it better this time [sge_shape].
+-A new class: sge_screen, a tool class when working with shapes [sge_shape].
+-sge_CalcYPitch() and sge_pPutPixel() added. Used for precalculating the y pitch
+ offset [sge_draw].
+-Some new routines for rotating and scaling bitmaps [sge_rotation].
+-Updated and added some examples.
+-Updated documentation.
+
+
+000418:
+-Improved the makefiles.
+  * Always link your code against libSGE.a or libSGE.so *
+-Fixed freetype.h include problem.
+-Added sge.h - use it instead of the sge_*.h files.
+-Separated the TT and bitmap code.
+-Added some alpha component support:
+ -sge_CreateAlphaSurface()
+  Creates a 32bit alpha surface (RGBA - 8/8/8/8). The alpha channel is
+	blended on blitting. *SGE only supports 32bit alpha surfaces*
+ -sge_MapAlpha()
+  Use this function to map Uint32 color values (RGBA) for alpha surfaces. 
+	The color value can then be used with any of SGEs functions.
+ -The TTF functions now support alpha blending. Use sge_TTF_AA_Alpha() to
+  turn this feature on.
+ -sge_AlphaFader()
+  Fades from (sR,sG,sB,sA) to (dR,dG,dB,dA).
+-Added SFont (Karl Bartel's font format) support to the bitmapfont routines.
+ Open the sfont with sge_BF_OpenFont("filename",SGE_BFSFONT). Note that most
+ sfonts need a alpha channel to look good which means it can't be loaded as
+ a .bmp file (they do not support alpha). To enable SGE to load .png files
+ uncomment 'USE_IMG = y' in the makefile (requires the SDL_img library!),
+ this will enable SGE to load any image format SDL_img supports. If you do
+ this, remember to link your code with SDL_img (not necessary if you use 
+ libSGE.so). 
+
+
+000312:
+-Fixed a bug in sge_Line().
+-Added (still testing, no documentation) collision routines.
+-More work on the sprite class.
+
+
+000115:
+-Added this text file.
+-The TTF routines can now draw non anti-aliased text also. Control this with
+ sge_TTF_AAOff() - Turns anti-aliasing OFF
+ sge_TTF_AAOn()  - Turns anti-aliasing ON -DEFAULT-
+-A new flagsystem (finally). The following routines are effected:
+   sge_tt_input... - 'int type' replaced by 'Uint8 flags'
+   sge_BF_OpenFont - 'int flags' replaced by 'Uint8 flags' (no API change)
+   sge_BF_input    - 'Uint8 flags' added  *PLEASE UPDATE YOUR SOURCE*
+ The following flags can be used: SGE_FLAG1 - SGE_FLAG8 (defined in sge_draw.h), but
+ routine specific flags are also provided. The flags can be ORed, eg. 
+ SGE_FLAG1|SGE_FLAG2|...
+ The input functions has the following flags:
+   SGE_IBG   - Preserve background (only in tt, BF always preserves the background)
+   SGE_IDEL  - Delete text when finished
+   SGE_INOKR - No keyrepeat
+ NOTE! sge_tt_input: The old ('type') and the new ('flags') flags are not the same!
+ If you do not update your source code, this will happend:
+   type=0 => flags=0 - OK, same
+   type=1 => flags=SGE_IBG - OK, same
+   type=2 => flags=SGE_IDEL - NOT THE SAME! (should be SGE_IBG|SGE_IDEL)
+-TrueType font support optional, check the README.
+
+
+000102: 
+SGE now supports win32 crosscompiling. Support for bitmap fonts added. Some printf() 
+like functions added.
+
+
+991222: 
+Fixed a small bug in sge_UpdateRect, more work on the circle routines. SGE can now 
+be linked to both C and C++ code, check the README file for more information.
+
+
+991219: 
+Fixes some problems with lines and adds some ellipse routines. Update: Oops, the 
+sge_FilledEllipse function was missing - fixed.
+
+
+991208: 
+SGE now has a sprite class *VERY BETA* and a nice surface rotation function. This 
+version is tested with SDL 0.10 and 1.0.
+
+
+990905: 
+New version, with a completed text edit class.
+
+
+990827: 
+Released a new version, now with documentation.
+
+
+990826: 
+First public release of SGE (r990826). Have fun!
+
+
+/Anders Lindström

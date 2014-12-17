@@ -1,0 +1,6 @@
+<map id="CollideMove" name="CollideMove">
+<area shape="rect" href="$_collision_8cpp.html#a269c12dda4ca1e0abb17da6e04f45419" title="Checks if the given position is valid if the Position is not valid it returns the direction..." alt="" coords="165,56,288,83"/>
+<area shape="rect" href="$_collision_8cpp.html#a332c2344cba3fda8e66c629a2d9c82f5" title="Returns the collision direction." alt="" coords="347,5,443,32"/>
+<area shape="rect" href="$group___engine___misc.html#ga60f74ce4c80dac50bac04ba035e7f5eb" title="returns 1 if 1 or more points intersect" alt="" coords="337,56,452,83"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="356,107,433,133"/>
+</map>

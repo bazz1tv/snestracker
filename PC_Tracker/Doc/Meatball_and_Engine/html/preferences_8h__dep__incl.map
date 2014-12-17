@@ -1,0 +1,11 @@
+<map id="include/preferences.h" name="include/preferences.h">
+<area shape="rect" href="$_game_8cpp.html" title="Game.cpp" alt="" coords="5,84,101,111"/>
+<area shape="rect" href="$_globals_8cpp.html" title="Globals.cpp" alt="" coords="125,84,229,111"/>
+<area shape="rect" href="$_options_menu_8h.html" title="include/OptionsMenu.h" alt="" coords="253,84,440,111"/>
+<area shape="rect" href="$main_8cpp.html" title="main.cpp" alt="" coords="433,239,521,265"/>
+<area shape="rect" href="$player_8cpp.html" title="player.cpp" alt="" coords="515,84,611,111"/>
+<area shape="rect" href="$preferences_8cpp.html" title="preferences.cpp" alt="" coords="635,84,773,111"/>
+<area shape="rect" href="$_main_menu_8h.html" title="include/MainMenu.h" alt="" coords="264,161,429,188"/>
+<area shape="rect" href="$_options_menu_8cpp.html" title="OptionsMenu.cpp" alt="" coords="113,239,260,265"/>
+<area shape="rect" href="$_main_menu_8cpp.html" title="MainMenu.cpp" alt="" coords="284,239,409,265"/>
+</map>

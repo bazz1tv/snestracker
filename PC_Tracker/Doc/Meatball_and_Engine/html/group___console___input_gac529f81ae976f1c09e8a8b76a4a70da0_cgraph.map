@@ -1,0 +1,7 @@
+<map id="cConsole::EventHandler" name="cConsole::EventHandler">
+<area shape="rect" href="$group___console.html#ga830e26ea219001452d9429f06b621fe9" title="Self Explanatory." alt="" coords="283,5,400,32"/>
+<area shape="rect" href="$include_2misc_8h.html#a2208b21211193f0e04cc18739d07f799" title="The Universal Event Handler handles some events that should be handled in ANY event handler..." alt="" coords="249,56,433,83"/>
+<area shape="rect" href="$group___console.html#ga5fbe849ea72e847e9058121cd0925a83" title="Move all output up one line." alt="" coords="484,5,711,32"/>
+<area shape="rect" href="$include_2misc_8h.html#af5bc71130f33f466ff560fa4a023763d" title="Toggle fullScreen." alt="" coords="536,56,659,83"/>
+<area shape="rect" href="$misc_8cpp.html#a9a19d17f4e5833b1f911829b6bdda983" title="Queries the Screen to see if it&#39;s set to Fullscreen or Not." alt="" coords="761,56,868,83"/>
+</map>

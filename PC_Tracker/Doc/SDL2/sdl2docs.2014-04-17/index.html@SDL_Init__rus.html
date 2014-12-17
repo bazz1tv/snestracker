@@ -1,0 +1,651 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - SDL_Init__rus</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@SDL_Init__rus.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@SDL_Init__rus.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id="line-4"></span>
+<p class="line867"></p>
+<h1 id="SDL_Init">SDL_Init</h1>
+<span class="anchor" id="line-5"></span>
+<p class="line874">
+&ETH;&tilde;&Ntilde;&ETH;&iquest;&ETH;&frac34;&ETH;&raquo;&Ntilde;&OElig;&ETH;&middot;&Ntilde;&fnof;&ETH;&sup1;&Ntilde;&sbquo;&ETH;&micro;
+&Ntilde;&Ntilde;&sbquo;&Ntilde;&fnof;
+&Ntilde;&bdquo;&Ntilde;&fnof;&ETH;&frac12;&ETH;&ordm;&Ntilde;&dagger;&ETH;&cedil;&Ntilde;&#381;
+&ETH;&acute;&ETH;&raquo;&Ntilde;
+&ETH;&cedil;&ETH;&frac12;&ETH;&cedil;&Ntilde;&dagger;&ETH;&cedil;&ETH;&deg;&ETH;&raquo;&ETH;&cedil;&ETH;&middot;&ETH;&deg;&Ntilde;&dagger;&ETH;&cedil;&ETH;&cedil;
+&ETH;&plusmn;&ETH;&cedil;&ETH;&plusmn;&ETH;&raquo;&ETH;&cedil;&ETH;&frac34;&Ntilde;&sbquo;&ETH;&micro;&ETH;&ordm;&ETH;&cedil;
+SDL. &ETH;&shy;&Ntilde;&sbquo;&ETH;&deg;
+&Ntilde;&bdquo;&Ntilde;&fnof;&ETH;&frac12;&ETH;&ordm;&Ntilde;&dagger;&ETH;&cedil;&Ntilde;
+&ETH;&acute;&ETH;&frac34;&ETH;&raquo;&ETH;&para;&ETH;&frac12;&ETH;&deg;
+&ETH;&plusmn;&Ntilde;&lsaquo;&Ntilde;&sbquo;&Ntilde;&OElig;
+&ETH;&sup2;&Ntilde;&lsaquo;&ETH;&middot;&ETH;&sup2;&ETH;&deg;&ETH;&frac12;&ETH;&deg;
+&ETH;&iquest;&ETH;&micro;&Ntilde;&euro;&ETH;&micro;&ETH;&acute;
+&ETH;&cedil;&Ntilde;&ETH;&iquest;&ETH;&frac34;&ETH;&raquo;&Ntilde;&OElig;&ETH;&middot;&ETH;&frac34;&ETH;&sup2;&ETH;&deg;&ETH;&frac12;&ETH;&cedil;&ETH;&micro;&ETH;&frac14;
+&ETH;&raquo;&Ntilde;&#381;&ETH;&plusmn;&ETH;&frac34;&ETH;&sup1;
+&ETH;&acute;&Ntilde;&euro;&Ntilde;&fnof;&ETH;&sup3;&ETH;&frac34;&ETH;&sup1;
+&Ntilde;&bdquo;&Ntilde;&fnof;&ETH;&frac12;&ETH;&ordm;&Ntilde;&dagger;&ETH;&cedil;&ETH;&cedil;
+SDL. <span class="anchor" id="line-6"></span><span class="anchor"
+id="line-7"></span></p>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@SDL_Init__rus.html#SDL_Init">SDL_Init</a>
+<ol>
+<li><a href=
+"index.html@SDL_Init__rus.html#A.2BBCEEOAQ9BEIEMAQ6BEEEOARB-">&ETH;&iexcl;&ETH;&cedil;&ETH;&frac12;&Ntilde;&sbquo;&ETH;&deg;&ETH;&ordm;&Ntilde;&ETH;&cedil;&Ntilde;</a></li>
+<li><a href=
+"index.html@SDL_Init__rus.html#A.2BBB8EMARABDAEPAQ1BEIEQARL_.2BBCQEQwQ9BDoERgQ4BDg-">&ETH;&Yuml;&ETH;&deg;&Ntilde;&euro;&ETH;&deg;&ETH;&frac14;&ETH;&micro;&Ntilde;&sbquo;&Ntilde;&euro;&Ntilde;&lsaquo;
+&ETH;&curren;&Ntilde;&fnof;&ETH;&frac12;&ETH;&ordm;&Ntilde;&dagger;&ETH;&cedil;&ETH;&cedil;</a></li>
+<li><a href=
+"index.html@SDL_Init__rus.html#A.2BBBIEPgQ3BDIEQAQwBEkEMAQ1BDwEPgQ1_.2BBBcEPQQwBEcENQQ9BDgENQ-">&ETH;&rsquo;&ETH;&frac34;&ETH;&middot;&ETH;&sup2;&Ntilde;&euro;&ETH;&deg;&Ntilde;&permil;&ETH;&deg;&ETH;&micro;&ETH;&frac14;&ETH;&frac34;&ETH;&micro;
+&ETH;&mdash;&ETH;&frac12;&ETH;&deg;&Ntilde;&Dagger;&ETH;&micro;&ETH;&frac12;&ETH;&cedil;&ETH;&micro;</a></li>
+<li><a href=
+"index.html@SDL_Init__rus.html#A.2BBB8EQAQ4BDwENQRABEs_.2BBDoEPgQ0BDA-">&ETH;&Yuml;&Ntilde;&euro;&ETH;&cedil;&ETH;&frac14;&ETH;&micro;&Ntilde;&euro;&Ntilde;&lsaquo;
+&ETH;&ordm;&ETH;&frac34;&ETH;&acute;&ETH;&deg;</a>
+<ol>
+<li><a href="index.html@SDL_Init__rus.html#C">C</a></li>
+<li><a href="index.html@SDL_Init__rus.html#C.2B-.2B-">C++</a></li>
+</ol>
+</li>
+<li><a href=
+"index.html@SDL_Init__rus.html#A.2BBB8EQAQ4BDwENQRHBDAEPQQ4BE8-">&ETH;&Yuml;&Ntilde;&euro;&ETH;&cedil;&ETH;&frac14;&ETH;&micro;&Ntilde;&Dagger;&ETH;&deg;&ETH;&frac12;&ETH;&cedil;&Ntilde;</a></li>
+<li><a href=
+"index.html@SDL_Init__rus.html#A.2BBCEEMgRPBDcEMAQ9BD0ESwQ1_.2BBCQEQwQ9BDoERgQ4BDg-">&ETH;&iexcl;&ETH;&sup2;&Ntilde;&ETH;&middot;&ETH;&deg;&ETH;&frac12;&ETH;&frac12;&Ntilde;&lsaquo;&ETH;&micro;
+&ETH;&curren;&Ntilde;&fnof;&ETH;&frac12;&ETH;&ordm;&Ntilde;&dagger;&ETH;&cedil;&ETH;&cedil;</a></li>
+</ol>
+</li>
+</ol>
+</div>
+<span class="anchor" id="line-8"></span><span class="anchor" id=
+"line-9"></span>
+<p class="line867"></p>
+<h2 id="A.2BBCEEOAQ9BEIEMAQ6BEEEOARB-">
+&ETH;&iexcl;&ETH;&cedil;&ETH;&frac12;&Ntilde;&sbquo;&ETH;&deg;&ETH;&ordm;&Ntilde;&ETH;&cedil;&Ntilde;</h2>
+<span class="anchor" id="line-10"></span>
+<p class="line867"><span class="anchor" id=
+"line-11"></span><span class="anchor" id="line-12"></span></p>
+<div class="codearea" dir="ltr" lang="en"> 
+<pre dir="ltr" id="CA-pygments_611" lang="en">
+<span class="line"><span class="kt">int</span> <span class=
+"n">SDL_Init</span><span class="p">(</span><span class=
+"n">Uint32</span> <span class="n">flags</span><span class=
+"p">)</span>
+</span>
+</pre></div>
+<span class="anchor" id="line-13"></span><span class="anchor" id=
+"line-14"></span>
+<p class="line867"></p>
+<h2 id="A.2BBB8EMARABDAEPAQ1BEIEQARL_.2BBCQEQwQ9BDoERgQ4BDg-">
+&ETH;&Yuml;&ETH;&deg;&Ntilde;&euro;&ETH;&deg;&ETH;&frac14;&ETH;&micro;&Ntilde;&sbquo;&Ntilde;&euro;&Ntilde;&lsaquo;
+&ETH;&curren;&Ntilde;&fnof;&ETH;&frac12;&ETH;&ordm;&Ntilde;&dagger;&ETH;&cedil;&ETH;&cedil;</h2>
+<span class="anchor" id="line-15"></span>
+<div>
+<table>
+<tbody>
+<tr>
+<td>
+<p class="line891"><strong>flags</strong></p>
+</td>
+<td>
+<p class="line862">
+&ETH;&Yuml;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&ETH;&deg;
+&ETH;&cedil;&ETH;&frac12;&ETH;&cedil;&Ntilde;&dagger;&ETH;&cedil;&ETH;&deg;&ETH;&raquo;&ETH;&cedil;&ETH;&middot;&ETH;&deg;&Ntilde;&dagger;&ETH;&cedil;&ETH;&cedil;
+&Ntilde;&bdquo;&ETH;&raquo;&ETH;&deg;&ETH;&sup3;&ETH;&frac34;&ETH;&sup2;;
+&ETH;&iexcl;&ETH;&frac14;&ETH;&frac34;&Ntilde;&sbquo;&Ntilde;&euro;&ETH;&micro;&Ntilde;&sbquo;&Ntilde;&OElig;
+<a href="index.html@SDL_Init__rus.html#A.2BBB8EQAQ4BDwENQRHBDAEPQQ4BE8-">&ETH;&Yuml;&Ntilde;&euro;&ETH;&cedil;&ETH;&frac14;&ETH;&micro;&Ntilde;&Dagger;&ETH;&deg;&ETH;&frac12;&ETH;&cedil;&Ntilde;</a>
+&ETH;&acute;&ETH;&raquo;&Ntilde;
+&ETH;&acute;&ETH;&micro;&Ntilde;&sbquo;&ETH;&deg;&ETH;&raquo;&ETH;&micro;&ETH;&sup1;</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-16"></span><span class="anchor" id=
+"line-17"></span>
+<p class="line867"></p>
+<h2 id=
+"A.2BBBIEPgQ3BDIEQAQwBEkEMAQ1BDwEPgQ1_.2BBBcEPQQwBEcENQQ9BDgENQ-">
+&ETH;&rsquo;&ETH;&frac34;&ETH;&middot;&ETH;&sup2;&Ntilde;&euro;&ETH;&deg;&Ntilde;&permil;&ETH;&deg;&ETH;&micro;&ETH;&frac14;&ETH;&frac34;&ETH;&micro;
+&ETH;&mdash;&ETH;&frac12;&ETH;&deg;&Ntilde;&Dagger;&ETH;&micro;&ETH;&frac12;&ETH;&cedil;&ETH;&micro;</h2>
+<span class="anchor" id="line-18"></span>
+<p class="line862">
+&ETH;&rsquo;&ETH;&frac34;&ETH;&middot;&ETH;&sup2;&Ntilde;&euro;&ETH;&deg;&Ntilde;&permil;&ETH;&deg;&ETH;&micro;&Ntilde;&sbquo;
+0 &ETH;&sup2;
+&Ntilde;&ETH;&raquo;&Ntilde;&fnof;&Ntilde;&Dagger;&ETH;&deg;&ETH;&micro;
+&Ntilde;&fnof;&Ntilde;&ETH;&iquest;&ETH;&micro;&Ntilde;&hellip;&ETH;&deg;
+&ETH;&cedil;&ETH;&raquo;&ETH;&cedil;
+&ETH;&frac34;&Ntilde;&sbquo;&Ntilde;&euro;&ETH;&cedil;&Ntilde;&dagger;&ETH;&deg;&Ntilde;&sbquo;&ETH;&micro;&ETH;&raquo;&Ntilde;&OElig;&ETH;&frac12;&ETH;&frac34;&ETH;&micro;
+&ETH;&middot;&ETH;&frac12;&ETH;&deg;&Ntilde;&Dagger;&ETH;&micro;&ETH;&frac12;&ETH;&cedil;&ETH;&micro;
+&ETH;&sup2;
+&Ntilde;&ETH;&raquo;&Ntilde;&fnof;&Ntilde;&Dagger;&ETH;&deg;&ETH;&micro;
+&ETH;&frac34;&Ntilde;&circ;&ETH;&cedil;&ETH;&plusmn;&ETH;&ordm;&ETH;&cedil;;
+&ETH;&rdquo;&ETH;&raquo;&Ntilde;
+&ETH;&iquest;&ETH;&frac34;&ETH;&raquo;&Ntilde;&fnof;&Ntilde;&Dagger;&ETH;&micro;&ETH;&frac12;&ETH;&cedil;&Ntilde;
+&ETH;&acute;&ETH;&frac34;&ETH;&iquest;&ETH;&frac34;&ETH;&raquo;&ETH;&frac12;&ETH;&cedil;&Ntilde;&sbquo;&ETH;&micro;&ETH;&raquo;&Ntilde;&OElig;&ETH;&frac12;&ETH;&frac34;&ETH;&sup1;
+&ETH;&cedil;&ETH;&frac12;&Ntilde;&bdquo;&ETH;&frac34;&Ntilde;&euro;&ETH;&frac14;&ETH;&deg;&Ntilde;&dagger;&ETH;&cedil;&ETH;&cedil;
+&ETH;&sup2;&Ntilde;&lsaquo;&ETH;&middot;&Ntilde;&lsaquo;&ETH;&sup2;&ETH;&deg;&Ntilde;&sbquo;&Ntilde;&OElig;
+<a href="index.html@SDL_GetError.html">SDL_GetError</a> () . <span class="anchor"
+id="line-19"></span><span class="anchor" id="line-20"></span></p>
+<p class="line867"></p>
+<h2 id="A.2BBB8EQAQ4BDwENQRABEs_.2BBDoEPgQ0BDA-">
+&ETH;&Yuml;&Ntilde;&euro;&ETH;&cedil;&ETH;&frac14;&ETH;&micro;&Ntilde;&euro;&Ntilde;&lsaquo;
+&ETH;&ordm;&ETH;&frac34;&ETH;&acute;&ETH;&deg;</h2>
+<span class="anchor" id="line-21"></span>
+<p class="line867"></p>
+<h3 id="C">C</h3>
+<span class="anchor" id="line-22"></span>
+<p class="line867"><span class="anchor" id=
+"line-23"></span><span class="anchor" id=
+"line-24"></span><span class="anchor" id=
+"line-25"></span><span class="anchor" id=
+"line-26"></span><span class="anchor" id=
+"line-27"></span><span class="anchor" id=
+"line-28"></span><span class="anchor" id=
+"line-29"></span><span class="anchor" id=
+"line-30"></span><span class="anchor" id=
+"line-31"></span><span class="anchor" id=
+"line-32"></span><span class="anchor" id=
+"line-33"></span><span class="anchor" id=
+"line-34"></span><span class="anchor" id=
+"line-35"></span><span class="anchor" id=
+"line-36"></span><span class="anchor" id=
+"line-37"></span><span class="anchor" id=
+"line-38"></span><span class="anchor" id=
+"line-39"></span><span class="anchor" id=
+"line-40"></span><span class="anchor" id="line-41"></span></p>
+<div class="codearea" dir="ltr" lang="en">
+<pre dir="ltr" id="CA-pygments_612" lang="en">
+<span class="line"><span class="cp">#include "SDL.h"</span>
+</span><span class="line"><span class=
+"cp">#include &lt;stdio.h&gt; </span><span class=
+"cm">/* &ETH;&acute;&ETH;&raquo;&Ntilde; fprintf() */</span>
+</span><span class="line"><span class=
+"cp">#include &lt;stdlib.h&gt; </span><span class=
+"cm">/* &ETH;&acute;&ETH;&raquo;&Ntilde; atexit() */</span>
+</span><span class="line">
+</span><span class="line"><span class="kt">int</span> <span class=
+"nf">main</span><span class="p">(</span><span class=
+"kt">int</span> <span class="n">argv</span><span class=
+"p">,</span> <span class="kt">char</span><span class=
+"o">**</span> <span class="n">argc</span><span class=
+"p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class=
+"k">if</span> <span class="p">(</span><span class=
+"n">SDL_Init</span><span class="p">(</span><span class=
+"n">SDL_INIT_VIDEO</span><span class="o">|</span><span class=
+"n">SDL_INIT_TIMER</span><span class="p">)</span> <span class=
+"o">!=</span> <span class="mi">0</span><span class=
+"p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class=
+"n">fprintf</span><span class="p">(</span><span class=
+"n">stderr</span><span class="p">,</span> 
+</span><span class="line">                <span class=
+"s">"</span><span class="se"></span><span class=
+"s">Unable to initialize SDL:  %s</span><span class=
+"se"></span><span class="s">"</span><span class="p">,</span>
+</span><span class="line">                <span class=
+"n">SDL_GetError</span><span class="p">()</span>
+</span><span class="line">               <span class="p">);</span>
+</span><span class="line">        <span class=
+"k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class=
+"n">atexit</span><span class="p">(</span><span class=
+"n">SDL_Quit</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line">    <span class="cm">/* ... */</span>
+</span><span class="line">
+</span><span class="line">    <span class=
+"k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span>
+</pre></div>
+<span class="anchor" id="line-42"></span><span class="anchor" id=
+"line-43"></span>
+<p class="line867"></p>
+<h3 id="C.2B-.2B-">C++</h3>
+<span class="anchor" id="line-44"></span>
+<p class="line867"><span class="anchor" id=
+"line-45"></span><span class="anchor" id=
+"line-46"></span><span class="anchor" id=
+"line-47"></span><span class="anchor" id=
+"line-48"></span><span class="anchor" id=
+"line-49"></span><span class="anchor" id=
+"line-50"></span><span class="anchor" id=
+"line-51"></span><span class="anchor" id=
+"line-52"></span><span class="anchor" id=
+"line-53"></span><span class="anchor" id=
+"line-54"></span><span class="anchor" id=
+"line-55"></span><span class="anchor" id=
+"line-56"></span><span class="anchor" id=
+"line-57"></span><span class="anchor" id=
+"line-58"></span><span class="anchor" id=
+"line-59"></span><span class="anchor" id=
+"line-60"></span><span class="anchor" id=
+"line-61"></span><span class="anchor" id=
+"line-62"></span><span class="anchor" id=
+"line-63"></span><span class="anchor" id=
+"line-64"></span><span class="anchor" id=
+"line-65"></span><span class="anchor" id=
+"line-66"></span><span class="anchor" id=
+"line-67"></span><span class="anchor" id=
+"line-68"></span><span class="anchor" id=
+"line-69"></span><span class="anchor" id=
+"line-70"></span><span class="anchor" id=
+"line-71"></span><span class="anchor" id=
+"line-72"></span><span class="anchor" id=
+"line-73"></span><span class="anchor" id=
+"line-74"></span><span class="anchor" id=
+"line-75"></span><span class="anchor" id=
+"line-76"></span><span class="anchor" id=
+"line-77"></span><span class="anchor" id=
+"line-78"></span><span class="anchor" id=
+"line-79"></span><span class="anchor" id=
+"line-80"></span><span class="anchor" id=
+"line-81"></span><span class="anchor" id=
+"line-82"></span><span class="anchor" id=
+"line-83"></span><span class="anchor" id=
+"line-84"></span><span class="anchor" id=
+"line-85"></span><span class="anchor" id=
+"line-86"></span><span class="anchor" id=
+"line-87"></span><span class="anchor" id=
+"line-88"></span><span class="anchor" id=
+"line-89"></span><span class="anchor" id=
+"line-90"></span><span class="anchor" id=
+"line-91"></span><span class="anchor" id=
+"line-92"></span><span class="anchor" id=
+"line-93"></span><span class="anchor" id=
+"line-94"></span><span class="anchor" id=
+"line-95"></span><span class="anchor" id=
+"line-96"></span><span class="anchor" id=
+"line-97"></span><span class="anchor" id=
+"line-98"></span><span class="anchor" id=
+"line-99"></span><span class="anchor" id=
+"line-100"></span><span class="anchor" id=
+"line-101"></span><span class="anchor" id=
+"line-102"></span><span class="anchor" id=
+"line-103"></span><span class="anchor" id="line-104"></span></p>
+<div class="codearea" dir="ltr" lang="en">
+<pre dir="ltr" id="CA-pygments_613" lang="en">
+<span class="line"><span class=
+"cp">#include &lt;exception&gt;</span>
+</span><span class="line"><span class=
+"cp">#include &lt;string&gt;</span>
+</span><span class="line"><span class="cp">#include "SDL.h"</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class=
+"nc">InitError</span><span class="o">:</span> <span class=
+"k">public</span> <span class="n">std</span><span class=
+"o">::</span><span class="n">exception</span> <span class=
+"p">{</span>
+</span><span class="line">    <span class="nl">public:</span>
+</span><span class="line">        <span class=
+"n">InitError</span><span class="p">();</span>
+</span><span class="line">        <span class=
+"n">InitError</span><span class="p">(</span><span class=
+"k">const</span> <span class="n">std</span><span class=
+"o">::</span><span class="n">string</span><span class=
+"o">&amp;</span><span class="p">);</span>
+</span><span class="line">        <span class=
+"k">virtual</span> <span class="o">~</span><span class=
+"n">InitError</span><span class="p">()</span> <span class=
+"k">throw</span><span class="p">();</span>
+</span><span class="line">        <span class=
+"k">virtual</span> <span class="k">const</span> <span class=
+"kt">char</span><span class="o">*</span> <span class=
+"nf">what</span><span class="p">()</span> <span class=
+"k">const</span> <span class="k">throw</span><span class=
+"p">();</span>
+</span><span class="line">    <span class="nl">private:</span>
+</span><span class="line">        <span class=
+"n">std</span><span class="o">::</span><span class=
+"n">string</span> <span class="n">msg</span><span class=
+"p">;</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line">
+</span><span class="line"><span class=
+"n">InitError</span><span class="o">::</span><span class=
+"n">InitError</span><span class="p">()</span><span class=
+"o">:</span>
+</span><span class="line">  <span class=
+"n">exception</span><span class="p">(),</span> <span class=
+"n">msg</span><span class="p">(</span><span class=
+"n">SDL_GetError</span><span class="p">())</span> <span class=
+"p">{}</span>
+</span><span class="line"><span class=
+"n">InitError</span><span class="o">::</span><span class=
+"n">InitError</span><span class="p">(</span><span class=
+"k">const</span> <span class="n">std</span><span class=
+"o">::</span><span class="n">string</span><span class=
+"o">&amp;</span> <span class="n">m</span><span class=
+"p">)</span><span class="o">:</span>
+</span><span class="line">  <span class=
+"n">exception</span><span class="p">(),</span> <span class=
+"n">msg</span><span class="p">(</span><span class=
+"n">m</span><span class="p">)</span> <span class="p">{}</span>
+</span><span class="line"><span class=
+"n">InitError</span><span class="o">::~</span><span class=
+"n">InitError</span><span class="p">()</span> <span class=
+"k">throw</span><span class="p">()</span> <span class="p">{}</span>
+</span><span class="line"><span class="k">const</span> <span class=
+"kt">char</span><span class="o">*</span> <span class=
+"n">InitError</span><span class="o">::</span><span class=
+"n">what</span><span class="p">()</span> <span class=
+"k">const</span> <span class="k">throw</span><span class=
+"p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class=
+"k">return</span> <span class="n">msg</span><span class=
+"p">.</span><span class="n">c_str</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class=
+"nc">SDL</span> <span class="p">{</span>
+</span><span class="line">    <span class="nl">public:</span>
+</span><span class="line">        <span class=
+"n">SDL</span><span class="p">(</span><span class=
+"n">Uint32</span> <span class="n">flags</span> <span class=
+"o">=</span> <span class="mi">0</span><span class=
+"p">)</span> <span class="k">throw</span><span class=
+"p">(</span><span class="n">InitError</span><span class=
+"p">);</span>
+</span><span class="line">        <span class=
+"k">virtual</span> <span class="o">~</span><span class=
+"n">SDL</span><span class="p">();</span>
+</span><span class="line"><span class="p">};</span>
+</span><span class="line">
+</span><span class="line"><span class="n">SDL</span><span class=
+"o">::</span><span class="n">SDL</span><span class=
+"p">(</span><span class="n">Uint32</span> <span class=
+"n">flags</span><span class="p">)</span> <span class=
+"k">throw</span><span class="p">(</span><span class=
+"n">InitError</span><span class="p">)</span> <span class=
+"p">{</span>
+</span><span class="line">    <span class=
+"k">if</span> <span class="p">(</span><span class=
+"n">SDL_Init</span><span class="p">(</span><span class=
+"n">flags</span><span class="p">)</span> <span class=
+"o">!=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class="line">        <span class=
+"k">throw</span> <span class="n">InitError</span><span class=
+"p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">SDL</span><span class=
+"o">::~</span><span class="n">SDL</span><span class=
+"p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class=
+"n">SDL_Quit</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="cm">/* ... */</span>
+</span><span class="line">
+</span><span class="line"><span class=
+"cp">#include &lt;iostream&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="kt">int</span> <span class=
+"n">main</span><span class="p">(</span><span class=
+"kt">int</span> <span class="n">argc</span><span class=
+"p">,</span> <span class="kt">char</span> <span class=
+"o">**</span><span class="n">argv</span><span class=
+"p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class=
+"n">try</span> <span class="p">{</span>
+</span><span class="line">        <span class=
+"n">SDL</span> <span class="n">sdl</span><span class=
+"p">(</span><span class="n">SDL_INIT_VIDEO</span><span class=
+"o">|</span><span class="n">SDL_INIT_TIMER</span><span class=
+"p">);</span>
+</span><span class="line">
+</span><span class="line">        <span class="cm">/* ... */</span>
+</span><span class="line">
+</span><span class="line">        <span class=
+"k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">    <span class=
+"k">catch</span> <span class="p">(</span><span class=
+"k">const</span> <span class="n">InitError</span><span class=
+"o">&amp;</span> <span class="n">err</span><span class=
+"p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class=
+"n">std</span><span class="o">::</span><span class="n">cerr</span>
+</span><span class="line">            <span class=
+"o">&lt;&lt;</span> <span class=
+"s">"Error while initializing SDL:  "</span>
+</span><span class="line">            <span class=
+"o">&lt;&lt;</span> <span class="n">err</span><span class=
+"p">.</span><span class="n">what</span><span class=
+"p">()</span> <span class="o">&lt;&lt;</span> <span class=
+"n">std</span><span class="o">::</span><span class=
+"n">endl</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">    <span class=
+"k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span>
+</pre></div>
+<span class="anchor" id="line-105"></span><span class="anchor" id=
+"line-106"></span>
+<p class="line867"></p>
+<h2 id="A.2BBB8EQAQ4BDwENQRHBDAEPQQ4BE8-">
+&ETH;&Yuml;&Ntilde;&euro;&ETH;&cedil;&ETH;&frac14;&ETH;&micro;&Ntilde;&Dagger;&ETH;&deg;&ETH;&frac12;&ETH;&cedil;&Ntilde;</h2>
+<span class="anchor" id="line-107"></span>
+<p class="line862">
+&ETH;&Yuml;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&Ntilde;&lsaquo;
+<a href="index.html@CategoryEvents.html">Event Handling</a>, <a href="index.html@CategoryIO.html">File I/O</a>, &ETH;&cedil; <a href="index.html@CategoryThread.html">Threading</a>
+&ETH;&cedil;&ETH;&frac12;&ETH;&cedil;&Ntilde;&dagger;&ETH;&cedil;&ETH;&deg;&ETH;&raquo;&ETH;&cedil;&ETH;&middot;&ETH;&cedil;&Ntilde;&euro;&Ntilde;&fnof;&Ntilde;&#381;&Ntilde;&sbquo;&Ntilde;&Ntilde;
+&ETH;&iquest;&ETH;&frac34;
+&Ntilde;&fnof;&ETH;&frac14;&ETH;&frac34;&ETH;&raquo;&Ntilde;&Dagger;&ETH;&deg;&ETH;&frac12;&ETH;&cedil;&Ntilde;&#381;.
+&ETH;&rsquo;&Ntilde;&lsaquo;
+&ETH;&acute;&ETH;&frac34;&ETH;&raquo;&ETH;&para;&ETH;&frac12;&Ntilde;&lsaquo;
+&ETH;&acute;&ETH;&frac34;&ETH;&iquest;&ETH;&frac34;&ETH;&raquo;&ETH;&frac12;&ETH;&cedil;&Ntilde;&sbquo;&ETH;&micro;&ETH;&raquo;&Ntilde;&OElig;&ETH;&frac12;&ETH;&frac34;
+&ETH;&cedil;&ETH;&frac12;&ETH;&cedil;&Ntilde;&dagger;&ETH;&cedil;&ETH;&deg;&ETH;&raquo;&ETH;&cedil;&ETH;&middot;&ETH;&cedil;&Ntilde;&euro;&ETH;&frac34;&ETH;&sup2;&ETH;&deg;&Ntilde;&sbquo;&Ntilde;&OElig;
+&ETH;&acute;&Ntilde;&euro;&Ntilde;&fnof;&ETH;&sup3;&ETH;&cedil;&ETH;&micro;
+&ETH;&iquest;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&Ntilde;&lsaquo;,
+&ETH;&micro;&Ntilde;&ETH;&raquo;&ETH;&cedil;
+&ETH;&sup2;&Ntilde;&lsaquo;
+&Ntilde;&hellip;&ETH;&frac34;&Ntilde;&sbquo;&ETH;&cedil;&Ntilde;&sbquo;&ETH;&micro;
+&ETH;&cedil;&Ntilde;&hellip;
+&ETH;&cedil;&Ntilde;&ETH;&iquest;&ETH;&frac34;&ETH;&raquo;&Ntilde;&OElig;&ETH;&middot;&ETH;&frac34;&ETH;&sup2;&ETH;&deg;&Ntilde;&sbquo;&Ntilde;&OElig;
+&ETH;&sup2;
+&Ntilde;&ETH;&sup2;&ETH;&frac34;&Ntilde;&lsquo;&ETH;&frac14;
+&ETH;&iquest;&Ntilde;&euro;&ETH;&cedil;&ETH;&raquo;&ETH;&frac34;&ETH;&para;&ETH;&micro;&ETH;&frac12;&ETH;&cedil;&ETH;&micro;.
+<span class="anchor" id="line-108"></span><span class="anchor" id=
+"line-109"></span></p>
+<p class="line867">
+<strong>&ETH;&curren;&ETH;&raquo;&ETH;&deg;&ETH;&sup3;&ETH;&cedil;</strong>
+&ETH;&frac14;&ETH;&frac34;&ETH;&sup3;&Ntilde;&fnof;&Ntilde;&sbquo;
+&ETH;&plusmn;&Ntilde;&lsaquo;&Ntilde;&sbquo;&Ntilde;&OElig;
+&ETH;&raquo;&Ntilde;&#381;&ETH;&plusmn;&Ntilde;&lsaquo;&ETH;&frac14;&ETH;&cedil;
+&ETH;&cedil;&ETH;&middot;
+&Ntilde;&ETH;&raquo;&ETH;&micro;&ETH;&acute;&Ntilde;&fnof;&Ntilde;&#381;&Ntilde;&permil;&ETH;&cedil;&Ntilde;&hellip;
+(&ETH;&frac14;&ETH;&frac34;&ETH;&para;&ETH;&frac12;&ETH;&frac34;
+&ETH;&cedil;&Ntilde;&ETH;&iquest;&ETH;&frac34;&ETH;&raquo;&Ntilde;&OElig;&ETH;&middot;&ETH;&frac34;&ETH;&sup2;&ETH;&deg;&Ntilde;&sbquo;&Ntilde;&OElig;
+&ETH;&sup2;&ETH;&frac14;&ETH;&micro;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;):
+<span class="anchor" id="line-110"></span></p>
+<div>
+<table>
+<tbody>
+<tr>
+<td>
+<p class="line891"><strong>SDL_INIT_TIMER</strong></p>
+</td>
+<td>
+<p class="line862">
+&ETH;&iquest;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&ETH;&deg;
+&ETH;&sup2;&Ntilde;&euro;&ETH;&micro;&ETH;&frac14;&ETH;&micro;&ETH;&frac12;&ETH;&cedil;</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-111"></span>
+<p class="line891"><strong>SDL_INIT_AUDIO</strong></p>
+</td>
+<td>
+<p class="line862">
+&ETH;&middot;&ETH;&sup2;&Ntilde;&fnof;&ETH;&ordm;&ETH;&frac34;&ETH;&sup2;&ETH;&deg;&Ntilde;
+&ETH;&iquest;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&ETH;&deg;</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-112"></span>
+<p class="line891"><strong>SDL_INIT_VIDEO</strong></p>
+</td>
+<td>
+<p class="line862">
+&ETH;&sup2;&ETH;&cedil;&ETH;&acute;&ETH;&micro;&ETH;&frac34;
+&ETH;&iquest;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&ETH;&deg;</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-113"></span>
+<p class="line891"><strong>SDL_INIT_JOYSTICK</strong></p>
+</td>
+<td>
+<p class="line862">
+&ETH;&iquest;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&ETH;&deg;
+&ETH;&acute;&ETH;&para;&ETH;&frac34;&ETH;&sup1;&Ntilde;&Ntilde;&sbquo;&ETH;&cedil;&ETH;&ordm;&ETH;&deg;</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-114"></span>
+<p class="line891"><strong>SDL_INIT_HAPTIC</strong></p>
+</td>
+<td>
+<p class="line862">
+&ETH;&iquest;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&ETH;&deg;
+&ETH;&frac34;&ETH;&plusmn;&Ntilde;&euro;&ETH;&deg;&Ntilde;&sbquo;&ETH;&frac12;&ETH;&frac34;&ETH;&sup1;
+&Ntilde;&sbquo;&ETH;&deg;&ETH;&ordm;&Ntilde;&sbquo;&ETH;&cedil;&ETH;&raquo;&Ntilde;&OElig;&ETH;&frac12;&ETH;&frac34;&ETH;&sup1;
+&Ntilde;&ETH;&sup2;&Ntilde;&ETH;&middot;&ETH;&cedil; (force
+feedback)</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-115"></span>
+<p class="line891"><strong>SDL_INIT_GAMECONTROLLER</strong></p>
+</td>
+<td>
+<p class="line862">
+&ETH;&iquest;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&ETH;&deg;
+&ETH;&cedil;&ETH;&sup3;&Ntilde;&euro;&ETH;&frac34;&ETH;&sup2;&ETH;&frac34;&ETH;&sup3;&ETH;&frac34;
+&ETH;&ordm;&ETH;&frac34;&ETH;&frac12;&Ntilde;&sbquo;&Ntilde;&euro;&ETH;&frac34;&ETH;&raquo;&ETH;&raquo;&ETH;&micro;&Ntilde;&euro;&ETH;&deg;</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-116"></span>
+<p class="line891"><strong>SDL_INIT_EVENTS</strong></p>
+</td>
+<td>
+<p class="line862">
+&ETH;&iquest;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&ETH;&deg;
+&Ntilde;&ETH;&frac34;&ETH;&plusmn;&Ntilde;&lsaquo;&Ntilde;&sbquo;&ETH;&cedil;&ETH;&sup1;</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-117"></span>
+<p class="line891"><strong>SDL_INIT_EVERYTHING</strong></p>
+</td>
+<td>
+<p class="line862">&ETH;&sup2;&Ntilde;&ETH;&micro;
+&ETH;&iquest;&ETH;&micro;&Ntilde;&euro;&ETH;&micro;&Ntilde;&Dagger;&ETH;&cedil;&Ntilde;&ETH;&raquo;&ETH;&micro;&ETH;&frac12;&ETH;&frac12;&Ntilde;&lsaquo;&ETH;&micro;
+&ETH;&sup2;&Ntilde;&lsaquo;&Ntilde;&circ;&ETH;&micro;
+&ETH;&iquest;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;&Ntilde;&lsaquo;</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-118"></span>
+<p class="line891"><strong>SDL_INIT_NOPARACHUTE</strong></p>
+</td>
+<td>
+<p class="line862">&ETH;&frac12;&ETH;&micro;
+&Ntilde;&fnof;&Ntilde;&Dagger;&ETH;&cedil;&Ntilde;&sbquo;&Ntilde;&lsaquo;&ETH;&sup2;&ETH;&deg;&ETH;&micro;&Ntilde;&sbquo;
+&Ntilde;&bdquo;&ETH;&deg;&Ntilde;&sbquo;&ETH;&deg;&ETH;&raquo;&Ntilde;&OElig;&ETH;&frac12;&Ntilde;&lsaquo;&ETH;&micro;
+&Ntilde;&ETH;&cedil;&ETH;&sup3;&ETH;&frac12;&ETH;&deg;&ETH;&raquo;&Ntilde;&lsaquo;</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-119"></span><span class="anchor" id=
+"line-120"></span>
+<p class="line867"><span class="anchor" id="line-121"></span></p>
+<p class="line874">&ETH;&bull;&Ntilde;&ETH;&raquo;&ETH;&cedil;
+&Ntilde;&bdquo;&ETH;&raquo;&ETH;&deg;&ETH;&sup3;
+SDL_INIT_NOPARACHUTE &ETH;&frac12;&ETH;&micro;
+&Ntilde;&fnof;&Ntilde;&Ntilde;&sbquo;&ETH;&deg;&ETH;&frac12;&ETH;&frac34;&ETH;&sup2;&ETH;&raquo;&ETH;&micro;&ETH;&frac12;,
+&ETH;&frac34;&ETH;&frac12;
+&ETH;&plusmn;&Ntilde;&fnof;&ETH;&acute;&ETH;&micro;&Ntilde;&sbquo;
+&Ntilde;&fnof;&Ntilde;&Ntilde;&sbquo;&ETH;&deg;&ETH;&frac12;&ETH;&frac34;&ETH;&sup2;&ETH;&raquo;&ETH;&micro;&ETH;&frac12;
+&ETH;&acute;&ETH;&raquo;&Ntilde;
+&Ntilde;&Dagger;&ETH;&deg;&Ntilde;&Ntilde;&sbquo;&ETH;&frac34;
+&ETH;&cedil;&ETH;&sup3;&ETH;&frac12;&ETH;&frac34;&Ntilde;&euro;&ETH;&cedil;&Ntilde;&euro;&Ntilde;&fnof;&ETH;&micro;&ETH;&frac14;&Ntilde;&lsaquo;&Ntilde;&hellip;
+&Ntilde;&ETH;&cedil;&ETH;&sup3;&ETH;&frac12;&ETH;&deg;&ETH;&raquo;&ETH;&frac34;&ETH;&sup2;
+(&Ntilde;&sbquo;&ETH;&deg;&ETH;&ordm;&ETH;&cedil;&Ntilde;&hellip;
+&ETH;&ordm;&ETH;&deg;&ETH;&ordm; SIGSEGV). <span class="anchor" id=
+"line-122"></span><span class="anchor" id="line-123"></span></p>
+<p class="line862">&ETH;&bull;&Ntilde;&ETH;&raquo;&ETH;&cedil;
+&Ntilde;&fnof; &ETH;&sup2;&ETH;&deg;&Ntilde;
+&ETH;&micro;&Ntilde;&Ntilde;&sbquo;&Ntilde;&OElig;
+&ETH;&frac12;&ETH;&micro;&ETH;&frac34;&ETH;&plusmn;&Ntilde;&hellip;&ETH;&frac34;&ETH;&acute;&ETH;&cedil;&ETH;&frac14;&ETH;&frac34;&Ntilde;&Ntilde;&sbquo;&Ntilde;&OElig;
+&ETH;&iquest;&Ntilde;&euro;&ETH;&frac34;&ETH;&cedil;&ETH;&frac12;&ETH;&cedil;&Ntilde;&dagger;&ETH;&cedil;&ETH;&deg;&ETH;&raquo;&ETH;&cedil;&ETH;&middot;&ETH;&cedil;&Ntilde;&euro;&ETH;&frac34;&ETH;&sup2;&ETH;&deg;&Ntilde;&sbquo;&Ntilde;&OElig;
+&ETH;&frac34;&ETH;&acute;&ETH;&frac12;&Ntilde;&fnof;
+&ETH;&cedil;&ETH;&middot;
+&ETH;&iquest;&ETH;&frac34;&ETH;&acute;&Ntilde;&ETH;&cedil;&Ntilde;&Ntilde;&sbquo;&ETH;&micro;&ETH;&frac14;
+&ETH;&frac34;&Ntilde;&sbquo;&ETH;&acute;&ETH;&micro;&ETH;&raquo;&Ntilde;&OElig;&ETH;&frac12;&ETH;&frac34;,
+&ETH;&frac14;&ETH;&frac34;&ETH;&para;&ETH;&micro;&Ntilde;&sbquo;&ETH;&micro;
+&ETH;&sup2;&Ntilde;&lsaquo;&ETH;&middot;&ETH;&sup2;&ETH;&deg;&Ntilde;&sbquo;&Ntilde;&OElig;
+<a href="index.html@SDL_InitSubSystem.html">SDL_InitSubSystem</a>() &Ntilde;
+&ETH;&frac12;&Ntilde;&fnof;&ETH;&para;&ETH;&frac12;&Ntilde;&lsaquo;&ETH;&frac14;
+&ETH;&sup2;&ETH;&deg;&ETH;&frac14;
+&Ntilde;&bdquo;&ETH;&raquo;&ETH;&deg;&ETH;&sup3;&ETH;&frac34;&ETH;&frac14;
+<span class="anchor" id="line-124"></span><span class="anchor" id=
+"line-125"></span></p>
+<p class="line867"></p>
+<h2 id="A.2BBCEEMgRPBDcEMAQ9BD0ESwQ1_.2BBCQEQwQ9BDoERgQ4BDg-">
+&ETH;&iexcl;&ETH;&sup2;&Ntilde;&ETH;&middot;&ETH;&deg;&ETH;&frac12;&ETH;&frac12;&Ntilde;&lsaquo;&ETH;&micro;
+&ETH;&curren;&Ntilde;&fnof;&ETH;&frac12;&ETH;&ordm;&Ntilde;&dagger;&ETH;&cedil;&ETH;&cedil;</h2>
+<span class="anchor" id="line-126"></span>
+<ul>
+<li style="list-style-type:none">
+<p class="line891"><a href="index.html@SDL_InitSubSystem.html">SDL_InitSubSystem</a> <span class="anchor" id=
+"line-127"></span></p>
+</li>
+<li style="list-style-type:none">
+<p class="line891"><a href="index.html@SDL_Quit.html">SDL_Quit</a> <span class=
+"anchor" id="line-128"></span></p>
+</li>
+<li style="list-style-type:none">
+<p class="line891"><a href="index.html@SDL_WasInit.html">SDL_WasInit</a>
+<span class="anchor" id="line-129"></span></p>
+</li>
+<li style="list-style-type:none">
+<p class="line891"><a href="index.html@SDL_SetMainReady.html">SDL_SetMainReady</a>
+<span class="anchor" id="line-130"></span><span class="anchor" id=
+"line-131"></span></p>
+</li>
+</ul>
+<p class="line867"></p>
+<hr/>
+<p class="line874"><span class="anchor" id=
+"line-132"></span><a href="index.html@CategoryAPI.html">CategoryAPI</a>, <a href="index.html@CategoryInit.html">CategoryInit</a> <span class="anchor" id=
+"line-133"></span><span class="anchor" id="bottom"></span></p>
+</div>
+</body></html>

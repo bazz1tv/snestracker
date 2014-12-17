@@ -1,0 +1,26 @@
+<map id="OptionsMenu::Update" name="OptionsMenu::Update">
+<area shape="rect" href="$class_slider.html#ad5898c678003fc910e084578b808f41d" title="Slider::getTargetValue" alt="" coords="256,5,437,32"/>
+<area shape="rect" href="$classc_audio.html#a4ee876a51bb3fdadb00160eebc4dfd49" title="cAudio::MusicPlaying" alt="" coords="261,56,432,83"/>
+<area shape="rect" href="$classc_audio.html#a8169acfbe8b79cfc13a871ab16b2ffc9" title="if no forcing the file will be played after the current Music file if loops is &#45;1 music will be loope..." alt="" coords="273,107,420,133"/>
+<area shape="rect" href="$_options_menu_8cpp.html#a238bfda81fcbf9083142369b7b613436" title="playSoundEffect" alt="" coords="277,157,416,184"/>
+<area shape="rect" href="$class_options_menu.html#ad3ad201a8ab892a1a203719d5726f3f0" title="Does general things." alt="" coords="247,208,447,235"/>
+<area shape="rect" href="$classc_audio.html#a7ad354ffe2a9aaa331a98920178a9721" title="Sets All the Sounds default Volume  Returns avg_volume" alt="" coords="232,259,461,285"/>
+<area shape="rect" href="$classc_audio.html#a0461c953d79bba40f59c7a6b5a5566f8" title="Sets the Music default Volume." alt="" coords="248,309,445,336"/>
+<area shape="rect" href="$class_slider.html#a92d89cabc59cb95fe583325b8f7a2ed3" title="Slider::Slide" alt="" coords="293,360,400,387"/>
+<area shape="rect" href="$class_text_object.html#ae42593af8093a831a779d7bed0852d81" title="TextObject::Update" alt="" coords="267,411,427,437"/>
+<area shape="rect" href="$classc_sound_manager.html#a13473964862648a84d60d20669cb6e23" title="cSoundManager::GetPointer" alt="" coords="512,107,736,133"/>
+<area shape="rect" href="$classc_audio.html#aa5e5c15b5915928533c02cb8a277081e" title="Plays an Sound chunk if channel is &#45;1 the sound will be played on the next free channel if volume is ..." alt="" coords="547,157,701,184"/>
+<area shape="rect" href="$classc_framerate.html#a526a4eb7f2f5f5894aebc47654be6573" title="cFramerate::SetSpeedFactor" alt="" coords="509,208,739,235"/>
+<area shape="rect" href="$classc_audio.html#a964b3d86635b460a4f25cf64997b0014" title="Checks if no music is played." alt="" coords="559,259,689,285"/>
+<area shape="rect" href="$classc_mouse_cursor.html#a19df312e71e7672f891dda410d4ef489" title="cMouseCursor::Update" alt="" coords="532,309,716,336"/>
+<area shape="rect" href="$classc_basic_sprite.html#abab9b223fef9a6875313718719866ccc" title="cBasicSprite::SetPos" alt="" coords="801,259,967,285"/>
+<area shape="rect" href="$classc_basic_sprite.html#a65779c476030c2463de8576fe1f67e39" title="cBasicSprite::Update" alt="" coords="799,309,969,336"/>
+<area shape="rect" href="$group___engine___image.html#ga2b7097260a2531e03c8853d2b22be2bd" title="V 1.1.1." alt="" coords="1080,284,1205,311"/>
+<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="1029,335,1256,361"/>
+<area shape="rect" href="$class_slider.html#a8ca3a1ac093b2ae70115c1f9ae2e816f" title="Slider::getTargetValue" alt="" coords="533,360,715,387"/>
+<area shape="rect" href="$class_text_object.html#a2f82818e76aff5329cddccb38123e477" title="Makes the surface and updates the Rect." alt="" coords="544,411,704,437"/>
+<area shape="rect" href="$class_text_object.html#af6103e05c76f2905d96e4f395ccaf9b1" title="TextObject::UpdateRect" alt="" coords="788,461,980,488"/>
+<area shape="rect" href="$class_text_object.html#a4aca0a06ab72da363ecdc81a036b79f1" title="TextObject::preRender" alt="" coords="792,360,976,387"/>
+<area shape="rect" href="$classc_font.html#a5e7d87da787e072678abee523d01e724" title="Creates the text in an Surface types : 1 = Blended 2 = Shaded 3 = Solid." alt="" coords="809,411,959,437"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="1104,461,1181,488"/>
+</map>

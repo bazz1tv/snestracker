@@ -1,0 +1,27 @@
+<map id="Game::Init" name="Game::Init">
+<area shape="rect" href="$classc_player.html#ac2d3fad59338a19b9c46af34f99d62ed" title="Loads the Player images." alt="" coords="692,37,796,64"/>
+<area shape="rect" href="$classc_level.html#a0585e5ce66c81057bc12da8e572f1cc4" title="Loads an Level." alt="" coords="179,265,291,292"/>
+<area shape="rect" href="$namespace_playlist.html#a63b8bcba7ba0c53a57ab082136b9becd" title="This gets all music files from the music directory." alt="" coords="165,316,304,343"/>
+<area shape="rect" href="$classc_audio.html#a4ee876a51bb3fdadb00160eebc4dfd49" title="cAudio::MusicPlaying" alt="" coords="149,367,320,393"/>
+<area shape="rect" href="$classc_audio.html#a8169acfbe8b79cfc13a871ab16b2ffc9" title="if no forcing the file will be played after the current Music file if loops is &#45;1 music will be loope..." alt="" coords="161,417,308,444"/>
+<area shape="rect" href="$group___guns.html#gaf0967c184c98c75dae56311e5bc3b6a1" title="Preloads all Bullet images get the pointer with the image manager and the image path." alt="" coords="659,88,829,115"/>
+<area shape="rect" href="$classc_player.html#a614d07b3557166554b6b800f480ff030" title="Resets." alt="" coords="175,480,295,507"/>
+<area shape="rect" href="$classc_image_manager.html#a75bc7ee74e8fe0839725639d8392390a" title="Adds an Image Should always have an Identifier." alt="" coords="880,88,1056,115"/>
+<area shape="rect" href="$classc_image_manager.html#a71fec48cbbf5fbc3bf75b66fa8066cbf" title="cImageManager::GetPointer" alt="" coords="1107,88,1331,115"/>
+<area shape="rect" href="$group___engine___image.html#gac3d007d1a2bfa7d73b87a8541a194c9c" title="LoadImage" alt="" coords="916,37,1020,64"/>
+<area shape="rect" href="$group___guns.html#gad49f863c1fd08dfaa59fb8c9c51e8c43" title="Deletes all Bullets ( Cleans the Array )" alt="" coords="423,341,556,368"/>
+<area shape="rect" href="$enemy_8cpp.html#ade7b770307420fa96585cff068b6e365" title="Deletes every Enemy and frees the array." alt="" coords="416,392,563,419"/>
+<area shape="rect" href="$effects_8cpp.html#aa0ce31d79258acc43ec735af3ac6b6e6" title="Delete&#39;s every Particle Emitter." alt="" coords="393,443,585,469"/>
+<area shape="rect" href="$_globals_8cpp.html#af38b5f4efeeaf7ca41eb85294f0f1ec5" title="Checks if the file exists." alt="" coords="927,392,1009,419"/>
+<area shape="rect" href="$classc_level.html#a8bcb4ae8a5396ec20c5616c3c31153b8" title="Cuts the parts out and sends it to the ParseLine function." alt="" coords="432,240,547,267"/>
+<area shape="rect" href="$classc_framerate.html#a989508dcaae1a97113f844df00219dd4" title="cFramerate::Reset" alt="" coords="413,139,565,165"/>
+<area shape="rect" href="$classc_level.html#abe150afdc2a9fdf7a0df8d8b71cdf08e" title="Unloads the Level." alt="" coords="425,189,553,216"/>
+<area shape="rect" href="$classc_level.html#a0a2f749fbf8b59eabbed37e1d6a30e83" title="Parses the Command and also reports any Error." alt="" coords="672,240,816,267"/>
+<area shape="rect" href="$enemy_8cpp.html#aed48716babc431a6d9216c142df5d71b" title="Adds an Enemy with the given type." alt="" coords="919,291,1017,317"/>
+<area shape="rect" href="$classc_level_data.html#ac868f4fdf7cf4bd9bb007426b65fc0ab" title="Adds an Sprite to the Leveldata." alt="" coords="877,240,1059,267"/>
+<area shape="rect" href="$_globals_8cpp.html#a09ea7ab11fa74ab23547640862c19939" title="Checks if it&#39;s an Number." alt="" coords="900,341,1036,368"/>
+<area shape="rect" href="$classc_basic_sprite.html#abab9b223fef9a6875313718719866ccc" title="cBasicSprite::SetPos" alt="" coords="885,139,1051,165"/>
+<area shape="rect" href="$classc_enemy.html#ad43a7bf539bec2be57bbdbf02fa25f9f" title="cEnemy::init" alt="" coords="1164,291,1273,317"/>
+<area shape="rect" href="$class_object_manager.html#abd00b75edcab4d19e93efacc12459f3e" title="ObjectManager::add" alt="" coords="1135,240,1303,267"/>
+<area shape="rect" href="$classc_player.html#a7eb61f626845f9e24b5791de6f8359d0" title="Change the Active Weapon." alt="" coords="368,493,611,520"/>
+</map>

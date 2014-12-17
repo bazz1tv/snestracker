@@ -1,0 +1,118 @@
+<html>
+<!--------------------------------------------------->
+<!--               Docs/ttf - SGE                  -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - TTF</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>TrueType font input</H1>
+
+<P>
+
+<a name="sge_tt_input"><H2>sge_tt_input</H2></a>
+
+<UL>
+<LI>int <B>sge_tt_input(</B>SDL_Surface *screen, sge_TTFont *font, char *string, Uint8 flags, int pos, int len, Sint16 x, Sint16 y, Uint32 fcol, Uint32 bcol, int Alpha<B>)</B>
+<LI>int <B>sge_tt_input(</B>SDL_Surface *screen, sge_TTFont *font, char *string, Uint8 flags, int pos,int len,Sint16 x,Sint16 y, Uint8 fR, Uint8 fG, Uint8 fB, Uint8 bR, Uint8 bG, Uint8 bB, int Alpha<B>)</B>
+<LI>int <B>sge_tt_input_UNI(</B>SDL_Surface *screen, sge_TTFont *font, Uint16 *string, Uint8 flags, int pos, int len, Sint16 x, Sint16 y, Uint32 fcol, Uint32 bcol, int Alpha<B>)</B>
+<LI>int <B>sge_tt_input_UNI(</B>SDL_Surface *screen, sge_TTFont *font, Uint16 *string, Uint8 flags, int pos, int len, Sint16 x, Sint16 y, Uint8 fR, Uint8 fG, Uint8 fB, Uint8 bR, Uint8 bG, Uint8 bB, int Alpha<B>)</B>
+</UL>
+
+These functions handle keyboard input and shows the result on screen.<BR><BR>
+<DL>
+<DT><B>SDL_Surface *screen</B> - The screen pointer.
+<DT><B>sge_TTFont *font</B> - The font to render the text with.
+<DT><B>char *string</B> or <B>Uint16 *string</B> - The Latin-1/Unicode text string to put the result into.
+<DT><B>Uint8 flags</B> - Flags (may be ORed, eg. SGE_IBG|SGE_IDEL).
+  <DD>0 - Default
+  <DD><I>SGE_IBG</I> - Keeps the background, use this if the background has more colors than the background color.
+  <DD><I>SGE_IDEL</I> - Delete text on screen on exit.
+  <DD><I>SGE_INOKR</I> - No keyrepeat (you can then use SDL_EnableKeyRepeat() yourself).
+<DT><B>int pos</B> - Set this to zero if you don't want a default text (see below).
+<DT><B>int len</B> - The max numbers of chars editable, "string" should have at least len+1 elements
+allocated.  
+<DT><B>Sint16 x, Sint16 y</B> - The leftmost point of the baseline for the text.
+<DT><B>Uint32 fcolor</B> or <B>Uint8 fR, Uint8 fG, Uint8 fB</B> - The color of the font.
+<DT><B>Uint32 bcolor</B> or <B>Uint8 bR, Uint8 bG, Uint8 bB</B> - The background color (see below).
+<DT><B>int Alpha</B> - Sets the transparency of the text (0-255).
+</DL>
+<BR>
+The text can be edited with [Backspace], [Delete], [Left arrow] and [Right arrow]. Text input is terminated when [Return], [Enter] or [Escape] is pressed, 
+or if a quit event is received. Puts the result in "string" (null terminated).<BR>
+<BR>
+If you want a 'default' text then copy a null (\0) terminated string into the argument "string" before calling this function. Set "pos" to any other value than zero
+to indicate this.<BR>
+<BR>
+You can use sge_TTF_AAOn(), sge_TTF_AAOff() and sge_TTF_AA_Alpha() to control how the text is rendered. If you use antialiasing, the background color must be set to the background color of the area where you will render the text. If the background has more than one color it might be better to use sge_TTF_AA_Alpha().<BR>
+Does lock and update the surface. Does respect clipping.<BR>
+<BR>
+<B>Note:</B> This function will block your program! Use the <A HREF="text_classes.html">text classes</A> if you want more control (see
+the <A HREF="text_classes.html#example1">example</A>).<BR>
+<BR>
+<B>Returns int</B>:<BR>
+Zero or above - the length of the string (i.e. [Return] or [Enter] was pressed).<BR>
+-1 - received a quit event, but everything else was handled as normal.<BR>
+-2 - [Escape] was pressed, but everything else was handled as normal.<BR>
+-3 - out of memory.<BR>
+<BR>
+
+<H3>Example</H3>
+<I>#include &lt;iostream&gt;</I><BR>
+<I>#include &lt;string.h&gt;</I><BR>
+<I>#include "SDL.h"</I><BR>
+<I>#include "sge.h"</I><BR>
+<BR>
+<B>using namespace</B> std;<BR>
+<BR>
+...<BR>
+<BR>
+
+<DL>
+<DT><I>//Init font engine and exit on error</I>
+<DT><B>if(</B>sge_TTF_Init()!=0<B>){</B><BR>
+  <DD>cerr &lt;&lt; "<I>TT error: </I>" &lt;&lt; SDL_GetError() &lt;&lt; endl;<BR> 
+  <DD>exit(1);<BR>
+<DT><B>}</B></DL>
+
+<DL>
+<DT><I>//Open font and exit on error</I>
+<DT>sge_TTFont *font=sge_TTF_OpenFont("font.ttf", 25);<BR>
+<DT>
+<DT><B>if(</B>!font<B>){</B>
+  <DD>cerr &lt;&lt; "<I>TT error: </I>" &lt;&lt; SDL_GetError() &lt;&lt; endl;<BR> 
+  <DD>exit(1);<BR>
+<DT><B>}</B></DL>
+
+sge_TTF_AA_Alpha(); <I>//Nice alpha rendering</I><BR>
+<BR>
+char string[52];<BR>
+strcpy(string,"Edit Me!"); <I>//The default text</I><BR>
+int ret;<BR>
+<BR>
+<I>//Let the user edit the text</I><BR>
+ret=sge_tt_input( screen, font, string, SGE_IBG, 1, 50,  10,100,  0,0,255,  0,0,0,  SDL_ALPHA_OPAQUE );<BR>
+
+<DL>
+<DT><B>if(</B>ret>0<B>)</B>
+  <DD>cout &lt;&lt; string &lt;&lt; endl; <I>//print the text</I>
+</DL>
+
+sge_TTF_CloseFont(font);<BR>
+
+<BR><BR>
+<A HREF="ttf.html"><B>To the TTF setup functions>><BR></A>
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

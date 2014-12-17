@@ -1,0 +1,296 @@
+<html>
+<!--------------------------------------------------->
+<!--              Docs/shape - SGE                 -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Shape classes</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Shape classes</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_shape">sge_shape</A>
+<LI><A HREF="#sge_surface">sge_surface</A>
+<LI><A HREF="#sge_ssprite">sge_ssprite</A>
+<LI><A HREF="#sge_sprite">sge_sprite</A>
+<LI><A HREF="#sge_screen">sge_screen</A>
+</UL>
+<BR>
+
+<B><a name="sge_shape">sge_shape</a></B><BR>
+This is an abstract base class. Shapes are something that can be drawn and cleared on surfaces.
+All classes derived from this class MUST provide the methods below.
+<BR><BR>
+
+Constructor:
+<BLOCKQUOTE>
+	No constructor.
+</BLOCKQUOTE>
+
+Methods:
+<BLOCKQUOTE>
+	<B>virtual void draw(void)</B><BR>
+	Draws the shape.<BR><BR>
+	
+	<B>virtual void clear(Uint32 color)</B><BR>
+	Removes the shape by clearing it to a color.<BR><BR>
+	
+	<B>virtual void clear(SDL_Surface *src, Sint16 srcX, Sint16 srcY)</B><BR>
+	Removes the shape by blitting a part of src over it.<BR><BR>
+	
+	<B>virtual void UpdateRects(void)</B><BR>
+	Updates (SDL/sge_UpdateRect) areas that have been cleared or drawn.<BR><BR>
+	
+	<B>SDL_Rect get_pos(void)</B><BR>
+	Returns the current (maybe undrawn) position.<BR><BR>
+	
+	<B>SDL_Rect get_last_pos(void)</B><BR>
+	Returns the last drawn position.<BR><BR>
+	
+	<B>Sint16 get_xpos(void)<BR>
+	Sint16 get_ypos(void)</B><BR>
+	Returns the upper left corner of shape.<BR><BR>
+	
+	<B>Sint16 get_w(void)<BR>
+	Sint16 get_h(void)</B><BR>
+	Returns the width and height of the shape.<BR><BR>
+	
+	<B>SDL_Surface* get_dest(void)</B><BR>
+	Returns the surface on which this class operates on.<BR><BR>
+	
+	<B>Usefull coords in shape</B><BR>
+	These methods returns some useful (current) coords in shape.
+	<PRE>
+	NW N NE
+	W  C  E
+	SW S SE
+	</PRE>
+	Sint16 c_x(void)<BR>
+	Sint16 c_y(void)<BR><BR>
+	
+ Sint16 nw_x(void)<BR>
+	Sint16 nw_y(void)<BR><BR>
+	
+ Sint16 n_x(void)<BR>
+	Sint16 n_y(void)<BR><BR>
+	
+ Sint16 ne_x(void)<BR>
+	Sint16 ne_y(void)<BR><BR>
+	
+ Sint16 e_x(void)<BR>
+	Sint16 e_y(void)<BR><BR>
+	
+ Sint16 se_x(void)<BR>
+	Sint16 se_y(void)<BR><BR>
+	
+ Sint16 s_x(void)<BR>
+	Sint16 s_y(void)<BR><BR>
+	
+ Sint16 sw_x(void)<BR>
+	Sint16 sw_y(void)<BR><BR>
+	
+ Sint16 w_x(void)<BR>
+	Sint16 w_y(void)<BR><BR>
+	<BR>	
+</BLOCKQUOTE>
+
+<HR>
+<BR><BR>
+
+<B><a name="sge_surface">sge_surface</a></B><BR>
+Derived (public) from sge_shape.<BR>
+This is the most basic blitting class. You can draw & clear the image and move it around.
+<BR><BR>
+
+Constructor:
+<BLOCKQUOTE>
+	<B>sge_surface(SDL_Surface *dest, SDL_Surface *src, Sint16 x=0, Sint16 y=0)</B><BR>
+	Dest is the surface you want to blit to, src is the image.<BR><BR>
+</BLOCKQUOTE>
+
+Methods:
+<BLOCKQUOTE>
+	<B>virtual void move_to(Sint16 x, Sint16 y)</B><BR>
+	Moves the image to a new coord.<BR><BR>
+	
+	<B>virtual void move(Sint16 x_step, Sint16 y_step)</B><BR>
+	Moves the image x/y steps to the left/down (or right/up if negative step size).<BR><BR>
+	
+	<B>SDL_Surface* get_img(void)</B><BR>
+	Returns a pointer to the image.<BR><BR>	
+</BLOCKQUOTE>
+
+<HR>
+<BR><BR>
+
+<B><a name="sge_ssprite">sge_ssprite</a></B><BR>
+Derived (public) from sge_surface.<BR>
+The next step is to introduce speeds and multiple frames.
+<BR><BR>
+
+Constructor:
+<BLOCKQUOTE>
+	<B>sge_ssprite(SDL_Surface *screen, SDL_Surface *img, Sint16 x=0, Sint16 y=0)</B><BR>
+	Img is the first frame to show.<BR><BR>
+	
+	<B>sge_ssprite(SDL_Surface *screen, SDL_Surface *img, sge_cdata *cdata, Sint16 x=0, Sint16 y=0)</B><BR>
+	As above but with collision data [sge_collision].<BR><BR>
+</BLOCKQUOTE>
+
+Methods:
+<BLOCKQUOTE>
+	<B>void set_vel(Sint16 x, Sint16 y)<BR>
+	void set_xvel(Sint16 x)<BR>
+	void set_yvel(Sint16 y)</B><BR>
+	Sets the speed (pixels/update).<BR><BR>
+	
+	<B>Sint16 get_xvel(void)<BR>
+	Sint16 get_yvel(void)</B><BR>
+	Returns the current speed.<BR><BR>
+	
+	<B>virtual bool update(void)</B><BR>
+	Move the sprite according to the speeds. Returns true if the position changed.<BR><BR>
+	
+	<B>void add_frame(SDL_Surface *img)<BR>
+	void add_frame(SDL_Surface *img, sge_cdata *cdata)</B><BR>
+	Adds a new frame to the sprite, with or without collision data [sge_collision]. This resets the
+	playing sequence.<BR><BR>
+	
+	<B>void skip_frame(int skips)<BR>
+	void next_frame(void)<BR>
+	void prev_frame(void)<BR>
+	void first_frame(void)<BR>
+	void last_frame(void)</B><BR>
+	Change the current frame. Calling next_frame()/prev_frame() is the same thing as calling
+	skip_frame(1)/skip_frame(-1). First_frame()/last_frame() sets the first/last frame in the
+	sequence as the current frame (but does not change the sequence).<BR><BR>
+	
+	<B>void set_seq(int start, int stop, playing_mode mode=loop)<BR>
+	void reset_seq(void)<BR>
+	sge_ssprite::playing_mode get_PlayingMode(void)</B><BR>
+	Changes the frame playing sequence. The default is to loop over all frames (next_frame() returns
+	to the first frame when the last frame has been shown). Use set_seq() to set the start and stop frame
+	(frame 0 is the first frame) and playing mode. You can set the following playing modes:<BR>
+	<UL>
+	<LI>sge_ssprite::loop - loops forever.
+	<LI>sge_ssprite::play_once - just once then stops on the last frame.
+	</UL>
+	Use reset_seq() to reset to the default sequence.<BR>
+	Get_PlayingMode() returns the current mode or sge_ssprite::stop if all frames in the sequence
+	has been shown (only possible if sge_ssprite::play_once was used).<BR><BR>
+	
+	<B>void set_border(SDL_Rect box)<BR>
+	void border_bounce(bool mode)<BR>
+ void border_warp(bool mode)</B><BR>
+	The sprite will bounce at the border of the screen as default. You can change the allowed rectangle
+	with set_border() or turn this off completely with border_bounce(false). You can also make the sprite warp (pixel for pixel) at the border with border_warp(true).<BR><BR>
+	
+	<B>sge_cdata* get_cdata(void)</B><BR>
+	Returns the collision map for the current frame (or NULL if no one exist).<BR><BR>
+	
+	<B>sge_frame* get_frame(void)</B><BR>
+	Returns the frame data for the current frame:
+	<PRE>struct sge_frame{
+  //The image
+  SDL_Surface *img;
+	
+  //Collision data
+  sge_cdata *cdata;
+};</PRE>
+	
+	<B>std::list&lt;sge_frame*&gt;* get_list(void)</B><BR>
+	The linked list with frames is stored in a STL list&lt;&gt; container. This method returns a
+	pointer to this list. If you change anything in the list you *MUST* call reset_seq()!<BR><BR>	
+</BLOCKQUOTE>
+
+<HR>
+<BR><BR>
+
+<B><a name="sge_sprite">sge_sprite</a></B><BR>
+Derived (public) from sge_ssprite.<BR>
+Finally we add timed operations to the sprite. All speeds are now in pixels/second.<BR><BR>
+
+Constructor:
+<BLOCKQUOTE>
+	<B>sge_sprite(SDL_Surface *screen, SDL_Surface *img, Sint16 x=0, Sint16 y=0)</B><BR>
+	<B>sge_sprite(SDL_Surface *screen, SDL_Surface *img, sge_cdata *cdata, Sint16 x=0, Sint16 y=0)</B>
+</BLOCKQUOTE>
+
+Methods:
+<BLOCKQUOTE>
+	<B>void set_pps(Sint16 x, Sint16 y)<BR>
+	void set_xpps(Sint16 x)<BR>
+	void set_ypps(Sint16 y)<BR>
+	void set_fps(Sint16 f)</B><BR>
+	Sets the speed (pixels/second). Set_fps() sets how fast (frames/second) the frames should be changed.<BR><BR>
+	
+	<B>Sint16 get_xpps(void)<BR>
+	Sint16 get_ypps(void)<BR>
+	Sint16 get_fps(void)</B><BR>
+	Returns the current speeds.<BR><BR>
+	
+	<B>bool update(Uint32 ticks)<BR>
+	bool update(void)</B><BR>
+	Updates the internal status (calculates the new position and changes the current frame if
+	needed). You can let update() call SDL_GetTicks() itself or provide the information. Returns
+	true if the sprite changed position or frame.<BR><BR>
+	
+	<B>void pause(void)</B><BR>
+	Halt the sprite until next call to update().<BR><BR>
+</BLOCKQUOTE>
+
+<HR>
+<BR><BR>
+
+<B><a name="sge_screen">sge_screen</a></B><BR>
+This class is not finished and might eat your homework.<BR>
+This class can be used to draw shapes (sge_shape) on screen. This class will detect if doublebuffering or a hardware screen
+surface is used and act accordingly.  
+<BR><BR>
+
+Constructor:
+<BLOCKQUOTE>
+	<B>sge_screen(SDL_Surface *screen)</B>
+</BLOCKQUOTE>
+
+Methods:
+<BLOCKQUOTE>
+	<B>void add_rect(SDL_Rect rect)<BR>
+	void add_rect(Sint16 x, Sint16 y, Uint32 w, Uint32 h)</B><BR>
+	Adds an rectangle to be updated (with SDL_UpdateRects()) on update() if needed.
+	<BR><BR>
+	
+	<B>void add_shape(sge_shape *shape)<BR>
+	void add_shape_p(sge_shape *shape)</B><BR>
+	Adds an sge_shape to be drawn and updated (if needed) on update(). 
+	<BR><BR>
+	
+	<B>void remove_shape_p(sge_shape *shape)</B><BR>
+	Removes an sge_shape from the permanent list. 
+	<BR><BR>
+	
+	<B>void clear_all(void)</B><BR>
+	Clears all shapes (even those added with add_shape_p()) and rectangles. 
+	<BR><BR>
+	
+	<B>void update(void)</B><BR>
+	Draws all shapes and updates all rectangles and shapes. All shapes and rectangales are then cleared (beside those added with
+	add_shape_p()) from the class.
+	<BR><BR>
+</BLOCKQUOTE>
+
+
+</P>
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030809
+</SMALL></I></P>
+
+</body>
+</html>

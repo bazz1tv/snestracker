@@ -1,0 +1,14 @@
+<map id="FillRectAlpha" name="FillRectAlpha">
+<area shape="rect" href="$class_slider.html#a87ae38e394d916107503c26dc7c2291c" title="Slider::Draw" alt="" coords="172,5,279,32"/>
+<area shape="rect" href="$classc_level_editor.html#a0ef2d00303762c35c2591bf9fe961305" title="cLevelEditor::Draw" alt="" coords="879,116,1031,143"/>
+<area shape="rect" href="$group___engine___gfx.html#gac4cec088c507df326cbce2913b69d697" title="FillRect" alt="" coords="189,107,261,133"/>
+<area shape="rect" href="$classc_level_editor.html#a14176b252453be2aa58ef18fdd55b904" title="cLevelEditor::OutlineObject" alt="" coords="331,137,549,164"/>
+<area shape="rect" href="$group___engine___gfx.html#gaac45188016ee81f7c6c4698af9a632ed" title="FillRectAlpha" alt="" coords="168,208,283,235"/>
+<area shape="rect" href="$class_options_menu.html#a6f95309648c53dcc8cb5e896ab8ba64e" title="OptionsMenu::Draw" alt="" coords="360,5,520,32"/>
+<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="641,5,785,32"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="893,5,1016,32"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="1080,5,1165,32"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1213,5,1272,32"/>
+<area shape="rect" href="$classc_level_editor.html#a569a450bbd738d548653068f1e3fe066" title="Draw the outline of the hovered Object." alt="" coords="597,107,829,152"/>
+<area shape="rect" href="$classc_multi_select.html#ae05e6b8b69a7c01608c1ad0bf1584762" title="cMultiSelect::DrawOutline\lAroundMultiSelect_Tiles" alt="" coords="611,176,816,221"/>
+</map>

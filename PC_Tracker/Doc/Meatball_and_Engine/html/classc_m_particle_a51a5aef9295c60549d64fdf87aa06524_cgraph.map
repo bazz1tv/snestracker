@@ -1,0 +1,13 @@
+<map id="cMParticle::Update" name="cMParticle::Update">
+<area shape="rect" href="$classc_angle_sprite.html#ab0a9e4ec6a72b43734778939b5627a5c" title="cAngleSprite::AddDirection" alt="" coords="476,105,689,132"/>
+<area shape="rect" href="$classc_angle_sprite.html#ad21bfe3eef5aab3d347a2d9b0a1f041f" title="cAngleSprite::SetDirection" alt="" coords="739,105,949,132"/>
+<area shape="rect" href="$classc_angle_sprite.html#a12613016a1db1eacca5e5982bc50f33e" title="cAngleSprite::AddSpeed" alt="" coords="485,55,680,81"/>
+<area shape="rect" href="$classc_m_particle.html#a3b2f0d5efe396abb2d2c299883ae1c2b" title="cMParticle::HandleCollision" alt="" coords="211,55,427,81"/>
+<area shape="rect" href="$group___engine___misc.html#ga0be98eebd3a462ca4848592d68073919" title="Random float between min and max." alt="" coords="277,207,360,233"/>
+<area shape="rect" href="$classc_m_angle_sprite.html#a42facb500fb312966e8babe1e9f00956" title="cMAngleSprite::Update" alt="" coords="225,257,412,284"/>
+<area shape="rect" href="$classc_angle_sprite.html#a839c7d3c2b047f3e20fea4776eb28df0" title="cAngleSprite::Update" alt="" coords="496,257,669,284"/>
+<area shape="rect" href="$classc_basic_sprite.html#a8ef384a01431f3cff6dffe00df1df2d8" title="cBasicSprite::Move" alt="" coords="767,283,921,309"/>
+<area shape="rect" href="$classc_basic_sprite.html#a65779c476030c2463de8576fe1f67e39" title="cBasicSprite::Update" alt="" coords="759,232,929,259"/>
+<area shape="rect" href="$group___engine___image.html#ga2b7097260a2531e03c8853d2b22be2bd" title="V 1.1.1." alt="" coords="1048,207,1173,233"/>
+<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="997,257,1224,284"/>
+</map>

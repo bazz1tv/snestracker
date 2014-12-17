@@ -1,0 +1,10 @@
+<map id="DeleteAllBullets" name="DeleteAllBullets">
+<area shape="rect" href="$classc_level.html#a0585e5ce66c81057bc12da8e572f1cc4" title="Loads an Level." alt="" coords="189,56,301,83"/>
+<area shape="rect" href="$main_8cpp.html#a0ff13d025cfc9da8a334629574ff33ff" title="QuitGame" alt="" coords="704,107,800,133"/>
+<area shape="rect" href="$group___console___commands.html#ga76761b48724947bd23c9d00816c14354" title="Load a new Level from LEVEL_DIR." alt="" coords="355,5,440,32"/>
+<area shape="rect" href="$class_game.html#a555a9e4719fd49971765a2ab8b090b5c" title="The init function to be called before starting your First Game." alt="" coords="349,56,445,83"/>
+<area shape="rect" href="$classc_console.html#a30b719f98df2be1670f6e4e1055844a5" title="Gets the current working path, Loads the Background image to the Image Manager, Creates the console f..." alt="" coords="493,5,656,32"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="513,56,636,83"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="709,56,795,83"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="848,81,907,108"/>
+</map>

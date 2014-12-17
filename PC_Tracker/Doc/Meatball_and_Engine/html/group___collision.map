@@ -1,0 +1,5 @@
+<map id="Collision" name="Collision">
+<area shape="rect" href="$group___collision___check___mouse.html" title="Check Collisions with\l the Mouse" alt="" coords="169,5,340,51"/>
+<area shape="rect" href="$group___a_l_l___c_o_l_l_i_s_i_o_n_s___d_i_r_e_c_t_i_o_n_s.html" title="for Collisiondata::direction" alt="" coords="137,75,372,101"/>
+<area shape="rect" href="$group___i_n_d_i_v_i_d_u_a_l___c_o_l_l_i_s_i_o_n___d_i_r_e_c_t_i_o_n_s.html" title="for Collisiondata::collide Same as PLAYER_DIRECTIONS exept for &#45;1 (no collision)" alt="" coords="161,125,348,171"/>
+</map>

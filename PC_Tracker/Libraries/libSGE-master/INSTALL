@@ -1,0 +1,72 @@
+The file "README" has more detailed information.
+You should also read the file "docs/guide.html". 
+
+Requirements
+=============
+-GNU Make.
+-SDL 1.2+ (http://www.libsdl.org/).
+-An ANSI/ISO C++ compiler. SGE should conform to ANSI/ISO C++.
+-Optional:
+ -FreeType 2+ (http://www.freetype.org/).
+ -SDL_Image (http://www.libsdl.org/projects/SDL_image/index.html).
+-Some SDL knowledge.
+
+
+Compile & install
+==================
+'make install'
+
+
+Configure
+==========
+You can edit the file "Makefile.conf" to configure SGE. At the top of this
+file you will see:
+
+C_COMP = y
+#USE_FT = n
+#USE_IMG = n
+#QUIET = y
+
+Remove the comment (#) symbol to activate the control (y/n) of the 
+following options:
+
+C_COMP
+Makes it possible to link C code to SGE. See the README file for more 
+information. Default: y.
+
+USE_FT
+Controls the use of the FreeType library. Default: autodetected.
+
+USE_IMG
+Controls the use of the SDL_Image library. Default: autodetected.
+
+QUIET
+Don't show build status before compiling.
+
+
+Make options
+=============
+'make'
+Builds a static SGE library (libSGE.a).
+
+'make shared'
+Builds a dynamic SGE library (libSGE.so).
+
+'make shared-strip'
+Same as 'make shared' but strips symbols from the libSGE.so file.
+
+'make dll'
+Builds a win32 dll file (SGE.dll). You must use a win32 cross compiler to do 
+this. You must also remove the # symbol on the "SGE_LIBS =...#-lstdc++" line
+in Makefile.conf. 
+
+'make dll-strip'
+Same as 'make dll' but strips symbols from the SGE.dll file.
+
+'make clean'
+Removes compiled files.
+
+'make install'
+Builds a dynamic SGE library and installs it with the headers to the same 
+install location as SDL. You can change this location by editing the PREFIX
+and PREFIX_H lines in Makefile.conf. You must probably be root to install.

@@ -1,0 +1,173 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - SDL_DetachThread</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@SDL_DetachThread.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@SDL_DetachThread.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id="line-4"></span>
+<p class="line867"></p>
+<h1 id="SDL_DetachThread-1">SDL_DetachThread</h1>
+<span class="anchor" id="line-5"></span>
+<p class="line874">Use this function to let a thread clean up on
+exit without intervention. <span class="anchor" id=
+"line-6"></span><span class="anchor" id="line-7"></span></p>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@SDL_DetachThread.html#SDL_DetachThread-1">SDL_DetachThread</a>
+<ol>
+<li><a href="index.html@SDL_DetachThread.html#Syntax">Syntax</a></li>
+<li><a href="index.html@SDL_DetachThread.html#Function_Parameters">Function Parameters</a></li>
+<li><a href="index.html@SDL_DetachThread.html#Code_Examples">Code Examples</a></li>
+<li><a href="index.html@SDL_DetachThread.html#Remarks">Remarks</a></li>
+<li><a href="index.html@SDL_DetachThread.html#Version">Version</a></li>
+<li><a href="index.html@SDL_DetachThread.html#Related_Functions">Related Functions</a></li>
+</ol>
+</li>
+</ol>
+</div>
+<span class="anchor" id="line-8"></span><span class="anchor" id=
+"line-9"></span>
+<p class="line867"></p>
+<h2 id="Syntax">Syntax</h2>
+<span class="anchor" id="line-10"></span>
+<p class="line867"><span class="anchor" id=
+"line-11"></span><span class="anchor" id="line-12"></span></p>
+<div class="codearea" dir="ltr" lang="en"> 
+<pre dir="ltr" id="CA-pygments_325" lang="en">
+<span class="line"><span class="kt">void</span> <span class=
+"n">SDL_DetachThread</span><span class="p">(</span><span class=
+"n">SDL_Thread</span><span class="o">*</span> <span class=
+"kr">thread</span><span class="p">)</span>
+</span>
+</pre></div>
+<span class="anchor" id="line-13"></span>
+<p class="line867"></p>
+<h2 id="Function_Parameters">Function Parameters</h2>
+<span class="anchor" id="line-14"></span>
+<div>
+<table>
+<tbody>
+<tr>
+<td>
+<p class="line891"><strong>thread</strong></p>
+</td>
+<td>
+<p class="line862">the SDL_Thread pointer that was returned from
+the <a href="index.html@SDL_CreateThread.html">SDL_CreateThread</a>() call that
+started this thread</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-15"></span><span class="anchor" id=
+"line-16"></span>
+<p class="line867"></p>
+<h2 id="Code_Examples">Code Examples</h2>
+<span class="anchor" id="line-17"></span>
+<p class="line867"><span class="anchor" id=
+"line-18"></span><span class="anchor" id=
+"line-19"></span><span class="anchor" id=
+"line-20"></span><span class="anchor" id="line-21"></span></p>
+<div class="codearea" dir="ltr" lang="en">
+<pre dir="ltr" id="CA-pygments_326" lang="en">
+<span class="line"><span class="k">extern</span> <span class=
+"kt">int</span> <span class="nf">TestThread</span><span class=
+"p">(</span><span class="kt">void</span> <span class=
+"o">*</span><span class="n">ptr</span><span class="p">);</span>
+</span><span class="line"><span class=
+"n">SDL_Thread</span> <span class="o">*</span><span class=
+"kr">thread</span> <span class="o">=</span> <span class=
+"n">SDL_CreateThread</span><span class="p">(</span><span class=
+"n">TestThread</span><span class="p">,</span> <span class=
+"s">"TestThread"</span><span class="p">,</span> <span class=
+"p">(</span><span class="kt">void</span> <span class=
+"o">*</span><span class="p">)</span><span class=
+"nb">NULL</span><span class="p">);</span>
+</span><span class="line"><span class=
+"n">SDL_DetachThread</span><span class="p">(</span><span class=
+"kr">thread</span><span class="p">);</span>  <span class=
+"cm">/* will go away on its own upon completion. */</span>
+</span>
+</pre></div>
+<span class="anchor" id="line-22"></span><span class="anchor" id=
+"line-23"></span>
+<p class="line867"></p>
+<h2 id="Remarks">Remarks</h2>
+<span class="anchor" id="line-24"></span><span class="anchor" id=
+"line-25"></span>
+<p class="line862">A thread may be "detached" to signify that it
+should not remain until another thread has called <a href="index.html@SDL_WaitThread.html">SDL_WaitThread</a>() on it. Detaching a thread is
+useful for long-running threads that nothing needs to synchronize
+with or further manage. When a detached thread is done, it simply
+goes away. <span class="anchor" id="line-26"></span><span class=
+"anchor" id="line-27"></span></p>
+<p class="line862">There is no way to recover the return code of a
+detached thread. If you need this, don't detach the thread and
+instead use <a href="index.html@SDL_WaitThread.html">SDL_WaitThread</a>().
+<span class="anchor" id="line-28"></span><span class="anchor" id=
+"line-29"></span></p>
+<p class="line862">Once a thread is detached, you should usually
+assume the SDL_Thread isn't safe to reference again, as it will
+become invalid immediately upon the detached thread's exit, instead
+of remaining until someone has called <a href="index.html@SDL_WaitThread.html">SDL_WaitThread</a>() to finally clean it up. As
+such, don't detach the same thread more than once. <span class=
+"anchor" id="line-30"></span><span class="anchor" id=
+"line-31"></span></p>
+<p class="line862">If a thread has already exited when passed to
+SDL_<a class="nonexistent" href="index.html@DetachThread.html">DetachThread</a>(),
+it will stop waiting for a call to <a href="index.html@SDL_WaitThread.html">SDL_WaitThread</a>() and clean up immediately. It
+is not safe to detach a thread that might be used with <a href="index.html@SDL_WaitThread.html">SDL_WaitThread</a>(). <span class="anchor" id=
+"line-32"></span><span class="anchor" id="line-33"></span></p>
+<p class="line862">You may not call <a href="index.html@SDL_WaitThread.html">SDL_WaitThread</a>() on a thread that has been
+detached. Use either that function or this one, but not both, or
+behavior is undefined. <span class="anchor" id=
+"line-34"></span><span class="anchor" id="line-35"></span></p>
+<p class="line874">It is safe to pass NULL to this function; it is
+a no-op. <span class="anchor" id="line-36"></span><span class=
+"anchor" id="line-37"></span></p>
+<p class="line867"></p>
+<h2 id="Version">Version</h2>
+<span class="anchor" id="line-38"></span>
+<p class="line874">This function is available since SDL 2.0.2.
+<span class="anchor" id="line-39"></span><span class="anchor" id=
+"line-40"></span></p>
+<p class="line867"></p>
+<h2 id="Related_Functions">Related Functions</h2>
+<span class="anchor" id="line-41"></span>
+<ul>
+<li style="list-style-type:none">
+<p class="line891"><a href="index.html@SDL_CreateThread.html">SDL_CreateThread</a>
+<span class="anchor" id="line-42"></span></p>
+</li>
+<li style="list-style-type:none">
+<p class="line891"><a href="index.html@SDL_WaitThread.html">SDL_WaitThread</a>
+<span class="anchor" id="line-43"></span><span class="anchor" id=
+"line-44"></span></p>
+</li>
+</ul>
+<p class="line867"></p>
+<hr/>
+<p class="line874"><span class="anchor" id=
+"line-45"></span><a href="index.html@CategoryAPI.html">CategoryAPI</a>, <a href="index.html@CategoryThread.html">CategoryThread</a> <span class="anchor" id=
+"line-46"></span><span class="anchor" id="bottom"></span></p>
+</div>
+</body></html>

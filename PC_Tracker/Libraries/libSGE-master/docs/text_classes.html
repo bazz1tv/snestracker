@@ -1,0 +1,297 @@
+<html>
+<!--------------------------------------------------->
+<!--         Docs/text_classes - SGE               -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Text Classes</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Text classes</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_TextEditor">sge_TextEditor</A>
+<LI><A HREF="#sge_text">sge_text</A>
+<LI><A HREF="#sge_TextSurface">sge_TextSurface</A>
+<LI><A HREF="#sge_TextSsprite">sge_TextSsprite</A>
+<LI><A HREF="#sge_TextSprite">sge_TextSprite</A>
+<LI><A HREF="#sge_text_input">sge_text_input</a>
+</UL>
+
+<B><a name="sge_TextEditor">sge_TextEditor</a></B><BR>
+Edits text from SDL_Events. This class just stores a text string in memory and lets you perfrom some basic editing on it. You can only change (or insert) the character left or right of the "cursor".
+<BR><BR>
+
+Constructor:
+<BLOCKQUOTE>
+  <B>sge_TextEditor(void)</B><BR>
+</BLOCKQUOTE>
+Methods:
+<BLOCKQUOTE>
+  <B>bool insert(Uint16 c)</B><BR>
+  Adds an (unicode) char before the cursor.<BR><BR>
+
+  <B>bool remove_left(void)</B><BR>
+  Removes the char left of cursor.<BR><BR>
+
+  <B>bool remove_right(void)</B><BR>
+  Removes the char right of cursor.<BR><BR>
+	
+  <B>inline bool move_left(void)</B><BR>
+  Move the cursor to the left.<BR><BR>
+
+  <B>inline bool move_right(void)</B><BR>
+  Move the cursor to the right.<BR><BR>
+
+  <B>bool move_start(void)</B><BR>
+  Move the cursor to the start.<BR><BR>
+
+  <B>bool move_end(void)</B><BR>
+  Move the cursor to the end.<BR><BR>
+	
+  <B>std::string get_string(bool wCursor=true)</B><BR>
+  Returns the text as latin1 with or without the cursor char.<BR><BR>
+
+  <B>Uint16* get_ucstring(bool wCursor=true)</B><BR>
+  Returns a unicode c-style string (allocated with new).<BR><BR>
+	
+  <B>virtual bool check(SDL_Event* event)</B><BR>
+  Process an SDL_Event. The text can be edited with [Backspace], [Delete], [Left arrow] and [Right arrow]. Returns true if the text changed.<BR><BR>
+	
+  <B>void change_cursor(Uint16 c)</B><BR>
+  Change the cursor char. Default is the '|' character.<BR><BR>
+	
+  <B>void clear_text(void)</B><BR>
+  Clears the text string.<BR><BR>
+
+  <B>void change_text(const std::string s)</B><BR>
+  Changes the text.<BR><BR>
+
+  <B>void change_uctext(Uint16 *text)</B><BR>
+  Changes the text (c-style unicode).<BR><BR>
+
+  <B>void change_textf(const char *text, ...)</B><BR>
+  Changes the text (printf c-style).<BR><BR>       
+	
+  <B>void max_chars(unsigned int c)</B><BR>
+  Set max chars (default: limited only by memory).<BR><BR>
+  
+  <B>unsigned int get_chars(void)</B><BR>
+  Returns the number of characters in the current string.<BR><BR>
+</BLOCKQUOTE>
+
+<HR>
+<BR><BR>
+
+<B><a name="sge_text">sge_text</a></B><BR>
+Derived (public) from sge_TextEditor.<BR>
+A class for rendering text. Can render both truetype and bitmap fonts. Change/Edit the text with the methods in sge_TextEditor.
+<BR><BR>
+
+Constructor:
+<BLOCKQUOTE>
+  <B>sge_text(void)</B><BR>
+</BLOCKQUOTE>
+Methods:
+<BLOCKQUOTE>
+  <B>SDL_Surface* get_textSurface(bool copy=false)</B><BR>
+  Get a pointer to the text surface or (if copy=true) returns a copy (don't forget to free it later). This will not 
+  work with SFonts with an alpha channel.<BR><BR>
+	
+  <B>bool update_textSurface(bool force=false)</B><BR>
+  Updates the textsurface if the text has changed (or if force=true) and returns true if the surface was updated.<BR><BR>
+	
+  <B>void set_ttFont(sge_TTFont *font, Uint8 r, Uint8 g, Uint8 b, Uint8 br=0, Uint8 bg=0, Uint8 bb=0)</B><BR>
+  Sets the truetype font and color. If you use antialiasing, the background color must be set to the background color of the area where you will render the text. If the background has more than one color it might be better to use sge_TTF_AA_Alpha().<BR><BR>
+
+  <B>void set_bmFont(sge_bmpFont *bm_font)</B><BR>
+  Sets the bitmap font.<BR><BR>
+	
+  <B>void show_cursor(bool mode)</B><BR>
+  Should the cursor be drawn when rendering text?<BR><BR>
+	
+  <B>SDL_Rect render_text(SDL_Surface *surface, Sint16 x, Sint16 y)</B><BR>
+  Renders the text directly to the given surface (instead of rendering to the text surface with update_textSurface()). Return the size and position of the rendered text.<BR><BR>
+	
+  <B>void use_TTrender(void)</B><BR>
+  Render text using truetype fonts. The default is to use the last set font.<BR><BR>
+
+  <B>void use_BMrender(void)</B><BR>
+  Render text using bitmap fonts. The default is to use the last set font.<BR><BR>
+
+  <B>void set_alpha(Uint8 alpha)</B><BR>
+  Sets the alpha value for the text (doesn't work with alpha channel SFonts).<BR><BR>
+  
+  <B>bool get_color(SDL_Color *fg)</B><BR>
+  Fills fg with the RGB color of the truetype font if set. Returns false if the color is not set.<BR><BR>
+  
+  <B>bool get_bg(SDL_Color *bg)</B><BR>
+  Fills bg with the background RGB color of the truetype font if set. Returns false if the color is not set.
+</BLOCKQUOTE>
+
+<HR>
+<BR><BR>
+
+<B><a name="sge_TextSurface">sge_TextSurface</a></B><BR>
+Derived public from sge_text and sge_surface.<BR>
+This class works exactly as <A HREF="shape.html#sge_surface">sge_surface</A>, but uses the current text surface.
+Note that get_img() will not work with SFonts with an alpha channel.
+See also the <A HREF="#example1">example</A>.
+<BR><BR>
+
+Constructor:
+<BLOCKQUOTE>
+  <B>sge_TextSurface(SDL_Surface *screen, Sint16 x=0, Sint16 y=0)</B><BR>
+  <B>sge_TextSurface(SDL_Surface *screen, const std::string text, Sint16 x=0, Sint16 y=0)</B><BR>
+  You can set a default text if you want.<BR>
+</BLOCKQUOTE>
+Methods:
+<BLOCKQUOTE>
+  See sge_text and <A HREF="shape.html#sge_surface">sge_surface</A>.<BR><BR>
+</BLOCKQUOTE>
+
+<HR>
+<BR><BR>
+
+<B><a name="sge_TextSsprite">sge_TextSsprite</a></B><BR>
+Derived public from sge_text and sge_ssprite.<BR>
+This class works exactly as <A HREF="shape.html#sge_ssprite">sge_ssprite</A>, but uses the current text surface. 
+The text surface is always the first frame (so you can display other frames). Will probably not work as normal with SFonts 
+with an alpha channel.
+<BR><BR>
+
+Constructor:
+<BLOCKQUOTE>
+  <B>sge_TextSsprite(SDL_Surface *screen, Sint16 x=0, Sint16 y=0)</B><BR>
+  <B>sge_TextSsprite(SDL_Surface *screen, const std::string text, Sint16 x=0, Sint16 y=0)</B><BR>
+  You can set a default text if you want.<BR>
+</BLOCKQUOTE>
+Methods:
+<BLOCKQUOTE>
+  See sge_text and <A HREF="shape.html#sge_ssprite">sge_ssprite</A>.<BR><BR>
+</BLOCKQUOTE>
+
+<HR>
+<BR><BR>
+
+
+<B><a name="sge_TextSprite">sge_TextSprite</a></B><BR>
+Derived public from sge_text and sge_sprite.<BR>
+This class works exactly as <A HREF="shape.html#sge_sprite">sge_sprite</A>, but uses the current text surface. The text 
+surface is always the first frame (so you can display other frames). Will probably not work as normal with SFonts 
+with an alpha channel.
+<BR><BR>
+
+Constructor:
+<BLOCKQUOTE>
+  <B>sge_TextSprite(SDL_Surface *screen, Sint16 x=0, Sint16 y=0)</B><BR>
+  <B>sge_TextSprite(SDL_Surface *screen, const std::string text, Sint16 x=0, Sint16 y=0)</B><BR>
+  You can set a default text if you want.<BR>
+</BLOCKQUOTE>
+Methods:
+<BLOCKQUOTE>
+  See sge_text and <A HREF="shape.html#sge_sprite">sge_sprite</A>.<BR><BR>
+</BLOCKQUOTE>
+
+<HR>
+<BR><BR>
+<B>int <a name="sge_text_input">sge_text_input</a>(sge_TextSurface *tc, Uint8 flags)</B><BR>
+A helper function for lazy users: blocking text input for sge_TextSurface objects. Does the same thing
+as the <A HREF="#example1">example</A> below.
+The argument "flags" is the same as for <A HREF="bmf.html#sge_BF_input">BM</A> and 
+<A HREF="ttf-input.html#sge_tt_input">TTF</A> input (which uses this function).
+Make sure "tc" is setup with the correct font etc. before calling this function.<BR><BR>
+
+<HR>
+<BR><BR>
+<H2><a name="example1">Example</a></H2>
+This is a simple example of the sge_TextSurface class; draws TT text on the screen and lets the user edit it.
+<BR><BR>
+
+<I>#include &lt;stdio.h&gt;</I><BR>
+<I>#include "SDL.h"</I><BR>
+<I>#include "sge.h"</I><BR>
+<BR>
+...<BR>
+<BR>
+
+<DL>
+<DT><I>/* Init font engine and exit on error */</I>
+<DT><B>if(</B> sge_TTF_Init() != 0 <B>){</B><BR>
+  <DD>fprintf(stderr,"<I>TT error: %s\n</I>", SDL_GetError());<BR> 
+  <DD>exit(1);<BR>
+<DT><B>}</B></DL>
+
+<DL>
+<BR>
+<DT><I>/* Open the TT font and exit on error */</I>
+<DT>sge_TTFont *font = sge_TTF_OpenFont("font.ttf", 25);<BR>
+<DT>
+<DT><B>if(</B> !font <B>){</B>
+  <DD>fprintf(stderr,"<I>TT error: %s\n</I>", SDL_GetError());<BR> 
+  <DD>exit(1);<BR>
+<DT><B>}</B></DL>
+<BR>
+
+<I>/* The buffer for the background (only if you want to keep the background) */</I><BR>
+SDL_Surface *buffer;<BR>
+buffer = SDL_DisplayFormat(screen);<BR>
+<BR>
+<I>/* Enable keyrepeat */</I><BR>
+SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL+50);<BR>
+<BR>
+SDL_EnableUNICODE(1); <I>//This is VERY important!!</I><BR>
+<BR>
+<I>/* Init our text class */</I><BR>
+sge_TextSurface text(screen,"Edit Me!",8,50);<BR>
+text.set_ttFont(font,0,255,0); <I>//Use the TT font</I><BR>
+text.show_cursor(true); <I>//Show a cursor</I><BR>
+<BR>
+<I>/* Draw the text for the first time */</I><BR>
+text.draw();<BR>
+text.UpdateRects();<BR>
+<BR>
+sge_Update_OFF();<BR>
+<BR>
+<DL>
+<DT><I>/* Main loop */</I>
+<DT>SDL_Event event;
+<DT><B>do{</B>
+	<DD>SDL_Delay(10);
+	<DD><BR>
+	<DD><I>/* Check events */</I>
+	<DL><DT><B>if(</B> SDL_PollEvent(&event) == 1 <B>){</B>
+		<DD><B>if(</B> event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE <B>) break</B>;
+		<DD><B>if(</B> event.type == SDL_QUIT <B>) break</B>;
+		<DD><BR>	
+		<DD><I>/* Let the text class handle the event*/</I>
+		<DL><DT><B>if(</B> text.check(&event) <B>){</B>
+			<DD><I>/* The text has changed */</I>
+			<DD>text.clear(buffer, 8,50); <I>//Remove the text</I>
+			<DD>text.draw(); <I>//Draw the new text</I>
+			<DD>sge_Update_ON();
+			<DD>text.UpdateRects(); <I>//Update screen</I>
+			<DD>sge_Update_OFF();</DL>
+		<DD><B>}</B></DL>
+	<DD><B>}</B>
+<DT><B>}while(</B>true<B>)</B>;</DL>
+<BR><BR>
+
+<I>/* Clean up */</I><BR>
+SDL_FreeSurface(buffer);<BR>
+sge_TTF_CloseFont(font);<BR>
+
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

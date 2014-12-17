@@ -1,0 +1,1152 @@
+TMeatballEngine
+v5
+r1
+cCheck dependencies
+cSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/Current A
+cSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Resources Versions/Current/Resources
+cSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/MeatBallEngine Versions/Current/MeatBallEngine
+cSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Headers Versions/Current/Headers
+cProcessInfoPlistFile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Resources/Info.plist MeatballEngine/MeatballEngine-Info.plist
+cProcessPCH++ /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch.pth MeatballEngine/MeatballEngine-Prefix.pch normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/audio.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../audio.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/font.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../font.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/framerate.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../framerate.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/gfx.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../gfx.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/image.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../image.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/img_manager.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../img_manager.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/misc.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../misc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/net.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/SDL_ep.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../SDL_ep.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/snd_manager.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../snd_manager.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/sprite.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../sprite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/video.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../video.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+cLd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/MeatBallEngine normal x86_64
+cCpHeader ../../include/audio.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/audio.h
+cCpHeader ../../include/font.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/font.h
+cCpHeader ../../include/framerate.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/framerate.h
+cCpHeader ../../include/gfx.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/gfx.h
+cCpHeader ../../include/image.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/image.h
+cCpHeader ../../include/img_manager.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/img_manager.h
+cCpHeader ../../include/misc.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/misc.h
+cCpHeader ../../include/net.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/net.h
+cCpHeader ../../include/SDL_ep.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/SDL_ep.h
+cCpHeader ../../include/snd_manager.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/snd_manager.h
+cCpHeader ../../include/sprite.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/sprite.h
+cCpHeader ../../include/video.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/video.h
+cCopyStringsFile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Resources/en.lproj/InfoPlist.strings MeatballEngine/en.lproj/InfoPlist.strings
+cTouch /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
+c00000000503F1B7700000000000000AA
+t1346313079
+s170
+
+N/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h
+c0000000050FF3A3400000000000001E5
+t1358903860
+s485
+
+N/Library/Frameworks/SDL.framework/Headers/SDL.h
+c0000000051018FCE0000000000000CA1
+t1359056846
+s3233
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_active.h
+c0000000051018FCE000000000000078D
+t1359056846
+s1933
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_audio.h
+c0000000051018FCE0000000000002BCF
+t1359056846
+s11215
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_cdrom.h
+c0000000051018FCE00000000000017A0
+t1359056846
+s6048
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_config.h
+c0000000051018FCE00000000000005C2
+t1359056846
+s1474
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_config_macosx.h
+c0000000051018FCE0000000000001061
+t1359056846
+s4193
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_cpuinfo.h
+c0000000051018FCE00000000000008AD
+t1359056846
+s2221
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_endian.h
+c0000000051018FCE00000000000017A7
+t1359056846
+s6055
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_error.h
+c0000000051018FCE0000000000000752
+t1359056846
+s1874
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_events.h
+c0000000051018FCE00000000000032F1
+t1359056846
+s13041
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_joystick.h
+c0000000051018FCE000000000000159C
+t1359056846
+s5532
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_keyboard.h
+c0000000051018FCE0000000000001002
+t1359056846
+s4098
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_keysym.h
+c0000000051018FCE0000000000001D44
+t1359056846
+s7492
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_loadso.h
+c0000000051018FCE0000000000000AB3
+t1359056846
+s2739
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_main.h
+c0000000051018FCE0000000000000B32
+t1359056846
+s2866
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_mouse.h
+c0000000051018FCE0000000000001292
+t1359056846
+s4754
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_mutex.h
+c0000000051018FCE00000000000016E4
+t1359056846
+s5860
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_platform.h
+c0000000051018FCE0000000000000A94
+t1359056846
+s2708
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_quit.h
+c0000000051018FCE00000000000007D9
+t1359056846
+s2009
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_rwops.h
+c0000000051018FCE000000000000135E
+t1359056846
+s4958
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_stdinc.h
+c0000000051018FCE0000000000004059
+t1359056846
+s16473
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_thread.h
+c0000000051018FCE0000000000001092
+t1359056846
+s4242
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_timer.h
+c0000000051018FCE00000000000011AF
+t1359056846
+s4527
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_types.h
+c0000000051018FCE00000000000003D3
+t1359056846
+s979
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_version.h
+c0000000051018FCE0000000000000A4D
+t1359056846
+s2637
+
+N/Library/Frameworks/SDL.framework/Headers/SDL_video.h
+c0000000051018FCE0000000000009482
+t1359056846
+s38018
+
+N/Library/Frameworks/SDL.framework/Headers/begin_code.h
+c0000000051018FCE000000000000146E
+t1359056846
+s5230
+
+N/Library/Frameworks/SDL.framework/Headers/close_code.h
+c0000000051018FCE00000000000005CA
+t1359056846
+s1482
+
+N/Library/Frameworks/SDL_image.framework/Headers/SDL_image.h
+c00000000510190620000000000001599
+t1359056994
+s5529
+
+N/Library/Frameworks/SDL_mixer.framework/Headers/SDL_mixer.h
+c00000000510161A70000000000006C77
+t1359045031
+s27767
+
+N/Library/Frameworks/SDL_net.framework/Headers/SDL_net.h
+c0000000051016FF1000000000000484C
+t1359048689
+s18508
+
+N/Library/Frameworks/SDL_ttf.framework/Headers/SDL_ttf.h
+c00000000510190BD00000000000029E3
+t1359057085
+s10723
+
+N/Library/Frameworks/SGE.framework/Headers/SGE.h
+c00000000510190F30000000000000354
+t1359057139
+s852
+
+N/Library/Frameworks/SGE.framework/Headers/sge_blib.h
+c00000000510190F300000000000010ED
+t1359057139
+s4333
+
+N/Library/Frameworks/SGE.framework/Headers/sge_bm_text.h
+c00000000510190F300000000000009F4
+t1359057139
+s2548
+
+N/Library/Frameworks/SGE.framework/Headers/sge_collision.h
+c00000000510190F300000000000006D3
+t1359057139
+s1747
+
+N/Library/Frameworks/SGE.framework/Headers/sge_config.h
+c00000000510190F30000000000000076
+t1359057139
+s118
+
+N/Library/Frameworks/SGE.framework/Headers/sge_internal.h
+c00000000510190F30000000000000EA8
+t1359057139
+s3752
+
+N/Library/Frameworks/SGE.framework/Headers/sge_misc.h
+c00000000510190F300000000000003B5
+t1359057139
+s949
+
+N/Library/Frameworks/SGE.framework/Headers/sge_primitives.h
+c00000000510190F30000000000002817
+t1359057139
+s10263
+
+N/Library/Frameworks/SGE.framework/Headers/sge_rotation.h
+c00000000510190F300000000000006F4
+t1359057139
+s1780
+
+N/Library/Frameworks/SGE.framework/Headers/sge_shape.h
+c00000000510190F30000000000002E3E
+t1359057139
+s11838
+
+N/Library/Frameworks/SGE.framework/Headers/sge_surface.h
+c00000000510190F300000000000012E1
+t1359057139
+s4833
+
+N/Library/Frameworks/SGE.framework/Headers/sge_textpp.h
+c00000000510190F30000000000001E4B
+t1359057139
+s7755
+
+N/Library/Frameworks/SGE.framework/Headers/sge_tt_text.h
+c00000000510190F30000000000001466
+t1359057139
+s5222
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../../../../../../../../Library/Frameworks/SDL.framework/SDL
+c0000000051018FFB0000000000186098
+t1359056891
+s1597592
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../../../../../../../../Library/Frameworks/SDL_image.framework/SDL_image
+c00000000510160D000000000000212F8
+t1359044816
+s135928
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../../../../../../../../Library/Frameworks/SDL_mixer.framework/SDL_mixer
+c00000000510161A700000000000919FC
+t1359045031
+s596476
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../../../../../../../../Library/Frameworks/SDL_net.framework/SDL_net
+c00000000510162E0000000000000F080
+t1359045344
+s61568
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../../../../../../../../Library/Frameworks/SDL_ttf.framework/SDL_ttf
+c000000005101626000000000000155BC
+t1359045216
+s87484
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../../../../../../../../Library/Frameworks/SGE.framework/SGE
+c0000000051016C5700000000000486AC
+t1359047767
+s296620
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../SDL_ep.cpp
+c000000005101874600000000000000E4
+t1359054662
+s228
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../audio.cpp
+c000000005101875200000000000017D7
+t1359054674
+s6103
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../font.cpp
+c000000005101875200000000000006C3
+t1359054674
+s1731
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../framerate.cpp
+c00000000510175B50000000000000915
+t1359050165
+s2325
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../gfx.cpp
+c00000000510187520000000000000023
+t1359054674
+s35
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../image.cpp
+c0000000051018752000000000000064A
+t1359054674
+s1610
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../img_manager.cpp
+c000000005101875200000000000008F1
+t1359054674
+s2289
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/SDL_ep.h
+c00000000510187470000000000000695
+t1359054663
+s1685
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/audio.h
+c0000000051016F0D0000000000000C90
+t1359048461
+s3216
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/font.h
+c0000000051016F3900000000000005C0
+t1359048505
+s1472
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/framerate.h
+c0000000051019AF80000000000000646
+t1359059704
+s1606
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/gfx.h
+c0000000051016F240000000000000106
+t1359048484
+s262
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/image.h
+c0000000051016EF500000000000004F4
+t1359048437
+s1268
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/img_manager.h
+c00000000510182B600000000000005FF
+t1359053494
+s1535
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/misc.h
+c0000000051017AE5000000000000048B
+t1359051493
+s1163
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/net.h
+c0000000051016F9300000000000011F0
+t1359048595
+s4592
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/snd_manager.h
+c00000000510182B600000000000005EB
+t1359053494
+s1515
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/sprite.h
+c0000000051009FA50000000000001AA5
+t1358995365
+s6821
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/video.h
+c0000000051009FA50000000000000295
+t1358995365
+s661
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../misc.cpp
+c000000005101875200000000000005B0
+t1359054674
+s1456
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp
+c000000005101875200000000000039DA
+t1359054674
+s14810
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../snd_manager.cpp
+c000000005101874600000000000006DC
+t1359054662
+s1756
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../sprite.cpp
+c00000000510187460000000000002DEB
+t1359054662
+s11755
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../video.cpp
+c000000005101874600000000000003DE
+t1359054662
+s990
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/MeatBallEngine.LinkFileList
+c0000000051017DD200000000000007D4
+t1359052242
+s2004
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/SDL_ep.o
+t1359057228
+s27464
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/audio.o
+t1359057224
+s44164
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/font.o
+t1359057225
+s34672
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/framerate.o
+t1359057224
+s33356
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/gfx.o
+t1359057224
+s26612
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/image.o
+t1359057225
+s32884
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/img_manager.o
+t1359057226
+s90356
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/misc.o
+t1359057227
+s32680
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/net.o
+t1359057227
+s101964
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/snd_manager.o
+t1359057229
+s87240
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/sprite.o
+t1359057229
+s64504
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/video.o
+t1359057230
+s32180
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch.pth
+t1359055035
+s97180
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-gghdfqmbrpfkjqfpruqusrhzkjlj/MeatballEngine-Prefix.pch.pth
+t1359052198
+s97164
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework
+t1359057230
+s204
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Headers
+t3
+s24
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/MeatBallEngine
+t3
+s31
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Resources
+t3
+s26
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/SDL_ep.h
+t1359054680
+s1685
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/audio.h
+t1359050187
+s3216
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/font.h
+t1359050187
+s1472
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/framerate.h
+t1359050187
+s1606
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/gfx.h
+t1359050187
+s262
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/image.h
+t1359050187
+s1268
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/img_manager.h
+t1359053502
+s1535
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/misc.h
+t1359051493
+s1163
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/net.h
+t1359050187
+s4592
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/snd_manager.h
+t1359053502
+s1515
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/sprite.h
+t1359050187
+s6821
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/video.h
+t1359050187
+s661
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/MeatBallEngine
+t1359057230
+s162060
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Resources/Info.plist
+t1359050187
+s1220
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Resources/en.lproj/InfoPlist.strings
+t1359050187
+s92
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/Current
+t3
+s1
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework
+t1359051214
+s170
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Headers
+t3
+s24
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Resources
+t3
+s26
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/SDL_ep.h
+t1359050187
+s1664
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/audio.h
+t1359050187
+s3216
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/font.h
+t1359050187
+s1472
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/framerate.h
+t1359050187
+s1606
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/gfx.h
+t1359050187
+s262
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/image.h
+t1359050187
+s1268
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/img_manager.h
+t1359050187
+s1530
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/misc.h
+t1359051214
+s1152
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/net.h
+t1359050187
+s4592
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/snd_manager.h
+t1359050187
+s1510
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/sprite.h
+t1359050187
+s6821
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/video.h
+t1359050187
+s661
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Resources/Info.plist
+t1359050187
+s1220
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Resources/en.lproj/InfoPlist.strings
+t1359050187
+s92
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/Current
+t3
+s1
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/MeatballEngine/MeatballEngine-Prefix.pch
+c00000000510174CE000000000000009F
+t1359049934
+s159
+i<Cocoa/Cocoa.h>
+
+N/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/MeatballEngine/en.lproj/InfoPlist.strings
+c00000000510174CE000000000000002D
+t1359049934
+s45
+
+NMeatballEngine/MeatballEngine-Info.plist
+c00000000510174CE00000000000003B1
+t1359049934
+s945
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../SDL_ep.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../audio.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../font.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../framerate.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../gfx.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../image.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../img_manager.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../misc.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../snd_manager.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../sprite.cpp
+r0
+
+CBuild AST from /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../video.cpp
+r0
+
+CCheck dependencies
+r0
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection18"Check dependenciesf0c29a79d2b1b641^bcaecf79d2b1b641^---0#1#0#--18"Check dependencies36"15A74770-5077-4E99-8630-24C0B450006C-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/SDL_ep.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../SDL_ep.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752507.643442
+e380752508.101041
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/SDL_ep.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../SDL_ep.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+o/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../SDL_ep.cpp:8:9: warning: implicit conversion loses integer precision: 'time_t' (aka 'long') to 'unsigned int' [-Wshorten-64-to-32]
+o        srand( time(NULL) );
+o        ~~~~~  ^~~~~~~~~~
+o1 warning generated.
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection100"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../SDL_ep.cppa6d5a47bd2b1b641^92ec197cd2b1b641^-289"/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../SDL_ep.cpp:8:9: warning: implicit conversion loses integer precision: 'time_t' (aka 'long') to 'unsigned int' [-Wshorten-64-to-32]        srand( time(NULL) );        ~~~~~  ^~~~~~~~~~1 warning generated.1(36%IDEClangDiagnosticActivityLogMessage2@84"Implicit conversion loses integer precision: 'time_t' (aka 'long') to 'unsigned int'-380752508#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@89"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/SDL_ep.cpp0000000000000000^7#8#7#8#77#0#14"Semantic Issue2(3@89"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/SDL_ep.cpp0000000000000000^7#8#7#18#77#9#3@89"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/SDL_ep.cpp0000000000000000^7#1#7#6#70#0#-0#0#0#-19%DVTDocumentLocation4@108"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../SDL_ep.cpp0000000000000000^2761"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/SDL_ep.o ../../SDL_ep.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/SDL_ep.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/SDL_ep.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../SDL_ep.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/SDL_ep.o36"DF238C54-0DE8-4E22-BB6E-7F8E4CBB5292-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/audio.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../audio.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752505.901864
+e380752506.411287
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/audio.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../audio.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection99"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../audio.cpp4301e779d2b1b641^6f4a697ad2b1b641^---0#0#0#-19%DVTDocumentLocation2@107"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../audio.cpp0000000000000000^2755"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/audio.o ../../audio.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/audio.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/audio.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../audio.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/audio.o36"0079A16F-0F59-4CD9-8888-79F3C7AB7E1A-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/font.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../font.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752505.901867
+e380752506.450875
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/font.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../font.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection98"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../font.cppef00e779d2b1b641^116d737ad2b1b641^---0#0#0#-19%DVTDocumentLocation2@106"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../font.cpp0000000000000000^2749"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/font.o ../../font.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/font.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/font.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../font.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/font.o36"FAA48D26-4718-4131-A4F0-301966DAEAA3-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/framerate.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../framerate.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752506.412608
+e380752506.829781
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/framerate.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../framerate.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection103"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../framerate.cpp4dbe697ad2b1b641^db6cd47ad2b1b641^---0#0#0#-19%DVTDocumentLocation2@111"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../framerate.cpp0000000000000000^2779"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/framerate.o ../../framerate.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/framerate.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/framerate.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../framerate.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/framerate.o36"A7B75E7A-0D29-47B9-B124-22B7347D878F-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/gfx.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../gfx.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752506.452188
+e380752506.815635
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/gfx.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../gfx.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection97"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../gfx.cpp8fdf737ad2b1b641^1cced07ad2b1b641^---0#0#0#-19%DVTDocumentLocation2@105"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../gfx.cpp0000000000000000^2743"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/gfx.o ../../gfx.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/gfx.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/gfx.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../gfx.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/gfx.o36"4DCB66BE-8836-4317-AB1F-9C51CAE431AB-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/image.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../image.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752506.816934
+e380752507.249811
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/image.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../image.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection99"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../image.cppd941d17ad2b1b641^9df33f7bd2b1b641^---0#0#0#-19%DVTDocumentLocation2@107"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../image.cpp0000000000000000^2755"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/image.o ../../image.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/image.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/image.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../image.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/image.o36"9E3464A5-D505-4239-88AB-10FDDCB5FAEB-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/img_manager.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../img_manager.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752506.831120
+e380752507.291669
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/img_manager.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../img_manager.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+o/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../img_manager.cpp:78:9: warning: implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'unsigned int' [-Wshorten-64-to-32]
+o        return ImageItems.size();
+o        ~~~~~~ ^~~~~~~~~~~~~~~~~
+o1 warning generated.
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection105"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../img_manager.cppa8e4d47ad2b1b641^55bf4a7bd2b1b641^-319"/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../img_manager.cpp:78:9: warning: implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'unsigned int' [-Wshorten-64-to-32]        return ImageItems.size();        ~~~~~~ ^~~~~~~~~~~~~~~~~1 warning generated.1(36%IDEClangDiagnosticActivityLogMessage2@96"Implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'unsigned int'-380752507#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@94"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/img_manager.cpp0000000000000000^77#8#77#8#1550#0#14"Semantic Issue2(3@94"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/img_manager.cpp0000000000000000^77#8#77#25#1550#16#3@94"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/img_manager.cpp0000000000000000^77#1#77#7#1543#0#-0#0#0#-19%DVTDocumentLocation4@113"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../img_manager.cpp0000000000000000^2791"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/img_manager.o ../../img_manager.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/img_manager.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/img_manager.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../img_manager.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/img_manager.o36"E6DE869C-C45C-4D85-B9A8-C0DB54BF2BE2-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/misc.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../misc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752507.251137
+e380752507.642128
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/misc.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../misc.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection98"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../misc.cppb16a407bd2b1b641^b262a47bd2b1b641^---0#0#0#-19%DVTDocumentLocation2@106"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../misc.cpp0000000000000000^2749"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/misc.o ../../misc.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/misc.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/misc.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../misc.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/misc.o36"C49A55AE-11F9-43A7-A367-AB7C763EBB31-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/net.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752507.292933
+e380752507.828433
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/net.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+o/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp:378:23: warning: implicit conversion loses integer precision: 'unsigned long' to 'Uint32' (aka 'unsigned int') [-Wshorten-64-to-32]
+o        len = message.size() + 1; // + 1 for the terminating NULL
+o            ~ ~~~~~~~~~~~~~~~^~~
+o/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp:518:53: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]
+o                socketset = SDLNet_AllocSocketSet( clients.size() + 1 ); // + 1 for csocket
+o                            ~~~~~~~~~~~~~~~~~~~~~  ~~~~~~~~~~~~~~~^~~
+o2 warnings generated.
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection97"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cppd61d4b7bd2b1b641^3127d47bd2b1b641^-703"/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp:378:23: warning: implicit conversion loses integer precision: 'unsigned long' to 'Uint32' (aka 'unsigned int') [-Wshorten-64-to-32]        len = message.size() + 1; // + 1 for the terminating NULL            ~ ~~~~~~~~~~~~~~~^~~/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp:518:53: warning: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Wshorten-64-to-32]                socketset = SDLNet_AllocSocketSet( clients.size() + 1 ); // + 1 for csocket                            ~~~~~~~~~~~~~~~~~~~~~  ~~~~~~~~~~~~~~~^~~2 warnings generated.2(36%IDEClangDiagnosticActivityLogMessage2@93"Implicit conversion loses integer precision: 'unsigned long' to 'Uint32' (aka 'unsigned int')-380752507#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@86"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/net.cpp0000000000000000^377#22#377#22#7678#0#14"Semantic Issue2(3@86"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/net.cpp0000000000000000^377#7#377#25#7663#17#3@86"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/net.cpp0000000000000000^377#5#377#6#7661#0#-2@69"Implicit conversion loses integer precision: 'unsigned long' to 'int'-380752507#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic3@86"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/net.cpp0000000000000000^517#52#517#52#10286#0#14"Semantic Issue2(3@86"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/net.cpp0000000000000000^517#37#517#55#10271#17#3@86"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/net.cpp0000000000000000^517#14#517#35#10248#0#-0#0#0#-19%DVTDocumentLocation4@105"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp0000000000000000^2743"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/net.o ../../net.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/net.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/net.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../net.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/net.o36"9642E563-D1B3-41D8-9B95-847DAE6D72C2-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/snd_manager.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../snd_manager.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752507.829723
+e380752508.377487
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/snd_manager.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../snd_manager.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+o/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../snd_manager.cpp:60:9: warning: implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'unsigned int' [-Wshorten-64-to-32]
+o        return SoundItems.size();
+o        ~~~~~~ ^~~~~~~~~~~~~~~~~
+o1 warning generated.
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection105"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../snd_manager.cppd385d47bd2b1b641^a3e5607cd2b1b641^-319"/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../snd_manager.cpp:60:9: warning: implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'unsigned int' [-Wshorten-64-to-32]        return SoundItems.size();        ~~~~~~ ^~~~~~~~~~~~~~~~~1 warning generated.1(36%IDEClangDiagnosticActivityLogMessage2@96"Implicit conversion loses integer precision: 'size_type' (aka 'unsigned long') to 'unsigned int'-380752508#18446744073709551615#0#-1#27"com.apple.dt.IDE.diagnostic23%DVTTextDocumentLocation3@94"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/snd_manager.cpp0000000000000000^59#8#59#8#1027#0#14"Semantic Issue2(3@94"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/snd_manager.cpp0000000000000000^59#8#59#25#1027#16#3@94"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/snd_manager.cpp0000000000000000^59#1#59#7#1020#0#-0#0#0#-19%DVTDocumentLocation4@113"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../snd_manager.cpp0000000000000000^2791"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/snd_manager.o ../../snd_manager.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/snd_manager.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/snd_manager.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../snd_manager.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/snd_manager.o36"C3093CFD-BE31-4E27-A672-7520207DFEBD-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/sprite.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../sprite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752508.102360
+e380752508.684802
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/sprite.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../sprite.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection100"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../sprite.cpp664f1a7cd2b1b641^2d5faf7cd2b1b641^---0#0#0#-19%DVTDocumentLocation2@108"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../sprite.cpp0000000000000000^2761"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/sprite.o ../../sprite.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/sprite.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/sprite.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../sprite.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/sprite.o36"A6A1DCF7-A93C-4370-958B-9A5346195C68-
+
+CCompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/video.o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../video.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380752508.378996
+e380752508.802326
+r1
+xCompileC
+xBuild/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/video.o
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../video.cpp
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection99"Compile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../video.cppd926617cd2b1b641^7b66cd7cd2b1b641^---0#0#0#-19%DVTDocumentLocation2@107"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../video.cpp0000000000000000^2755"CompileC Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/video.o ../../video.cpp normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -include /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/video.d --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/video.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../video.cpp -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/video.o36"D599D05E-BC46-4DCE-ABEE-3E386A0DA9B3-
+
+CCopyStringsFile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Resources/en.lproj/InfoPlist.strings MeatballEngine/en.lproj/InfoPlist.strings
+r0
+
+CCopyStringsFile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Resources/en.lproj/InfoPlist.strings MeatballEngine/en.lproj/InfoPlist.strings
+s380742987.346832
+e380742987.349740
+r1
+xCopyStringsFile
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Resources/en.lproj/InfoPlist.strings
+xMeatballEngine/en.lproj/InfoPlist.strings
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection46"Copy MeatballEngine/en.lproj/InfoPlist.strings87dc584badb1b641^4e97594badb1b641^---0#0#0#-19%DVTDocumentLocation2@133"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/MeatballEngine/en.lproj/InfoPlist.strings0000000000000000^522"CopyStringsFile Build/Products/Debug/MeatballEngine.framework/Versions/A/Resources/en.lproj/InfoPlist.strings MeatballEngine/en.lproj/InfoPlist.strings    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copyStrings --validate --inputencoding utf-8 --outputencoding UTF-16 --outdir /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Resources/en.lproj -- MeatballEngine/en.lproj/InfoPlist.strings36"2D64F065-DAA9-4452-A560-42634D611814-
+
+CCpHeader ../../include/SDL_ep.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/SDL_ep.h
+s380747480.494745
+e380747480.497463
+r1
+xCpHeader
+x../../include/SDL_ep.h
+xBuild/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/SDL_ep.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection78"Copy Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/SDL_ep.hbabf7ed8beb1b641^5b5c7fd8beb1b641^---0#0#0#-19%DVTDocumentLocation2@165"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/SDL_ep.h0000000000000000^541"CpHeader ../../include/SDL_ep.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/SDL_ep.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/SDL_ep.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers36"BAF682EC-6906-429C-8CEF-E8A6649A5D16-
+
+CCpHeader ../../include/SDL_ep.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/SDL_ep.h
+s380742987.327639
+e380742987.330810
+r1
+xCpHeader
+x../../include/SDL_ep.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/SDL_ep.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection78"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/SDL_ep.h0af2534badb1b641^45b9544badb1b641^---0#0#0#-19%DVTDocumentLocation2@165"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/SDL_ep.h000000000080d041^541"CpHeader ../../include/SDL_ep.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/SDL_ep.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/SDL_ep.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"4C23C389-B3B4-4F17-AA9E-9CCC9E594A39-
+
+CCpHeader ../../include/audio.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/audio.h
+r0
+
+CCpHeader ../../include/audio.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/audio.h
+s380742987.308343
+e380742987.310767
+r1
+xCpHeader
+x../../include/audio.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/audio.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection77"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/audio.h08034f4badb1b641^00904f4badb1b641^---0#0#0#-19%DVTDocumentLocation2@164"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/audio.h000000000080d041^538"CpHeader ../../include/audio.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/audio.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/audio.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"B7A1AFCE-39F5-4A21-82A1-082915F1D720-
+
+CCpHeader ../../include/font.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/font.h
+r0
+
+CCpHeader ../../include/font.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/font.h
+s380742987.309054
+e380742987.311969
+r1
+xCpHeader
+x../../include/font.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/font.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection76"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/font.hbd3a4f4badb1b641^6de34f4badb1b641^---0#0#0#-19%DVTDocumentLocation2@163"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/font.h000000000080d041^535"CpHeader ../../include/font.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/font.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/font.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"288C939F-F2FD-4AA7-A928-1CD412DCA217-
+
+CCpHeader ../../include/framerate.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/framerate.h
+s380752509.250818
+e380752509.285043
+r1
+xCpHeader
+x../../include/framerate.h
+xBuild/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/framerate.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection81"Copy Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/framerate.h3f56407dd2b1b641^27fa487dd2b1b641^---0#0#0#-19%DVTDocumentLocation2@168"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/framerate.h0000000000000000^550"CpHeader ../../include/framerate.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/framerate.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/framerate.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers36"6BEAC2D6-D231-4176-9207-3DA2E106E94C-
+
+CCpHeader ../../include/framerate.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/framerate.h
+s380742987.312064
+e380742987.315424
+r1
+xCpHeader
+x../../include/framerate.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/framerate.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection81"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/framerate.h6ff24f4badb1b641^0dc6504badb1b641^---0#0#0#-19%DVTDocumentLocation2@168"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/framerate.h000000000080d041^550"CpHeader ../../include/framerate.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/framerate.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/framerate.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"3C0CA9B5-2CCB-47DB-806B-ED5CF7746D17-
+
+CCpHeader ../../include/gfx.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/gfx.h
+r0
+
+CCpHeader ../../include/gfx.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/gfx.h
+s380742987.313198
+e380742987.315808
+r1
+xCpHeader
+x../../include/gfx.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/gfx.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection75"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/gfx.hde39504badb1b641^dcd8504badb1b641^---0#0#0#-19%DVTDocumentLocation2@162"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/gfx.h000000000080d041^532"CpHeader ../../include/gfx.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/gfx.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/gfx.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"74C5CE49-2720-480E-A671-34B54FD04F03-
+
+CCpHeader ../../include/image.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/image.h
+r0
+
+CCpHeader ../../include/image.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/image.h
+s380742987.316734
+e380742987.321969
+r1
+xCpHeader
+x../../include/image.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/image.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection77"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/image.he926514badb1b641^ce6d524badb1b641^---0#0#0#-19%DVTDocumentLocation2@164"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/image.h000000000080d041^538"CpHeader ../../include/image.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/image.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/image.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"065090D7-AD46-4420-A145-E900B7C4DC54-
+
+CCpHeader ../../include/img_manager.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/img_manager.h
+s380746302.571044
+e380746302.574098
+r1
+xCpHeader
+x../../include/img_manager.h
+xBuild/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/img_manager.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection83"Copy Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/img_manager.h0343923ebab1b641^83fa923ebab1b641^---0#0#0#-19%DVTDocumentLocation2@170"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/img_manager.h0000000000000000^556"CpHeader ../../include/img_manager.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/img_manager.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/img_manager.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers36"C4E3EE24-614E-4AAF-B831-FEC46D664A88-
+
+CCpHeader ../../include/img_manager.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/img_manager.h
+s380742987.317214
+e380742987.322147
+r1
+xCpHeader
+x../../include/img_manager.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/img_manager.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection83"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/img_manager.hee40514badb1b641^397c524badb1b641^---0#0#0#-19%DVTDocumentLocation2@170"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/img_manager.h000000000080d041^556"CpHeader ../../include/img_manager.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/img_manager.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/img_manager.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"906F8F5E-FEA4-4ED6-A6BF-2E6D29C90969-
+
+CCpHeader ../../include/misc.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/misc.h
+r0
+
+CCpHeader ../../include/misc.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/misc.h
+s380744293.897562
+e380744293.899967
+r1
+xCpHeader
+x../../include/misc.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/misc.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection76"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/misc.ha5d8e565b2b1b641^4f96e665b2b1b641^---0#0#0#-19%DVTDocumentLocation2@163"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/misc.h0000000000000000^535"CpHeader ../../include/misc.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/misc.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/misc.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"CCC42634-AF52-49CD-B68A-C8D772D9BA60-
+
+CCpHeader ../../include/net.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/net.h
+r0
+
+CCpHeader ../../include/net.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/net.h
+s380742987.323470
+e380742987.325983
+r1
+xCpHeader
+x../../include/net.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/net.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection75"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/net.hfdda524badb1b641^3c86534badb1b641^---0#0#0#-19%DVTDocumentLocation2@162"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/net.h000000000080d041^532"CpHeader ../../include/net.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/net.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/net.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"91438A54-1157-41CD-A85C-C18E37341150-
+
+CCpHeader ../../include/snd_manager.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/snd_manager.h
+s380746302.575154
+e380746302.578061
+r1
+xCpHeader
+x../../include/snd_manager.h
+xBuild/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/snd_manager.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection83"Copy Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/snd_manager.he84f933ebab1b641^82fd933ebab1b641^---0#0#0#-19%DVTDocumentLocation2@170"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/snd_manager.h0000000000000000^556"CpHeader ../../include/snd_manager.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/snd_manager.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/snd_manager.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers36"C37786E0-AE88-4856-B7F7-1D9F5798CB08-
+
+CCpHeader ../../include/snd_manager.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/snd_manager.h
+s380742987.330144
+e380742987.333771
+r1
+xCpHeader
+x../../include/snd_manager.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/snd_manager.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection83"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/snd_manager.ha697544badb1b641^6876554badb1b641^---0#0#0#-19%DVTDocumentLocation2@170"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/snd_manager.h000000000080d041^556"CpHeader ../../include/snd_manager.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/snd_manager.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/snd_manager.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"D89352A0-BD13-45A0-ABF5-83B733E829BA-
+
+CCpHeader ../../include/sprite.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/sprite.h
+r0
+
+CCpHeader ../../include/sprite.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/sprite.h
+s380742987.332401
+e380742987.335857
+r1
+xCpHeader
+x../../include/sprite.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/sprite.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection78"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/sprite.hd028554badb1b641^b5fb554badb1b641^---0#0#0#-19%DVTDocumentLocation2@165"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/sprite.h000000000080d041^541"CpHeader ../../include/sprite.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/sprite.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/sprite.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"7F085A5C-8D8B-4667-97FB-996FE6DF7ADF-
+
+CCpHeader ../../include/video.h Build/Products/Debug/MeatBallEngine.framework/Versions/A/Headers/video.h
+r0
+
+CCpHeader ../../include/video.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/video.h
+s380742987.335398
+e380742987.339028
+r1
+xCpHeader
+x../../include/video.h
+xBuild/Products/Debug/MeatballEngine.framework/Versions/A/Headers/video.h
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection77"Copy Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/video.h4aed554badb1b641^5ad5564badb1b641^---0#0#0#-19%DVTDocumentLocation2@164"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/video.h000000000080d041^538"CpHeader ../../include/video.h Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers/video.h    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/../../include/video.h /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Headers36"1F9A9BEC-2033-4B59-B501-A7DE8C9F838C-
+
+CLd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/MeatBallEngine normal x86_64
+s380752508.811028
+e380752509.241406
+r1
+xLd
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/MeatBallEngine
+xnormal
+xx86_64
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection152"Link /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/MeatBallEnginea29ad27cd2b1b641^f2ce3d7dd2b1b641^---0#0#0#--1311"Ld Build/Products/Debug/MeatBallEngine.framework/Versions/A/MeatBallEngine normal x86_64    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv MACOSX_DEPLOYMENT_TARGET 10.8    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -arch x86_64 -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -L/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks -filelist /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/Objects-normal/x86_64/MeatBallEngine.LinkFileList -install_name /Library/Frameworks/MeatBallEngine.framework/Versions/A/MeatBallEngine -mmacosx-version-min=10.8 -stdlib=libstdc++ -framework SDL_image -framework SDL_mixer -framework SDL_net -framework SDL_ttf -framework SDL -framework SGE -single_module -compatibility_version 1 -current_version 1 -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/MeatBallEngine36"EFB4A1E7-E7EF-4E2D-AD50-9BB86DC458E9-
+
+CProcessInfoPlistFile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/A/Resources/Info.plist MeatballEngine/MeatballEngine-Info.plist
+r0
+
+CProcessInfoPlistFile /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Resources/Info.plist MeatballEngine/MeatballEngine-Info.plist
+s380742987.296891
+e380742987.300194
+r1
+xProcessInfoPlistFile
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Resources/Info.plist
+xMeatballEngine/MeatballEngine-Info.plist
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection48"Process MeatballEngine/MeatballEngine-Info.plistcb134c4badb1b641^abe74c4badb1b641^---0#0#0#-19%DVTDocumentLocation2@132"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/MeatballEngine/MeatballEngine-Info.plist0000000000000000^488"ProcessInfoPlistFile Build/Products/Debug/MeatballEngine.framework/Versions/A/Resources/Info.plist MeatballEngine/MeatballEngine-Info.plist    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    builtin-infoPlistUtility MeatballEngine/MeatballEngine-Info.plist -expandbuildsettings -platform macosx -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/A/Resources/Info.plist36"DA627726-63C4-4C09-B7E4-884F21EDA6D8-
+
+CProcessPCH++ /Users/bazz/Library/Developer/Xcode/DerivedData/Engine-bsmvbttgwacofidcjbtnuylweypk/Index/PrecompiledHeaders/MeatballEngine-Prefix-beqgvnwptirchedxjnyqpquxhoow_ast/MeatballEngine-Prefix.pch.pth MeatballEngine/MeatballEngine-Prefix.pch normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.astbuilder
+r0
+
+CProcessPCH++ /Users/bazz/Library/Developer/Xcode/DerivedData/Engine-bsmvbttgwacofidcjbtnuylweypk/Index/PrecompiledHeaders/MeatballEngine-Prefix-bniovuytodatjfekhgaprtvnlwfv_ast/MeatballEngine-Prefix.pch.pth MeatballEngine/MeatballEngine-Prefix.pch normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.astbuilder
+r0
+
+CProcessPCH++ /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch.pth MeatballEngine/MeatballEngine-Prefix.pch normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+s380747835.398329
+e380747835.419530
+r1
+xProcessPCH++
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch.pth
+xMeatballEngine/MeatballEngine-Prefix.pch
+xnormal
+xx86_64
+xc++
+xcom.apple.compilers.llvm.clang.1_0.compiler
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection51"Precompile MeatballEngine/MeatballEngine-Prefix.pch0917663bc0b1b641^62666b3bc0b1b641^---0#0#0#-19%DVTDocumentLocation2@132"file://localhost/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/MeatballEngine/MeatballEngine-Prefix.pch0000000000000000^2731"ProcessPCH++ Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch.pth MeatballEngine/MeatballEngine-Prefix.pch normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    setenv LANG en_US.US-ASCII    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++-header -arch x86_64 -fmessage-length=0 -std=gnu++11 -stdlib=libstdc++ -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wreturn-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wformat -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DDEBUG=1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk -fasm-blocks -Wdeprecated-declarations -Winvalid-offsetof -mmacosx-version-min=10.8 -g -fvisibility-inlines-hidden -Wno-sign-conversion -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/MeatBallEngine.hmap -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/include -I../.. -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources/x86_64 -I/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/Engine.build/Debug/MeatBallEngine.build/DerivedSources -F/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug -F/Library/Frameworks --serialize-diagnostics /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch.dia -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/MeatballEngine/MeatballEngine-Prefix.pch -o /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch.pth -MMD -MT dependencies -MF /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-dsiepykxjzdfkvgeykjhjqlqyfgz/MeatballEngine-Prefix.pch.d36"9E34F39E-AD42-45CD-8017-299651AF6E51-
+
+CProcessPCH++ /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Intermediates/PrecompiledHeaders/MeatballEngine-Prefix-gghdfqmbrpfkjqfpruqusrhzkjlj/MeatballEngine-Prefix.pch.pth MeatballEngine/MeatballEngine-Prefix.pch normal x86_64 c++ com.apple.compilers.llvm.clang.1_0.compiler
+r0
+
+CSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Headers Versions/Current/Headers
+r0
+
+CSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/MeatBallEngine Versions/Current/MeatBallEngine
+s380745042.321840
+e380745042.330463
+r1
+xSymLink
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/MeatBallEngine
+xVersions/Current/MeatBallEngine
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection144"Process /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/MeatBallEngineab755252b5b1b641^789a5452b5b1b641^---0#0#0#--369"SymLink Build/Products/Debug/MeatBallEngine.framework/MeatBallEngine Versions/Current/MeatBallEngine    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    /bin/ln -sf Versions/Current/MeatBallEngine /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/MeatBallEngine36"988570D1-53C6-4CBF-8164-76DEDA9DF8E5-
+
+CSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Resources Versions/Current/Resources
+r0
+
+CSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework/Versions/Current A
+r0
+
+CSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Headers Versions/Current/Headers
+s380742987.278712
+e380742987.288717
+r1
+xSymLink
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Headers
+xVersions/Current/Headers
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection137"Process /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Headersbe6c474badb1b641^34f6494badb1b641^---0#0#0#--341"SymLink Build/Products/Debug/MeatballEngine.framework/Headers Versions/Current/Headers    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    /bin/ln -sf Versions/Current/Headers /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Headers36"B24FFD26-E2B2-415D-944E-CB5C091EC6A4-
+
+CSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Resources Versions/Current/Resources
+s380742987.260137
+e380742987.274023
+r1
+xSymLink
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Resources
+xVersions/Current/Resources
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection139"Process /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Resources01a4424badb1b641^74cf464badb1b641^---0#0#0#--349"SymLink Build/Products/Debug/MeatballEngine.framework/Resources Versions/Current/Resources    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    /bin/ln -sf Versions/Current/Resources /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Resources36"D66AC590-1507-4931-AE71-22A8A9DEA109-
+
+CSymLink /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/Current A
+s380742987.259754
+e380742987.272356
+r1
+xSymLink
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/Current
+xA
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection146"Process /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/Current5c8f424badb1b641^4ace454badb1b641^---0#0#0#--313"SymLink Build/Products/Debug/MeatballEngine.framework/Versions/Current A    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    /bin/ln -sf A /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework/Versions/Current36"351D0613-AAEE-46F5-B7B7-05647DFBA15C-
+
+CTouch /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework
+s380752509.301354
+e380752509.335344
+r1
+xTouch
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection127"Touch /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework0c3a4d7dd2b1b641^cfda557dd2b1b641^---0#0#0#--279"Touch Build/Products/Debug/MeatBallEngine.framework    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    /usr/bin/touch -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatBallEngine.framework36"07B2C31A-CCF0-4036-BF73-164B41DD4709-
+
+CTouch /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework
+s380744293.918067
+e380744293.928140
+r1
+xTouch
+x/Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework
+lSLF05#21%IDEActivityLogSection1@2#32"com.apple.dt.IDE.BuildLogSection127"Touch /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework9f1eeb65b2b1b641^0b9bed65b2b1b641^---0#0#0#--279"Touch Build/Products/Debug/MeatballEngine.framework    cd /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine    /usr/bin/touch -c /Users/bazz/Projects/newmeatball/meatball-code/Meatball/Engine/XCode/Engine/Build/Products/Debug/MeatballEngine.framework36"CE3A181C-06FA-4BDD-B5DF-0B4DE4EE54ED-
+

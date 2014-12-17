@@ -1,0 +1,4 @@
+<map id="cWeapon_Pistol" name="cWeapon_Pistol">
+<area shape="rect" href="$classc_weapon.html" title="The Basic Weapon class." alt="" coords="28,84,116,111"/>
+<area shape="rect" href="$classc_basic_sprite.html" title="cBasicSprite" alt="" coords="17,7,127,33"/>
+</map>

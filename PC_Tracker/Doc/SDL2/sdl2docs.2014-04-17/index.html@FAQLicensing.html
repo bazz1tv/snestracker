@@ -1,0 +1,139 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - FAQLicensing</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@FAQLicensing.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@FAQLicensing.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span>
+<p class="line867"></p>
+<h1 id="FAQ:_Licensing">FAQ: Licensing</h1>
+<span class="anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@FAQLicensing.html#FAQ:_Licensing">FAQ: Licensing</a>
+<ol>
+<li><a href="index.html@FAQLicensing.html#What_license_does_SDL_use.3F">What license does SDL
+use?</a></li>
+<li><a href="index.html@FAQLicensing.html#Can_I_use_SDL_in_a_commercial_application.3F">Can I
+use SDL in a commercial application?</a></li>
+<li><a href="index.html@FAQLicensing.html#Can_I_use_SDL_in_an_embedded_application.3F">Can I
+use SDL in an embedded application?</a></li>
+<li><a href=
+"index.html@FAQLicensing.html#If_I_use_SDL.2C_do_I_owe_any_licensing_fees_or_royalties.3F">If I
+use SDL, do I owe any licensing fees or royalties?</a></li>
+<li><a href=
+"index.html@FAQLicensing.html#Can_I_use_code_from_the_test_directory.3F_From_the_examples.3F">Can
+I use code from the test directory? From the examples?</a></li>
+<li><a href=
+"index.html@FAQLicensing.html#Can_I_use_code_from_the_demos_in_my_applications.3F">Can I use
+code from the demos in my applications?</a></li>
+</ol>
+</li>
+</ol>
+</div>
+<span class="anchor" id="line-4"></span><span class="anchor" id=
+"line-5"></span>
+<p class="line867"></p>
+<h2 id="What_license_does_SDL_use.3F">What license does SDL
+use?</h2>
+<span class="anchor" id="line-6"></span>
+<p class="line874">SDL 2.0 is freely available under the terms of
+the zlib license, and SDL 1.2 is freely available under the GNU
+LGPL license. <span class="anchor" id="line-7"></span><span class=
+"anchor" id="line-8"></span></p>
+<p class="line874">Both may be used in both free and commercial
+applications. <span class="anchor" id="line-9"></span><span class=
+"anchor" id="line-10"></span></p>
+<p class="line862">You can read the detailed license text at
+<a class="http" href=
+"http://www.libsdl.org/license.php">http://www.libsdl.org/license.php</a>
+<span class="anchor" id="line-11"></span><span class="anchor" id=
+"line-12"></span></p>
+<p class="line867"></p>
+<h2 id="Can_I_use_SDL_in_a_commercial_application.3F">Can I use SDL
+in a commercial application?</h2>
+<span class="anchor" id="line-13"></span>
+<p class="line874">Yes! <span class="anchor" id=
+"line-14"></span><span class="anchor" id="line-15"></span></p>
+<p class="line874">SDL 2.0 can be freely embedded either as static
+library or as linked .dll (or .so or other sorts of dynamic
+libraries). <span class="anchor" id="line-16"></span><span class=
+"anchor" id="line-17"></span></p>
+<p class="line874">For SDL 1.2, the GNU LGPL license requires you
+to adhere to this additional restriction: <span class="anchor" id=
+"line-18"></span><span class="anchor" id="line-19"></span></p>
+<ul>
+<li>If you link dynamically (via .dll's, .so's or using other
+dynamic linking devices) then you do not need to do anything.
+<span class="anchor" id="line-20"></span><span class="anchor" id=
+"line-21"></span></li>
+<li class="gap">If you link statically (include the SDL source
+inside your project when you compile) you have to provide some way
+for your customer to relink your application with a custom version
+of SDL. <span class="anchor" id="line-22"></span><span class=
+"anchor" id="line-23"></span></li>
+</ul>
+<p class="line862">The details are available at: <a class="http"
+href=
+"http://www.libsdl.org/license.php">http://www.libsdl.org/license.php</a>
+<span class="anchor" id="line-24"></span><span class="anchor" id=
+"line-25"></span></p>
+<p class="line867"></p>
+<h2 id="Can_I_use_SDL_in_an_embedded_application.3F">Can I use SDL
+in an embedded application?</h2>
+<span class="anchor" id="line-26"></span>
+<p class="line874">Yes! However, for SDL 1.2 you will either need
+to publish the source code of your program if you're statically
+linking, or provide tools and object files required to link against
+another version of SDL. <span class="anchor" id=
+"line-27"></span><span class="anchor" id="line-28"></span></p>
+<p class="line862">The details are available at: <a class="http"
+href=
+"http://www.libsdl.org/license.php">http://www.libsdl.org/license.php</a>
+<span class="anchor" id="line-29"></span><span class="anchor" id=
+"line-30"></span></p>
+<p class="line867"></p>
+<h2 id=
+"If_I_use_SDL.2C_do_I_owe_any_licensing_fees_or_royalties.3F">If I
+use SDL, do I owe any licensing fees or royalties?</h2>
+<span class="anchor" id="line-31"></span>
+<p class="line874">No! <span class="anchor" id="line-32"></span>You
+may use SDL completely free of charge. <span class="anchor" id=
+"line-33"></span><span class="anchor" id="line-34"></span></p>
+<p class="line867"></p>
+<h2 id=
+"Can_I_use_code_from_the_test_directory.3F_From_the_examples.3F">
+Can I use code from the test directory? From the examples?</h2>
+<span class="anchor" id="line-35"></span>
+<p class="line874">Yes, code from the test directory and from the
+examples in the documentation is placed in the public domain.
+Anyone can use it for any purpose. <span class="anchor" id=
+"line-36"></span><span class="anchor" id="line-37"></span></p>
+<p class="line867"></p>
+<h2 id="Can_I_use_code_from_the_demos_in_my_applications.3F">Can I
+use code from the demos in my applications?</h2>
+<span class="anchor" id="line-38"></span>
+<p class="line874">Each of the demos has its own licensing
+restrictions. See the "COPYING" file in each demo's source
+directory for more information on a particular demo. <span class=
+"anchor" id="line-39"></span><span class="anchor" id=
+"bottom"></span></p>
+</div>
+</body></html>

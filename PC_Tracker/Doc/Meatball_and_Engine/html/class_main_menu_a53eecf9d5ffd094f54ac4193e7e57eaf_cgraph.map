@@ -1,0 +1,19 @@
+<map id="MainMenu::MainMenu" name="MainMenu::MainMenu">
+<area shape="rect" href="$classc_sound_manager.html#a863e7deccbb0132ed5d7e8cb73ad8851" title="Adds an Sound Should always have an Identifier." alt="" coords="239,5,415,32"/>
+<area shape="rect" href="$classc_image_manager.html#a75bc7ee74e8fe0839725639d8392390a" title="Adds an Image Should always have an Identifier." alt="" coords="239,56,415,83"/>
+<area shape="rect" href="$classc_image_manager.html#a71fec48cbbf5fbc3bf75b66fa8066cbf" title="cImageManager::GetPointer" alt="" coords="469,81,693,108"/>
+<area shape="rect" href="$classc_font.html#a9cda61e758210967fdad70e9a42bf858" title="Creates an Font from an .ttf file default pointsize is 16 default style is TTF_STYLE_NORMAL." alt="" coords="252,157,401,184"/>
+<area shape="rect" href="$group___engine___image.html#gac3d007d1a2bfa7d73b87a8541a194c9c" title="LoadImage" alt="" coords="275,208,379,235"/>
+<area shape="rect" href="$classc_audio.html#a9ae6005c01a5384fee41652038e05358" title="Loads an sound if volume is &#45;1 the default sound volume will be used if volume is &#45;2 no volume will b..." alt="" coords="247,259,407,285"/>
+<area shape="rect" href="$classc_audio.html#a8169acfbe8b79cfc13a871ab16b2ffc9" title="if no forcing the file will be played after the current Music file if loops is &#45;1 music will be loope..." alt="" coords="253,309,400,336"/>
+<area shape="rect" href="$class_text_object.html#a2f82818e76aff5329cddccb38123e477" title="Makes the surface and updates the Rect." alt="" coords="247,360,407,387"/>
+<area shape="rect" href="$group___engine___misc.html#ga65ae4a33cf99a3d6a533a465500c8eeb" title="return an SDL_Color" alt="" coords="285,411,368,437"/>
+<area shape="rect" href="$class_text_object.html#ad5999d4ca55061ed8d1177a70897b7e9" title="TextObject::SetFGColor" alt="" coords="232,461,421,488"/>
+<area shape="rect" href="$classc_basic_sprite.html#ae17ff9f6cc4d178240cc3d4c79eb0169" title="cBasicSprite::SetSize" alt="" coords="241,512,412,539"/>
+<area shape="rect" href="$classc_sound_manager.html#a13473964862648a84d60d20669cb6e23" title="cSoundManager::GetPointer" alt="" coords="469,5,693,32"/>
+<area shape="rect" href="$classc_font.html#a05f5e81edc2bafa2dd0a756468e62cb9" title="Sets the Style of an Font styles : TTF_STYLE_NORMAL TTF_STYLE_BOLD TTF_STYLE_ITALIC TTF_STYLE_UNDERLI..." alt="" coords="501,157,661,184"/>
+<area shape="rect" href="$class_text_object.html#a4aca0a06ab72da363ecdc81a036b79f1" title="TextObject::preRender" alt="" coords="489,309,673,336"/>
+<area shape="rect" href="$classc_font.html#a5e7d87da787e072678abee523d01e724" title="Creates the text in an Surface types : 1 = Blended 2 = Shaded 3 = Solid." alt="" coords="507,360,656,387"/>
+<area shape="rect" href="$class_text_object.html#af6103e05c76f2905d96e4f395ccaf9b1" title="TextObject::UpdateRect" alt="" coords="485,411,677,437"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="741,411,819,437"/>
+</map>

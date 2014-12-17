@@ -1,0 +1,758 @@
+/*  screen.css - MoinMoin Default Styles
+
+Copyright (c) 2001, 2002, 2003 by Juergen Hermann
+Copyright (c) 2008, 2009 by Roger Haase
+License: GNU GPL
+
+This file was copied from Moin 1.8.3 modernized theme and modified for fixedleft theme.
+
+WRONG COLORS?  See the bottom of this file to change the sidebar panel color.
+
+*/
+
+/* content styles */
+
+/* debug 
+* {border: 1px dotted blue;}
+*/
+
+body {
+    padding: 0;
+    border: 0;
+}
+
+a:link { color: #47f; text-decoration: none; }
+a:link:active { text-decoration: underline; color: red; }
+a:visited { text-decoration: none; color: #04a;}
+a:visited:hover { text-decoration: none; color: red; }
+a.nonexistent:link { 
+	color: blue; 
+	text-weight: bold; 
+}
+a.nonexistent:hover { 
+	color: red; 
+	text-weight: bold; 
+	text-decoration: none; 
+}
+
+a.download {
+    font-size: 120%; 
+    letter-spacing: 0.05em;
+    font-weight: bold;
+    background: #E7E7E7;
+    border: 1px solid #9C9C9C;
+    padding: 0.5em;
+    text-align: center;
+}
+
+input {
+    /* does strange effect to button (text size becomes bigger when clicking)
+    font-size: 1em;
+    font-family: Arial, Lucida Grande, sans-serif;
+    */
+}
+
+textarea {
+    font-size: 1em;
+    font-family: monospace;
+}
+
+.disabled {
+    /* IE ignore disabled attribute, but at least show items in gray */
+    color: gray;
+}
+
+/* user interface styles */
+
+#header {
+    margin: 1px;
+    padding: 1px;
+    background: #e6eaf0;
+    line-height: 1.1em;
+}
+
+#logo {
+    float: left;
+    margin: 5px 10px;
+    padding: 0;
+    /* For text only logo */
+    font-size: 1.4em;
+    line-height: 1em;
+    font-weight: bold;
+}
+
+*[dir="rtl"] #logo {
+    float: right;
+}
+
+#logo img {
+    vertical-align: middle;
+}
+
+#logo a {
+    color: black;
+    text-decoration: none;
+}
+
+#username {
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+}
+#username form {
+    display: inline;
+}
+
+#username input {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: blue;
+    font-size: 0.82em;
+    cursor: pointer;
+}
+
+#username input:hover {
+    color: red;
+}
+
+#searchform {
+    margin: 4px 0.5em 0 0;
+    padding: 0 0 0 .5em;
+    font-size: 0.82em;
+    float: left;
+    clear: left;
+    text-align: left;
+}
+*[dir="rtl"] #searchform {
+    float: left;
+    clear: left;
+    text-align: left;
+}
+#searchform input {
+    font-size: 100%;
+    vertical-align: middle;
+}
+#searchform div#searchbuttons > input {
+	color: blue;
+}
+#searchform div#searchbuttons > input:hover {
+	color: red;
+} 
+
+#pagetrail {
+    clear: right;
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+}
+
+*[dir="rtl"] #pagetrail {
+    clear: left;
+}
+#interwiki {
+    font-size: 1em;
+}
+
+#locationline {
+    padding: 0;
+    font-size: 100%;
+    font-weight: normal;
+    margin: 0.25em 12px 5px 12px;
+    clear: right;
+}
+*[dir="rtl"] #locationline {
+    clear: left;
+}
+
+#pagelocation {
+    clear: both;  
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+}
+
+*[dir="rtl"] #pagetrail span.sep {
+    visibility: hidden;
+}
+*[dir="rtl"] #pagetrail span.sep:after {
+    content: " « ";
+}
+
+#navibar {
+    clear: both;  
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+}
+
+#navibar li {
+    border-bottom: none;
+    white-space: nowrap;
+}
+
+*[dir="rtl"] #navibar li {
+    float: right;
+}
+
+#navibar li.current a {
+    font-weight: bold;
+}
+
+#pageline {
+    clear: both;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /* sync these values, line-height is needed for IE */
+        height: 4px;
+        line-height: 4px;
+    border-bottom: 1px solid #4d7da9;
+    border-top: 1px solid #4d7da9;
+    background: #81BBF2;
+}
+
+.editbar {
+    clear: both;
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+}
+
+.editbar form, .editbar form div {
+    display: block;
+    margin: 0;
+}
+
+.editbar select {
+    font-size: 100%;
+    vertical-align: middle;
+}
+
+.editbar li {
+    display: block;
+    padding: 0;
+    margin: 0;
+}
+
+#message {
+    clear: both;
+    margin: 0;
+    padding: 5px 10px;
+    border-bottom: 1px solid #c9c9c9;
+    background: #E6EAF0;
+}
+
+#message p {
+    margin: 5px 0;
+    padding: 0;
+    /* font-weight: bold; */
+}
+
+#message div.buttons {
+    font-weight: normal;
+}
+
+.dialog form {
+    margin: 0 15px;
+}
+
+.dialog td {
+    border: none;
+    padding: 5px;
+}
+
+.dialog td.label {
+    text-align: right;
+    font-weight: bold;
+    width: 25%;
+}
+
+*[dir="rtl"] .dialog td.label {
+    text-align: left;
+}
+
+.dialog td.content input {
+    width: 100%;
+}
+
+#page {
+    background-color: white;
+    margin: 0;
+    padding: 2px 20px 20px 20px;
+
+   /* theses are some Firefox 1.5b1 specific extensions, see also the CSS3 draft.
+   -moz-column-width: 25em;
+   -moz-column-gap: 2em;
+   -moz-column-rule: solid black 0.3em;     --   doesn't work yet with 1.5b1!
+
+   TODO: make text/gui editor NOT use #page css, we don't want columns there!
+    */
+}
+
+/* We use here dumb css1 ids because of IE suckiness */
+#editor-textarea, #editor-help {
+    font-family: monospace;
+    border: 1px solid #8cacbb;  
+    color: black;
+    background-color: white;
+    padding: 3px;
+    width: 100%;
+    margin-top: 0.5em;
+}
+
+#editor-help {
+    font-size: small;
+    background-color: #EEEEFF;
+}
+
+#editor-comment {
+    font-size: 100%;
+    border: 1px solid #8cacbb;
+    color: black;
+    background-color: white;
+    vertical-align: middle;
+    padding: 1px;
+    display: inline;
+    width: 70%;
+}
+
+#preview, #previewbelow {
+    border: 1px solid #6C7680;
+    padding: 10px 30px 20px 30px;
+    background: url(draft.png);
+    margin-top: 0.5em;
+}
+
+#textcha {
+    font-size: 100%;
+    margin-top: 0.5em;
+    border: 2px solid #FF8888;
+    color: black;
+    vertical-align: middle;
+    padding: 3px 2px;
+}
+
+#textcha-answer {
+    border: 2px solid #000000;
+    padding: 3px 2px;
+}
+
+input.button {
+    /*
+    border: 1px solid #8cacbb;  
+    color: black;
+    background-color: #CCCCCC;
+    vertical-align: middle;
+    text-decoration: none;
+    font-size: 100%;
+    cursor: pointer;
+    margin: 2px;
+    padding: 1px;
+    display: inline;
+    */
+}
+
+#footer {
+    clear: both;
+    margin: 0;
+    padding: 0;
+}
+
+#credits, #version, #timings{
+    margin: 5px 10px;
+    padding: 0;
+    text-align: center;
+    font-size: 0.88em;
+    color: #6C7680;
+}
+
+#credits li, #timings li {
+    display: inline;
+    padding: 0 2px;
+    margin: 0 4px;
+}
+
+#credits img {
+    vertical-align: middle;
+}
+
+.diff {
+    width:99%;
+}
+
+.diff-header {
+    font-weight: bold;
+}
+
+.diff-title {
+    background-color: #C0C0C0;
+}
+
+.diff-added {
+    background-color: #E0FFE0;
+    vertical-align: sub;
+}
+
+.diff-removed {
+    background-color: #FFFFE0;
+    vertical-align: sub;
+}
+
+.diff-added span {
+    background-color: #80FF80;
+}
+
+.diff-removed span {
+    background-color: #FFFF80;
+}
+
+table.navigation {
+    float: right;
+    margin: 2px;
+}
+        
+#openididentifier {
+    padding-left: 18px;
+}
+
+
+
+
+/* custom styling for fixedleft theme starts here; changes made above are minor  */
+
+
+/*  ==== Wiki Page Content - defines content displayed in large right panel ==== */
+
+#wikipagecontent {
+    margin: 10px 10px 10px 14em;
+}
+	
+/* headers, footers, credits */
+#credits, #version, #sflogo {
+	clear: both;
+}
+
+ul#timings {
+    margin: 4px 4px 4px 14em;
+    color: gray;
+    list-style-type: none;
+}
+
+ul#timings li {
+    /* float: left; */
+    font-size: smaller;
+    margin: 0 0.5em;
+}
+
+/* Changes for edit page. */ 
+
+/*  hide the edit page buttons and help that would normally display on the main right panel*/
+input.button, #editor-help{
+    display: none;
+}
+	
+/* hide the extra trivial change checkbox at top of edit area; also hidden by javascript because of ie6 */
+#chktrivialtop, #chktrivialtop + label {
+	display: none;    /*this does not work for IE6 - it does not understand #chktrivialtop + label  */
+}
+
+/* hide the gui button at top of edit area */
+#xswitch2gui {
+    display:none;
+}
+
+/* styling for sorttable headings */
+table.sortable tr th,  table.sortable thead tr td {
+	color: #0000FF;
+}
+table.sortable tr th:hover,  table.sortable thead tr td:hover {
+	cursor: pointer; 
+	color: #FF0000;
+}
+/* sorttable nosort override  option */
+table.sortable tr th.sorttable_nosort,  table.sortable thead tr td.sorttable_nosort {
+	color: #000000;
+}
+table.sortable tr th.sorttable_nosort:hover,  table.sortable thead tr td.sorttable_nosort:hover {
+	cursor: default; 
+	color: #000000;
+}
+
+/*  ==== end of styling modifications for Wiki Page Content on right side ==== */
+
+
+/*  ====Sidebar - fixed on left side ==== */
+
+div#sidebar {
+    position: fixed;
+    top: 0;
+	left: 0;
+    height: 100%;
+    display: block;
+    margin: 0;
+    float: left; 
+    width: 13em;
+    padding: 0; 
+    z-index: 1;
+    overflow: auto;
+}
+/* IE6 requires the following hack for fixed sidebar */
+* html {
+	overflow-y: hidden;
+}
+* html body {
+	overflow-y: auto;
+	height: 100%;
+	padding: 0 0 0 0;
+	font-size: 100%;
+}
+* html div#sidebar {
+	position: absolute;  
+}
+* html div#altWikiNavMenu {
+	Position: absolute;
+}
+/* ie6 does not support li:hover, so no sideways menu for user */
+* html ul#menuIcon li {
+	display: none; 
+}
+/* end of IE6 hack for sidebar */
+
+div#logo {
+    margin-left: 5px; 
+	margin-top: 5px;
+}
+#logo a {
+	text-align: center;
+	font-size: small; 
+	font-family: sans-serif; 
+	white-space: nowrap;
+	color: blue; 
+	font-weight: bold;
+}
+#logo a:hover {
+	color: red;
+}
+
+#logo img {
+	vertical-align: middle;
+}
+
+.sidepanel ul li a img {
+	margin-left: 0;
+}
+
+ul#wikiNavMenu {clear: left; }
+
+li.sidepanel ul li  {
+	display: block;
+	text-align: left; 
+	margin: 0;}
+ul#wikiNavMenu  li.sidepanel {font-weight: bold; list-style-type: none;}
+ul#wikiNavMenu  li.sidepanel ul {font-weight: normal; font-size: .92em; list-style-type: none;}
+ul#wikiNavMenu  li.sidepanel {margin-top: 1em;}
+	
+	
+div#sidebar ul li {display: block; margin-left: 0px; padding-left: .5em; clear: left;}
+div#sidebar ul {padding-left: 0em;}
+/* make links in sidebar pointing to the current page bold; thispage class set by javascript  */
+li.sidepanel ul li a.thispage {
+	font-weight: bold;
+}
+
+/* more actions  -  more actions is a popup list */
+div.moreactions {
+	color: #47f;
+}
+div.moreactions ul {
+	background-color: white;
+	border: 1px solid black; 
+	display: none;
+	font-size: .82em;
+	list-style-type: none;
+	position: absolute;
+	top: 8em;
+	left: 3.0em;
+	z-index: 10;
+}
+div.moreactions ul li {
+	padding-left: .5em;
+	padding-right: .5em;
+}
+li#hideMoreActions {
+	font-size: 0.6em;
+	text-align: right;
+	vertical-align: middle;
+	list-style-type:none;
+	padding-right: 0;
+}
+/* end of more actions styling */
+
+/*  extra bits that are never displayed in sidebar,*/
+div#sidebar li#sidewaysSearch {display: none;}
+div#sidebar a#searchFormClose {display: none; }
+
+/* IE and Opera have unusual defaults for ul */
+ul#wikiNavMenu,  ul#wikiNavMenu ul {
+	margin: 0; 
+	padding: 0;
+}
+/* end of sidepanel changes for normal (non-edit) wiki page */
+
+
+/* ==== sidepanel for edit page ==== */
+
+li.sidepanel  a:visited {
+	color: blue;
+}
+li.sidepanel  a:hover {
+	color: red;
+}
+li.sidepanel  li {
+	font-size: 0.92em; 
+}
+
+/* editor help */
+div.editorhelp a {
+    margin-left: 1.5em;
+	font-size: .92em;
+}
+
+/* editor hints  */
+.hintheader {
+    font-size: 0.62em; 
+    font-weight: bold; 
+    margin-left: 1.5em;
+}
+    
+div#sidebar ul li.hint {
+    font-size: 0.62em; 
+    margin-left: 3em;
+}
+div#sidebar ul li.hint span.hintital {
+	font-style: italic;
+}
+div#sidebar ul li.hint span.hintbold {
+	font-weight: bold;
+}
+div#sidebar ul li.hint span.hintboit {
+	font-style: italic;
+	font-weight: bold;
+}
+/* ==== end of sidepanel for edit page ==== */
+
+/* styling for fixedleft sideways drop down start here */
+
+/* icon for hide sidebar panel  */
+#hideIcon {
+	position: absolute;
+	top: 2px;
+	right: 2px; 
+}
+/* icons for show sidebar panel and sideways drop down menu */
+div#altWikiNavMenu {
+	position: fixed;
+	top: 2px;
+	left: 2px;
+    z-index: 1;
+	display: none;
+}
+
+/* sideways drop down  list  */
+
+ul.sideways {
+	margin: 0;
+	padding: 0;
+	list-style: none; font-size: 0.82em;
+	}
+ul.sideways  li#sidebarSearch {display: none; position: fixed; top:20px; left: 9em; width: 12em; z-index:1; }
+ul.sideways a#searchFormClose {float: right; padding: 0px; margin: 0px;}
+ul.sideways  li  a  img {margin: 0; padding: 0;}
+
+ul.sideways ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: none; border: 1px solid #000;border-bottom: 2px solid #000; width: 9em; 
+	}
+ul.sideways li {
+	position: relative; 
+		background: #E6EAF0;  
+	}
+ul.sideways li li {
+	border: 1px solid #000;
+	color: blue; 
+	padding: 4px; margin: 0px;}
+ul.sideways > li > ul {
+	position: absolute; 
+	left: 13px;
+	top: 0;
+
+	}
+ul.sideways li ul li ul {
+	position: absolute; 
+	left: 9.5em;
+	top: 0em;  z-index: 2;
+	 width: 13em; 
+	}
+ul.sideways li.disabled,  ul.sideways li#hideMoreActions {
+	display: none; 
+	}
+ul.sideways li a {
+	text-decoration: none;
+	overflow: hidden;
+	background: #E6EAF0;
+	padding: 0px;
+	border: 0px solid #000;
+	margin: 0;
+	}
+
+ul.sideways > li {border: 0; }
+
+ul.sideways > li:hover > ul { display: block; z-index: 1;}
+ul.sideways li li:hover {color:red;}
+ul.sideways li li li {display: none;}
+
+ul.sideways > li > ul > li:hover >  ul { display: block; z-index:2; } 
+ul.sideways > li > ul > li:hover >  ul li { display: block; z-index:3;} 
+ul.sideways > li > ul > li > ul > li:hover >  div.moreactions ul { display: block; } 
+
+ul.sideways  div.moreactions ul li {
+	padding: 1px 0.5em 1px 0.5em;
+	font-size: 1em; 
+	width: 12em;
+}
+
+ul.sideways  div.moreactions ul {top: -15em; width: 10em;}
+ul.sideways  div.moreactions ul li.disabled {display: none;}
+
+ul.sideways a:hover { text-decoration: none; }
+ul.sideways span#actionsGT {display: none; }
+ul.sideways ul ul{border: 0px ; }
+
+div#sidebar {
+	border-right: 1px solid #81BBF2; 
+}
+/* end of sideways drop down  list  */
+
+/* CHANGE THE SIDEBAR COLORS HERE 
+     ul.sideways ul,li is required for IE7           */
+div#sidebar, ul.sideways ul, ul.sideways li, #header, #message, ul.sideways li, ul.sideways li a {
+    background-color: #E6EAF0; /* moin modernized theme color */ 
+}
+/* CHANGE COLORS OF PAGE CONTENT HERE */
+html, body, div#page, div.table-of-contents, ul.sideways > li > a#contentWikiMenu{
+	background-color: #FFFFFF; 
+}
+
+div#content {
+margin-left: 13em;
+}

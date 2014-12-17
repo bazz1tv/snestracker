@@ -1,0 +1,205 @@
+<html>
+<!--------------------------------------------------->
+<!--              Docs/intro - SGE                 -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Intro</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>SDL Graphics Extension (SGE)</H1>
+
+<P>
+<DL>
+<DT><A HREF="#1">1. Intro</A>
+<DT><A HREF="#2">2. Requirements</A>
+<DT><A HREF="#3">3. Compiling</A>
+<DT><A HREF="#4">4. Library usage</A>
+<DT><A HREF="#5">5. Makefile options</A>
+  <DD><A HREF="#5.1">5.1 Using pure C with SGE (C_COMP)</A>
+  <DD><A HREF="#5.2">5.2 FreeType (USE_FT)</A>
+  <DD><A HREF="#5.3">5.3 The SDL_Image library (USE_IMG)</A>
+  <DD><A HREF="#5.4">5.4 The QUIET option (QUIET)</A>
+<DT><A HREF="#6">6. Cross compiling SGE to W32</A>
+<DT><A HREF="#7">7. Compiling SGE under W32 with MS VisC/C++</A>
+<DT><A HREF="#8">8. Misc.</A>
+</DL>
+
+
+<a name="1"><H2>1. Intro</H2></a>
+SGE is an add-on graphics library for the Simple Direct Media Layer. SGE provides 
+pixel operations, graphics primitives, FreeType rendering, rotation/scaling and much 
+more.<BR><BR>
+This is free software (LGPL), read LICENSE for details.
+<BR><BR>
+SGE has the following parts:<BR>
+<BR>
+<B>[sge_surface] - </B> Pixel operations, blitting and some pallete stuff.<BR>  
+<B>[sge_primitives] - </B> Drawing primitives such as lines and circles.<BR> 
+<B>[sge_tt_text] - </B> FreeType font support.<BR>
+<B>[sge_bm_text] - </B> Bitmapfont and SFont support.<BR> 
+<B>[sge_textpp] - </B> Classes for handling and rendering text.<BR>
+<B>[sge_shape] - </B> Classes for blitting and sprites.<BR>
+<B>[sge_collision] - </B> Basic collision detection.<BR>
+<B>[sge_rotation] - </B> Rotation and scaling of surfaces.<BR> 
+<B>[sge_blib] - </B> Filled, gourand shaded and texture mapped polygons.<BR>
+<B>[sge_misc] - </B> Random number and delay functions.<BR>
+<BR>
+<BR>
+Read docs/index.html for API documentation.<BR>
+<BR>
+<B>Always check WhatsNew for important (API) changes!</B><BR>
+<BR>
+There is a <A HREF="guide.html">"Beginners guide to SGE"</A> in this documentation about how 
+to compile and use SGE in your own project, please read it if you're new to Unix/Linux development.<BR>
+<BR>
+Read INSTALL for quick compile and install instructions.<BR>
+<BR>
+<a name="2"><H2>2. Requirements</H2></a>
+<UL>
+<LI>GNU Make.
+<LI>SDL 1.2+.
+<LI>An ANSI/ISO C++ compiler. SGE should conform to ANSI/ISO C++.
+<LI>Optional:
+<UL>
+  <LI>FreeType 2.x
+  <LI><A HREF="http://www.libsdl.org/projects/SDL_image/index.html" TARGET=_top>SDL_Image</A> (see <A HREF="#5.3">section 5.3</A>)
+</UL>
+<LI>Some SDL knowledge.
+</UL>
+
+First you need <A HREF="http://www.libsdl.org/" TARGET=_top>SDL</A> and the 
+<A HREF="http://www.freetype.org/" TARGET=_top>FreeType (2.x)</A> library (you only need the FreeType 
+library if you want to use SGE's truetype font routines, see <A HREF="#5.2">section 5.2</A>). The FreeType library is 
+included in most Linux distributions (RPM users: install the freetype dev rpm package from the install cd).<BR> 
+<BR>
+After installing SDL and FreeType, don't forget to check that the dynamic
+linker can find them (check /etc/ld.so.conf and run ldconfig).
+<BR>
+You must also have a good C++ compiler (should be able to handle templates). Recent 
+versions of GNU c++ works fine. SGE will use gcc/g++ as default, this can be changed
+in Makefile.conf.<BR>
+<BR>
+<BR>
+<a name="3"><H2>3. Compiling</H2></a>
+Before compiling you might want to change some Makefile.conf options, see <A HREF="#5">section 5</A>.<BR>
+<BR>
+Just do 'make install' to compile and install SGE. This will install SGE to the same 
+place as SDL. You can change the install location by editing the PREFIX and PREFIX_H lines in 
+the file "Makefile.conf".<BR> 
+<BR>
+If you just want to test the examples (and not install anything) you can just do
+'make'. This will build a static version of SGE (libSGE.a).<BR>
+<BR>
+If you want a dynamic version of SGE (libSGE.so) but don't want the makefile to
+install SGE, do 'make shared'.<BR>
+<BR>
+To build the examples, goto the directory examples/ and do 'make'.<BR>
+<BR>
+See the file INSTALL for more information. You can also read the <A HREF="guide.html">"Beginners guide to SGE"</A>.<BR>
+<BR>
+<BR>
+<a name="4"><H2>4. Library usage</H2></a>
+
+Do <b>#include "sge.h"</b> in your code after the normal <b>#include "SDL.h"</b> line.<BR>
+<BR>
+The normal way to compile code that uses SGE is with the flag 
+<i>`sdl-config --cflags`</i>, but also add the flag <i>-I/path/to/SGE/headers</i> if the SGE 
+headers are installed at any other place than the SDL headers.<BR>
+<BR>
+The normal way to link code that uses SGE is with the flags 
+<i>-lSGE `sdl-config --libs` -lstdc++</i>, but also add the flag <i>-L/path/to/SGE/library</i> 
+if SGE is installed at any other place than SDL. If you're using static linking then 
+the flags <i>`freetype-config --libs`</i> and/or <i>-lSDL_image</i> also needs to be added if
+FreeType and/or SDL_Image support is enabled.<BR>
+<BR>
+Example:<BR>
+<code>
+g++ -Wall -O3 `sdl-config --cflags` -c my_sge_app.cxx<BR>
+g++ -o my_sge_app my_sge_app.o -lSGE `sdl-config --libs` -lstdc++<BR>
+</code>
+<BR>
+See the <A HREF="guide.html">"Beginners guide to SGE"</A> and the code in examples/ for more information.<BR>
+<BR>
+<BR>
+<a name="5"><H2>5. Makefile options</H2></a>
+Edit Makefile.conf to turn on/off (y/n) these options.<BR>
+
+<a name="5.1"><H3>5.1 Using pure C with SGE (C_COMP)</H3></a> 
+Setting 'C_COMP = y' should allow both C and C++ projects to use SGE. However, you 
+will not be able to use any of the overloaded functions (only the Uint32 color 
+version of the overloaded functions will be available) or C++ classes from a C 
+project. C++ projects should not be affected. Default is 'y'.<BR>
+
+<a name="5.2"><H3>5.2 FreeType (USE_FT)</H3></a>
+If you don't need the TT font routines or just don't want do depend on FreeType,
+uncomment 'USE_FT = n' in Makefile.conf. Default behavior is to autodetect
+FreeType.<BR>
+
+<a name="5.3"><H3>5.3 The SDL_Image library (USE_IMG)</H3></a>
+The SDL_Image library <A HREF="http://www.libsdl.org/projects/SDL_image/index.html" TARGET=_top>SDL_Image</A>
+will be autodetected with the default setting. SDL_Image support enables SGE to load png 
+images and thus use Karl Bartel's very nice
+<A HREF="http://www.linux-games.com/sfont/" TARGET=_top>SFont</A>
+bitmapfonts. The use of SDL_Image can also be controlled by
+setting 'USE_IMG = y/n' manually.<BR>
+
+<a name="5.4"><H3>5.4 The QUIET option (QUIET)</H3></a>
+Set QUIET = y if you don't want the makefile to output any SGE specific messages.<BR>
+<BR>
+<BR>
+<a name="6"><H2>6. Cross compiling SGE to W32</H2></a>
+SGE can be compiled by a win32 crosscompiler. You need a crosscompiled version of 
+SDL (and FreeType or SDL_Image if used). Check SDL's documentation (README.Win32) on how to get and setup 
+a cross-compiler.<BR>
+<BR>
+A crosscompiler can be found at 
+<A HREF="http://www.libsdl.org/Xmingw32/index.html" TARGET=_top>SDL's Mingw32 side</A>. This 
+crosscompiler uses the new MS C-Run-time library "msvcrt.dll", you can get
+it from <A HREF="http://www.microsoft.com/downloads" TARGET=_top>Microsoft</A> (do a keyword search for "libraries update") 
+if you don't already have it.<BR>
+<BR>
+If you want to build a dll ('cross-make dll' or 'dll-strip') then you might want to
+do 'ln -s ../../bin/i386-mingw32msvc-dllwrap dllwrap' in 
+/usr/local/cross-tools/i386-mingw32msvc/bin.
+<BR>
+<BR>
+<a name="7"><H2>7. Compiling SGE under W32 with MS VisC/C++</H2></a>
+Should work. Check the <A HREF="http://www.etek.chalmers.se/~e8cal1/sge/download.html" TARGET=_top>download page</A> on SGEs homepage for project files (these are untested by me and are often outdated but may be of some help).<BR>
+<BR>
+Note that if you don't use the makefile system to build SGE (as with VisC/C++) then
+you must edit sge_config.h manually to change build options. The options in <A HREF="#5">section 5</A>
+corresponds to defining the following symbols in sge_config.h:
+<pre>
+<b>_SGE_C_AND_CPP</b>  - C_COMP=y
+<b>_SGE_NOTTF</b>      - USE_FT=n
+<b>_SGE_HAVE_IMG</b>   - USE_IMG=y
+</pre>
+For example:<BR>
+<code>
+/* SGE Config header */<BR>
+#define SGE_VER 030810<BR>
+#define _SGE_C_AND_CPP<BR>
+#define _SGE_HAVE_IMG<BR>
+</code>
+<BR>
+<BR>
+<a name="8"><H2>8. Misc.</H2></a>
+Read the html documentation and study the examples.<BR> 
+<BR><BR><BR>
+
+
+<B><I>Anders Lindström</I></B> 
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030803
+</SMALL></I></P>
+
+</body>
+</html>

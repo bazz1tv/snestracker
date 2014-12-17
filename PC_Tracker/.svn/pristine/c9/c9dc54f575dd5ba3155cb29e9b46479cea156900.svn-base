@@ -1,0 +1,1883 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - HelpOnConfiguration</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@HelpOnConfiguration.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@HelpOnConfiguration.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id=
+"line-4"></span><span class="anchor" id=
+"line-5"></span><span class="anchor" id=
+"line-6"></span><span class="anchor" id=
+"line-7"></span><span class="anchor" id="line-8"></span>
+<p class="line867"><a href="index.html@HelpContents.html">HelpContents</a> &gt;
+<a href="index.html@HelpForAdministrators.html">HelpForAdministrators</a> &gt;
+HelpOnConfiguration <span class="anchor" id=
+"line-9"></span><span class="anchor" id="line-10"></span></p>
+<p class="line862">This page should help you with configuring an
+already installed <a href="index.html@MoinMoin.html">MoinMoin</a> wiki. If you
+have not installed one yet please go to <a href="index.html@HelpOnInstalling.html">HelpOnInstalling</a>. <span class="anchor" id=
+"line-11"></span><span class="anchor" id="line-12"></span></p>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@HelpOnConfiguration.html#General">General</a>
+<ol>
+<li><a href="index.html@HelpOnConfiguration.html#Character_Set">Character Set</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#International_Setup">International Setup</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#Customization_of_user_preferences">Customization of
+user preferences</a></li>
+</ol>
+</li>
+<li><a href="index.html@HelpOnConfiguration.html#Configuring_a_single_wiki">Configuring a single
+wiki</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#Configuration_of_multiple_wikis">Configuration of
+multiple wikis</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#Overview_of_Configuration_Options">Overview of
+Configuration Options</a>
+<ol>
+<li><a href="index.html@HelpOnConfiguration.html#acl">Access control lists</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#attachment_extension">Mapping of attachment
+extensions to actions</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#auth">Authentication / Authorization / Security
+settings</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#backup">Backup settings</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#datastruct">Datastruct settings</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#editor">Editor related</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#mail">Mail settings</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#openid_server">OpenID Server</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#openidrp">OpenID Relying Party</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#pages">Special page names</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#paths">Paths</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#rss">RSS settings</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#search_macro">Search macro settings</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#session">Session settings</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#spam_leech_dos">Anti-Spam/Leech/DOS</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#style">Style / Theme / UI related</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#urls">URLs</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#user">User Preferences related</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#user-1">Users / User settings</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#various">Various</a></li>
+<li><a href="index.html@HelpOnConfiguration.html#xapian">Xapian search</a></li>
+</ol>
+</li>
+<li><a href="index.html@HelpOnConfiguration.html#Related_Topics">Related Topics</a></li>
+</ol>
+</div>
+<span class="anchor" id="line-13"></span><span class="anchor" id=
+"line-14"></span>
+<p class="line867"></p>
+<h1 id="General">General</h1>
+<span class="anchor" id="line-15"></span>
+<p class="line867"><span class="anchor" id="character-set"></span>
+<span class="anchor" id="line-16"></span></p>
+<h2 id="Character_Set">Character Set</h2>
+<span class="anchor" id="line-17"></span><span class="anchor" id=
+"line-18"></span>
+<p class="line862">Moin uses Unicode internally, and <tt class=
+"backtick">utf-8</tt> for external output and input, like pages,
+HTML output and translation files. The external character set is
+defined in <tt class="backtick">config.charset</tt> to <tt class=
+"backtick">utf-8</tt>. This setting is fine for all languages, as
+any character can be encoded in UTF-8. You should not change this
+value, although technically it is possible. <span class="anchor"
+id="line-19"></span><span class="anchor" id="line-20"></span></p>
+<ul>
+<li style="list-style-type:none">
+<p class="line891"><img alt="&lt;!&gt;" height="16" src="attention.png" title="&lt;!&gt;"
+width="16"> <strong>Important: to use Unicode values, you must
+setup a correct coding line in the first line of your configuration
+file. Check that your editor is configured correctly.</strong>
+<span class="anchor" id="line-21"></span><span class="anchor" id=
+"line-22"></span></p>
+</li>
+</ul>
+<p class="line862">Certain options <strong>must</strong> use
+Unicode values. For example, the site name could contain German
+umlauts or French accents or be in Chinese or Hebrew. Because of
+this, you must use unicode strings for those items. Unicode strings
+are defined by prefixing the letter <tt class="backtick">u</tt> to
+the string. Here are some examples: <span class="anchor" id=
+"line-23"></span><span class="anchor" id="line-24"></span></p>
+<p class="line867"><span class="anchor" id=
+"line-25"></span><span class="anchor" id=
+"line-26"></span><span class="anchor" id=
+"line-27"></span><span class="anchor" id=
+"line-28"></span><span class="anchor" id="line-29"></span></p>
+<pre>
+<span class="anchor" id=
+"line-1"></span>    # Site name, used by default for wiki name-logo [Unicode]
+<span class="anchor" id=
+"line-2"></span>    sitename = u"J&Atilde;&frac14;rgen's Wiki"
+<span class="anchor" id="line-3"></span>    # another example:
+<span class="anchor" id=
+"line-4"></span>    sitename = u'&times;&rdquo;&times;&bull;&times;&bull;&times;&trade;&times;&sect;&times;&trade; &times;&copy;&times;&oelig; &times;&trade;&times;&bull;&times;&uml;&times;&rsquo;&times;&Yuml;'
+</pre>
+<span class="anchor" id="line-30"></span><span class="anchor" id=
+"line-31"></span>
+<p class="line874">Read the comments in the configuration file -
+they tell you which options must use Unicode values. <span class=
+"anchor" id="line-32"></span><span class="anchor" id=
+"line-33"></span></p>
+<p class="line874">Notes: <span class="anchor" id=
+"line-34"></span><span class="anchor" id="line-35"></span></p>
+<ul>
+<li>
+<p class="line862">You can't mix different encodings in the same
+file. If your coding line says <tt class=
+"backtick">iso-8859-1</tt>, all your characters, the whole file
+content, must be in that encoding. <span class="anchor" id=
+"line-36"></span><span class="anchor" id="line-37"></span></p>
+</li>
+<li class="gap">If you use utf-8 encoding (or plain ascii), you
+don't have to use unicode strings, moin will decode your string
+correctly for you. <span class="anchor" id=
+"line-38"></span><span class="anchor" id="line-39"></span></li>
+</ul>
+<p class="line867"><span class="anchor" id="intsetup"></span>
+<span class="anchor" id="line-40"></span></p>
+<h2 id="International_Setup">International Setup</h2>
+<span class="anchor" id="line-41"></span><span class="anchor" id=
+"line-42"></span>
+<p class="line862">The default configuration file shipped with moin
+uses <tt class="backtick">iso-8859-1</tt> coding. This is fine for
+Latin languages like English or German, but not usable for
+non-latin languages. If you want to have non-latin characters in
+your configuration items, use utf-8 coding for the config file.
+<span class="anchor" id="line-43"></span><span class="anchor" id=
+"line-44"></span></p>
+<p class="line874">Set the first line of all configuration files to
+this line: <span class="anchor" id="line-45"></span><span class=
+"anchor" id="line-46"></span><span class="anchor" id=
+"line-47"></span></p>
+<pre>
+<span class="anchor" id="line-1-1"></span># -*- coding: utf-8 -*-
+</pre>
+<span class="anchor" id="line-48"></span><span class="anchor" id=
+"line-49"></span>
+<ul>
+<li style="list-style-type:none">
+<p class="line891"><img alt="/!\" height="16" src="alert.png" title="/!\" width="16">
+You need a text editor being capable of (and also really using)
+utf-8 encoding for editing the config files. <span class="anchor"
+id="line-50"></span><span class="anchor" id="line-51"></span></p>
+</li>
+</ul>
+<p class="line862">Values using unicode strings can be recognized
+by their default value being <tt class="backtick">u"...."</tt> or
+<tt class="backtick">ur"..."</tt> (the <tt class="backtick">u</tt>
+means unicode) or when the description explicitly tells <tt class=
+"backtick">[unicode]</tt>. <span class="anchor" id=
+"line-52"></span><span class="anchor" id="line-53"></span></p>
+<p class="line862">For ready made configuration in your language,
+see <a class="interwiki" href="http://moinmo.in/ConfigMarket"
+title="MoinMoin">ConfigMarket</a>. Read also the section about
+unicode options. <span class="anchor" id=
+"line-54"></span><span class="anchor" id="line-55"></span></p>
+<p class="line867"></p>
+<h2 id="Customization_of_user_preferences">Customization of user
+preferences</h2>
+<span class="anchor" id="line-56"></span>
+<p class="line862">You can predefine, disable or remove several
+options in the user preferences, see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnConfiguration/UserPreferences">HelpOnConfiguration/UserPreferences</a>.
+<span class="anchor" id="line-57"></span><span class="anchor" id=
+"line-58"></span></p>
+<p class="line867"><span class="anchor" id="singlewiki"></span>
+<span class="anchor" id="line-59"></span></p>
+<h1 id="Configuring_a_single_wiki">Configuring a single wiki</h1>
+<span class="anchor" id="line-60"></span><span class="anchor" id=
+"line-61"></span>
+<p class="line862">If you run a single wiki, you should not copy
+the file <tt class="backtick">farmconfig.py</tt> into your
+configuration directory (remove it and the <tt class=
+"backtick">.pyc</tt> file, if it is there). Without farmconfig,
+moin uses the default <tt class="backtick">wikiconfig.py</tt>.
+<span class="anchor" id="line-62"></span><span class="anchor" id=
+"line-63"></span></p>
+<p class="line867"><tt class="backtick">wikiconfig.py</tt> can be
+located anywhere, you just have make sure it can be imported by
+moin - it is a good idea to add the directory where it resides as
+first element to <tt class="backtick">sys.path</tt> (this is the
+list of pathes python uses when searching for importable stuff).
+<tt class="backtick">sys.path</tt> setup is done early, usually in
+the server adaptor script you use (e.g. <tt class=
+"backtick">moin.cgi</tt> or <tt class="backtick">moin.wsgi</tt>) -
+see the comments in the script for details. <span class="anchor"
+id="line-64"></span><span class="anchor" id="line-65"></span></p>
+<p class="line874">General notes on wiki/farmconfig.py structure:
+<span class="anchor" id="line-66"></span><span class="anchor" id=
+"line-67"></span><span class="anchor" id=
+"line-68"></span><span class="anchor" id=
+"line-69"></span><span class="anchor" id=
+"line-70"></span><span class="anchor" id=
+"line-71"></span><span class="anchor" id=
+"line-72"></span><span class="anchor" id=
+"line-73"></span><span class="anchor" id=
+"line-74"></span><span class="anchor" id=
+"line-75"></span><span class="anchor" id=
+"line-76"></span><span class="anchor" id=
+"line-77"></span><span class="anchor" id=
+"line-78"></span><span class="anchor" id="line-79"></span></p>
+<pre>
+<span class="anchor" id=
+"line-1-2"></span># -*- coding: iso-8859-1 -*-
+<span class="anchor" id="line-2-1"></span>
+<span class="anchor" id=
+"line-3-1"></span>from MoinMoin.config.multiconfig import DefaultConfig
+<span class="anchor" id="line-4-1"></span>
+<span class="anchor" id=
+"line-5"></span>class Config(DefaultConfig):
+<span class="anchor" id="line-6"></span>
+<span class="anchor" id=
+"line-7"></span>    sitename = u'MyWiki'   # u means that it will be converted to Unicode
+<span class="anchor" id=
+"line-8"></span>    interwikiname = u'MyWiki'
+<span class="anchor" id=
+"line-9"></span>    data_dir = '/where/ever/mywiki/data/'
+<span class="anchor" id=
+"line-10"></span>    underlay_dir = '/where/ever/mywiki/underlay/'
+<span class="anchor" id="line-11"></span>    
+<span class="anchor" id=
+"line-12"></span>    # More settings follow...
+</pre>
+<span class="anchor" id="line-80"></span><span class="anchor" id=
+"line-81"></span>
+<ul>
+<li>
+<p class="line862">First, you must define the coding of the config
+file. The default setting is suited for Latin ("western") languages
+only, for international setup, read section <a href="index.html@HelpOnConfiguration.html#intsetup">#intsetup</a>. If you don't define
+the coding, you can't use non-ascii characters. <span class=
+"anchor" id="line-82"></span><span class="anchor" id=
+"line-83"></span></p>
+</li>
+<li class="gap">Next we import moin's internal default
+configuration. The default configuration includes values for all
+options, so we don't have to define all values, just what we want
+to customize. <span class="anchor" id="line-84"></span><span class=
+"anchor" id="line-85"></span></li>
+<li class="gap">Then we define a new configuration class called
+"Config" and inherit all settings from the default configuration we
+imported. Note that the class name must be "Config". <span class=
+"anchor" id="line-86"></span><span class="anchor" id=
+"line-87"></span></li>
+<li class="gap">Next lines are the configuration options for the
+Config class. Note that each line must be indented by 4 spaces,
+tabs are not allowed. Moin will not run if you use wrong
+indentation. <span class="anchor" id="line-88"></span><span class=
+"anchor" id="line-89"></span></li>
+<li class="gap">
+<p class="line862">A common configuration item is <tt class=
+"backtick">sitename</tt> - in most cases you don't want your wiki
+to have the default u"Untitled Wiki" name. You can define any name
+you like in any language, but before you do that, read section
+<a href="index.html@HelpOnConfiguration.html#character-set">#character-set</a>.
+<span class="anchor" id="line-90"></span><span class="anchor" id=
+"line-91"></span></p>
+</li>
+<li class="gap">
+<p class="line862">If you followed the install instructions, the
+wiki will run without any other change, but you might want to
+change some values, like <tt class="backtick">data_dir</tt>,
+<tt class="backtick">data_underlay_dir</tt> <tt class=
+"backtick">acl_rights_before</tt> and more. For most cases, setting
+all the values in the supplied <tt class=
+"backtick">wikiconfig.py</tt> file is enough. <span class="anchor"
+id="line-92"></span><span class="anchor" id="line-93"></span></p>
+</li>
+<li class="gap">
+<p class="line862">Anything we do not define simply stays at moin's
+internal defaults which we inherited from DefaultConfig.
+<span class="anchor" id="line-94"></span><span class="anchor" id=
+"line-95"></span><span class="anchor" id="line-96"></span></p>
+</li>
+</ul>
+<p class="line867"><span class="anchor" id="multiwiki"></span>
+<span class="anchor" id="line-97"></span></p>
+<h1 id="Configuration_of_multiple_wikis">Configuration of multiple
+wikis</h1>
+<span class="anchor" id="line-98"></span><span class="anchor" id=
+"line-99"></span>
+<p class="line874">The moinmoin wiki engine is capable of handling
+multiple wikis using a single installation, a single set of
+configuration files and a single server process. Especially for
+persistent environments like Twisted, this is necessary, because
+the Twisted server will permanently run on a specific IP address
+and TCP port number. So for virtual hosting of multiple domains
+(wikis) on the same IP and port, we need the wiki engine to
+permanently load multiple configs at the same time and choose the
+right of them when handling a request for a specific URL.
+<span class="anchor" id="line-100"></span><span class="anchor" id=
+"line-101"></span></p>
+<p class="line862">To be able to choose the right config, moin uses
+config variable <tt class="backtick">wikis</tt> located in the file
+<tt class="backtick">farmconfig.py</tt> - it simply contains a list
+of pairs <tt class="backtick">(wikiname,&nbsp;url-regex)</tt>.
+Please only use valid python identifiers for <tt class=
+"backtick">wikiname</tt> (to be exact: <tt class=
+"backtick">identifier&nbsp;::=&nbsp;(letter|"_")&nbsp;(letter&nbsp;|&nbsp;digit&nbsp;|&nbsp;"_")*</tt>
+- just try with a simple word if you didn't understand that grammar
+rule). When processing a request for some URL, moin searches
+through this list and tries to match the url-regex against the
+current URL. If it doesn't match, it simply proceeds to the next
+pair. If it does match, moin loads a configuration file named
+<tt class="backtick">&lt;wikiname&gt;.py</tt> (usually from the
+same directory) that contains the configuration for that wiki.
+<span class="anchor" id="line-102"></span><span class="anchor" id=
+"line-103"></span></p>
+<p class="line867"><tt class="backtick">farmconfig.py</tt> in the
+distribution archive has some sample entries for a wiki farm
+running multiple wikis. You need to adapt it to match your needs if
+you want to run multiple wikis. <span class="anchor" id=
+"line-104"></span><span class="anchor" id="line-105"></span></p>
+<p class="line867"><img alt="/!\" height="16" src="alert.png" title="/!\" width="16">
+For simpler writing of these help pages, we will call such a
+<tt class="backtick">&lt;wikiname&gt;.py</tt> configuration file
+simply <tt class="backtick">wikiconfig.py</tt>, of course you have
+to use the filename you chose. <span class="anchor" id=
+"line-106"></span><span class="anchor" id="line-107"></span></p>
+<p class="line862">Of course you have already adapted the
+<tt class="backtick">wikis</tt> setting in <tt class=
+"backtick">farmconfig.py</tt> (see above), so we only give some
+hints how you can save some work. Please also read the single wiki
+configuration hints, because it explains config inheritance.
+<span class="anchor" id="line-108"></span><span class="anchor" id=
+"line-109"></span></p>
+<p class="line862">We now use the class-based configuration to be
+able to configure the common settings of your wikis at a single
+place: in the base configuration class (see <tt class=
+"backtick">farmconfig.py</tt> for an example): <span class="anchor"
+id="line-110"></span><span class="anchor" id="line-111"></span></p>
+<p class="line867"><strong>farmconfig.py</strong>: <span class=
+"anchor" id="line-112"></span><span class="anchor" id=
+"line-113"></span><span class="anchor" id=
+"line-114"></span><span class="anchor" id=
+"line-115"></span><span class="anchor" id=
+"line-116"></span><span class="anchor" id=
+"line-117"></span><span class="anchor" id=
+"line-118"></span><span class="anchor" id=
+"line-119"></span><span class="anchor" id=
+"line-120"></span><span class="anchor" id="line-121"></span></p>
+<pre>
+<span class="anchor" id=
+"line-1-3"></span># -*- coding: iso-8859-1 -*-
+<span class="anchor" id="line-2-2"></span># farmconfig.py:
+<span class="anchor" id=
+"line-3-2"></span>from MoinMoin.config.multiconfig import DefaultConfig
+<span class="anchor" id=
+"line-4-2"></span>class FarmConfig(DefaultConfig):
+<span class="anchor" id="line-5-1"></span>    url_prefix = '/wiki'
+<span class="anchor" id="line-6-1"></span>    show_hosts = True
+<span class="anchor" id=
+"line-7-1"></span>    underlay_dir = '/where/ever/common/underlay'
+<span class="anchor" id="line-8-1"></span>    # ...
+</pre>
+<span class="anchor" id="line-122"></span><span class="anchor" id=
+"line-123"></span>
+<ul>
+<li style="list-style-type:none">Explanation: <span class="anchor"
+id="line-124"></span>
+<ul>
+<li>first we import the default config, like we do when configuring
+a single wiki <span class="anchor" id="line-125"></span></li>
+<li>now we define a new farm config class - and inherit from the
+default config <span class="anchor" id="line-126"></span></li>
+<li>then we change everything that our farm wikis have in common,
+leaving out the settings that they need to be different
+<span class="anchor" id="line-127"></span></li>
+<li>
+<p class="line862">this FarmConfig class will now be used by the
+config files of the wikis instead of moin's internal DefaultConfig
+class, see below: <span class="anchor" id=
+"line-128"></span><span class="anchor" id="line-129"></span></p>
+</li>
+</ul>
+</li>
+</ul>
+<p class="line862">The configs of your individual wikis then only
+keep the settings that need to be different (like the logo, or the
+data directory or ACL settings). Everything else they get by
+inheriting from the base configuration class, see <tt class=
+"backtick">moinmaster.py</tt> for a sample. <span class="anchor"
+id="line-130"></span><span class="anchor" id="line-131"></span></p>
+<p class="line867"><strong>moinmaster.py</strong>: <span class=
+"anchor" id="line-132"></span><span class="anchor" id=
+"line-133"></span><span class="anchor" id=
+"line-134"></span><span class="anchor" id=
+"line-135"></span><span class="anchor" id=
+"line-136"></span><span class="anchor" id=
+"line-137"></span><span class="anchor" id=
+"line-138"></span><span class="anchor" id=
+"line-139"></span><span class="anchor" id=
+"line-140"></span><span class="anchor" id=
+"line-141"></span><span class="anchor" id="line-142"></span></p>
+<pre>
+<span class="anchor" id=
+"line-1-4"></span># -*- coding: iso-8859-1 -*-
+<span class="anchor" id="line-2-3"></span># moinmaster.py:
+<span class="anchor" id=
+"line-3-3"></span>from farmconfig import FarmConfig
+<span class="anchor" id="line-4-3"></span>class Config(FarmConfig):
+<span class="anchor" id="line-5-2"></span>    show_hosts = False
+<span class="anchor" id=
+"line-6-2"></span>    sitename = u'MoinMaster'
+<span class="anchor" id=
+"line-7-2"></span>    interwikiname = u'MoinMaster'
+<span class="anchor" id=
+"line-8-2"></span>    data_dir = '/org/de.wikiwikiweb.moinmaster/data/'
+<span class="anchor" id="line-9-1"></span>    # ...
+</pre>
+<span class="anchor" id="line-143"></span><span class="anchor" id=
+"line-144"></span>
+<ul>
+<li style="list-style-type:none">Explanation: <span class="anchor"
+id="line-145"></span>
+<ul>
+<li>
+<p class="line862">see single wiki configuration, the only
+difference is that we inherit from FarmConfig (that inherited from
+DefaultConfig) instead of directly using DefaultConfig <span class=
+"anchor" id="line-146"></span></p>
+</li>
+<li>
+<p class="line862">now we override show_hosts to be <tt class=
+"backtick">False</tt> - we want it for most wikis in our farm, but
+not for this one <span class="anchor" id="line-147"></span></p>
+</li>
+<li>we also override sitename, interwikiname and data_dir (the
+usual stuff) <span class="anchor" id="line-148"></span><span class=
+"anchor" id="line-149"></span></li>
+</ul>
+</li>
+</ul>
+<p class="line867"><span class="anchor" id="index"></span>
+<span class="anchor" id="line-150"></span></p>
+<h1 id="Overview_of_Configuration_Options">Overview of
+Configuration Options</h1>
+<span class="anchor" id="line-151"></span><span class="anchor" id=
+"line-152"></span>
+<p class="line862">The following table contains default values and
+a short description for most configuration variables. Most of these
+can be left at their defaults, those you need to change with every
+installation are listed in the sample <tt class=
+"backtick">wikiconfig.py</tt> that comes with the distribution.
+<span class="anchor" id="line-153"></span><span class="anchor" id=
+"line-154"></span></p>
+<p class="line867"><img alt="(!)" height="16" src="http://www.ginkgobitter.org/sdl2/idea.png" title="(!)" width="16">
+You can also have a look at <tt class=
+"backtick">MoinMoin/config/multiconfig.py</tt>, <tt class=
+"backtick">class&nbsp;DefaultConfig</tt> for further information
+(that file has the builtin default configuration). <span class=
+"anchor" id="line-155"></span><span class="anchor" id=
+"line-156"></span></p>
+<p class="line867"></p>
+<h2 id="acl">Access control lists</h2>
+<p>ACLs control who may do what, see HelpOnAccessControlLists.</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>acl_hierarchic</td>
+<td><tt class="backtick">False</tt></td>
+<td>True to use hierarchical ACLs</td>
+</tr>
+<tr>
+<td>acl_rights_after</td>
+<td><tt class="backtick">u''</tt></td>
+<td>ACL that is processed after the on-page/default ACL</td>
+</tr>
+<tr>
+<td>acl_rights_before</td>
+<td><tt class="backtick">u''</tt></td>
+<td>ACL that is processed before the on-page/default ACL</td>
+</tr>
+<tr>
+<td>acl_rights_default</td>
+<td><tt class="backtick"><span title=
+"u'Trusted:read,write,delete,revert Known:read,write,delete,revert All:read,write'">
+...</span></tt></td>
+<td>ACL used if no ACL is specified on the page</td>
+</tr>
+<tr>
+<td>acl_rights_valid</td>
+<td><tt class="backtick"><span title=
+"['read', 'write', 'delete', 'revert', 'admin']">...</span></tt></td>
+<td>Valid tokens for right sides of ACL entries.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="attachment_extension">Mapping of attachment extensions to
+actions</h2>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>extensions_mapping</td>
+<td><tt class="backtick"><span title=
+"{'.tdraw': {'modify': 'twikidraw'}, '.adraw': {'modify': 'anywikidraw'}}">
+...</span></tt></td>
+<td>file extension -&gt; do -&gt; action</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="auth">Authentication / Authorization / Security
+settings</h2>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>DesktopEdition</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, give all local users special powers - <em>only use
+this for a local desktop wiki!</em></td>
+</tr>
+<tr>
+<td>SecurityPolicy</td>
+<td><tt class="backtick">None</tt></td>
+<td>Class object hook for implementing security restrictions or
+relaxations</td>
+</tr>
+<tr>
+<td>actions_excluded</td>
+<td><tt class="backtick"><span title=
+"['xmlrpc', 'MyPages', 'CopyPage']">...</span></tt></td>
+<td>Exclude unwanted actions (list of strings)</td>
+</tr>
+<tr>
+<td>allow_xslt</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, enables XSLT processing via 4Suite (Note that this is
+DANGEROUS. It enables anyone who can edit the wiki to get
+<strong>read/write access to your filesystem as the moin process
+uid/gid</strong> and to insert <strong>arbitrary HTML</strong> into
+your wiki pages, which is why this setting defaults to <tt class=
+"backtick">False</tt> (XSLT disabled). Do not set it to other
+values, except if you know what you do and if you have very trusted
+editors only).</td>
+</tr>
+<tr>
+<td>auth</td>
+<td><tt class="backtick">[MoinAuth()]</tt></td>
+<td>list of auth objects, to be called in this order (see
+HelpOnAuthentication)</td>
+</tr>
+<tr>
+<td>auth_methods_trusted</td>
+<td><tt class="backtick"><span title=
+"['http', 'given', 'xmlrpc_applytoken']">...</span></tt></td>
+<td>authentication methods for which users should be included in
+the special "Trusted" ACL group.</td>
+</tr>
+<tr>
+<td>password_checker</td>
+<td><tt class="backtick">_default_password_checker</tt></td>
+<td>checks whether a password is acceptable (default check is
+length &gt;= 6, at least 4 different chars, no keyboard sequence,
+not username used somehow (you can switch this off by using
+`None`)</td>
+</tr>
+<tr>
+<td>secrets</td>
+<td><tt class="backtick">None</tt></td>
+<td>Either a long shared secret string used for multiple purposes
+or a dict {"purpose": "longsecretstring", ...} for setting up
+different shared secrets for different purposes. If you don't setup
+own secret(s), a secret string will be auto-generated from other
+config settings.</td>
+</tr>
+<tr>
+<td>superuser</td>
+<td><tt class="backtick">[]</tt></td>
+<td>List of trusted user names with wiki system administration
+super powers (not to be confused with ACL admin rights!). Used for
+e.g. software installation, language installation via <a href="http://www.ginkgobitter.org/sdl2/?SystemPagesSetup">SystemPagesSetup</a> and more. See also
+<a href="http://www.ginkgobitter.org/sdl2/?HelpOnSuperUser">HelpOnSuperUser</a>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="backup">Backup settings</h2>
+<p>These settings control how the backup action works and who is
+allowed to use it.</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>backup_compression</td>
+<td><tt class="backtick">'gz'</tt></td>
+<td>What compression to use for the backup ("gz" or "bz2").</td>
+</tr>
+<tr>
+<td>backup_exclude</td>
+<td><tt class="backtick"><span title=
+"&lt;function &lt;lambda&gt; at 0x2ca6230&gt;">...</span></tt></td>
+<td>Function f(self, filename) that tells whether a file should be
+excluded from backup. By default, nothing is excluded.</td>
+</tr>
+<tr>
+<td>backup_include</td>
+<td><tt class="backtick">[]</tt></td>
+<td>List of pathes to backup.</td>
+</tr>
+<tr>
+<td>backup_users</td>
+<td><tt class="backtick">[]</tt></td>
+<td>List of trusted user names who are allowed to get a
+backup.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="datastruct">Datastruct settings</h2>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>dicts</td>
+<td><tt class="backtick"><span title=
+"&lt;function &lt;lambda&gt; at 0x2ca0a28&gt;">...</span></tt></td>
+<td>function f(cfg, request) that returns a backend which is used
+to access dicts definitions.</td>
+</tr>
+<tr>
+<td>groups</td>
+<td><tt class="backtick"><span title=
+"&lt;function &lt;lambda&gt; at 0x2ca0b18&gt;">...</span></tt></td>
+<td>function f(cfg, request) that returns a backend which is used
+to access groups definitions.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="editor">Editor related</h2>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>comment_required</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, only allow saving if a comment is filled in</td>
+</tr>
+<tr>
+<td>edit_locking</td>
+<td><tt class="backtick">'warn 10'</tt></td>
+<td>Editor locking policy: <tt class="backtick">None</tt>,
+<tt class=
+"backtick">'warn&nbsp;&lt;timeout&nbsp;in&nbsp;minutes&gt;'</tt>,
+or <tt class=
+"backtick">'lock&nbsp;&lt;timeout&nbsp;in&nbsp;minutes&gt;'</tt></td>
+</tr>
+<tr>
+<td>edit_rows</td>
+<td><tt class="backtick">20</tt></td>
+<td>Default height of the edit box</td>
+</tr>
+<tr>
+<td>edit_ticketing</td>
+<td><tt class="backtick">True</tt></td>
+<td></td>
+</tr>
+<tr>
+<td>editor_default</td>
+<td><tt class="backtick">'text'</tt></td>
+<td>Editor to use by default, 'text' or 'gui'</td>
+</tr>
+<tr>
+<td>editor_force</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, force using the default editor</td>
+</tr>
+<tr>
+<td>editor_ui</td>
+<td><tt class="backtick">'freechoice'</tt></td>
+<td>Editor choice shown on the user interface, 'freechoice' or
+'theonepreferred'</td>
+</tr>
+<tr>
+<td>page_license_enabled</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, show a license hint in page editor.</td>
+</tr>
+<tr>
+<td>page_license_page</td>
+<td><tt class="backtick">u'WikiLicense'</tt></td>
+<td>Page linked from the license hint. [Unicode]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="mail">Mail settings</h2>
+<p>These settings control outgoing and incoming email from and to
+the wiki.</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>mail_from</td>
+<td><tt class="backtick">None</tt></td>
+<td>Used as From: address for generated mail.</td>
+</tr>
+<tr>
+<td>mail_import_pagename_envelope</td>
+<td><tt class="backtick">u'%s'</tt></td>
+<td>Use this to add some fixed prefix/postfix to the generated
+target pagename.</td>
+</tr>
+<tr>
+<td>mail_import_pagename_regex</td>
+<td><tt class="backtick">'\\[\\[([^\\]]*)\\]\\]'</tt></td>
+<td>Regular expression used to search for target pagename
+specification.</td>
+</tr>
+<tr>
+<td>mail_import_pagename_search</td>
+<td><tt class="backtick">['subject', 'to']</tt></td>
+<td>Where to look for target pagename specification.</td>
+</tr>
+<tr>
+<td>mail_import_subpage_template</td>
+<td><tt class="backtick">u'$from-$date-$subject'</tt></td>
+<td>Create subpages using this template when importing mail.</td>
+</tr>
+<tr>
+<td>mail_import_wiki_addrs</td>
+<td><tt class="backtick">[]</tt></td>
+<td>Target mail addresses to consider when importing mail</td>
+</tr>
+<tr>
+<td>mail_login</td>
+<td><tt class="backtick">None</tt></td>
+<td>'username userpass' for SMTP server authentication (None =
+don't use auth).</td>
+</tr>
+<tr>
+<td>mail_sendmail</td>
+<td><tt class="backtick">None</tt></td>
+<td>sendmail command to use for sending mail (None = don't use
+sendmail)</td>
+</tr>
+<tr>
+<td>mail_smarthost</td>
+<td><tt class="backtick">None</tt></td>
+<td>Address of SMTP server to use for sending mail (None = don't
+use SMTP server).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="openid_server">OpenID Server</h2>
+<p>These settings control the built-in OpenID Identity Provider
+(server).</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>openid_server_enable_user</td>
+<td><tt class="backtick">False</tt></td>
+<td>If True, the OpenIDUser processing instruction is allowed.</td>
+</tr>
+<tr>
+<td>openid_server_enabled</td>
+<td><tt class="backtick">False</tt></td>
+<td>True to enable the built-in OpenID server.</td>
+</tr>
+<tr>
+<td>openid_server_restricted_users_group</td>
+<td><tt class="backtick">None</tt></td>
+<td>If set to a group name, the group members are allowed to use
+the wiki as an OpenID provider. (None = allow for all users)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="openidrp">OpenID Relying Party</h2>
+<p>These settings control the built-in OpenID Relying Party
+(client).</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>openidrp_allowed_op</td>
+<td><tt class="backtick">[]</tt></td>
+<td>List of forced providers</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="pages">Special page names</h2>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>page_category_regex</td>
+<td><tt class="backtick"><span title=
+"u'(?P&lt;all&gt;Category(?P&lt;key&gt;(?!Template)\\S+))'">...</span></tt></td>
+<td>Pagenames exactly matching this regex are regarded as Wiki
+categories [Unicode]</td>
+</tr>
+<tr>
+<td>page_dict_regex</td>
+<td><tt class=
+"backtick">u'(?P&lt;all&gt;(?P&lt;key&gt;\\S+)Dict)'</tt></td>
+<td>Pagenames exactly matching this regex are regarded as pages
+containing variable dictionary definitions [Unicode]</td>
+</tr>
+<tr>
+<td>page_front_page</td>
+<td><tt class="backtick">u'LanguageSetup'</tt></td>
+<td>Name of the front page. We don't expect you to keep the
+default. Just read <a class="nonexistent" href="http://www.ginkgobitter.org/sdl2/?LanguageSetup">LanguageSetup</a> in case you're wondering...
+[Unicode]</td>
+</tr>
+<tr>
+<td>page_group_regex</td>
+<td><tt class=
+"backtick">u'(?P&lt;all&gt;(?P&lt;key&gt;\\S+)Group)'</tt></td>
+<td>Pagenames exactly matching this regex are regarded as pages
+containing group definitions [Unicode]</td>
+</tr>
+<tr>
+<td>page_local_spelling_words</td>
+<td><tt class="backtick">u'LocalSpellingWords'</tt></td>
+<td>Name of the page containing user-provided spellchecker words
+[Unicode]</td>
+</tr>
+<tr>
+<td>page_template_regex</td>
+<td><tt class="backtick"><span title=
+"u'(?P&lt;all&gt;(?P&lt;key&gt;\\S+)Template)'">...</span></tt></td>
+<td>Pagenames exactly matching this regex are regarded as pages
+containing templates for new pages [Unicode]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="paths">Paths</h2>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>cache_dir</td>
+<td><tt class="backtick">None</tt></td>
+<td>Directory for caching, by default computed from <tt class=
+"backtick">data_dir</tt>/cache.</td>
+</tr>
+<tr>
+<td>data_dir</td>
+<td><tt class="backtick">'./data/'</tt></td>
+<td>Path to the data directory containing your (locally made) wiki
+pages.</td>
+</tr>
+<tr>
+<td>data_underlay_dir</td>
+<td><tt class="backtick">'./underlay/'</tt></td>
+<td>Path to the underlay directory containing distribution system
+and help pages.</td>
+</tr>
+<tr>
+<td>docbook_html_dir</td>
+<td><tt class="backtick"><span title=
+"'/usr/share/xml/docbook/stylesheet/nwalsh/html/'">...</span></tt></td>
+<td>Path to the directory with the Docbook to HTML XSLT files
+(optional, used by the docbook parser). The default value is
+correct for Debian Etch.</td>
+</tr>
+<tr>
+<td>plugin_dir</td>
+<td><tt class="backtick">None</tt></td>
+<td>Plugin directory, by default computed to be <tt class=
+"backtick">data_dir</tt>/plugin.</td>
+</tr>
+<tr>
+<td>plugin_dirs</td>
+<td><tt class="backtick">[]</tt></td>
+<td>Additional plugin directories.</td>
+</tr>
+<tr>
+<td>session_dir</td>
+<td><tt class="backtick">None</tt></td>
+<td>Directory for session storage, by default computed to be
+<tt class="backtick">cache_dir</tt>/<span class=
+"u">session</span>.</td>
+</tr>
+<tr>
+<td>shared_intermap</td>
+<td><tt class="backtick">None</tt></td>
+<td>Path to a file containing global <a href="http://www.ginkgobitter.org/sdl2/?InterWiki">InterWiki</a> definitions (or a list of such
+filenames)</td>
+</tr>
+<tr>
+<td>user_dir</td>
+<td><tt class="backtick">None</tt></td>
+<td>Directory for user storage, by default computed to be
+<tt class="backtick">data_dir</tt>/user.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="rss">RSS settings</h2>
+<p>These settings control RSS behaviour.</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>rss_ddiffs</td>
+<td><tt class="backtick">0</tt></td>
+<td>If set to 1, links to diff view instead of page itself would be
+generated by default. Can be changed via ddiffs URL query parameter
+of rss_rc action.</td>
+</tr>
+<tr>
+<td>rss_diffs</td>
+<td><tt class="backtick">0</tt></td>
+<td>Add diffs in RSS item descriptions by default. Can be changed
+via diffs URL query parameter of rss_rc action.</td>
+</tr>
+<tr>
+<td>rss_items_default</td>
+<td><tt class="backtick">15</tt></td>
+<td>Default maximum items value for RSS feed. Can be changed via
+items URL query parameter of rss_rc action.</td>
+</tr>
+<tr>
+<td>rss_items_limit</td>
+<td><tt class="backtick">100</tt></td>
+<td>Limit for item count got via RSS (i. e. user can't get more
+than items_limit items even via changing items URL query
+parameter).</td>
+</tr>
+<tr>
+<td>rss_lines_default</td>
+<td><tt class="backtick">20</tt></td>
+<td>Default line count limit for diffs added as item descriptions
+for RSS items. Can be changed via lines URL query parameter of
+rss_rc action.</td>
+</tr>
+<tr>
+<td>rss_lines_limit</td>
+<td><tt class="backtick">100</tt></td>
+<td>Limit for possible line count for diffs added as item
+descriptions in RSS.</td>
+</tr>
+<tr>
+<td>rss_page_filter_pattern</td>
+<td><tt class="backtick">''</tt></td>
+<td>Default page filter pattern for RSS feed. Empty pattern matches
+to any page. Pattern beginning with circumflex is interpreted as
+regular expression. Pattern ending with slash matches page and all
+its subpages. Otherwise pattern sets specific pagename. Can be
+changed via page URL query parameter of rss_rc action.</td>
+</tr>
+<tr>
+<td>rss_show_attachment_entries</td>
+<td><tt class="backtick">0</tt></td>
+<td>If set to 1, items, related to attachment management, would be
+added to RSS feed. Can be changed via show_att URL query parameter
+of rss_rc action.</td>
+</tr>
+<tr>
+<td>rss_show_page_history_link</td>
+<td><tt class="backtick">True</tt></td>
+<td>Add link to page change history RSS feed in theme.</td>
+</tr>
+<tr>
+<td>rss_unique</td>
+<td><tt class="backtick">0</tt></td>
+<td>If set to 1, for each page name only one RSS item would be
+shown. Can be changed via unique rss_rc action URL query
+parameter.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="search_macro">Search macro settings</h2>
+<p>Settings related to behaviour of search macros (such as
+FullSearch, FullSearchCached, PageList)</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>search_macro_highlight_pages</td>
+<td><tt class="backtick">1</tt></td>
+<td>Add highlight parameter to links in search results generated by
+search macros by default.</td>
+</tr>
+<tr>
+<td>search_macro_highlight_titles</td>
+<td><tt class="backtick">1</tt></td>
+<td>Perform title matches highlighting by default in search results
+generated by macro.</td>
+</tr>
+<tr>
+<td>search_macro_parse_args</td>
+<td><tt class="backtick">False</tt></td>
+<td>Do search macro parameter parsing. In previous versions of
+<a href="index.html@MoinMoin.html">MoinMoin</a>, whole search macro parameter
+string had been interpreted as needle. Now, to provide ability to
+pass additional parameters, this behaviour should be changed.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="session">Session settings</h2>
+<p>Session-related settings, see HelpOnSessions.</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>cookie_domain</td>
+<td><tt class="backtick">None</tt></td>
+<td>Domain used in the session cookie. (None = do not specify
+domain).</td>
+</tr>
+<tr>
+<td>cookie_httponly</td>
+<td><tt class="backtick">False</tt></td>
+<td>Use a httponly cookie that can only be used by the server, not
+by clientside scripts.</td>
+</tr>
+<tr>
+<td>cookie_lifetime</td>
+<td><tt class="backtick">(0, 12)</tt></td>
+<td>Session lifetime [h] of (anonymous, logged-in) users (see
+<a href="http://www.ginkgobitter.org/sdl2/?HelpOnSessions">HelpOnSessions</a> for details).</td>
+</tr>
+<tr>
+<td>cookie_name</td>
+<td><tt class="backtick">None</tt></td>
+<td>The variable part of the session cookie name. (None = determine
+from URL, siteidmagic = use siteid, any other string = use
+that)</td>
+</tr>
+<tr>
+<td>cookie_path</td>
+<td><tt class="backtick">None</tt></td>
+<td>Path used in the session cookie (None = auto-detect). Please
+only set if you know exactly what you are doing.</td>
+</tr>
+<tr>
+<td>cookie_secure</td>
+<td><tt class="backtick">None</tt></td>
+<td>Use secure cookie. (None = auto-enable secure cookie for https,
+True = ever use secure cookie, False = never use secure
+cookie).</td>
+</tr>
+<tr>
+<td>session_service</td>
+<td><tt class="backtick">web.session.FileSessionService()</tt></td>
+<td>The session service.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="spam_leech_dos">Anti-Spam/Leech/DOS</h2>
+<p>These settings help limiting ressource usage and avoiding
+abuse.</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>antispam_master_url</td>
+<td><tt class="backtick"><span title=
+"'http://master.moinmo.in/?action=xmlrpc2'">...</span></tt></td>
+<td>where antispam security policy fetches spam pattern updates (if
+it is enabled)</td>
+</tr>
+<tr>
+<td>hosts_deny</td>
+<td><tt class="backtick">[]</tt></td>
+<td>List of denied IPs; if an IP ends with a dot, it denies a whole
+subnet (class A, B or C)</td>
+</tr>
+<tr>
+<td>surge_action_limits</td>
+<td><tt class="backtick"><span title=
+"{'all': (30, 30), 'show': (30, 60), 'fullsearch': (10, 120), 'AttachFile': (300, 30), 'raw': (20, 40), 'diff': (30, 60), 'rss_rc': (1, 60), 'edit': (30, 300), 'recall': (10, 120), 'cache': (600, 30), 'default': (30, 60)}">
+...</span></tt></td>
+<td>Surge protection tries to deny clients causing too much
+load/traffic, see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnConfiguration/SurgeProtection">HelpOnConfiguration/SurgeProtection</a>.</td>
+</tr>
+<tr>
+<td>surge_lockout_time</td>
+<td><tt class="backtick">3600</tt></td>
+<td>time [s] someone gets locked out when ignoring the
+warnings</td>
+</tr>
+<tr>
+<td>textchas</td>
+<td><tt class="backtick">None</tt></td>
+<td>Spam protection setup using site-specific questions/answers,
+see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnSpam">HelpOnSpam</a>.</td>
+</tr>
+<tr>
+<td>textchas_disabled_group</td>
+<td><tt class="backtick">None</tt></td>
+<td>Name of a group of trusted users who do not get asked TextCha
+questions.</td>
+</tr>
+<tr>
+<td>textchas_expiry_time</td>
+<td><tt class="backtick">600</tt></td>
+<td>Time [s] for a TextCha to expire.</td>
+</tr>
+<tr>
+<td>ua_spiders</td>
+<td><tt class="backtick"><span title=
+"'archiver|cfetch|charlotte|crawler|gigabot|googlebot|heritrix|holmes|htdig|httrack|httpunit|intelix|jeeves|larbin|leech|libwww-perl|linkbot|linkmap|linkwalk|litefinder|mercator|microsoft.url.control|mirror| mj12bot|msnbot|msrbot|neomo|nutbot|omniexplorer|puf|robot|scooter|seekbot|sherlock|slurp|sitecheck|snoopy|spider|teleport|twiceler|voilabot|voyager|webreaper|wget|yeti'">
+...</span></tt></td>
+<td>A regex of HTTP_USER_AGENTs that should be excluded from
+logging and are not allowed to use actions.</td>
+</tr>
+<tr>
+<td>unzip_attachments_count</td>
+<td><tt class="backtick">101</tt></td>
+<td>max. number of files which are extracted from the zip file</td>
+</tr>
+<tr>
+<td>unzip_attachments_space</td>
+<td><tt class="backtick">200000000.0</tt></td>
+<td>max. total amount of bytes can be used to unzip files
+[bytes]</td>
+</tr>
+<tr>
+<td>unzip_single_file_size</td>
+<td><tt class="backtick">2000000.0</tt></td>
+<td>max. size of a single file in the archive which will be
+extracted [bytes]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="style">Style / Theme / UI related</h2>
+<p>These settings control how the wiki user interface will look
+like.</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>changed_time_fmt</td>
+<td><tt class="backtick">'%H:%M'</tt></td>
+<td>Time format used on RecentChanges for page edits within the
+last 24 hours</td>
+</tr>
+<tr>
+<td>chart_options</td>
+<td><tt class="backtick">None</tt></td>
+<td>If you have gdchart, use something like chart_options =
+{'width': 720, 'height': 540}</td>
+</tr>
+<tr>
+<td>date_fmt</td>
+<td><tt class="backtick">'%Y-%m-%d'</tt></td>
+<td>System date format, used mostly in RecentChanges</td>
+</tr>
+<tr>
+<td>datetime_fmt</td>
+<td><tt class="backtick">'%Y-%m-%d %H:%M:%S'</tt></td>
+<td>Default format for dates and times (when the user has no
+preferences or chose the "default" date format)</td>
+</tr>
+<tr>
+<td>edit_bar</td>
+<td><tt class="backtick"><span title=
+"['Edit', 'Comments', 'Discussion', 'Info', 'Subscribe', 'Quicklink', 'Attachments', 'ActionsMenu']">
+...</span></tt></td>
+<td>list of edit bar entries</td>
+</tr>
+<tr>
+<td>history_count</td>
+<td><tt class="backtick">(100, 200, 5, 10, 25, 50)</tt></td>
+<td>Number of revisions shown for info/history action
+(default_count_shown, max_count_shown, [other values shown as page
+size choices]). At least first two values (default and maximum)
+should be provided. If additional values are provided, user will be
+able to change number of items per page in the UI.</td>
+</tr>
+<tr>
+<td>history_paging</td>
+<td><tt class="backtick">True</tt></td>
+<td>Enable paging functionality for info action's history
+display.</td>
+</tr>
+<tr>
+<td>html_pagetitle</td>
+<td><tt class="backtick">None</tt></td>
+<td>Allows you to set a specific HTML page title (if None, it
+defaults to the value of <tt class="backtick">sitename</tt>)</td>
+</tr>
+<tr>
+<td>interwiki_preferred</td>
+<td><tt class="backtick">[]</tt></td>
+<td>In dialogues, show those wikis at the top of the list.</td>
+</tr>
+<tr>
+<td>interwikiname</td>
+<td><tt class="backtick">None</tt></td>
+<td>unique and stable <a href="http://www.ginkgobitter.org/sdl2/?InterWiki">InterWiki</a> name
+(prefix, moniker) of the site [Unicode], or None</td>
+</tr>
+<tr>
+<td>logo_string</td>
+<td><tt class="backtick">None</tt></td>
+<td>The wiki logo top of page, HTML is allowed (<tt class=
+"backtick">&lt;img&gt;</tt> is possible as well) [Unicode]</td>
+</tr>
+<tr>
+<td>navi_bar</td>
+<td><tt class="backtick"><span title=
+"[u'RecentChanges', u'FindPage', u'HelpContents']">...</span></tt></td>
+<td>Most important page names. Users can add more names in their
+quick links in user preferences. To link to URL, use <tt class=
+"backtick">u"[[url|link&nbsp;title]]"</tt>, to use a shortened name
+for long page name, use <tt class=
+"backtick">u"[[LongLongPageName|title]]"</tt>. [list of Unicode
+strings]</td>
+</tr>
+<tr>
+<td>packagepages_actions_excluded</td>
+<td><tt class="backtick"><span title=
+"['setthemename', 'copythemefile', 'installplugin', 'renamepage', 'deletepage', 'delattachment']">
+...</span></tt></td>
+<td>list with excluded package actions (e.g. because they are
+dangerous / questionable)</td>
+</tr>
+<tr>
+<td>page_credits</td>
+<td><tt class="backtick"><span title=
+"['&lt;a href=&quot;http://moinmo.in/&quot; title=&quot;This site uses the MoinMoin Wiki software.&quot;&gt;MoinMoin Powered&lt;/a&gt;', '&lt;a href=&quot;http://moinmo.in/Python&quot; title=&quot;MoinMoin is written in Python.&quot;&gt;Python Powered&lt;/a&gt;', '&lt;a href=&quot;http://moinmo.in/GPL&quot; title=&quot;MoinMoin is GPL licensed.&quot;&gt;GPL licensed&lt;/a&gt;', '&lt;a href=&quot;http://validator.w3.org/check?uri=referer&quot; title=&quot;Click here to validate this page.&quot;&gt;Valid HTML 4.01&lt;/a&gt;']">
+...</span></tt></td>
+<td>list with html fragments with logos or strings for
+crediting.</td>
+</tr>
+<tr>
+<td>page_footer1</td>
+<td><tt class="backtick">''</tt></td>
+<td>Custom HTML markup sent <em>before</em> the system footer.</td>
+</tr>
+<tr>
+<td>page_footer2</td>
+<td><tt class="backtick">''</tt></td>
+<td>Custom HTML markup sent <em>after</em> the system footer.</td>
+</tr>
+<tr>
+<td>page_header1</td>
+<td><tt class="backtick">''</tt></td>
+<td>Custom HTML markup sent <em>before</em> the system header /
+title area but after the body tag.</td>
+</tr>
+<tr>
+<td>page_header2</td>
+<td><tt class="backtick">''</tt></td>
+<td>Custom HTML markup sent <em>after</em> the system header /
+title area (and body tag).</td>
+</tr>
+<tr>
+<td>page_iconbar</td>
+<td><tt class="backtick"><span title=
+"['up', 'edit', 'view', 'diff', 'info', 'subscribe', 'raw', 'print']">
+...</span></tt></td>
+<td>list of icons to show in iconbar, valid values are only those
+in page_icons_table. Available only in classic theme.</td>
+</tr>
+<tr>
+<td>page_icons_table</td>
+<td><tt class="backtick"><span title=
+"{'info': ('page', {'action': 'info'}, 'Info', 'info'), 'subscribe': ('page', {'action': 'subscribe'}, 'Subscribe', 'subscribe'), 'unsubscribe': ('page', {'action': 'unsubscribe'}, 'UnSubscribe', 'unsubscribe'), 'raw': ('page', {'action': 'raw'}, 'Raw', 'raw'), 'edit': ('page', {'action': 'edit'}, 'Edit', 'edit'), 'diff': ('page', {'action': 'diff'}, 'Diffs', 'diff'), 'print': ('page', {'action': 'print'}, 'Print', 'print'), 'xml': ('page', {'action': 'show', 'mimetype': 'text/xml'}, 'XML', 'xml'), 'up': ('page_parent_page', {}, 'Up', 'up'), 'view': ('page', {}, 'View', 'view')}">
+...</span></tt></td>
+<td>dict of {'iconname': (url, title, icon-img-key), ...}.
+Available only in classic theme.</td>
+</tr>
+<tr>
+<td>show_highlight_msg</td>
+<td><tt class="backtick">False</tt></td>
+<td>Show message that page has highlighted text and provide link to
+non-highlighted version.</td>
+</tr>
+<tr>
+<td>show_hosts</td>
+<td><tt class="backtick">True</tt></td>
+<td>if True, show host names and IPs. Set to False to hide
+them.</td>
+</tr>
+<tr>
+<td>show_interwiki</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, let the theme display your interwiki name</td>
+</tr>
+<tr>
+<td>show_names</td>
+<td><tt class="backtick">True</tt></td>
+<td>if True, show user names in the revision history and on
+RecentChanges. Set to False to hide them.</td>
+</tr>
+<tr>
+<td>show_rename_redirect</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, offer creation of redirect pages when renaming wiki
+pages</td>
+</tr>
+<tr>
+<td>show_section_numbers</td>
+<td><tt class="backtick">False</tt></td>
+<td>show section numbers in headings by default</td>
+</tr>
+<tr>
+<td>show_timings</td>
+<td><tt class="backtick">False</tt></td>
+<td>show some timing values at bottom of a page</td>
+</tr>
+<tr>
+<td>show_version</td>
+<td><tt class="backtick">False</tt></td>
+<td>show moin's version at the bottom of a page</td>
+</tr>
+<tr>
+<td>sistersites</td>
+<td><tt class="backtick">[]</tt></td>
+<td>list of tuples <tt class=
+"backtick">('WikiName',&nbsp;'sisterpagelist_fetch_url')</tt></td>
+</tr>
+<tr>
+<td>sitename</td>
+<td><tt class="backtick">u'Untitled Wiki'</tt></td>
+<td>Short description of your wiki site, displayed below the logo
+on each page, and used in RSS documents as the channel title
+[Unicode]</td>
+</tr>
+<tr>
+<td>stylesheets</td>
+<td><tt class="backtick">[]</tt></td>
+<td>List of tuples (media, csshref) to insert after theme css,
+before user css, see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnThemes">HelpOnThemes</a>.</td>
+</tr>
+<tr>
+<td>supplementation_page</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, show a link to the supplementation page in the
+theme</td>
+</tr>
+<tr>
+<td>supplementation_page_name</td>
+<td><tt class="backtick">u'Discussion'</tt></td>
+<td>default name of the supplementation (sub)page [unicode]</td>
+</tr>
+<tr>
+<td>supplementation_page_template</td>
+<td><tt class="backtick">u'DiscussionTemplate'</tt></td>
+<td>default template used for creation of the supplementation page
+[unicode]</td>
+</tr>
+<tr>
+<td>theme_default</td>
+<td><tt class="backtick">'modernized'</tt></td>
+<td>the name of the theme that is used by default (see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnThemes">HelpOnThemes</a>)</td>
+</tr>
+<tr>
+<td>theme_force</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, do not allow to change the theme</td>
+</tr>
+<tr>
+<td>trail_size</td>
+<td><tt class="backtick">5</tt></td>
+<td>Number of pages in the trail of visited pages</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="urls">URLs</h2>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>notification_bot_uri</td>
+<td><tt class="backtick">None</tt></td>
+<td>URI of the Jabber notification bot.</td>
+</tr>
+<tr>
+<td>url_mappings</td>
+<td><tt class="backtick">{}</tt></td>
+<td>lookup table to remap URL prefixes (dict of
+<tt>'prefix':&nbsp;'replacement'</tt>); especially useful in
+intranets, when whole trees of externally hosted documents move
+around</td>
+</tr>
+<tr>
+<td>url_prefix_action</td>
+<td><tt class="backtick">None</tt></td>
+<td>Use 'action' to enable action URL generation to be compatible
+with robots.txt. It will generate
+.../action/info/PageName?action=info then. Recommended for internet
+wikis.</td>
+</tr>
+<tr>
+<td>url_prefix_fckeditor</td>
+<td><tt class="backtick">None</tt></td>
+<td>used as the base URL for FCKeditor - similar to
+url_prefix_local, but just for FCKeditor.</td>
+</tr>
+<tr>
+<td>url_prefix_local</td>
+<td><tt class="backtick">None</tt></td>
+<td>used as the base URL for some Javascript - set this to a URL on
+same server as the wiki if your url_prefix_static points to a
+different server.</td>
+</tr>
+<tr>
+<td>url_prefix_static</td>
+<td><tt class="backtick">'/'</tt></td>
+<td>used as the base URL for icons, css, etc. - includes the moin
+version number and changes on every release. This replaces the
+deprecated and sometimes confusing <tt class=
+"backtick">url_prefix&nbsp;=&nbsp;'/wiki'</tt> setting.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="user">User Preferences related</h2>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>email_subscribed_events_default</td>
+<td><tt class="backtick"><span title=
+"['PageChangedEvent', 'PageRenamedEvent', 'PageDeletedEvent', 'PageCopiedEvent', 'PageRevertedEvent', 'FileAttachedEvent']">
+...</span></tt></td>
+<td></td>
+</tr>
+<tr>
+<td>external_creation_check</td>
+<td><tt class="backtick">None</tt></td>
+<td>Name of external program to call for checking new account
+creation.</td>
+</tr>
+<tr>
+<td>jabber_subscribed_events_default</td>
+<td><tt class="backtick">[]</tt></td>
+<td></td>
+</tr>
+<tr>
+<td>quicklinks_default</td>
+<td><tt class="backtick">[]</tt></td>
+<td>List of preset quicklinks for a newly created user accounts.
+Existing accounts are not affected by this option whereas changes
+in navi_bar do always affect existing accounts. Preset quicklinks
+can be removed by the user in the user preferences menu, navi_bar
+settings not.</td>
+</tr>
+<tr>
+<td>require_email_verification</td>
+<td><tt class="backtick">False</tt></td>
+<td>Require verification of new user accounts.</td>
+</tr>
+<tr>
+<td>subscribed_pages_default</td>
+<td><tt class="backtick">[]</tt></td>
+<td>List of pagenames used for presetting page subscriptions for
+newly created user accounts.</td>
+</tr>
+<tr>
+<td>tz_offset</td>
+<td><tt class="backtick">0.0</tt></td>
+<td>default time zone offset in hours from UTC</td>
+</tr>
+<tr>
+<td>userprefs_disabled</td>
+<td><tt class="backtick">[]</tt></td>
+<td>Disable the listed user preferences plugins.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="user-1">Users / User settings</h2>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>user_checkbox_defaults</td>
+<td><tt class="backtick"><span title=
+"{'show_topbottom': 0, 'remember_me': 1, 'remember_last_visit': 0, 'show_page_trail': 1, 'wikiname_add_spaces': 0, 'mailto_author': 0, 'show_nonexist_qm': False, 'show_fancy_diff': 1, 'show_toolbar': 1, 'show_comments': 0, 'edit_on_doubleclick': 1}">
+...</span></tt></td>
+<td>Defaults for user preferences, see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnConfiguration/UserPreferences">HelpOnConfiguration/UserPreferences</a>.</td>
+</tr>
+<tr>
+<td>user_checkbox_disable</td>
+<td><tt class="backtick">[]</tt></td>
+<td>Disable user preferences, see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnConfiguration/UserPreferences">HelpOnConfiguration/UserPreferences</a>.</td>
+</tr>
+<tr>
+<td>user_checkbox_fields</td>
+<td><tt class="backtick"><span title=
+"[('mailto_author', &lt;function &lt;lambda&gt; at 0x2ca0c08&gt;), ('edit_on_doubleclick', &lt;function &lt;lambda&gt; at 0x2ca0c80&gt;), ('remember_last_visit', &lt;function &lt;lambda&gt; at 0x2ca0cf8&gt;), ('show_comments', &lt;function &lt;lambda&gt; at 0x2ca0d70&gt;), ('show_nonexist_qm', &lt;function &lt;lambda&gt; at 0x2ca0de8&gt;), ('show_page_trail', &lt;function &lt;lambda&gt; at 0x2ca0e60&gt;), ('show_toolbar', &lt;function &lt;lambda&gt; at 0x2ca0ed8&gt;), ('show_topbottom', &lt;function &lt;lambda&gt; at 0x2ca0f50&gt;), ('show_fancy_diff', &lt;function &lt;lambda&gt; at 0x2ca6050&gt;), ('wikiname_add_spaces', &lt;function &lt;lambda&gt; at 0x2ca60c8&gt;), ('remember_me', &lt;function &lt;lambda&gt; at 0x2ca6140&gt;), ('disabled', &lt;function &lt;lambda&gt; at 0x2ca61b8&gt;)]">
+...</span></tt></td>
+<td>Describes user preferences, see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnConfiguration/UserPreferences">HelpOnConfiguration/UserPreferences</a>.</td>
+</tr>
+<tr>
+<td>user_checkbox_remove</td>
+<td><tt class="backtick">[]</tt></td>
+<td>Remove user preferences, see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnConfiguration/UserPreferences">HelpOnConfiguration/UserPreferences</a>.</td>
+</tr>
+<tr>
+<td>user_email_unique</td>
+<td><tt class="backtick">True</tt></td>
+<td>if True, check email addresses for uniqueness and don't accept
+duplicates.</td>
+</tr>
+<tr>
+<td>user_form_defaults</td>
+<td><tt class="backtick"><span title=
+"{'password2': '', 'jid': '', 'aliasname': '', 'name': '', 'css_url': '', 'password': '', 'email': '', 'edit_rows': '20'}">
+...</span></tt></td>
+<td></td>
+</tr>
+<tr>
+<td>user_form_disable</td>
+<td><tt class="backtick">[]</tt></td>
+<td>list of field names used to disable user preferences form
+fields</td>
+</tr>
+<tr>
+<td>user_form_fields</td>
+<td><tt class="backtick"><span title=
+"[('name', 'Name', 'text', '36', '(Use FirstnameLastname)'), ('aliasname', 'Alias-Name', 'text', '36', ''), ('email', 'Email', 'text', '36', ''), ('jid', 'Jabber ID', 'text', '36', ''), ('css_url', 'User CSS URL', 'text', '40', '(Leave it empty for disabling user CSS)'), ('edit_rows', 'Editor size', 'text', '3', '')]">
+...</span></tt></td>
+<td></td>
+</tr>
+<tr>
+<td>user_form_remove</td>
+<td><tt class="backtick">[]</tt></td>
+<td>list of field names used to remove user preferences form
+fields</td>
+</tr>
+<tr>
+<td>user_homewiki</td>
+<td><tt class="backtick">u'Self'</tt></td>
+<td>interwiki name of the wiki where the user home pages are
+located [Unicode] - useful if you have <em>many</em> users. You
+could even link to nonwiki "user pages" if the wiki username is in
+the target URL.</td>
+</tr>
+<tr>
+<td>user_jid_unique</td>
+<td><tt class="backtick">True</tt></td>
+<td>if True, check Jabber IDs for uniqueness and don't accept
+duplicates.</td>
+</tr>
+<tr>
+<td>user_transient_fields</td>
+<td><tt class="backtick"><span title=
+"['id', 'valid', 'may', 'auth_username', 'password', 'password2', 'auth_method', 'auth_attribs']">
+...</span></tt></td>
+<td>User object attributes that are not persisted to permanent
+storage (internal use).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="various">Various</h2>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>bang_meta</td>
+<td><tt class="backtick">True</tt></td>
+<td>if True, enable <tt>!NoWikiName</tt> markup</td>
+</tr>
+<tr>
+<td>caching_formats</td>
+<td><tt class="backtick">['text_html']</tt></td>
+<td>output formats that are cached; set to [] to turn off caching
+(useful for development)</td>
+</tr>
+<tr>
+<td>config_check_enabled</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, check configuration for unknown settings.</td>
+</tr>
+<tr>
+<td>default_markup</td>
+<td><tt class="backtick">'wiki'</tt></td>
+<td>Default page parser / format (name of module in <tt class=
+"backtick">MoinMoin.parser</tt>)</td>
+</tr>
+<tr>
+<td>html_head</td>
+<td><tt class="backtick">''</tt></td>
+<td>Additional &lt;HEAD&gt; tags, see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnThemes">HelpOnThemes</a>.</td>
+</tr>
+<tr>
+<td>html_head_index</td>
+<td><tt class="backtick"><span title=
+"'&lt;meta name=&quot;robots&quot; content=&quot;index,follow&quot;&gt;'">
+...</span></tt></td>
+<td>Additional &lt;HEAD&gt; tags for some few index pages.</td>
+</tr>
+<tr>
+<td>html_head_normal</td>
+<td><tt class="backtick"><span title=
+"'&lt;meta name=&quot;robots&quot; content=&quot;index,nofollow&quot;&gt;'">
+...</span></tt></td>
+<td>Additional &lt;HEAD&gt; tags for most normal pages.</td>
+</tr>
+<tr>
+<td>html_head_posts</td>
+<td><tt class="backtick"><span title=
+"'&lt;meta name=&quot;robots&quot; content=&quot;noindex,nofollow&quot;&gt;'">
+...</span></tt></td>
+<td>Additional &lt;HEAD&gt; tags for POST requests.</td>
+</tr>
+<tr>
+<td>html_head_queries</td>
+<td><tt class="backtick"><span title=
+"'&lt;meta name=&quot;robots&quot; content=&quot;noindex,nofollow&quot;&gt;'">
+...</span></tt></td>
+<td>Additional &lt;HEAD&gt; tags for requests with query strings,
+like actions.</td>
+</tr>
+<tr>
+<td>language_default</td>
+<td><tt class="backtick">'en'</tt></td>
+<td>Default language for user interface and page content, see
+<a href="http://www.ginkgobitter.org/sdl2/?HelpOnLanguages">HelpOnLanguages</a>.</td>
+</tr>
+<tr>
+<td>language_ignore_browser</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, ignore user's browser language settings, see <a href="http://www.ginkgobitter.org/sdl2/?HelpOnLanguages">HelpOnLanguages</a>.</td>
+</tr>
+<tr>
+<td>log_remote_addr</td>
+<td><tt class="backtick">True</tt></td>
+<td>if True, log the remote IP address (and maybe hostname).</td>
+</tr>
+<tr>
+<td>log_reverse_dns_lookups</td>
+<td><tt class="backtick">True</tt></td>
+<td>if True, do a reverse DNS lookup on page SAVE. If your DNS is
+broken, set this to False to speed up SAVE.</td>
+</tr>
+<tr>
+<td>log_timing</td>
+<td><tt class="backtick">False</tt></td>
+<td>if True, add timing infos to the log output to analyse load
+conditions</td>
+</tr>
+<tr>
+<td>mimetypes_embed</td>
+<td><tt class="backtick"><span title=
+"['application/x-dvi', 'application/postscript', 'application/pdf', 'application/ogg', 'application/vnd.visio', 'image/x-ms-bmp', 'image/svg+xml', 'image/tiff', 'image/x-photoshop', 'audio/mpeg', 'audio/midi', 'audio/x-wav', 'video/fli', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'chemical/x-pdb', 'x-world/x-vrml']">
+...</span></tt></td>
+<td>mimetypes that can be embedded by the <a href="http://www.ginkgobitter.org/sdl2/?HelpOnMacros/EmbedObject">EmbedObject macro</a></td>
+</tr>
+<tr>
+<td>mimetypes_xss_protect</td>
+<td><tt class="backtick"><span title=
+"['text/html', 'application/x-shockwave-flash', 'application/xhtml+xml']">
+...</span></tt></td>
+<td>"content-disposition: inline" isn't used for them when a user
+downloads such attachments</td>
+</tr>
+<tr>
+<td>refresh</td>
+<td><tt class="backtick">None</tt></td>
+<td>refresh = (minimum_delay_s, targets_allowed) enables use of
+<tt class="backtick">#refresh&nbsp;5&nbsp;PageName</tt> processing
+instruction, targets_allowed must be either <tt class=
+"backtick">'internal'</tt> or <tt class=
+"backtick">'external'</tt></td>
+</tr>
+<tr>
+<td>rss_cache</td>
+<td><tt class="backtick">60</tt></td>
+<td>suggested caching time for RecentChanges RSS, in second</td>
+</tr>
+<tr>
+<td>search_results_per_page</td>
+<td><tt class="backtick">25</tt></td>
+<td>Number of hits shown per page in the search results</td>
+</tr>
+<tr>
+<td>siteid</td>
+<td><tt class="backtick">'default'</tt></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="xapian">Xapian search</h2>
+<p>Configuration of the Xapian based indexed search, see
+HelpOnXapian.</p>
+<div>
+<table>
+<tbody>
+<tr style="background-color: #ffffcc">
+<td><strong>Variable name</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td>xapian_index_dir</td>
+<td><tt class="backtick">None</tt></td>
+<td>Directory where the Xapian search index is stored (None =
+auto-configure wiki local storage)</td>
+</tr>
+<tr>
+<td>xapian_index_history</td>
+<td><tt class="backtick">False</tt></td>
+<td>True to enable indexing of non-current page revisions.</td>
+</tr>
+<tr>
+<td>xapian_search</td>
+<td><tt class="backtick">False</tt></td>
+<td>True to enable the fast, indexed search (based on the Xapian
+search library)</td>
+</tr>
+<tr>
+<td>xapian_stemming</td>
+<td><tt class="backtick">False</tt></td>
+<td>True to enable Xapian word stemmer usage for indexing /
+searching.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-157"></span><span class="anchor" id=
+"line-158"></span>
+<p class="line862">Some values can only be set from <tt class=
+"backtick">MoinMoin/config/__init__.py</tt> (part of the moin code
+and thus GLOBALLY changing behaviour of all your wikis), but not
+from the individual wiki's config - you should only touch them if
+you know what you are doing: <span class="anchor" id=
+"line-159"></span></p>
+<div>
+<table>
+<tbody>
+<tr>
+<td>
+<p class="line862">charset</p>
+</td>
+<td>
+<p class="line862"><tt class="backtick">'utf-8'</tt></p>
+</td>
+<td>
+<p class="line862">the encoding / character set used by the wiki
+<img alt="&lt;!&gt;" height="16" src="attention.png" title="&lt;!&gt;"
+width="16"> <strong>Do not c</body></html>

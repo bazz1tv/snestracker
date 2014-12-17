@@ -1,0 +1,88 @@
+{
+  'version': 0,
+  'case-sensitive': 'false',
+  'roots': [
+    {
+      'type': 'directory',
+      'name': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/XCode/Build/Products/Debug/SDLEngine.framework/Headers",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "SDLEngine-Swift.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/XCode/Build/Products/Debug/SDLEngine.framework/Versions/A/Headers/SDLEngine-Swift.h"
+        },
+        {
+          'type': 'file',
+          'name': "SDL_ep.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/SDL_ep.h"
+        },
+        {
+          'type': 'file',
+          'name': "audio.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/audio.h"
+        },
+        {
+          'type': 'file',
+          'name': "font.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/font.h"
+        },
+        {
+          'type': 'file',
+          'name': "framerate.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/framerate.h"
+        },
+        {
+          'type': 'file',
+          'name': "gfx.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/gfx.h"
+        },
+        {
+          'type': 'file',
+          'name': "image.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/image.h"
+        },
+        {
+          'type': 'file',
+          'name': "img_manager.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/img_manager.h"
+        },
+        {
+          'type': 'file',
+          'name': "misc.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/misc.h"
+        },
+        {
+          'type': 'file',
+          'name': "net.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/net.h"
+        },
+        {
+          'type': 'file',
+          'name': "snd_manager.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/snd_manager.h"
+        },
+        {
+          'type': 'file',
+          'name': "sprite.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/sprite.h"
+        },
+        {
+          'type': 'file',
+          'name': "video.h",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/Engine/include/video.h"
+        }
+      ]
+    },
+    {
+      'type': 'directory',
+      'name': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/XCode/Build/Products/Debug/SDLEngine.framework/Modules",
+      'contents': [
+        {
+          'type': 'file',
+          'name': "module.modulemap",
+          'external-contents': "/Users/bazz/Projects/SNES-Tracker/PC_Tracker/trunk/Src/XCode/Build/Products/Debug/SDLEngine.framework/Versions/A/Modules/module.modulemap"
+        }
+      ]
+    }
+  ]
+}

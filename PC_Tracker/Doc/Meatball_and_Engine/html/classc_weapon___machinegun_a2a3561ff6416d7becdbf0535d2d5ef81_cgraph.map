@@ -1,0 +1,5 @@
+<map id="cWeapon_Machinegun::cWeapon_Machinegun" name="cWeapon_Machinegun::cWeapon_Machinegun">
+<area shape="rect" href="$classc_sound_manager.html#a863e7deccbb0132ed5d7e8cb73ad8851" title="Adds an Sound Should always have an Identifier." alt="" coords="248,5,424,32"/>
+<area shape="rect" href="$classc_audio.html#a9ae6005c01a5384fee41652038e05358" title="Loads an sound if volume is &#45;1 the default sound volume will be used if volume is &#45;2 no volume will b..." alt="" coords="256,56,416,83"/>
+<area shape="rect" href="$classc_sound_manager.html#a13473964862648a84d60d20669cb6e23" title="cSoundManager::GetPointer" alt="" coords="472,5,696,32"/>
+</map>

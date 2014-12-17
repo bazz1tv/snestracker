@@ -1,0 +1,4 @@
+<map id="cMouseCursor::CollisonCheck" name="cMouseCursor::CollisonCheck">
+<area shape="rect" href="$group___engine___misc.html#ga60f74ce4c80dac50bac04ba035e7f5eb" title="returns 1 if 1 or more points intersect" alt="" coords="289,5,404,32"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="308,56,385,83"/>
+</map>

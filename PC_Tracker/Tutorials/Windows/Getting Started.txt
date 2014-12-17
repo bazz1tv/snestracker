@@ -1,0 +1,11 @@
+Getting Started | 
+----------------
+
+Tools Necessary
+----------------
+SVN (Subversion) Client
+ . TortoiseSVN for Windows (graphical GUI)
+ 
+Mercurial Client
+ . 
+ 

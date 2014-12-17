@@ -1,0 +1,17 @@
+<map id="Engine/include/gfx.h" name="Engine/include/gfx.h">
+<area shape="rect" href="$_engine_2include_2sprite_8h.html" title="Engine/include/sprite.h" alt="" coords="1093,84,1277,111"/>
+<area shape="rect" href="$_s_d_l__ep_8h.html" title="SDL_ep &#45; Engine primitives for SDL." alt="" coords="1087,161,1284,188"/>
+<area shape="rect" href="$audio_8cpp.html" title="Engine/audio.cpp" alt="" coords="5,239,152,265"/>
+<area shape="rect" href="$font_8cpp.html" title="Engine/font.cpp" alt="" coords="176,239,309,265"/>
+<area shape="rect" href="$framerate_8cpp.html" title="Engine/framerate.cpp" alt="" coords="333,239,512,265"/>
+<area shape="rect" href="$gfx_8cpp.html" title="Engine/gfx.cpp" alt="" coords="536,239,664,265"/>
+<area shape="rect" href="$image_8cpp.html" title="Engine/image.cpp" alt="" coords="688,239,840,265"/>
+<area shape="rect" href="$img__manager_8cpp.html" title="Engine/img_manager.cpp" alt="" coords="864,239,1069,265"/>
+<area shape="rect" href="$video_8h.html" title="Video Initialization and other." alt="" coords="1093,239,1277,265"/>
+<area shape="rect" href="$_engine_2misc_8cpp.html" title="Engine/misc.cpp" alt="" coords="1301,239,1440,265"/>
+<area shape="rect" href="$net_8cpp.html" title="Engine/net.cpp" alt="" coords="1464,239,1592,265"/>
+<area shape="rect" href="$_s_d_l__ep_8cpp.html" title="Engine/SDL_ep.cpp" alt="" coords="1616,239,1773,265"/>
+<area shape="rect" href="$snd__manager_8cpp.html" title="Engine/snd_manager.cpp" alt="" coords="1797,239,2000,265"/>
+<area shape="rect" href="$_engine_2sprite_8cpp.html" title="Engine/sprite.cpp" alt="" coords="2024,239,2168,265"/>
+<area shape="rect" href="$video_8cpp.html" title="Engine/video.cpp" alt="" coords="2192,239,2336,265"/>
+</map>

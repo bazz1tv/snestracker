@@ -1,0 +1,258 @@
+<html>
+<!--------------------------------------------------->
+<!--              Docs/guide - SGE                 -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Guide</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Beginners guide to SGE</H1>
+
+<P>
+<DL>
+<DT><A HREF="#1">1. Intro</A>
+<DT><A HREF="#2">2. Compiling SGE</A>
+<DT><A HREF="#3">3. Using SGE</A>
+<DT><A HREF="#4">4. How to distribute your project</A>
+</DL>
+<br>
+<a name="1"><H2>1. Intro</H2></a>
+This is a small guide about how to compile and use SGE in your own project. It's mostly
+aimed at Unix/Linux developers but others can probably find some information in here too.
+This guide also assumes that you have a working version of SDL (and FreeType if you want
+to use TT fonts in SGE) installed on your system (see the "README" file for more
+information about this).<br>
+<br>
+<a name="2"><H2>2. Compiling SGE</H2></a>
+First we need to download the latest release. It's available under "Download" at the SGE
+homepage:<br>
+<A HREF="http://www.etek.chalmers.se/~e8cal1/sge/index.html" TARGET=_top>http://www.etek.chalmers.se/~e8cal1/sge/index.html</A> or<br>
+<A HREF="http://home.swipnet.se/cal_home/sge/index.html" TARGET=_top>http://home.swipnet.se/cal_home/sge/index.html</A>.<br>
+Save the sgeXXXXXX.tar.gz file somewhere and open a terminal and go to the directory
+where you saved it. Unpack the file ('tar zxfv sgeXXXXXX.tar.gz') and you will have a new
+directory with the SGE source code inside.<br>
+<br>
+Now you're ready to compile SGE! Make sure that you're standing in the root SGE directory
+(sgeXXXXXX/). If you just want to test SGE and its examples you should now run 'make'
+(or whatever GNU make is called on your system), but if you want to install SGE on your
+system then you should run 'make install'. If something goes wrong under the compilation
+there's probably something wrong with your SDL or FreeType installations.<br>
+<br>
+You should test the examples when you have finished compiling SGE. Enter the directory
+"examples/" and run "make", this will build all examples. Read the "README" file in this
+directory for more information about the examples.<br>
+<br>
+<a name="3"><H2>3. Using SGE</H2></a>
+In this part of the guide I'll assume that you have installed SGE with "make install".<br>
+<br>
+First create a directory for your new project (e.g. 'mkdir myproject'), in this directory we'll
+create the file "myproject.cpp". Start your favorite text editor and put some C/C++ code into the 
+"myproject.cpp" file, e.g. this very simple program:<br>
+<br>
+<BLOCKQUOTE><PRE>
+/* A very simple SDL/SGE program */
+
+#include "SDL.h"
+#include "sge.h"
+
+int main(int argc, char** argv)
+{
+	/* Init SDL */
+	SDL_Init(SDL_INIT_TIMER|SDL_INIT_VIDEO);
+
+	/* Set window title */
+	SDL_WM_SetCaption("Testing", "testing");
+
+	/* Initialize the display */
+	SDL_Surface *screen;
+	screen = SDL_SetVideoMode(640, 480, 16, SDL_SWSURFACE);
+
+	sge_FilledRect(screen, 20,20, 620,460, 255,0,0);
+
+	SDL_Event event;
+	do{
+		/* Wait for user input */
+		SDL_WaitEvent(&event);
+		if(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
+			break;
+		if(event.type == SDL_QUIT)
+			break;
+	}while(true);
+
+	SDL_Quit();
+	return 0;
+}
+</PRE></BLOCKQUOTE>
+<br>
+This is a very simple program without any error checking. Don't try this at home, always
+check for errors!<br>
+<br>
+You can now compile and link this code with:<br>
+<code>
+g++ -Wall -O3 `sdl-config --cflags` -c myproject.cpp<BR>
+g++ -o myproject myproject.o -lSGE `sdl-config --libs` -lstdc++<BR>
+</code><br>
+Run ./myproject and a window with a red rectangle should show.<br>
+<br>
+It can become a bit tedious to enter the command lines above every time you want to compile your code, therefor
+we will now write a makefile for our project.
+Create a file namned "Makefile" and enter the following:<br>
+<br>
+<BLOCKQUOTE><PRE>
+# Makefile for myproject
+
+CXX=g++
+CFLAGS =-Wall -O3 $(shell sdl-config --cflags)
+LIBS = -lSGE  $(shell sdl-config --libs) -lstdc++
+
+TARGETS = myproject 	#change this to your project name
+
+OBJECTS = $(addsuffix .o, $(TARGETS))
+
+all:	$(TARGETS)
+
+$(TARGETS):	%:%.o
+	$(CXX) -o $@ $< $(LIBS)
+
+$(OBJECTS):	%.o:%.cpp
+	$(CXX) $(CFLAGS) -c $<
+
+clean:
+	@rm -f *.o $(TARGETS)
+
+</PRE></BLOCKQUOTE>
+<br>
+Run 'make clean' to remove the data from the previous compile and then run 'make', the result should be the same
+as when you entered the commands manually.<br>
+<br>
+If your project grows and spilts into multiple .cpp files that each have a corresponding .h
+file then your makefile should look something like:<br>
+<br>
+<BLOCKQUOTE><PRE>
+# Makefile for mycomplexproject
+
+CXX=g++
+CFLAGS =-Wall -O3 $(shell sdl-config --cflags)
+LIBS = -lSGE  $(shell sdl-config --libs) -lstdc++
+
+OBJECTS = foo.o bar.o baz.o  #every .cpp file in your project but replace .cpp with .o
+
+all:	$(OBJECTS)
+	$(CXX) -o mycomplexproject $(OBJECTS) $(LIBS)
+
+$(OBJECTS):	%.o:%.cpp %.h
+	$(CXX) $(CFLAGS) -c $<
+
+clean:
+	@rm -f *.o mycomplexproject
+
+</PRE></BLOCKQUOTE>
+<br>
+Well, it's all a bit of black magic but for now I assume that you used the first Makefile
+example (for more information about GNU make black magic please read its manual).<br>
+<br>
+<a name="4"><H2>4. How to distribute your project</H2></a>
+It's important to remember that SGE is licensed under the GNU Lesser General Public
+License, which means that you can't link any non-GPL or non-LGPL code directly to it. In
+that case you MUST link to a shared library version (under Unix libSGE.so and under Win32
+SGE.dll). You must also include a notice in your distribution that you're using SGE (and
+SDL!) and where the source code for SGE can be found. Also note that you might be using
+other libraries too that SGE and SDL depend on (e.g. libpthread and libfreetype).<br>
+<br>
+But if your project is licensed under the GPL or LGPL then you're free to use SGE (and SDL)
+in almost any way you want (e.g. copy&paste code directly from SGE).<br>
+<br>
+Below are some hints about how to include SGE in a source distribution of your project.<br>
+<br><br>
+<b>The do-it-yourself method</b><br>
+The easiest way to use SGE in your source distribution is to tell the user to download and
+install SGE him/her-self. This is the most common way.<br>
+<br><br>
+<b>The include-it method</b><br>
+It might be a bit frustrating for the user to download every library him/her-self, especially
+smaller libraries like SGE. One way to solve this is to include the SGE source code directly.
+Place the sge*.cpp, sge*.h, Makefile* and License files in a new directory (i.e. sge/) at the
+root of your project. Please also include a short notice like:<br>
+<br>
+<i>This project uses the SGE library from http://www.etek.chalmers.se/~e8cal1/sge/index.html.
+SGE is distributed under the GNU Lesser General Public License (LGPL - see the License
+file for more information).</i><br>
+<br>
+Now either tell the user to go to this directory and compile and install SGE him/her-self or do
+it from your build system. Make sure that you modify the "Makefile.conf" to suite your
+project, this way you can use it directly in your build system (if you use a pure make system
+like the examples above). Then you can use a Makefile like this for your project:<br>
+<BLOCKQUOTE><PRE>
+# Makefile for foobar
+
+include sge/Makefile.conf
+
+CFLAGS =-Wall -O2 $(SGE_CFLAGS) -Isge/
+LIBS =-Lsge/ -lSGE $(SGE_LIBS)
+
+... (the rest of the Makefile goes here).
+</PRE></BLOCKQUOTE>
+<br>
+Also add this rule in the Makefile:<br>
+
+<BLOCKQUOTE><PRE>
+...
+sgelib:
+	@(cd sge; $(MAKE))
+...
+</PRE></BLOCKQUOTE>
+
+and then add that rule like a dependency somewhere, something like:<br>
+
+<BLOCKQUOTE><PRE>
+...
+all:	sgelib $(TARGETS)
+	...
+</PRE></BLOCKQUOTE>
+
+or if you used the more complex makefile example above:<br>
+
+<BLOCKQUOTE><PRE>
+...
+all:	sgelib $(OBJECTS)
+	...
+</PRE></BLOCKQUOTE>
+
+well, you get the idea. It might also be a good idea to modify the clean rule:<br>
+
+<BLOCKQUOTE><PRE>
+...
+clean:
+	...
+	@(cd sge; $(MAKE) clean)
+...
+</PRE></BLOCKQUOTE>
+
+Done! If you don't want "Makefile.conf" to output any SGE messages while building then
+you should uncomment the "QUIET" option.<br>
+<br>
+This will link your code statically to SGE so your project must be GPL/LGPL licensed for
+this to work. If you want to link dynamically to SGE it might be better to ask the user to
+compile and install SGE before building your project, but you might also automatically build
+a shared version of SGE with "@(cd sge; $(MAKE) shared)" from your Makefile, however you should no longer use
+the SGE_CFLAGS and SGE_LIBS in your makefile (just do something like the first simple makefile example above).
+Also, in this case, don't forget to install SGE ("@(cd sge; $(MAKE) install)" if you want the default SGE 
+installation) with your project or else your executables won't run. Some Unix systems (like Linux) also 
+require that you run "ldconfig" when you have installed new libraries.<br>
+<br>
+<br>
+<B><I>Anders Lindström</I></B>
+</P>
+
+
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030802
+</SMALL></I></P>
+
+</body>
+</html>

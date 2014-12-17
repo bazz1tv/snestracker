@@ -1,0 +1,7 @@
+<map id="cBasicSprite::cBasicSprite" name="cBasicSprite::cBasicSprite">
+<area shape="rect" href="$classc_basic_sprite.html#ad2c10ff9164b58697bd987261f87c82e" title="cBasicSprite::SetImage" alt="" coords="260,31,447,57"/>
+<area shape="rect" href="$classc_basic_sprite.html#abab9b223fef9a6875313718719866ccc" title="cBasicSprite::SetPos" alt="" coords="271,81,436,108"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="315,132,392,159"/>
+<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="496,5,723,32"/>
+<area shape="rect" href="$classc_basic_sprite.html#ab14231b4170c136c10ccc75b910cb93e" title="cBasicSprite::SetAlpha" alt="" coords="519,56,700,83"/>
+</map>

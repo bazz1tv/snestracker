@@ -1,0 +1,237 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - CategoryRender</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@CategoryRender.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@CategoryRender.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id=
+"line-4"></span><span class="anchor" id=
+"line-5"></span><span class="anchor" id="line-6"></span>
+<p class="line867"></p>
+<h1 id="A2D_Accelerated_Rendering">2D Accelerated Rendering</h1>
+<span class="anchor" id="line-7"></span><span class="anchor" id=
+"line-8"></span>
+<p class="line867"><strong>Include File(s):</strong> <a class=
+"http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_render.h">SDL_render.h</a>
+<span class="anchor" id="line-9"></span><span class="anchor" id=
+"line-10"></span></p>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@CategoryRender.html#A2D_Accelerated_Rendering">2D Accelerated
+Rendering</a>
+<ol>
+<li><a href="index.html@CategoryRender.html#Introduction">Introduction</a></li>
+<li><a href="index.html@CategoryRender.html#Enumerations">Enumerations</a></li>
+<li><a href="index.html@CategoryRender.html#Structures">Structures</a></li>
+<li><a href="index.html@CategoryRender.html#Functions">Functions</a></li>
+</ol>
+</li>
+</ol>
+</div>
+<span class="anchor" id="line-11"></span><span class="anchor" id=
+"line-12"></span>
+<p class="line867"></p>
+<h2 id="Introduction">Introduction</h2>
+<span class="anchor" id="line-13"></span>
+<p class="line874">This category contains functions for 2D
+accelerated rendering. <span class="anchor" id=
+"line-14"></span><span class="anchor" id="line-15"></span></p>
+<p class="line874">This API supports the following features:
+<span class="anchor" id="line-16"></span><span class="anchor" id=
+"line-17"></span></p>
+<ul>
+<li>single pixel points <span class="anchor" id=
+"line-18"></span></li>
+<li>single pixel lines <span class="anchor" id=
+"line-19"></span></li>
+<li>filled rectangles <span class="anchor" id=
+"line-20"></span></li>
+<li>texture images <span class="anchor" id=
+"line-21"></span><span class="anchor" id="line-22"></span></li>
+</ul>
+<p class="line874">All of these may be drawn in opaque, blended, or
+additive modes. <span class="anchor" id=
+"line-23"></span><span class="anchor" id="line-24"></span></p>
+<p class="line874">The texture images can have an additional color
+tint or alpha modulation applied to them, and may also be stretched
+with linear interpolation, rotated or flipped/mirrored.
+<span class="anchor" id="line-25"></span><span class="anchor" id=
+"line-26"></span></p>
+<p class="line874">For advanced functionality like particle effects
+or actual 3D you should use SDL's OpenGL/Direct3D support or one of
+the many available 3D engines. <span class="anchor" id=
+"line-27"></span><span class="anchor" id="line-28"></span></p>
+<p class="line862">This API is not designed to be used from
+multiple threads, see <a class="http" href=
+"http://bugzilla.libsdl.org/show_bug.cgi?id=1995">this bug</a> for
+details. <span class="anchor" id="line-29"></span><span class=
+"anchor" id="line-30"></span></p>
+<p class="line867"></p>
+<h2 id="Enumerations">Enumerations</h2>
+<span class="anchor" id="line-31"></span>
+<p class="line867"></p>
+<div class="searchresults">
+<ol start="1">
+<li><a href="index.html@SDL_RendererFlags.html">
+SDL_RendererFlags</a></li>
+<li><a href="index.html@SDL_RendererFlip.html">
+SDL_RendererFlip</a></li>
+<li><a href="index.html@SDL_TextureAccess.html">
+SDL_TextureAccess</a></li>
+<li><a href="index.html@SDL_TextureModulate.html">
+SDL_TextureModulate</a></li>
+</ol>
+</div>
+<span class="anchor" id="line-32"></span><span class="anchor" id=
+"line-33"></span>
+<p class="line867"></p>
+<h2 id="Structures">Structures</h2>
+<span class="anchor" id="line-34"></span>
+<p class="line867"></p>
+<div class="searchresults">
+<ol start="1">
+<li><a href="index.html@SDL_RendererInfo.html">
+SDL_RendererInfo</a></li>
+</ol>
+</div>
+<span class="anchor" id="line-35"></span><span class="anchor" id=
+"line-36"></span>
+<p class="line867"></p>
+<h2 id="Functions">Functions</h2>
+<span class="anchor" id="line-37"></span>
+<p class="line867"></p>
+<div class="searchresults">
+<ol start="1">
+<li><a href="index.html@SDL_CreateRenderer.html">
+SDL_CreateRenderer</a></li>
+<li><a href="index.html@SDL_CreateSoftwareRenderer.html">
+SDL_CreateSoftwareRenderer</a></li>
+<li><a href="index.html@SDL_CreateTexture.html">
+SDL_CreateTexture</a></li>
+<li><a href="index.html@SDL_CreateTextureFromSurface.html">
+SDL_CreateTextureFromSurface</a></li>
+<li><a href="index.html@SDL_CreateWindowAndRenderer.html">
+SDL_CreateWindowAndRenderer</a></li>
+<li><a href="index.html@SDL_DestroyRenderer.html">
+SDL_DestroyRenderer</a></li>
+<li><a href="index.html@SDL_DestroyTexture.html">
+SDL_DestroyTexture</a></li>
+<li><a href="index.html@SDL_GetNumRenderDrivers.html">
+SDL_GetNumRenderDrivers</a></li>
+<li><a href="index.html@SDL_GetRenderDrawBlendMode.html">
+SDL_GetRenderDrawBlendMode</a></li>
+<li><a href="index.html@SDL_GetRenderDrawColor.html">
+SDL_GetRenderDrawColor</a></li>
+<li><a href="index.html@SDL_GetRenderDriverInfo.html">
+SDL_GetRenderDriverInfo</a></li>
+<li><a href="index.html@SDL_GetRenderTarget.html">
+SDL_GetRenderTarget</a></li>
+<li><a href="index.html@SDL_GetRenderer.html">
+SDL_GetRenderer</a></li>
+<li><a href="index.html@SDL_GetRendererInfo.html">
+SDL_GetRendererInfo</a></li>
+<li><a href="index.html@SDL_GetRendererOutputSize.html">
+SDL_GetRendererOutputSize</a></li>
+<li><a href="index.html@SDL_GetTextureAlphaMod.html">
+SDL_GetTextureAlphaMod</a></li>
+<li><a href="index.html@SDL_GetTextureBlendMode.html">
+SDL_GetTextureBlendMode</a></li>
+<li><a href="index.html@SDL_GetTextureColorMod.html">
+SDL_GetTextureColorMod</a></li>
+<li><a href="index.html@SDL_LockTexture.html">
+SDL_LockTexture</a></li>
+<li><a href="index.html@SDL_QueryTexture.html">
+SDL_QueryTexture</a></li>
+<li><a href="index.html@SDL_RenderClear.html">
+SDL_RenderClear</a></li>
+<li><a href="index.html@SDL_RenderCopy.html">
+SDL_RenderCopy</a></li>
+<li><a href="index.html@SDL_RenderCopyEx.html">
+SDL_RenderCopyEx</a></li>
+<li><a href="index.html@SDL_RenderDrawLine.html">
+SDL_RenderDrawLine</a></li>
+<li><a href="index.html@SDL_RenderDrawLines.html">
+SDL_RenderDrawLines</a></li>
+<li><a href="index.html@SDL_RenderDrawPoint.html">
+SDL_RenderDrawPoint</a></li>
+<li><a href="index.html@SDL_RenderDrawPoints.html">
+SDL_RenderDrawPoints</a></li>
+<li><a href="index.html@SDL_RenderDrawRect.html">
+SDL_RenderDrawRect</a></li>
+<li><a href="index.html@SDL_RenderDrawRects.html">
+SDL_RenderDrawRects</a></li>
+<li><a href="index.html@SDL_RenderFillRect.html">
+SDL_RenderFillRect</a></li>
+<li><a href="index.html@SDL_RenderFillRects.html">
+SDL_RenderFillRects</a></li>
+<li><a href="index.html@SDL_RenderGetClipRect.html">
+SDL_RenderGetClipRect</a></li>
+<li><a href="index.html@SDL_RenderGetLogicalSize.html">
+SDL_RenderGetLogicalSize</a></li>
+<li><a href="index.html@SDL_RenderGetScale.html">
+SDL_RenderGetScale</a></li>
+<li><a href="index.html@SDL_RenderGetViewport.html">
+SDL_RenderGetViewport</a></li>
+<li><a href="index.html@SDL_RenderPresent.html">
+SDL_RenderPresent</a></li>
+<li><a href="index.html@SDL_RenderReadPixels.html">
+SDL_RenderReadPixels</a></li>
+<li><a href="index.html@SDL_RenderSetClipRect.html">
+SDL_RenderSetClipRect</a></li>
+<li><a href="index.html@SDL_RenderSetLogicalSize.html">
+SDL_RenderSetLogicalSize</a></li>
+<li><a href="index.html@SDL_RenderSetScale.html">
+SDL_RenderSetScale</a></li>
+<li><a href="index.html@SDL_RenderSetViewport.html">
+SDL_RenderSetViewport</a></li>
+<li><a href="index.html@SDL_RenderTargetSupported.html">
+SDL_RenderTargetSupported</a></li>
+<li><a href="index.html@SDL_SetRenderDrawBlendMode.html">
+SDL_SetRenderDrawBlendMode</a></li>
+<li><a href="index.html@SDL_SetRenderDrawColor.html">
+SDL_SetRenderDrawColor</a></li>
+<li><a href="index.html@SDL_SetRenderTarget.html">
+SDL_SetRenderTarget</a></li>
+<li><a href="index.html@SDL_SetTextureAlphaMod.html">
+SDL_SetTextureAlphaMod</a></li>
+<li><a href="index.html@SDL_SetTextureBlendMode.html">
+SDL_SetTextureBlendMode</a></li>
+<li><a href="index.html@SDL_SetTextureColorMod.html">
+SDL_SetTextureColorMod</a></li>
+<li><a href="index.html@SDL_UnlockTexture.html">
+SDL_UnlockTexture</a></li>
+<li><a href="index.html@SDL_UpdateTexture.html">
+SDL_UpdateTexture</a></li>
+<li><a href="index.html@SDL_UpdateYUVTexture.html">
+SDL_UpdateYUVTexture</a></li>
+</ol>
+</div>
+<span class="anchor" id="line-38"></span><span class="anchor" id=
+"line-39"></span><span class="anchor" id="line-40"></span>
+<p class="line867"></p>
+<hr/>
+<p class="line874"><span class="anchor" id=
+"line-41"></span><a href="index.html@CategoryCategory.html">CategoryCategory</a>
+<span class="anchor" id="line-42"></span><span class="anchor" id=
+"bottom"></span></p>
+</div>
+</body></html>

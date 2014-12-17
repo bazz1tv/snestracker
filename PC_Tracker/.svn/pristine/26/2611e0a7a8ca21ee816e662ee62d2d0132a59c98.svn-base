@@ -1,0 +1,139 @@
+I'm going to Add a new Lib folder the the Meatball source directory. With SDL2 libraries installed there.. Let's Get Started by Created
+
+Creating  a 2.0 directory in install_libraries
+
+here's we will use Mercurial to download all the SDL2 libraries into that Folder. 
+
+Get Mercurial if you don't have it already - http://mercurial.selenic.com/downloads/
+
+Make sure you add the installation to the PATH variable. It will already be checked at the end of the installation process alongside
+with asking if you want to view the README.txt .. You want that because that lets you run the programs without being in the directory of Mercurial
+
+If you would like to learn more about PATH environment variable: 
+The %PATH% environment variable is a group of directories where executable files that are repeatedly used are to be found.
+
+Open up a command prompt -> Start->Run Type CMD (you better know how to do this already)
+
+type "hg" and see if the command will run. Got it? Good.. if not check your PATH variable: echo %PATH%
+
+if you don't see the installation path of Mercurial in there.. that's probably your issue.. Otherwise you have something strange. Good luck.
+
+Ok now that we have hg, we can download all of the Repo's we need for our project.
+
+
+Since our project uses SDL, SDL_Mixer, SDL_Image, SDL_net, SDL_ttf.. We will be getting all of them. 
+
+make a folder somewhere to download these libraries.. I'm  calling mine 2.0.. open a command line into it.
+
+let's run these commands:
+hg clone http://hg.libsdl.org/SDL & hg clone http://hg.libsdl.org/SDL_image & hg clone http://hg.libsdl.org/SDL_mixer & hg clone http://hg.libsdl.org/SDL_net & hg clone http://hg.libsdl.org/SDL_ttf
+
+that command will get all of the libraries (it runs all 5 commands at once), but you can run the commands seperate from each other if you'd like. 
+
+Ok now let's compile these libraries :) 
+You need to compile SDL first, since I use Visual C++ 2008, that's what we'll walk it thru...
+
+
+in SDL folder, go to VisualC and open the appropriate version of the Visual Studio file
+they have 2008, 2010, 2012. If you have express like me, it might complain some things couldn't load. Dont worry about it.
+
+Go to Project Properties -> Configuration Properties -> c/C++ -> Code Generation
+Here for all things we compile we will set for DEBUG -> Runtime Library MD/D
+						Release -> Runtime Library MD
+						
+Make a new configuration Release_MT and/or Debug_MT so you can also create the static versions of these libraries.
+						
+Click Build-> Batch Build and build debug and Production version libraries for x86/x64 depending for you.
+I build only SDL and SDLMain
+
+now back to Folder Explorer, you're still in VisualC directory, click into SDL directory, 
+there are 2 resulting Debug and Release, and/or Debug_MT Release_MT
+
+In these are the .lib and .dll files you will be copying..
+
+Open up another explorer window into the MeatBall project 
+
+go into Lib->sdl2
+
+inside sdl2 I have created directory structure to hold all the 4 different kinds of library files for both x86 and x64 architectures.
+
+MD and MT
+
+MD is for DLL libraries and MT is for Static Libraries
+lib is for Release versions and libd is for debug versions. The debug versions contain debug symbols which make debugging way easier, so that when
+something bad happens in your program, it will show where in Source code the issue is. Without the debugging symbols, you would have to analyze
+assembly code (a bitch!)
+
+
+so depending on your configuration, you will put the *.lib and *.dll files into the md or mt folder, and the lib or libd folder
+
+NOTE: some libraries have a special folder called "external" in the VisualC directories. These are other DLL's that the library needs to run.
+I have already made the Lib/Library_name/external folder with these DLL files there. So you won't have to mess with that, but now you know the standards.
+That's where they go, and any future libraries should be setup this way.
+
+I do the same thing for SDLMain, but i put those files into sdl directory not a whole new directory.
+so basically you will have SDL2.lib SDL2.DLL and SDL2Main.lib files (at least for installation of SDL2) 
+
+
+now it's time to make / update the include directory in meatball/lib/sdl
+
+simply copy the include directory from SDL (in my case 2.0/sdl/include) into meatball/lib/sdl/
+
+
+
+Now we basically Repeat the process for all other libraries. Only you need to Do a couple things first
+
+First we make sure we add an Environment Variable 
+go to Start->Right click Mycomputer->Properties->Advanced
+
+Click Environment Variables
+add a variable called MEATBALL_LIBDIR and have it be to the Absolute path of your Meatball Lib directory
+in my case it is C:\Documents and Settings\Administrator\My Documents\meatball\Lib
+
+Now that you have that added.. when you go to compile the other libraries.. you'll need modify the project properties
+and add linker dependency directory like this: 
+
+under project settings -> Linker -> General -> Additional Library Directories
+
+Depending on the build you will have 4 options (replace x86 with x86 if you are on 64 bit machine)
+
+"$(MEATBALL_LIBDIR)\sdl2\mt\libd\x86"  - that one is for static debug mode
+"$(MEATBALL_LIBDIR)\sdl2\mt\lib\x86"  - that one is for static release mode
+"$(MEATBALL_LIBDIR)\sdl2\md\libd\x86"  - that one is for DLL debug mode
+"$(MEATBALL_LIBDIR)\sdl2\md\lib\x86"  - that one is for DLL release mode
+
+ -------------------------------------------------------------------------------------------------------------------------
+/ Why do we have static and Dynamic versions of the libraries?? Simply put. I started writing Meatball with the dynamic   \ 
+| versions of the libraries, not really knowing much about libraries and how they functioned, I left it that way.         |
+| However, when it was time to test Meatball on foreign computers, I realized that the dynamic build of Meatball depended | 
+| on MSVC DLL's that simply don't come shipped on the foreign systems. There were 2 solutions.                            |
+|  1 ) be lazy and ship my game with the MSVC Runtime DLL installation package (it's called a Redistributable)            |
+|  2 ) Ship the game built statically, which means those library's are built into the game executable.                    |
+|                                                                                                                         |
+\  I chose 2                                                                                                              /
+ -------------------------------------------------------------------------------------------------------------------------
+ 
+we also have to add an include directory for both configurations.
+$(MEATBALL_LIBDIR)\sdl2\include
+
+do that for every other library and compile them
+
+here's a handy line to paste into Library Dependencies:
+"$(MEATBALL_LIBDIR)\sdl2_ttf\md\libd\x86";"$(MEATBALL_LIBDIR)\sdl2_mixer\md\libd\x86";"$(MEATBALL_LIBDIR)\sdl2_net\md\libd\x86";"$(MEATBALL_LIBDIR)\sdl2_image\md\libd\x86";"$(MEATBALL_LIBDIR)\sdl2\md\libd\x86";"$(BOOST_DIR)\lib";..\..\Bin\Dll\Debug;"$(MEATBALL_LIBDIR)\freetype\libd\x86"
+
+"$(MEATBALL_LIBDIR)\sdl2_ttf\mt\lib\x86";"$(MEATBALL_LIBDIR)\sdl2_mixer\mt\lib\x86";"$(MEATBALL_LIBDIR)\sdl2_net\mt\lib\x86";"$(MEATBALL_LIBDIR)\sdl2_image\mt\lib\x86";"$(MEATBALL_LIBDIR)\sdl2\mt\lib\x86";"$(BOOST_DIR)\lib";..\..\Bin\Dll\Debug;"$(MEATBALL_LIBDIR)\freetype\lib\x86"
+
+
+
+To-Do
+-----
+write a script that copies DLL files from the Lib directory into the final directory for execution
+
+Explain the installation of Boost Library
+
+
+
+
+
+
+

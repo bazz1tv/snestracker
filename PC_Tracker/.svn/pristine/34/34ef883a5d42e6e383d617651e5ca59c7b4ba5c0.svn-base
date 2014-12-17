@@ -1,0 +1,695 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - SGRemarks</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@SGRemarks.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@SGRemarks.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id=
+"line-4"></span><span class="anchor" id="line-5"></span>
+<p class="line867"></p>
+<h1 id="Style_Guide:_Remarks">Style Guide: Remarks</h1>
+<span class="anchor" id="line-6"></span><span class="anchor" id=
+"line-7"></span>
+<p class="line862">All <a href="index.html@SGWikiBasics.html#api">API pages</a> in
+this wiki contain a section for remarks. This guide provides
+instructions for adding your own content to the Remarks section of
+these pages. <span class="anchor" id="line-8"></span><span class=
+"anchor" id="line-9"></span></p>
+<p class="line867"><strong>The Remarks section provides additional
+information related to other sections on the page as well as a
+location for users to add comments related to real-world
+application of the API.</strong> <span class="anchor" id=
+"line-10"></span><span class="anchor" id="line-11"></span></p>
+<p class="line867"><span class="anchor" id="ToC"></span>
+<span class="anchor" id="line-12"></span></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@SGRemarks.html#Style_Guide:_Remarks">Style Guide: Remarks</a>
+<ol>
+<li><a href="index.html@SGRemarks.html#General_Guidelines">General Guidelines</a></li>
+<li><a href="index.html@SGRemarks.html#Adding_Your_Remarks">Adding Your Remarks</a></li>
+<li><a href="index.html@SGRemarks.html#Formatting_Your_Remarks">Formatting Your Remarks</a>
+<ol>
+<li><a href="index.html@SGRemarks.html#Location">Location</a></li>
+<li><a href="index.html@SGRemarks.html#Referencing_Function_Parameters">Referencing Function
+Parameters</a></li>
+<li><a href="index.html@SGRemarks.html#Referencing_Structure_Data_Fields">Referencing
+Structure Data Fields</a></li>
+<li><a href="index.html@SGRemarks.html#Referencing_Enumeration_Values">Referencing
+Enumeration Values</a></li>
+<li><a href="index.html@SGRemarks.html#Referencing_A_Callback_Function">Referencing A
+Callback Function</a></li>
+<li><a href="index.html@SGRemarks.html#Using_an_Include">Using an Include</a></li>
+<li><a href="index.html@SGRemarks.html#Referencing_Other_API_Components">Referencing Other
+API Components</a></li>
+</ol>
+</li>
+<li><a href="index.html@SGRemarks.html#SGWikiBasics.Resources">Resources</a></li>
+<li><a href="index.html@SGRemarks.html#SGWikiBasics.Disclaimer">Disclaimer</a></li>
+</ol>
+</li>
+</ol>
+</div>
+<span class="anchor" id="line-13"></span><span class="anchor" id=
+"line-14"></span>
+<p class="line867"></p>
+<h2 id="General_Guidelines">General Guidelines</h2>
+<span class="anchor" id="line-15"></span><span class="anchor" id=
+"line-16"></span>
+<p class="line867"><strong>Please post appropriate remarks that may
+benefit other users.</strong> <span class="anchor" id=
+"line-17"></span></p>
+<ul>
+<li>Do not post anything that you do not have permission to post
+publicly. <span class="anchor" id="line-18"></span></li>
+<li>Remarks should have adequate references to make them clear and
+useful. <span class="anchor" id="line-19"></span></li>
+<li>Please remember to keep it accurate, simple, and easy to
+understand. <span class="anchor" id="line-20"></span></li>
+<li>
+<p class="line891"><em><span style="color:Important!;"><span class=
+"anchor" id="line-1-1"></span>red</span></em> The Remarks section
+is not a discussion board. This is not an appropriate place to post
+questions, unrelated comments, or general commentary. Only
+constructive information is to be posted in the Remarks section.
+<span class="anchor" id="line-21"></span></p>
+<ul>
+<li style="list-style-type:none">
+<p class="line862">Please use the <a class="http" href=
+"http://forums.libsdl.org/">forums</a>, <a class="http" href=
+"http://www.libsdl.org/mailing-list.php">mailing lists</a>,
+<em>Feedback</em> form (upper right corner), or email
+(<tt>&lt;ANTI&nbsp;SPAM&nbsp;wiki&nbsp;AT&nbsp;libsdl&nbsp;DOT&nbsp;org&gt;</tt>)
+if you have questions or need to discuss some aspect of the API.
+<span class="anchor" id="line-22"></span><span class="anchor" id=
+"line-23"></span></p>
+</li>
+</ul>
+</li>
+</ul>
+<p class="line867"><small><a href="index.html@SGRemarks.html#ToC">Return to Table
+of Contents</a></small> <span class="anchor" id=
+"line-24"></span><span class="anchor" id="line-25"></span></p>
+<p class="line867"></p>
+<h2 id="Adding_Your_Remarks">Adding Your Remarks</h2>
+<span class="anchor" id="line-26"></span>
+<ol type="1">
+<li>
+<p class="line862">Begin by going to the page you wish to edit and
+selecting <span style="color:Edit (Text);"><span class="anchor" id=
+"line-1-2"></span>blue</span> or <span style=
+"color:Edit (GUI);"><span class="anchor" id=
+"line-1-3"></span>blue</span> in the left column to begin editing.
+<span class="anchor" id="line-27"></span></p>
+<ul>
+<li style="list-style-type:none">
+<p class="line891"><img alt="{i}" height="16" src="icon-info.png" title="{i}" width=
+"16"> <small>Markup info provided here is specifically for use in
+the Text editor but should work in both.</small> <span class=
+"anchor" id="line-28"></span></p>
+</li>
+</ul>
+</li>
+<li>
+<p class="line862">Scroll down in the edit window to the section
+that begins with <tt>==&nbsp;Remarks&nbsp;==</tt>. Add your content
+below this heading following the conventions in this style guide.
+<span class="anchor" id="line-29"></span></p>
+</li>
+<li>
+<p class="line862">Find information relevant to your content in the
+style guide sections <a href="index.html@SGRemarks.html#formatting">below</a> and
+apply the appropriate formatting as you create your content.
+<span class="anchor" id="line-30"></span></p>
+</li>
+<li>
+<p class="line862">Preview your work as you go by clicking
+<span style="color:Preview;"><span class="anchor" id=
+"line-1-4"></span>blue</span> in the left column. Preview often and
+any time you are unsure of formatting. <span class="anchor" id=
+"line-31"></span></p>
+<ul>
+<li style="list-style-type:none">
+<p class="line891"><small>(Keep in mind that a few things (like
+<a href="index.html@SGWikiBasics.html#color2">Color2 text</a>) don't preview
+exactly as they parse.)</small> <span class="anchor" id=
+"line-32"></span></p>
+</li>
+</ul>
+</li>
+<li>
+<p class="line862">Save your work by clicking <span style=
+"color:Save Changes;"><span class="anchor" id=
+"line-1-5"></span>blue</span> in the left column after you are
+satisfied with your content and have filled in the Comment field
+under the editing box. <span class="anchor" id=
+"line-33"></span></p>
+</li>
+</ol>
+<p class="line862">For additional assistance with editing, saving,
+or wiki-appropriate markup see the <a href="index.html@SGWikiBasics.html">Wiki
+Basics</a> Style Guide. <span class="anchor" id=
+"line-34"></span><span class="anchor" id=
+"line-35"></span><span class="anchor" id="line-36"></span></p>
+<p class="line867"><small><a href="index.html@SGRemarks.html#ToC">Return to Table
+of Contents</a></small> <span class="anchor" id=
+"line-37"></span><br/>
+<span class="anchor" id="line-38"></span><span class="anchor" id=
+"formatting"></span> <span class="anchor" id="line-39"></span></p>
+<h2 id="Formatting_Your_Remarks">Formatting Your Remarks</h2>
+<span class="anchor" id="line-40"></span><span class="anchor" id=
+"line-41"></span>
+<p class="line867"></p>
+<h3 id="Location">Location</h3>
+<span class="anchor" id="line-42"></span>
+<div>
+<table>
+<tbody>
+<tr>
+<td colspan="1" rowspan="2" style="width: 30%; text-align: left">
+<p class="line891"><em>If</em> your remark is the <span class=
+"u">first on the page</span></p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Replace the following text and
+markup with your remarks:<br/>
+<tt>''You&nbsp;can&nbsp;add&nbsp;useful&nbsp;comments&nbsp;here''</tt></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-43"></span>
+<p class="line891"><em>Example</em>: <a href="index.html@SDL_StopTextInput.html">SDL_StopTextInput</a>()<br/>
+<small>(Remarks were empty at the time this was
+selected.</small>)</p>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="3" style="text-align: left"><span class=
+"anchor" id="line-44"></span>
+<p class="line891"><em>If</em> there are <span class="u">existing
+remarks</span> on the page</p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Add your remarks to the end of
+the Remarks section, or to a related grouping if there are existing
+remarks covering the same topic.</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-45"></span>
+<p class="line891"><span style="color:''Important!'';"><span class=
+"anchor" id="line-1-6"></span>red</span> Do not change or remove
+any of the existing content.</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-46"></span>
+<p class="line891"><em>Example</em>: <a href="index.html@SDL_MixAudio.html">SDL_MixAudio</a>()</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-47"></span><span class="anchor" id=
+"line-48"></span>
+<p class="line867"><small><a href="index.html@SGRemarks.html#ToC">Return to Table
+of Contents</a></small> <span class="anchor" id=
+"line-49"></span><span class="anchor" id="line-50"></span></p>
+<p class="line867"><span class="anchor" id="params"></span>
+<span class="anchor" id="line-51"></span></p>
+<h3 id="Referencing_Function_Parameters">Referencing Function
+Parameters</h3>
+<span class="anchor" id="line-52"></span>
+<p class="line874">When your remark includes a reference to a
+function parameter: <span class="anchor" id="line-53"></span></p>
+<div>
+<table>
+<tbody>
+<tr>
+<td colspan="1" rowspan="3" style="width: 30%; text-align: left">
+<p class="line891"><em>If</em> you are referencing a parameter
+<span class="u">on the same page</span></p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Use <strong>bold</strong>
+wherever the name is used in the remark.</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-54"></span>
+<p class="line891"><em>Markup</em>: Use 3 apostrophes on either
+side of the text for bold.<br/>
+<tt>'''parameter'''</tt> = <strong>parameter</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-55"></span>
+<p class="line891"><em>Example</em>: <a href="index.html@SDL_ConvertAudio.html">SDL_ConvertAudio</a>()</p>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="3" style="text-align: left"><span class=
+"anchor" id="line-56"></span>
+<p class="line891"><em>If</em> you are referencing a parameter
+<span class="u">from another page</span></p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Use <tt class=
+"backtick">monospace</tt> wherever the name is used in the
+remark.</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-57"></span>
+<p class="line891"><em>Markup</em>: Use a single backtick on either
+side of the text for monospace.<br/>
+<tt>`member`</tt> = <tt class="backtick">member</tt></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-58"></span>
+<p class="line891"><em>Example</em>: <a href="index.html@SDL_OpenAudio.html">SDL_OpenAudio</a>()</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-59"></span><span class="anchor" id=
+"line-60"></span>
+<p class="line867"><small><a href="index.html@SGRemarks.html#ToC">Return to Table
+of Contents</a></small> <span class="anchor" id=
+"line-61"></span><span class="anchor" id="line-62"></span></p>
+<p class="line867"></p>
+<h3 id="Referencing_Structure_Data_Fields">Referencing Structure
+Data Fields</h3>
+<span class="anchor" id="line-63"></span>
+<p class="line867"><em>If</em> your remark includes a reference to
+a structure data field: <span class="anchor" id=
+"line-64"></span><span class="anchor" id="line-65"></span></p>
+<p class="line867"><em>Action</em>: Use the same formatting as for
+<a href="index.html@SGRemarks.html#params">function parameters</a> above.
+<span class="anchor" id="line-66"></span><span class="anchor" id=
+"line-67"></span></p>
+<p class="line867"><em>Example</em>: <a href="index.html@SDL_AudioSpec.html">SDL_AudioSpec</a> <span class="anchor" id=
+"line-68"></span><span class="anchor" id="line-69"></span></p>
+<p class="line867"><small><a href="index.html@SGRemarks.html#ToC">Return to Table
+of Contents</a></small> <span class="anchor" id=
+"line-70"></span><span class="anchor" id="line-71"></span></p>
+<p class="line867"></p>
+<h3 id="Referencing_Enumeration_Values">Referencing Enumeration
+Values</h3>
+<span class="anchor" id="line-72"></span>
+<p class="line867"><em>If</em> your remark includes a reference to
+an enumeration value: <span class="anchor" id=
+"line-73"></span><span class="anchor" id="line-74"></span></p>
+<p class="line867"><em>Action</em>: No special formatting is
+required since these are generally already in ALL CAPS.
+<span class="anchor" id="line-75"></span><span class="anchor" id=
+"line-76"></span></p>
+<p class="line867"><em>Example</em>: <a href="index.html@SDL_GLattr.html">SDL_GLattr</a> <span class="anchor" id=
+"line-77"></span><span class="anchor" id="line-78"></span></p>
+<p class="line867"><small><a href="index.html@SGRemarks.html#ToC">Return to Table
+of Contents</a></small> <span class="anchor" id=
+"line-79"></span><span class="anchor" id="line-80"></span></p>
+<p class="line867"></p>
+<h3 id="Referencing_A_Callback_Function">Referencing A Callback
+Function</h3>
+<span class="anchor" id="line-81"></span>
+<p class="line867"><em>If</em> your remark is describing a callback
+function: <span class="anchor" id="line-82"></span><span class=
+"anchor" id="line-83"></span></p>
+<p class="line867"><em>Action</em>: See the special section on
+callback functions in the <a href="index.html@SGFunctions.html#Callback_Functions">Function Pages</a> Style Guide.
+<span class="anchor" id="line-84"></span><span class="anchor" id=
+"line-85"></span></p>
+<p class="line867"><em>Note</em>: Callback functions do not get
+their own pages. <span class="anchor" id=
+"line-86"></span><span class="anchor" id="line-87"></span></p>
+<p class="line867"><em>Example</em>: <a href="index.html@SDL_AddEventWatch.html">SDL_AddEventWatch</a>(), <a href="index.html@SDL_AddTimer.html">SDL_AddTimer</a>() <span class="anchor" id=
+"line-88"></span><span class="anchor" id="line-89"></span></p>
+<p class="line867"><small><a href="index.html@SGRemarks.html#ToC">Return to Table
+of Contents</a></small> <span class="anchor" id=
+"line-90"></span><span class="anchor" id="line-91"></span></p>
+<p class="line867"></p>
+<h3 id="Using_an_Include">Using an Include</h3>
+<span class="anchor" id="line-92"></span>
+<p class="line867"><em>If</em> your remark uses an <a href="index.html@SGWikiBasics.html#Includes">Include</a> to copy content from another
+page into the Remarks section, see the guidelines below.
+<span class="anchor" id="line-93"></span><span class="anchor" id=
+"line-94"></span></p>
+<div>
+<table>
+<tbody>
+<tr>
+<td style="width: 30%; text-align: left">
+<p class="line891"><em>If</em> your Include is copying <span class=
+"u">stand-alone content</span> into the Remarks</p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: A tie-in statement is not
+likely necessary. In that case, simply follow the instructions for
+creating an Include in <a href="index.html@SGWikiBasics.html#Includes">Wiki
+Basics</a></p>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="2" style="width: 30%; text-align: left">
+<span class="anchor" id="line-95"></span>
+<p class="line891"><em>If</em> your Include is used to copy
+<span class="u">values from a related enumeration</span> that was
+mentioned in the Function Parameters section (<em>most common
+use</em>)</p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: See the following table for
+tie-in text options to precede the <a href="index.html@SGWikiBasics.html#Includes">Include</a>.</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-96"></span>
+<p class="line891"><em>Note</em>: In these examples, replace
+<tt class="backtick">&lt;parameter&gt;</tt> with the relevant
+parameter name and replace <tt class=
+"backtick">&lt;enumeration&gt;</tt> with the name of the
+enumeration or other page being referenced.</p>
+</td>
+</tr>
+<tr>
+<td style="width: 30%; text-align: left"><span class="anchor" id=
+"line-97"></span>
+<p class="line891"><em>If</em> your Include is for <span class=
+"u">some other purpose</span></p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Please apply the closest
+appropriate match from the other two options (above) with minimal
+modifications, or contact us if you are unsure what to do.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-98"></span><span class="anchor" id=
+"line-99"></span>
+<p class="line867"><em>Action</em>: If required (see table above),
+select from the following introductory phrases to explain the
+relationship of the included material to the page: <span class=
+"anchor" id="line-100"></span><span class="anchor" id=
+"line-101"></span></p>
+<div>
+<table>
+<tbody>
+<tr>
+<td colspan="1" rowspan="2" style="width: 30%; text-align: left">
+<p class="line891"><em>If</em> the Include contains a list from
+which <span class="u">only one option</span> may be selected</p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Place the following phrase on
+the line above the Include markup<br/>
+<tt class="backtick">'''&lt;parameter&gt;'''may</tt> <tt class=
+"backtick">be</tt> <tt class="backtick">one</tt> <tt class=
+"backtick">of</tt> <tt class="backtick">the</tt> <tt class=
+"backtick">following:</tt></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-102"></span>
+<p class="line891"><em>Example</em>: <a href="index.html@SDL_CreateTexture.html">SDL_CreateTexture</a>(), <a href="index.html@SDL_SetThreadPriority.html">SDL_SetThreadPriority</a>()</p>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="2" style="width: 30%; text-align: left">
+<span class="anchor" id="line-103"></span>
+<p class="line891"><em>If</em> the Include contains a list from
+which <span class="u">more than one option</span> may be
+selected</p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Place the following phrase on
+the line above the Include markup<br/>
+<tt class="backtick">'''&lt;parameter&gt;'''&nbsp;may&nbsp;be</tt>
+<tt class="backtick">any</tt> <tt class="backtick">of</tt>
+<tt class="backtick">the</tt> <tt class="backtick">following</tt>
+<tt class="backtick">OR'd</tt> <tt class=
+"backtick">together:</tt></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-104"></span>
+<p class="line891"><em>Example</em>: <a href="index.html@SDL_CreateRenderer.html">SDL_CreateRenderer</a>()</p>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="2" style="width: 30%; text-align: left">
+<span class="anchor" id="line-105"></span>
+<p class="line891"><em>If</em> the Include contains a list from
+which <span class="u">only one value will be used to fill a
+parameter</span></p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Place the following phrase on
+the line above the Include markup<br/>
+<tt class="backtick">'''parameter'''&nbsp;will</tt> <tt class=
+"backtick">be&nbsp;filled</tt> <tt class="backtick">in</tt>
+<tt class="backtick">with</tt> <tt class="backtick">one</tt>
+<tt class="backtick">of</tt> <tt class="backtick">the</tt>
+<tt class="backtick">following:</tt></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-106"></span>
+<p class="line891"><em>Example</em>: <a href="index.html@SDL_GetTextureBlendMode.html">SDL_GetTextureBlendMode</a>()</p>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="2" style="width: 30%; text-align: left">
+<span class="anchor" id="line-107"></span>
+<p class="line891"><em>If</em> the Include contains a list from
+which <span class="u">more than one option may be selected or the
+value may be 0</span></p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Place the following phrase on
+the line above the Include markup<br/>
+<tt class="backtick">'''parameter'''&nbsp;may&nbsp;be</tt>
+<tt class="backtick">0&nbsp;or&nbsp;a</tt> <tt class=
+"backtick">mask</tt> <tt class="backtick">of</tt> <tt class=
+"backtick">any</tt> <tt class="backtick">of</tt> <tt class=
+"backtick">the</tt> <tt class="backtick">following</tt> <tt class=
+"backtick">SDL_&lt;enumeration&gt;</tt> <tt class=
+"backtick">values</tt> <tt class="backtick">OR'd</tt> <tt class=
+"backtick">together:</tt></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-108"></span>
+<p class="line891"><em>Example</em>: <a href="index.html@SDL_RendererInfo.html">SDL_RendererInfo</a></p>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="2" style="width: 30%; text-align: left">
+<span class="anchor" id="line-109"></span>
+<p class="line891"><em>If</em> the Include contains a list from
+which <span class="u">one or more than one</span> option may be
+selected</p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Place the following phrase on
+the line above the Include markup<br/>
+<tt class=
+"backtick">'''parameter'''&nbsp;may&nbsp;be&nbsp;&lt;option&nbsp;that</tt>
+<tt class="backtick">cannot&nbsp;be&nbsp;OR'd</tt> <tt class=
+"backtick">(ie:&nbsp;SDL_x_NONE)&gt;&nbsp;or</tt> <tt class=
+"backtick">a&nbsp;mask&nbsp;of&nbsp;any</tt> <tt class=
+"backtick">of&nbsp;the&nbsp;other</tt> <tt class=
+"backtick">SDL_&lt;enumeration&gt;</tt> <tt class=
+"backtick">values</tt> <tt class=
+"backtick">OR'd&nbsp;together:</tt></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-110"></span>
+<p class="line891"><em>Example</em>: <a href="index.html@SDL_RendererInfo.html">SDL_RendererInfo</a>, <a href="index.html@SDL_SetRenderDrawBlendMode.html">SDL_SetRenderDrawBlendMode</a>()</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-111"></span><span class="anchor" id=
+"line-112"></span>
+<p class="line867"><small><a href="index.html@SGRemarks.html#ToC">Return to Table
+of Contents</a></small> <span class="anchor" id=
+"line-113"></span><span class="anchor" id="line-114"></span></p>
+<p class="line867"></p>
+<h3 id="Referencing_Other_API_Components">Referencing Other API
+Components</h3>
+<span class="anchor" id="line-115"></span>
+<p class="line867"><em>If</em> your remark includes a reference to
+an SDL function, enumeration, or structure: <span class="anchor"
+id="line-116"></span><span class="anchor" id="line-117"></span></p>
+<p class="line867"><em>Action</em>: Create a hyperlink to its page.
+<span class="anchor" id="line-118"></span></p>
+<ul>
+<li style="list-style-type:none">
+<p class="line891"><small>Although the wiki will automatically
+create links in many cases, it does not recognize the SDL names
+correctly so you must manually hyperlink them.</small><br/>
+<span class="anchor" id="line-119"></span><span class="anchor" id=
+"line-120"></span></p>
+</li>
+</ul>
+<p class="line867"><em>Markup</em>: Use two brackets surrounding
+the page name (<tt>[[&nbsp;]]</tt>) to create a link. <span class=
+"anchor" id="line-121"></span></p>
+<ul>
+<li style="list-style-type:none">
+<p class="line891"><small>Using the full page address is not
+necessary. The page name portion (end of address) is sufficient,
+but must be exact.</small> <span class="anchor" id=
+"line-122"></span><span class="anchor" id="line-123"></span></p>
+</li>
+</ul>
+<div>
+<table>
+<tbody>
+<tr>
+<td colspan="1" rowspan="2" style="width: 30%; text-align: left">
+<p class="line891"><em>If</em> you reference a <span class=
+"u">function</span></p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Include open and closed
+parentheses outside of the hyperlink markup.</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-124"></span>
+<p class="line891"><em>Markup</em>: <tt>[[SDL_Function]]()</tt> =
+<a class="nonexistent" href="index.html@SDL_Function.html">SDL_Function</a>()</p>
+</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="2" style="text-align: left"><span class=
+"anchor" id="line-125"></span>
+<p class="line891"><em>If</em> you reference a <span class=
+"u">structure</span> or <span class="u">enumeration</span></p>
+</td>
+<td>
+<p class="line891"><em>Action</em>: Do not use parentheses.</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-126"></span>
+<p class="line891"><em>Markup</em>:
+<tt>[[SDL_Enumeration/Structure]]</tt> = <a class="nonexistent"
+href="index.html@SDL_Enumeration%252FStructure.html">SDL_Enumeration/Structure</a></p>
+</td>
+</tr>
+<tr>
+<td colspan="2" style="text-align: left"><span class="anchor" id=
+"line-127"></span>
+<p class="line891"><em>Example</em>: <a class="nonexistent" href="index.html@SDL_SetTextureScaleMode.html">SDL_SetTextureScaleMode</a>()</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-128"></span><span class="anchor" id=
+"line-129"></span><span class="anchor" id="line-130"></span>
+<p class="line867"><small><a href="index.html@SGRemarks.html#ToC">Return to Table
+of Contents</a></small> <span class="anchor" id=
+"line-131"></span><span class="anchor" id=
+"line-132"></span><span class="anchor" id=
+"line-133"></span><span class="anchor" id="line-134"></span></p>
+<p class="line867"></p>
+<div dir="ltr" id="SGWikiBasics.content" lang="en"><span class=
+"anchor" id="SGWikiBasics.top"></span> <span class="anchor" id=
+"SGWikiBasics.line-1"></span><span class="anchor" id=
+"SGWikiBasics.line-2"></span>
+<p class="line867"></p>
+<hr/>
+<p class="line874"><span class="anchor" id=
+"SGWikiBasics.line-3"></span></p>
+<h2 id="SGWikiBasics.Resources">Resources</h2>
+<span class="anchor" id="SGWikiBasics.line-4"></span><span class=
+"anchor" id="SGWikiBasics.line-5"></span>
+<p class="line874">Our goal is to create accurate, consistent,
+helpful, user-friendly documentation. We appreciate your efforts to
+make your additions fit into the existing framework and retain the
+same look and feel as much <span class="anchor" id=
+"SGWikiBasics.line-6"></span>as possible. <span class="anchor" id=
+"SGWikiBasics.line-7"></span><span class="anchor" id=
+"SGWikiBasics.line-8"></span></p>
+<p class="line874">If you have questions that aren't addressed
+here: <span class="anchor" id="SGWikiBasics.line-9"></span></p>
+<ol type="a">
+<li>Search for another page that contains something similar to what
+you want to do and copy all the basics as much as applicable.
+<span class="anchor" id="SGWikiBasics.line-10"></span></li>
+<li>
+<p class="line862">Check the other SDL <a href="index.html@Contributing.html#guides">Style Guides</a>. <span class="anchor" id=
+"SGWikiBasics.line-11"></span></p>
+</li>
+<li>
+<p class="line862">Post a question to <a href="index.html@Contributing.html#form">Feedback</a> and include a way to contact you.
+<span class="anchor" id="SGWikiBasics.line-12"></span></p>
+</li>
+<li>
+<p class="line862">Post a question to the <a href="index.html@Contributing.html#list">Mailing List</a>. <span class="anchor" id=
+"SGWikiBasics.line-13"></span></p>
+</li>
+<li>
+<p class="line862">Send a comment or question to
+<tt>&lt;ANTI&nbsp;SPAM&nbsp;wiki&nbsp;AT&nbsp;libsdl&nbsp;DOT&nbsp;org&gt;</tt>
+for clarification. <span class="anchor" id=
+"SGWikiBasics.line-14"></span><span class="anchor" id=
+"SGWikiBasics.line-15"></span></p>
+</li>
+</ol>
+<p class="line874">If you have suggestions for changes or additions
+to this document or any other portion of the wiki please don't
+hesitate to contact us with your thoughts. We are happy to have the
+participation! <span class="anchor" id=
+"SGWikiBasics.line-16"></span><span class="anchor" id=
+"SGWikiBasics.line-17"></span></p>
+<p class="line867"></p>
+<hr class="hr2">
+<p class="line874"><span class="anchor" id=
+"SGWikiBasics.line-18"></span></p>
+<h2 id="SGWikiBasics.Disclaimer">Disclaimer</h2>
+<span class="anchor" id="SGWikiBasics.line-19"></span>
+<p class="line867"><span class="anchor" id=
+"SGWikiBasics.line-20"></span><span class="anchor" id=
+"SGWikiBasics.line-21"></span></p>
+<div class="note"><span class="anchor" id=
+"SGWikiBasics.line-1-1"></span>
+<p class="line862">All content modifications are subject to review
+for consistency and quality. We reserve the right to remove or
+modify any content added to this wiki at any time. You may direct
+questions or concerns to
+<tt>&lt;ANTI&nbsp;SPAM&nbsp;wiki&nbsp;AT&nbsp;libsdl&nbsp;DOT&nbsp;org&gt;</tt>.</p>
+</div>
+<span class="anchor" id="SGWikiBasics.line-22"></span><span class=
+"anchor" id="SGWikiBasics.line-23"></span><span class="anchor" id=
+"SGWikiBasics.bottom"></span></div>
+<span class="anchor" id="line-135"></span><span class="anchor" id=
+"bottom"></span></div>
+</body></html>

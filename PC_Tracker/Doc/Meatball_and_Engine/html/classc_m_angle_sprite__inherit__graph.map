@@ -1,0 +1,5 @@
+<map id="cMAngleSprite" name="cMAngleSprite">
+<area shape="rect" href="$classc_m_particle.html" title="The Particle class." alt="" coords="21,239,115,265"/>
+<area shape="rect" href="$classc_angle_sprite.html" title="cAngleSprite" alt="" coords="12,84,124,111"/>
+<area shape="rect" href="$classc_basic_sprite.html" title="cBasicSprite" alt="" coords="13,7,123,33"/>
+</map>

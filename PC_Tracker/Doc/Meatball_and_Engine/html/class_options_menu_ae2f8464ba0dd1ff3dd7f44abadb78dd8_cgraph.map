@@ -1,0 +1,10 @@
+<map id="OptionsMenu::Collisions" name="OptionsMenu::Collisions">
+<area shape="rect" href="$class_slider.html#a7109feabc4044f9854575d88228cd69e" title="Slider::Activate" alt="" coords="268,5,396,32"/>
+<area shape="rect" href="$classc_preferences.html#a82383f70bf9e5667335affbd51abc0f2" title="Sets the Current Settings to the in&#45;game settings." alt="" coords="251,56,413,83"/>
+<area shape="rect" href="$classc_mouse_cursor.html#aa681201a8194eb2ca537cd464e185ada" title="cMouseCursor::hide" alt="" coords="251,107,413,133"/>
+<area shape="rect" href="$include_2misc_8h.html#a560a6414379f077656c6532fea93a46c" title="More english version of." alt="" coords="253,157,411,184"/>
+<area shape="rect" href="$classc_mouse_cursor.html#ad189f1861119d03dc9f60385688adcaf" title="cMouseCursor::show" alt="" coords="249,208,415,235"/>
+<area shape="rect" href="$classc_settings.html#ab5a83be74d8476af0fd7eac14fdaa7e9" title="cSettings::Apply" alt="" coords="513,31,649,57"/>
+<area shape="rect" href="$classc_settings.html#a673f47a8a7dc98fd4cf6b83961f7cdd8" title="cSettings::Update" alt="" coords="507,81,656,108"/>
+<area shape="rect" href="$classc_mouse_cursor.html#a3a424c1e8f7e8c91cfc28ba9f588c040" title="Point Collisioncheck." alt="" coords="465,157,697,184"/>
+</map>

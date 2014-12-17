@@ -1,0 +1,15 @@
+<map id="FramerateDraw" name="FramerateDraw">
+<area shape="rect" href="$class_mini_engine.html#aa553c0bf445926d1501c5c05dc90ab8a" title="MiniEngine::PostDraw" alt="" coords="187,81,360,108"/>
+<area shape="rect" href="$classc_level_editor.html#a0ef2d00303762c35c2591bf9fe961305" title="cLevelEditor::Draw" alt="" coords="415,5,567,32"/>
+<area shape="rect" href="$class_mini_engine.html#a69cfed53ff62e5023f1fa01e2ab0cf05" title="MiniEngine::Draw" alt="" coords="419,56,563,83"/>
+<area shape="rect" href="$class_options_menu.html#a6f95309648c53dcc8cb5e896ab8ba64e" title="OptionsMenu::Draw" alt="" coords="637,107,797,133"/>
+<area shape="rect" href="$class_controls_menu.html#aacf9c14ee8a65901d3ac54988a9e6636" title="ControlsMenu::Draw" alt="" coords="408,157,573,184"/>
+<area shape="rect" href="$class_mini_engine.html#aaaaae01092335a268fd25150f45433b6" title="MiniEngine::Do" alt="" coords="896,56,1024,83"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="1749,69,1835,96"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1883,69,1941,96"/>
+<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="1383,145,1527,172"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="1577,120,1700,147"/>
+<area shape="rect" href="$class_controls_menu.html#a5b1621a48998b2ddf486f418b063a8af" title="ControlsMenu::GetInput" alt="" coords="621,208,813,235"/>
+<area shape="rect" href="$class_controls_menu.html#acca9d246bc75edb0e0037b9cc5f496b2" title="ControlsMenu::Collisions" alt="" coords="861,208,1059,235"/>
+<area shape="rect" href="$class_controls_menu.html#a8c0100408843df3ca976dc13121c7ac8" title="ControlsMenu::EventHandler" alt="" coords="1107,208,1333,235"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="ButtonObject" name="ButtonObject">
+<area shape="rect" href="$class_text_object.html" title="To write Text requires the cFont class to be activated." alt="" coords="81,103,180,129"/>
+<area shape="rect" href="$class_graphics_object.html" title="A simple collection of Surface/Texture/Rect for most basic graphics objects." alt="" coords="5,7,136,33"/>
+</map>

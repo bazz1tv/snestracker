@@ -1,0 +1,8 @@
+<map id="cBasicSprite::GetAlpha" name="cBasicSprite::GetAlpha">
+<area shape="rect" href="$class_main_menu.html#a6bbe5f370a5e2c5f54dd8ba7dd1707f0" title="MainMenu::Collisions" alt="" coords="251,5,421,32"/>
+<area shape="rect" href="$class_main_menu.html#ab6d42d4caddbaf0b71f507f3e03dada2" title="MainMenu::UpdateLogic" alt="" coords="239,56,433,83"/>
+<area shape="rect" href="$class_main_menu.html#a23f9e84cda740d24402ee1695024e656" title="MainMenu::Update" alt="" coords="483,31,640,57"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="689,31,812,57"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="861,31,947,57"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="995,31,1053,57"/>
+</map>

@@ -1,0 +1,88 @@
+SGE Examples
+==================================================================================
+
+Do 'make' to compile the examples (requires the libSGE.a and header files 
+in ../ - if you're using libSGE.so, make sure ld can find it).
+
+Read ttf_readme for license details about the truetype font.
+
+The file sfont.png is copyrighted by Karl Bartel (http://www.linux-games.com/),
+please ask him before including it into any non-GPL/LGPL project!
+
+Press [ESC] or close the window to quit.
+
+
+Basics
+=======
+Shows the basic drawing and text functions. Basics_c is the C version of this program
+and tests SGE's C compatibility.
+
+Blitting
+=========
+Shows simple buffering and blitting with alpha value. Reports fps - should be
+slightly under 100 fps.
+
+Fire
+=====
+Shows the block copy function and some palette functions.
+
+Input
+======
+Demonstrates the use of sge_tt_input functions. Feel free to edit the
+text. If you press [Return],[Enter] or [ESC] the text will be printed out on
+the console.
+
+InputDeluxe
+============
+sge_TextSprite is *much* more powerful than sge_tt_input... You can even make 
+the text bounce around on the screen. Also shows border warping. 
+
+Sprite
+=======
+Demonstrates the sprite class with timed movement and frames.
+
+Sprite2
+========
+The sge_ssprite version of SDLs testsprite... Uses the sge_screen class.
+
+Bitmapfont
+===========
+Some bitmapfont routines. 
+
+Collision
+==========
+A simple test of the pixel collision routines.
+
+Alpha
+======
+Demonstrates alpha surfaces and text. Very nice.
+
+Rotate
+=======
+Rotates and scales an image. Press |SPACE] to switch between texture mapped,
+normal and interpolated rendering. Press [s] to slow down or to speed up 
+the rendering.
+
+Sfont
+======
+Same as 'bitmapfont' but with Karl Bartel's SFonts. You must have the SDL_image 
+library and compile SGE with the 'USE_IMG' build option to get this to work.
+
+Blib
+=====
+Fun with triangles.
+
+Speedtest
+==========
+Benchmarks some of SGEs routines. You can specify some options if you want:
+Usage: ./speedtest [-bpp N] [-hw] [-fullscreen] 
+-bpp N - The colordepth you want to run the program in (8/16/24/32).
+-hw - Use hardware surfaces if possible, often used with '-fullscreen'.
+-fullscreen - Run the program in fullscreen.
+
+Poly
+=====
+Draws some random filled polygons (press any key for a new one). The first polygon
+is precalculated (a gourand shaded filled pentagram).
+
+/Anders Lindström

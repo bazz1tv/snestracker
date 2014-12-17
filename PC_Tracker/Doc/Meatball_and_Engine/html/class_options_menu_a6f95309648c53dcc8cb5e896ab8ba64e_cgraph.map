@@ -1,0 +1,10 @@
+<map id="OptionsMenu::Draw" name="OptionsMenu::Draw">
+<area shape="rect" href="$class_slider.html#a87ae38e394d916107503c26dc7c2291c" title="Slider::Draw" alt="" coords="249,5,356,32"/>
+<area shape="rect" href="$class_text_object.html#ac6d6a5eaa19af6d7fd991332622e329e" title="TextObject::Draw" alt="" coords="231,56,375,83"/>
+<area shape="rect" href="$classc_basic_sprite.html#a98a8928524972f62711142ee282ec178" title="cBasicSprite::Draw" alt="" coords="227,107,379,133"/>
+<area shape="rect" href="$class_mini_engine.html#aa553c0bf445926d1501c5c05dc90ab8a" title="MiniEngine::PostDraw" alt="" coords="216,157,389,184"/>
+<area shape="rect" href="$group___engine___gfx.html#gac4acd3032d3e6cfd739052f155cf49a2" title="FillRectAlpha" alt="" coords="447,5,561,32"/>
+<area shape="rect" href="$_globals_8cpp.html#abba66423d34deb4e3668adc1ccc03b4d" title="Draws the Framerate." alt="" coords="437,157,571,184"/>
+<area shape="rect" href="$classc_font.html#a5e7d87da787e072678abee523d01e724" title="Creates the text in an Surface types : 1 = Blended 2 = Shaded 3 = Solid." alt="" coords="619,132,768,159"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="655,183,732,209"/>
+</map>

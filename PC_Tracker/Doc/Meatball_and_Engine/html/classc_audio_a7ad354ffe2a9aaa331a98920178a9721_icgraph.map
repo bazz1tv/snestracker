@@ -1,0 +1,9 @@
+<map id="cAudio::SetAllSoundsVolume" name="cAudio::SetAllSoundsVolume">
+<area shape="rect" href="$group___console___commands.html#ga435f3ef1ed3b1343f8da1f0a31b2b860" title="Change the volume of All sounds (0&#45;128)" alt="" coords="315,5,429,32"/>
+<area shape="rect" href="$class_options_menu.html#a568f31e2fede9d17ba9c820a889eee0e" title="OptionsMenu::Update" alt="" coords="283,56,461,83"/>
+<area shape="rect" href="$classc_console.html#a30b719f98df2be1670f6e4e1055844a5" title="Gets the current working path, Loads the Background image to the Image Manager, Creates the console f..." alt="" coords="509,5,672,32"/>
+<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="519,56,663,83"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="721,56,844,83"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="893,56,979,83"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1027,56,1085,83"/>
+</map>

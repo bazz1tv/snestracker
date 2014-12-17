@@ -1,0 +1,648 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - APIByCategory</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@APIByCategory.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@APIByCategory.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id=
+"line-4"></span><span class="anchor" id=
+"line-5"></span><span class="anchor" id=
+"line-6"></span><span class="anchor" id="line-7"></span>
+<p class="line867"></p>
+<h1 id="SDL_2.0_API_by_Category">SDL 2.0 API by Category</h1>
+<span class="anchor" id="line-8"></span>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@APIByCategory.html#SDL_2.0_API_by_Category">SDL 2.0 API by Category</a>
+<ol>
+<li><a href="index.html@APIByCategory.html#Basics">Basics</a></li>
+<li><a href="index.html@APIByCategory.html#Video">Video</a></li>
+<li><a href="index.html@APIByCategory.html#Input_Events">Input Events</a></li>
+<li><a href="index.html@APIByCategory.html#Force_Feedback">Force Feedback</a></li>
+<li><a href="index.html@APIByCategory.html#Audio">Audio</a></li>
+<li><a href="index.html@APIByCategory.html#Threads">Threads</a></li>
+<li><a href="index.html@APIByCategory.html#Timers">Timers</a></li>
+<li><a href="index.html@APIByCategory.html#File_Abstraction">File Abstraction</a></li>
+<li><a href="index.html@APIByCategory.html#Shared_Object_Support">Shared Object Support</a></li>
+<li><a href="index.html@APIByCategory.html#Platform_and_CPU_Information">Platform and CPU
+Information</a></li>
+<li><a href="index.html@APIByCategory.html#Power_Management">Power Management</a></li>
+<li><a href="index.html@APIByCategory.html#Additional">Additional</a></li>
+</ol>
+</li>
+</ol>
+</div>
+<span class="anchor" id="line-9"></span><span class="anchor" id=
+"line-10"></span>
+<p class="line867"></p>
+<h2 id="Basics">Basics</h2>
+<span class="anchor" id="line-11"></span><span class="anchor" id=
+"line-12"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-13"></span>
+<p class="line891"><a href="index.html@CategoryInit.html">Initialization and
+Shutdown</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL.h">SDL.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-14"></span>
+<p class="line891"><a href="index.html@CategoryHints.html">Configuration
+Variables</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_hints.h">SDL_hints.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-15"></span>
+<p class="line891"><a href="index.html@CategoryError.html">Error Handling</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_error.h">SDL_error.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-16"></span>
+<p class="line891"><a href="index.html@CategoryLog.html">Log Handling</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_log.h">SDL_log.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-17"></span>
+<p class="line891"><a href="index.html@CategoryAssertions.html">Assertions</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_assert.h">SDL_assert.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-18"></span>
+<p class="line891"><a href="index.html@CategoryVersion.html">Querying SDL
+Version</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_version.h">SDL_version.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-19"></span><span class="anchor" id=
+"line-20"></span><span class="anchor" id=
+"line-21"></span><span class="anchor" id="line-22"></span>
+<p class="line867"></p>
+<h2 id="Video">Video</h2>
+<span class="anchor" id="line-23"></span><span class="anchor" id=
+"line-24"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-25"></span>
+<p class="line891"><a href="index.html@CategoryVideo.html">Display and Window
+Management</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_video.h">SDL_video.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-26"></span>
+<p class="line891"><a href="index.html@CategoryRender.html">2D Accelerated
+Rendering</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_render.h">SDL_render.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-27"></span>
+<p class="line891"><a href="index.html@CategoryPixels.html">Pixel Formats and
+Conversion Routines</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_pixels.h">SDL_pixels.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-28"></span>
+<p class="line891"><a href="index.html@CategoryRect.html">Rectangle
+Functions</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_rect.h">SDL_rect.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-29"></span>
+<p class="line891"><a href="index.html@CategorySurface.html">Surface Creation and
+Simple Drawing</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_surface.h">SDL_surface.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-30"></span>
+<p class="line891"><a href="index.html@CategorySWM.html">Platform-specific Window
+Management</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_syswm.h">SDL_syswm.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-31"></span>
+<p class="line891"><a href="index.html@CategoryClipboard.html">Clipboard
+Handling</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_clipboard.h">SDL_clipboard.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-32"></span><span class="anchor" id=
+"line-33"></span><span class="anchor" id="line-34"></span>
+<p class="line867"></p>
+<h2 id="Input_Events">Input Events</h2>
+<span class="anchor" id="line-35"></span><span class="anchor" id=
+"line-36"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-37"></span>
+<p class="line891"><a href="index.html@CategoryEvents.html">Event Handling</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_events.h">SDL_events.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-38"></span>
+<p class="line891"><a href="index.html@CategoryKeyboard.html">Keyboard
+Support</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_keyboard.h">SDL_keyboard.h</a><br/>
+
+<a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_keycode.h">SDL_keycode.h</a><br/>
+
+<a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_scancode.h">SDL_scancode.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-39"></span>
+<p class="line891"><a href="index.html@CategoryMouse.html">Mouse Support</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_mouse.h">SDL_mouse.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-40"></span>
+<p class="line891"><a href="index.html@CategoryJoystick.html">Joystick
+Support</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_joystick.h">SDL_joystick.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-41"></span>
+<p class="line891"><a href="index.html@CategoryGameController.html">Game
+Controller Support</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_gamecontroller.h">
+SDL_gamecontroller.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-42"></span><span class="anchor" id=
+"line-43"></span><span class="anchor" id="line-44"></span>
+<p class="line867"></p>
+<h2 id="Force_Feedback">Force Feedback</h2>
+<span class="anchor" id="line-45"></span><span class="anchor" id=
+"line-46"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-47"></span>
+<p class="line891"><a href="index.html@CategoryForceFeedback.html">Force Feedback
+Support</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_haptic.h">SDL_haptic.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-48"></span><span class="anchor" id=
+"line-49"></span><span class="anchor" id="line-50"></span>
+<p class="line867"></p>
+<h2 id="Audio">Audio</h2>
+<span class="anchor" id="line-51"></span><span class="anchor" id=
+"line-52"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-53"></span>
+<p class="line891"><a href="index.html@CategoryAudio.html">Audio Device
+Management, Playing and Recording</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_audio.h">SDL_audio.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-54"></span><span class="anchor" id=
+"line-55"></span><span class="anchor" id="line-56"></span>
+<p class="line867"></p>
+<h2 id="Threads">Threads</h2>
+<span class="anchor" id="line-57"></span><span class="anchor" id=
+"line-58"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-59"></span>
+<p class="line891"><a href="index.html@CategoryThread.html">Thread
+Management</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_thread.h">SDL_thread.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-60"></span>
+<p class="line891"><a href="index.html@CategoryMutex.html">Thread Synchronization
+Primitives</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_mutex.h">SDL_mutex.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-61"></span>
+<p class="line891"><a href="index.html@CategoryAtomic.html">Atomic
+Operations</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_atomic.h">SDL_atomic.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-62"></span><span class="anchor" id=
+"line-63"></span><span class="anchor" id="line-64"></span>
+<p class="line867"></p>
+<h2 id="Timers">Timers</h2>
+<span class="anchor" id="line-65"></span><span class="anchor" id=
+"line-66"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-67"></span>
+<p class="line891"><a href="index.html@CategoryTimer.html">Timer Support</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_timer.h">SDL_timer.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-68"></span><span class="anchor" id=
+"line-69"></span><span class="anchor" id="line-70"></span>
+<p class="line867"></p>
+<h2 id="File_Abstraction">File Abstraction</h2>
+<span class="anchor" id="line-71"></span><span class="anchor" id=
+"line-72"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-73"></span>
+<p class="line891"><a href="index.html@CategoryFilesystem.html">Filesystem
+Paths</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_filesystem.h">SDL_filesystem.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-74"></span>
+<p class="line891"><a href="index.html@CategoryIO.html">File I/O
+Abstraction</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_rwops.h">SDL_rwops.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-75"></span><span class="anchor" id=
+"line-76"></span><span class="anchor" id="line-77"></span>
+<p class="line867"></p>
+<h2 id="Shared_Object_Support">Shared Object Support</h2>
+<span class="anchor" id="line-78"></span><span class="anchor" id=
+"line-79"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-80"></span>
+<p class="line891"><a href="index.html@CategorySharedObject.html">Shared Object
+Loading and Function Lookup</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_loadso.h">SDL_loadso.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-81"></span><span class="anchor" id=
+"line-82"></span><span class="anchor" id="line-83"></span>
+<p class="line867"></p>
+<h2 id="Platform_and_CPU_Information">Platform and CPU
+Information</h2>
+<span class="anchor" id="line-84"></span><span class="anchor" id=
+"line-85"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-86"></span>
+<p class="line891"><a href="index.html@CategoryPlatform.html">Platform
+Detection</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_platform.h">SDL_platform.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-87"></span>
+<p class="line891"><a href="index.html@CategoryCPU.html">CPU Feature
+Detection</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_cpuinfo.h">SDL_cpuinfo.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-88"></span>
+<p class="line891"><a href="index.html@CategoryEndian.html">Byte Order and Byte
+Swapping</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_endian.h">SDL_endian.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-89"></span>
+<p class="line891"><a href="index.html@CategoryBits.html">Bit Manipulation</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_bits.h">SDL_bits.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-90"></span><span class="anchor" id=
+"line-91"></span><span class="anchor" id="line-92"></span>
+<p class="line867"></p>
+<h2 id="Power_Management">Power Management</h2>
+<span class="anchor" id="line-93"></span><span class="anchor" id=
+"line-94"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-95"></span>
+<p class="line891"><a href="index.html@CategoryPower.html">Power Management
+Status</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_power.h">SDL_power.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-96"></span><span class="anchor" id=
+"line-97"></span><span class="anchor" id="line-98"></span>
+<p class="line867"></p>
+<h2 id="Additional">Additional</h2>
+<span class="anchor" id="line-99"></span><span class="anchor" id=
+"line-100"></span>
+<div>
+<table style="width: &amp;quot;100%&amp;quot">
+<tbody>
+<tr>
+<td style="width: &amp;quot;75%&amp;quot">
+<p class="line891"><strong>View information and functions related
+to...</strong></p>
+</td>
+<td>
+<p class="line891"><strong>View the header</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-101"></span>
+<p class="line891"><a href="index.html@CategorySystem.html">Platform-specific
+functionality</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_system.h">SDL_system.h</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-102"></span>
+<p class="line891"><a href="index.html@CategoryAdditionalOther.html">Other</a></p>
+</td>
+<td>
+<p class="line891"><a class="http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_stdinc.h">SDL_stdinc.h</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-103"></span><span class="anchor" id=
+"bottom"></span></div>
+</body></html>

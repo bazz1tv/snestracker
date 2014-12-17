@@ -1,0 +1,96 @@
+<html>
+<!--------------------------------------------------->
+<!--             Docs/pixels - SGE                 -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Pixels</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Pixel operations</H1>
+
+<P>
+<UL>
+<LI><A HREF="#_PutPixel">_PutPixel</A>
+<LI><A HREF="#sge_PutPixel">sge_PutPixel</A>
+<LI><A HREF="#sge_CalcYPitch">sge_CalcYPitch</A>
+<LI><A HREF="#sge_pPutPixel">sge_pPutPixel</A>
+<LI><A HREF="#sge_GetPixel">sge_GetPixel</A>
+<LI><A HREF="#sge_write_block">sge_write_block</A>
+<LI><A HREF="#sge_read_block">sge_read_block</A>
+</UL>
+<BR><BR>
+
+<a name="_PutPixel"><B>_PutPixel</B></a><BR>
+<UL>
+<LI>void <B>_PutPixel(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color<B>)</B>
+<LI>void <B>_PutPixel(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>_PutPixelAlpha(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>_PutPixelAlpha(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+<LI>void <B>_PutPixel8(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color<B>)</B>
+<LI>void <B>_PutPixel16(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color<B>)</B>
+<LI>void <B>_PutPixel24(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color<B>)</B>
+<LI>void <B>_PutPixel32(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color<B>)</B>
+<LI>void <B>_PutPixelX(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color<B>)</B>
+</UL>
+Writes a pixel to the specified position. Does <B>NOT</B> lock or update the surface, but respects clipping. The 
+'Uint32 color' version is faster. _PutPixelAlpha() will blend the pixel with the background.
+For the speed maniac the [8/16/24/32] functions are also available, which
+only work on the correct bpp (8/16/24/32). They do not respect clipping.
+_PutPixelX() works like _PutPixel() but ignores clipping.
+<BR><BR><BR><BR>
+
+
+<a name="sge_PutPixel"><B>sge_PutPixel</B></a><BR>
+<UL>
+<LI>void <B>sge_PutPixel(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color<B>)</B>
+<LI>void <B>sge_PutPixel(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_PutPixelAlpha(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_PutPixelAlpha(</B>SDL_Surface *surface, Sint16 x, Sint16 y, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+</UL>
+Unlike _PutPixel these functions does lock and update the surface.<BR><BR><BR><BR>
+
+
+
+<B>Sint32 <a name="sge_CalcYPitch">sge_CalcYPitch</a>(SDL_Surface *surface, Sint16 y)</B><BR>
+Returns the y pitch offset, use it with sge_pPutPixel. Note that the return type is *Sint32*.<BR><BR>
+
+<B>void <a name="sge_pPutPixel">sge_pPutPixel</a>(SDL_Surface *surface, Sint16 x, Sint32 ypitch, Uint32 color)</B><BR>
+Writes a pixel to the specified position using the precalculated ypitch. This saves one mul and one div when writing more than one time
+to the same y coord.<BR>
+Does not lock or update the surface, but respects clipping.<BR><BR><BR>
+
+
+<B>Uint32 <a name="sge_GetPixel">sge_GetPixel</a>(SDL_Surface *surface, Sint16 x, Sint16 y)</B><BR>
+Gets the color of the specified pixel.<BR><BR><BR>
+
+
+<B>void <a name="sge_write_block">sge_write_block8</a>(SDL_Surface *Surface, Uint8 *block, Sint16 y)<BR>
+void sge_write_block16(SDL_Surface *Surface, Uint16 *block, Sint16 y)<BR>
+void sge_write_block32(SDL_Surface *Surface, Uint32 *block, Sint16 y)<BR></B> 
+These functions writes the given block (of color values) to the surface. A block consist of Surface->w (the width 
+of the surface) numbers of color values. Write your data to the block and then call sge_write_block() to update the
+y:th line on the surface with new color values. Note the difference in byte size for the block elements for
+different bpp. This is <B>much</B> faster then using the put pixel functions to update a line. 24-bpp version
+not included (OK! I admit that I don't like 24bpp - it's slow!). Does not lock or update the surface, nor
+does it respect clipping - but it's fast!.<BR><BR><BR>
+
+
+<B>void <a name="sge_read_block">sge_read_block8</a>(SDL_Surface *Surface, Uint8 *block, Sint16 y)<BR>
+void sge_read_block16(SDL_Surface *Surface, Uint16 *block, Sint16 y)<BR>
+void sge_read_block32(SDL_Surface *Surface, Uint32 *block, Sint16 y)<BR></B>
+Reads the y:th line to block. See above for more information.<BR><BR><BR>
+
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

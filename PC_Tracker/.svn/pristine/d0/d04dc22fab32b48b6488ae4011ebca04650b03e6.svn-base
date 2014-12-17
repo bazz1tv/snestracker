@@ -1,0 +1,164 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - Books</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@Books.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@Books.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span>
+<p class="line867"></p>
+<h1 id="Books_Related_to_SDL">Books Related to SDL</h1>
+<span class="anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span>
+<ul>
+<li>
+<p class="line891"><a class="http" href=
+"http://www.packtpub.com/simple-directmedia-layer-game-development/book">
+SDL Game Development</a> (Packt Publishing) by Shaun Mitchell
+<span class="anchor" id="line-4"></span></p>
+<ul>
+<li style="list-style-type:none">SDL Game Development guides you
+through creating your first 2D game using SDL 2.0 and C++. It takes
+a clear and practical approach to SDL game development, ensuring
+that the focus remains on creating awesome games. <span class=
+"anchor" id="line-5"></span></li>
+<li style="list-style-type:none">
+<p class="line891"><em>"Written as a practical and engaging
+tutorial, SDL Game Development guides you through the development
+of your own framework and the creation of two exciting,
+fully-featured games."</em> <small>(Packt Publishing)</small>
+<span class="anchor" id="line-6"></span><span class="anchor" id=
+"line-7"></span></p>
+</li>
+</ul>
+</li>
+<li class="gap">
+<p class="line891"><a class="http" href=
+"http://www.amazon.com/Learn-Making-Games-Charles-Programming/dp/1584504552/ref=sr_1_2?ie=UTF8&amp;s=books&amp;qid=1255150140&amp;sr=8-2"
+target="blank">Learn C++ by Making Games</a> by Erik Yuzwa &amp;
+Francois Dominic Laramee <span class="anchor" id=
+"line-8"></span></p>
+<ul>
+<li style="list-style-type:none">An introduction to C++, using it
+to develop games with SDL <span class="anchor" id=
+"line-9"></span></li>
+<li style="list-style-type:none">
+<p class="line891"><em>"The book concludes with an exploration of
+how to use the Simple DirectMedia Layer to display graphics and
+handle basic input, sound, linked lists, templates, along with a
+variety of more advanced topics, including using SDL to create a
+simple demo."</em> <small>(Amazon.com)</small> <span class="anchor"
+id="line-10"></span><span class="anchor" id="line-11"></span></p>
+</li>
+</ul>
+</li>
+<li class="gap">
+<p class="line891"><a class="http" href=
+"http://www.amazon.com/Game-Programming-Start-Finish-Development/dp/1584504323/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1255150140&amp;sr=8-1"
+target="blank">Game Programming in C++ Start to Finish</a> by Erik
+Yuzwa <span class="anchor" id="line-12"></span></p>
+<ul>
+<li style="list-style-type:none">An introduction to game
+programming using SDL and OpenGL on Windows. <span class="anchor"
+id="line-13"></span></li>
+<li style="list-style-type:none">
+<p class="line891"><em>"As you work through the book,
+you&acirc;&euro;&trade;ll build the <a class="nonexistent" href="index.html@SuperAsteriodArena.html">SuperAsteriodArena</a> game, beginning with
+engine creation and 3D programming with SDL and OpenGL. From there
+you&acirc;&euro;&trade;ll move on to animation effects, audio,
+collision detection, networking, and finalizing the game. A variety
+of tools are used throughout, including Visual Studio and OpenGL,
+SDL, Autodesk 3ds Max, and the Audacity sound tool. "</em>
+<small>(Amazon.com)</small> <span class="anchor" id=
+"line-14"></span><span class="anchor" id="line-15"></span></p>
+</li>
+</ul>
+</li>
+<li class="gap">
+<p class="line891"><a class="http" href=
+"http://www.amazon.com/Teach-Yourself-Games-Programming-Computers/dp/0071544755">
+Teach Yourself Games Programming</a> by Alan Thorne <span class=
+"anchor" id="line-16"></span></p>
+<ul>
+<li style="list-style-type:none">Check out chapters 4 and 6
+especially! <span class="anchor" id="line-17"></span></li>
+<li style="list-style-type:none">
+<p class="line891"><em>"This book provides an overview of game
+production using C++ and either VC++2005 or Codeblocks and the SDL
+library."</em> <small>(Amazon.com UK)</small> <span class="anchor"
+id="line-18"></span><span class="anchor" id="line-19"></span></p>
+</li>
+</ul>
+</li>
+<li class="gap">
+<p class="line891"><a class="http" href=
+"http://www.amazon.com/exec/obidos/ASIN/1592000304/acmorg-20">Focus
+On SDL</a> (The Premier Press Game Development Series) by Ernest
+Pazera <span class="anchor" id="line-20"></span></p>
+<ul>
+<li style="list-style-type:none">This book has received many
+positive reviews from users! <span class="anchor" id=
+"line-21"></span></li>
+<li style="list-style-type:none">
+<p class="line891"><em>"From setting up your system to
+incorporating networking and user interface components, Focus On
+SDL gives you the tools you need in one comprehensive guide."</em>
+<small>(Amazon.com)</small> <span class="anchor" id=
+"line-22"></span><span class="anchor" id="line-23"></span></p>
+</li>
+</ul>
+</li>
+<li class="gap">
+<p class="line891"><a class="http" href=
+"http://www.amazon.com/Structures-Programmers-Premier-Press-Development/dp/1931841942/ref=sr_1_1?ie=UTF8&amp;s=books&amp;qid=1273790911&amp;sr=1-1">
+Data Structures for Game Programmers</a> (Premier Press Game
+Development) by Ron Penton <span class="anchor" id=
+"line-24"></span></p>
+<ul>
+<li style="list-style-type:none">The included CD contains an SDL
+Primer by Ernest Pazera. <span class="anchor" id=
+"line-25"></span></li>
+<li style="list-style-type:none">
+<p class="line891"><em>"SDL, a cross-platform graphics library, is
+used for the demos and the coverage of that is almost worth the
+price of admission. (though I recommend Focus on SDL in
+addition)"</em> <small>(Amazon.com)</small> <span class="anchor"
+id="line-26"></span><span class="anchor" id="line-27"></span></p>
+</li>
+</ul>
+</li>
+<li class="gap">
+<p class="line891"><a class="http" href=
+"http://www.nostarch.com/plg.htm">Programming Linux Games</a> by
+Loki Software, Inc. with John R. Hall <span class="anchor" id=
+"line-28"></span></p>
+<ul>
+<li style="list-style-type:none">
+<p class="line862">Building Multimedia Applications with SDL,
+OpenAL<sup>(tm)</sup>, and Other APIs <span class="anchor" id=
+"line-29"></span></p>
+</li>
+<li style="list-style-type:none">
+<p class="line891"><em>"This is the sort of book that could
+kickstart a new movement in Linux game development."</em>
+<small>(Slashdot)</small> <span class="anchor" id=
+"line-30"></span></p>
+</li>
+</ul>
+</li>
+</ul>
+<span class="anchor" id="bottom"></span></div>
+</body></html>

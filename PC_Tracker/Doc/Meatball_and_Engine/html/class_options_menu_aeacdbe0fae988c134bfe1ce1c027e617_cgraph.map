@@ -1,0 +1,51 @@
+<map id="OptionsMenu::Do" name="OptionsMenu::Do">
+<area shape="rect" href="$class_controls_menu.html#aacf9c14ee8a65901d3ac54988a9e6636" title="ControlsMenu::Draw" alt="" coords="1064,336,1229,363"/>
+<area shape="rect" href="$class_options_menu.html#a6f95309648c53dcc8cb5e896ab8ba64e" title="OptionsMenu::Draw" alt="" coords="1067,83,1227,109"/>
+<area shape="rect" href="$class_controls_menu.html#a8c0100408843df3ca976dc13121c7ac8" title="ControlsMenu::EventHandler" alt="" coords="200,235,427,261"/>
+<area shape="rect" href="$class_options_menu.html#a67ae8f7d97ad79cb34f0de644e4d6982" title="OptionsMenu::EventHandler" alt="" coords="203,311,424,337"/>
+<area shape="rect" href="$class_options_menu.html#ad3ad201a8ab892a1a203719d5726f3f0" title="Does general things." alt="" coords="489,640,689,667"/>
+<area shape="rect" href="$class_controls_menu.html#afcaaadb0d93d976b3649aaa22e9997b7" title="ControlsMenu::Update" alt="" coords="223,539,404,565"/>
+<area shape="rect" href="$class_options_menu.html#a568f31e2fede9d17ba9c820a889eee0e" title="OptionsMenu::Update" alt="" coords="224,767,403,793"/>
+<area shape="rect" href="$class_text_object.html#ac6d6a5eaa19af6d7fd991332622e329e" title="TextObject::Draw" alt="" coords="1327,260,1471,287"/>
+<area shape="rect" href="$classc_basic_sprite.html#a98a8928524972f62711142ee282ec178" title="cBasicSprite::Draw" alt="" coords="1323,159,1475,185"/>
+<area shape="rect" href="$class_mini_engine.html#aa553c0bf445926d1501c5c05dc90ab8a" title="MiniEngine::PostDraw" alt="" coords="1312,336,1485,363"/>
+<area shape="rect" href="$_globals_8cpp.html#abba66423d34deb4e3668adc1ccc03b4d" title="Draws the Framerate." alt="" coords="1533,437,1667,464"/>
+<area shape="rect" href="$classc_font.html#a5e7d87da787e072678abee523d01e724" title="Creates the text in an Surface types : 1 = Blended 2 = Shaded 3 = Solid." alt="" coords="1715,463,1864,489"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="1751,525,1828,552"/>
+<area shape="rect" href="$class_slider.html#a87ae38e394d916107503c26dc7c2291c" title="Slider::Draw" alt="" coords="1345,83,1452,109"/>
+<area shape="rect" href="$group___engine___gfx.html#gac4acd3032d3e6cfd739052f155cf49a2" title="FillRectAlpha" alt="" coords="1543,83,1657,109"/>
+<area shape="rect" href="$classc_preferences.html#a82383f70bf9e5667335affbd51abc0f2" title="Sets the Current Settings to the in&#45;game settings." alt="" coords="785,184,948,211"/>
+<area shape="rect" href="$class_controls_menu.html#acca9d246bc75edb0e0037b9cc5f496b2" title="ControlsMenu::Collisions" alt="" coords="491,285,688,312"/>
+<area shape="rect" href="$include_2misc_8h.html#a2208b21211193f0e04cc18739d07f799" title="The Universal Event Handler handles some events that should be handled in ANY event handler..." alt="" coords="497,184,681,211"/>
+<area shape="rect" href="$classc_settings.html#ab5a83be74d8476af0fd7eac14fdaa7e9" title="cSettings::Apply" alt="" coords="1079,184,1215,211"/>
+<area shape="rect" href="$classc_settings.html#a673f47a8a7dc98fd4cf6b83961f7cdd8" title="cSettings::Update" alt="" coords="1072,235,1221,261"/>
+<area shape="rect" href="$class_controls_menu.html#a5b1621a48998b2ddf486f418b063a8af" title="ControlsMenu::GetInput" alt="" coords="771,235,963,261"/>
+<area shape="rect" href="$include_2misc_8h.html#a560a6414379f077656c6532fea93a46c" title="More english version of." alt="" coords="788,285,945,312"/>
+<area shape="rect" href="$classc_mouse_cursor.html#a3a424c1e8f7e8c91cfc28ba9f588c040" title="Point Collisioncheck." alt="" coords="1031,285,1263,312"/>
+<area shape="rect" href="$include_2misc_8h.html#af5bc71130f33f466ff560fa4a023763d" title="Toggle fullScreen." alt="" coords="805,133,928,160"/>
+<area shape="rect" href="$misc_8cpp.html#a9a19d17f4e5833b1f911829b6bdda983" title="Queries the Screen to see if it&#39;s set to Fullscreen or Not." alt="" coords="1093,133,1200,160"/>
+<area shape="rect" href="$class_options_menu.html#ae2f8464ba0dd1ff3dd7f44abadb78dd8" title="OptionsMenu::Collisions" alt="" coords="493,336,685,363"/>
+<area shape="rect" href="$class_slider.html#a7109feabc4044f9854575d88228cd69e" title="Slider::Activate" alt="" coords="803,387,931,413"/>
+<area shape="rect" href="$classc_mouse_cursor.html#aa681201a8194eb2ca537cd464e185ada" title="cMouseCursor::hide" alt="" coords="785,437,948,464"/>
+<area shape="rect" href="$classc_mouse_cursor.html#ad189f1861119d03dc9f60385688adcaf" title="cMouseCursor::show" alt="" coords="784,336,949,363"/>
+<area shape="rect" href="$classc_mouse_cursor.html#a19df312e71e7672f891dda410d4ef489" title="cMouseCursor::Update" alt="" coords="775,741,959,768"/>
+<area shape="rect" href="$classc_audio.html#a964b3d86635b460a4f25cf64997b0014" title="Checks if no music is played." alt="" coords="801,640,932,667"/>
+<area shape="rect" href="$classc_framerate.html#a526a4eb7f2f5f5894aebc47654be6573" title="cFramerate::SetSpeedFactor" alt="" coords="752,691,981,717"/>
+<area shape="rect" href="$classc_basic_sprite.html#abab9b223fef9a6875313718719866ccc" title="cBasicSprite::SetPos" alt="" coords="1064,716,1229,743"/>
+<area shape="rect" href="$classc_basic_sprite.html#a65779c476030c2463de8576fe1f67e39" title="cBasicSprite::Update" alt="" coords="1061,767,1232,793"/>
+<area shape="rect" href="$group___engine___image.html#ga2b7097260a2531e03c8853d2b22be2bd" title="V 1.1.1." alt="" coords="1336,767,1461,793"/>
+<area shape="rect" href="$class_text_object.html#a2f82818e76aff5329cddccb38123e477" title="Makes the surface and updates the Rect." alt="" coords="787,539,947,565"/>
+<area shape="rect" href="$class_text_object.html#ae42593af8093a831a779d7bed0852d81" title="TextObject::Update" alt="" coords="509,589,669,616"/>
+<area shape="rect" href="$class_text_object.html#a4aca0a06ab72da363ecdc81a036b79f1" title="TextObject::preRender" alt="" coords="1055,539,1239,565"/>
+<area shape="rect" href="$class_text_object.html#af6103e05c76f2905d96e4f395ccaf9b1" title="TextObject::UpdateRect" alt="" coords="1051,589,1243,616"/>
+<area shape="rect" href="$class_slider.html#a92d89cabc59cb95fe583325b8f7a2ed3" title="Slider::Slide" alt="" coords="536,995,643,1021"/>
+<area shape="rect" href="$class_slider.html#ad5898c678003fc910e084578b808f41d" title="Slider::getTargetValue" alt="" coords="499,691,680,717"/>
+<area shape="rect" href="$classc_audio.html#a7ad354ffe2a9aaa331a98920178a9721" title="Sets All the Sounds default Volume  Returns avg_volume" alt="" coords="475,741,704,768"/>
+<area shape="rect" href="$_options_menu_8cpp.html#a238bfda81fcbf9083142369b7b613436" title="playSoundEffect" alt="" coords="520,792,659,819"/>
+<area shape="rect" href="$classc_audio.html#a0461c953d79bba40f59c7a6b5a5566f8" title="Sets the Music default Volume." alt="" coords="491,843,688,869"/>
+<area shape="rect" href="$classc_audio.html#a4ee876a51bb3fdadb00160eebc4dfd49" title="cAudio::MusicPlaying" alt="" coords="504,893,675,920"/>
+<area shape="rect" href="$classc_audio.html#a8169acfbe8b79cfc13a871ab16b2ffc9" title="if no forcing the file will be played after the current Music file if loops is &#45;1 music will be loope..." alt="" coords="516,944,663,971"/>
+<area shape="rect" href="$class_slider.html#a8ca3a1ac093b2ae70115c1f9ae2e816f" title="Slider::getTargetValue" alt="" coords="776,995,957,1021"/>
+<area shape="rect" href="$classc_sound_manager.html#a13473964862648a84d60d20669cb6e23" title="cSoundManager::GetPointer" alt="" coords="755,792,979,819"/>
+<area shape="rect" href="$classc_audio.html#aa5e5c15b5915928533c02cb8a277081e" title="Plays an Sound chunk if channel is &#45;1 the sound will be played on the next free channel if volume is ..." alt="" coords="789,843,944,869"/>
+</map>

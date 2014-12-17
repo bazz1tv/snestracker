@@ -1,0 +1,19 @@
+<map id="moveConsoleHistoryLinesUp" name="moveConsoleHistoryLinesUp">
+<area shape="rect" href="$group___console.html#ga830e26ea219001452d9429f06b621fe9" title="Self Explanatory." alt="" coords="283,353,400,380"/>
+<area shape="rect" href="$group___console___commands.html#ga435f3ef1ed3b1343f8da1f0a31b2b860" title="Change the volume of All sounds (0&#45;128)" alt="" coords="691,24,805,51"/>
+<area shape="rect" href="$group___console___commands.html#ga5d9c22361e5c135e94bd5a09658d88ce" title="change the current directory" alt="" coords="729,100,767,127"/>
+<area shape="rect" href="$group___console___input.html#gac529f81ae976f1c09e8a8b76a4a70da0" title="Handles console input." alt="" coords="449,100,641,127"/>
+<area shape="rect" href="$group___console___commands.html#ga99ed3ad1baebe6360406cee0cfa52168" title="bring up help on all commands or specific command" alt="" coords="721,201,775,228"/>
+<area shape="rect" href="$classc_console.html#a714228c67b935d14c674b223be5605be" title="cConsole::helpCMD" alt="" coords="465,201,625,228"/>
+<area shape="rect" href="$group___console___commands.html#ga9525780ab6c47a437572eda56f8ccfe0" title="list the directory" alt="" coords="729,252,767,279"/>
+<area shape="rect" href="$group___console___commands.html#gaefbb9887e1a21dc75e10547496cae00e" title="Change the music volume (0&#45;128)" alt="" coords="705,303,791,329"/>
+<area shape="rect" href="$group___console___commands.html#ga58909b8e8e2a955d5113e99e307da7a0" title="Play a song from the MUSIC_DIR." alt="" coords="723,353,773,380"/>
+<area shape="rect" href="$group___console___commands.html#gad17e168b6742ca55a9a90c91a6915a14" title="Set Meatball&#39;s X Coordinate." alt="" coords="716,404,780,431"/>
+<area shape="rect" href="$group___console___commands.html#ga8a02b58fbfae3bd589115d39955c554b" title="Set Meatball (X,Y) coordinate." alt="" coords="712,455,784,481"/>
+<area shape="rect" href="$group___console___commands.html#gad6e5b2456e77889b49c4a85babf6a50e" title="Set Meatball&#39;s Y Coordinate." alt="" coords="513,505,577,532"/>
+<area shape="rect" href="$group___console___commands.html#ga044479e5cccbba56546f6fb29605e555" title="SetScreenScaleX" alt="" coords="473,556,617,583"/>
+<area shape="rect" href="$group___console___commands.html#ga74cb0202407652a90483bca533ee73e6" title="SetScreenScaleXY" alt="" coords="468,607,623,633"/>
+<area shape="rect" href="$group___console___commands.html#gad448378e42bd6feeabd55f0fc558e439" title="SetScreenScaleY" alt="" coords="473,657,617,684"/>
+<area shape="rect" href="$group___console___commands.html#gab0d3b7a7354c23795d8daff20727a5a8" title="change the volume of a sound (0&#45;128)" alt="" coords="501,708,589,735"/>
+<area shape="rect" href="$classc_console.html#a30b719f98df2be1670f6e4e1055844a5" title="Gets the current working path, Loads the Background image to the Image Manager, Creates the console f..." alt="" coords="853,404,1016,431"/>
+</map>

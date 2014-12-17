@@ -1,0 +1,8 @@
+<map id="cLevel::Load" name="cLevel::Load">
+<area shape="rect" href="$class_game.html#a555a9e4719fd49971765a2ab8b090b5c" title="The init function to be called before starting your First Game." alt="" coords="165,5,261,32"/>
+<area shape="rect" href="$group___console___commands.html#ga76761b48724947bd23c9d00816c14354" title="Load a new Level from LEVEL_DIR." alt="" coords="171,56,256,83"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="329,5,452,32"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="520,5,605,32"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="653,5,712,32"/>
+<area shape="rect" href="$classc_console.html#a30b719f98df2be1670f6e4e1055844a5" title="Gets the current working path, Loads the Background image to the Image Manager, Creates the console f..." alt="" coords="309,56,472,83"/>
+</map>

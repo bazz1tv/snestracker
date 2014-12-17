@@ -1,0 +1,4 @@
+<map id="cPlayer::Update" name="cPlayer::Update">
+<area shape="rect" href="$group___player.html#gab3a456d791fc2bd6c2bd0b1bc44fd6c6" title="UpdatePlayer" alt="" coords="191,5,308,32"/>
+<area shape="rect" href="$class_game.html#a1c5373c68261c54aff03e6abe40fee52" title="Game::Update" alt="" coords="359,5,484,32"/>
+</map>

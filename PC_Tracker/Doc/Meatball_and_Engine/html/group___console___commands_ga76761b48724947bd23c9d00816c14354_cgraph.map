@@ -1,0 +1,20 @@
+<map id="loadmap" name="loadmap">
+<area shape="rect" href="$classc_level.html#a0585e5ce66c81057bc12da8e572f1cc4" title="Loads an Level." alt="" coords="141,192,253,219"/>
+<area shape="rect" href="$_globals_8cpp.html#af38b5f4efeeaf7ca41eb85294f0f1ec5" title="Checks if the file exists." alt="" coords="785,65,868,92"/>
+<area shape="rect" href="$classc_level.html#abe150afdc2a9fdf7a0df8d8b71cdf08e" title="Unloads the Level." alt="" coords="333,91,461,117"/>
+<area shape="rect" href="$effects_8cpp.html#aa0ce31d79258acc43ec735af3ac6b6e6" title="Delete&#39;s every Particle Emitter." alt="" coords="301,141,493,168"/>
+<area shape="rect" href="$group___guns.html#gad49f863c1fd08dfaa59fb8c9c51e8c43" title="Deletes all Bullets ( Cleans the Array )" alt="" coords="331,192,464,219"/>
+<area shape="rect" href="$enemy_8cpp.html#ade7b770307420fa96585cff068b6e365" title="Deletes every Enemy and frees the array." alt="" coords="324,243,471,269"/>
+<area shape="rect" href="$classc_level.html#a8bcb4ae8a5396ec20c5616c3c31153b8" title="Cuts the parts out and sends it to the ParseLine function." alt="" coords="340,293,455,320"/>
+<area shape="rect" href="$classc_framerate.html#a989508dcaae1a97113f844df00219dd4" title="cFramerate::Reset" alt="" coords="321,344,473,371"/>
+<area shape="rect" href="$classc_level.html#a0a2f749fbf8b59eabbed37e1d6a30e83" title="Parses the Command and also reports any Error." alt="" coords="543,280,687,307"/>
+<area shape="rect" href="$_globals_8cpp.html#a09ea7ab11fa74ab23547640862c19939" title="Checks if it&#39;s an Number." alt="" coords="759,128,895,155"/>
+<area shape="rect" href="$classc_image_manager.html#a75bc7ee74e8fe0839725639d8392390a" title="Adds an Image Should always have an Identifier." alt="" coords="739,179,915,205"/>
+<area shape="rect" href="$classc_image_manager.html#a71fec48cbbf5fbc3bf75b66fa8066cbf" title="cImageManager::GetPointer" alt="" coords="965,204,1189,231"/>
+<area shape="rect" href="$group___engine___image.html#gac3d007d1a2bfa7d73b87a8541a194c9c" title="LoadImage" alt="" coords="775,280,879,307"/>
+<area shape="rect" href="$classc_level_data.html#ac868f4fdf7cf4bd9bb007426b65fc0ab" title="Adds an Sprite to the Leveldata." alt="" coords="736,331,917,357"/>
+<area shape="rect" href="$enemy_8cpp.html#aed48716babc431a6d9216c142df5d71b" title="Adds an Enemy with the given type." alt="" coords="777,381,876,408"/>
+<area shape="rect" href="$classc_basic_sprite.html#abab9b223fef9a6875313718719866ccc" title="cBasicSprite::SetPos" alt="" coords="744,432,909,459"/>
+<area shape="rect" href="$class_object_manager.html#abd00b75edcab4d19e93efacc12459f3e" title="ObjectManager::add" alt="" coords="993,331,1161,357"/>
+<area shape="rect" href="$classc_enemy.html#ad43a7bf539bec2be57bbdbf02fa25f9f" title="cEnemy::init" alt="" coords="1023,381,1132,408"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="cAudio::PlaySound" name="cAudio::PlaySound">
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="873,111,996,137"/>
+<area shape="rect" href="$classc_weapon___pistol.html#a721295c1a1e841a80fe8b24c30809ad3" title="Fires an Bullet." alt="" coords="221,93,389,120"/>
+<area shape="rect" href="$classc_weapon___machinegun.html#ad0455412b53fd76dcbd768041765a424" title="Fires an Bullet." alt="" coords="213,144,397,189"/>
+<area shape="rect" href="$classc_weapon___laser___x1.html#a9257307d7f8c8fb81231f23fe9e872ba" title="Fires an Bullet." alt="" coords="208,213,403,240"/>
+<area shape="rect" href="$_options_menu_8cpp.html#a238bfda81fcbf9083142369b7b613436" title="playSoundEffect" alt="" coords="236,264,375,291"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="1045,111,1131,137"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1179,111,1237,137"/>
+<area shape="rect" href="$class_options_menu.html#a568f31e2fede9d17ba9c820a889eee0e" title="OptionsMenu::Update" alt="" coords="451,221,629,248"/>
+<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="679,179,823,205"/>
+</map>

@@ -1,0 +1,32 @@
+Contents of /Users/bazz/Projects/MeatBall/trunk/Meatball/XCode/MacSDLFiles/MeatBall-Prefix.pch
+-x
+c++
+-arch
+x86_64
+-fretain-comments-from-system-headers
+-stdlib=libstdc++
+-fpascal-strings
+-O0
+-D_DEBUG
+-isysroot
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk
+-fasm-blocks
+-mmacosx-version-min=10.9
+-g
+-fvisibility-inlines-hidden
+-Iinclude
+-I/Users/bazz/Projects/MeatBall/trunk/Meatball/XCode/Build/Products/Debug/include
+-I/usr/local/include
+-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include
+-I/opt/local/include
+-F/Users/bazz/Projects/MeatBall/trunk/Meatball/XCode/Build/Products/Debug
+-F/Library/Frameworks
+-F/Users/bazz/Projects/MeatBall/trunk/Meatball/XCode/Frameworks
+-ferror-limit=10
+-working-directory=/Users/bazz/Projects/MeatBall/trunk/Meatball/XCode
+-Xclang
+-detailed-preprocessing-record
+x86_64-apple-darwin13.1.0
+"4.2.1 Compatible Apple LLVM 5.1 (clang-503.0.40)"
+SDK_PRODUCT_BUILD_VERSION=13C64
+13C64

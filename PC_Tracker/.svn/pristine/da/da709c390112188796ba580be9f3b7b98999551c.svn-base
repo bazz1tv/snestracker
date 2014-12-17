@@ -1,0 +1,753 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - HelpOnParsers</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@HelpOnParsers.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@HelpOnParsers.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id=
+"line-4"></span><span class="anchor" id=
+"line-5"></span><span class="anchor" id=
+"line-6"></span><span class="anchor" id=
+"line-7"></span><span class="anchor" id="line-8"></span>
+<p class="line867"><a href="index.html@HelpContents.html">HelpContents</a> &gt;
+<a href="http://www.ginkgobitter.org/sdl2/?HelpForUsers">HelpForUsers</a> &gt; <a href="http://www.ginkgobitter.org/sdl2/?HelpOnEditing">HelpOnEditing</a> &gt; HelpOnParsers <span class=
+"anchor" id="line-9"></span><span class="anchor" id=
+"line-10"></span></p>
+<p class="line867"></p>
+<h1 id="Parsers">Parsers</h1>
+<span class="anchor" id="line-11"></span><span class="anchor" id=
+"line-12"></span>
+<p class="line862">Besides the default <a href="index.html@MoinMoin.html">MoinMoin</a> wiki markup, different
+<strong>parsers</strong> allow the user to enter content into a
+page or a page section which is interpreted differently. A <a href="index.html@MoinMoin.html">MoinMoin</a> wiki mostly will use the default wiki
+parser, which is described on <a href="index.html@HelpOnFormatting.html">HelpOnFormatting</a>. <span class="anchor" id=
+"line-13"></span><span class="anchor" id="line-14"></span></p>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@HelpOnParsers.html#Parsers">Parsers</a>
+<ol>
+<li><a href="index.html@HelpOnParsers.html#How_formats_are_applied">How formats are
+applied</a></li>
+<li><a href="index.html@HelpOnParsers.html#ParserBase">ParserBase</a></li>
+<li><a href="index.html@HelpOnParsers.html#creole">creole</a></li>
+<li><a href="index.html@HelpOnParsers.html#python">python</a>
+<ol>
+<li><a href="index.html@HelpOnParsers.html#cplusplus">cplusplus</a></li>
+<li><a href="index.html@HelpOnParsers.html#java">java</a></li>
+<li><a href="index.html@HelpOnParsers.html#pascal">pascal</a></li>
+</ol>
+</li>
+<li><a href="index.html@HelpOnParsers.html#IRC">IRC</a></li>
+<li><a href="index.html@HelpOnParsers.html#CSV">CSV</a></li>
+<li><a href="index.html@HelpOnParsers.html#reStructuredText">reStructuredText</a></li>
+<li><a href="index.html@HelpOnParsers.html#XML.2FXSLT.2FDocBook">XML/XSLT/DocBook</a></li>
+<li><a href="index.html@HelpOnParsers.html#Additional_Parsers">Additional Parsers</a></li>
+</ol>
+</li>
+</ol>
+</div>
+<span class="anchor" id="line-15"></span><span class="anchor" id=
+"line-16"></span><span class="anchor" id="line-17"></span>
+<p class="line867"></p>
+<h2 id="How_formats_are_applied">How formats are applied</h2>
+<span class="anchor" id="line-18"></span><span class="anchor" id=
+"line-19"></span>
+<p class="line862">Parsers go through the contents of a page to
+create a sequence of formatter calls which in sequence create some
+readable output. <a href="index.html@MoinMoin.html">MoinMoin</a> will choose the
+parser for a page using 2 different techniques: <span class=
+"anchor" id="line-20"></span></p>
+<ol type="1">
+<li>
+<p class="line891"><strong><a href="http://www.ginkgobitter.org/sdl2/?HelpOnProcessingInstructions#format">FORMAT Processing
+Instruction</a></strong> <span class="anchor" id=
+"line-21"></span><span class="anchor" id="line-22"></span></p>
+<p class="line862">A <tt class="backtick">#FORMAT</tt> processing
+instruction can be used to tell <a href="index.html@MoinMoin.html">MoinMoin</a>
+which parser to use for the whole page content. By default this is
+the <em>wiki</em> parser. Example: <span class="anchor" id=
+"line-23"></span><span class="anchor" id=
+"line-24"></span><span class="anchor" id=
+"line-25"></span><span class="anchor" id="line-26"></span></p>
+<pre>
+<span class="anchor" id="line-1"></span>#FORMAT cplusplus
+<span class="anchor" id="line-2"></span>... some C++ source ...
+</pre>
+<span class="anchor" id="line-27"></span><span class="anchor" id=
+"line-28"></span></li>
+<li class="gap">
+<p class="line891"><strong>Code Display Regions</strong> - see
+<a href="index.html@HelpOnFormatting.html">HelpOnFormatting</a> <span class=
+"anchor" id="line-29"></span><span class="anchor" id=
+"line-30"></span></p>
+<p class="line862">With the use of code display regions, a parser
+can be applied to only a part of a page (this was a processor
+region in earlier versions of <a href="index.html@MoinMoin.html">MoinMoin</a>).
+You specify which parser to call by using a bang path-like
+construct in the first line. A bang path is a concept known from
+Unix command line scripts, where they serve the exact same purpose:
+the first line tells the shell what program to start to process the
+remaining lines of the script. For example, the code <span class=
+"anchor" id="line-31"></span><span class="anchor" id=
+"line-32"></span><span class="anchor" id=
+"line-33"></span><span class="anchor" id=
+"line-34"></span><span class="anchor" id=
+"line-35"></span><span class="anchor" id="line-36"></span></p>
+<pre>
+<span class="anchor" id="line-1-1"></span>{{{#!CSV ,
+<span class="anchor" id="line-2-1"></span>a,b,c
+<span class="anchor" id="line-3"></span>d,e,f
+<span class="anchor" id="line-4"></span>}}}
+</pre>
+<span class="anchor" id="line-37"></span>produces the table:
+<span class="anchor" id="line-38"></span><span class="anchor" id=
+"line-39"></span><span class="anchor" id=
+"line-40"></span><span class="anchor" id="line-41"></span>
+<form action="http://www.ginkgobitter.org/HelpOnParsers" method="get" name="dbw.form" id=
+"dbw.form">
+<div>
+<div>
+<table id="dbw.table">
+<tbody>
+<tr>
+<td class="hcolumn0"><strong>a</strong></td>
+<td class="hcolumn1"><strong>b</strong></td>
+<td class="hcolumn2"><strong>c</strong></td>
+</tr>
+<tr>
+<td abbr="d" class="column0">d</td>
+<td abbr="e" class="column1">e</td>
+<td abbr="f" class="column2">f</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</form>
+<span class="anchor" id="line-42"></span><span class="anchor" id=
+"line-43"></span></li>
+</ol>
+<p class="line867"><img alt="(!)" height="16" src="http://www.ginkgobitter.org/sdl2/idea.png" title="(!)" width="16">
+Note that there are 2 ways to solve <em>nesting problems</em>
+related to <tt class="backtick">}}}</tt>: <span class="anchor" id=
+"line-44"></span></p>
+<ul>
+<li>Use more than 3 curly braces for beginning / ending of the
+parser section (what you use must not be contained in the section
+you are enclosing). E.g.: <span class="anchor" id=
+"line-45"></span><span class="anchor" id=
+"line-46"></span><span class="anchor" id=
+"line-47"></span><span class="anchor" id=
+"line-48"></span><span class="anchor" id=
+"line-49"></span><span class="anchor" id=
+"line-50"></span><span class="anchor" id="line-51"></span>
+<pre>
+<span class="anchor" id="line-1-2"></span>{{{{
+<span class="anchor" id="line-2-2"></span>{{{
+<span class="anchor" id="line-3-1"></span>...
+<span class="anchor" id="line-4-1"></span>}}}
+<span class="anchor" id="line-5"></span>}}}}
+</pre>
+<span class="anchor" id="line-52"></span></li>
+<li>Use 3 curly braces + some unique string: <span class="anchor"
+id="line-53"></span><span class="anchor" id=
+"line-54"></span><span class="anchor" id=
+"line-55"></span><span class="anchor" id=
+"line-56"></span><span class="anchor" id=
+"line-57"></span><span class="anchor" id=
+"line-58"></span><span class="anchor" id="line-59"></span>
+<pre>
+<span class="anchor" id="line-1-3"></span>{{{asdfghj
+<span class="anchor" id="line-2-3"></span>{{{
+<span class="anchor" id="line-3-2"></span>...
+<span class="anchor" id="line-4-2"></span>}}}
+<span class="anchor" id="line-5-1"></span>asdfghj}}}
+</pre>
+<span class="anchor" id="line-60"></span><span class="anchor" id=
+"line-61"></span></li>
+</ul>
+<p class="line862">For more information on the possible markup, see
+<a href="http://www.ginkgobitter.org/sdl2/?HelpOnEditing">HelpOnEditing</a>. <span class="anchor"
+id="line-62"></span><span class="anchor" id="line-63"></span></p>
+<p class="line867"></p>
+<h2 id="ParserBase">ParserBase</h2>
+<span class="anchor" id="line-64"></span><span class="anchor" id=
+"line-65"></span>
+<p class="line867">ParserBase is a parser utility class used to
+produce colorized source displays. It is easily extended. The HTML
+Formatter will render such code displays with switchable
+linenumbers, if the browser supports DOM and JavaScript.
+<span class="anchor" id="line-66"></span><span class="anchor" id=
+"line-67"></span></p>
+<p class="line862">A ParserBase colorization parser understands the
+following arguments to a <tt class="backtick">#FORMAT</tt> pi or a
+hashbang line. Just add those arguments after the name of the
+parser (<tt class=
+"backtick">#FORMAT&nbsp;python&nbsp;start=10&nbsp;step=10&nbsp;numbers=on</tt>
+or <tt class="backtick">#!python&nbsp;numbers=off</tt>).
+<span class="anchor" id="line-68"></span><span class="anchor" id=
+"line-69"></span></p>
+<dl>
+<dt>numbers</dt>
+<dd>if line numbers should be added. defaults to 'on'. possible
+values: 'on', 'off' (no line numbers, but javascript to add them),
+'disable' (no line numbers at all) <span class="anchor" id=
+"line-70"></span></dd>
+<dt>start</dt>
+<dd>where to start with numbering. defaults to 1 <span class=
+"anchor" id="line-71"></span></dd>
+<dt>step</dt>
+<dd>increment to the linenumber. defaults to 1 <span class="anchor"
+id="line-72"></span><span class="anchor" id="line-73"></span></dd>
+</dl>
+<p class="line867"><a href="index.html@MoinMoin.html">MoinMoin</a> comes with a
+few examples from which you can go on: <span class="anchor" id=
+"line-74"></span><span class="anchor" id="line-75"></span></p>
+<p class="line867"></p>
+<h2 id="creole">creole</h2>
+<span class="anchor" id="line-76"></span><span class="anchor" id=
+"line-77"></span>
+<p class="line862">See <a href="http://www.ginkgobitter.org/sdl2/?HelpOnCreoleSyntax">HelpOnCreoleSyntax</a>. <span class="anchor"
+id="line-78"></span><span class="anchor" id="line-79"></span></p>
+<p class="line867"></p>
+<h2 id="python">python</h2>
+<span class="anchor" id="line-80"></span><span class="anchor" id=
+"line-81"></span>
+<p class="line862">Colorizes python code. It is not derived from
+ParserBase, but it allows the same arguments as the ParserBase
+parsers. <span class="anchor" id="line-82"></span><span class=
+"anchor" id="line-83"></span></p>
+<p class="line867"><span class="anchor" id=
+"line-84"></span><span class="anchor" id=
+"line-85"></span><span class="anchor" id=
+"line-86"></span><span class="anchor" id="line-1-1"></span></p>
+<div class="highlight python">
+<div class="codearea" dir="ltr" lang="en"> 
+<pre dir="ltr" id="CA-78c687fbb04d58d5ee5c7f64fd6654a3595f0c88"
+lang="en">
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-78c687fbb04d58d5ee5c7f64fd6654a3595f0c88_1">   1</a> </span><span class="LineAnchor"
+id=
+"CA-78c687fbb04d58d5ee5c7f64fd6654a3595f0c88_1"></span><span class=
+"anchor" id="line-1-2"></span><span class=
+"ResWord">def</span> <span class="ID">hello</span>():</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-78c687fbb04d58d5ee5c7f64fd6654a3595f0c88_2">   2</a> </span><span class="LineAnchor"
+id=
+"CA-78c687fbb04d58d5ee5c7f64fd6654a3595f0c88_2"></span><span class=
+"anchor" id="line-2-1"></span>    <span class=
+"ResWord">print</span> <span class="String">"</span><span class=
+"String">Hello World!</span><span class="String">"</span></span>
+</pre></div>
+</div>
+<span class="anchor" id="line-87"></span><span class="anchor" id=
+"line-88"></span>
+<p class="line867"><span class="anchor" id=
+"line-89"></span><span class="anchor" id=
+"line-90"></span><span class="anchor" id=
+"line-91"></span><span class="anchor" id="line-1-3"></span></p>
+<div class="highlight python">
+<div class="codearea" dir="ltr" lang="en">
+<pre dir="ltr" id="CA-78c687fbb04d58d5ee5c7f64fd6654a3595f0c88-1"
+lang="en">
+<span class="line"><span class="anchor" id=
+"line-1-4"></span><span class="ResWord">def</span> <span class=
+"ID">hello</span>():</span>
+<span class="line"><span class="anchor" id=
+"line-2-2"></span>    <span class=
+"ResWord">print</span> <span class="String">"</span><span class=
+"String">Hello World!</span><span class="String">"</span></span>
+</pre></div>
+</div>
+<span class="anchor" id="line-92"></span><span class="anchor" id=
+"line-93"></span>
+<p class="line867"><span class="anchor" id=
+"line-94"></span><span class="anchor" id=
+"line-95"></span><span class="anchor" id=
+"line-96"></span><span class="anchor" id="line-1-5"></span></p>
+<div class="highlight python">
+<div class="codearea" dir="ltr" lang="en">
+<pre dir="ltr" id="CA-78c687fbb04d58d5ee5c7f64fd6654a3595f0c88-2"
+lang="en">
+<span class="line"><span class="anchor" id=
+"line-1-6"></span><span class="ResWord">def</span> <span class=
+"ID">hello</span>():</span>
+<span class="line"><span class="anchor" id=
+"line-2-3"></span>    <span class=
+"ResWord">print</span> <span class="String">"</span><span class=
+"String">Hello World!</span><span class="String">"</span></span>
+</pre></div>
+</div>
+<span class="anchor" id="line-97"></span><span class="anchor" id=
+"line-98"></span>
+<p class="line867"></p>
+<h3 id="cplusplus">cplusplus</h3>
+<span class="anchor" id="line-99"></span><span class="anchor" id=
+"line-100"></span>
+<p class="line867"><span class="anchor" id=
+"line-101"></span><span class="anchor" id=
+"line-102"></span><span class="anchor" id=
+"line-103"></span><span class="anchor" id=
+"line-104"></span><span class="anchor" id="line-1-7"></span></p>
+<div class="highlight cpp">
+<div class="codearea" dir="ltr" lang="en">
+<pre dir="ltr" id="CA-c8af74bda6d0a6dcf4fe60216e146c7945313d11"
+lang="en">
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-c8af74bda6d0a6dcf4fe60216e146c7945313d11_1">   1</a> </span><span class="LineAnchor"
+id=
+"CA-c8af74bda6d0a6dcf4fe60216e146c7945313d11_1"></span><span class=
+"anchor" id="line-1-8"></span><span class=
+"ResWord">int</span> <span class="ID">main</span>(<span class=
+"ResWord">int</span> <span class="ID">argc</span>, <span class=
+"ResWord">char</span> **<span class="ID">argv</span>) {</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-c8af74bda6d0a6dcf4fe60216e146c7945313d11_2">   2</a> </span><span class="LineAnchor"
+id=
+"CA-c8af74bda6d0a6dcf4fe60216e146c7945313d11_2"></span><span class=
+"anchor" id="line-2-4"></span>  <span class=
+"ResWord">return</span> <span class="Number">0</span>;</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-c8af74bda6d0a6dcf4fe60216e146c7945313d11_3">   3</a> </span><span class="LineAnchor"
+id=
+"CA-c8af74bda6d0a6dcf4fe60216e146c7945313d11_3"></span><span class=
+"anchor" id="line-3-1"></span>}</span>
+</pre></div>
+</div>
+<span class="anchor" id="line-105"></span><span class="anchor" id=
+"line-106"></span>
+<p class="line867"></p>
+<h3 id="java">java</h3>
+<span class="anchor" id="line-107"></span><span class="anchor" id=
+"line-108"></span>
+<p class="line867"><span class="anchor" id=
+"line-109"></span><span class="anchor" id=
+"line-110"></span><span class="anchor" id=
+"line-111"></span><span class="anchor" id=
+"line-112"></span><span class="anchor" id=
+"line-113"></span><span class="anchor" id=
+"line-114"></span><span class="anchor" id=
+"line-115"></span><span class="anchor" id=
+"line-116"></span><span class="anchor" id=
+"line-117"></span><span class="anchor" id=
+"line-118"></span><span class="anchor" id=
+"line-119"></span><span class="anchor" id=
+"line-120"></span><span class="anchor" id=
+"line-121"></span><span class="anchor" id=
+"line-122"></span><span class="anchor" id=
+"line-123"></span><span class="anchor" id=
+"line-124"></span><span class="anchor" id="line-1-9"></span></p>
+<div class="highlight java">
+<div class="codearea" dir="ltr" lang="en">
+<pre dir="ltr" id="CA-a1e49b2b9c45fe86836287323d723b12278329b6"
+lang="en">
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_1">   1</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_1"></span><span class=
+"anchor" id="line-1-10"></span><span class=
+"ResWord">import</span> <span class=
+"ID">java.util.Date</span>;</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_2">   2</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_2"></span><span class=
+"anchor" id="line-2-5"></span><span class=
+"ResWord">import</span> <span class=
+"ID">java.util.Calendar</span>;</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_3">   3</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_3"></span><span class=
+"anchor" id="line-3-2"></span></span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_4">   4</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_4"></span><span class=
+"anchor" id="line-4-1"></span><span class=
+"ResWord">public</span> <span class=
+"ResWord">class</span> <span class="ID">IntDate</span></span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_5">   5</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_5"></span><span class=
+"anchor" id="line-5-1"></span>{</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_6">   6</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_6"></span><span class=
+"anchor" id="line-6-1"></span>  <span class=
+"ResWord">public</span> <span class=
+"ResWord">static</span> <span class="ID">Date</span> <span class=
+"ID">getDate</span>(<span class="ID">String</span> <span class=
+"ID">year</span>, <span class="ID">String</span> <span class=
+"ID">month</span>, <span class="ID">String</span> <span class=
+"ID">day</span>)</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_7">   7</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_7"></span><span class=
+"anchor" id="line-7-1"></span>    {</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_8">   8</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_8"></span><span class=
+"anchor" id="line-8-1"></span>      <span class=
+"Comment">// Date(int, int, int) has been deprecated, so use Calendar to</span></span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_9">   9</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_9"></span><span class=
+"anchor" id="line-9-1"></span>      <span class=
+"Comment">// set the year, month, and day.</span></span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_10">  10</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_10"></span><span class="anchor"
+id="line-10-1"></span>      <span class=
+"ID">Calendar</span> <span class="ID">c</span> = <span class=
+"ID">Calendar</span>.<span class="ID">getInstance</span>();</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_11">  11</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_11"></span><span class="anchor"
+id="line-11-1"></span>      <span class=
+"Comment">// Convert each argument to int.</span></span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_12">  12</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_12"></span><span class="anchor"
+id="line-12-1"></span>      <span class="ID">c</span>.<span class=
+"ID">set</span>(<span class="ID">Integer</span>.<span class=
+"ID">parseInt</span>(<span class="ID">year</span>),<span class=
+"ID">Integer</span>.<span class="ID">parseInt</span>(<span class=
+"ID">month</span>),<span class="ID">Integer</span>.<span class=
+"ID">parseInt</span>(<span class="ID">day</span>));</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_13">  13</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_13"></span><span class="anchor"
+id="line-13-1"></span>      <span class=
+"ResWord">return</span> <span class="ID">c</span>.<span class=
+"ID">getTime</span>();</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_14">  14</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_14"></span><span class="anchor"
+id="line-14-1"></span>    }</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-a1e49b2b9c45fe86836287323d723b12278329b6_15">  15</a> </span><span class="LineAnchor"
+id=
+"CA-a1e49b2b9c45fe86836287323d723b12278329b6_15"></span><span class="anchor"
+id="line-15-1"></span>}</span>
+</pre></div>
+</div>
+<span class="anchor" id="line-125"></span><span class="anchor" id=
+"line-126"></span>
+<p class="line867"></p>
+<h3 id="pascal">pascal</h3>
+<span class="anchor" id="line-127"></span><span class="anchor" id=
+"line-128"></span>
+<p class="line867"><span class="anchor" id=
+"line-129"></span><span class="anchor" id=
+"line-130"></span><span class="anchor" id=
+"line-131"></span><span class="anchor" id=
+"line-132"></span><span class="anchor" id=
+"line-133"></span><span class="anchor" id=
+"line-134"></span><span class="anchor" id=
+"line-135"></span><span class="anchor" id="line-1-11"></span></p>
+<div class="highlight pascal">
+<div class="codearea" dir="ltr" lang="en">
+<pre dir="ltr" id="CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06"
+lang="en">
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_1">   1</a> </span><span class="LineAnchor"
+id=
+"CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_1"></span><span class=
+"anchor" id="line-1-12"></span><span class=
+"ResWord">function</span> <span class=
+"ID">TRegEx</span>.<span class="ID">Match</span>(<span class=
+"ResWord">const</span> <span class="ID">s</span>:<span class=
+"ResWord">string</span>):<span class=
+"ResWord">boolean</span>;</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_2">   2</a> </span><span class="LineAnchor"
+id=
+"CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_2"></span><span class=
+"anchor" id="line-2-6"></span><span class=
+"ResWord">var</span></span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_3">   3</a> </span><span class="LineAnchor"
+id=
+"CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_3"></span><span class=
+"anchor" id="line-3-3"></span>    <span class=
+"ID">l</span>,<span class="ID">i</span> : <span class=
+"ResWord">integer</span>;</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_4">   4</a> </span><span class="LineAnchor"
+id=
+"CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_4"></span><span class=
+"anchor" id="line-4-2"></span><span class=
+"ResWord">begin</span></span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_5">   5</a> </span><span class="LineAnchor"
+id=
+"CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_5"></span><span class=
+"anchor" id="line-5-2"></span>    <span class=
+"ResWord">result</span> := <span class=
+"ID">MatchPos</span>(<span class="ID">s</span>,<span class=
+"ID">l</span>,<span class="ID">i</span>);</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_6">   6</a> </span><span class="LineAnchor"
+id=
+"CA-5b038b58a5d96f18c97739a9b1eb0c7177181e06_6"></span><span class=
+"anchor" id="line-6-2"></span><span class=
+"ResWord">end</span>;</span>
+</pre></div>
+</div>
+<span class="anchor" id="line-136"></span><span class="anchor" id=
+"line-137"></span>
+<p class="line867"></p>
+<h2 id="IRC">IRC</h2>
+<span class="anchor" id="line-138"></span><span class="anchor" id=
+"line-139"></span>
+<p class="line874">Puts an IRC log into a table. <span class=
+"anchor" id="line-140"></span><span class="anchor" id=
+"line-141"></span></p>
+<p class="line867"><span class="anchor" id=
+"line-142"></span><span class="anchor" id=
+"line-143"></span><span class="anchor" id=
+"line-144"></span><span class="anchor" id=
+"line-145"></span><span class="anchor" id=
+"line-146"></span><span class="anchor" id=
+"line-147"></span><span class="anchor" id=
+"line-148"></span><span class="anchor" id="line-1-13"></span></p>
+<div class="highlight irc">
+<div class="codearea" dir="ltr" lang="en">
+<pre dir="ltr" id="CA-9757c4c173cf8572928ff49b15ee354c0e8407e0"
+lang="en">
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_1">   1</a> </span><span class="LineAnchor"
+id=
+"CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_1"></span><span class=
+"anchor" id="line-1-14"></span><span class=
+"Preprc">(23:18) </span><span class=
+"ID">&lt;     jroes&gt; </span>ah</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_2">   2</a> </span><span class="LineAnchor"
+id=
+"CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_2"></span><span class=
+"anchor" id="line-2-7"></span><span class=
+"Preprc">(23:21) </span><span class=
+"ResWord">-!- </span><span class=
+"String">gpciceri </span><span class=
+"Comment">[~gpciceri@host181-130.pool8248.interbusiness.it] has quit [Read error: 110 (Connection timed out)]</span></span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_3">   3</a> </span><span class="LineAnchor"
+id=
+"CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_3"></span><span class=
+"anchor" id="line-3-4"></span><span class=
+"Preprc">(23:36) </span><span class=
+"ID">&lt; ThomasWal&gt; </span>you could also write a parser or processor</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_4">   4</a> </span><span class="LineAnchor"
+id=
+"CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_4"></span><span class=
+"anchor" id="line-4-3"></span><span class=
+"Preprc">(23:38) </span><span class=
+"ID">&lt;     jroes&gt; </span>i could?</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_5">   5</a> </span><span class="LineAnchor"
+id=
+"CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_5"></span><span class=
+"anchor" id="line-5-3"></span><span class=
+"Preprc">(23:38) </span><span class=
+"ID">&lt;     jroes&gt; </span>would that require modification on the moin end though?</span>
+<span class="line"><span class="LineNumber"><a href=
+"index.html@HelpOnParsers.html#CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_6">   6</a> </span><span class="LineAnchor"
+id=
+"CA-9757c4c173cf8572928ff49b15ee354c0e8407e0_6"></span><span class=
+"anchor" id="line-6-3"></span><span class=
+"Preprc">(23:38) </span><span class=
+"ID">&lt;     jroes&gt; </span>i cant change the wiki myself :x</span>
+</pre></div>
+</div>
+<span class="anchor" id="line-149"></span><span class="anchor" id=
+"line-150"></span>
+<p class="line874">The format parsed is the log format of IRSSI, a
+popular console IRC client, but it should also match the log format
+of quite some other IRC clients. <span class="anchor" id=
+"line-151"></span><span class="anchor" id="line-152"></span></p>
+<p class="line867"><span class="anchor" id="csvparser"></span>
+<span class="anchor" id="line-153"></span></p>
+<h2 id="CSV">CSV</h2>
+<span class="anchor" id="line-154"></span><span class="anchor" id=
+"line-155"></span>
+<p class="line862">The CSV parser works on so-called <em>comma
+separated values</em>, though the comma is now usually and by
+default a semicolon. <span class="anchor" id="line-156"></span>The
+first line is considered to contain column titles that are rendered
+in <strong>bold</strong>, so when you don't want table headers,
+leave the first line empty. <span class="anchor" id=
+"line-157"></span><span class="anchor" id="line-158"></span></p>
+<p class="line874">The bang path can contain the following
+arguments: <span class="anchor" id="line-159"></span></p>
+<ul>
+<li>
+<p class="line891"><tt class="backtick">delimiter</tt> or
+<tt class="backtick">separator</tt>: <tt class=
+"backtick">delimiter=,</tt> will set the delimiter to a comma
+<span class="anchor" id="line-160"></span></p>
+</li>
+<li>
+<p class="line891"><tt class="backtick">quotechar</tt>: <tt class=
+"backtick">quotechar="</tt> will allow quoting values with a
+double-quote <span class="anchor" id="line-161"></span></p>
+</li>
+<li>
+<p class="line891"><tt class="backtick">show</tt>: comma-separated
+list of columns to show only <span class="anchor" id=
+"line-162"></span></p>
+</li>
+<li>
+<p class="line891"><tt class="backtick">hide</tt>: comma-separated
+list of columns to hide <span class="anchor" id=
+"line-163"></span></p>
+</li>
+<li>
+<p class="line891"><tt class="backtick">autofilter</tt>:
+comma-separated list of columns to add auto-filters on <span class=
+"anchor" id="line-164"></span></p>
+</li>
+<li>
+<p class="line891"><tt class="backtick">name</tt>: name of the
+dataset <span class="anchor" id="line-165"></span></p>
+</li>
+<li>
+<p class="line891"><tt class="backtick">link</tt>: comma-separated
+list of columns consisting of <tt class=
+"backtick">http://example.com/link&nbsp;description&nbsp;text</tt>
+rather than just text <span class="anchor" id=
+"line-166"></span></p>
+</li>
+<li>
+<p class="line891"><tt class="backtick">static_cols</tt>,
+<tt class="backtick">static_vals</tt>: columns (and respective
+values) added to each record <span class="anchor" id=
+"line-167"></span></p>
+</li>
+<li>
+<p class="line891"><tt class="backtick">-N</tt> (where N is a
+number): hide column N (useful when column names are omitted)
+<span class="anchor" id="line-168"></span><span class="anchor" id=
+"line-169"></span></p>
+</li>
+</ul>
+<p class="line874">The parser also supports the old, deprecated
+syntax for the bang path. <span class="anchor" id=
+"line-170"></span><span class="anchor" id="line-171"></span></p>
+<p class="line874">Example tables (please see the raw text of this
+page for the markup used): <span class="anchor" id=
+"line-172"></span><span class="anchor" id="line-173"></span></p>
+<p class="line867">MoinMoin 1.3 - clipping of the patch history:
+<span class="anchor" id="line-174"></span><span class="anchor" id=
+"line-175"></span><span class="anchor" id=
+"line-176"></span><span class="anchor" id=
+"line-177"></span><span class="anchor" id=
+"line-178"></span><span class="anchor" id=
+"line-179"></span><span class="anchor" id=
+"line-180"></span><span class="anchor" id=
+"line-181"></span><span class="anchor" id=
+"line-182"></span><span class="anchor" id=
+"line-183"></span><span class="anchor" id=
+"line-184"></span><span class="anchor" id=
+"line-185"></span><span class="anchor" id=
+"line-186"></span><span class="anchor" id="line-187"></span></p>
+<form action="http://www.ginkgobitter.org/HelpOnParsers" method="get" name="dbw.form" id=
+"dbw.form">
+<div>
+<div>
+<table id="dbw.table-1">
+<tbody>
+<tr>
+<td class="hcolumn0"><strong>patch-366</strong></td>
+<td class="hcolumn1"><strong>make _normalize_text public
+method</strong></td>
+<td class="hcolumn2"><strong>Nir Soffer</strong></td>
+</tr>
+<tr>
+<td abbr="patch-367" class="column0">patch-367</td>
+<td abbr="fixed failing test wikiutil: good system page names"
+class="column1">fixed failing test wikiutil: good system page
+names</td>
+<td abbr="Nir Soffer" class="column2">Nir Soffer</td>
+</tr>
+<tr>
+<td abbr="patch-368" class="column0">patch-368</td>
+<td abbr=
+"Fixed DeprecationWarning in RandomPage.py and an unused import in twistedmoin.py"
+class="column1">Fixed DeprecationWarning in RandomPage.py and an
+unused import in twistedmoin.py</td>
+<td abbr="Alexander Schremmer" class="column2">Alexander
+Schremmer</td>
+</tr>
+<tr>
+<td abbr="patch-369" class="column0">patch-369</td>
+<td abbr="remove duplicate code in formatter.base" class="column1">
+remove duplicate code in formatter.base</td>
+<td abbr="Thomas Waldmann" class="column2">Thomas Waldmann</td>
+</tr>
+<tr>
+<td abbr="patch-370" class="column0">patch-370</td>
+<td abbr="fixed long int in mig3" class="column1">fixed long int in
+mig3</td>
+<td abbr="Thomas Waldmann" class="column2">Thomas Waldmann</td>
+</tr>
+<tr>
+<td abbr="patch-371" class="column0">patch-371</td>
+<td abbr="fixed unicode error on eventlog" class="column1">fixed
+unicode error on eventlog</td>
+<td abbr="Nir Soffer" class="column2">Nir Soffer</td>
+</tr>
+<tr>
+<td abbr="patch-372" class="column0">patch-372</td>
+<td abbr="fixed util.web.makeQueryString and Page.url" class=
+"column1">fixed util.web.makeQueryString and Page.url</td>
+<td abbr="Nir Soffer" class="column2">Nir Soffer</td>
+</tr>
+<tr>
+<td abbr="patch-373" class="column0">patch-373</td>
+<td abbr="fixed again non ascii http_referer" class="column1">fixed
+again non ascii http_referer</td>
+<td abbr="Nir Soffer" class="column2">Nir Soffer</td>
+</tr>
+<tr>
+<td abbr="patch-374" class="column0">patch-374</td>
+<td abbr="CSV.py supports different separators now" class=
+"column1">CSV.py supports different separators now</td>
+<td abbr="Alexander Schremmer" class="column2">Alexander
+Schremmer</td>
+</tr>
+<tr>
+<td abbr="patch-375" class="column0">patch-375</td>
+<td abbr="improved searchform behavior on Mozilla/Firefox" class=
+"column1">improved searchform behavior on Mozilla/Firefox</td>
+<td abbr="Nir Soffer" </body></html>

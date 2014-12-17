@@ -1,0 +1,5 @@
+<map id="SetSpriteSpeedfactor" name="SetSpriteSpeedfactor">
+<area shape="rect" href="$main_8cpp.html#a66c2b0f98868e33e780f996f1dbd84f1" title="initEngine" alt="" coords="341,5,435,32"/>
+<area shape="rect" href="$group___engine.html#ga98243e7d3f313dee3b0059af96e13f34" title="Inits SDL_ep. It seeds the random number generator and sets the SpriteSpeed Factor to 1..." alt="" coords="233,31,292,57"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="483,5,541,32"/>
+</map>

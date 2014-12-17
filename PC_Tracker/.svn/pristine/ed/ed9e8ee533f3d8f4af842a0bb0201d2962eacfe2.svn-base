@@ -1,0 +1,155 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - CategorySurface</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@CategorySurface.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@CategorySurface.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id=
+"line-4"></span><span class="anchor" id=
+"line-5"></span><span class="anchor" id="line-6"></span>
+<p class="line867"></p>
+<h1 id="Surface_Creation_and_Simple_Drawing">Surface Creation and
+Simple Drawing</h1>
+<span class="anchor" id="line-7"></span><span class="anchor" id=
+"line-8"></span>
+<p class="line867"><strong>Include File(s):</strong> <a class=
+"http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_surface.h">SDL_surface.h</a>
+<span class="anchor" id="line-9"></span><span class="anchor" id=
+"line-10"></span></p>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@CategorySurface.html#Surface_Creation_and_Simple_Drawing">Surface Creation
+and Simple Drawing</a>
+<ol>
+<li><a href="index.html@CategorySurface.html#Introduction">Introduction</a></li>
+<li><a href="index.html@CategorySurface.html#Structures">Structures</a></li>
+<li><a href="index.html@CategorySurface.html#Functions">Functions</a></li>
+</ol>
+</li>
+</ol>
+</div>
+<span class="anchor" id="line-11"></span><span class="anchor" id=
+"line-12"></span>
+<p class="line867"></p>
+<h2 id="Introduction">Introduction</h2>
+<span class="anchor" id="line-13"></span><span class="anchor" id=
+"line-14"></span>
+<p class="line874">This category contains functions for handling
+surface creation and blitting as well as simple drawing tasks
+including points, lines, and rectangles. <span class="anchor" id=
+"line-15"></span><span class="anchor" id="line-16"></span></p>
+<p class="line867"><span class="anchor" id="line-17"></span></p>
+<p class="line867"><span class="anchor" id="line-18"></span></p>
+<p class="line867"><span class="anchor" id=
+"line-19"></span><span class="anchor" id="line-20"></span></p>
+<p class="line867"></p>
+<h2 id="Structures">Structures</h2>
+<span class="anchor" id="line-21"></span>
+<p class="line867"></p>
+<div class="searchresults">
+<ol start="1">
+<li><a href="index.html@SDL_Surface.html">
+SDL_Surface</a></li>
+</ol>
+</div>
+<span class="anchor" id="line-22"></span><span class="anchor" id=
+"line-23"></span>
+<p class="line867"></p>
+<h2 id="Functions">Functions</h2>
+<span class="anchor" id="line-24"></span>
+<p class="line867"></p>
+<div class="searchresults">
+<ol start="1">
+<li><a href="index.html@SDL_BlitScaled.html">
+SDL_BlitScaled</a></li>
+<li><a href="index.html@SDL_BlitSurface.html">
+SDL_BlitSurface</a></li>
+<li><a href="index.html@SDL_ConvertPixels.html">
+SDL_ConvertPixels</a></li>
+<li><a href="index.html@SDL_ConvertSurface.html">
+SDL_ConvertSurface</a></li>
+<li><a href="index.html@SDL_ConvertSurfaceFormat.html">
+SDL_ConvertSurfaceFormat</a></li>
+<li><a href="index.html@SDL_CreateRGBSurface.html">
+SDL_CreateRGBSurface</a></li>
+<li><a href="index.html@SDL_CreateRGBSurfaceFrom.html">
+SDL_CreateRGBSurfaceFrom</a></li>
+<li><a href="index.html@SDL_FillRect.html">
+SDL_FillRect</a></li>
+<li><a href="index.html@SDL_FillRects.html">
+SDL_FillRects</a></li>
+<li><a href="index.html@SDL_FreeSurface.html">
+SDL_FreeSurface</a></li>
+<li><a href="index.html@SDL_GetClipRect.html">
+SDL_GetClipRect</a></li>
+<li><a href="index.html@SDL_GetColorKey.html">
+SDL_GetColorKey</a></li>
+<li><a href="index.html@SDL_GetSurfaceAlphaMod.html">
+SDL_GetSurfaceAlphaMod</a></li>
+<li><a href="index.html@SDL_GetSurfaceBlendMode.html">
+SDL_GetSurfaceBlendMode</a></li>
+<li><a href="index.html@SDL_GetSurfaceColorMod.html">
+SDL_GetSurfaceColorMod</a></li>
+<li><a href="index.html@SDL_LoadBMP.html">
+SDL_LoadBMP</a></li>
+<li><a href="index.html@SDL_LoadBMP_RW.html">
+SDL_LoadBMP_RW</a></li>
+<li><a href="index.html@SDL_LockSurface.html">
+SDL_LockSurface</a></li>
+<li><a href="index.html@SDL_LowerBlit.html">
+SDL_LowerBlit</a></li>
+<li><a href="index.html@SDL_LowerBlitScaled.html">
+SDL_LowerBlitScaled</a></li>
+<li><a href="index.html@SDL_MUSTLOCK.html">
+SDL_MUSTLOCK</a></li>
+<li><a href="index.html@SDL_SaveBMP.html">
+SDL_SaveBMP</a></li>
+<li><a href="index.html@SDL_SaveBMP_RW.html">
+SDL_SaveBMP_RW</a></li>
+<li><a href="index.html@SDL_SetClipRect.html">
+SDL_SetClipRect</a></li>
+<li><a href="index.html@SDL_SetColorKey.html">
+SDL_SetColorKey</a></li>
+<li><a href="index.html@SDL_SetSurfaceAlphaMod.html">
+SDL_SetSurfaceAlphaMod</a></li>
+<li><a href="index.html@SDL_SetSurfaceBlendMode.html">
+SDL_SetSurfaceBlendMode</a></li>
+<li><a href="index.html@SDL_SetSurfaceColorMod.html">
+SDL_SetSurfaceColorMod</a></li>
+<li><a href="index.html@SDL_SetSurfacePalette.html">
+SDL_SetSurfacePalette</a></li>
+<li><a href="index.html@SDL_SetSurfaceRLE.html">
+SDL_SetSurfaceRLE</a></li>
+<li><a href="index.html@SDL_UnlockSurface.html">
+SDL_UnlockSurface</a></li>
+</ol>
+</div>
+<span class="anchor" id="line-25"></span><span class="anchor" id=
+"line-26"></span>
+<p class="line867"></p>
+<hr/>
+<p class="line874"><span class="anchor" id=
+"line-27"></span><a href="index.html@CategoryCategory.html">CategoryCategory</a>
+<span class="anchor" id="line-28"></span><span class="anchor" id=
+"bottom"></span></p>
+</div>
+</body></html>

@@ -1,0 +1,8 @@
+<map id="cPlayer::Jump" name="cPlayer::Jump">
+<area shape="rect" href="$class_game.html#a54a07333126e6dda45c114227b697499" title="Game::Keydown_Events" alt="" coords="181,5,373,32"/>
+<area shape="rect" href="$class_game.html#a229498a644bd9a1581ab1ad4c985e1f0" title="Game::MouseButtonDown\l_Events" alt="" coords="173,56,381,101"/>
+<area shape="rect" href="$classc_player.html#a28a14211f3f36ed0ef550fc973ab1858" title="Updates the Player." alt="" coords="211,125,344,152"/>
+<area shape="rect" href="$class_game.html#a7ee7ce6614bdabc3eecdf6ae8eaa94d6" title="Game::EventHandler" alt="" coords="429,36,600,63"/>
+<area shape="rect" href="$group___player.html#gab3a456d791fc2bd6c2bd0b1bc44fd6c6" title="UpdatePlayer" alt="" coords="456,125,573,152"/>
+<area shape="rect" href="$class_game.html#a1c5373c68261c54aff03e6abe40fee52" title="Game::Update" alt="" coords="649,125,775,152"/>
+</map>

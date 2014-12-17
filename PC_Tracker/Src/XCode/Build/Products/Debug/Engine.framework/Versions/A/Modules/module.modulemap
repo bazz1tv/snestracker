@@ -1,0 +1,6 @@
+framework module Engine {
+  umbrella header "Engine.h"
+
+  export *
+  module * { export * }
+}

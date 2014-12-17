@@ -1,0 +1,221 @@
+<html>
+<!--------------------------------------------------->
+<!--             Docs/figures - SGE                -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Figures</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Figures</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_HLine">sge_H/VLine</A>
+<LI><A HREF="#sge_DoLine">sge_DoLine</A>
+<LI><A HREF="#sge_Line">sge_Line</A>
+<LI><A HREF="#sge_DomcLine">sge_DomcLine</A>
+<LI><A HREF="#sge_mcLine">sge_mcLine</A>
+<LI><A HREF="#sge_Rect">sge_Rect</A>
+<LI><A HREF="#sge_FilledRect">sge_FilledRect</A>
+<LI><A HREF="#sge_DoCircle">sge_DoCircle</A>
+<LI><A HREF="#sge_Circle">sge_Circle</A>
+<LI><A HREF="#sge_FilledCircle">sge_FilledCircle</A>
+<LI><A HREF="#sge_DoEllipse">sge_DoEllipse</A>
+<LI><A HREF="#sge_Ellipse">sge_Ellipse</A>
+<LI><A HREF="#sge_FilledEllipse">sge_FilledEllipse</A>
+<LI><A HREF="#sge_Bezier">sge_Bezier</A>
+</UL>
+<BR>
+
+<B>Important!</B>
+<UL>
+<LI>The clipping rectangle set by SDL_SetClipRect() will always be respected.
+<LI>These functions will lock the surface if necessary, but you can control this with <A HREF="surface.html#sge_Lock_ON">sge_Lock_ON/OFF()</A>.
+<LI>Functions marked as "Must be able to control surface locking" might use both SW (needs locked surfaces) and HW (SDL_FillRect() - 
+needs unlocked surfaces) access to the surface if a HW surface is used, so don't toy with sge_Lock_ON/OFF() or SDL_LockSurface()!
+<LI>The destination surface will be updated if necessary, but you should really do this yourself to avoid unnecessary updates; control this with <A HREF="surface.html#sge_Update_">sge_Update_ON/OFF()</A>.
+<LI>Most drawing primitives can blend with the background; use the Alpha version of the routine to do this.
+<LI>A few primitives also has an anti-aliasing mode; use the AA version of the routine to get this feature.
+</UL>
+<BR><BR><BR><BR>
+
+
+<a name="sge_HLine"><B>sge_H/VLine</B></a>
+<UL>
+<LI>void <B>sge_HLine(</B>SDL_Surface *Surface, Sint16 x1, Sint16 x2, Sint16 y, Uint32 Color<B>)</B>
+<LI>void <B>sge_HLine(</B>SDL_Surface *Surface, Sint16 x1, Sint16 x2, Sint16 y, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_HLineAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 x2, Sint16 y, Uint32 Color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_HLineAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 x2, Sint16 y, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+<LI>void <B>sge_VLine(</B>SDL_Surface *Surface, Sint16 x, Sint16 y1, Sint16 y2, Uint32 Color<B>)</B>
+<LI>void <B>sge_VLine(</B>SDL_Surface *Surface, Sint16 x, Sint16 y1, Sint16 y2, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_VLineAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y1, Sint16 y2, Uint32 Color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_VLineAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y1, Sint16 y2, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+</UL>
+Draws a horizontal or vertical line. The surface must be unlocked if using a HW surface with the non-alpha functions.<BR><BR><BR><BR>
+
+
+<a name="sge_DoLine"><B>sge_DoLine</B></a>
+<UL>
+<LI>void <B>sge_DoLine(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint32 Color, void Callback(SDL_Surface *Surf, Sint16 X, Sint16 Y, Uint32 Color)<B>)</B>
+<LI>void <B>sge_DoLine(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 R, Uint8 G, Uint8 B, void Callback(SDL_Surface *Surf, Sint16 X, Sint16 Y, Uint32 Color)<B>)</B>
+</UL>
+Calculates all the points along a line from (x1, y1) to (x2, y2), calling the supplied function for each point. The callback function 
+should look like Callback(SDL_Surface *Surf, Sint16 x, Sint16 y, Uint32 Color). For example, to draw a line without lock or 
+update: sge_DoLine(Surface, x1, y1, x2, y2, Color, _PutPixel).<BR><BR><BR><BR>
+
+
+<a name="sge_Line"><B>sge_Line</B></a>
+<UL>
+<LI>void <B>sge_Line(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint32 Color<B>)</B>
+<LI>void <B>sge_Line(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_LineAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint32 Color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_LineAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AALine(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint32 Color<B>)</B>
+<LI>void <B>sge_AALine(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_AALineAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint32 Color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AALineAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+</UL>
+Draws a line from (x1, y1) to (x2, y2).<BR><BR><BR><BR>
+
+
+<a name="sge_DomcLine"><B>sge_DomcLine</B></a>
+<UL>
+<LI>void <B>sge_DomcLine(</B>SDL_Surface *surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r1, Uint8 g1, Uint8 b1, Uint8 r2, Uint8 g2, Uint8 b2, void Callback(SDL_Surface *Surf, Sint16 X, Sint16 Y, Uint32 Color)<B>)</B>
+</UL>
+Calculates all the points along a line from (x1, y1) to (x2, y2), calling the supplied function for each point. The color is faded from
+(r1, g1, b1) to (r2, g2, b2).
+<BR><BR><BR><BR>
+
+
+<a name="sge_mcLine"><B>sge_mcLine</B></a>
+<UL>
+<LI>void <B>sge_mcLine(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r1, Uint8 g1, Uint8 b1, Uint8 r2, Uint8 g2, Uint8 b2<B>)</B>
+<LI>void <B>sge_mcLineAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r1, Uint8 g1, Uint8 b1, Uint8 r2, Uint8 g2, Uint8 b2, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AAmcLine(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r1, Uint8 g1, Uint8 b1, Uint8 r2, Uint8 g2, Uint8 b2<B>)</B>
+<LI>void <B>sge_AAmcLineAlpha(</B>SDL_Surface *dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 r1, Uint8 g1, Uint8 b1, Uint8 r2, Uint8 g2, Uint8 b2, Uint8 alpha<B>)</B>
+</UL>
+Draws a multicolored line from (x1, y1) to (x2, y2), fading the color from (r1, g1, b1) to (r2, g2, b2).
+Also see <A HREF="blib.html#sge_FadedLine">sge_FadedLine()</A>.
+<BR><BR><BR><BR>
+
+
+<a name="sge_Rect"><B>sge_Rect</B></a>
+<UL>
+<LI>void <B>sge_Rect(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint32 color<B>)</B>
+<LI>void <B>sge_Rect(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_RectAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_RectAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+</UL>
+Draws a rectangle. The surface must be unlocked if using a HW surface with the non-alpha functions.<BR><BR><BR><BR>
+
+
+<a name="sge_FilledRect"><B>sge_FilledRect</B></a>
+<UL>
+<LI>void <B>sge_FilledRect(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint32 color<B>)</B>
+<LI>void <B>sge_FilledRect(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_FilledRectAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_FilledRectAlpha(</B>SDL_Surface *Surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+</UL>
+Draws a filled rectangle. You can also use SDL_FillRect() directly. The surface must be unlocked if using a HW surface with the non-alpha functions.<BR><BR><BR><BR>
+
+
+<a name="sge_DoCircle"><B>sge_DoCircle</B></a>
+<UL>
+<LI>void <B>sge_DoCircle(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint32 color, void Callback()<B>)</B>
+<LI>void <B>sge_DoCircle(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint8 R, Uint8 G, Uint8 B, void Callback()<B>)</B>
+</UL>
+Calculates all the points in a circle around point (x,y) with radius r, calling the supplied function for each one. The callback 
+function should look like Callback(SDL_Surface *Surf, Sint16 x, Sint16 y, Uint32 Color).<BR><BR><BR><BR>
+
+
+<a name="sge_Circle"><B>sge_Circle</B></a>
+<UL>
+<LI>void <B>sge_Circle(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint32 color<B>)</B>
+<LI>void <B>sge_Circle(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_CircleAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_CircleAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AACircle(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint32 color<B>)</B>
+<LI>void <B>sge_AACircle(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_AACircleAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AACircleAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+</UL>
+Draws a circle with the specified centre and radius.<BR><BR><BR><BR>
+
+
+<a name="sge_FilledCircle"><B>sge_FilledCircle</B></a>
+<UL>
+<LI>void <B>sge_FilledCircle(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint32 color<B>)</B>
+<LI>void <B>sge_FilledCircle(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_FilledCircleAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_FilledCircleAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AAFilledCircle(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint32 color<B>)</B>
+<LI>void <B>sge_AAFilledCircle(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 r, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+</UL>
+Draws a filled circle with the specified centre and radius. The surface must be unlocked if using a HW surface with sge_FilledCircle().
+Note that sge_AAFilledCircle() must be able to control surface locking.<BR><BR><BR><BR>
+
+
+<a name="sge_DoEllipse"><B>sge_DoEllipse</B></a>
+<UL>
+<LI>void <B>sge_DoEllipse(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color, void Callback()<B>)</B>
+<LI>void <B>sge_DoEllipse(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 R, Uint8 G, Uint8 B, void Callback()<B>)</B>
+</UL>
+Calculates all the points in an ellipse around point (x,y) with x-radius rx and y-radius ry, calling the supplied function for each one. 
+The callback function should look like Callback(SDL_Surface *Surf, Sint16 X, Sint16 Y, Uint32 Color).<BR><BR><BR><BR>
+
+
+<a name="sge_Ellipse"><B>sge_Ellipse</B></a>
+<UL>
+<LI>void <B>sge_Ellipse(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color<B>)</B>
+<LI>void <B>sge_Ellipse(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_EllipseAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_EllipseAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AAEllipse(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color<B>)</B>
+<LI>void <B>sge_AAEllipse(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_AAEllipseAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AAEllipseAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+</UL>
+Draws an ellipse with the specified centre and radius.<BR><BR><BR><BR>
+
+
+<a name="sge_FilledEllipse"><B>sge_FilledEllipse</B></a>
+<UL>
+<LI>void <B>sge_FilledEllipse(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color<B>)</B>
+<LI>void <B>sge_FilledEllipse(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_FilledEllipseAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_FilledEllipseAlpha(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AAFilledEllipse(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color<B>)</B>
+<LI>void <B>sge_AAFilledEllipse(</B>SDL_Surface *Surface, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+</UL>
+Draws a filled ellipse with the specified centre and radius. The surface must be unlocked if using a HW surface with sge_FilledEllipse().
+Note that sge_AAFilledEllipse() must be able to control surface locking.<BR><BR><BR><BR>
+
+
+<a name="sge_Bezier"><B>sge_Bezier</B></a>
+<UL>
+<LI>void <B>sge_Bezier(</B>SDL_Surface *surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,Sint16 x3, Sint16 y3, Sint16 x4, Sint16 y4, int level, Uint32 color<B>)</B>
+<LI>void <B>sge_Bezier(</B>SDL_Surface *surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,Sint16 x3, Sint16 y3, Sint16 x4, Sint16 y4, int level, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_BezierAlpha(</B>SDL_Surface *surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,Sint16 x3, Sint16 y3, Sint16 x4, Sint16 y4, int level, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_BezierAlpha(</B>SDL_Surface *surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,Sint16 x3, Sint16 y3, Sint16 x4, Sint16 y4, int level, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AABezier(</B>SDL_Surface *surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,Sint16 x3, Sint16 y3, Sint16 x4, Sint16 y4, int level, Uint32 color<B>)</B>
+<LI>void <B>sge_AABezier(</B>SDL_Surface *surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,Sint16 x3, Sint16 y3, Sint16 x4, Sint16 y4, int level, Uint8 R, Uint8 G, Uint8 B<B>)</B>
+<LI>void <B>sge_AABezierAlpha(</B>SDL_Surface *surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,Sint16 x3, Sint16 y3, Sint16 x4, Sint16 y4, int level, Uint32 color, Uint8 alpha<B>)</B>
+<LI>void <B>sge_AABezierAlpha(</B>SDL_Surface *surface, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,Sint16 x3, Sint16 y3, Sint16 x4, Sint16 y4, int level, Uint8 R, Uint8 G, Uint8 B, Uint8 alpha<B>)</B>
+</UL>
+Draws a bezier curve from (x1, y1) to (x4, y4) with the control points (x2, y2) and (x3, y3). The variable 'level' indicates how good precision the function 
+should use, 4-7 is normal.<BR><BR><BR><BR>
+
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030806
+</SMALL></I></P>
+
+</body>
+</html>

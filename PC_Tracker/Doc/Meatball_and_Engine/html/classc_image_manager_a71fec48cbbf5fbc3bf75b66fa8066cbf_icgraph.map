@@ -1,0 +1,24 @@
+<map id="cImageManager::GetPointer" name="cImageManager::GetPointer">
+<area shape="rect" href="$classc_image_manager.html#a75bc7ee74e8fe0839725639d8392390a" title="Adds an Image Should always have an Identifier." alt="" coords="300,195,476,221"/>
+<area shape="rect" href="$classc_console.html#a30b719f98df2be1670f6e4e1055844a5" title="Gets the current working path, Loads the Background image to the Image Manager, Creates the console f..." alt="" coords="1379,43,1541,69"/>
+<area shape="rect" href="$classc_a_f373.html#af45007e3095690f46e0b741650b3829c" title="cAF373::init" alt="" coords="584,296,688,323"/>
+<area shape="rect" href="$classc_player.html#ac2d3fad59338a19b9c46af34f99d62ed" title="Loads the Player images." alt="" coords="584,93,688,120"/>
+<area shape="rect" href="$class_main_menu.html#a53eecf9d5ffd094f54ac4193e7e57eaf" title="MainMenu::MainMenu" alt="" coords="547,347,725,373"/>
+<area shape="rect" href="$classc_level.html#a0a2f749fbf8b59eabbed37e1d6a30e83" title="Parses the Command and also reports any Error." alt="" coords="564,43,708,69"/>
+<area shape="rect" href="$main_8cpp.html#a33644ace611479c8f2b6b96c91c213bb" title="SetupMouse" alt="" coords="581,245,691,272"/>
+<area shape="rect" href="$classc_bullet.html#ae583bcd0a15e4f214be6160e9c621bb5" title="Initializes the Bullet with the given parameters Reinitializes all values." alt="" coords="337,397,439,424"/>
+<area shape="rect" href="$classc_image_manager.html#acd17246eeec1c157734248af838d0e6b" title="cImageManager::operator[]" alt="" coords="277,448,499,475"/>
+<area shape="rect" href="$group___guns.html#gaf0967c184c98c75dae56311e5bc3b6a1" title="Preloads all Bullet images get the pointer with the image manager and the image path." alt="" coords="1016,144,1187,171"/>
+<area shape="rect" href="$class_game.html#a555a9e4719fd49971765a2ab8b090b5c" title="The init function to be called before starting your First Game." alt="" coords="1235,119,1331,145"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="1399,139,1521,165"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="1589,176,1675,203"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1723,211,1781,237"/>
+<area shape="rect" href="$classc_level.html#a8bcb4ae8a5396ec20c5616c3c31153b8" title="Cuts the parts out and sends it to the ParseLine function." alt="" coords="813,43,928,69"/>
+<area shape="rect" href="$classc_level.html#a0585e5ce66c81057bc12da8e572f1cc4" title="Loads an Level." alt="" coords="1045,43,1157,69"/>
+<area shape="rect" href="$group___console___commands.html#ga76761b48724947bd23c9d00816c14354" title="Load a new Level from LEVEL_DIR." alt="" coords="1240,43,1325,69"/>
+<area shape="rect" href="$main_8cpp.html#a66c2b0f98868e33e780f996f1dbd84f1" title="initEngine" alt="" coords="1055,245,1148,272"/>
+<area shape="rect" href="$group___guns.html#ga3301e06816eeee0c45be015466ae596d" title="Adds an Bullet which gets controlled by the game just use Bullet type." alt="" coords="591,397,681,424"/>
+<area shape="rect" href="$classc_weapon___pistol.html#a721295c1a1e841a80fe8b24c30809ad3" title="Fires an Bullet." alt="" coords="787,337,955,364"/>
+<area shape="rect" href="$classc_weapon___machinegun.html#ad0455412b53fd76dcbd768041765a424" title="Fires an Bullet." alt="" coords="779,388,963,433"/>
+<area shape="rect" href="$classc_weapon___laser___x1.html#a9257307d7f8c8fb81231f23fe9e872ba" title="Fires an Bullet." alt="" coords="773,457,968,484"/>
+</map>

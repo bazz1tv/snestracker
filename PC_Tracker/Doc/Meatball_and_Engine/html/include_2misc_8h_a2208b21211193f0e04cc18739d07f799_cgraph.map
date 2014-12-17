@@ -1,0 +1,4 @@
+<map id="UniversalEventHandler" name="UniversalEventHandler">
+<area shape="rect" href="$include_2misc_8h.html#af5bc71130f33f466ff560fa4a023763d" title="Toggle fullScreen." alt="" coords="240,5,363,32"/>
+<area shape="rect" href="$misc_8cpp.html#a9a19d17f4e5833b1f911829b6bdda983" title="Queries the Screen to see if it&#39;s set to Fullscreen or Not." alt="" coords="412,5,519,32"/>
+</map>

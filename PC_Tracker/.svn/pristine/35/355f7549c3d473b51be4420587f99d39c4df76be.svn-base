@@ -1,0 +1,267 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - Contributing</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@Contributing.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@Contributing.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id=
+"line-4"></span><span class="anchor" id="line-5"></span>
+<p class="line867"><span class="anchor" id=
+"line-6"></span><span class="anchor" id=
+"line-7"></span><span class="anchor" id=
+"line-8"></span><span class="anchor" id="line-9"></span></p>
+<div class="important"><span class="anchor" id="line-1-1"></span>
+<p class="line862">Due to spammers, write access to this wiki is
+disabled by default. If you haven't already, please email your wiki
+username and the kind(s) of edits you would like to make to
+<tt>&lt;ANTI&nbsp;SPAM&nbsp;wiki&nbsp;AT&nbsp;libsdl&nbsp;DOT&nbsp;org&gt;</tt>
+to be given write access and to coordinate efforts. <span class=
+"anchor" id="line-2-1"></span><span class="anchor" id=
+"line-3-1"></span></p>
+<p class="line874">Thank you!</p>
+</div>
+<span class="anchor" id="line-10"></span><span class="anchor" id=
+"line-11"></span>
+<p class="line867"></p>
+<h1 id="Contributing-1">Contributing</h1>
+<span class="anchor" id="line-12"></span><span class="anchor" id=
+"line-13"></span>
+<p class="line874">We are very pleased that you are interested in
+contributing! <span class="anchor" id="line-14"></span><span class=
+"anchor" id="line-15"></span></p>
+<p class="line874">Our goal is to create the best documentation for
+SDL possible. To this end we have adopted the following guiding
+principles and would appreciate your keeping them in mind as you
+create your contributions. <span class="anchor" id=
+"line-16"></span></p>
+<ul>
+<li style="list-style-type:none">This wiki should: <span class=
+"anchor" id="line-17"></span>
+<ul>
+<li>have a consistent look and feel throughout <span class="anchor"
+id="line-18"></span></li>
+<li>be easy to use <span class="anchor" id="line-19"></span></li>
+<li>be accurate <span class="anchor" id="line-20"></span></li>
+<li>contain high quality information <span class="anchor" id=
+"line-21"></span></li>
+<li>be as simple and straight forward as possible <span class=
+"anchor" id="line-22"></span><span class="anchor" id=
+"line-23"></span></li>
+</ul>
+</li>
+</ul>
+<p class="line874">To help you with this we have created a series
+of resources: <span class="anchor" id="line-24"></span><span class=
+"anchor" id="line-25"></span></p>
+<p class="line867"><span class="anchor" id="form"></span>
+<span class="anchor" id="line-26"></span></p>
+<h3 id="Feedback_Form">Feedback Form</h3>
+<span class="anchor" id="line-27"></span>
+<ul>
+<li style="list-style-type:none">
+<p class="line862">This is the quickest and simplest way for anyone
+to contribute to the wiki! There is no sign up and no permissions
+are required to use this option. Every page of the wiki contains a
+drop down <em>Feedback</em> form (upper right) where you can post
+quick content ideas, questions, suggestions, etc. Simply click the
+form tab, fill in the text field with your contribution, include
+your contact information if you would like a reply, and click
+<em>Submit</em>. We'll take it from there! <span class="anchor" id=
+"line-28"></span><span class="anchor" id="line-29"></span></p>
+</li>
+</ul>
+<p class="line867"><span class="anchor" id="list"></span>
+<span class="anchor" id="line-30"></span></p>
+<h3 id="Mailing_List">Mailing List</h3>
+<span class="anchor" id="line-31"></span>
+<ul>
+<li style="list-style-type:none">
+<p class="line862">The <a class="http" href=
+"http://lists.libsdl.org/listinfo.cgi/docs-libsdl.org">Documentation
+Mailing List</a> has been set up to allow users to share
+documentation-related topics. (There is a separate mailing list for
+development-related topics.) Anything from conventions to needed
+content, questions or comments, can be posted to the Mailing List.
+Plus, keep up with what others are saying and doing on the wiki.
+<span class="anchor" id="line-32"></span><span class="anchor" id=
+"line-33"></span></p>
+</li>
+<li class="gap" style="list-style-type:none">We encourage all
+contributors to join the mailing list and participate in the
+discussions there. It is a great place to discuss areas that need
+contributions and to let others know what you are working on or if
+you are able to help address a request. <span class="anchor" id=
+"line-34"></span><span class="anchor" id="line-35"></span></li>
+</ul>
+<p class="line867"><span class="anchor" id="guides"></span>
+<span class="anchor" id="line-36"></span></p>
+<h3 id="Style_Guides_by_Topic">Style Guides by Topic</h3>
+<span class="anchor" id="line-37"></span>
+<ul>
+<li style="list-style-type:none">
+<p class="line862">These are the core of our contribution
+resources. There is a style guide for each type of contribution you
+may wish to make as well as the <a href="index.html@SGWikiBasics.html">Wiki
+Basics</a> guide which contains global information that all
+contributors should have. <span class="anchor" id=
+"line-38"></span><span class="anchor" id="line-39"></span></p>
+</li>
+<li class="gap" style="list-style-type:none">
+<p class="line891"><strong>We recommend that you begin with
+<a href="index.html@SGWikiBasics.html">Wiki Basics</a> and then dive into the
+topic-specific guides that interest you before you begin to
+edit.</strong> Please check back periodically for reminders and
+updates! <span class="anchor" id="line-40"></span><span class=
+"anchor" id="line-41"></span></p>
+<div>
+<table>
+<tbody>
+<tr>
+<td style="background-color: &amp;quot;#EDEDED&amp;quot">
+<p class="line891"><em>Style Guide</em></p>
+</td>
+<td style="background-color: &amp;quot;#EDEDED&amp;quot">
+<p class="line891"><em>Topics Covered</em></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-42"></span>
+<p class="line891"><a href="index.html@SGWikiBasics.html">Wiki Basics</a></p>
+</td>
+<td>
+<p class="line862">Starting to edit<br/>
+Saving changes<br/>
+Style Guide basics<br/>
+Quick reference for wiki markup used in this wiki<br/>
+Miscellaneous notes</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-43"></span>
+<p class="line891"><a href="index.html@SGCodeExamples.html">Code Examples</a></p>
+</td>
+<td>
+<p class="line862">Adding Code Examples to any <a href="index.html@SGWikiBasics.html#api">API page</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-44"></span>
+<p class="line891"><a href="index.html@SGRemarks.html">Remarks</a></p>
+</td>
+<td>
+<p class="line862">Adding Remarks to any <a href="index.html@SGWikiBasics.html#api">API page</a></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-45"></span>
+<p class="line891"><a href="index.html@SGTutorials.html">Tutorials</a></p>
+</td>
+<td>
+<p class="line862">Adding an existing tutorial to the Tutorials
+page<br/>
+Creating a new tutorial within the wiki</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-46"></span>
+<p class="line891"><a href="index.html@SGFunctions.html">Function Pages</a></p>
+</td>
+<td>
+<p class="line862">Editing Function pages<br/>
+Editing Macro pages<br/>
+<small>This is supplemental to the Code Examples and Remarks Style
+Guides</small></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-47"></span>
+<p class="line891"><a href="index.html@SGStructures.html">Structure Pages</a></p>
+</td>
+<td>
+<p class="line862">Editing Structure pages<br/>
+Editing Union pages<br/>
+<small>This is supplemental to the Code Examples and Remarks Style
+Guides</small></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-48"></span>
+<p class="line891"><a href="index.html@SGEnumerations.html">Enumeration
+Pages</a></p>
+</td>
+<td>
+<p class="line862">Editing Enumeration pages<br/>
+Editing Hint pages<br/>
+<small>This is supplemental to the Code Examples and Remarks Style
+Guides</small></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-49"></span>
+<p class="line891"><a href="index.html@SGNewPages.html">New Pages</a></p>
+</td>
+<td>
+<p class="line862">Creating new pages in the wiki<br/>
+<small>This is supplemental to the other Style Guides</small></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-50"></span><span class="anchor" id=
+"line-51"></span></li>
+<li class="gap" style="list-style-type:none">
+<p class="line862">If you find something that is not addressed or
+is unclear in a style guide please post your questions to the
+Documentation mailing list, on a Forum, or email us at
+<tt>&lt;ANTI&nbsp;SPAM&nbsp;wiki&nbsp;AT&nbsp;libsdl&nbsp;DOT&nbsp;org&gt;</tt>.
+<span class="anchor" id="line-52"></span><span class="anchor" id=
+"line-53"></span></p>
+</li>
+</ul>
+<p class="line867"><span class="anchor" id="email"></span>
+<span class="anchor" id="line-54"></span></p>
+<h3 id="Email">Email</h3>
+<span class="anchor" id="line-55"></span>
+<ul>
+<li style="list-style-type:none">
+<p class="line862">For anything that is not addressed in the above
+you can always send an email to
+<tt>&lt;ANTI&nbsp;SPAM&nbsp;wiki&nbsp;AT&nbsp;libsdl&nbsp;DOT&nbsp;org&gt;</tt>.
+<span class="anchor" id="line-56"></span><span class="anchor" id=
+"line-57"></span></p>
+</li>
+</ul>
+<p class="line867"></p>
+<hr class="hr2">
+<p class="line874"><span class="anchor" id="line-58"></span></p>
+<h2 id="Disclaimer">Disclaimer</h2>
+<span class="anchor" id="line-59"></span>
+<p class="line867"><span class="anchor" id=
+"line-60"></span><span class="anchor" id="line-61"></span></p>
+<div class="note"><span class="anchor" id="line-1-2"></span>
+<p class="line862">All content modifications are subject to review
+for consistency and quality. We reserve the right to remove or
+modify any content added to this wiki at any time. You may direct
+questions or concerns to
+<tt>&lt;ANTI&nbsp;SPAM&nbsp;wiki&nbsp;AT&nbsp;libsdl&nbsp;DOT&nbsp;org&gt;</tt>.</p>
+</div>
+<span class="anchor" id="line-62"></span><span class="anchor" id=
+"bottom"></span></div>
+</body></html>

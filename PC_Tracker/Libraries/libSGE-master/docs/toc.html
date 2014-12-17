@@ -1,0 +1,196 @@
+<html>
+<!--------------------------------------------------->
+<!--                Docs - SGE                     -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>SGE Documentation</H1>
+
+<P>
+<H2>Table of Contents</H2>
+
+<DL>
+<DT><a name="intro"><A HREF="intro.html">SGE Introduction</A></A>
+  <DD><A HREF="intro.html#1">1. Intro</A>
+  <DD><A HREF="intro.html#2">2. Requirements</A>
+  <DD><A HREF="intro.html#3">3. Compiling</A>
+  <DD><A HREF="intro.html#4">4. Library usage</A>
+  <DL><DT><A HREF="intro.html#5">5. Makefile options</A>
+    <DD><A HREF="intro.html#5.1">5.1 Using pure C with SGE(C_COMP)</A>
+    <DD><A HREF="intro.html#5.2">5.2 FreeType (USE_FT)</A>
+    <DD><A HREF="intro.html#5.3">5.3 The SDL_Image library (USE_IMG)</A>
+	<DD><A HREF="intro.html#5.4">5.4 The QUIET option (QUIET)</A></DL>
+  <DD><A HREF="intro.html#6">6. Cross compiling SGE to W32</A>
+  <DD><A HREF="intro.html#7">7. Compiling SGE under W32 with MS VisC/C++</A>
+  <DD><A HREF="intro.html#8">8. Misc.</A>
+
+<DT><a name="guide"><A HREF="guide.html">Beginners guide to SGE</A></A>
+  <DD><A HREF="guide.html#1">1. Intro</A>
+  <DD><A HREF="guide.html#2">2. Compiling SGE</A>
+  <DD><A HREF="guide.html#3">3. Using SGE</A>
+  <DD><A HREF="guide.html#4">4. How to distribute your project</A>
+
+<DT><a name="surface"><A HREF="surface.html">Surface operations</A></A>
+  <DD><A HREF="surface.html#sge_UpdateRect">sge_UpdateRect</A>
+  <DD><A HREF="surface.html#sge_Update_">sge_Update_ON/OFF</A>
+  <DD><A HREF="surface.html#sge_Lock_ON">sge_Lock_ON/OFF</A>
+  <DD><A HREF="surface.html#sge_CreateAlphaSurface">sge_CreateAlphaSurface</A>
+  <DD><A HREF="surface.html#sge_ClearSurface">sge_ClearSurface</A>
+  <DD><A HREF="surface.html#sge_copy_surface">sge_copy_surface</A>
+  <DD><A HREF="surface.html#sge_BlitTransparent">sge_BlitTransparent</A>
+  <DD><A HREF="surface.html#sge_Blit">sge_Blit</A>
+  <DD><A HREF="surface.html#sge_FloodFill">sge_FloodFill</A>
+
+<DT><a name="color"><A HREF="color.html">Color manipulation</A></A>
+  <DD><A HREF="color.html#sge_MapAlpha">sge_MapAlpha</A>
+  <DD><A HREF="color.html#sge_FillPaletteEntry">sge_FillPaletteEntry</A>
+  <DD><A HREF="color.html#sge_GetRGB">sge_GetRGB</A>
+  <DD><A HREF="color.html#sge_Fader">sge_Fader</A>
+  <DD><A HREF="color.html#sge_AlphaFader">sge_AlphaFader</A>
+  <DD><A HREF="color.html#sge_SetupRainbowPalette">sge_SetupRainbowPalette</A>
+  <DD><A HREF="color.html#sge_SetupBWPalette">sge_SetupBWPalette</A>
+
+<DT><a name="pixels"><A HREF="pixels.html">Pixel operations</A></A>
+  <DD><A HREF="pixels.html#_PutPixel">_PutPixel</A>
+  <DD><A HREF="pixels.html#sge_PutPixel">sge_PutPixel</A>
+  <DD><A HREF="pixels.html#sge_CalcYPitch">sge_CalcYPitch</A>
+  <DD><A HREF="pixels.html#sge_pPutPixel">sge_pPutPixel</A>
+  <DD><A HREF="pixels.html#sge_GetPixel">sge_GetPixel</A>
+  <DD><A HREF="pixels.html#sge_write_block">sge_write_block</A>
+  <DD><A HREF="pixels.html#sge_read_block">sge_read_block</A>
+
+<DT><a name="figures"><A HREF="figures.html">Figures</A></A>
+  <DD><A HREF="figures.html#sge_HLine">sge_H/VLine</A>
+  <DD><A HREF="figures.html#sge_DoLine">sge_DoLine</A>
+  <DD><A HREF="figures.html#sge_Line">sge_Line</A>
+  <DD><A HREF="figures.html#sge_DomcLine">sge_DomcLine</A>
+  <DD><A HREF="figures.html#sge_mcLine">sge_mcLine</A>
+  <DD><A HREF="figures.html#sge_Rect">sge_Rect</A>
+  <DD><A HREF="figures.html#sge_FilledRect">sge_FilledRect</A>
+  <DD><A HREF="figures.html#sge_DoCircle">sge_DoCircle</A>
+  <DD><A HREF="figures.html#sge_Circle">sge_Circle</A>
+  <DD><A HREF="figures.html#sge_FilledCircle">sge_FilledCircle</A>
+  <DD><A HREF="figures.html#sge_DoEllipse">sge_DoEllipse</A>
+  <DD><A HREF="figures.html#sge_Ellipse">sge_Ellipse</A>
+  <DD><A HREF="figures.html#sge_FilledEllipse">sge_FilledEllipse</A>
+  <DD><A HREF="figures.html#sge_Bezier">sge_Bezier</A>
+
+<DT>Text management
+<DD> 
+  <DL>
+  <DT><a name="ttf"><A HREF="ttf.html">TrueType font rendering</A></A>
+    <DD><A HREF="ttf.html#ttstructure">The TT font structure</A>
+    <DD><A HREF="ttf.html#sge_TTF_Init">sge_TTF_Init</A>
+    <DD><A HREF="ttf.html#sge_TTF_OpenFont">sge_TTF_OpenFont</A>
+	<DD><A HREF="ttf.html#sge_TTF_OpenFontIndex">sge_TTF_OpenFontIndex</A>
+	<DD><A HREF="ttf.html#sge_TTF_OpenFontRW">sge_TTF_OpenFontRW</A>
+	<DD><A HREF="ttf.html#sge_TTF_OpenFontIndexRW">sge_TTF_OpenFontIndexRW</A>
+    <DD><A HREF="ttf.html#sge_TTF_CloseFont">sge_TTF_CloseFont</A>
+	<DD><A HREF="ttf.html#sge_TTF_ByteSwappedUNICODE">sge_TTF_ByteSwappedUNICODE</A>
+    <DD><A HREF="ttf.html#sge_TTF_SetFontSize">sge_TTF_SetFontSize</A>
+	<DD><A HREF="ttf.html#sge_TTF_SetFontSizeDPI">sge_TTF_SetFontSizeDPI</A>
+    <DD><A HREF="ttf.html#sge_TTF_TextSize">sge_TTF_TextSize</A>
+	<DD><A HREF="ttf.html#sge_TTF_FontHeight">sge_TTF_FontHeight</A>
+    <DD><A HREF="ttf.html#sge_TTF_FontAscent">sge_TTF_FontAscent</A>
+    <DD><A HREF="ttf.html#sge_TTF_FontDescent">sge_TTF_FontDescent</A>
+    <DD><A HREF="ttf.html#sge_TTF_FontLineSkip">sge_TTF_FontLineSkip</A>
+	<DD><A HREF="ttf.html#sge_TTF_FontFaces">sge_TTF_FontFaces</A>
+	<DD><A HREF="ttf.html#sge_TTF_FontFaceIsFixedWidth">sge_TTF_FontFaceIsFixedWidth</A>
+	<DD><A HREF="ttf.html#sge_TTF_FontFaceFamilyName">sge_TTF_FontFaceFamilyName</A>
+	<DD><A HREF="ttf.html#sge_TTF_FontFaceStyleName">sge_TTF_FontFaceStyleName</A>
+    <DD><A HREF="ttf.html#sge_TTF_AAOn">sge_TTF_AAOn/Off/_Alpha</A>
+    <DD><A HREF="ttf.html#sge_TTF_SetFontStyle">sge_TTF_SetFontStyle</A>
+    <DD><A HREF="ttf.html#sge_TTF_GetFontStyle">sge_TTF_GetFontStyle</A>
+    <DD><A HREF="ttf-output.html#sge_tt_textout">sge_tt_textout</A>
+    <DD><A HREF="ttf-output.html#sge_tt_textoutf">sge_tt_textoutf</A>
+    <DD><A HREF="ttf-input.html#sge_tt_input">sge_tt_input</A>
+  </DL>
+  <DL>
+  <DT><a name="bmf"><A HREF="bmf.html">Bitmap font rendering</A></A>
+    <DD><A HREF="bmf.html#bfstructure">The bitmap font structure</A>
+    <DD><A HREF="bmf.html#sge_BF_OpenFont">sge_BF_OpenFont</A>
+	<DD><A HREF="bmf.html#sge_BF_CreateFont">sge_BF_CreateFont</A>
+    <DD><A HREF="bmf.html#sge_BF_CloseFont">sge_BF_CloseFont</A>
+    <DD><A HREF="bmf.html#sge_BF_SetColor">sge_BF_SetColor</A>
+	<DD><A HREF="bmf.html#sge_BF_SetAlpha">sge_BF_SetAlpha</A>
+    <DD><A HREF="bmf.html#sge_BF_GetHeight">sge_BF_GetHeight</A>
+    <DD><A HREF="bmf.html#sge_BF_GetWidth">sge_BF_GetWidth</A>
+    <DD><A HREF="bmf.html#sge_BF_TextSize">sge_BF_TextSize</A>
+    <DD><A HREF="bmf.html#sge_BF_textout">sge_BF_textout</A>
+    <DD><A HREF="bmf.html#sge_BF_textoutf">sge_BF_textoutf</A>
+    <DD><A HREF="bmf.html#sge_BF_input">sge_BF_input</A>
+  </DL>
+  <DL>
+  <DT><a name="text_classes"><A HREF="text_classes.html">Text classes</A></A>
+    <DD><A HREF="text_classes.html#sge_TextEditor">sge_TextEditor</A>
+    <DD><A HREF="text_classes.html#sge_text">sge_text</A>
+    <DD><A HREF="text_classes.html#sge_TextSurface">sge_TextSurface</A>
+    <DD><A HREF="text_classes.html#sge_TextSsprite">sge_TextSsprite</A>
+    <DD><A HREF="text_classes.html#sge_TextSprite">sge_TextSprite</A>
+	<DD><A HREF="text_classes.html#sge_text_input">sge_text_input</a>
+  </DL>
+
+<DT><a name="shape"><A HREF="shape.html">Surface and sprite classes</A></A>
+  <DD><A HREF="shape.html#sge_shape">sge_shape</A>
+  <DD><A HREF="shape.html#sge_surface">sge_surface</A>
+  <DD><A HREF="shape.html#sge_ssprite">sge_ssprite</A>
+  <DD><A HREF="shape.html#sge_sprite">sge_sprite</A>
+  <DD><A HREF="shape.html#sge_screen">sge_screen</A>
+
+<DT><a name="collision"><A HREF="collision.html">Basic collision detection</A></A>
+  <DD><A HREF="collision.html#sge_make_cmap">sge_make_cmap</A>
+  <DD><A HREF="collision.html#sge_bbcheck">sge_bbcheck</A>
+  <DD><A HREF="collision.html#sge_bbcheck_shape">sge_bbcheck_shape</A>
+  <DD><A HREF="collision.html#sge_cmcheck">sge_cmcheck</A>
+  <DD><A HREF="collision.html#sge_get_cx/y">sge_get_cx/y</A>
+  <DD><A HREF="collision.html#sge_unset_cdata">sge_unset_cdata</A>
+  <DD><A HREF="collision.html#sge_set_cdata">sge_set_cdata</A>
+  <DD><A HREF="collision.html#sge_destroy_cmap">sge_destroy_cmap</A>
+
+<DT><a name="rotate"><A HREF="rotate.html">Surface rotation/scaling routines</A></A>
+  <DD><A HREF="rotate.html#sge_transform">sge_transform</A>
+  <DD><A HREF="rotate.html#sge_transform_surface">sge_transform_surface</A>
+
+<DT><a name="blib"><A HREF="blib.html">Polygons and some texture mapping</A></A>
+  <DD><A HREF="blib.html#sge_FadedLine">sge_FadedLine</A>
+  <DD><A HREF="blib.html#sge_TexturedLine">sge_TexturedLine</A>
+  <DD><A HREF="blib.html#sge_Trigon">sge_Trigon</A>
+  <DD><A HREF="blib.html#sge_FilledTrigon">sge_FilledTrigon</A>
+  <DD><A HREF="blib.html#sge_FadedTrigon">sge_FadedTrigon</A>
+  <DD><A HREF="blib.html#sge_TexturedTrigon">sge_TexturedTrigon</A>
+  <DD><A HREF="blib.html#sge_TexturedRect">sge_TexturedRect</A>
+  <DD><A HREF="blib.html#sge_FilledPolygon">sge_FilledPolygon</A>
+  <DD><A HREF="blib.html#sge_FadedPolygon">sge_FadedPolygon</A>
+
+<DT><a name="misc"><A HREF="misc.html">Misc. functions</A></A>
+  <DD><A HREF="misc.html#sge_Random">sge_Random</A>
+  <DD><A HREF="misc.html#sge_Randomize">sge_Randomize</A>
+  <DD><A HREF="misc.html#sge_CalibrateDelay">sge_CalibrateDelay</A>
+  <DD><A HREF="misc.html#sge_DelayRes">sge_DelayRes</A>
+  <DD><A HREF="misc.html#sge_Delay">sge_Delay</A>
+
+<DT><a name="macros"><A HREF="macros.html">Macros</A></A>
+  <DD><A HREF="macros.html#sge_clip_">sge_clip</A>
+  <DD><A HREF="macros.html#sge_RectUnion">sge_RectUnion</A>
+
+<DT><A HREF="thanks.html">Thanks</A>
+</DL>
+
+<BR><BR>
+<A HREF="http://www.etek.chalmers.se/~e8cal1/sge/index.html" TARGET=_top>SGE:s Homepage</A>
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

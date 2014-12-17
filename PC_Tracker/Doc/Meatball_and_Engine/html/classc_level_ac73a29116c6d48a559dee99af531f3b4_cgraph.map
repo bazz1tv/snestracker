@@ -1,0 +1,10 @@
+<map id="cLevel::Save" name="cLevel::Save">
+<area shape="rect" href="$_globals_8cpp.html#af38b5f4efeeaf7ca41eb85294f0f1ec5" title="Checks if the file exists." alt="" coords="227,5,309,32"/>
+<area shape="rect" href="$classc_level.html#a8bc529e49ff2f16e973cc7f3cc6b227e" title="cLevel::PrintSaveHeader" alt="" coords="169,56,367,83"/>
+<area shape="rect" href="$classc_level.html#a869a494d6a9627ac70180a3195437a9d" title="cLevel::SaveMapEnemies" alt="" coords="167,107,369,133"/>
+<area shape="rect" href="$classc_level.html#a2ec54a3896de3018d4d614a670308dc0" title="cLevel::SaveMapObjects" alt="" coords="169,157,367,184"/>
+<area shape="rect" href="$classc_level.html#a396eb68126a56446b704baece0672a47" title="cLevel::SaveMusicFile" alt="" coords="180,208,356,235"/>
+<area shape="rect" href="$classc_level.html#a264d96f8ea49972b5d7be7b1300d0427" title="cLevel::SavePlayerPos" alt="" coords="179,259,357,285"/>
+<area shape="rect" href="$group___engine___misc.html#ga5346c8ec7e8830e38c727cd1b299045f" title="Get_Curr_Date" alt="" coords="476,56,601,83"/>
+<area shape="rect" href="$classc_image_manager.html#ae5fbcb0a2b3e289bc1f5afc415d2918b" title="cImageManager::GetIdentifier" alt="" coords="420,157,657,184"/>
+</map>

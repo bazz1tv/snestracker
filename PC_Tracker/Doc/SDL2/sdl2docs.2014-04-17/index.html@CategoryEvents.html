@@ -1,0 +1,222 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - CategoryEvents</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@CategoryEvents.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@CategoryEvents.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id=
+"line-4"></span><span class="anchor" id=
+"line-5"></span><span class="anchor" id="line-6"></span>
+<p class="line867"></p>
+<h1 id="Event_Handling">Event Handling</h1>
+<span class="anchor" id="line-7"></span><span class="anchor" id=
+"line-8"></span>
+<p class="line867"><strong>Include File(s):</strong> <a class=
+"http" href=
+"http://hg.libsdl.org/SDL/file/default/include/SDL_events.h">SDL_events.h</a>
+<span class="anchor" id="line-9"></span><span class="anchor" id=
+"line-10"></span></p>
+<p class="line867"></p>
+<div class="table-of-contents">
+<p class="table-of-contents-heading">Contents</p>
+<ol>
+<li><a href="index.html@CategoryEvents.html#Event_Handling">Event Handling</a>
+<ol>
+<li><a href="index.html@CategoryEvents.html#Introduction">Introduction</a></li>
+<li><a href="index.html@CategoryEvents.html#Enumerations">Enumerations</a></li>
+<li><a href="index.html@CategoryEvents.html#Structures">Structures</a></li>
+<li><a href="index.html@CategoryEvents.html#Functions">Functions</a></li>
+</ol>
+</li>
+</ol>
+</div>
+<span class="anchor" id="line-11"></span><span class="anchor" id=
+"line-12"></span>
+<p class="line867"></p>
+<h2 id="Introduction">Introduction</h2>
+<span class="anchor" id="line-13"></span>
+<p class="line874">Event handling allows your application to
+receive input from the user. Event handling is initialized (along
+with video) with a call to: <span class="anchor" id=
+"line-14"></span><span class="anchor" id="line-15"></span></p>
+<ul>
+<li style="list-style-type:none"><span class="anchor" id=
+"line-16"></span><span class="anchor" id="line-17"></span>
+<pre>
+<span class="anchor" id="line-1"></span>SDL_Init(SDL_INIT_VIDEO);
+</pre>
+<span class="anchor" id="line-18"></span>
+<p class="line862">(<em>see</em> <a href="index.html@CategoryInit.html">Initialization &amp; Shutdown</a> and <a href="index.html@SDL_Init.html">SDL_Init</a>() <em>for details</em>) <span class=
+"anchor" id="line-19"></span><span class="anchor" id=
+"line-20"></span></p>
+</li>
+</ul>
+<p class="line862">Internally, SDL stores all the events waiting to
+be handled in an event queue. Using functions like <a href="index.html@SDL_PollEvent.html">SDL_PollEvent</a>(), <a href="index.html@SDL_PeepEvents.html">SDL_PeepEvents</a>() and <a href="index.html@SDL_WaitEvent.html">SDL_WaitEvent</a>() you can observe and handle
+waiting input events. <span class="anchor" id=
+"line-21"></span><span class="anchor" id="line-22"></span></p>
+<p class="line862">The event queue itself is composed of a series
+of <a href="index.html@SDL_Event.html">SDL_Event</a> structures, one for each
+waiting event. <a href="index.html@SDL_Event.html">SDL_Event</a> structures are
+read from the queue with the <a href="index.html@SDL_PollEvent.html">SDL_PollEvent</a>() function and it is then up to
+the application to process the information stored with them.
+<span class="anchor" id="line-23"></span><span class="anchor" id=
+"line-24"></span></p>
+<p class="line867"></p>
+<h2 id="Enumerations">Enumerations</h2>
+<span class="anchor" id="line-25"></span>
+<p class="line867"></p>
+<div class="searchresults">
+<ol start="1">
+<li><a href="index.html@SDL_EventType.html">
+SDL_EventType</a></li>
+<li><a href="index.html@SDL_WindowEventID.html">
+SDL_WindowEventID</a></li>
+</ol>
+</div>
+<span class="anchor" id="line-26"></span><span class="anchor" id=
+"line-27"></span>
+<p class="line867"></p>
+<h2 id="Structures">Structures</h2>
+<span class="anchor" id="line-28"></span>
+<p class="line867"></p>
+<div class="searchresults">
+<ol start="1">
+<li><a href="index.html@SDL_ControllerAxisEvent.html">
+SDL_ControllerAxisEvent</a></li>
+<li><a href="index.html@SDL_ControllerButtonEvent.html">
+SDL_ControllerButtonEvent</a></li>
+<li><a href="index.html@SDL_ControllerDeviceEvent.html">
+SDL_ControllerDeviceEvent</a></li>
+<li><a href="index.html@SDL_DollarGestureEvent.html">
+SDL_DollarGestureEvent</a></li>
+<li><a href="index.html@SDL_DropEvent.html">
+SDL_DropEvent</a></li>
+<li><a href="index.html@SDL_Event.html">
+SDL_Event</a></li>
+<li><a href="index.html@SDL_Finger.html">
+SDL_Finger</a></li>
+<li><a href="index.html@SDL_JoyAxisEvent.html">
+SDL_JoyAxisEvent</a></li>
+<li><a href="index.html@SDL_JoyBallEvent.html">
+SDL_JoyBallEvent</a></li>
+<li><a href="index.html@SDL_JoyButtonEvent.html">
+SDL_JoyButtonEvent</a></li>
+<li><a href="index.html@SDL_JoyDeviceEvent.html">
+SDL_JoyDeviceEvent</a></li>
+<li><a href="index.html@SDL_JoyHatEvent.html">
+SDL_JoyHatEvent</a></li>
+<li><a href="index.html@SDL_KeyboardEvent.html">
+SDL_KeyboardEvent</a></li>
+<li><a href="index.html@SDL_MouseButtonEvent.html">
+SDL_MouseButtonEvent</a></li>
+<li><a href="index.html@SDL_MouseMotionEvent.html">
+SDL_MouseMotionEvent</a></li>
+<li><a href="index.html@SDL_MouseWheelEvent.html">
+SDL_MouseWheelEvent</a></li>
+<li><a href="index.html@SDL_MultiGestureEvent.html">
+SDL_MultiGestureEvent</a></li>
+<li><a href="index.html@SDL_QuitEvent.html">
+SDL_QuitEvent</a></li>
+<li><a href="index.html@SDL_SysWMEvent.html">
+SDL_SysWMEvent</a></li>
+<li><a href="index.html@SDL_TextEditingEvent.html">
+SDL_TextEditingEvent</a></li>
+<li><a href="index.html@SDL_TextInputEvent.html">
+SDL_TextInputEvent</a></li>
+<li><a href="index.html@SDL_TouchFingerEvent.html">
+SDL_TouchFingerEvent</a></li>
+<li><a href="index.html@SDL_UserEvent.html">
+SDL_UserEvent</a></li>
+<li><a href="index.html@SDL_WindowEvent.html">
+SDL_WindowEvent</a></li>
+</ol>
+</div>
+<span class="anchor" id="line-29"></span><span class="anchor" id=
+"line-30"></span>
+<p class="line867"></p>
+<h2 id="Functions">Functions</h2>
+<span class="anchor" id="line-31"></span>
+<p class="line867"></p>
+<div class="searchresults">
+<ol start="1">
+<li><a href="index.html@SDL_AddEventWatch.html">
+SDL_AddEventWatch</a></li>
+<li><a href="index.html@SDL_DelEventWatch.html">
+SDL_DelEventWatch</a></li>
+<li><a href="index.html@SDL_EventState.html">
+SDL_EventState</a></li>
+<li><a href="index.html@SDL_FilterEvents.html">
+SDL_FilterEvents</a></li>
+<li><a href="index.html@SDL_FlushEvent.html">
+SDL_FlushEvent</a></li>
+<li><a href="index.html@SDL_FlushEvents.html">
+SDL_FlushEvents</a></li>
+<li><a href="index.html@SDL_GetEventFilter.html">
+SDL_GetEventFilter</a></li>
+<li><a href="index.html@SDL_GetNumTouchDevices.html">
+SDL_GetNumTouchDevices</a></li>
+<li><a href="index.html@SDL_GetNumTouchFingers.html">
+SDL_GetNumTouchFingers</a></li>
+<li><a href="index.html@SDL_GetTouchDevice.html">
+SDL_GetTouchDevice</a></li>
+<li><a href="index.html@SDL_GetTouchFinger.html">
+SDL_GetTouchFinger</a></li>
+<li><a href="index.html@SDL_HasEvent.html">
+SDL_HasEvent</a></li>
+<li><a href="index.html@SDL_HasEvents.html">
+SDL_HasEvents</a></li>
+<li><a href="index.html@SDL_LoadDollarTemplates.html">
+SDL_LoadDollarTemplates</a></li>
+<li><a href="index.html@SDL_PeepEvents.html">
+SDL_PeepEvents</a></li>
+<li><a href="index.html@SDL_PollEvent.html">
+SDL_PollEvent</a></li>
+<li><a href="index.html@SDL_PumpEvents.html">
+SDL_PumpEvents</a></li>
+<li><a href="index.html@SDL_PushEvent.html">
+SDL_PushEvent</a></li>
+<li><a href="index.html@SDL_QuitRequested.html">
+SDL_QuitRequested</a></li>
+<li><a href="index.html@SDL_RecordGesture.html">
+SDL_RecordGesture</a></li>
+<li><a href="index.html@SDL_RegisterEvents.html">
+SDL_RegisterEvents</a></li>
+<li><a href="index.html@SDL_SaveAllDollarTemplates.html">
+SDL_SaveAllDollarTemplates</a></li>
+<li><a href="index.html@SDL_SaveDollarTemplate.html">
+SDL_SaveDollarTemplate</a></li>
+<li><a href="index.html@SDL_SetEventFilter.html">
+SDL_SetEventFilter</a></li>
+<li><a href="index.html@SDL_WaitEvent.html">
+SDL_WaitEvent</a></li>
+<li><a href="index.html@SDL_WaitEventTimeout.html">
+SDL_WaitEventTimeout</a></li>
+</ol>
+</div>
+<span class="anchor" id="line-32"></span><span class="anchor" id=
+"line-33"></span>
+<p class="line867"></p>
+<hr/>
+<p class="line874"><span class="anchor" id=
+"line-34"></span><a href="index.html@CategoryCategory.html">CategoryCategory</a>
+<span class="anchor" id="line-35"></span><span class="anchor" id=
+"bottom"></span></p>
+</div>
+</body></html>

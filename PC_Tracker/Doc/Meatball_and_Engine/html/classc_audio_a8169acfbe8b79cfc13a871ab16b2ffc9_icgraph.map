@@ -1,0 +1,14 @@
+<map id="cAudio::PlayMusik" name="cAudio::PlayMusik">
+<area shape="rect" href="$class_game.html#a555a9e4719fd49971765a2ab8b090b5c" title="The init function to be called before starting your First Game." alt="" coords="463,49,559,76"/>
+<area shape="rect" href="$class_main_menu.html#a53eecf9d5ffd094f54ac4193e7e57eaf" title="MainMenu::MainMenu" alt="" coords="203,49,381,76"/>
+<area shape="rect" href="$namespace_playlist.html#a935dd1616e18bb26d88fc7dcb95b0161" title="Puts them into musicfiles array." alt="" coords="216,100,368,127"/>
+<area shape="rect" href="$group___console___commands.html#ga58909b8e8e2a955d5113e99e307da7a0" title="Play a song from the MUSIC_DIR." alt="" coords="267,151,317,177"/>
+<area shape="rect" href="$class_options_menu.html#a568f31e2fede9d17ba9c820a889eee0e" title="OptionsMenu::Update" alt="" coords="203,201,381,228"/>
+<area shape="rect" href="$classc_level.html#a8d2f8db27146af4302c78a94eaea5024" title="Updates the Level." alt="" coords="228,252,356,279"/>
+<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="641,125,764,152"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="813,125,899,152"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="947,125,1005,152"/>
+<area shape="rect" href="$classc_console.html#a30b719f98df2be1670f6e4e1055844a5" title="Gets the current working path, Loads the Background image to the Image Manager, Creates the console f..." alt="" coords="429,151,592,177"/>
+<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="439,201,583,228"/>
+<area shape="rect" href="$class_game.html#a1c5373c68261c54aff03e6abe40fee52" title="Game::Update" alt="" coords="448,252,573,279"/>
+</map>

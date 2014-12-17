@@ -1,0 +1,6 @@
+<map id="cConsole::Update" name="cConsole::Update">
+<area shape="rect" href="$group___console.html#gafca257b0b67bf291fa8f87f99b96f868" title="Queries the user to hit enter key.. kinda like a cheap [less] cmd." alt="" coords="204,31,324,57"/>
+<area shape="rect" href="$group___console___commands.html#ga99ed3ad1baebe6360406cee0cfa52168" title="bring up help on all commands or specific command" alt="" coords="373,5,427,32"/>
+<area shape="rect" href="$group___console___commands.html#ga9525780ab6c47a437572eda56f8ccfe0" title="list the directory" alt="" coords="381,56,419,83"/>
+<area shape="rect" href="$classc_console.html#a30b719f98df2be1670f6e4e1055844a5" title="Gets the current working path, Loads the Background image to the Image Manager, Creates the console f..." alt="" coords="475,31,637,57"/>
+</map>

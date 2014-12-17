@@ -1,0 +1,1 @@
+every folder should have "remote.txt" explaining where to access the documentation online

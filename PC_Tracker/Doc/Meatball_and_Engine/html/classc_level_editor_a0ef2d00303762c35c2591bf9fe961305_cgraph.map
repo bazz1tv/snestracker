@@ -1,0 +1,24 @@
+<map id="cLevelEditor::Draw" name="cLevelEditor::Draw">
+<area shape="rect" href="$classc_player.html#a0c218d335a29db098fd1b795d1975d63" title="Draws the Player." alt="" coords="265,5,383,32"/>
+<area shape="rect" href="$classc_basic_sprite.html#a98a8928524972f62711142ee282ec178" title="cBasicSprite::Draw" alt="" coords="248,56,400,83"/>
+<area shape="rect" href="$enemy_8cpp.html#aa4a973eecad16182826d84aca6df7f12" title="Draws all Enemies." alt="" coords="265,107,383,133"/>
+<area shape="rect" href="$classc_multi_select.html#ae05e6b8b69a7c01608c1ad0bf1584762" title="cMultiSelect::DrawOutline\lAroundMultiSelect_Tiles" alt="" coords="221,277,427,323"/>
+<area shape="rect" href="$group___engine___gfx.html#gac4acd3032d3e6cfd739052f155cf49a2" title="FillRectAlpha" alt="" coords="1009,208,1124,235"/>
+<area shape="rect" href="$classc_level_editor.html#a569a450bbd738d548653068f1e3fe066" title="Draw the outline of the hovered Object." alt="" coords="208,208,440,253"/>
+<area shape="rect" href="$class_mini_engine.html#aa553c0bf445926d1501c5c05dc90ab8a" title="MiniEngine::PostDraw" alt="" coords="237,347,411,373"/>
+<area shape="rect" href="$class_mini_engine.html#a76dd29fe68d7e6c34c45a5f385758704" title="MiniEngine::PreDraw" alt="" coords="241,404,407,431"/>
+<area shape="rect" href="$classc_m_vel_sprite.html#a63285b3980443306cdf8ba5ce9ce2795" title="Use SDL_TRUE to get the RECT with camera position coordinates calculated also." alt="" coords="512,292,683,319"/>
+<area shape="rect" href="$classc_level_editor.html#a14176b252453be2aa58ef18fdd55b904" title="cLevelEditor::OutlineObject" alt="" coords="488,229,707,256"/>
+<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="800,309,877,336"/>
+<area shape="rect" href="$group___engine___gfx.html#gac4cec088c507df326cbce2913b69d697" title="FillRect" alt="" coords="803,259,875,285"/>
+<area shape="rect" href="$_globals_8cpp.html#abba66423d34deb4e3668adc1ccc03b4d" title="Draws the Framerate." alt="" coords="531,347,664,373"/>
+<area shape="rect" href="$classc_font.html#a5e7d87da787e072678abee523d01e724" title="Creates the text in an Surface types : 1 = Blended 2 = Shaded 3 = Solid." alt="" coords="764,360,913,387"/>
+<area shape="rect" href="$classc_level.html#a16aafe3cb222333629eeb67e61ca55ca" title="Draws the Level." alt="" coords="541,411,653,437"/>
+<area shape="rect" href="$classc_m_vel_sprite.html#a2eb88619ac4ca1f9fbe8d5c22ee1ac70" title="cMVelSprite::Draw" alt="" coords="764,461,913,488"/>
+<area shape="rect" href="$classc_m_vel_sprite.html#a0472c4eecda7bba06bef8bb5a8a2312f" title="cMVelSprite::Update" alt="" coords="755,411,923,437"/>
+<area shape="rect" href="$classc_velocity_sprite.html#a5d3eae34157edcd011641aaea67def14" title="cVelocitySprite::Update" alt="" coords="972,411,1161,437"/>
+<area shape="rect" href="$classc_basic_sprite.html#a65779c476030c2463de8576fe1f67e39" title="cBasicSprite::Update" alt="" coords="1211,385,1381,412"/>
+<area shape="rect" href="$classc_basic_sprite.html#a8ef384a01431f3cff6dffe00df1df2d8" title="cBasicSprite::Move" alt="" coords="1219,436,1373,463"/>
+<area shape="rect" href="$group___engine___image.html#ga2b7097260a2531e03c8853d2b22be2bd" title="V 1.1.1." alt="" coords="1480,360,1605,387"/>
+<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="1429,411,1656,437"/>
+</map>

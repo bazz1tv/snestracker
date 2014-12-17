@@ -1,0 +1,21 @@
+<map id="initEngine" name="initEngine">
+<area shape="rect" href="$classc_preferences.html#a82383f70bf9e5667335affbd51abc0f2" title="Sets the Current Settings to the in&#45;game settings." alt="" coords="147,56,309,83"/>
+<area shape="rect" href="$classc_font.html#a9cda61e758210967fdad70e9a42bf858" title="Creates an Font from an .ttf file default pointsize is 16 default style is TTF_STYLE_NORMAL." alt="" coords="153,107,303,133"/>
+<area shape="rect" href="$main_8cpp.html#a02dc6f0ae7a28c43ab60634e91071b5b" title="CreateWindow" alt="" coords="165,157,291,184"/>
+<area shape="rect" href="$classc_audio.html#a061b99482e902ad4120ac4026851b0ba" title="Initializes the Audio with the specified settings." alt="" coords="157,208,299,235"/>
+<area shape="rect" href="$group___engine.html#ga98243e7d3f313dee3b0059af96e13f34" title="Inits SDL_ep. It seeds the random number generator and sets the SpriteSpeed Factor to 1..." alt="" coords="199,259,257,285"/>
+<area shape="rect" href="$group___engine___sprite.html#ga98c97898aa88bcfee8d60954637452b5" title="Sets the Sprite Speedfactor this affects the movement." alt="" coords="359,284,535,311"/>
+<area shape="rect" href="$group___engine___video.html#ga027233f188d8702bd396844d7166ffe2" title="InitSDL" alt="" coords="192,360,264,387"/>
+<area shape="rect" href="$classc_preferences.html#abd5bdb8036b92286a8cbf32a6b16a3a0" title="Loads the user Settings if no user Settings file exists loads the default settings." alt="" coords="149,411,307,437"/>
+<area shape="rect" href="$_globals_8cpp.html#aad2c8bab39c89915946d2e23a9d97fbe" title="SetColorKey" alt="" coords="173,461,283,488"/>
+<area shape="rect" href="$main_8cpp.html#a33644ace611479c8f2b6b96c91c213bb" title="SetupMouse" alt="" coords="173,512,283,539"/>
+<area shape="rect" href="$classc_settings.html#a673f47a8a7dc98fd4cf6b83961f7cdd8" title="cSettings::Update" alt="" coords="372,5,521,32"/>
+<area shape="rect" href="$classc_settings.html#ab5a83be74d8476af0fd7eac14fdaa7e9" title="cSettings::Apply" alt="" coords="379,56,515,83"/>
+<area shape="rect" href="$classc_font.html#a05f5e81edc2bafa2dd0a756468e62cb9" title="Sets the Style of an Font styles : TTF_STYLE_NORMAL TTF_STYLE_BOLD TTF_STYLE_ITALIC TTF_STYLE_UNDERLI..." alt="" coords="367,107,527,133"/>
+<area shape="rect" href="$group___engine___video.html#gadcb20e7402d6e7d20612f8327580747c" title="GetRenderer" alt="" coords="391,157,503,184"/>
+<area shape="rect" href="$group___engine___video.html#ga5cdda47622909e6f9d40ed3a2d86a2c9" title="GetWindow" alt="" coords="396,208,497,235"/>
+<area shape="rect" href="$_globals_8cpp.html#af38b5f4efeeaf7ca41eb85294f0f1ec5" title="Checks if the file exists." alt="" coords="405,411,488,437"/>
+<area shape="rect" href="$classc_image_manager.html#a75bc7ee74e8fe0839725639d8392390a" title="Adds an Image Should always have an Identifier." alt="" coords="359,461,535,488"/>
+<area shape="rect" href="$classc_image_manager.html#a71fec48cbbf5fbc3bf75b66fa8066cbf" title="cImageManager::GetPointer" alt="" coords="584,487,808,513"/>
+<area shape="rect" href="$group___engine___image.html#gac3d007d1a2bfa7d73b87a8541a194c9c" title="LoadImage" alt="" coords="395,563,499,589"/>
+</map>

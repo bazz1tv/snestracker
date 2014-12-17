@@ -1,0 +1,22 @@
+<map id="cBasicSprite::Move" name="cBasicSprite::Move">
+<area shape="rect" href="$classc_velocity_sprite.html#a5d3eae34157edcd011641aaea67def14" title="cVelocitySprite::Update" alt="" coords="212,85,401,112"/>
+<area shape="rect" href="$classc_angle_sprite.html#a839c7d3c2b047f3e20fea4776eb28df0" title="cAngleSprite::Update" alt="" coords="220,140,393,167"/>
+<area shape="rect" href="$classc_m_vel_sprite.html#a0472c4eecda7bba06bef8bb5a8a2312f" title="cMVelSprite::Update" alt="" coords="460,80,628,107"/>
+<area shape="rect" href="$classc_bullet.html#a19e5203aca92a91dbb4ebf64a15c28f1" title="Updates the Bullet." alt="" coords="699,81,829,108"/>
+<area shape="rect" href="$classc_enemy.html#af63fe08e8a91d670c29c81b4dae76cc7" title="cEnemy::Update" alt="" coords="695,132,833,159"/>
+<area shape="rect" href="$classc_level.html#a16aafe3cb222333629eeb67e61ca55ca" title="Draws the Level." alt="" coords="708,31,820,57"/>
+<area shape="rect" href="$group___guns.html#gaef41c9344f33dc8d04962193e18ce0a3" title="Updates all Bullets." alt="" coords="1136,109,1259,136"/>
+<area shape="rect" href="$class_game.html#a1c5373c68261c54aff03e6abe40fee52" title="Game::Update" alt="" coords="1337,139,1463,165"/>
+<area shape="rect" href="$classc_a_f373.html#acbc4a7495a52eeeac9f25fd09b390173" title="cAF373::Update" alt="" coords="908,132,1041,159"/>
+<area shape="rect" href="$class_mini_engine.html#a76dd29fe68d7e6c34c45a5f385758704" title="MiniEngine::PreDraw" alt="" coords="892,31,1057,57"/>
+<area shape="rect" href="$classc_level_editor.html#a0ef2d00303762c35c2591bf9fe961305" title="cLevelEditor::Draw" alt="" coords="1121,5,1273,32"/>
+<area shape="rect" href="$class_mini_engine.html#a69cfed53ff62e5023f1fa01e2ab0cf05" title="MiniEngine::Draw" alt="" coords="1125,56,1269,83"/>
+<area shape="rect" href="$class_mini_engine.html#aaaaae01092335a268fd25150f45433b6" title="MiniEngine::Do" alt="" coords="1336,56,1464,83"/>
+<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="1512,56,1597,83"/>
+<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1645,56,1704,83"/>
+<area shape="rect" href="$classc_m_angle_sprite.html#a42facb500fb312966e8babe1e9f00956" title="cMAngleSprite::Update" alt="" coords="451,200,637,227"/>
+<area shape="rect" href="$classc_acceleration_sprite.html#a5777989c7f77ad8eb01dd400a30c81cb" title="cAccelerationSprite\l::Update" alt="" coords="463,131,625,176"/>
+<area shape="rect" href="$classc_m_particle.html#a51a5aef9295c60549d64fdf87aa06524" title="cMParticle::Update" alt="" coords="687,199,841,225"/>
+<area shape="rect" href="$classc_m_particle_emitter.html#a532c3cedb373d1a74a9811f271892ab7" title="cMParticleEmitter::\lUpdate" alt="" coords="897,187,1052,232"/>
+<area shape="rect" href="$effects_8h.html#a2d0aefe8c17bdfa8b07ad984ae3e2e70" title="Updates all Particle Emitter." alt="" coords="1108,164,1287,191"/>
+</map>

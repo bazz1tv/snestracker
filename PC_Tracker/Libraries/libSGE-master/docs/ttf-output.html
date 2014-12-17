@@ -1,0 +1,100 @@
+<html>
+<!--------------------------------------------------->
+<!--               Docs/ttf - SGE                  -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - TTF</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>TrueType font output</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_tt_textout">sge_tt_textout</A>
+<LI><A HREF="#sge_tt_textoutf">sge_tt_textoutf</A>
+</UL>
+
+<A HREF="ttf.html"><B>To the TTF setup functions>><BR></A>
+<BR>
+
+<a name="sge_tt_textout"><H2>sge_tt_textout</H2></a>
+<UL>
+<LI>SDL_Rect <B>sge_tt_textout(</B>SDL_Surface *Surface, sge_TTFont *font, const char *string, Sint16 x, Sint16 y, Uint32 fcolor, Uint32 bcolor, int Alpha<B>)</B>
+<LI>SDL_Rect <B>sge_tt_textout(</B>SDL_Surface *Surface, sge_TTFont *font, const char *string, Sint16 x, Sint16 y, Uint8 fR, Uint8 fG, Uint8 fB, Uint8 bR, Uint8 bG, Uint8 bB, int Alpha<B>)</B>
+<LI>SDL_Rect <B>sge_tt_textout_UNI(</B>SDL_Surface *Surface, sge_TTFont *font, const Uint16 *uni, Sint16 x, Sint16 y, Uint32 fcolor, Uint32 bcolor, int Alpha<B>)</B>
+<LI>SDL_Rect <B>sge_tt_textout_UNI(</B>SDL_Surface *Surface, sge_TTFont *font, const Uint16 *uni, Sint16 x, Sint16 y, Uint8 fR, Uint8 fG, Uint8 fB, Uint8 bR, Uint8 bG, Uint8 bB, int Alpha<B>)</B>
+<LI>SDL_Rect <B>sge_tt_textout_UTF8(</B>SDL_Surface *Surface, sge_TTFont *font, const char *string, Sint16 x, Sint16 y, Uint32 fcolor, Uint32 bcolor, int Alpha<B>)</B>
+<LI>SDL_Rect <B>sge_tt_textout_UTF8(</B>SDL_Surface *Surface, sge_TTFont *font, const char *string, Sint16 x, Sint16 y, Uint8 fR, Uint8 fG, Uint8 fB, Uint8 bR, Uint8 bG, Uint8 bB, int Alpha<B>)</B>
+</UL>
+
+Renders the given Latin-1/Unicode/UTF-8 string on surface with the given font.<BR> 
+<BR>
+<B>SDL_Surface *Surface</B> - The surface to render text to.<BR>
+<B>sge_TTFont *font</B> - The font to render the text with.<BR>
+<B>const char *string</B> or <B>const Uint16 *uni</B> - The Latin-1/Unicode/UTF-8 text string.<BR>
+<B>Sint16 x, Sint16 y</B> - The leftmost point of the baseline for the text.<BR>
+<B>Uint32 fcolor</B> or <B>Uint8 fR, Uint8 fG, Uint8 fB</B> - The color of the font.<BR>
+<B>Uint32 bcolor</B> or <B>Uint8 bR, Uint8 bG, Uint8 bB</B> - The background color (see below).<BR>
+<B>int Alpha</B> - Sets the transparency of the text (0-255).<BR>
+<BR>
+You can use sge_TTF_AAOn(), sge_TTF_AAOff() and sge_TTF_AA_Alpha() to control how the text is rendered. If you use antialiasing, the background color must be set to the background color of the area where you will render the text. If the background has more than one color it might be better to use sge_TTF_AA_Alpha().<BR>
+Does lock and update the surface. Does respect clipping.<BR>
+<BR>
+<B>Returns SDL_Rect</B>: The size and position of the rendered text.
+<BR><BR>
+<BR>
+<a name="sge_tt_textoutf"><H2>sge_tt_textoutf</H2></a>
+
+<UL>
+<LI>SDL_Rect <B>sge_tt_textoutf(</B>SDL_Surface *Surface, sge_TTFont *font, Sint16 x, Sint16 y, Uint8 fR, Uint8 fG, Uint8 fB, Uint8 bR, Uint8 bG, Uint8 bB, int Alpha, char *format,...<B>)</B>
+</UL>
+Just as sge_tt_textout() but with the same syntax as printf().
+<H3>Example</H3>
+<I>#include &lt;iostream&gt;</I><BR>
+<I>#include &lt;string&gt;</I><BR>
+<I>#include "SDL.h"</I><BR>
+<I>#include "sge.h"</I><BR>
+<BR>
+<B>using namespace</B> std;<BR>
+<BR>
+...<BR>
+<BR>
+
+<DL>
+<DT><I>//Init font engine and exit on error</I>
+<DT><B>if(</B>sge_TTF_Init()!=0<B>){</B><BR>
+  <DD>cerr &lt;&lt; "<I>TT error: </I>" &lt;&lt; SDL_GetError() &lt;&lt; endl;<BR> 
+  <DD>exit(1);<BR>
+<DT><B>}</B></DL>
+
+<DL>
+<DT><I>//Open font and exit on error</I>
+<DT>sge_TTFont *font=sge_TTF_OpenFont("font.ttf", 25);<BR>
+<DT>
+<DT><B>if(</B>!font<B>){</B>
+  <DD>cerr &lt;&lt; "<I>TT error: </I>" &lt;&lt; SDL_GetError() &lt;&lt; endl;<BR> 
+  <DD>exit(1);<BR>
+<DT><B>}</B></DL>
+
+string text("<I>Hello World!</I>");<BR>
+<BR>
+sge_tt_textoutf( screen, font, 10,100,  0,200,100,  0,0,0,  SDL_ALPHA_OPAQUE, "Testing: %s", text.c_str() );<BR>
+<BR>
+sge_TTF_CloseFont(font);<BR>
+
+<BR><BR>
+<A HREF="ttf-input.html"><B>To the TTF input functions>><BR></A>
+</P>
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030803
+</SMALL></I></P>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+Attention young hero! 
+
+You have been selected to develop on Meatball! The all-star shoot-em-up video game that will take the masses!! <3 
+
+To start, you will have to love yourself!
+
+Good job!! <3 
+
+Step 1 Complete
+--------------------
+-------------------
+------------------
+-----------------
+----------------
+---------------
+--------------
+-------------
+------------
+-----------
+----------
+---------
+--------
+-------
+------
+-----
+----
+---
+--
+-
+-
+--
+---
+----
+-----
+------
+-------
+--------
+---------
+----------
+-----------
+------------
+-------------
+--------------
+---------------
+
+I will give you the correct instructions to successfully install your future
+work fun base :) a.k.a Meatball SVN Repo
+
+Let's continue!!
+
+BEGIN PRELIMINARY INSTRUCTIoNS!!!!!
+-----------------------------------------------------------------
+ 1) Run copied installation files you got from my USB. 
+  . Direct X
+  . Tortoise SVN
+  . Boost 
+  . Memory Leak detector! https://vld.codeplex.com/
+
+2) Get Dream Spark (see operator)
+  . Visual Studio 2013
+  . install takes awhile so do it before the next meeting
+ 
+3) Checkout SVN Repo
+
+  . Download meatball by right clicking on the desktop, or in the desired folder where you want to download 
+  Meatball to, and click "SVN Checkout." This is an option now because TortoiseSVN is installed. 
+
+  A window will come up asking for the address, use this:
+  svn://svn.code.sf.net/p/meatball/code/trunk meatball-code
+
+  In this same window, you can also name the folder that will be created, defaults to "code." Call it Meatball.
+
+  Click OK and everything should download just fine :) 
+
+4) Prepare environment variables 
+ This is a step I forgot to inform you of, and Meatball will not install without doing this. We should meet ASAP and I can help you do this, and we will write a batch script to do it automatically for us in the future. For us, and for future developers on Windows. :) 
+
+That means you cannot continue!! Please wait until we meet again!!! For completeness, I include step 5! BUT WAIT. IF You Have got the balls to continue, I present to you a challenge!! If you succeed, you will be able to forge onwards to step 5!! The golden gate!! <3 
+CHALLENGE STAGE
+  . Setting up environment variables for Meatball Code Compilation
+
+In this challenge stage, you will google your way to discover setting up environment variables for your system. You will need to add 2 new system environment variables!! That's right! 2 NEW SYSTEM ENVIRONMENT Variables!! OK! 
+
+You must name these 2 variables with the following contents: 
+MEATBALL_LIBDIR -- this must be filled with the location of your new Meatball SVN repo which you recently downloaded with tortoiseSVN. :) 
+
+BOOST_DIR = the install path of Boost. Check C:\local for starters.. that's the default path. 
+
+If you've done that you can actually DO IT! You're a champion!! If not, GIVE IT TIME :) 
+-----
+
+5) Now you have meatball. It's time to compile. Navigate to Meatball/src/MSVC, and open the Meatball.sln file. 
+This will open Visual Studio, from there, try to build Meatball. Remember that I warned you against the perils of "build solution." try to just "build" or "build project" ;) 
+
+After that, you can run from within Visual Studio, or alternatively navigate to meatball root directory / Bin / and run the exectutable Meatball.exe. Have fun :) See you next week :D !!!! 
+
+Sincerely, 

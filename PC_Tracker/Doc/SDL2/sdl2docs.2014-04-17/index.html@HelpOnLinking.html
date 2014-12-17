@@ -1,0 +1,832 @@
+<!DOCTYPE html><html><head><title>SDL2 Documentation - HelpOnLinking</title><meta charset="utf-8"><link rel="stylesheet" type="text/css" media="all" href="common.css"><link rel="stylesheet" type="text/css" media="screen" href="screen.css"></head><body><div id="sidebar">
+<h1 id="wikinavigationheader">Wiki Navigation</h1>
+<div class="sidepanel" id="sitenamelogo">
+<div style="text-align:center"><a target="sdlpage" href="http://www.libsdl.org"><img src="logo.png" alt="SDL Logo"></a></div>
+</div>
+<ul id="wikiNavMenu">
+<li class="sidepanel" id="sidebarSearch"><a href="index.html@HelpOnLinking.html#" id="searchFormClose" onclick="return hideSearchForm()">
+</a>Search Wiki
+<form id="searchform" method="get" onsubmit="document.location.href='index.html@'+document.getElementById('searchinput').value+'.html';return false;">
+<div>
+<label style="display: none;" for="searchinput">Search:</label>
+<input class="disabled" id="searchinput" name="value" value="" size="20" type="text">
+<input id="titlesearch" name="titlesearch" value="Titles" style="visibility:hidden" type="submit">
+</div>
+</form>
+</li><li>
+</li><li id="sidewaysSearch"><a href="index.html@HelpOnLinking.html#" onclick="showSearchForm()">Search &gt;</a></li> 
+<li class="sidepanel">Navigation Links<ul id="navibar"><li class="wikilink current"><a href="index.html@FrontPage.html">FrontPage</a></li><li class="wikilink"><a href="index.html@Introduction.html">Introduction</a></li><li class="wikilink"><a href="index.html@Support.html">Support</a></li><li class="wikilink"><a href="index.html@CategoryAPI.html">API By Name</a></li><li class="wikilink"><a href="index.html@APIByCategory.html">API By Category</a></li></ul></li>
+</ul>
+</div><div class="sdl" id="content" lang="en"><span class="anchor" id=
+"top"></span> <span class="anchor" id="line-1"></span><span class=
+"anchor" id="line-2"></span><span class="anchor" id=
+"line-3"></span><span class="anchor" id=
+"line-4"></span><span class="anchor" id=
+"line-5"></span><span class="anchor" id=
+"line-6"></span><span class="anchor" id=
+"line-7"></span><span class="anchor" id=
+"line-8"></span><span class="anchor" id="line-9"></span>
+<p class="line867"></p>
+<h1 id="Linking_Rules">Linking Rules</h1>
+<span class="anchor" id="line-10"></span>
+<ul>
+<li>Targets can be: <span class="anchor" id="line-11"></span>
+<ul>
+<li>Local Pages: <span class="anchor" id="line-12"></span>
+<ul>
+<li>
+<p class="line862">either absolute: <strong><tt class=
+"backtick">a&nbsp;page&nbsp;name</tt></strong> or
+<strong><tt class="backtick">main&nbsp;page/sub&nbsp;page</tt></strong>
+<span class="anchor" id="line-13"></span></p>
+</li>
+<li>
+<p class="line862">or relative: <strong><tt class=
+"backtick">/some&nbsp;sub&nbsp;page</tt></strong> or
+<strong><tt class=
+"backtick">../some&nbsp;sister&nbsp;page</tt></strong> <span class=
+"anchor" id="line-14"></span></p>
+</li>
+</ul>
+</li>
+<li>
+<p class="line891"><a href="http://www.ginkgobitter.org/sdl2/?InterWiki">InterWiki</a> Pages:
+<strong><tt class=
+"backtick">OtherWiki:a&nbsp;pagename&nbsp;there</tt></strong>
+<span class="anchor" id="line-15"></span></p>
+</li>
+<li>
+<p class="line862">URLs: <strong><tt class=
+"backtick">http://server/path</tt></strong> <span class="anchor"
+id="line-16"></span></p>
+</li>
+<li>
+<p class="line862">Pages and URLs may include an anchor
+(<strong><tt class="backtick">...#anchorname</tt></strong>).
+<span class="anchor" id="line-17"></span></p>
+</li>
+</ul>
+</li>
+<li>
+<p class="line862">Use <strong><tt class=
+"backtick">[[target]]</tt></strong> if you want to <em>link</em> to
+some target object. <span class="anchor" id="line-18"></span></p>
+</li>
+<li>
+<p class="line862">Use <strong><tt class=
+"backtick">{{target}}</tt></strong> if you want to
+<em>transclude</em> (embed/include/show) some target object (often
+an image). <span class="anchor" id="line-19"></span></p>
+</li>
+<li>
+<p class="line862">Use <strong><tt class=
+"backtick">target|text</tt></strong> instead of just
+<strong><tt class="backtick">target</tt></strong> to make it use
+the given text (e.g. as link text for links or as alt text for
+images). <span class="anchor" id="line-20"></span></p>
+</li>
+<li>
+<p class="line862">Use <strong><tt class=
+"backtick">target|text|params</tt></strong> instead of just
+<strong><tt class="backtick">target</tt></strong> to give
+additional params. <span class="anchor" id=
+"line-21"></span><span class="anchor" id="line-22"></span></p>
+</li>
+<li class="gap">
+<p class="line862">Use <strong><tt class=
+"backtick">target|{{imagetarget}}</tt></strong> if you want to show
+an image instead of a text. <span class="anchor" id=
+"line-23"></span><span class="anchor" id="line-24"></span></p>
+</li>
+</ul>
+<p class="line862">URLs, interwiki pages, email addresses and
+<a href="index.html@CamelCase.html">CamelCase</a> pagenames are recognized as
+targets even without using brackets. <span class="anchor" id=
+"line-25"></span><span class="anchor" id="line-26"></span></p>
+<p class="line867"></p>
+<h1 id="Quick_Reference">Quick Reference</h1>
+<span class="anchor" id="line-27"></span>
+<div>
+<table>
+<tbody>
+<tr>
+<td>
+<p class="line891"><strong>Description</strong></p>
+</td>
+<td>
+<p class="line891"><strong>Example</strong></p>
+</td>
+<td>
+<p class="line891"><strong>Comment</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-28"></span>
+<p class="line862">internal link</p>
+</td>
+<td>
+<p class="line891"><tt class="backtick">WikiName</tt></p>
+</td>
+<td>
+<p class="line862">CamelCase page name</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-29"></span>
+<p class="line862">internal free link</p>
+</td>
+<td>
+<p class="line891"><tt class="backtick">[[free&nbsp;link]]</tt></p>
+</td>
+<td>
+<p class="line862">any page name</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-30"></span>
+<p class="line862">internal link to sub page</p>
+</td>
+<td>
+<p class="line891"><tt class="backtick">/SubPage</tt> or <tt class=
+"backtick">[[/sub&nbsp;page]]</tt></p>
+</td>
+<td>
+<p class="line862"></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-31"></span>
+<p class="line862">internal link to sister page</p>
+</td>
+<td>
+<p class="line891"><tt class="backtick">../SisterPage</tt> or
+<tt class="backtick">[[../SisterPage|link&nbsp;text]]</tt></p>
+</td>
+<td>
+<p class="line862"></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-32"></span>
+<p class="line862">internal link with linktext</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[SomePage|some&nbsp;Page]]</tt></p>
+</td>
+<td>
+<p class="line862"></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-33"></span>
+<p class="line862">internal link with linktext &amp; parameter</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[SomePage|some&nbsp;Page|target="_blank"]]</tt></p>
+</td>
+<td>
+<p class="line862">see below for parameter configurations</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-34"></span>
+<p class="line862">internal link using a graphic as button</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[SomePage|{{attachment:samplegraphic.png}}]]</tt></p>
+</td>
+<td>
+<p class="line862"></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-35"></span>
+<p class="line862">internal link using graphic button, open new
+window</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[SomePage|{{attachment:samplegraphic.png}}|target="_blank"]]</tt></p>
+</td>
+<td>
+<p class="line862"></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-36"></span>
+<p class="line862">link to attachment</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[attachment:image.png]]</tt></p>
+</td>
+<td>
+<p class="line862">links to attachment image</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-37"></span>
+<p class="line862">link to attachment of another page</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[attachment:SomePage/image.png]]</tt></p>
+</td>
+<td>
+<p class="line862">links to image attached to a different page</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-38"></span>
+<p class="line862">interwiki link</p>
+</td>
+<td>
+<p class="line891"><tt class="backtick">Otherwiki:somepage</tt></p>
+</td>
+<td>
+<p class="line862">requires uppercase wikiname</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-39"></span>
+<p class="line862">interwiki free link</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[otherwiki:somepage]]</tt></p>
+</td>
+<td>
+<p class="line862">any wikiname in the <a href="http://www.ginkgobitter.org/sdl2/?InterWiki">InterWiki</a> map works</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-40"></span>
+<p class="line862">external link</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">http://example.net/</tt></p>
+</td>
+<td>
+<p class="line862"></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-41"></span>
+<p class="line862">external link with linktext</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[http://example.net/|example&nbsp;site]]</tt></p>
+</td>
+<td>
+<p class="line862"></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-42"></span>
+<p class="line862">external link with linktext, open new window</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[http://example.net/|example&nbsp;site|target="_blank"]]</tt></p>
+</td>
+<td>
+<p class="line862">see below for parameter configurations</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-43"></span>
+<p class="line862">external link using a graphic as button</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[http://example.net/|{{attachment:samplegraphic.png}}]]</tt></p>
+</td>
+<td>
+<p class="line862"></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-44"></span>
+<p class="line862">external link using graphic button, open new
+window</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">[[http://example.net/|{{attachment:samplegraphic.png}}|target="_blank"]]</tt></p>
+</td>
+<td>
+<p class="line862"></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-45"></span>
+<p class="line862">border of internal link</p>
+</td>
+<td>
+<p class="line891"><tt>WikiName``s</tt></p>
+</td>
+<td>
+<p class="line862">2 backticks - for when a WikiName ends in the
+middle of a word</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-46"></span>
+<p class="line862">avoid an internal link</p>
+</td>
+<td>
+<p class="line891"><tt class="backtick">!WikiName</tt></p>
+</td>
+<td>
+<p class="line862">configurable function</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-47"></span><span class="anchor" id=
+"line-48"></span>
+<p class="line867"><br/>
+<span class="anchor" id="line-49"></span><span class="anchor" id=
+"line-50"></span></p>
+<div>
+<table>
+<tbody>
+<tr>
+<td>
+<p class="line891"><strong>Transclusion/Embedding</strong></p>
+</td>
+<td>
+<p class="line891"><strong>Syntax</strong></p>
+</td>
+<td>
+<p class="line891"><strong>Comment</strong></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-51"></span>
+<p class="line862">embed an attached graphics</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">{{attachment:image.png}}</tt></p>
+</td>
+<td>
+<p class="line862">show attached image file <tt class=
+"backtick">image.png</tt></p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-52"></span>
+<p class="line862">embed an attached graphics and give alt text</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">{{attachment:image.png|alt&nbsp;text}}</tt></p>
+</td>
+<td>
+<p class="line862">show attached image file <tt class=
+"backtick">image.png</tt> with alternative text saying <tt class=
+"backtick">alt&nbsp;text</tt> (recommended for accessibility)</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-53"></span>
+<p class="line862">embed an attached graphics and define
+alignment</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">{{attachment:image.png|alt&nbsp;text|align="position"}}</tt></p>
+</td>
+<td>
+<p class="line862">show attached image file <tt class=
+"backtick">image.png</tt> with alternative text <tt class=
+"backtick">alt&nbsp;text</tt> and aligned to <em>position</em>,
+where <em>position</em> can be one of <strong>top</strong>,
+<strong>middle</strong>, <strong>bottom</strong>,
+<strong>right</strong> or <strong>left</strong> (do not omit alt
+text)</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-54"></span>
+<p class="line862">embed an attached graphics and resize it</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">{{attachment:image.png|alt&nbsp;text|width=100}}</tt></p>
+</td>
+<td>
+<p class="line862">show attached image file <tt class=
+"backtick">image.png</tt> with alternative text <tt class=
+"backtick">alt&nbsp;text</tt> and resize it to 100px width (do not
+omit alt text)</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-55"></span>
+<p class="line862">embed an external graphics</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">{{http://example.net/image.png}}</tt></p>
+</td>
+<td>
+<p class="line862">show target image inline</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-56"></span>
+<p class="line862">embed an external graphics and give alt text</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">{{http://example.net/image.png|alt&nbsp;text}}</tt></p>
+</td>
+<td>
+<p class="line862">show target image inline with alternative text
+saying <tt class="backtick">alt&nbsp;text</tt> (recommended for
+accessibility)</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-57"></span>
+<p class="line862">embed an external graphics and define
+alignment</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">{{http://example.net/image.png|alt&nbsp;text|align="position"}}</tt></p>
+</td>
+<td>
+<p class="line862">show target image inline with alternative text
+<tt class="backtick">alt&nbsp;text</tt> and aligned to
+<em>position</em>, where <em>position</em> can be one of
+<strong>top</strong>, <strong>middle</strong>,
+<strong>bottom</strong>, <strong>right</strong>, or
+<strong>left</strong> (do not omit alt text)</p>
+</td>
+</tr>
+<tr>
+<td><span class="anchor" id="line-58"></span>
+<p class="line862">embed an external graphics and resize it</p>
+</td>
+<td>
+<p class="line891"><tt class=
+"backtick">{{http://example.net/image.png|alt&nbsp;text|width=100}}</tt></p>
+</td>
+<td>
+<p class="line862">show target image inline with alternative text
+<tt class="backtick">alt&nbsp;text</tt> and resize it to 100px
+width (do not omit alt text)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span class="anchor" id="line-59"></span><span class="anchor" id=
+"line-60"></span>
+<p class="line867"></p>
+<h1 id="Explanations">Explanations</h1>
+<span class="anchor" id="line-61"></span><span class="anchor" id=
+"line-62"></span>
+<p class="line867"></p>
+<h2 id="URLs">URLs</h2>
+<span class="anchor" id="line-63"></span>
+<p class="line874">If you enter URLs into normal text, there is the
+problem of detecting what belongs to the URL and what not. There
+are four ways to force the ending of an URL: <span class="anchor"
+id="line-64"></span></p>
+<ul>
+<li>put a space after the URL, <span class="anchor" id=
+"line-65"></span></li>
+<li>
+<p class="line862">use the <a class="interwiki" href=
+"http://c2.com/cgi/wiki?SixSingleQuotes" title=
+"Wiki">SixSingleQuotes</a> escaping, <span class="anchor" id=
+"line-66"></span></p>
+</li>
+<li>use the double bracketed URL syntax. <span class="anchor" id=
+"line-67"></span><span class="anchor" id="line-68"></span></li>
+</ul>
+<p class="line862">The supported URL schemes are: <tt class=
+"backtick">http</tt>, <tt class="backtick">https</tt>, <tt class=
+"backtick">ftp</tt>, <tt class="backtick">file</tt> and some
+others. The administrator of your wiki can extend the supported
+schemes by using the <tt>url_schemas</tt> variable (see <a href="index.html@HelpOnConfiguration.html">HelpOnConfiguration</a>). <span class=
+"anchor" id="line-69"></span><span class="anchor" id=
+"line-70"></span></p>
+<p class="line862">In addition to the standard schemes, there are
+<a href="index.html@MoinMoin.html">MoinMoin</a>-specific ones: <tt class=
+"backtick">attachment</tt> and <tt class="backtick">drawing</tt>,
+these are related to file attachments and are explained on <a href="http://www.ginkgobitter.org/sdl2/?HelpOnActions/AttachFile">HelpOnActions/AttachFile</a>.
+<span class="anchor" id="line-71"></span></p>
+<h2 id="Spaces">Spaces</h2>
+<span class="anchor" id="line-72"></span>
+<p class="line874">You can always use the double brackets (or
+double braces) syntax to use page or file names with spaces.
+<span class="anchor" id="line-73"></span><span class="anchor" id=
+"line-74"></span></p>
+<p class="line874">This will even work for interwiki links, if the
+target wiki understands standard url quoting (space will become
+%20). <span class="anchor" id="line-75"></span><span class="anchor"
+id="line-76"></span></p>
+<p class="line867"></p>
+<h2 id="Anchors">Anchors</h2>
+<span class="anchor" id="line-77"></span>
+<p class="line862">To <em>insert</em> anchors into a page you need
+the <em>Anchor</em> macro (see <a href="index.html@HelpOnMacros.html">HelpOnMacros</a>): <tt class=
+"backtick">&lt;&lt;Anchor(anchorname)&gt;&gt;</tt>, where
+"anchorname" is the actual identifier of the anchor. <span class=
+"anchor" id="line-78"></span><span class="anchor" id=
+"line-79"></span></p>
+<p class="line862">To link to an anchor on the same wiki page use
+<tt class="backtick">[[#anchorname]]</tt> or <tt class=
+"backtick">[[#anchorname|label&nbsp;text]]</tt>. <span class=
+"anchor" id="line-80"></span><span class="anchor" id=
+"line-81"></span></p>
+<p class="line862">To link to an anchor on another wiki page write
+<tt class="backtick">[[PageName#anchorname]]</tt> or <tt class=
+"backtick">[[PageName#anchorname|label&nbsp;text]]</tt>, where
+"PageName" is the name of the other page and "anchorname" is the
+identifier of the anchor on that page. <span class="anchor" id=
+"line-82"></span><span class="anchor" id="line-83"></span></p>
+<p class="line867"><img alt="/!\" height="16" src="alert.png" title="/!\" width="16">
+On some Wikis, a link to the page <a href="http://www.ginkgobitter.org/sdl2/?RecentChanges">RecentChanges</a> might refer to the same page as
+this link: <a class="nonexistent" href="http://www.ginkgobitter.org/sdl2/?recentchanges">recentchanges</a>. This is especially true for
+Windows and Mac OS X systems because they are not case-sensitive
+normally. <span class="anchor" id="line-84"></span><span class=
+"anchor" id="line-85"></span></p>
+<p class="line867"></p>
+<h2 id="Preventing_Automatically_Generated_Links">Preventing
+Automatically Generated Links</h2>
+<span class="anchor" id="line-86"></span><span class="anchor" id=
+"line-87"></span>
+<p class="line862">To keep a word like PageName from automatically
+being turned into a link, use <tt>Page``Name</tt>. (The problem
+with doing this is that it will prevent a simple search for the
+word "WikiName" from matching <tt>Wiki``Name</tt> in a page, due to
+the inserted characters.) <span class="anchor" id=
+"line-88"></span><span class="anchor" id="line-89"></span></p>
+<p class="line862">You can also suppress <a href="index.html@WikiName.html">WikiName</a> linking by putting an exclamation mark
+(<em>bang</em>) before the <a href="index.html@WikiName.html">WikiName</a>, i.e.
+<tt class="backtick">!WikiName</tt>. This is available by default,
+but can be disabled with the configuration option <tt class=
+"backtick">bang_meta&nbsp;=&nbsp;False</tt>. Using this method will
+not interfere with most searches for the escaped <tt class=
+"backtick">WikiName</tt>, with the exception of certain quoted
+phrases and regular expressions. <span class="anchor" id=
+"line-90"></span><span class="anchor" id="line-91"></span></p>
+<p class="line862">To prevent automatic URL linking, use either
+<tt>`http://...`</tt> or <tt class=
+"backtick">{{{http://...}}}</tt>. <span class="anchor" id=
+"line-92"></span><span class="anchor" id="line-93"></span></p>
+<p class="line867"></p>
+<h2 id="Using_link_parameters">Using link parameters</h2>
+<span class="anchor" id="line-94"></span>
+<p class="line862">Sometimes you may want to give additional
+parameters for a link, influencing how it looks like, how it
+behaves and how exactly it links to the target - this is what the
+<strong>params</strong> part of <tt class=
+"backtick">[[target|text|params]]</tt> is for. <span class="anchor"
+id="line-95"></span><span class="anchor" id="line-96"></span></p>
+<p class="line867"></p>
+<h3 id="Setting_attributes_of_the_.3Ca.3E_tag">Setting attributes
+of the &lt;a&gt; tag</h3>
+<span class="anchor" id="line-97"></span>
+<p class="line874">Available attributes: class, title, target,
+accesskey (see some html reference if you want to know what they
+mean). <span class="anchor" id="line-98"></span><span class=
+"anchor" id="line-99"></span></p>
+<p class="line862">Example: <tt class=
+"backtick">[[http://moinmo.in/|MoinMoin&nbsp;Wiki|class=green&nbsp;dotted,accesskey=1]]</tt>
+<span class="anchor" id="line-100"></span><span class="anchor" id=
+"line-101"></span></p>
+<p class="line862">Renders as: <a accesskey="1" class=
+"green dotted" href="http://moinmo.in/">MoinMoin Wiki</a>
+<span class="anchor" id="line-102"></span><span class="anchor" id=
+"line-103"></span></p>
+<p class="line867"><img alt="(!)" height="16" src="http://www.ginkgobitter.org/sdl2/idea.png" title="(!)" width="16">
+Pressing the access key should jump to that link target (for
+Firefox 2.x and the example above it is Alt-Shift-1). <span class=
+"anchor" id="line-104"></span><span class="anchor" id=
+"line-105"></span></p>
+<p class="line867"></p>
+<h3 id="Creating_a_query_string_for_the_target_URL">Creating a
+query string for the target URL</h3>
+<span class="anchor" id="line-106"></span>
+<p class="line874">What is possible for this depends on the target
+site. <span class="anchor" id="line-107"></span><span class=
+"anchor" id="line-108"></span></p>
+<p class="line862">Example: <tt class=
+"backtick">[[MoinMoin:MoinMoinWiki|MoinMoin&nbsp;Wiki|&amp;action=diff,&amp;rev1=1,&amp;rev2=2]]</tt>
+<span class="anchor" id="line-109"></span><span class="anchor" id=
+"line-110"></span></p>
+<p class="line862">Renders as: <a class="interwiki" href=
+"http://moinmo.in/MoinMoinWiki?rev1=1&amp;action=diff&amp;rev2=2"
+title="MoinMoin">MoinMoin Wiki</a> <span class="anchor" id=
+"line-111"></span><span class="anchor" id="line-112"></span></p>
+<p class="line867"><img alt="(!)" height="16" src="http://www.ginkgobitter.org/sdl2/idea.png" title="(!)" width="16">
+Please remember: <span class="anchor" id="line-113"></span></p>
+<ul>
+<li>
+<p class="line862">If you want to give a key=value item for the
+query string, don't forget the ampersand (&amp;). <span class=
+"anchor" id="line-114"></span></p>
+</li>
+<li>Giving query string items does not work when you give a URL as
+target (but for links to pages or attachments). <span class=
+"anchor" id="line-115"></span></li>
+<li>If you give a URL as target, you can include a query string
+directly in that target, no need for params. <span class="anchor"
+id="line-116"></span></li>
+<li>You don't need to encode and url_quote the query string stuff,
+moin does this automatically for you. <span class="anchor" id=
+"line-117"></span><span class="anchor" id="line-118"></span></li>
+</ul>
+<p class="line867"></p>
+<h2 id="Images">Images</h2>
+<span class="anchor" id="line-119"></span>
+<p class="line874">You may use <span class="anchor" id=
+"line-120"></span><span class="anchor" id=
+"line-121"></span><span class="anchor" id="line-122"></span></p>
+<pre>
+<span class="anchor" id=
+"line-1"></span>{{attachment:imagefile.png|text describing image|width=100}}
+</pre>
+<span class="anchor" id="line-123"></span>
+<p class="line862">to have the attached file <tt class=
+"backtick">imagefile.png</tt> displayed with a width of 100px; the
+graphics' height will be reduced/ enlarged proportionally (e.g. if
+<tt class="backtick">imagefile.png</tt> was actually 200px width
+and 400px height, height would be reduced in this example to
+200px). You may also use <span class="anchor" id=
+"line-124"></span><span class="anchor" id=
+"line-125"></span><span class="anchor" id="line-126"></span></p>
+<pre>
+<span class="anchor" id=
+"line-1-1"></span>{{attachment:imagefile.png|text describing image|height=100}}
+</pre>
+<span class="anchor" id="line-127"></span>
+<p class="line862">to have the attached file <tt class=
+"backtick">imagefile.png</tt> displayed with a height of 100px, and
+the graphics' width will be reduced/ enlarged proportionally. Use
+<span class="anchor" id="line-128"></span><span class="anchor" id=
+"line-129"></span><span class="anchor" id="line-130"></span></p>
+<pre>
+<span class="anchor" id=
+"line-1-2"></span>{{attachment:imagefile.png|text describing image|width=100,height=150}}
+</pre>
+<span class="anchor" id="line-131"></span>
+<p class="line862">to have the attached file <tt class=
+"backtick">imagefile.png</tt> displayed with a width of 100px and a
+height of 150px. Please do not omit the alternative text in neither
+case. <span class="anchor" id="line-132"></span><span class=
+"anchor" id="line-133"></span></p>
+<p class="line874">Note this does not alter the attached file
+itself, in only makes the browser scale the image down/ up to the
+value given while displaying it. <span class="anchor" id=
+"line-134"></span><span class="anchor" id="line-135"></span></p>
+<p class="line867"></p>
+<h3 id="Thumbnails">Thumbnails</h3>
+<span class="anchor" id="line-136"></span>
+<p class="line874">You may combine the transclusion with the
+linking syntax, leading to an image displayed in reduced size that
+links to itself in actual size, e.g. <span class="anchor" id=
+"line-137"></span><span class="anchor" id=
+"line-138"></span><span class="anchor" id="line-139"></span></p>
+<pre>
+<span class="anchor" id=
+"line-1-3"></span>[[attachment:imagefile.png|{{attachment:imagefile.png|text describing image|width=100}}]]
+</pre>
+<span class="anchor" id="line-140"></span><span class="anchor" id=
+"line-141"></span>
+<p class="line867"></p>
+<h2 id="Other_stuff">Other stuff</h2>
+<span class="anchor" id="line-142"></span><span class="anchor" id=
+"line-143"></span>
+<p class="line862">For more information on the possible markup, see
+<a href="http://www.ginkgobitter.org/sdl2/?HelpOnEditing">HelpOnEditing</a>. For details on how to
+link to subpages, see <a href="index.html@HelpOnEditing%252FSubPages.html">HelpOnEditing/SubPages</a>. <span class=
+"anchor" id="line-144"></span><span class="anchor" id=
+"line-145"></span></p>
+<p class="line867"><span class="anchor" id=
+"line-146"></span><span class="anchor" id="line-147"></span></p>
+<p class="line867"></p>
+<h1 id="Examples">Examples</h1>
+<span class="anchor" id="line-148"></span>
+<p class="line867"></p>
+<h2 id="Markup">Markup</h2>
+<span class="anchor" id="line-149"></span>
+<p class="line867"><span class="anchor" id=
+"line-150"></span><span class="anchor" id=
+"line-151"></span><span class="anchor" id=
+"line-152"></span><span class="anchor" id=
+"line-153"></span><span class="anchor" id=
+"line-154"></span><span class="anchor" id=
+"line-155"></span><span class="anchor" id=
+"line-156"></span><span class="anchor" id=
+"line-157"></span><span class="anchor" id=
+"line-158"></span><span class="anchor" id=
+"line-159"></span><span class="anchor" id=
+"line-160"></span><span class="anchor" id=
+"line-161"></span><span class="anchor" id=
+"line-162"></span><span class="anchor" id=
+"line-163"></span><span class="anchor" id=
+"line-164"></span><span class="anchor" id=
+"line-165"></span><span class="anchor" id=
+"line-166"></span><span class="anchor" id="line-167"></span></p>
+<pre>
+<span class="anchor" id="line-1-4"></span> * http://moinmo.in/
+<span class="anchor" id="line-2"></span> * [[http://moinmo.in/]]
+<span class="anchor" id=
+"line-3"></span> * [[http://moinmo.in/|MoinMoin Homepage]]
+<span class="anchor" id="line-4"></span> * InterWiki
+<span class="anchor" id="line-5"></span>  * Self:InterWiki
+<span class="anchor" id="line-6"></span>  * MeatBall:InterWiki
+<span class="anchor" id=
+"line-7"></span>  * [[MeatBall:InterWiki|InterWiki page on MeatBall]]
+<span class="anchor" id=
+"line-8"></span>  * [[MoinMoin:page with spaces]] (doesn't exist)
+<span class="anchor" id="line-9"></span> * email
+<span class="anchor" id="line-10"></span>  * user@example.com
+<span class="anchor" id=
+"line-11"></span>  * mailto:user@example.com?subject=test
+<span class="anchor" id=
+"line-12"></span>  * [[mailto:user@example.com?subject=test|Email me]]
+<span class="anchor" id=
+"line-13"></span> * [[InterWiki|InterWiki page in this wiki]]
+<span class="anchor" id=
+"line-14"></span> * [[#anchorname|Link to anchor on this page]]
+<span class="anchor" id=
+"line-15"></span> * [[OtherPage#anchorname|Link to anchor on other page in current wiki with label text]]
+<span class="anchor" id=
+"line-16"></span> * {{http://moinmo.in/moin_static/common/moinmoin.png}}
+<span class="anchor" id=
+"line-17"></span> * {{http://moinmo.in/moin_static/common/moinmoin.png|moinmoin logo}}
+</pre>
+<span class="anchor" id="line-168"></span><span class="anchor" id=
+"line-169"></span>
+<p class="line867"></p>
+<h2 id="Display">Display</h2>
+<span class="anchor" id="line-170"></span>
+<ul>
+<li>
+<p class="line891"><a class="http" href=
+"http://moinmo.in/">http://moinmo.in/</a> <span class="anchor" id=
+"line-171"></span></p>
+</li>
+<li>
+<p class="line891"><a class="http" href=
+"http://moinmo.in/">http://moinmo.in/</a> <span class="anchor" id=
+"line-172"></span></p>
+</li>
+<li>
+<p class="line891"><a class="http" href=
+"http://moinmo.in/">MoinMoin Homepage</a> <span class="anchor" id=
+"line-173"></span></p>
+</li>
+<li>
+<p class="line891"><a href="http://www.ginkgobitter.org/sdl2/?InterWiki">InterWiki</a> <span class=
+"anchor" id="line-174"></span></p>
+<ul>
+<li>
+<p class="line891"><a href="http://www.ginkgobitter.org/sdl2/?InterWiki">InterWiki</a> <span class=
+"anchor" id="line-175"></span></p>
+</li>
+<li>
+<p class="line891"><a class="interwiki" href=
+"http://www.usemod.com/cgi-bin/mb.pl?InterWiki" title=
+"MeatBall">InterWiki</a> <span class="anchor" id=
+"line-176"></span></p>
+</li>
+<li>
+<p class="line891"><a class="interwiki" href=
+"http://www.usemod.com/cgi-bin/mb.pl?InterWiki" title=
+"MeatBall">InterWiki page on MeatBall</a> <span class="anchor" id=
+"line-177"></span></p>
+</li>
+<li>
+<p class="line891"><a class="interwiki" href=
+"http://moinmo.in/page%20with%20spaces" title="MoinMoin">page with
+spaces</a> (doesn't exist) <span class="anchor" id=
+"line-178"></span></p>
+</li>
+</ul>
+</li>
+<li>email <span class="anchor" id="line-179"></span>
+<ul>
+<li>
+<p class="line891"><a class="mailto" href=
+"mailto:user@example.com">user@example.com</a> <span class="anchor"
+id="line-180"></span></p>
+</li>
+<li>
+<p class="line891"><a class="mailto" href=
+"mailto:user@example.com?subject=test">mailto:user@example.com?subject=test</</body></html>

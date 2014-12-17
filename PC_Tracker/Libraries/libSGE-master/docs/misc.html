@@ -1,0 +1,57 @@
+<html>
+<!--------------------------------------------------->
+<!--              Docs/misc - SGE                  -->
+<!--------------------------------------------------->
+<head>
+<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+<title>SGE Documentation - Misc. functions</title>
+</head>
+
+<body bgcolor=#DED7A0>
+
+<H1>Misc. functions</H1>
+
+<P>
+<UL>
+<LI><A HREF="#sge_Random">sge_Random</A>
+<LI><A HREF="#sge_Randomize">sge_Randomize</A>
+<LI><A HREF="#sge_CalibrateDelay">sge_CalibrateDelay</A>
+<LI><A HREF="#sge_DelayRes">sge_DelayRes</A>
+<LI><A HREF="#sge_Delay">sge_Delay</A>
+</UL>
+<BR>
+
+<B>int <a name="sge_Random">sge_Random</a>(int min, int max)</B><BR>
+Returns a random integer between (and including) min and max.<BR><BR>
+
+<B>void <a name="sge_Randomize">sge_Randomize</a>(void)</B><BR>
+Seed the random number generator with a number from the system clock. Should be called once before the first use of sge_Random.<BR><BR>
+
+<B>Uint32 <a name="sge_CalibrateDelay">sge_CalibrateDelay</a>(void)</B><BR>
+Tests and returns the current resolution (the smallest delay possible) of SDL_Delay(). This test will
+take 10-50ms to complete.<BR><BR>
+
+<B>Uint32 <a name="sge_DelayRes">sge_DelayRes</a>(void)</B><BR>
+Returns the latest result of sge_CalibrateDelay() or 10ms as default.<BR><BR>
+
+<B>Uint32 <a name="sge_Delay">sge_Delay</a>(Uint32 ticks)</B><BR>
+The SGE version of SDL_Delay(). SDL_Delay() burns time by giving it to the system, which gives other
+tasks more CPU time. BUT (if you're not running a realtime OS) the delay will not take the exact time
+you specified and will not be the same on a different machine or OS. sge_Delay() uses sge_DelayRes()
+to get the safe amount of time to burn with SDL_Delay() and burns the rest in a loop. This should
+give the same delay on all machines & OSes but still give more CPU time to other tasks if possible.
+Note that if the user starts something CPU intensive after you called sge_CalibrateDelay() the result
+will be less reliable.<BR>
+Returns the exact time delayed.<BR><BR>
+</P>
+
+
+	
+<BR><BR><BR><HR>
+<P><I><SMALL>
+Copyright &copy; 1999-2003 Anders Lindström<BR>
+Last updated 030808
+</SMALL></I></P>
+
+</body>
+</html>

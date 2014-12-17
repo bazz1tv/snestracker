@@ -1,0 +1,15 @@
+<map id="help" name="help">
+<area shape="rect" href="$group___console.html#ga830e26ea219001452d9429f06b621fe9" title="Self Explanatory." alt="" coords="333,5,451,32"/>
+<area shape="rect" href="$classc_console.html#a714228c67b935d14c674b223be5605be" title="cConsole::helpCMD" alt="" coords="108,56,268,83"/>
+<area shape="rect" href="$group___console.html#gafca257b0b67bf291fa8f87f99b96f868" title="Queries the user to hit enter key.. kinda like a cheap [less] cmd." alt="" coords="128,107,248,133"/>
+<area shape="rect" href="$group___console.html#ga5fbe849ea72e847e9058121cd0925a83" title="Move all output up one line." alt="" coords="516,5,743,32"/>
+<area shape="rect" href="$classc_console.html#aab42c0844cdbaad9fa3b770579e5a48e" title="Updates background, Updates logic to draw the cursor or not (blinking underscore)" alt="" coords="317,81,467,108"/>
+<area shape="rect" href="$classc_console.html#a7e31861f0b406b190d3fd8d001a73902" title="Draws the BG, the input display and history displays, the blinking cursor." alt="" coords="327,132,457,159"/>
+<area shape="rect" href="$group___guns.html#ga23a6d37c03b03a98adaf07b3fa220681" title="Draws all Bullets." alt="" coords="577,56,681,83"/>
+<area shape="rect" href="$effects_8cpp.html#aabbcf57ec8d8ff03c75241c854afcf33" title="Draws all Particle Emitter." alt="" coords="548,107,711,133"/>
+<area shape="rect" href="$classc_player.html#a0c218d335a29db098fd1b795d1975d63" title="Draws the Player." alt="" coords="571,157,688,184"/>
+<area shape="rect" href="$enemy_8cpp.html#aa4a973eecad16182826d84aca6df7f12" title="Draws all Enemies." alt="" coords="571,208,688,235"/>
+<area shape="rect" href="$classc_m_particle_emitter.html#a8b4f2eea58b7f4880640bc1b4133514f" title="cMParticleEmitter::Draw" alt="" coords="793,107,983,133"/>
+<area shape="rect" href="$classc_m_particle.html#a13f7382733db401a8076bdf6556ff488" title="cMParticle::Draw" alt="" coords="1032,107,1171,133"/>
+<area shape="rect" href="$group___engine___gfx.html#gacfc08e9fdf88e59b854f75eb636c1c62" title="DrawPixel" alt="" coords="1219,107,1309,133"/>
+</map>
