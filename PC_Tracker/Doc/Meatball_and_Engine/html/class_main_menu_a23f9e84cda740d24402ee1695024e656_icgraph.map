@@ -1,5 +1,0 @@
-<map id="MainMenu::Update" name="MainMenu::Update">
-<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="212,5,335,32"/>
-<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="384,5,469,32"/>
-<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="517,5,576,32"/>
-</map>

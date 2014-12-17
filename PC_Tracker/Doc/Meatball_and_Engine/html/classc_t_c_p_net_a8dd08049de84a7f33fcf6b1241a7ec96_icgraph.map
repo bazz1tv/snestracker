@@ -1,3 +1,0 @@
-<map id="cTCPNet::Server_SendGlobalMessage" name="cTCPNet::Server_SendGlobalMessage">
-<area shape="rect" href="$classc_t_c_p_net.html#a2d6f0e395adc0b659ba66f6ebad1b4ee" title="Sends the Message to all Connections you have uses Send_message if you&#39;re an Client else Server_SenGl..." alt="" coords="283,15,520,41"/>
-</map>

@@ -1,8 +1,0 @@
-<map id="effects.cpp" name="effects.cpp">
-<area shape="rect" href="$effects_8h.html" title="effects.h" alt="" coords="243,84,325,111"/>
-<area shape="rect" href="$_camera_8h.html" title="Camera.h" alt="" coords="5,84,99,111"/>
-<area shape="rect" href="$_collision_8h.html" title="Collision.h" alt="" coords="123,84,219,111"/>
-<area shape="rect" href="$_globals_8h.html" title="Globals.h" alt="" coords="127,161,215,188"/>
-<area shape="rect" href="$_o_s_8h.html" title="OS.h" alt="" coords="95,239,151,265"/>
-<area shape="rect" href="$defines_8h.html" title="defines.h" alt="" coords="175,239,263,265"/>
-</map>

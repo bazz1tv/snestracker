@@ -1,6 +1,0 @@
-<map id="cWeapon::Update" name="cWeapon::Update">
-<area shape="rect" href="$classc_a_f373.html#acbc4a7495a52eeeac9f25fd09b390173" title="cAF373::Update" alt="" coords="207,5,340,32"/>
-<area shape="rect" href="$classc_player.html#a28a14211f3f36ed0ef550fc973ab1858" title="Updates the Player." alt="" coords="207,56,340,83"/>
-<area shape="rect" href="$group___player.html#gab3a456d791fc2bd6c2bd0b1bc44fd6c6" title="UpdatePlayer" alt="" coords="391,56,508,83"/>
-<area shape="rect" href="$class_game.html#a1c5373c68261c54aff03e6abe40fee52" title="Game::Update" alt="" coords="559,56,684,83"/>
-</map>

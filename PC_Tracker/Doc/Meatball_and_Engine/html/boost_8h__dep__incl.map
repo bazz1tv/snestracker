@@ -1,9 +1,0 @@
-<map id="include/boost.h" name="include/boost.h">
-<area shape="rect" href="$console_8h.html" title="include/console.h" alt="" coords="148,84,295,111"/>
-<area shape="rect" href="$playlist_8h.html" title="include/playlist.h" alt="" coords="353,84,495,111"/>
-<area shape="rect" href="$console_8cpp.html" title="console.cpp" alt="" coords="5,161,112,188"/>
-<area shape="rect" href="$_globals_8cpp.html" title="Globals.cpp" alt="" coords="136,161,240,188"/>
-<area shape="rect" href="$main_8cpp.html" title="main.cpp" alt="" coords="264,161,352,188"/>
-<area shape="rect" href="$_game_8cpp.html" title="Game.cpp" alt="" coords="376,161,472,188"/>
-<area shape="rect" href="$playlist_8cpp.html" title="playlist.cpp" alt="" coords="496,161,597,188"/>
-</map>

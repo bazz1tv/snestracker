@@ -1,4 +1,0 @@
-<map id="cTCPNet::Send_Message" name="cTCPNet::Send_Message">
-<area shape="rect" href="$classc_t_c_p_net.html#a2d6f0e395adc0b659ba66f6ebad1b4ee" title="Sends the Message to all Connections you have uses Send_message if you&#39;re an Client else Server_SenGl..." alt="" coords="528,5,765,32"/>
-<area shape="rect" href="$classc_t_c_p_net.html#a8dd08049de84a7f33fcf6b1241a7ec96" title="Sends an Message to ervery Client." alt="" coords="252,25,479,71"/>
-</map>

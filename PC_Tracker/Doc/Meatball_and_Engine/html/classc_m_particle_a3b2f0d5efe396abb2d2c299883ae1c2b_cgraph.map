@@ -1,5 +1,0 @@
-<map id="cMParticle::HandleCollision" name="cMParticle::HandleCollision">
-<area shape="rect" href="$classc_angle_sprite.html#ab0a9e4ec6a72b43734778939b5627a5c" title="cAngleSprite::AddDirection" alt="" coords="271,5,484,32"/>
-<area shape="rect" href="$classc_angle_sprite.html#a12613016a1db1eacca5e5982bc50f33e" title="cAngleSprite::AddSpeed" alt="" coords="280,56,475,83"/>
-<area shape="rect" href="$classc_angle_sprite.html#ad21bfe3eef5aab3d347a2d9b0a1f041f" title="cAngleSprite::SetDirection" alt="" coords="533,31,744,57"/>
-</map>

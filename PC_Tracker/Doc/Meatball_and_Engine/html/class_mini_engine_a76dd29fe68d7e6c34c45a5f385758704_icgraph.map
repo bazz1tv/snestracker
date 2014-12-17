@@ -1,7 +1,0 @@
-<map id="MiniEngine::PreDraw" name="MiniEngine::PreDraw">
-<area shape="rect" href="$class_mini_engine.html#a69cfed53ff62e5023f1fa01e2ab0cf05" title="MiniEngine::Draw" alt="" coords="227,5,371,32"/>
-<area shape="rect" href="$classc_level_editor.html#a0ef2d00303762c35c2591bf9fe961305" title="cLevelEditor::Draw" alt="" coords="223,56,375,83"/>
-<area shape="rect" href="$class_mini_engine.html#aaaaae01092335a268fd25150f45433b6" title="MiniEngine::Do" alt="" coords="424,5,552,32"/>
-<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="600,5,685,32"/>
-<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="733,5,792,32"/>
-</map>

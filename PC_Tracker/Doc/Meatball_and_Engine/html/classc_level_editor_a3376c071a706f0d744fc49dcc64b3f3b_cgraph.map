@@ -1,4 +1,0 @@
-<map id="cLevelEditor::HeldKey_movecamera" name="cLevelEditor::HeldKey_movecamera">
-<area shape="rect" href="$classc_camera.html#ac5f6fa72fab83344d26dc27886a5cdd1" title="Moves the Camera." alt="" coords="233,15,367,41"/>
-<area shape="rect" href="$classc_camera.html#ac2db0486ff63c0e69aad872393c4c706" title="Checks the Left/Right/Up/Down boundaries  Currently No Up boundary is set Currently The down boundary..." alt="" coords="417,15,607,41"/>
-</map>

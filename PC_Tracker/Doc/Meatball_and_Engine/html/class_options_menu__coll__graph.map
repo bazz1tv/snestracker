@@ -1,8 +1,0 @@
-<map id="OptionsMenu" name="OptionsMenu">
-<area shape="rect" href="$class_mini_engine.html" title="A base class from which the main Steam Rollers can derive from." alt="" coords="9,103,108,129"/>
-<area shape="rect" href="$class_controls_menu.html" title="ControlsMenu" alt="" coords="80,443,200,469"/>
-<area shape="rect" href="$class_text_object.html" title="To write Text requires the cFont class to be activated." alt="" coords="235,103,333,129"/>
-<area shape="rect" href="$class_graphics_object.html" title="A simple collection of Surface/Texture/Rect for most basic graphics objects." alt="" coords="219,7,349,33"/>
-<area shape="rect" href="$class_slider.html" title="Slider" alt="" coords="479,443,540,469"/>
-<area shape="rect" href="$class_range.html" title="Range\&lt; int \&gt;" alt="" coords="467,103,584,129"/>
-</map>

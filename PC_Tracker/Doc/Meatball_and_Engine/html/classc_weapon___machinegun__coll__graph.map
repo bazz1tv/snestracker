@@ -1,4 +1,0 @@
-<map id="cWeapon_Machinegun" name="cWeapon_Machinegun">
-<area shape="rect" href="$classc_weapon.html" title="The Basic Weapon class." alt="" coords="53,84,141,111"/>
-<area shape="rect" href="$classc_basic_sprite.html" title="cBasicSprite" alt="" coords="43,7,152,33"/>
-</map>

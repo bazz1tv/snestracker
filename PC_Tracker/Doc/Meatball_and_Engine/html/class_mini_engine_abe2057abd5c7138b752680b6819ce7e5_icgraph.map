@@ -1,6 +1,0 @@
-<map id="MiniEngine::HeldKey_Handler" name="MiniEngine::HeldKey_Handler">
-<area shape="rect" href="$class_mini_engine.html#abbe5d0c4da184e8e1302ec86d8835b73" title="MiniEngine::Input" alt="" coords="223,15,367,41"/>
-<area shape="rect" href="$class_mini_engine.html#aaaaae01092335a268fd25150f45433b6" title="MiniEngine::Do" alt="" coords="416,15,544,41"/>
-<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="592,15,677,41"/>
-<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="725,15,784,41"/>
-</map>

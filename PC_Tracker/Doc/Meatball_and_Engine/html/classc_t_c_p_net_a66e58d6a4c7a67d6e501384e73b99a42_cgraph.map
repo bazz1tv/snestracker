@@ -1,4 +1,0 @@
-<map id="cTCPNet::Alloc_Socketset" name="cTCPNet::Alloc_Socketset">
-<area shape="rect" href="$classc_t_c_p_net.html#a8940d4bdd34ad6d2110e6d098de699fc" title="Frees the Socketset." alt="" coords="467,5,667,32"/>
-<area shape="rect" href="$classc_t_c_p_net.html#a227063acbfe3f006c8519786e7a41fab" title="Closes every Connection returns 0 if there were no connections or opened sockets." alt="" coords="256,31,419,57"/>
-</map>

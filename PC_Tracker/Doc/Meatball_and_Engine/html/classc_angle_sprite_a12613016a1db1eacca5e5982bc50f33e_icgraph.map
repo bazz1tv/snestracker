@@ -1,7 +1,0 @@
-<map id="cAngleSprite::AddSpeed" name="cAngleSprite::AddSpeed">
-<area shape="rect" href="$classc_m_particle.html#a3b2f0d5efe396abb2d2c299883ae1c2b" title="cMParticle::HandleCollision" alt="" coords="251,5,467,32"/>
-<area shape="rect" href="$classc_m_particle.html#a51a5aef9295c60549d64fdf87aa06524" title="cMParticle::Update" alt="" coords="516,31,671,57"/>
-<area shape="rect" href="$classc_m_particle_emitter.html#a532c3cedb373d1a74a9811f271892ab7" title="cMParticleEmitter::\lUpdate" alt="" coords="720,21,875,67"/>
-<area shape="rect" href="$effects_8h.html#a2d0aefe8c17bdfa8b07ad984ae3e2e70" title="Updates all Particle Emitter." alt="" coords="924,31,1103,57"/>
-<area shape="rect" href="$class_game.html#a1c5373c68261c54aff03e6abe40fee52" title="Game::Update" alt="" coords="1153,31,1279,57"/>
-</map>

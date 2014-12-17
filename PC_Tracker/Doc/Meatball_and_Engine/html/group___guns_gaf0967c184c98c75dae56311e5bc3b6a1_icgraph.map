@@ -1,6 +1,0 @@
-<map id="PreloadBulletimages" name="PreloadBulletimages">
-<area shape="rect" href="$class_game.html#a555a9e4719fd49971765a2ab8b090b5c" title="The init function to be called before starting your First Game." alt="" coords="224,5,320,32"/>
-<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="369,5,492,32"/>
-<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="541,5,627,32"/>
-<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="675,5,733,32"/>
-</map>

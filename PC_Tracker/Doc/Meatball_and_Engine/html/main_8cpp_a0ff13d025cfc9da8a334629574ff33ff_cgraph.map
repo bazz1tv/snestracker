@@ -1,6 +1,0 @@
-<map id="QuitGame" name="QuitGame">
-<area shape="rect" href="$group___guns.html#gad49f863c1fd08dfaa59fb8c9c51e8c43" title="Deletes all Bullets ( Cleans the Array )" alt="" coords="179,5,312,32"/>
-<area shape="rect" href="$enemy_8cpp.html#ade7b770307420fa96585cff068b6e365" title="Deletes every Enemy and frees the array." alt="" coords="172,56,319,83"/>
-<area shape="rect" href="$effects_8cpp.html#aa0ce31d79258acc43ec735af3ac6b6e6" title="Delete&#39;s every Particle Emitter." alt="" coords="149,107,341,133"/>
-<area shape="rect" href="$group___engine___video.html#gafc031fb883e11d96d5e10a49c479ca77" title="Quits SDL." alt="" coords="205,157,285,184"/>
-</map>

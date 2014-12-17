@@ -1,6 +1,0 @@
-<map id="TextObject::Render_shaded" name="TextObject::Render_shaded">
-<area shape="rect" href="$classc_font.html#a5e7d87da787e072678abee523d01e724" title="Creates the text in an Surface types : 1 = Blended 2 = Shaded 3 = Solid." alt="" coords="236,5,385,32"/>
-<area shape="rect" href="$class_text_object.html#a4aca0a06ab72da363ecdc81a036b79f1" title="TextObject::preRender" alt="" coords="219,56,403,83"/>
-<area shape="rect" href="$class_text_object.html#af6103e05c76f2905d96e4f395ccaf9b1" title="TextObject::UpdateRect" alt="" coords="215,107,407,133"/>
-<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="456,107,533,133"/>
-</map>

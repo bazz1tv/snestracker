@@ -1,9 +1,0 @@
-<map id="ControlsMenu::GetInput" name="ControlsMenu::GetInput">
-<area shape="rect" href="$class_controls_menu.html#aacf9c14ee8a65901d3ac54988a9e6636" title="ControlsMenu::Draw" alt="" coords="245,56,411,83"/>
-<area shape="rect" href="$class_text_object.html#ac6d6a5eaa19af6d7fd991332622e329e" title="TextObject::Draw" alt="" coords="473,5,617,32"/>
-<area shape="rect" href="$classc_basic_sprite.html#a98a8928524972f62711142ee282ec178" title="cBasicSprite::Draw" alt="" coords="469,56,621,83"/>
-<area shape="rect" href="$class_mini_engine.html#aa553c0bf445926d1501c5c05dc90ab8a" title="MiniEngine::PostDraw" alt="" coords="459,107,632,133"/>
-<area shape="rect" href="$_globals_8cpp.html#abba66423d34deb4e3668adc1ccc03b4d" title="Draws the Framerate." alt="" coords="680,107,813,133"/>
-<area shape="rect" href="$classc_font.html#a5e7d87da787e072678abee523d01e724" title="Creates the text in an Surface types : 1 = Blended 2 = Shaded 3 = Solid." alt="" coords="861,81,1011,108"/>
-<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="897,132,975,159"/>
-</map>

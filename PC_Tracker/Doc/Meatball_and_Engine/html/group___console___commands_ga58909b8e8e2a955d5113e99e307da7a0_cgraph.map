@@ -1,6 +1,0 @@
-<map id="play" name="play">
-<area shape="rect" href="$group___console.html#ga830e26ea219001452d9429f06b621fe9" title="Self Explanatory." alt="" coords="123,5,240,32"/>
-<area shape="rect" href="$_globals_8cpp.html#af38b5f4efeeaf7ca41eb85294f0f1ec5" title="Checks if the file exists." alt="" coords="140,56,223,83"/>
-<area shape="rect" href="$classc_audio.html#a8169acfbe8b79cfc13a871ab16b2ffc9" title="if no forcing the file will be played after the current Music file if loops is &#45;1 music will be loope..." alt="" coords="108,107,255,133"/>
-<area shape="rect" href="$group___console.html#ga5fbe849ea72e847e9058121cd0925a83" title="Move all output up one line." alt="" coords="305,5,532,32"/>
-</map>

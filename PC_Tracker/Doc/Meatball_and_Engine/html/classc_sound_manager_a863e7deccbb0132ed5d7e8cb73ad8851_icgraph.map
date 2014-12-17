@@ -1,7 +1,0 @@
-<map id="cSoundManager::Add" name="cSoundManager::Add">
-<area shape="rect" href="$classc_weapon___laser___x1.html#ac1b9bbf377db4b807194d45983d14d90" title="cWeapon_Laser_X1::cWeapon\l_Laser_X1" alt="" coords="231,5,465,51"/>
-<area shape="rect" href="$classc_weapon___machinegun.html#a2a3561ff6416d7becdbf0535d2d5ef81" title="cWeapon_Machinegun\l::cWeapon_Machinegun" alt="" coords="252,75,444,120"/>
-<area shape="rect" href="$classc_weapon___pistol.html#a43bca4ee29db52bc801227deb9d174f1" title="cWeapon_Pistol::cWeapon\l_Pistol" alt="" coords="244,144,452,189"/>
-<area shape="rect" href="$class_main_menu.html#a53eecf9d5ffd094f54ac4193e7e57eaf" title="MainMenu::MainMenu" alt="" coords="259,213,437,240"/>
-<area shape="rect" href="$class_options_menu.html#aa1164b1bc500cc1f53b176ab05b30fe2" title="OptionsMenu::OptionsMenu" alt="" coords="237,264,459,291"/>
-</map>

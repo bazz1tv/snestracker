@@ -1,7 +1,0 @@
-<map id="cBullet::init" name="cBullet::init">
-<area shape="rect" href="$classc_image_manager.html#a71fec48cbbf5fbc3bf75b66fa8066cbf" title="cImageManager::GetPointer" alt="" coords="155,5,379,32"/>
-<area shape="rect" href="$classc_basic_sprite.html#ad2c10ff9164b58697bd987261f87c82e" title="cBasicSprite::SetImage" alt="" coords="173,56,360,83"/>
-<area shape="rect" href="$classc_velocity_sprite.html#acb4d562f26588d03e800a3aa9e597dff" title="cVelocitySprite::SetVelocity" alt="" coords="157,107,376,133"/>
-<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="427,31,653,57"/>
-<area shape="rect" href="$classc_basic_sprite.html#ab14231b4170c136c10ccc75b910cb93e" title="cBasicSprite::SetAlpha" alt="" coords="449,81,631,108"/>
-</map>

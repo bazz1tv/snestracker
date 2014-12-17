@@ -1,6 +1,0 @@
-<map id="CollideMove_Meatball" name="CollideMove_Meatball">
-<area shape="rect" href="$_collision_8cpp.html#a269c12dda4ca1e0abb17da6e04f45419" title="Checks if the given position is valid if the Position is not valid it returns the direction..." alt="" coords="235,56,357,83"/>
-<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="425,5,503,32"/>
-<area shape="rect" href="$group___engine___misc.html#ga60f74ce4c80dac50bac04ba035e7f5eb" title="returns 1 if 1 or more points intersect" alt="" coords="407,56,521,83"/>
-<area shape="rect" href="$_collision_8cpp.html#a332c2344cba3fda8e66c629a2d9c82f5" title="Returns the collision direction." alt="" coords="416,107,512,133"/>
-</map>

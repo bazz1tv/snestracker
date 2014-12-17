@@ -1,9 +1,0 @@
-<map id="cPlayer::ChangeActiveWeapon" name="cPlayer::ChangeActiveWeapon">
-<area shape="rect" href="$class_game.html#a54a07333126e6dda45c114227b697499" title="Game::Keydown_Events" alt="" coords="296,5,488,32"/>
-<area shape="rect" href="$classc_player.html#a614d07b3557166554b6b800f480ff030" title="Resets." alt="" coords="332,56,452,83"/>
-<area shape="rect" href="$class_game.html#a7ee7ce6614bdabc3eecdf6ae8eaa94d6" title="Game::EventHandler" alt="" coords="536,5,707,32"/>
-<area shape="rect" href="$class_game.html#a555a9e4719fd49971765a2ab8b090b5c" title="The init function to be called before starting your First Game." alt="" coords="573,56,669,83"/>
-<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="756,56,879,83"/>
-<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="928,56,1013,83"/>
-<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1061,56,1120,83"/>
-</map>

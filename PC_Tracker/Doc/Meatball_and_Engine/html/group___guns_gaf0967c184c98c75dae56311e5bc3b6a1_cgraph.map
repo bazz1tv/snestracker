@@ -1,5 +1,0 @@
-<map id="PreloadBulletimages" name="PreloadBulletimages">
-<area shape="rect" href="$classc_image_manager.html#a75bc7ee74e8fe0839725639d8392390a" title="Adds an Image Should always have an Identifier." alt="" coords="224,5,400,32"/>
-<area shape="rect" href="$group___engine___image.html#gac3d007d1a2bfa7d73b87a8541a194c9c" title="LoadImage" alt="" coords="260,56,364,83"/>
-<area shape="rect" href="$classc_image_manager.html#a71fec48cbbf5fbc3bf75b66fa8066cbf" title="cImageManager::GetPointer" alt="" coords="448,5,672,32"/>
-</map>

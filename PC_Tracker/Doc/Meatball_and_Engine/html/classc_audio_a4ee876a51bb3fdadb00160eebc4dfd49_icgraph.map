@@ -1,8 +1,0 @@
-<map id="cAudio::MusicPlaying" name="cAudio::MusicPlaying">
-<area shape="rect" href="$class_game.html#a555a9e4719fd49971765a2ab8b090b5c" title="The init function to be called before starting your First Game." alt="" coords="476,5,572,32"/>
-<area shape="rect" href="$class_options_menu.html#a568f31e2fede9d17ba9c820a889eee0e" title="OptionsMenu::Update" alt="" coords="224,56,403,83"/>
-<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="647,31,769,57"/>
-<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="819,31,904,57"/>
-<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="952,31,1011,57"/>
-<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="452,56,596,83"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="FillRect" name="FillRect">
-<area shape="rect" href="$classc_level_editor.html#a14176b252453be2aa58ef18fdd55b904" title="cLevelEditor::OutlineObject" alt="" coords="128,49,347,76"/>
-<area shape="rect" href="$classc_level_editor.html#a569a450bbd738d548653068f1e3fe066" title="Draw the outline of the hovered Object." alt="" coords="395,5,627,51"/>
-<area shape="rect" href="$classc_multi_select.html#ae05e6b8b69a7c01608c1ad0bf1584762" title="cMultiSelect::DrawOutline\lAroundMultiSelect_Tiles" alt="" coords="408,75,613,120"/>
-<area shape="rect" href="$classc_level_editor.html#a0ef2d00303762c35c2591bf9fe961305" title="cLevelEditor::Draw" alt="" coords="676,49,828,76"/>
-</map>

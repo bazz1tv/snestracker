@@ -1,8 +1,0 @@
-<map id="MainMenu::UpdateHardware" name="MainMenu::UpdateHardware">
-<area shape="rect" href="$classc_audio.html#a964b3d86635b460a4f25cf64997b0014" title="Checks if no music is played." alt="" coords="307,5,437,32"/>
-<area shape="rect" href="$classc_mouse_cursor.html#a19df312e71e7672f891dda410d4ef489" title="cMouseCursor::Update" alt="" coords="280,56,464,83"/>
-<area shape="rect" href="$classc_basic_sprite.html#abab9b223fef9a6875313718719866ccc" title="cBasicSprite::SetPos" alt="" coords="515,31,680,57"/>
-<area shape="rect" href="$classc_basic_sprite.html#a65779c476030c2463de8576fe1f67e39" title="cBasicSprite::Update" alt="" coords="512,81,683,108"/>
-<area shape="rect" href="$group___engine___image.html#ga2b7097260a2531e03c8853d2b22be2bd" title="V 1.1.1." alt="" coords="781,56,907,83"/>
-<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="731,107,957,133"/>
-</map>

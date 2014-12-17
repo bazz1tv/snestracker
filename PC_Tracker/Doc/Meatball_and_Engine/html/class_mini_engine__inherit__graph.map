@@ -1,8 +1,0 @@
-<map id="MiniEngine" name="MiniEngine">
-<area shape="rect" href="$classc_console.html" title="For Live In&#45;game editing to the Game World and Variables." alt="" coords="5,84,93,111"/>
-<area shape="rect" href="$classc_level_editor.html" title="The Leveleditor as an ingame implementation." alt="" coords="117,84,227,111"/>
-<area shape="rect" href="$class_controls_menu.html" title="ControlsMenu" alt="" coords="251,84,371,111"/>
-<area shape="rect" href="$class_game.html" title="The Game class houses the Specific Gameplay routines for the Actual Game!! A.k.A when you are in MODE..." alt="" coords="395,84,459,111"/>
-<area shape="rect" href="$class_main_menu.html" title="MainMenu" alt="" coords="483,84,579,111"/>
-<area shape="rect" href="$class_options_menu.html" title="OptionsMenu" alt="" coords="603,84,720,111"/>
-</map>

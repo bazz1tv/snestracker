@@ -1,4 +1,0 @@
-<map id="CollideMove_Meatball" name="CollideMove_Meatball">
-<area shape="rect" href="$group___player.html#gab3a456d791fc2bd6c2bd0b1bc44fd6c6" title="UpdatePlayer" alt="" coords="236,5,353,32"/>
-<area shape="rect" href="$class_game.html#a1c5373c68261c54aff03e6abe40fee52" title="Game::Update" alt="" coords="404,5,529,32"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="cAF373::init" name="cAF373::init">
-<area shape="rect" href="$classc_image_manager.html#a75bc7ee74e8fe0839725639d8392390a" title="Adds an Image Should always have an Identifier." alt="" coords="179,5,355,32"/>
-<area shape="rect" href="$classc_image_manager.html#a71fec48cbbf5fbc3bf75b66fa8066cbf" title="cImageManager::GetPointer" alt="" coords="425,31,649,57"/>
-<area shape="rect" href="$group___engine___image.html#gac3d007d1a2bfa7d73b87a8541a194c9c" title="LoadImage" alt="" coords="215,107,319,133"/>
-<area shape="rect" href="$classc_basic_sprite.html#ad2c10ff9164b58697bd987261f87c82e" title="cBasicSprite::SetImage" alt="" coords="173,157,360,184"/>
-<area shape="rect" href="$classc_velocity_sprite.html#acb4d562f26588d03e800a3aa9e597dff" title="cVelocitySprite::SetVelocity" alt="" coords="157,208,376,235"/>
-<area shape="rect" href="$classc_basic_sprite.html#abdb383535c671712059e5226956f1fd5" title="cBasicSprite::DestroyTexture" alt="" coords="424,132,651,159"/>
-<area shape="rect" href="$classc_basic_sprite.html#ab14231b4170c136c10ccc75b910cb93e" title="cBasicSprite::SetAlpha" alt="" coords="447,183,628,209"/>
-</map>

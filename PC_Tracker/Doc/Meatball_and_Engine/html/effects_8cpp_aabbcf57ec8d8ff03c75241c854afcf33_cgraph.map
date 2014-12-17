@@ -1,5 +1,0 @@
-<map id="DrawParticleEmitter" name="DrawParticleEmitter">
-<area shape="rect" href="$classc_m_particle_emitter.html#a8b4f2eea58b7f4880640bc1b4133514f" title="cMParticleEmitter::Draw" alt="" coords="217,5,407,32"/>
-<area shape="rect" href="$classc_m_particle.html#a13f7382733db401a8076bdf6556ff488" title="cMParticle::Draw" alt="" coords="456,5,595,32"/>
-<area shape="rect" href="$group___engine___gfx.html#gacfc08e9fdf88e59b854f75eb636c1c62" title="DrawPixel" alt="" coords="643,5,733,32"/>
-</map>

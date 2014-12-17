@@ -1,8 +1,0 @@
-<map id="ControlsMenu::GetInput" name="ControlsMenu::GetInput">
-<area shape="rect" href="$class_controls_menu.html#acca9d246bc75edb0e0037b9cc5f496b2" title="ControlsMenu::Collisions" alt="" coords="245,5,443,32"/>
-<area shape="rect" href="$class_controls_menu.html#a8c0100408843df3ca976dc13121c7ac8" title="ControlsMenu::EventHandler" alt="" coords="491,5,717,32"/>
-<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="767,5,911,32"/>
-<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="961,5,1084,32"/>
-<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="1133,5,1219,32"/>
-<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1267,5,1325,32"/>
-</map>

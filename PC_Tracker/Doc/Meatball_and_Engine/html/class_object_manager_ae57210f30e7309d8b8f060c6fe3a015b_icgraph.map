@@ -1,7 +1,0 @@
-<map id="ObjectManager::hasa" name="ObjectManager::hasa">
-<area shape="rect" href="$group___l_e___input.html#ga3ef023f6cdd3f0a2934490a891887497" title="cLevelEditor::EventHandler" alt="" coords="1015,49,1228,76"/>
-<area shape="rect" href="$classc_multi_select.html#adf55b266ea5da16f249ea59af5785463" title="cMultiSelect::GetAllColliding\lObjects" alt="" coords="496,40,720,85"/>
-<area shape="rect" href="$classc_level_data.html#aadf577575fcd0f7c9d648b8fcb209902" title="cLevelData::GetAllColliding\lSpriteNum" alt="" coords="231,65,447,111"/>
-<area shape="rect" href="$classc_multi_select.html#a0be15625d81777ae537d540e12c61075" title="Add to OM array." alt="" coords="513,121,703,148"/>
-<area shape="rect" href="$classc_multi_select.html#a2426fe2bf6c20cf4b97fea2c4793a3b7" title="cMultiSelect::SetObjects" alt="" coords="769,49,964,76"/>
-</map>

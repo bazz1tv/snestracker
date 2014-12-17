@@ -1,8 +1,0 @@
-<map id="SetColor" name="SetColor">
-<area shape="rect" href="$classc_font.html#a1a5a3a11895ce275f9e99ae42332c9ff" title="cFont::cFont" alt="" coords="199,5,308,32"/>
-<area shape="rect" href="$class_controls_menu.html#aba440a54d8bb3458cee45584a2e9ffa9" title="ControlsMenu::ControlsMenu" alt="" coords="139,56,368,83"/>
-<area shape="rect" href="$class_text_object.html#a4a1ab8dc77e06fc31d526deb3d28ad26" title="TextObject::initDefaultColors" alt="" coords="139,107,368,133"/>
-<area shape="rect" href="$class_main_menu.html#a53eecf9d5ffd094f54ac4193e7e57eaf" title="MainMenu::MainMenu" alt="" coords="164,157,343,184"/>
-<area shape="rect" href="$class_options_menu.html#aa1164b1bc500cc1f53b176ab05b30fe2" title="OptionsMenu::OptionsMenu" alt="" coords="143,208,364,235"/>
-<area shape="rect" href="$class_text_object.html#a2d3e7eac069f9e1c4370943fd951df44" title="Update the surface with the object&#39;s internal text and font." alt="" coords="416,107,603,133"/>
-</map>

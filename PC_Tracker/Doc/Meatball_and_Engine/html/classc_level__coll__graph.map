@@ -1,8 +1,0 @@
-<map id="cLevel" name="cLevel">
-<area shape="rect" href="$classc_level_data.html" title="cLevelData" alt="" coords="173,375,275,401"/>
-<area shape="rect" href="$class_object_manager.html" title="ObjectManager\&lt; cMVelSprite \&gt;" alt="" coords="52,279,303,305"/>
-<area shape="rect" href="$classc_m_vel_sprite.html" title="cMVelSprite" alt="" coords="124,183,231,209"/>
-<area shape="rect" href="$classc_velocity_sprite.html" title="cVelocitySprite" alt="" coords="5,87,133,113"/>
-<area shape="rect" href="$classc_basic_sprite.html" title="cBasicSprite" alt="" coords="15,7,124,33"/>
-<area shape="rect" href="$class_collisiondata.html" title="Collisiondata" alt="" coords="157,87,272,113"/>
-</map>

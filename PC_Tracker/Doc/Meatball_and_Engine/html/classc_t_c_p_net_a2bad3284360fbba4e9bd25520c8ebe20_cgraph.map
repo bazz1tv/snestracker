@@ -1,6 +1,0 @@
-<map id="cTCPNet::Read_Message" name="cTCPNet::Read_Message">
-<area shape="rect" href="$classc_t_c_p_net.html#a2afbf5d90c709a6f1192e27779862249" title="Disconnects an specific Client Connected Server Only." alt="" coords="251,37,475,83"/>
-<area shape="rect" href="$classc_t_c_p_net.html#a227063acbfe3f006c8519786e7a41fab" title="Closes every Connection returns 0 if there were no connections or opened sockets." alt="" coords="773,56,936,83"/>
-<area shape="rect" href="$classc_t_c_p_net.html#a66e58d6a4c7a67d6e501384e73b99a42" title="Allocates an Socketset for buffer message checking used internally." alt="" coords="523,5,725,32"/>
-<area shape="rect" href="$classc_t_c_p_net.html#a8940d4bdd34ad6d2110e6d098de699fc" title="Frees the Socketset." alt="" coords="984,31,1184,57"/>
-</map>

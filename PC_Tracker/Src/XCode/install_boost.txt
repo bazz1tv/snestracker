@@ -1,6 +1,0 @@
-./bootstrap.sh
-sudo ./b2 --build-dir=/tmp --with-system --with-filesystem link=static install
-
-Link direct to Static *.a libraries in "Other Linker Flags" 
-ie
-/usr/local/lib/libboost_filesystem.a /usr/local/lib/libboost_system.a

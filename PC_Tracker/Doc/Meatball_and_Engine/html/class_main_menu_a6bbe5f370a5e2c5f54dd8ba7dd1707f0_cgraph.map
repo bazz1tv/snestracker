@@ -1,6 +1,0 @@
-<map id="MainMenu::Collisions" name="MainMenu::Collisions">
-<area shape="rect" href="$classc_basic_sprite.html#a236ab4a4fe5c6490a71d0a56b0c73bfb" title="cBasicSprite::GetAlpha" alt="" coords="227,5,411,32"/>
-<area shape="rect" href="$include_2misc_8h.html#a560a6414379f077656c6532fea93a46c" title="More english version of." alt="" coords="240,56,397,83"/>
-<area shape="rect" href="$classc_basic_sprite.html#ab14231b4170c136c10ccc75b910cb93e" title="cBasicSprite::SetAlpha" alt="" coords="228,107,409,133"/>
-<area shape="rect" href="$classc_mouse_cursor.html#a3a424c1e8f7e8c91cfc28ba9f588c040" title="Point Collisioncheck." alt="" coords="460,56,692,83"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" href="$class_mini_engine.html" title="A base class from which the main Steam Rollers can derive from." alt="" coords="7,132,105,159"/>
-<area shape="rect" href="$classc_console.html" title="For Live In&#45;game editing to the Game World and Variables." alt="" coords="172,5,260,32"/>
-<area shape="rect" href="$classc_level_editor.html" title="The Leveleditor as an ingame implementation." alt="" coords="161,56,271,83"/>
-<area shape="rect" href="$class_controls_menu.html" title="ControlsMenu" alt="" coords="156,107,276,133"/>
-<area shape="rect" href="$class_game.html" title="The Game class houses the Specific Gameplay routines for the Actual Game!! A.k.A when you are in MODE..." alt="" coords="184,157,248,184"/>
-<area shape="rect" href="$class_main_menu.html" title="MainMenu" alt="" coords="168,208,264,235"/>
-<area shape="rect" href="$class_options_menu.html" title="OptionsMenu" alt="" coords="157,259,275,285"/>
-</map>

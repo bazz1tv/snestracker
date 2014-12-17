@@ -1,7 +1,0 @@
-<map id="soundVol" name="soundVol">
-<area shape="rect" href="$group___console.html#ga830e26ea219001452d9429f06b621fe9" title="Self Explanatory." alt="" coords="195,5,312,32"/>
-<area shape="rect" href="$classc_sound_manager.html#a13473964862648a84d60d20669cb6e23" title="cSoundManager::GetPointer" alt="" coords="141,56,365,83"/>
-<area shape="rect" href="$classc_audio.html#ac125f1588c35a9a7071a90230d055aee" title="cAudio::GetSoundVolume" alt="" coords="151,107,356,133"/>
-<area shape="rect" href="$classc_audio.html#a5561e9289154d175e181bc6e2a3d9384" title="Set a specific sound&#39;s volume with it&#39;s chunk ptr." alt="" coords="151,157,356,184"/>
-<area shape="rect" href="$group___console.html#ga5fbe849ea72e847e9058121cd0925a83" title="Move all output up one line." alt="" coords="415,5,641,32"/>
-</map>

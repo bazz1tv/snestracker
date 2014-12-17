@@ -1,8 +1,0 @@
-<map id="Slider::getTargetValue" name="Slider::getTargetValue">
-<area shape="rect" href="$class_slider.html#a92d89cabc59cb95fe583325b8f7a2ed3" title="Slider::Slide" alt="" coords="237,5,344,32"/>
-<area shape="rect" href="$class_options_menu.html#a568f31e2fede9d17ba9c820a889eee0e" title="OptionsMenu::Update" alt="" coords="392,5,571,32"/>
-<area shape="rect" href="$class_options_menu.html#aeacdbe0fae988c134bfe1ce1c027e617" title="OptionsMenu::Do" alt="" coords="620,5,764,32"/>
-<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="815,5,937,32"/>
-<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="987,5,1072,32"/>
-<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="1120,5,1179,32"/>
-</map>

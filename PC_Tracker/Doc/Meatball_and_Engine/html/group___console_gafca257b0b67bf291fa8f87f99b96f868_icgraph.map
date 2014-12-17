@@ -1,5 +1,0 @@
-<map id="wait_for_input" name="wait_for_input">
-<area shape="rect" href="$group___console___commands.html#ga99ed3ad1baebe6360406cee0cfa52168" title="bring up help on all commands or specific command" alt="" coords="176,5,229,32"/>
-<area shape="rect" href="$group___console___commands.html#ga9525780ab6c47a437572eda56f8ccfe0" title="list the directory" alt="" coords="184,56,221,83"/>
-<area shape="rect" href="$classc_console.html#a30b719f98df2be1670f6e4e1055844a5" title="Gets the current working path, Loads the Background image to the Image Manager, Creates the console f..." alt="" coords="277,31,440,57"/>
-</map>

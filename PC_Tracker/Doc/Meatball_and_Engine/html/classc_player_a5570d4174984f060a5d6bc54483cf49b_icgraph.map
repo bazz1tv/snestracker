@@ -1,7 +1,0 @@
-<map id="cPlayer::Fire" name="cPlayer::Fire">
-<area shape="rect" href="$class_game.html#a54a07333126e6dda45c114227b697499" title="Game::Keydown_Events" alt="" coords="171,5,363,32"/>
-<area shape="rect" href="$class_game.html#a229498a644bd9a1581ab1ad4c985e1f0" title="Game::MouseButtonDown\l_Events" alt="" coords="163,56,371,101"/>
-<area shape="rect" href="$class_game.html#aca434a238e8771d5f674ebe67864d061" title="Game::Player_Input" alt="" coords="187,125,347,152"/>
-<area shape="rect" href="$class_game.html#a7ee7ce6614bdabc3eecdf6ae8eaa94d6" title="Game::EventHandler" alt="" coords="432,36,603,63"/>
-<area shape="rect" href="$class_game.html#a94554d07a495b86217149c8589f08d27" title="Game::HeldKey_Handler" alt="" coords="419,125,616,152"/>
-</map>

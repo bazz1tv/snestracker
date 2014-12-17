@@ -1,9 +1,0 @@
-<map id="cLevelEditor::DeleteObject" name="cLevelEditor::DeleteObject">
-<area shape="rect" href="$enemy_8cpp.html#a51239ad060a93dda96f718509538a457" title="Seletes an given Enemy." alt="" coords="313,5,423,32"/>
-<area shape="rect" href="$classc_level_data.html#a3fddca9f09bf3d7e1fe8e12a16ed01ab" title="Delets an given Sprite." alt="" coords="268,56,468,83"/>
-<area shape="rect" href="$enemy_8cpp.html#a4aea8b4c1726da681ac20abb12b939fc" title="Gets the first Collision if the rect overlaps." alt="" coords="271,107,465,133"/>
-<area shape="rect" href="$classc_level_data.html#a8aa8699eafb268cb0453ffe7ba28d905" title="Gets the first overlapping Collision." alt="" coords="268,157,468,203"/>
-<area shape="rect" href="$group___engine___misc.html#gaee31d5f222e67b535b20d7fd10080d4b" title="Returns an SDL_rect." alt="" coords="739,200,816,227"/>
-<area shape="rect" href="$group___engine___misc.html#ga60f74ce4c80dac50bac04ba035e7f5eb" title="returns 1 if 1 or more points intersect" alt="" coords="547,115,661,141"/>
-<area shape="rect" href="$classc_m_vel_sprite.html#a63285b3980443306cdf8ba5ce9ce2795" title="Use SDL_TRUE to get the RECT with camera position coordinates calculated also." alt="" coords="519,172,689,199"/>
-</map>

@@ -1,8 +1,0 @@
-<map id="include/TextObject.h" name="include/TextObject.h">
-<area shape="rect" href="$_main_menu_8h.html" title="include/MainMenu.h" alt="" coords="104,161,269,188"/>
-<area shape="rect" href="$_options_menu_8h.html" title="include/OptionsMenu.h" alt="" coords="224,84,411,111"/>
-<area shape="rect" href="$_text_object_8cpp.html" title="TextObject.cpp" alt="" coords="435,84,565,111"/>
-<area shape="rect" href="$main_8cpp.html" title="main.cpp" alt="" coords="5,239,93,265"/>
-<area shape="rect" href="$_main_menu_8cpp.html" title="MainMenu.cpp" alt="" coords="117,239,243,265"/>
-<area shape="rect" href="$_options_menu_8cpp.html" title="OptionsMenu.cpp" alt="" coords="267,239,413,265"/>
-</map>

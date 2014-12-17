@@ -1,9 +1,0 @@
-<map id="cFramerate::Reset" name="cFramerate::Reset">
-<area shape="rect" href="$classc_level.html#a0585e5ce66c81057bc12da8e572f1cc4" title="Loads an Level." alt="" coords="208,31,320,57"/>
-<area shape="rect" href="$group___console___commands.html#ga76761b48724947bd23c9d00816c14354" title="Load a new Level from LEVEL_DIR." alt="" coords="373,5,459,32"/>
-<area shape="rect" href="$class_game.html#a555a9e4719fd49971765a2ab8b090b5c" title="The init function to be called before starting your First Game." alt="" coords="368,56,464,83"/>
-<area shape="rect" href="$classc_console.html#a30b719f98df2be1670f6e4e1055844a5" title="Gets the current working path, Loads the Background image to the Image Manager, Creates the console f..." alt="" coords="512,5,675,32"/>
-<area shape="rect" href="$class_main_menu.html#ab02082f551405d2b75c9d1222f138221" title="MainMenu::Do" alt="" coords="532,56,655,83"/>
-<area shape="rect" href="$main_8cpp.html#a916c743eda88c5fcf2d05a18c7c564e8" title="Runs the actual Game." alt="" coords="723,56,808,83"/>
-<area shape="rect" href="$main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title="main" alt="" coords="856,56,915,83"/>
-</map>

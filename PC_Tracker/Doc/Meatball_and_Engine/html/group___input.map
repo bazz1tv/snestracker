@@ -1,5 +1,0 @@
-<map id="Input" name="Input">
-<area shape="rect" href="$group___event___handlers.html" title="Tracks events such as window resize, mouse down, static key presses." alt="" coords="237,5,365,32"/>
-<area shape="rect" href="$group___held_keys___handlers.html" title="Goes to a GAME_MODE specific handler to handle keys being held down." alt="" coords="227,56,376,83"/>
-<area shape="rect" href="$group___game.html" title="Grouped functions related to the Game&#39;s Core." alt="" coords="7,31,71,57"/>
-</map>

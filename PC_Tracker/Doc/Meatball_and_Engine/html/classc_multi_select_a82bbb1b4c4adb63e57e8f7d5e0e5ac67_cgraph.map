@@ -1,4 +1,0 @@
-<map id="cMultiSelect::InitTiles" name="cMultiSelect::InitTiles">
-<area shape="rect" href="$classc_multi_select.html#a1c6e56d973a3fe228e15e014ba5522ac" title="Releases any MultiSelect_ selected object." alt="" coords="228,15,401,41"/>
-<area shape="rect" href="$class_object_manager.html#a13f219a1b5fc3c2cfe4f81a3dbd38458" title="Remove from OM but don&#39;t delete from memory." alt="" coords="451,5,669,51"/>
-</map>
