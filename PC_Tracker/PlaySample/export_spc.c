@@ -97,7 +97,7 @@ int getopts(int argc, char **argv)
 {
   int c, err = 0; 
   int pflag=0, sflag=0, oflag=0, cflag=0, aflag;
-  char *sname = "default_sname", *fname;
+  char *sname = (char *)"default_sname", *fname;
   static char usage[] = "usage: %s -s sample_name -a sample_upload_addr -p spc_prog_obj_name -c prog_pc\n";
 
   while ((c = getopt(argc, argv, "a:s:p:o:c:")) != -1)
@@ -217,13 +217,14 @@ int main(int argc, char **argv)
   craft_skeleton();
 
   //
+  printf("done\n");
 }
 
 
 int craft_skeleton()
 {
   // @ 0x000000, write "SNES-SPC700 Sound File Data v0.30" 
-  out.write(SPC_HEADER_STR);
+  out.write((char*)SPC_HEADER_STR);
 
   // write 26,26
   out.write((char)26);
