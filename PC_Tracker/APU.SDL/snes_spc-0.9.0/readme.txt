@@ -48,7 +48,7 @@ demo/
   benchmark.c           Finds how fast emulator runs on your computer
   trim_spc.c            Trims silence off beginning of an SPC file
   save_state.c          Saves/loads exact emulator state to/from file
-  comm.c                Communicates with SPC how SNES would
+  comm.c                Communicates with SPC how SNES would            *
   demo_util.h           General utility functions used by demos
   demo_util.c
   wave_writer.h         WAVE sound file writer used for demo output
@@ -61,7 +61,7 @@ fast_dsp/               Optional standalone fast DSP emulator
 snes_spc/               Library sources
   blargg_config.h       Configuration (modify as necessary)
   
-  spc.h                 C interface to SPC emulator and sound filter
+  spc.h                 C interface to SPC emulator and sound filter    *
   spc.cpp
   
   SPC_Filter.h          Optional filter to make sound more authentic
@@ -73,7 +73,7 @@ snes_spc/               Library sources
   SNES_SPC_state.cpp
   SPC_CPU.h
   
-  dsp.h                 C interface to DSP emulator
+  dsp.h                 C interface to DSP emulator                     *
   dsp.cpp
   
   SPC_DSP.h             Standalone accurate DSP emulator
