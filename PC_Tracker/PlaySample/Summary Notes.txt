@@ -1,0 +1,30 @@
+Summary Notes
+=============
+
+SPC Program @ $1000
+Sample @ $200
+
+All emulators use a reader object to access file data, allowing it to be
+stored in a regular file, compressed archive, memory, or generated
+on-the-fly. Again, the library can be kept free of the particulars of
+file access and changes required to support new formats.
+
+* Can read music data from file, memory, or custom reader function/class
+
+This means that you *must* check for NULL when creating a
+library object with the new operator.
+
+* Load from a block of memory rather than a file with gme_load_data()
+
+When loading a music file in the wrong emulator or trying to load a
+non-music file, gme_wrong_file_type is returned. You can check for this
+error in C++ like this:
+
+  gme_err_t err = gme_open_file( path, &emu );
+  if ( err == gme_wrong_file_type )
+    ...
+
+    "Your
+code should be prepared for any combination of available and unavailable
+fields, as a particular music file might not use all of the supported
+fields listed above."
