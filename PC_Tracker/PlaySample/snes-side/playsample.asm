@@ -165,11 +165,18 @@ scr_check6:
 
 .SECTION "MusicData"
 
+; To programmatically generate the stuff below, ask the user to supply
+; the following: 
+; sample file, sample load address (in SPC ram)
+; spc file, spc load address
+; program will find file sizes, check for conflict, and output
+; correct WLA format directives
+
 spx_binary:
-    .dw $200, 1080;7065; 1080
-    .INCBIN "blarg.brr"
+    .dw $200, 1530 ; 1080;7065; 1530
+    .INCBIN "../samples/blip.brr"
     .dw $1000, 99
-    .INCBIN "SPC.OBJ"
+    .INCBIN "spc/SPC.OBJ"
     .dw $0000, $1000
 
 

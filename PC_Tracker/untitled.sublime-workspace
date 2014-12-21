@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"sample",
+				"sample_startaddr"
+			],
+			[
+				"SPC",
+				"SPC_HEADER_STR"
+			],
+			[
+				"sa",
+				"sample_stat"
+			],
+			[
+				"pro",
+				"prog_name"
+			],
+			[
+				"sam",
+				"sample_name"
+			],
+			[
+				"craf",
+				"craft_skeleton"
+			],
+			[
 				"ff",
 				"ff_addr"
 			],
@@ -183,6 +207,75 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "APU.SDL/Game_Music_Emu-0.5.2/readme.txt",
+			"settings":
+			{
+				"buffer_size": 5673,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "APU.SDL/Readme.txt",
+			"settings":
+			{
+				"buffer_size": 42,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "APU.SDL/snes_spc-0.9.0/readme.txt",
+			"settings":
+			{
+				"buffer_size": 3174,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "APU.SDL/snes_spc-0.9.0/snes_spc.txt",
+			"settings":
+			{
+				"buffer_size": 10661,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "PlaySample/export_spc.c",
+			"settings":
+			{
+				"buffer_size": 5764,
+				"line_ending": "Unix",
+				"name": "#include <stdio.h>"
+			}
+		},
+		{
+			"contents": "pushd snes-side\ntasm spc.asm SPC.OBJ\nwla playsample\npopd\ng++ export_spc.c -o export_spc\n./export_spc -s blip.brr -a 0x200 -p snes-side/SPC.OBJ -c 0x1000 -o derp.spc\npushd PC-side\nmake && ./play ../derp.spc\npopd",
+			"file": "PlaySample/play_sample.sh",
+			"file_size": 210,
+			"file_write_time": 1419108137000000,
+			"settings":
+			{
+				"buffer_size": 210,
+				"line_ending": "Unix",
+				"name": "./export_spc -s snes-side/blarg.brr -a 0x200 -p sn"
+			}
+		},
+		{
+			"file": "PlaySample/snes-side/spc.asm",
+			"settings":
+			{
+				"buffer_size": 977,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "PlaySample/snes-side/playsample.asm",
+			"settings":
+			{
+				"buffer_size": 2162,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "Packages/User/pic_compile.sublime-build",
 	"command_palette":
@@ -582,8 +675,229 @@
 	"groups":
 	[
 		{
+			"selected": 5,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "APU.SDL/Game_Music_Emu-0.5.2/readme.txt",
+					"settings":
+					{
+						"buffer_size": 5673,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2752.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "APU.SDL/Readme.txt",
+					"settings":
+					{
+						"buffer_size": 42,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "APU.SDL/snes_spc-0.9.0/readme.txt",
+					"settings":
+					{
+						"buffer_size": 3174,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "APU.SDL/snes_spc-0.9.0/snes_spc.txt",
+					"settings":
+					{
+						"buffer_size": 10661,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4359,
+								4369
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2083.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "PlaySample/export_spc.c",
+					"settings":
+					{
+						"buffer_size": 5764,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4480,
+								4480
+							]
+						],
+						"settings":
+						{
+							"auto_name": "#include <stdio.h>",
+							"syntax": "Packages/C++/C.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3267.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "PlaySample/play_sample.sh",
+					"settings":
+					{
+						"buffer_size": 210,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								108,
+								108
+							]
+						],
+						"settings":
+						{
+							"auto_name": "./export_spc -s snes-side/blarg.brr -a 0x200 -p sn",
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "PlaySample/snes-side/spc.asm",
+					"settings":
+					{
+						"buffer_size": 977,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								315,
+								315
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 278.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "PlaySample/snes-side/playsample.asm",
+					"settings":
+					{
+						"buffer_size": 2162,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2471.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -647,6 +961,6 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 340.0,
+	"side_bar_width": 183.0,
 	"status_bar_visible": true
 }

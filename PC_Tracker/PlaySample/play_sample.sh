@@ -1,9 +1,14 @@
+# build snes stuffz
 pushd snes-side
-tasm spc.asm SPC.OBJ
+cd spc; tasm spc.asm SPC.OBJ; cd ..
 wla playsample
 popd
-g++ export_spc.c -o export_spc
-./export_spc -s blip.brr -a 0x200 -p snes-side/SPC.OBJ -c 0x1000 -o derp.spc
-pushd PC-side
-make && ./play ../derp.spc
+
+# build PC tools
+pushd PC-side/tools/export_spc
+g++ export_spc.cpp -o ../bin/export_spc
+popd
+PC-side/tools/bin/export_spc -s samples/blip.brr -a 0x200 -p snes-side/spc/SPC.OBJ -c 0x1000 -o PC-side/out/derp.spc
+pushd PC-side/gme
+make && ./play ../out/derp.spc
 popd
