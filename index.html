@@ -1,15 +1,47 @@
 <html>
 
 <head>
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <SCRIPT LANGUAGE="JavaScript" SRC="js/JSFX_Layer.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="js/JSFX_Mouse.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript" SRC="js/JSFX_Fire.js"></SCRIPT>
+  <SCRIPT LANGUAGE="JavaScript">
+  function JSFX_StartEffects()
+  {
+    JSFX.Fire(28, 0);
+  }
+  </SCRIPT>
+
+  <style>
+
+  </style>  
 </head>
 
-<body>
-<img src="gfx/logo/logo.png" width="750">
-<p>Hi everyone, bazz &amp; electronoob here. While we get everything together, feel free to check out what we have ^.^
-  <p><a href="//snestracker.wordpress.com/" target="_blank">Wordpress Blog</a><p>
-  <a href="//www.youtube.com/channel/UCy0ZWRLCMAW2pokjX9or-YQ" target="_blank">Youtube Channel</a>
+<body onLoad="JSFX_StartEffects(); ">
+<div class="content">
+  <img src="gfx/logo/logo.png" width="750">
+  <p>Hi everyone, bazz here. While I get everything together, feel free to learn about what I'm working on.
+    <p><a href="//snestracker.wordpress.com/" target="_blank">Wordpress Blog</a><p>
+      
+    <a href="//www.youtube.com/channel/UCy0ZWRLCMAW2pokjX9or-YQ" target="_blank">Youtube Channel</a>
+    <p><div class="video-container" ></div>
+  <h2>Features</h2>
+  X-platform<p>
+  C/CPP/SDL<p>
+  Blargg's APU Emulator <p>
+  UI will either be written from scratch or plugged into MilkyTracker (not final)
+  <hr>
 
-<p>Logo by Remmie of #BotB
+   
+
+
+  <p>Logo by Remmie of #BotB
+</div>
+
+
+<script type="text/javascript" src="js/youtube.js"></script>
+<script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
 </body>
 
 </html>
