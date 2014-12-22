@@ -53,6 +53,9 @@ public:
 public:
 	Snes_Spc();
 	typedef BOOST::uint8_t uint8_t;
+
+	int  read( spc_addr_t );
+	void write( spc_addr_t, int );
 private:
 	// timers
 	struct Timer
@@ -77,8 +80,7 @@ private:
 	// hardware
 	int extra_cycles;
 	spc_time_t time() const;
-	int  read( spc_addr_t );
-	void write( spc_addr_t, int );
+	
 	friend class Spc_Cpu;
 	
 	// dsp

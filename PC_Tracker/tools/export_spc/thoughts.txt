@@ -1,0 +1,3 @@
+ID666
+
+Debating the file format.. Should samples be integrated into a SNES-Tracker format  file?

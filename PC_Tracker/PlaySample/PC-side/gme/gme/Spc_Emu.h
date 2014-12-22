@@ -14,7 +14,7 @@ public:
 	// handled by resampling the 32kHz output; emulation accuracy is not affected.
 	enum { native_sample_rate = 32000 };
 	
-	// SPC file header
+	// SPC file header (ID666 binary)
 	enum { header_size = 0x100 };
 	struct header_t
 	{
@@ -56,6 +56,9 @@ public:
 public:
 	Spc_Emu();
 	~Spc_Emu();
+
+	int  read( spc_addr_t addr) { return apu.read(addr); }
+	void write( spc_addr_t addr, int val) { apu.write(addr, val); }
 protected:
 	blargg_err_t load_mem_( byte const*, long );
 	blargg_err_t track_info_( track_info_t*, int track ) const;
@@ -71,6 +74,8 @@ private:
 	Fir_Resampler<24> resampler;
 	Snes_Spc apu;
 };
+
+//(spcemu..).apu.write()
 
 inline void Spc_Emu::disable_surround( bool b ) { apu.disable_surround( b ); }
 

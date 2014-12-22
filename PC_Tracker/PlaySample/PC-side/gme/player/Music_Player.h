@@ -34,6 +34,7 @@ public:
 	// True if track ended
 	bool track_ended() const;
 	
+	
 	// Pointer to emulator
 	Music_Emu* emu() const { return emu_; }
 	

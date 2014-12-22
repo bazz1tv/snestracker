@@ -18,6 +18,7 @@ int const scope_width = 512;
 #include <stdlib.h>
 #include <stdio.h>
 #include "SDL.h"
+#include "Spc_Emu.h"
 
 void handle_error( const char* );
 
@@ -164,6 +165,27 @@ int main( int argc, char** argv )
 						stereo_depth = 0;
 					player->set_stereo_depth( stereo_depth );
 					break;
+
+				static int pitchhi = 0x10;
+				case SDLK_g: // up pitch
+				{
+					
+					Spc_Emu *p = (Spc_Emu*)player->emu(); 
+					p->write(0xf2, 03);
+					p->write(0xf3, ++pitchhi);
+					fprintf(stderr, "pitchhi = 0x%02x00\n", pitchhi);
+					break;
+				}
+				case SDLK_f: // down pitch
+				{
+					
+					//static int pitchhi = 0x10;
+					Spc_Emu *p = (Spc_Emu*)player->emu(); 
+					p->write(0xf2, 03);
+					p->write(0xf3, --pitchhi);
+					fprintf(stderr, "pitchhi = 0x%02x00\n", pitchhi);
+					break;
+				}
 				
 				case SDLK_0: // reset tempo and muting
 					tempo = 1.0;

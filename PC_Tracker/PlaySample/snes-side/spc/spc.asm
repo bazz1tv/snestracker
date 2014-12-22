@@ -43,11 +43,35 @@ Init:
     
     mov $F2, #$6C   ; turn off mute
     mov $F3, #0
+
+    ;
+    mov $FA, #0
+    mov $f1, #1
+
+    mov a, #0
+    mov !$800, a
+
+loop:    
+    mov a, $fd
+    beq loop
+
+    ; if a > 0
+    clrc
+    adc a, !$800
+    mov !$800, a
+
+    cmp a, #$20
+    bne loop
+
+    mov a, #0
+    mov !$800, a
     
+
     mov $F2, #$4C
+    mov $f3, #0
     mov $F3, #$01
     
-loop:
+
     bra loop
 
 .END

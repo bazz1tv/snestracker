@@ -175,7 +175,7 @@ scr_check6:
 spx_binary:
     .dw $200, 1530 ; 1080;7065; 1530
     .INCBIN "../samples/blip.brr"
-    .dw $1000, 99
+    .dw $1000, 133
     .INCBIN "spc/SPC.OBJ"
     .dw $0000, $1000
 

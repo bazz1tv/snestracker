@@ -1,6 +1,6 @@
 CC=g++
-CFLAGS=-c -I. -Igme -Idemo -I/opt/local/include/SDL
-LDFLAGS=-I. -L/opt/local/lib -lsdl -lSDLMain -framework Cocoa
+CFLAGS=-g -c -I. -Igme -Idemo -I/opt/local/include/SDL
+LDFLAGS=-g -I. -L/opt/local/lib -lsdl -lSDLMain -framework Cocoa
 ####
 SOURCES= gme/M3u_Playlist.cpp gme/Data_Reader.cpp gme/Multi_Buffer.cpp\
 gme/Blip_Buffer.cpp gme/Effects_Buffer.cpp gme/Fir_Resampler.cpp\
