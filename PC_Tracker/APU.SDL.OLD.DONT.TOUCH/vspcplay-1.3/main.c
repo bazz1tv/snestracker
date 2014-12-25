@@ -535,10 +535,11 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	
-    spc_buf_size = SPC_init(&spc_config);
+	/* REPLACE WITH BLARGG APU INIT */
+  spc_buf_size = SPC_init(&spc_config);
 	printf("spc buffer size: %d\n", spc_buf_size);
 	buf = malloc(spc_buf_size*2);
-
+	/* */
 	
 	init_sdl();
 	time_cur = time_last = SDL_GetTicks();

@@ -1,0 +1,5 @@
+Have GME open without having to open a file.
+
+Add in "keyboard play" functionality w/ octave selector variable
+
+Add vSPC debugger
