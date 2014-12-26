@@ -24,7 +24,6 @@ while (SDL_PollEvent(&ev))
 
 #pragma once
 #include "SDL.h"
-#include "mode.h"
 
 #define DBLCLICK_TIMEWINDOW 800
 
