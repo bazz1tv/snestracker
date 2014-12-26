@@ -89,6 +89,27 @@ static int g_paused = 0;
 static int g_cur_entry = 0;
 static char *g_real_filename=NULL; // holds the filename minus path
 
+#define MODE_NAV 0
+#define MODE_EDIT 1
+
+int mode=0;
+int numclicks=0;
+SDL_TimerID dblclick_timerid; 
+SDL_Event event, event2;
+#define double_click_code 1
+#define reset_click_code 2
+Uint32 dblclicktimer(Uint32 interval, void *param)
+{
+	
+	fprintf(stderr, "tptt");
+	event2.type = SDL_USEREVENT;
+	event2.user.code = reset_click_code;
+	event2.user.data1 = 0;
+	event2.user.data2 = 0;
+	SDL_PushEvent(&event2);
+	return interval;
+}
+
 SDL_Surface *screen=NULL;
 SDL_Surface *memsurface=NULL;
 unsigned char *memsurface_data=NULL;
@@ -438,6 +459,7 @@ int init_sdl()
 	Uint32 flags=0;
 	
 	/* SDL initialisation */
+	// can keep these variables i guess
 	if (!g_cfg_novideo) { flags |= SDL_INIT_VIDEO; }
 	if (!g_cfg_nosound) { flags |= SDL_INIT_AUDIO; }
 
@@ -492,6 +514,8 @@ int init_sdl()
 
 		printf("sdl audio frag size: %d\n", desired.samples *4);
 	}
+
+	//dblclick_timerid = SDL_AddTimer(800, dblclicktimer, NULL);
 	    
 	return 0;	
 }
@@ -510,7 +534,7 @@ void pack_mask(unsigned char packed_mask[32])
 
 int main(int argc, char **argv)
 {
-    void *buf=NULL;
+  void *buf=NULL;
 	int tmp, i;
 	int updates;
 	int cur_mouse_address=0x0000;
@@ -534,6 +558,8 @@ int main(int argc, char **argv)
 		printf("No files specified\n");
 		return 1;
 	}
+
+	
 	
 	/* REPLACE WITH BLARGG APU INIT */
   spc_buf_size = SPC_init(&spc_config);
@@ -692,7 +718,7 @@ reload:
 		SDL_PauseAudio(0);
 	}
 	g_paused = 0;
-    for (;;) 
+  for (;;) 
 	{
 		SDL_Event ev;
 
@@ -768,8 +794,104 @@ reload:
 						
 						}
 						break;
+					case SDL_KEYDOWN:
+					{
+						if (ev.key.keysym.sym == SDLK_ESCAPE)
+						{
+							if (mode == MODE_EDIT)
+							{
+
+							}
+							else if (mode == MODE_NAV)
+							{
+								if (!g_cfg_nosound) {
+									SDL_PauseAudio(1);
+								}
+								//printf ("penis4\n");
+								goto clean;
+							}
+						}
+						
+					}
+						break;
+
+					
+					case SDL_USEREVENT:
+					{
+						fprintf(stderr, "DERP");
+						if (ev.user.code == double_click_code)
+						{
+							fprintf (stderr, ",2,");
+							#define MOUSE_HEXDUMP_START_X 584
+							#define MOUSE_HEXDUMP_START_Y 229
+							#define MOUSE_HEXDUMP_END_X 740
+							#define MOUSE_HEXDUMP_END_Y 364 + 9
+							#define MOUSE_HEXDUMP_ENTRY_X_INCREMENT 20 // but i think i like 16 programmatically
+							#define MOUSE_HEXDUMP_ENTRY_Y_INCREMENT 9  // dunno what i like programmatically yet
+							//top-left of memory write-region: p_x = 584, tmp_y = 229
+							//bottom-right of memory write-region: p_x = 724, tmp_y = 364
+
+							//fprintf(stderr, "x = %d, y = %d\n", ev.user.data1, ev.user.data2);
+							if (ev.motion.x >= (MOUSE_HEXDUMP_START_X - 2) && ev.motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
+								ev.motion.y >= MOUSE_HEXDUMP_START_Y && ev.motion.y <= MOUSE_HEXDUMP_END_Y)
+							{
+								
+								mode = MODE_EDIT;
+								const int entry_width = MOUSE_HEXDUMP_ENTRY_X_INCREMENT;
+								const int entry_height = MOUSE_HEXDUMP_ENTRY_Y_INCREMENT;
+
+								int rel_x = ev.motion.x - MOUSE_HEXDUMP_START_X;
+								rel_x+=2;
+								int rel_y = ev.motion.y - MOUSE_HEXDUMP_START_Y;
+
+								int res_x = rel_x / entry_width;
+								int res_y = rel_y / entry_height;
+								int res_half = rel_x % entry_width;
+								int tmp = entry_width / 2;
+								int whichhalf;
+								if (res_half < tmp) whichhalf = 0;
+								else whichhalf = 1;
+
+								if (res_y == 16) res_y = 15;
+
+								fprintf (stderr, "(%d,%d, %d), ", res_x, res_y, whichhalf);
+
+								if (!whichhalf)
+								{
+
+								}
+								else
+								{
+
+								}
+
+							}
+						}
+						else if (ev.user.code == reset_click_code)
+						{
+							fprintf(stderr, ".3.");
+							numclicks = 0;
+						}
+					} break;
 					case SDL_MOUSEBUTTONDOWN:						
 						{
+							fprintf (stderr, "0, numclicks = %d\n", numclicks);
+							numclicks++;
+							if (numclicks == 2)
+							{
+								fprintf (stderr, "asd1, numclicks = %d\n", numclicks);
+								numclicks = 0;
+								
+								//SDL_Event event;
+								
+								
+								event.type = SDL_USEREVENT;
+								event.user.code = double_click_code;
+								event.user.data1 = ev.motion.x;
+								event.user.data2 = ev.motion.y;
+								int r = SDL_PushEvent(&event);
+								fprintf (stderr, "r = %d\n", r);
+							}
 							// click in memory view. Toggle lock
 							if (	ev.motion.x >= MEMORY_VIEW_X && 
 									ev.motion.x < MEMORY_VIEW_X + 512 &&
@@ -778,6 +900,7 @@ reload:
 							{
 								hexdump_locked = (!hexdump_locked);
 							}
+
 
 							/* porttool */
 							if (	(ev.button.x >= PORTTOOL_X + (8*5)) &&
@@ -854,6 +977,9 @@ reload:
 								}
 							}
 						}
+						break;
+						default:
+						//fprintf(stderr, "type = %d, SDL_USEREVENT = %d\n", ev.type, SDL_USEREVENT);
 						break;
 				}
 			} // while (pollevent)
@@ -1042,19 +1168,22 @@ reload:
 			tmp+=9;
 			if (cur_mouse_address>=0)
 			{
-		
+				
 				for (i=0; i<128; i+=8)
 				{
 
 					unsigned char *st = &IAPU.RAM[hexdump_address+i];
 					// *st = ;
 					int p = MEMORY_VIEW_X+520, j;
+					//printf ("top_left of rect p = ")
 					if ((hexdump_address+i) > 0xffff)
 						sprintf(tmpbuf, "    : ");
 					else
 						sprintf(tmpbuf, "%04X: ", hexdump_address+i);
 					sdlfont_drawString(screen, p, tmp, tmpbuf, color_screen_white);
 					p += 6*8;
+					//if (i==0)
+						//printf ("top-left of memory write-region: p_x = %d, tmp_y = %d\n", p, tmp); // top-left of memory write-region
 					for (j=0; j<8; j++) {
 						int idx = ((hexdump_address+i+j)&0xff00)<<4;	
 						Uint32 color;
@@ -1072,6 +1201,8 @@ reload:
 						st++;
 
 						sdlfont_drawString(screen, p, tmp, tmpbuf, color);
+						//if ( j == 7 && i == 120 )
+							//printf ("bottom-right of memory write-region: p_x = %d, tmp_y = %d\n", p, tmp);
 						p+= 2*8 + 4;
 					}
 					
