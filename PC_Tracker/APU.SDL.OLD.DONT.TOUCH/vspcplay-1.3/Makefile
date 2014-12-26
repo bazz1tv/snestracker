@@ -1,4 +1,4 @@
-CC=gcc
+CC=g++
 CPP=g++
 LD=$(CPP)
 
