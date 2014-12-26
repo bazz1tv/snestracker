@@ -95,19 +95,19 @@ static char *g_real_filename=NULL; // holds the filename minus path
 int mode=0;
 int numclicks=0;
 SDL_TimerID dblclick_timerid; 
-SDL_Event event, event2;
+SDL_Event event;
 #define double_click_code 1
 #define reset_click_code 2
-Uint32 dblclicktimer(Uint32 interval, void *param)
+Uint32 dblclicktimer(Uint32 interval)
 {
-	
-	fprintf(stderr, "tptt");
+	SDL_Event event2;
+	//fprintf(stderr, "tptt");
 	event2.type = SDL_USEREVENT;
 	event2.user.code = reset_click_code;
 	event2.user.data1 = 0;
 	event2.user.data2 = 0;
 	SDL_PushEvent(&event2);
-	return interval;
+	return 0;
 }
 
 SDL_Surface *screen=NULL;
@@ -463,7 +463,7 @@ int init_sdl()
 	if (!g_cfg_novideo) { flags |= SDL_INIT_VIDEO; }
 	if (!g_cfg_nosound) { flags |= SDL_INIT_AUDIO; }
 
-	SDL_Init(flags);	
+	SDL_Init(flags | SDL_INIT_TIMER);	
 
 	if (!g_cfg_novideo) {
 		// video
@@ -515,8 +515,8 @@ int init_sdl()
 		printf("sdl audio frag size: %d\n", desired.samples *4);
 	}
 
-	//dblclick_timerid = SDL_AddTimer(800, dblclicktimer, NULL);
-	    
+	dblclick_timerid = SDL_AddTimer(800, &dblclicktimer, NULL);
+	//SDL_AddTimer(800, dblclicktimer, 0);
 	return 0;	
 }
 
@@ -832,6 +832,8 @@ reload:
 							//bottom-right of memory write-region: p_x = 724, tmp_y = 364
 
 							//fprintf(stderr, "x = %d, y = %d\n", ev.user.data1, ev.user.data2);
+							ev.motion.x = ev.user.data1;
+							ev.motion.y = ev.user.data2;
 							if (ev.motion.x >= (MOUSE_HEXDUMP_START_X - 2) && ev.motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
 								ev.motion.y >= MOUSE_HEXDUMP_START_Y && ev.motion.y <= MOUSE_HEXDUMP_END_Y)
 							{
@@ -875,22 +877,26 @@ reload:
 					} break;
 					case SDL_MOUSEBUTTONDOWN:						
 						{
-							fprintf (stderr, "0, numclicks = %d\n", numclicks);
+							//fprintf (stderr, "0, numclicks = %d\n", numclicks);
 							numclicks++;
 							if (numclicks == 2)
 							{
-								fprintf (stderr, "asd1, numclicks = %d\n", numclicks);
+								//fprintf (stderr, "asd1, numclicks = %d\n", numclicks);
+								SDL_RemoveTimer(dblclick_timerid);
 								numclicks = 0;
 								
-								//SDL_Event event;
-								
-								
+								SDL_Event event;
+								//event.motion.x = ev.motion.x; // doesnt work
 								event.type = SDL_USEREVENT;
 								event.user.code = double_click_code;
 								event.user.data1 = ev.motion.x;
 								event.user.data2 = ev.motion.y;
-								int r = SDL_PushEvent(&event);
-								fprintf (stderr, "r = %d\n", r);
+								SDL_PushEvent(&event);
+								//fprintf (stderr, "r = %d\n", r);
+							}
+							else 
+							{
+								dblclick_timerid = SDL_AddTimer(800, &dblclicktimer, NULL);
 							}
 							// click in memory view. Toggle lock
 							if (	ev.motion.x >= MEMORY_VIEW_X && 
