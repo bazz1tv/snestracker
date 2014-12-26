@@ -39,6 +39,7 @@
 
 #include "sdl_dblclick.h"
 #include "mode.h"
+#include "mouse_hexdump.h"
 
 int last_pc=-1;
 
@@ -110,6 +111,7 @@ static unsigned char audiobuf[BUFFER_SIZE];
 static int audio_buf_bytes=0, spc_buf_size;
 
 Uint32 color_screen_white, color_screen_black, color_screen_cyan, color_screen_magenta, color_screen_yellow, color_screen_red;
+Uint32  color_screen_green;
 Uint32 color_screen_gray;
 Uint32 colorscale[12];
 
@@ -475,6 +477,7 @@ int init_sdl()
 		color_screen_magenta = SDL_MapRGB(screen->format, 0xff, 0x00, 0xff);
 		color_screen_gray = SDL_MapRGB(screen->format, 0x7f, 0x7f, 0x7f);
 		color_screen_red = SDL_MapRGB(screen->format, 0xff, 0x00, 0x00);
+		color_screen_green = SDL_MapRGB(screen->format, 0x00, 0xff, 0x00);
 
 		colorscale[0] = SDL_MapRGB(screen->format, 0xff, 0x00, 0x00);
 		colorscale[1] = SDL_MapRGB(screen->format, 0xff, 0x7f, 0x00);
@@ -524,6 +527,8 @@ void pack_mask(unsigned char packed_mask[32])
 	}
 }
 
+int hexdump_address=0x0000, hexdump_locked=0;
+
 int main(int argc, char **argv)
 {
   void *buf=NULL;
@@ -538,7 +543,7 @@ int main(int argc, char **argv)
 	Uint32 current_ticks, song_started_ticks;
 	unsigned char packed_mask[32];
 	Uint32 time_last=0, time_cur=0;
-	int hexdump_address=0x0000, hexdump_locked=0;
+	
 	
 	//memset(used, 0, 65536);
 
@@ -763,51 +768,113 @@ reload:
 						break;
 					case SDL_MOUSEMOTION:
 						{
-							if (	ev.motion.x >= MEMORY_VIEW_X && 
-									ev.motion.x < MEMORY_VIEW_X + 512 &&
-									ev.motion.y >= MEMORY_VIEW_Y &&
-									ev.motion.y < MEMORY_VIEW_Y + 512)
+							if (mode == MODE_NAV)
 							{
-								int x, y;
-								x = ev.motion.x - MEMORY_VIEW_X;
-								y = ev.motion.y - MEMORY_VIEW_Y;
-								x /= 2;
-								y /= 2;
-								cur_mouse_address = y*256+x;
-								if (!hexdump_locked) {
-									hexdump_address = cur_mouse_address;
+								if (	ev.motion.x >= MEMORY_VIEW_X && 
+										ev.motion.x < MEMORY_VIEW_X + 512 &&
+										ev.motion.y >= MEMORY_VIEW_Y &&
+										ev.motion.y < MEMORY_VIEW_Y + 512)
+								{
+									int x, y;
+									x = ev.motion.x - MEMORY_VIEW_X;
+									y = ev.motion.y - MEMORY_VIEW_Y;
+									x /= 2;
+									y /= 2;
+									cur_mouse_address = y*256+x;
+									if (!hexdump_locked) {
+										hexdump_address = cur_mouse_address;
+									}
+		//							printf("%d,%d: $%04X\n", x, y, y*256+x);
 								}
-	//							printf("%d,%d: $%04X\n", x, y, y*256+x);
+								else
+								{
+									//cur_mouse_address = -1;
+								}
 							}
-							else
-							{
-								//cur_mouse_address = -1;
-							}
-
 						
 						}
 						break;
 					case SDL_KEYDOWN:
 					{
-						if (ev.key.keysym.sym == SDLK_ESCAPE)
+						if (mode == MODE_NAV)
 						{
-							if (mode == MODE_EDIT)
+							if (ev.key.keysym.sym == SDLK_ESCAPE)
 							{
-								if (!g_cfg_nosound) {
-									SDL_PauseAudio(1);
-								}
-								//printf ("penis4\n");
-								goto clean;
-							}
-							else if (mode == MODE_NAV)
-							{
-								if (!g_cfg_nosound) {
-									SDL_PauseAudio(1);
-								}
-								//printf ("penis4\n");
-								goto clean;
+								
+									if (!g_cfg_nosound) {
+										SDL_PauseAudio(1);
+									}
+									//printf ("penis4\n");
+									goto clean;
 							}
 						}
+						else if (mode == MODE_EDIT)
+						{
+							int scancode = ev.key.keysym.sym;
+							if ( (scancode >= '0') && (scancode <= '9') || ((scancode >= 'A') && (scancode <= 'F')) || 
+								((scancode >= 'a') && (scancode <= 'f')))
+							{
+								uint i;
+
+								if ((scancode >= '0') && (scancode <= '9'))
+									i = scancode - '0';
+								else if ((scancode >= 'A') && (scancode <= 'F'))
+									i = (scancode - 'A') + 0x0a;
+								else if ((scancode >= 'a') && (scancode <= 'f'))
+									i = (scancode - 'a') + 0x0a;  
+
+								if (mouse_hexdump::highnibble)
+								{
+									i <<= 4;
+									i &= 0xf0;
+									//IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= i;
+									IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0x0f;
+								}
+								else
+								{
+									i &= 0x0f;
+									IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0xf0;
+								}
+
+								IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
+								
+								
+								mouse_hexdump::inc_cursor_pos();
+	    					
+							}
+					    else if ((scancode == SDLK_SPACE))
+					    {
+
+					    }
+					    else if ((scancode == SDLK_TAB))
+					    {
+
+					    }
+					    else if ((scancode == SDLK_BACKSPACE))
+					    {
+
+					    }
+					    else if ((scancode == SDLK_LEFT))
+					    {
+					    	mouse_hexdump::dec_cursor_pos();
+					    }
+					    else if ((scancode == SDLK_RIGHT))
+					    {
+					    	mouse_hexdump::inc_cursor_pos();
+					    }
+
+							if (ev.key.keysym.sym == SDLK_ESCAPE || ev.key.keysym.sym == SDLK_RETURN)
+							{
+								mode = MODE_NAV;
+								mouse_hexdump::stop_timer();
+								//hexdump_locked=0;
+							}
+							
+							
+
+
+						}
+						
 						
 					}
 						break;
@@ -818,15 +885,10 @@ reload:
 						//fprintf(stderr, "DERP");
 						
 
-						if (ev.user.code == dblclick::react)
+						if (ev.user.code == UserEvents::mouse_react)
     				{
 							//fprintf (stderr, ",2,");
-				      #define MOUSE_HEXDUMP_START_X 584
-				      #define MOUSE_HEXDUMP_START_Y 229
-				      #define MOUSE_HEXDUMP_END_X 740
-				      #define MOUSE_HEXDUMP_END_Y 364 + 9
-				      #define MOUSE_HEXDUMP_ENTRY_X_INCREMENT 20 // but i think i like 16 programmatically
-				      #define MOUSE_HEXDUMP_ENTRY_Y_INCREMENT 9  // dunno what i like programmatically yet
+				      
 				      //top-left of memory write-region: p_x = 584, tmp_y = 229
 				      //bottom-right of memory write-region: p_x = 724, tmp_y = 364
 
@@ -837,51 +899,49 @@ reload:
 				      if (te->motion.x >= (MOUSE_HEXDUMP_START_X - 2) && te->motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
 				        te->motion.y >= MOUSE_HEXDUMP_START_Y && te->motion.y <= MOUSE_HEXDUMP_END_Y)
 				      {
-				        
+				        // editor stuffz
 				        mode = MODE_EDIT;
+				        hexdump_locked = 1;
+
 				        const int entry_width = MOUSE_HEXDUMP_ENTRY_X_INCREMENT;
 				        const int entry_height = MOUSE_HEXDUMP_ENTRY_Y_INCREMENT;
 
-				        int rel_x = te->motion.x - MOUSE_HEXDUMP_START_X;
-				        rel_x+=2;
-				        int rel_y = te->motion.y - MOUSE_HEXDUMP_START_Y;
+				        mouse_hexdump::rel_x = te->motion.x - MOUSE_HEXDUMP_START_X;
+				        mouse_hexdump::rel_x+=2;
+				        mouse_hexdump::rel_y = te->motion.y - MOUSE_HEXDUMP_START_Y;
 
-				        int res_x = rel_x / entry_width;
-				        int res_y = rel_y / entry_height;
-				        int res_half = rel_x % entry_width;
+				        mouse_hexdump::res_x = mouse_hexdump::rel_x / entry_width;
+				        mouse_hexdump::res_y = mouse_hexdump::rel_y / entry_height;
+				        int res_half = mouse_hexdump::rel_x % entry_width;
 				        int tmp = entry_width / 2;
-				        int whichhalf;
-				        if (res_half < tmp) whichhalf = 0;
-				        else whichhalf = 1;
+				        
+				        if (res_half < tmp) mouse_hexdump::highnibble = 1;
+				        else mouse_hexdump::highnibble = 0;
 
-				        if (res_y == 16) res_y = 15;
+				        if (mouse_hexdump::res_y == 16) mouse_hexdump::res_y = 15;
 
-				        fprintf (stderr, "(%d,%d, %d), ", res_x, res_y, whichhalf);
+				        fprintf (stderr, "(%d,%d, %d), ", mouse_hexdump::res_x, mouse_hexdump::res_y, mouse_hexdump::highnibble);
 
-				        if (!whichhalf)
-				        {
-
-				        }
-				        else
-				        {
-
-				        }
+				        // mouse_hexdump::cursor_toggle = 1; done in start_timer
+				        mouse_hexdump::stop_timer();
+				        mouse_hexdump::start_timer();
 
 				      }
 				    }
 					} break;
 					case SDL_MOUSEBUTTONDOWN:						
 						{
-							
-							// click in memory view. Toggle lock
-							if (	ev.motion.x >= MEMORY_VIEW_X && 
-									ev.motion.x < MEMORY_VIEW_X + 512 &&
-									ev.motion.y >= MEMORY_VIEW_Y &&
-									ev.motion.y < MEMORY_VIEW_Y + 512 )
+							if (mode == MODE_NAV)
 							{
-								hexdump_locked = (!hexdump_locked);
+								// click in memory view. Toggle lock
+								if (	ev.motion.x >= MEMORY_VIEW_X && 
+										ev.motion.x < MEMORY_VIEW_X + 512 &&
+										ev.motion.y >= MEMORY_VIEW_Y &&
+										ev.motion.y < MEMORY_VIEW_Y + 512 )
+								{
+									hexdump_locked = (!hexdump_locked);
+								}
 							}
-
 
 							/* porttool */
 							if (	(ev.button.x >= PORTTOOL_X + (8*5)) &&
@@ -1062,6 +1122,7 @@ reload:
 			}
 
 			// write the program counter
+			last_pc = (int)(IAPU.PC - IAPU.RAM);
 			sprintf(tmpbuf, "PC: $%04x  ", last_pc);
 			sdlfont_drawString(screen, MEMORY_VIEW_X+8*12, MEMORY_VIEW_Y-10, tmpbuf, color_screen_white);
 
@@ -1189,6 +1250,17 @@ reload:
 					
 					tmp += 9;
 				}
+				if (mouse_hexdump::cursor_toggle)
+				{
+					if (mouse_hexdump::highnibble)
+	        {
+	          sdlfont_drawString(screen, MOUSE_HEXDUMP_START_X + (mouse_hexdump::res_x * MOUSE_HEXDUMP_ENTRY_X_INCREMENT), MOUSE_HEXDUMP_START_Y + (mouse_hexdump::res_y * MOUSE_HEXDUMP_ENTRY_Y_INCREMENT), "\x5B", color_screen_green);
+	        }
+	        else
+	        {
+	          sdlfont_drawString(screen, MOUSE_HEXDUMP_START_X + (mouse_hexdump::res_x * MOUSE_HEXDUMP_ENTRY_X_INCREMENT + (7)), MOUSE_HEXDUMP_START_Y + (mouse_hexdump::res_y * MOUSE_HEXDUMP_ENTRY_Y_INCREMENT), "\x5B", color_screen_green);
+	        }
+	      }
 			}
 
 

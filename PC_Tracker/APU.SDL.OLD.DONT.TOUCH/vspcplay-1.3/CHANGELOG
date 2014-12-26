@@ -1,4 +1,6 @@
 -- v1.31 (by bazz)
+  Adding writable mouse memory segment
+
   main()'s tmpbuf was too small causing Buffer Overflow at program startup. Fixed.. 
 
   The SPC RAM is only 0x10000 bytes, But vSPCPLAY was confusingly going out of the bounds of the RAM array and actually displaying parts of the PC program's memory XD. Fixed
