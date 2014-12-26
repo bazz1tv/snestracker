@@ -800,12 +800,18 @@ reload:
 						{
 							if (ev.key.keysym.sym == SDLK_ESCAPE)
 							{
-								
+								if (hexdump_locked)
+								{
+									hexdump_locked = 0;
+								}
+								else
+								{
 									if (!g_cfg_nosound) {
 										SDL_PauseAudio(1);
 									}
 									//printf ("penis4\n");
 									goto clean;
+								}
 							}
 						}
 						else if (mode == MODE_EDIT)
