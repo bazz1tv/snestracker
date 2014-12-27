@@ -24,7 +24,7 @@ namespace mouse_hexdump
   int res_x;
   int res_y;
   Uint8 highnibble;
-  Uint8 horizontal=0;
+  Uint8 horizontal=1;
 
   void inc_cursor_row()
   {

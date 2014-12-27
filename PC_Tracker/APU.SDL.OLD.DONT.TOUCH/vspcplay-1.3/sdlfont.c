@@ -2,16 +2,16 @@
 #include "SDL.h"
 #include "font.h"
 
-static void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
+// unused // static void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 static void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 
-static void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+/* unused // static void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {
 	putpixel(surface, x, y, pixel);
 	putpixel(surface, x + 1, y, pixel);
 	putpixel(surface, x, y + 1, pixel);
 	putpixel(surface, x + 1, y + 1, pixel);
-}
+}*/
 
 static void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {

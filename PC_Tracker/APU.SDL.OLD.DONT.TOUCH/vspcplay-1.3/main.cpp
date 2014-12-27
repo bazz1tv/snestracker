@@ -460,7 +460,7 @@ int init_sdl()
 
 	if (!g_cfg_novideo) {
 		// video
-		screen = SDL_SetVideoMode(800, 600, 0, SDL_SWSURFACE);
+		screen = SDL_SetVideoMode(800, 600, 0, SDL_HWSURFACE | SDL_DOUBLEBUF);
 		if (screen == NULL) {
 			printf("Failed to set video mode\n");
 			return 0;
@@ -768,7 +768,7 @@ reload:
 						break;
 					case SDL_MOUSEMOTION:
 						{
-							if (mode == MODE_NAV)
+							if (mode == MODE_NAV || mode == MODE_EDIT_MOUSE_HEXDUMP)
 							{
 								if (	ev.motion.x >= MEMORY_VIEW_X && 
 										ev.motion.x < MEMORY_VIEW_X + 512 &&
@@ -1052,8 +1052,11 @@ reload:
 				        te->motion.y >= MOUSE_HEXDUMP_START_Y && te->motion.y <= MOUSE_HEXDUMP_END_Y)
 				      {
 				        // editor stuffz
+				        Uint8 oldmode = mode;
 				        mode = MODE_EDIT_MOUSE_HEXDUMP;
 				        hexdump_locked = 1;
+
+				        int res_x, res_y, highnibble;
 
 				        const int entry_width = MOUSE_HEXDUMP_ENTRY_X_INCREMENT;
 				        const int entry_height = MOUSE_HEXDUMP_ENTRY_Y_INCREMENT;
@@ -1062,13 +1065,29 @@ reload:
 				        mouse_hexdump::rel_x+=2;
 				        mouse_hexdump::rel_y = te->motion.y - MOUSE_HEXDUMP_START_Y;
 
-				        mouse_hexdump::res_x = mouse_hexdump::rel_x / entry_width;
-				        mouse_hexdump::res_y = mouse_hexdump::rel_y / entry_height;
+				        res_x = mouse_hexdump::rel_x / entry_width;
+				        res_y = mouse_hexdump::rel_y / entry_height;
 				        int res_half = mouse_hexdump::rel_x % entry_width;
 				        int tmp = entry_width / 2;
+
+				        if (res_half < tmp) highnibble = 1;
+				        else highnibble = 0;
+
+				        if (oldmode == MODE_EDIT_MOUSE_HEXDUMP)
+				        {
+				        	if (res_x == mouse_hexdump::res_x && res_y == mouse_hexdump::res_y && highnibble == mouse_hexdump::highnibble)
+				        	{
+				        		mode = MODE_NAV;
+				        		cursor::stop_timer();
+				        		break;
+				        	}
+				        }
 				        
-				        if (res_half < tmp) mouse_hexdump::highnibble = 1;
-				        else mouse_hexdump::highnibble = 0;
+				        mouse_hexdump::highnibble = highnibble;
+				        mouse_hexdump::res_x = res_x;
+								mouse_hexdump::res_y = res_y;
+
+				        
 
 				        if (mouse_hexdump::res_y == 16) mouse_hexdump::res_y = 15;
 
@@ -1191,6 +1210,10 @@ reload:
 								}
 								else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
 									hexdump_address += 0x08;
+								else if (ev.button.button == SDL_BUTTON_RIGHT)
+								{
+									hexdump_locked = !hexdump_locked;
+								}
 							}
 
 							/* porttool */

@@ -15,11 +15,17 @@ all: $(PROG)
 $(PROG): $(OBJS)
 	$(LD) $(OBJS) -o $(PROG) $(LDFLAGS) 
 
+main.o: main.cpp mouse_hexdump.h gui/cursor.h gui/porttool.h mouse_hexdump_events.h sdl_dblclick.h sdl_dblclick_events.h sdl_userevents.h\
+	spc_structs.h mode.h
+	$(CPP) $(CFLAGS) -c main.cpp
+
+# Order matters.. do the ones with headers first
+%.o: %.c %.h
+	$(CC) $(CFLAGS) -c $<
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
-%.o: %.c %.h
-	$(CC) $(CFLAGS) -c $<
 
 %.o: %.cpp %.h
 	$(CPP) $(CFLAGS) -c $<
