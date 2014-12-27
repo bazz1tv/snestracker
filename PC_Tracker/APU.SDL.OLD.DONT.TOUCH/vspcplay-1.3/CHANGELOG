@@ -1,5 +1,6 @@
 -- v1.31 (by bazz)
-  Adding writable mouse memory segment
+  Added keyboard writable Porttool
+  Added writable mouse hex dump display
 
   main()'s tmpbuf was too small causing Buffer Overflow at program startup. Fixed.. 
 
