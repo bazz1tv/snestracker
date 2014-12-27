@@ -1,6 +1,7 @@
 -- v1.31 (by bazz)
+
   Added keyboard writable Porttool
-  Added writable mouse hex dump display
+  Modded mouse hex dump display to be >writable< , made it scrollable too
 
   main()'s tmpbuf was too small causing Buffer Overflow at program startup. Fixed.. 
 

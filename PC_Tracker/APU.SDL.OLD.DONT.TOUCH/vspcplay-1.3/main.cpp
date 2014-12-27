@@ -1182,6 +1182,17 @@ reload:
 								}
 							}
 
+							if (ev.motion.x >= (MOUSE_HEXDUMP_START_X - 2) && ev.motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
+				        ev.motion.y >= MOUSE_HEXDUMP_START_Y && ev.motion.y <= MOUSE_HEXDUMP_END_Y)
+							{
+								if (ev.button.button == SDL_BUTTON_WHEELUP)
+								{
+									hexdump_address -= 0x08;									
+								}
+								else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
+									hexdump_address += 0x08;
+							}
+
 							/* porttool */
 							if (	(ev.button.x >= PORTTOOL_X + (8*5)) &&
 									ev.button.y >= PORTTOOL_Y && ev.button.y < (PORTTOOL_Y + 16) )
