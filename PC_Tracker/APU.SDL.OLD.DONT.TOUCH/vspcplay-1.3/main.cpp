@@ -460,7 +460,7 @@ int init_sdl()
 
 	if (!g_cfg_novideo) {
 		// video
-		screen = SDL_SetVideoMode(800, 600, 0, SDL_HWSURFACE | SDL_DOUBLEBUF);
+		screen = SDL_SetVideoMode(800, 600, 0, SDL_SWSURFACE); //SDL_HWSURFACE | SDL_DOUBLEBUF);
 		if (screen == NULL) {
 			printf("Failed to set video mode\n");
 			return 0;
