@@ -48,8 +48,7 @@ int last_pc=-1;
 
 #define MEMORY_VIEW_X	16
 #define MEMORY_VIEW_Y	40
-#define PORTTOOL_X		540
-#define PORTTOOL_Y		380
+#include "gui/porttool.h"
 #define INFO_X			540
 #define INFO_Y			420
 
@@ -815,13 +814,13 @@ reload:
 								}
 							}
 						}
-						else if (mode == MODE_EDIT)
+						else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
 						{
 							int scancode = ev.key.keysym.sym;
 							if ( (scancode >= '0') && (scancode <= '9') || ((scancode >= 'A') && (scancode <= 'F')) || 
 								((scancode >= 'a') && (scancode <= 'f')))
 							{
-								uint i;
+								uint i=0;
 
 								if ((scancode >= '0') && (scancode <= '9'))
 									i = scancode - '0';
@@ -849,17 +848,17 @@ reload:
 								mouse_hexdump::inc_cursor_pos();
 	    					
 							}
-					    else if ((scancode == SDLK_SPACE))
+					    else if (scancode == SDLK_SPACE)
 					    {
 					    	mouse_hexdump::inc_cursor_pos();
 					    }
-					    else if ((scancode == SDLK_TAB))
+					    else if (scancode == SDLK_TAB)
 					    {
 					    	mouse_hexdump::inc_cursor_pos();
 					    	mouse_hexdump::inc_cursor_pos();
 					    	//mouse_hexdump::highnibble = 1;
 					    }
-					    else if ((scancode == SDLK_BACKSPACE))
+					    else if (scancode == SDLK_BACKSPACE)
 					    {
 					    	// eh
 					    	int i = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
@@ -872,7 +871,7 @@ reload:
 					    	mouse_hexdump::dec_cursor_pos();
 					    	mouse_hexdump::highnibble=1;
 					    }
-					    else if ((scancode == SDLK_DELETE))
+					    else if (scancode == SDLK_DELETE)
 					    {
 					    	// eh
 					    	int i = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
@@ -885,19 +884,19 @@ reload:
 					    	//mouse_hexdump::dec_cursor_pos();
 					    	mouse_hexdump::highnibble=1;
 					    }
-					    else if ((scancode == SDLK_LEFT))
+					    else if (scancode == SDLK_LEFT)
 					    {
 					    	mouse_hexdump::dec_cursor_pos();
 					    }
-					    else if ((scancode == SDLK_RIGHT))
+					    else if (scancode == SDLK_RIGHT)
 					    {
 					    	mouse_hexdump::inc_cursor_pos();
 					    }
-					    else if ((scancode == SDLK_UP))
+					    else if (scancode == SDLK_UP)
 					    {
 					    	mouse_hexdump::dec_cursor_row();
 					    }
-					    else if ((scancode == SDLK_DOWN))
+					    else if (scancode == SDLK_DOWN)
 					    {
 					    	mouse_hexdump::inc_cursor_row();
 					    }
@@ -905,20 +904,100 @@ reload:
 							if (ev.key.keysym.sym == SDLK_ESCAPE || ev.key.keysym.sym == SDLK_RETURN)
 							{
 								mode = MODE_NAV;
-								mouse_hexdump::stop_timer();
+								cursor::stop_timer();
 								//hexdump_locked=0;
 							}
-							
-							
+						}		
+						else if (mode == MODE_EDIT_APU_PORT)
+						{
 
+							int scancode = ev.key.keysym.sym;
+							if ( (scancode >= '0') && (scancode <= '9') || ((scancode >= 'A') && (scancode <= 'F')) || 
+								((scancode >= 'a') && (scancode <= 'f')))
+							{
+								Uint8 i;
 
-						}
-						
-						
+								i = cursor::scancode_to_hex(scancode); 
+
+								if (porttool::highnibble)
+								{
+									i <<= 4;
+									i &= 0xf0;
+									//IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= i;
+									porttool::tmp[porttool::portnum] &= 0x0f;
+								}
+								else
+								{
+									i &= 0x0f;
+									porttool::tmp[porttool::portnum] &= 0xf0;
+								}
+
+								porttool::tmp[porttool::portnum] |= i;
+								
+								if (porttool::highnibble)
+									porttool::inc_cursor_pos();
+								else porttool::dec_cursor_pos();
+	    					
+							}
+					    else if (scancode == SDLK_SPACE)
+					    {
+					    	porttool::inc_cursor_pos();
+					    }
+					    else if (scancode == SDLK_TAB)
+					    {
+					    	porttool::inc_cursor_pos();
+					    	porttool::inc_cursor_pos();
+					    	porttool::highnibble=1;
+					    }
+					    else if (scancode == SDLK_BACKSPACE)
+					    {
+					    	if (porttool::highnibble == 0)
+					    	{
+					    		porttool::tmp[porttool::portnum] &= 0x0f;
+					    		porttool::dec_cursor_pos();
+					    	}
+					    }
+					    else if (scancode == SDLK_DELETE)
+					    {
+					    	if (porttool::highnibble)
+					    	{
+					    		porttool::tmp[porttool::portnum] &= 0x0f;
+					    	}
+					    	else porttool::tmp[porttool::portnum] &= 0xf0;
+					    }
+					    else if (scancode == SDLK_LEFT)
+					    {
+					    	porttool::dec_cursor_pos();
+					    }
+					    else if (scancode == SDLK_RIGHT)
+					    {
+					    	porttool::inc_cursor_pos();
+					    }
+					    else if (scancode == SDLK_UP)
+					    {
+					    	porttool::tmp[porttool::portnum]++;
+					    }
+					    else if (scancode == SDLK_DOWN)
+					    {
+					    	porttool::tmp[porttool::portnum]--;
+					    }
+
+							if (ev.key.keysym.sym == SDLK_ESCAPE)
+							{
+								mode = MODE_NAV;
+								cursor::stop_timer();
+								//hexdump_locked=0;
+							}
+							else if (ev.key.keysym.sym == SDLK_RETURN)
+							{
+								//mode = MODE_NAV;
+								//cursor::stop_timer();
+								IAPU.RAM[porttool::portaddress] = porttool::tmp[porttool::portnum];
+							}
+						}				
 					}
 						break;
-
-					
+				
 					case SDL_USEREVENT:
 					{
 						//fprintf(stderr, "DERP");
@@ -939,7 +1018,7 @@ reload:
 				        te->motion.y >= MOUSE_HEXDUMP_START_Y && te->motion.y <= MOUSE_HEXDUMP_END_Y)
 				      {
 				        // editor stuffz
-				        mode = MODE_EDIT;
+				        mode = MODE_EDIT_MOUSE_HEXDUMP;
 				        hexdump_locked = 1;
 
 				        const int entry_width = MOUSE_HEXDUMP_ENTRY_X_INCREMENT;
@@ -961,11 +1040,98 @@ reload:
 
 				        fprintf (stderr, "(%d,%d, %d), ", mouse_hexdump::res_x, mouse_hexdump::res_y, mouse_hexdump::highnibble);
 
-				        // mouse_hexdump::cursor_toggle = 1; done in start_timer
-				        mouse_hexdump::stop_timer();
-				        mouse_hexdump::start_timer();
+				        // cursor::toggle = 1; done in start_timer
+				        cursor::start_timer();
 
 				      }
+
+				      /* porttool */
+							else if (	(te->button.x >= PORTTOOL_X + (8*5)) &&
+									te->button.y >= PORTTOOL_Y)
+							{
+								int x, y;
+								x = te->button.x - (PORTTOOL_X + (8*5));
+								x /= 8;
+								porttool::x = ((PORTTOOL_X + (8*5)) + (x*8));
+								
+								y = te->button.y - PORTTOOL_Y;
+								y /= 8;
+								//if (y==1)
+									//; 
+								fprintf(stderr, "(%d,%d), ", x, y);
+								if (te->button.button == SDL_BUTTON_LEFT)
+								{
+									switch (x)
+									{
+										// i think single click takes care of this
+										//case 1: IAPU.RAM[0xf4]++; break;
+										case 2:
+										{
+											porttool::set_port(0);
+
+											porttool::highnibble = 1;
+											mode = MODE_EDIT_APU_PORT;
+											cursor::start_timer();
+										} break;
+										case 3:
+										{
+											porttool::set_port(0);
+											porttool::highnibble = 0;
+											mode = MODE_EDIT_APU_PORT;
+											cursor::start_timer();
+										} break;
+										//case 4: IAPU.RAM[0xf4]--; break;
+										//case 6: IAPU.RAM[0xf5]++; break;
+										case 7:
+										{
+											porttool::set_port(1);
+											porttool::highnibble = 1;
+											mode = MODE_EDIT_APU_PORT;
+											cursor::start_timer();
+										} break;
+										case 8:
+										{
+											porttool::set_port(1);
+											porttool::highnibble = 0;
+											mode = MODE_EDIT_APU_PORT;
+											cursor::start_timer();
+										} break;
+										//case 9: IAPU.RAM[0xf5]--; break;
+										//case 11: IAPU.RAM[0xf6]++; break;
+										case 12:
+										{
+											porttool::set_port(2);
+											porttool::highnibble = 1;
+											mode = MODE_EDIT_APU_PORT;
+											cursor::start_timer();
+										} break;
+										case 13:
+										{
+											porttool::set_port(2);
+											porttool::highnibble = 0;
+											mode = MODE_EDIT_APU_PORT;
+											cursor::start_timer();
+										} break;
+										//case 14: IAPU.RAM[0xf6]--; break;
+										//case 16: IAPU.RAM[0xf7]++; break;
+										case 17:
+										{
+											porttool::set_port(3);
+											porttool::highnibble = 1;
+											mode = MODE_EDIT_APU_PORT;
+											cursor::start_timer();
+										} break;
+										case 18:
+										{
+											porttool::set_port(3);
+											porttool::highnibble = 0;
+											mode = MODE_EDIT_APU_PORT;
+											cursor::start_timer();
+										} break;
+										//case 19: IAPU.RAM[0xf7]--; break;
+									}
+								}
+							}
 				    }
 					} break;
 					case SDL_MOUSEBUTTONDOWN:						
@@ -991,8 +1157,9 @@ reload:
 								x /= 8;
 								y = ev.button.y - PORTTOOL_Y;
 								y /= 8;
-								if (y==1) 
-//								printf("%d\n", x);
+								if (y==1)
+									; 
+								printf("x= %d\n", x);
 								if (ev.button.button == SDL_BUTTON_LEFT)
 								{
 									switch (x)
@@ -1289,24 +1456,19 @@ reload:
 					
 					tmp += 9;
 				}
-				if (mouse_hexdump::cursor_toggle)
-				{
-					if (mouse_hexdump::highnibble)
-	        {
-	          sdlfont_drawString(screen, MOUSE_HEXDUMP_START_X + (mouse_hexdump::res_x * MOUSE_HEXDUMP_ENTRY_X_INCREMENT), MOUSE_HEXDUMP_START_Y + (mouse_hexdump::res_y * MOUSE_HEXDUMP_ENTRY_Y_INCREMENT), "\x5B", color_screen_green);
-	        }
-	        else
-	        {
-	          sdlfont_drawString(screen, MOUSE_HEXDUMP_START_X + (mouse_hexdump::res_x * MOUSE_HEXDUMP_ENTRY_X_INCREMENT + (7)), MOUSE_HEXDUMP_START_Y + (mouse_hexdump::res_y * MOUSE_HEXDUMP_ENTRY_Y_INCREMENT), "\x5B", color_screen_green);
-	        }
-	      }
+
+				
 			}
 
 
 			sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+8, " APU:", color_screen_white);
 			sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:", color_screen_white);
 
-			sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", IAPU.RAM[0xf4], IAPU.RAM[0xf5], IAPU.RAM[0xf6], IAPU.RAM[0xf7]);		
+			if (mode == MODE_EDIT_APU_PORT)
+	    	sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", porttool::tmp[0], porttool::tmp[1], porttool::tmp[2], porttool::tmp[3]);	
+			else 
+				sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", IAPU.RAM[0xf4], IAPU.RAM[0xf5], IAPU.RAM[0xf6], IAPU.RAM[0xf7]);		
+			
 			sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf, color_screen_white);
 			
 			sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", APU.OutPorts[0], APU.OutPorts[1], APU.OutPorts[2], APU.OutPorts[3]);		
@@ -1320,7 +1482,16 @@ reload:
 			sdlfont_drawString(screen, INFO_X, INFO_Y+48, tmpbuf, color_screen_white);
 
 			
-			
+			if (mode == MODE_EDIT_MOUSE_HEXDUMP)
+			{
+				mouse_hexdump::draw_cursor(screen, color_screen_green);
+	    }
+	    else if (mode == MODE_EDIT_APU_PORT)
+	    {
+	    	//fprintf (stderr, "yee");
+	    	porttool::draw_cursor(screen, color_screen_green);
+	    }
+	    
 			SDL_UpdateRect(screen, 0, 0, 0, 0);
 			time_last = time_cur;
 			if (g_cfg_nice) {  SDL_Delay(100); }

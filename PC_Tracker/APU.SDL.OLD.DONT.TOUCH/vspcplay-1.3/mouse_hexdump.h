@@ -2,6 +2,7 @@
 
 #include "SDL.h"
 #include "sdl_userevents.h"
+#include "gui/cursor.h"
 
 #define MOUSE_HEXDUMP_START_X 584
 #define MOUSE_HEXDUMP_START_Y 229
@@ -10,7 +11,7 @@
 #define MOUSE_HEXDUMP_ENTRY_X_INCREMENT 20 // but i think i like 16 programmatically
 #define MOUSE_HEXDUMP_ENTRY_Y_INCREMENT 9  // dunno what i like programmatically yet
 
-#define CURSOR_TOGGLE_TIMEWINDOW 500
+
 
 extern int hexdump_address;
 extern struct SIAPU IAPU;
@@ -23,13 +24,10 @@ namespace mouse_hexdump
   int res_x;
   int res_y;
   Uint8 highnibble;
-  Uint8 cursor_toggle;
-
-  SDL_TimerID timerid;
 
   void inc_cursor_row()
   {
-    mouse_hexdump::cursor_toggle=1;
+    cursor::toggle=1;
     
     if (res_y == 15)
     {
@@ -40,7 +38,7 @@ namespace mouse_hexdump
   }
   void dec_cursor_row()
   {
-    mouse_hexdump::cursor_toggle=1;
+    cursor::toggle=1;
     
     if (res_y == 0)
     {
@@ -51,7 +49,7 @@ namespace mouse_hexdump
   }
   void inc_cursor_pos()
   {
-    mouse_hexdump::cursor_toggle=1;
+    cursor::toggle=1;
     if (highnibble)
     {
       highnibble = 0;
@@ -78,7 +76,7 @@ namespace mouse_hexdump
   }
   void dec_cursor_pos()
   {
-    mouse_hexdump::cursor_toggle=1;
+    cursor::toggle=1;
     if (!highnibble)
     {
       highnibble = 1;
@@ -101,23 +99,17 @@ namespace mouse_hexdump
       highnibble = 0;
     }
   }
-  // Timer Callback.. 
-  Uint32 cursor_timer(Uint32 interval, void *param)
-  {
-    Uint8 *p = (Uint8 *) param;
-    *p = !*p;
-    return interval;
-  }
 
-  void start_timer()
+  void draw_cursor(SDL_Surface *screen, Uint32 color)
   {
-    cursor_toggle = 1;
-    timerid = SDL_AddTimer(CURSOR_TOGGLE_TIMEWINDOW, &cursor_timer, &cursor_toggle);
-  }
-  void stop_timer()
-  {
-    SDL_RemoveTimer(timerid);
-    cursor_toggle = 0;
+    if (mouse_hexdump::highnibble)
+    {
+      cursor::draw(screen, MOUSE_HEXDUMP_START_X + (mouse_hexdump::res_x * MOUSE_HEXDUMP_ENTRY_X_INCREMENT), MOUSE_HEXDUMP_START_Y + (mouse_hexdump::res_y * MOUSE_HEXDUMP_ENTRY_Y_INCREMENT), color);
+    }
+    else
+    {
+      cursor::draw(screen, MOUSE_HEXDUMP_START_X + (mouse_hexdump::res_x * MOUSE_HEXDUMP_ENTRY_X_INCREMENT + (7)), MOUSE_HEXDUMP_START_Y + (mouse_hexdump::res_y * MOUSE_HEXDUMP_ENTRY_Y_INCREMENT), color);
+    }
   }
 
 }
