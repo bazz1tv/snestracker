@@ -108,7 +108,7 @@ void STOP (char *s)
     S9xAPUOPrint (buffer, IAPU.PC - IAPU.RAM);
 #endif
 
-    sprintf (String, "Sound CPU in unknown state executing %s at %04X\n%s\n", s, IAPU.PC - IAPU.RAM, buffer);
+    sprintf (String, "Sound CPU in unknown state executing %s at %04X\n%s\n", s, (unsigned int)(IAPU.PC - IAPU.RAM), buffer);
 //     S9xMessage (S9X_ERROR, S9X_APU_STOPED, String);
     APU.TimerEnabled[0] = APU.TimerEnabled[1] = APU.TimerEnabled[2] = FALSE;
     IAPU.APUExecuting = FALSE;

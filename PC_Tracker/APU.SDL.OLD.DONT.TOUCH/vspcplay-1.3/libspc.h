@@ -41,11 +41,11 @@ typedef enum
 
 typedef struct SPC_ID666
 {
-  char songname[33];
-  char gametitle[33];
-  char dumper[17];
-  char comments[33];
-  char author[33];
+  char songname[33+1];
+  char gametitle[33+1];
+  char dumper[17+1];
+  char comments[33+1];
+  char author[33+1];
   int playtime;
   int fadetime;
   SPC_EmulatorType emulator;

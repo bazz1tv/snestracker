@@ -4,7 +4,7 @@
 #define PORTTOOL_Y    380
 
 #define PORTTOOL_PORT0_X PORTTOOL_X + (8*7)
-#define PORTTOOL_PORT3_X_LOBYTE PORTTOOL_X + (8*23)
+#define PORTTOOL_PORT3_X_RIGHTMOST_LOBYTE PORTTOOL_X + (8*23)
 // 8 = tile width
 
 extern struct SIAPU IAPU;
@@ -12,6 +12,7 @@ extern struct SIAPU IAPU;
 namespace porttool
 {
   Uint8 highnibble, portnum, portaddress, tmp[4];
+  Uint8 horizontal=0;
   int x,y;
 
   void draw_cursor(SDL_Surface *screen, Uint32 color)
@@ -23,10 +24,33 @@ namespace porttool
       cursor::draw(screen, x, PORTTOOL_Y+8, color);
   }
 
+  void write()
+  {
+    for (int i=0; i < 4; i++)
+      IAPU.RAM[0xf4 + i] = tmp[i];
+  }
+
+  void reset_port()
+  {
+    tmp[portnum] = IAPU.RAM[0xf4 + portnum];
+  }
+  void reset_port(Uint8 num)
+  {
+    tmp[num] = IAPU.RAM[0xf4 + num];
+  }
+
+  void switch_port(Uint8 num)
+  {
+    // don't read from RAM like in set_port()
+    // 
+    porttool::portaddress = 0xf4 + num;
+    portnum = num;
+  }
   void set_port(Uint8 num)
   {
     porttool::portaddress = 0xf4 + num;
     portnum = num;
+    //tmp[portnum] = IAPU.RAM[0xf4 + portnum];
     for (int i=0; i < 4; i++)
       tmp[i] = IAPU.RAM[0xf4 + i];
   }
@@ -43,12 +67,12 @@ namespace porttool
       highnibble = 1;
       if (portnum == 3)
       {
-        set_port(0);
+        switch_port(0);
         x = PORTTOOL_PORT0_X;
       }
       else
       {
-        set_port(++portnum);
+        switch_port(++portnum);
         x += (8*4);
       }
     }
@@ -66,12 +90,12 @@ namespace porttool
       highnibble = 0;
       if (portnum == 0)
       {
-        set_port(3);
-        x = PORTTOOL_PORT3_X_LOBYTE;
+        switch_port(3);
+        x = PORTTOOL_PORT3_X_RIGHTMOST_LOBYTE;
       }
       else
       {
-        set_port(--portnum);
+        switch_port(--portnum);
         x -= 8*4;
       }
     }

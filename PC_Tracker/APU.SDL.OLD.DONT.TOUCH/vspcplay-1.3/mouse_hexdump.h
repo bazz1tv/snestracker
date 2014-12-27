@@ -24,6 +24,7 @@ namespace mouse_hexdump
   int res_x;
   int res_y;
   Uint8 highnibble;
+  Uint8 horizontal=0;
 
   void inc_cursor_row()
   {
@@ -31,7 +32,7 @@ namespace mouse_hexdump
     
     if (res_y == 15)
     {
-      res_y;
+      //res_y;
       hexdump_address += 8;
     }
     else res_y++;    
@@ -42,7 +43,7 @@ namespace mouse_hexdump
     
     if (res_y == 0)
     {
-      res_y;
+      //res_y;
       hexdump_address -= 8;
     }
     else res_y--;    
@@ -61,7 +62,7 @@ namespace mouse_hexdump
         res_x = 0;
         if (res_y == 15)
         {
-          res_y;
+          //res_y;
           hexdump_address += 8;
         }
         else res_y++;
@@ -88,7 +89,7 @@ namespace mouse_hexdump
         res_x = 7;
         if (res_y == 0)
         {
-          res_y;
+          //res_y;
           hexdump_address -= 8;
         }
         else res_y--;

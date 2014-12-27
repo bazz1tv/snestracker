@@ -373,7 +373,7 @@ void write_mask(unsigned char packed_mask[32])
 }
 
 static char now_playing[1024];
-static char *marquees[3] = { CREDITS, now_playing, NULL };
+static char *marquees[3] = { (char*)CREDITS, now_playing, NULL };
 static char *cur_marquee = NULL;
 static int cur_marquee_id = 0;
 
@@ -817,8 +817,13 @@ reload:
 						else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
 						{
 							int scancode = ev.key.keysym.sym;
-							if ( (scancode >= '0') && (scancode <= '9') || ((scancode >= 'A') && (scancode <= 'F')) || 
-								((scancode >= 'a') && (scancode <= 'f')))
+
+							if (scancode == 'h' || scancode == 'H')
+							{
+								mouse_hexdump::horizontal = !mouse_hexdump::horizontal;
+							}
+							if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
+								((scancode >= 'a') && (scancode <= 'f')) )
 							{
 								uint i=0;
 
@@ -845,7 +850,7 @@ reload:
 								IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
 								
 								
-								mouse_hexdump::inc_cursor_pos();
+								if (mouse_hexdump::horizontal) mouse_hexdump::inc_cursor_pos();
 	    					
 							}
 					    else if (scancode == SDLK_SPACE)
@@ -912,7 +917,13 @@ reload:
 						{
 
 							int scancode = ev.key.keysym.sym;
-							if ( (scancode >= '0') && (scancode <= '9') || ((scancode >= 'A') && (scancode <= 'F')) || 
+
+							if (scancode == 'h' || scancode == 'H')
+							{
+								porttool::horizontal = !porttool::horizontal;
+							}
+
+							if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
 								((scancode >= 'a') && (scancode <= 'f')))
 							{
 								Uint8 i;
@@ -934,9 +945,10 @@ reload:
 
 								porttool::tmp[porttool::portnum] |= i;
 								
-								if (porttool::highnibble)
-									porttool::inc_cursor_pos();
-								else porttool::dec_cursor_pos();
+								if (porttool::horizontal) porttool::inc_cursor_pos();
+								//if (porttool::highnibble)
+									//porttool::inc_cursor_pos();
+								//else porttool::dec_cursor_pos();
 	    					
 							}
 					    else if (scancode == SDLK_SPACE)
@@ -947,7 +959,7 @@ reload:
 					    {
 					    	porttool::inc_cursor_pos();
 					    	porttool::inc_cursor_pos();
-					    	porttool::highnibble=1;
+					    	//porttool::highnibble=1;
 					    }
 					    else if (scancode == SDLK_BACKSPACE)
 					    {
@@ -975,24 +987,46 @@ reload:
 					    }
 					    else if (scancode == SDLK_UP)
 					    {
-					    	porttool::tmp[porttool::portnum]++;
+					    	if (porttool::highnibble)
+					    	{
+					    		porttool::tmp[porttool::portnum] += 0x10;
+					    	}
+					    	else
+					    	{
+					    		Uint8 tmp = porttool::tmp[porttool::portnum] + 1;
+					    		tmp &= 0x0f;
+					    		porttool::tmp[porttool::portnum] &= 0xf0;
+					    		porttool::tmp[porttool::portnum] |= tmp;
+					    	}
 					    }
 					    else if (scancode == SDLK_DOWN)
 					    {
-					    	porttool::tmp[porttool::portnum]--;
+					    	if (porttool::highnibble)
+					    	{
+					    		porttool::tmp[porttool::portnum] -= 0x10;
+					    	}
+					    	else
+					    	{
+					    		Uint8 tmp = porttool::tmp[porttool::portnum] - 1;
+					    		tmp &= 0x0f;
+					    		porttool::tmp[porttool::portnum] &= 0xf0;
+					    		porttool::tmp[porttool::portnum] |= tmp;
+					    	}
 					    }
 
 							if (ev.key.keysym.sym == SDLK_ESCAPE)
 							{
 								mode = MODE_NAV;
 								cursor::stop_timer();
+								porttool::reset_port();
 								//hexdump_locked=0;
 							}
 							else if (ev.key.keysym.sym == SDLK_RETURN)
 							{
 								//mode = MODE_NAV;
 								//cursor::stop_timer();
-								IAPU.RAM[porttool::portaddress] = porttool::tmp[porttool::portnum];
+								//IAPU.RAM[porttool::portaddress] = porttool::tmp[porttool::portnum];
+								porttool::write();
 							}
 						}				
 					}
@@ -1038,7 +1072,7 @@ reload:
 
 				        if (mouse_hexdump::res_y == 16) mouse_hexdump::res_y = 15;
 
-				        fprintf (stderr, "(%d,%d, %d), ", mouse_hexdump::res_x, mouse_hexdump::res_y, mouse_hexdump::highnibble);
+				        //fprintf (stderr, "(%d,%d, %d), ", mouse_hexdump::res_x, mouse_hexdump::res_y, mouse_hexdump::highnibble);
 
 				        // cursor::toggle = 1; done in start_timer
 				        cursor::start_timer();
@@ -1047,7 +1081,7 @@ reload:
 
 				      /* porttool */
 							else if (	(te->button.x >= PORTTOOL_X + (8*5)) &&
-									te->button.y >= PORTTOOL_Y)
+									te->button.y >= PORTTOOL_Y && te->button.y < (PORTTOOL_Y + 16))
 							{
 								int x, y;
 								x = te->button.x - (PORTTOOL_X + (8*5));
@@ -1058,7 +1092,7 @@ reload:
 								y /= 8;
 								//if (y==1)
 									//; 
-								fprintf(stderr, "(%d,%d), ", x, y);
+								//fprintf(stderr, "(%d,%d), ", x, y);
 								if (te->button.button == SDL_BUTTON_LEFT)
 								{
 									switch (x)
@@ -1150,16 +1184,16 @@ reload:
 
 							/* porttool */
 							if (	(ev.button.x >= PORTTOOL_X + (8*5)) &&
-									ev.button.y >= PORTTOOL_Y)
+									ev.button.y >= PORTTOOL_Y && ev.button.y < (PORTTOOL_Y + 16) )
 							{
 								int x, y;
 								x = ev.button.x - (PORTTOOL_X + (8*5));
 								x /= 8;
 								y = ev.button.y - PORTTOOL_Y;
 								y /= 8;
-								if (y==1)
-									; 
-								printf("x= %d\n", x);
+								//if (y==1)
+								//	; 
+								//printf("y= %d\n", y);
 								if (ev.button.button == SDL_BUTTON_LEFT)
 								{
 									switch (x)
@@ -1177,6 +1211,7 @@ reload:
 								if (ev.button.button == SDL_BUTTON_WHEELUP ||
 									ev.button.button == SDL_BUTTON_WHEELDOWN)
 								{
+									Uint8 i;
 									if (ev.button.button == SDL_BUTTON_WHEELUP) { i=1; } else { i = -1; }
 									if (x>1 && x<4) { IAPU.RAM[0xf4] += i; }
 									if (x>6 && x<9) { IAPU.RAM[0xf5] += i; }
