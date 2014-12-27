@@ -1,0 +1,55 @@
+CC=g++
+CPP=g++
+debug=-g
+gme_CFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `sdl-config --cflags`
+LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl-config --libs`
+
+vspc_CFLAGS=-O3 -funroll-loops -Wall -Ivspc `sdl-config --cflags` -Wall
+vspc_LDFLAGS=-g `sdl-config --libs` -lm
+
+CFLAGS = $(gme_CFLAGS) $(vspc_CFLAGS)
+####
+gme_SOURCES= gme/gme/M3u_Playlist.cpp gme/gme/Data_Reader.cpp gme/gme/Multi_Buffer.cpp\
+gme/gme/Blip_Buffer.cpp gme/gme/Effects_Buffer.cpp gme/gme/Fir_Resampler.cpp\
+gme/gme/Music_Emu.cpp gme/gme/gme.cpp gme/gme/gme_File.cpp gme/gme/Snes_Spc.cpp\
+gme/gme/Spc_Cpu.cpp gme/gme/Spc_Dsp.cpp gme/gme/Spc_Emu.cpp gme/demo/Wave_Writer.cpp\
+gme/player/Music_Player.cpp
+###
+OBJECTS=$(gme_SOURCES:.cpp=.o)
+vspc_OBJECTS=  vspc/main.o vspc/font.o vspc/sdlfont.o
+OBJECTS += $(vspc_OBJECTS)
+EXECUTABLE=snestracker
+
+all: $(gme_SOURCES) $(EXECUTABLE)
+	
+$(EXECUTABLE): $(OBJECTS) 
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+
+vspc/main.o: vspc/main.cpp vspc/mouse_hexdump.h vspc/gui/cursor.h vspc/gui/porttool.h vspc/mouse_hexdump_events.h vspc/sdl_dblclick.h\
+	vspc/sdl_dblclick_events.h vspc/sdl_userevents.h\
+	vspc/mode.h
+	$(CPP) $(vspc_CFLAGS) -c vspc/main.cpp -o vspc/main.o
+
+.cpp.o:
+	$(CC) $(gme_CFLAGS) $< -o $@
+
+# Order matters.. do the ones with headers first
+%.o: %.c %.h
+	$(CC) $(vspc_CFLAGS) -c $< -o $@
+
+%.o: %.c
+	$(CC) $(vspc_CFLAGS) -c $< -o $@
+
+
+%.o: %.cpp %.h
+	$(CPP) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp
+	$(CPP) $(CFLAGS) -c $< -o $@
+	
+
+
+clean:
+	rm -f $(EXECUTABLE); #gme/gme/*.o gme/demo/*.o gme/player/*.o vspc/*.o
+	find . -name "*.o" | xargs rm -rf
+
