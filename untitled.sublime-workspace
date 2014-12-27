@@ -4,16 +4,56 @@
 		"selected_items":
 		[
 			[
+				"he",
+				"hexdump_locked"
+			],
+			[
+				"I",
+				"IAPU"
+			],
+			[
+				"inc",
+				"inc_cursor_pos"
+			],
+			[
+				"res",
+				"res_y"
+			],
+			[
+				"cursor",
+				"cursor_toggle"
+			],
+			[
+				"lo",
+				"hexdump_locked"
+			],
+			[
+				"MODE_",
+				"MODE_NAV"
+			],
+			[
+				"mouse",
+				"mouse_hexdump"
+			],
+			[
+				"MO",
+				"MOUSE_HEXDUMP_ENTRY_Y_INCREMENT"
+			],
+			[
+				"MOUSE",
+				"MOUSE_HEXDUMP_START_Y"
+			],
+			[
+				"MOUSE_HEX",
+				"MOUSE_HEXDUMP_START_X"
+			],
+			[
 				"SDL",
 				"SDL_USEREVENT"
 			],
 			[
 				"dbl",
 				"dblclick"
-			],
-			[
-				"res",
-				"reset_click_code"
 			],
 			[
 				"mode_",
@@ -30,10 +70,6 @@
 			[
 				"MOUSE_",
 				"MOUSE_HEXDUMP_START_X"
-			],
-			[
-				"MOUSE",
-				"MOUSE_HEXDUMP_ENTRY_Y_INCREMENT"
 			],
 			[
 				"DSP",
@@ -292,6 +328,17 @@
 	},
 	"file_history":
 	[
+		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/APU.SDL.OLD.DONT.TOUCH/vspcplay-1.3/sdl_userevents.h",
+		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/APU.SDL.OLD.DONT.TOUCH/vspcplay-1.3/mouse_hexdump_events.h",
+		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/APU.SDL.OLD.DONT.TOUCH/vspcplay-1.3/sdl_dblclick_events.h",
+		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/APU.SDL.OLD.DONT.TOUCH/vspcplay-1.3/font.c",
+		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/APU.SDL.OLD.DONT.TOUCH/vspcplay-1.3/libspc.h",
+		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/APU.SDL.OLD.DONT.TOUCH/vspcplay-1.3/globals.cpp",
+		"/Users/bazz/Projects/Reusable-Code/SDL/sdl_dblclick.h",
+		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/APU.SDL.OLD.DONT.TOUCH/vspcplay-1.3/mouse_hexdump.h",
+		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/APU.SDL.OLD.DONT.TOUCH/vspcplay-1.3/spc_structs.h",
+		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/APU.SDL.OLD.DONT.TOUCH/vspcplay-1.3/main.cpp",
+		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/APU.SDL.OLD.DONT.TOUCH/vspcplay-1.3/README",
 		"/Users/bazz/Projects/SNES-Tracker/PC_Tracker/DSP_REGISTER_MAP_API_BITCHES/PC-side/DSPRegisterMap.cpp",
 		"/Users/bazz/Downloads/vspcplay-1.3/main.c",
 		"/Users/bazz/Downloads/vspcplay-1.3/README",
@@ -408,18 +455,7 @@
 		"/private/var/folders/_g/8ck0kqk51z38kgfh807mc1cc0000gn/T/fz3temp-1/note_to_admin.txt",
 		"/Users/bazz/Hacking/cmdline_apps/bigmomma",
 		"/Users/bazz/Hacking/cmdline_apps/hacking/loader.c",
-		"/Users/bazz/.vimrc",
-		"/mnt/Blade72/nobackup/blade71/bazz/public_html/learn/school/carduino/home.php",
-		"/mnt/Blade72/nobackup/blade74_sd0g/bazz/tmp/xor_test.S",
-		"/Users/bazz/Dropbox/sparc_yotube_post.txt",
-		"/mnt/Blade72/nobackup/blade74_sd0g/bazz/tmp/notes.txt",
-		"/mnt/Blade72/nobackup/blade74_sd0g/bazz/tmp/a.c",
-		"/mnt/Blade72/nobackup/blade74_sd0g/bazz/tmp/alternating_payload2.c",
-		"/Users/bazz/Dropbox/Hacking/phrack/dl.sh",
-		"/Users/bazz/.ssh/config",
-		"/Users/bazz/.work",
-		"/private/tmp/growl_final_test/Release/rakefile",
-		"/Users/bazz/growl/Release/Plugins/System/GrowlAction/xcconfig/Common.xcconfig"
+		"/Users/bazz/.vimrc"
 	],
 	"find":
 	{
@@ -427,7 +463,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 93.0,
 		"where_history":
 		[
 			""
@@ -438,6 +474,24 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Audio",
+			"PC",
+			"last_pc",
+			"highbyte",
+			"IAPU",
+			"hexdump_address",
+			"highbyte",
+			"whichhalf",
+			"color_screen",
+			"reset",
+			"reactmou",
+			"react",
+			"dblclick::",
+			"dblclick::reset",
+			"dblclick::react",
+			"hexdump_locked",
+			"mode",
+			"top-left",
 			"mode",
 			"ev.",
 			"ev->",
@@ -547,25 +601,7 @@
 			"ifdef __DEBUG",
 			"Code Alignment",
 			"3Bh",
-			"guipresstestb",
-			"AllKeys",
-			"scancodelisting",
-			"scancode",
-			"0x7a",
-			"7ah",
-			"0x0a",
-			"NEWSYM pressed",
-			"pressed",
-			"scancodelist",
-			"scancode",
-			"1bh",
-			"0x0d",
-			"0x1b",
-			"scancode",
-			"pressed",
-			"presses",
-			"27",
-			"bazz"
+			"guipresstestb"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -573,6 +609,10 @@
 		"regex": false,
 		"replace_history":
 		[
+			"highnibble",
+			"highbyte",
+			"UserEvents::reset",
+			"UserEvents::react",
 			"te->",
 			"ev.",
 			"ev->",

@@ -511,6 +511,7 @@ int init_sdl()
 	}
 
 	dblclick::init();
+	SDL_EnableKeyRepeat( 500, 80 );
 	//SDL_AddTimer(800, dblclicktimer, 0);
 	return 0;	
 }
@@ -850,15 +851,39 @@ reload:
 							}
 					    else if ((scancode == SDLK_SPACE))
 					    {
-
+					    	mouse_hexdump::inc_cursor_pos();
 					    }
 					    else if ((scancode == SDLK_TAB))
 					    {
-
+					    	mouse_hexdump::inc_cursor_pos();
+					    	mouse_hexdump::inc_cursor_pos();
+					    	//mouse_hexdump::highnibble = 1;
 					    }
 					    else if ((scancode == SDLK_BACKSPACE))
 					    {
-
+					    	// eh
+					    	int i = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
+					    	while (i < (0x10000) )
+					    	{
+					    		IAPU.RAM[i-1] = IAPU.RAM[i];
+					    		i++;
+					    	}
+					    	mouse_hexdump::dec_cursor_pos();
+					    	mouse_hexdump::dec_cursor_pos();
+					    	mouse_hexdump::highnibble=1;
+					    }
+					    else if ((scancode == SDLK_DELETE))
+					    {
+					    	// eh
+					    	int i = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
+					    	while (i < (0x10000) )
+					    	{
+					    		IAPU.RAM[i] = IAPU.RAM[i+1];
+					    		i++;
+					    	}
+					    	//mouse_hexdump::dec_cursor_pos();
+					    	//mouse_hexdump::dec_cursor_pos();
+					    	mouse_hexdump::highnibble=1;
 					    }
 					    else if ((scancode == SDLK_LEFT))
 					    {
@@ -867,6 +892,14 @@ reload:
 					    else if ((scancode == SDLK_RIGHT))
 					    {
 					    	mouse_hexdump::inc_cursor_pos();
+					    }
+					    else if ((scancode == SDLK_UP))
+					    {
+					    	mouse_hexdump::dec_cursor_row();
+					    }
+					    else if ((scancode == SDLK_DOWN))
+					    {
+					    	mouse_hexdump::inc_cursor_row();
 					    }
 
 							if (ev.key.keysym.sym == SDLK_ESCAPE || ev.key.keysym.sym == SDLK_RETURN)

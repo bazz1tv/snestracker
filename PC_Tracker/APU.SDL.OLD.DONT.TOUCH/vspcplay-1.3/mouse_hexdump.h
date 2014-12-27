@@ -16,17 +16,39 @@ extern int hexdump_address;
 extern struct SIAPU IAPU;
 namespace mouse_hexdump
 {
-int rel_x; // = te->motion.x - MOUSE_HEXDUMP_START_X;
-//rel_x+=2;
-int rel_y; // = te->motion.y - MOUSE_HEXDUMP_START_Y;
+  int rel_x; // = te->motion.x - MOUSE_HEXDUMP_START_X;
+  //rel_x+=2;
+  int rel_y; // = te->motion.y - MOUSE_HEXDUMP_START_Y;
 
-int res_x;
-int res_y;
-Uint8 highnibble;
-Uint8 cursor_toggle;
+  int res_x;
+  int res_y;
+  Uint8 highnibble;
+  Uint8 cursor_toggle;
 
   SDL_TimerID timerid;
 
+  void inc_cursor_row()
+  {
+    mouse_hexdump::cursor_toggle=1;
+    
+    if (res_y == 15)
+    {
+      res_y;
+      hexdump_address += 8;
+    }
+    else res_y++;    
+  }
+  void dec_cursor_row()
+  {
+    mouse_hexdump::cursor_toggle=1;
+    
+    if (res_y == 0)
+    {
+      res_y;
+      hexdump_address -= 8;
+    }
+    else res_y--;    
+  }
   void inc_cursor_pos()
   {
     mouse_hexdump::cursor_toggle=1;
