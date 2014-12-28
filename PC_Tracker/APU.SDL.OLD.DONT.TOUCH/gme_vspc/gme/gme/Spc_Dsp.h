@@ -35,11 +35,13 @@ public:
 	
 	// Run DSP for 'count' samples. Write resulting samples to 'buf' if not NULL.
 	void run( long count, short* buf = NULL );
+
+	void toggle_echo() { echoing = !echoing; }
 	
 	
 // End of public interface
 private:
-	
+
 	struct raw_voice_t {
 		int8_t  left_vol;
 		int8_t  right_vol;
@@ -137,6 +139,8 @@ private:
 	voice_t voice_state [voice_count];
 	
 	int clock_envelope( int );
+	// for echo on/off
+	char echoing;
 };
 
 inline void Spc_Dsp::disable_surround( bool disable ) { surround_threshold = disable ? 0 : -0x7FFF; }

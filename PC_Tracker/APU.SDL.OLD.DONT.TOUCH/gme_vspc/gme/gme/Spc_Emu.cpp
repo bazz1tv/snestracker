@@ -19,6 +19,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
+void Spc_Emu::disable_surround( bool b ) { apu.disable_surround( b ); }
+uint8_t* Spc_Emu::ram() { return apu.ram(); }
+long Spc_Emu::pc() { return apu.pc(); }
+Spc_Dsp* Spc_Emu::dsp() { return apu.get_dsp(); }
+uint8_t Spc_Emu::read_dsp(uint8_t dsp_addr) { return apu.get_dsp()->read(dsp_addr); }
+void Spc_Emu::write_dsp(uint8_t dsp_addr, int val) { apu.get_dsp()->write(dsp_addr, val); }
+void Spc_Emu::toggle_echo() { dsp()->toggle_echo(); apu.clear_echo(); }
+
 Spc_Emu::Spc_Emu() : Spc_Dsp_Register_Map_Interface(&apu)
 {
 	set_type( gme_spc_type );

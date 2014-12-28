@@ -29,6 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 Spc_Dsp::Spc_Dsp( uint8_t* ram_ ) : ram( ram_ )
 {
+	echoing=1;
 	set_gain( 1.0 );
 	mute_voices( 0 );
 	disable_surround( false );
@@ -608,12 +609,15 @@ void Spc_Dsp::run( long count, short* out_buf )
 			echol += (fb_left  * g.echo_feedback) >> 14;
 			echor += (fb_right * g.echo_feedback) >> 14;
 
-			report_echomem(echo_buf-ram);
-			report_echomem(echo_buf+1-ram);
-			report_echomem(echo_buf+2-ram);
-			report_echomem(echo_buf+3-ram);
-			SET_LE16( echo_buf    , clamp_16( echol ) );
-			SET_LE16( echo_buf + 2, clamp_16( echor ) );
+			if (echoing)
+			{
+				report_echomem(echo_buf-ram);
+				report_echomem(echo_buf+1-ram);
+				report_echomem(echo_buf+2-ram);
+				report_echomem(echo_buf+3-ram);
+				SET_LE16( echo_buf    , clamp_16( echol ) );
+				SET_LE16( echo_buf + 2, clamp_16( echor ) );
+			}
 		}
 		
 		if ( out_buf )

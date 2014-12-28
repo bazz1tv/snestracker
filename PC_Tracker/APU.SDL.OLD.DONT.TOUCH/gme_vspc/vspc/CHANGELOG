@@ -1,7 +1,10 @@
 -- v1.31 (by bazz)
+  Incorporated Blargg's gme APU/player functionality.
+  Added new "echo region" color highlight
 
   Added keyboard writable Porttool
-  Modded mouse hex dump display to be >writable< , made it scrollable too
+  Modded mouse hex dump display to be >writable< , made it scrollable too,
+    with overflow rollover.
 
   main()'s tmpbuf was too small causing Buffer Overflow at program startup. Fixed.. 
 

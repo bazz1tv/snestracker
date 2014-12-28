@@ -65,6 +65,7 @@ public:
 	Spc_Dsp* dsp();
 	uint8_t read_dsp(uint8_t dsp_addr);
 	void write_dsp(uint8_t dsp_addr, int val);
+	void toggle_echo();
 
 protected:
 	blargg_err_t load_mem_( byte const*, long );
@@ -84,11 +85,6 @@ private:
 
 //(spcemu..).apu.write()
 
-inline void Spc_Emu::disable_surround( bool b ) { apu.disable_surround( b ); }
-inline uint8_t* Spc_Emu::ram() { return apu.ram(); }
-inline long Spc_Emu::pc() { return apu.pc(); }
-inline Spc_Dsp* Spc_Emu::dsp() { return apu.get_dsp(); }
-inline uint8_t Spc_Emu::read_dsp(uint8_t dsp_addr) { return apu.get_dsp()->read(dsp_addr); }
-inline void Spc_Emu::write_dsp(uint8_t dsp_addr, int val) { apu.get_dsp()->write(dsp_addr, val); }
+
 
 #endif

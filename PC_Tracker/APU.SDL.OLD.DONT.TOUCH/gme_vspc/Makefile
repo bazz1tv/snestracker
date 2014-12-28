@@ -39,6 +39,9 @@ gme/gme/Snes_Spc.o: gme/gme/Snes_Spc.cpp gme/gme/Snes_Spc.h vspc/report.h
 gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h vspc/report.h 
 	$(CPP) $(CFLAGS) -c $< -o $@
 
+%.o: %.cpp %.h
+	$(CPP) $(CFLAGS) -c $< -o $@
+	
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
 
@@ -50,8 +53,7 @@ gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h vspc/report.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 
-%.o: %.cpp %.h
-	$(CPP) $(CFLAGS) -c $< -o $@
+
 
 %.o: %.cpp
 	$(CPP) $(CFLAGS) -c $< -o $@

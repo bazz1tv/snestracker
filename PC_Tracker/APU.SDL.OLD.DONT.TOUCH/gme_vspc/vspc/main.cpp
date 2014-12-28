@@ -926,6 +926,11 @@ reload:
 						break;
 					case SDL_KEYDOWN:
 					{
+						if (ev.key.keysym.sym == SDLK_e)
+						{
+							//toggle echo
+							player->spc_emu()->toggle_echo();
+						}
 						if (ev.key.keysym.sym == SDLK_u)
 						{
 							//player->spc_write_dsp(0x4c, 0);
@@ -933,6 +938,9 @@ reload:
 							//player->spc_write_dsp(0x5c, 0);
 							//player->spc_write_dsp(0x4c, 1);
 							//player->spc_write_dsp(0x03, 0x08);
+							
+							//player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0xff);
+							//player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x63);
 							player->spc_write_dsp(dsp_reg::eon, 0x1);
 							player->spc_write_dsp(dsp_reg::flg, 0x00);
 							player->spc_write_dsp(dsp_reg::esa, 0x50);
@@ -941,6 +949,30 @@ reload:
 							player->spc_write_dsp(dsp_reg::evol_l, 127);
 							player->spc_write_dsp(dsp_reg::evol_r, 127);
 							player->spc_write_dsp(dsp_reg::c0, 0x7f);
+							player->spc_write_dsp(dsp_reg::kon,0x1);
+
+							//player->spc_write(0xf2, 0x4c);
+							//player->spc_write(0xf3, 0);
+							//player->spc_write(0xf3, 1);
+						}
+						else if (ev.key.keysym.sym == SDLK_i)
+						{
+							//player->spc_write_dsp(0x4c, 0);
+							//player->spc_write_dsp(0x5c, 1);
+							//player->spc_write_dsp(0x5c, 0);
+							//player->spc_write_dsp(0x4c, 1);
+							//player->spc_write_dsp(0x03, 0x08);
+							
+							player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0xff);
+							player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x23);
+							/*player->spc_write_dsp(dsp_reg::eon, 0x1);
+							player->spc_write_dsp(dsp_reg::flg, 0x00);
+							player->spc_write_dsp(dsp_reg::esa, 0x50);
+							player->spc_write_dsp(dsp_reg::edl, 0x0f);
+							player->spc_write_dsp(dsp_reg::efb, 0x40);
+							player->spc_write_dsp(dsp_reg::evol_l, 127);
+							player->spc_write_dsp(dsp_reg::evol_r, 127);
+							player->spc_write_dsp(dsp_reg::c0, 0x7f);*/
 							player->spc_write_dsp(dsp_reg::kon,0x1);
 
 							//player->spc_write(0xf2, 0x4c);
@@ -1599,7 +1631,9 @@ reload:
 			tmprect.h = 5;
 			for (i=0; i<8; i++)
 			{
-				unsigned short pitch = player->spc_read_dsp(2+(i*0x10)) | (player->spc_read_dsp(3+(i*0x10))<<8);
+				unsigned short pitch = (player->spc_read_dsp(2+(i*0x10)) | (player->spc_read_dsp(3+(i*0x10))<<8)) & 0x3fff; 
+				// I believe pitch is max 0x3fff but kirby is using higher values for some unknown reason...
+				//if (i == 7) fprintf (stderr, "pitch = 0x%04x", pitch);
 				Uint32 cur_color;
 			
 				if (player->spc_read_dsp(0x5c)&(1<<i)) {
