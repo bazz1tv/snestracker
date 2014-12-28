@@ -92,7 +92,7 @@ loop:
     adc a, !$800
     mov !$800, a
 
-    cmp a, #$20
+    cmp a, #$40
     bne loop
 
     mov a, #0

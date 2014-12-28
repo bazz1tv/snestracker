@@ -93,7 +93,7 @@ spc.asm line 0043: unrecognized directive.            (#)
 0092   109E 85 00 08        adc a, !$800
 0093   10A1 C5 00 08        mov !$800, a
 0094   10A4             
-0095   10A4 68 20           cmp a, #$20
+0095   10A4 68 40           cmp a, #$40
 0096   10A6 D0 F1           bne loop
 0097   10A8             
 0098   10A8 E8 00           mov a, #0

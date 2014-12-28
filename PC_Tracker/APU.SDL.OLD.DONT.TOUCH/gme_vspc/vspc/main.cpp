@@ -617,7 +617,7 @@ void pack_mask(unsigned char packed_mask[32])
 	}
 }
 
-int hexdump_address=0x0000, hexdump_locked=0;
+Uint16 hexdump_address=0x0000, hexdump_locked=0;
 
 int main(int argc, char **argv)
 {
@@ -910,6 +910,9 @@ reload:
 									cur_mouse_address = y*256+x;
 									if (!hexdump_locked) {
 										hexdump_address = cur_mouse_address;
+										int derp = (cur_mouse_address % 8);
+										if (derp >= 4) hexdump_address += (8-derp);
+										else hexdump_address -= derp;;
 									}
 		//							printf("%d,%d: $%04X\n", x, y, y*256+x);
 								}
@@ -926,9 +929,10 @@ reload:
 						if (ev.key.keysym.sym == SDLK_u)
 						{
 							//player->spc_write_dsp(0x4c, 0);
-							player->spc_write_dsp(0x5c, 1);
-							player->spc_write_dsp(0x5c, 0);
+							//player->spc_write_dsp(0x5c, 1);
+							//player->spc_write_dsp(0x5c, 0);
 							player->spc_write_dsp(0x4c, 1);
+							player->spc_write_dsp(0x03, 0x08);
 							//player->spc_write(0xf2, 0x4c);
 							//player->spc_write(0xf3, 0);
 							//player->spc_write(0xf3, 1);
@@ -963,7 +967,7 @@ reload:
 								((scancode >= 'a') && (scancode <= 'f')) )
 							{
 								uint i=0;
-								int ram_tmp, addr;
+								int addr;
 								addr = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
 
 								if ((scancode >= '0') && (scancode <= '9'))
@@ -973,24 +977,44 @@ reload:
 								else if ((scancode >= 'a') && (scancode <= 'f'))
 									i = (scancode - 'a') + 0x0a;  
 
-								ram_tmp = player->spc_read(addr);
+
+								if (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c))
+								{
+									if (!mouse_hexdump::draw_tmp_ram)
+										mouse_hexdump::tmp_ram = player->spc_read(addr);
+								}
+								else 
+								{
+									if (mouse_hexdump::draw_tmp_ram) mouse_hexdump::draw_tmp_ram = 0;
+									mouse_hexdump::tmp_ram = player->spc_read(addr);
+								}
 								if (mouse_hexdump::highnibble)
 								{
 									i <<= 4;
 									i &= 0xf0;
 									//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0x0f;
-									ram_tmp &= 0x0f;
+									mouse_hexdump::tmp_ram &= 0x0f;
 								}
 								else
 								{
 									i &= 0x0f;
 									//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0xf0;
-									ram_tmp &= 0xf0;
+									mouse_hexdump::tmp_ram &= 0xf0;
 								}
 
 								//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
-								ram_tmp |= i;
-								player->spc_write(addr, ram_tmp);
+								mouse_hexdump::tmp_ram |= i;
+
+								if (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c))
+								{
+									if (!mouse_hexdump::highnibble)
+									{
+										player->spc_write(addr, mouse_hexdump::tmp_ram);
+										mouse_hexdump::draw_tmp_ram = 0;
+									}
+									else mouse_hexdump::draw_tmp_ram = 1;
+								}
+								else player->spc_write(addr, mouse_hexdump::tmp_ram);
 								
 								if (mouse_hexdump::horizontal) mouse_hexdump::inc_cursor_pos();
 	    					
@@ -1053,6 +1077,7 @@ reload:
 							if (ev.key.keysym.sym == SDLK_ESCAPE || ev.key.keysym.sym == SDLK_RETURN)
 							{
 								mode = MODE_NAV;
+								mouse_hexdump::draw_tmp_ram = 0;
 								cursor::stop_timer();
 								//hexdump_locked=0;
 							}
@@ -1392,9 +1417,9 @@ reload:
 									Uint8 i;
 									if (ev.button.button == SDL_BUTTON_WHEELUP) { i=1; } else { i = -1; }
 									if (x>1 && x<4) { inc_ram(0xf4, i); }
-									if (x>6 && x<9) { inc_ram(0xf4, i); }
-									if (x>11 && x<14) { inc_ram(0xf4, i); }
-									if (x>16 && x<19) { inc_ram(0xf4, i); }
+									if (x>6 && x<9) { inc_ram(0xf5, i); }
+									if (x>11 && x<14) { inc_ram(0xf6, i); }
+									if (x>16 && x<19) { inc_ram(0xf7, i); }
 								}
 							}	
 
@@ -1672,7 +1697,9 @@ reload:
 							sprintf(tmpbuf, "   ");
 						else if (hexdump_address+i+j == 0xf3)
 						{
-							sprintf(tmpbuf, "%02X ", player->spc_read_dsp(IAPURAM[0xf2]));
+							if (mouse_hexdump::draw_tmp_ram)
+								sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+							else sprintf(tmpbuf, "%02X ", player->spc_read_dsp(IAPURAM[0xf2]));
 						}
 						else sprintf(tmpbuf, "%02X ", *st);
 						st++;

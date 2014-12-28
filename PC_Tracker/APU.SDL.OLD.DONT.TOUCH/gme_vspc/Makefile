@@ -18,7 +18,7 @@ gme/player/Music_Player.cpp
 OBJECTS=$(gme_SOURCES:.cpp=.o)
 vspc_OBJECTS=  vspc/main.o vspc/font.o vspc/sdlfont.o
 OBJECTS += $(vspc_OBJECTS)
-EXECUTABLE=snestracker
+EXECUTABLE=vspc_blargg
 
 all: $(gme_SOURCES) $(EXECUTABLE)
 	

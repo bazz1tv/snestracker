@@ -13,10 +13,11 @@
 
 
 
-extern int hexdump_address;
+extern Uint16 hexdump_address;
 extern struct SIAPU IAPU;
 namespace mouse_hexdump
 {
+  int tmp_ram; char draw_tmp_ram;
   int rel_x; // = te->motion.x - MOUSE_HEXDUMP_START_X;
   //rel_x+=2;
   int rel_y; // = te->motion.y - MOUSE_HEXDUMP_START_Y;

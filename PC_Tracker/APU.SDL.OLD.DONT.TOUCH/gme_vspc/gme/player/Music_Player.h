@@ -46,7 +46,9 @@ public:
 
 	void spc_write(spc_addr_t addr, int data)
 	{
-		spc_emu_->write(addr, data, 1);
+		if (addr == 0xf3)
+			spc_write_dsp(spc_emu_->ram()[0xf2], data);
+		else spc_emu_->write(addr, data, 1);
 	}
 	uint8_t spc_read(spc_addr_t addr)
 	{
