@@ -607,6 +607,11 @@ void Spc_Dsp::run( long count, short* out_buf )
 		{
 			echol += (fb_left  * g.echo_feedback) >> 14;
 			echor += (fb_right * g.echo_feedback) >> 14;
+
+			report_echomem(echo_buf-ram);
+			report_echomem(echo_buf+1-ram);
+			report_echomem(echo_buf+2-ram);
+			report_echomem(echo_buf+3-ram);
 			SET_LE16( echo_buf    , clamp_16( echol ) );
 			SET_LE16( echo_buf + 2, clamp_16( echor ) );
 		}

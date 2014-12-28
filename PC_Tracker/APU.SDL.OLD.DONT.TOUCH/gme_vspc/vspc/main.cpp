@@ -734,7 +734,7 @@ reload:
 
 		/* decide how much time the song will play */
 		if (!g_cfg_ignoretagtime) {
-			song_time = (int)tag.length; //atoi((const char *)tag.seconds_til_fadeout);
+			song_time = (int)tag.length / 1000; //atoi((const char *)tag.seconds_til_fadeout);
 			if (song_time <= 0) {
 				song_time = g_cfg_defaultsongtime;
 			}
@@ -828,7 +828,7 @@ reload:
 		sprintf(tmpbuf, "Ignore tag time: %s", g_cfg_ignoretagtime ? "Yes" : "No");
 		sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, color_screen_white);
 
-		sprintf(tmpbuf, "Default time...: %d", g_cfg_defaultsongtime);
+		sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg_defaultsongtime/60, g_cfg_defaultsongtime%60);
 		sdlfont_drawString(screen, INFO_X, INFO_Y+88, tmpbuf, color_screen_white);
 
 		
@@ -931,8 +931,18 @@ reload:
 							//player->spc_write_dsp(0x4c, 0);
 							//player->spc_write_dsp(0x5c, 1);
 							//player->spc_write_dsp(0x5c, 0);
-							player->spc_write_dsp(0x4c, 1);
-							player->spc_write_dsp(0x03, 0x08);
+							//player->spc_write_dsp(0x4c, 1);
+							//player->spc_write_dsp(0x03, 0x08);
+							player->spc_write_dsp(dsp_reg::eon, 0x1);
+							player->spc_write_dsp(dsp_reg::flg, 0x00);
+							player->spc_write_dsp(dsp_reg::esa, 0x50);
+							player->spc_write_dsp(dsp_reg::edl, 0x0f);
+							player->spc_write_dsp(dsp_reg::efb, 0x40);
+							player->spc_write_dsp(dsp_reg::evol_l, 127);
+							player->spc_write_dsp(dsp_reg::evol_r, 127);
+							player->spc_write_dsp(dsp_reg::c0, 0x7f);
+							player->spc_write_dsp(dsp_reg::kon,0x1);
+
 							//player->spc_write(0xf2, 0x4c);
 							//player->spc_write(0xf3, 0);
 							//player->spc_write(0xf3, 1);
@@ -1732,8 +1742,8 @@ reload:
 
 			current_ticks = audio_samples_written/44100;
 			sprintf(tmpbuf, "Time....: %0d:%02d / %0d:%02d", 
-					(current_ticks-song_started_ticks)/60,
-					((current_ticks-song_started_ticks))%60,
+					(player->emu()->tell()/1000)/60,
+					((player->emu()->tell()/1000))%60,
 					song_time/60, song_time%60);
 			sdlfont_drawString(screen, INFO_X, INFO_Y+48, tmpbuf, color_screen_white);
 
@@ -1751,7 +1761,7 @@ reload:
 			SDL_UpdateRect(screen, 0, 0, 0, 0);
 			time_last = time_cur;
 			if (g_cfg_nice) {  SDL_Delay(100); }
-			SDL_Delay( 1000 / 100 );
+			//SDL_Delay( 1000 / 100 );
 		} // if !g_cfg_novideo
 	}
 clean:

@@ -30,6 +30,15 @@ vspc/main.o: vspc/main.cpp vspc/mouse_hexdump.h vspc/gui/cursor.h vspc/gui/portt
 	vspc/mode.h
 	$(CPP) $(CFLAGS) -c vspc/main.cpp -o vspc/main.o
 
+gme/gme/Spc_Dsp.o: gme/gme/Spc_Dsp.cpp gme/gme/Spc_Dsp.h vspc/report.h 
+	$(CPP) $(CFLAGS) -c $< -o $@
+
+gme/gme/Snes_Spc.o: gme/gme/Snes_Spc.cpp gme/gme/Snes_Spc.h vspc/report.h 
+	$(CPP) $(CFLAGS) -c $< -o $@
+
+gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h vspc/report.h 
+	$(CPP) $(CFLAGS) -c $< -o $@
+
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
 

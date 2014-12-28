@@ -3,7 +3,126 @@
 //#include "Spc_Emu.h"
 #include "Snes_Spc.h"
 
-//spc_addr_t dsp
+namespace dsp_reg
+{
+enum {
+  voice0_vol_l=0,
+  voice0_vol_r=1,
+  voice0_pitch_lo=2,
+  voice0_pitch_hi=3,
+  voice0_srcn=4,
+  voice0_adsr1=5,
+  voice0_adsr2=6,
+  voice0_gain=7,
+  voice0_envx=8,
+  voice0_outx=9,
+
+  voice1_vol_l=0x10,
+  voice1_vol_r=0x11,
+  voice1_pitch_lo=0x12,
+  voice1_pitch_hi=0x13,
+  voice1_srcn=0x14,
+  voice1_adsr1=0x15,
+  voice1_adsr2=0x16,
+  voice1_gain=0x17,
+  voice1_envx=0x18,
+  voice1_outx=0x19,
+
+  voice2_vol_l=0x20,
+  voice2_vol_r=0x21,
+  voice2_pitch_lo=0x22,
+  voice2_pitch_hi=0x23,
+  voice2_srcn=0x24,
+  voice2_adsr1=0x25,
+  voice2_adsr2=0x26,
+  voice2_gain=0x27,
+  voice2_envx=0x28,
+  voice2_outx=0x29,
+
+  voice3_vol_l=0x30,
+  voice3_vol_r=0x31,
+  voice3_pitch_lo=0x32,
+  voice3_pitch_hi=0x33,
+  voice3_srcn=0x34,
+  voice3_adsr1=0x35,
+  voice3_adsr2=0x36,
+  voice3_gain=0x37,
+  voice3_envx=0x38,
+  voice3_outx=0x39,
+
+  voice4_vol_l=0x40,
+  voice4_vol_r=0x41,
+  voice4_pitch_lo=0x42,
+  voice4_pitch_hi=0x43,
+  voice4_srcn=0x44,
+  voice4_adsr1=0x45,
+  voice4_adsr2=0x46,
+  voice4_gain=0x47,
+  voice4_envx=0x48,
+  voice4_outx=0x49,
+
+  voice5_vol_l=0x50,
+  voice5_vol_r=0x51,
+  voice5_pitch_lo=0x52,
+  voice5_pitch_hi=0x53,
+  voice5_srcn=0x54,
+  voice5_adsr1=0x55,
+  voice5_adsr2=0x56,
+  voice5_gain=0x57,
+  voice5_envx=0x58,
+  voice5_outx=0x59,
+
+  voice6_vol_l=0x60,
+  voice6_vol_r=0x61,
+  voice6_pitch_lo=0x62,
+  voice6_pitch_hi=0x63,
+  voice6_srcn=0x64,
+  voice6_adsr1=0x65,
+  voice6_adsr2=0x66,
+  voice6_gain=0x67,
+  voice6_envx=0x68,
+  voice6_outx=0x69,
+
+  voice7_vol_l=0x70,
+  voice7_vol_r=0x71,
+  voice7_pitch_lo=0x72,
+  voice7_pitch_hi=0x73,
+  voice7_srcn=0x74,
+  voice7_adsr1=0x75,
+  voice7_adsr2=0x76,
+  voice7_gain=0x77,
+  voice7_envx=0x78,
+  voice7_outx=0x79,
+
+  mvol_l=0x0c,
+  mvol_r=0x1c,
+  evol_l=0x2c,
+  evol_r=0x3c,
+  kon=0x4c,
+  koff=0x5c,
+  flg=0x6c,
+  endx=0x7c,
+
+  efb=0x0d,
+  //
+  pmon=0x2d,
+  non=0x3d,
+  eon=0x4d,
+  dir=0x5d,
+  esa=0x6d,
+  edl=0x7d,
+
+  c0=0x0f,
+  c1=0x1f,
+  c2=0x2f,
+  c3=0x3f,
+  c4=0x4f,
+  c5=0x5f,
+  c6=0x6f,
+  c7=0x7f,
+};
+
+}
 
 
 // api needs a pointer to a spc_emu * wooooo
