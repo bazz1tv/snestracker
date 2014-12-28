@@ -244,7 +244,7 @@ int Snes_Spc::read( spc_addr_t addr, int external=0 )
 		report_memread(addr);
 	int result = mem.ram [addr];
 	
-	if ( (rom_addr <= addr && addr < 0xFFFC || addr >= 0xFFFE) && rom_enabled )
+	if ( ((rom_addr <= addr && addr < 0xFFFC) || addr >= 0xFFFE) && rom_enabled )
 		ddprintf( "Read from ROM: %04X -> %02X\n", addr, result );
 	
 	if ( unsigned (addr - 0xF0) < 0x10 )

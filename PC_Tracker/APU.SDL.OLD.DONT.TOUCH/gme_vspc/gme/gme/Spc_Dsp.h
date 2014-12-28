@@ -99,7 +99,7 @@ private:
 	enum { emu_gain_bits = 8 };
 	int emu_gain;
 	
-	int keyed_on; // 8-bits for 8 voices
+	//int keyed_on; // 8-bits for 8 voices
 	int keys;
 	
 	int echo_ptr;

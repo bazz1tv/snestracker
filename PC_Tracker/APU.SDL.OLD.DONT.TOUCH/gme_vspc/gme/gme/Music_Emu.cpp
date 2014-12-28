@@ -33,7 +33,7 @@ void Music_Emu::clear_track_vars()
 	emu_time         = 0;
 	emu_track_ended_ = true;
 	track_ended_     = true;
-	fade_start       = LONG_MAX / 2 + 1;
+	fade_start       = (blargg_long)(LONG_MAX / 2 + 1);
 	fade_step        = 1;
 	silence_time     = 0;
 	silence_count    = 0;

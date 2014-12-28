@@ -90,8 +90,8 @@ void handle_error( const char* error )
 	{
 		// put error in window title
 		char str [256];
-		sprintf( str, "Error: %s", error );
-		fprintf( stderr, str );
+		//sprintf( str, "Error: %s", error );
+		fprintf( stderr, "Error: %s", error );
 		SDL_WM_SetCaption( str, str );
 		
 		// wait for keyboard or mouse activity
@@ -639,7 +639,7 @@ void pack_mask(unsigned char packed_mask[32])
 
 int main(int argc, char **argv)
 {
-  void *buf=NULL;
+  //void *buf=NULL;
 	int tmp, i;
 	int updates;
 	int cur_mouse_address=0x0000;
@@ -649,7 +649,7 @@ int main(int argc, char **argv)
 	//id666_tag tag;
 	track_info_t tag;
 	int song_time, cur_time; // in seconds
-	Uint32 current_ticks, song_started_ticks;
+	Uint32 /*current_ticks,*/ song_started_ticks;
 	unsigned char packed_mask[32];
 	Uint32 time_last=0, time_cur=0;
 	
@@ -942,7 +942,7 @@ reload:
 						break;
 					case SDL_KEYDOWN:
 					{
-						int scancode = ev.key.keysym.sym;
+						//int scancode = ev.key.keysym.sym;
 
 						if (ev.key.keysym.sym == SDLK_u)
 						{
@@ -1792,7 +1792,7 @@ reload:
 				{
 
 					unsigned char *st;
-					unsigned char sst;
+					//unsigned char sst;
 					Uint16 cut_addr = (mouse_hexdump::address + i) & 0xffff;
 					
 					st = &IAPURAM[cut_addr];
@@ -1859,8 +1859,8 @@ reload:
 
 			//current_ticks = audio_samples_written/44100;
 			sprintf(tmpbuf, "Time....: %0d:%02d / %0d:%02d", 
-					(player->emu()->tell()/1000)/60,
-					((player->emu()->tell()/1000))%60,
+					int(player->emu()->tell()/1000)/60,
+					int((player->emu()->tell()/1000))%60,
 					song_time/60, song_time%60);
 			sdlfont_drawString(screen, INFO_X, INFO_Y+48, tmpbuf, color_screen_white);
 
@@ -1868,8 +1868,8 @@ reload:
 			sprintf(tmpbuf, "Echo....: %s", player->spc_emu()->is_echoing() ? "On " : "Off");	
 			sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, color_screen_white);
 
-			sprintf(tmpbuf, "GAINV0..: %02x", player->spc_read_dsp(0x07));	
-			sdlfont_drawString(screen, INFO_X, INFO_Y+56+8, tmpbuf, color_screen_white);
+			//sprintf(tmpbuf, "GAINV0..: %02x", player->spc_read_dsp(0x07));	
+			//sdlfont_drawString(screen, INFO_X, INFO_Y+56+8, tmpbuf, color_screen_white);
 			
 			if (mode == MODE_EDIT_MOUSE_HEXDUMP)
 			{
