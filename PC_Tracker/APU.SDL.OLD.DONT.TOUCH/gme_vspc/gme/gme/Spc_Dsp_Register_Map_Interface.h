@@ -122,7 +122,7 @@ enum {
   c7=0x7f
 };
 
-  struct reg_lut {
+  struct reg_lut_t {
   uint8_t addr;
   char *name;
   //char *altname;
@@ -131,7 +131,7 @@ enum {
 // this lut is for automatic iteration in loops.. 
 // like, im totally going to use it for the debugger page that details all
 // DSP registers
-struct reg_lut_t reg_lut[] = {
+struct reg_lut_t lut[] = {
   {0,"voice0_vol_l"},
   {1,"voice0_vol_l"},
   {2,"voice0_pitch_lo"},
