@@ -149,7 +149,8 @@ inline void Spc_Dsp::set_gain( double v ) { emu_gain = (int) (v * (1 << emu_gain
 
 inline int Spc_Dsp::read( int i )
 {
-	assert( (unsigned) i < register_count );
+	// bazz commented this out, should probably be re-instated later date
+	//assert( (unsigned) i < register_count );
 	return reg [i];
 }
 

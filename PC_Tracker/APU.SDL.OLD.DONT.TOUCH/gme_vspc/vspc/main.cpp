@@ -1866,7 +1866,10 @@ reload:
 
 
 			sprintf(tmpbuf, "Echo....: %s", player->spc_emu()->is_echoing() ? "On " : "Off");	
-		sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, color_screen_white);
+			sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, color_screen_white);
+
+			sprintf(tmpbuf, "GAINV0..: %02x", player->spc_read_dsp(0x07));	
+			sdlfont_drawString(screen, INFO_X, INFO_Y+56+8, tmpbuf, color_screen_white);
 			
 			if (mode == MODE_EDIT_MOUSE_HEXDUMP)
 			{
