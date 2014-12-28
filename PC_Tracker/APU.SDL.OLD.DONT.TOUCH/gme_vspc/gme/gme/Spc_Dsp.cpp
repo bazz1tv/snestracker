@@ -2,6 +2,7 @@
 
 // Based on Brad Martin's OpenSPC DSP emulator
 
+#include "vspc/report.h"
 #include "Spc_Dsp.h"
 
 #include "blargg_endian.h"
@@ -431,6 +432,7 @@ void Spc_Dsp::run( long count, short* out_buf )
 						}
 					}
 					
+					report_memread(voice.addr);
 					voice.block_header = ram [voice.addr++];
 					voice.block_remain = 16; // nybbles
 				}
@@ -456,6 +458,7 @@ void Spc_Dsp::run( long count, short* out_buf )
 					break;
 				}
 				
+				report_memread(voice.addr);
 				int delta = ram [voice.addr];
 				if ( voice.block_remain & 1 )
 				{

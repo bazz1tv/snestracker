@@ -1,5 +1,6 @@
 // Game_Music_Emu 0.5.2. http://www.slack.net/~ant/
 
+#include "vspc/report.h"
 #include "Spc_Cpu.h"
 
 #include "blargg_endian.h"
@@ -43,14 +44,25 @@ Spc_Cpu::Spc_Cpu( Snes_Spc* e, uint8_t* ram_in ) : ram( ram_in ), emu( *e )
 	blargg_verify_byte_order();
 }
 
-#define READ( addr )            (emu.read( addr ))
-#define WRITE( addr, value )    (emu.write( addr, value ))
+#define READ( addr )            (emu.read( addr, 0 ))
+#define WRITE( addr, value )    (emu.write( addr, value, 0 ))
 
 #define READ_DP( addr )         READ( (addr) + dp )
 #define WRITE_DP( addr, value ) WRITE( (addr) + dp, value )
 
-#define READ_PROG( addr )       (ram [addr])
-#define READ_PROG16( addr )     GET_LE16( &READ_PROG( addr ) )
+#define READ_PROG_2( addr )       (ram [addr])
+inline uint8_t Spc_Cpu::READ_PROG (int pc)
+{
+	report_memread2(pc, ram[pc]);
+	return ram[pc];
+}
+inline uint16_t Spc_Cpu::READ_PROG16 (int pc)
+{
+	report_memread(ram[pc]);
+	report_memread(ram[pc+1]);
+	return GET_LE16(&READ_PROG_2(pc));
+}
+#define READ_PROG16_2( addr )     GET_LE16( &READ_PROG_2( addr ) )
 
 int Spc_Cpu::read( spc_addr_t addr )
 {

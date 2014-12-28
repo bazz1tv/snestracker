@@ -1,5 +1,6 @@
 #pragma once
 #include "gui/cursor.h"
+//#include "gme/player/Music_Player.h"
 #define PORTTOOL_X    540
 #define PORTTOOL_Y    380
 
@@ -7,8 +8,8 @@
 #define PORTTOOL_PORT3_X_RIGHTMOST_LOBYTE PORTTOOL_X + (8*23)
 // 8 = tile width
 
-extern struct SIAPU IAPU;
-
+//extern struct SIAPU IAPU;
+extern Music_Player* player;
 namespace porttool
 {
   Uint8 highnibble, portnum, portaddress, tmp[4];
@@ -27,16 +28,19 @@ namespace porttool
   void write()
   {
     for (int i=0; i < 4; i++)
-      IAPU.RAM[0xf4 + i] = tmp[i];
+    {
+      player->spc_write(0xf4 + i, tmp[i]);
+      //IAPU.RAM[0xf4 + i] = tmp[i];
+    }
   }
 
   void reset_port()
   {
-    tmp[portnum] = IAPU.RAM[0xf4 + portnum];
+    tmp[portnum] = player->spc_read(0xf4 + portnum);
   }
   void reset_port(Uint8 num)
   {
-    tmp[num] = IAPU.RAM[0xf4 + num];
+    tmp[num] = player->spc_read(0xf4 + num);
   }
 
   void switch_port(Uint8 num)
@@ -52,7 +56,7 @@ namespace porttool
     portnum = num;
     //tmp[portnum] = IAPU.RAM[0xf4 + portnum];
     for (int i=0; i < 4; i++)
-      tmp[i] = IAPU.RAM[0xf4 + i];
+      tmp[i] = player->spc_read(0xf4 + i);
   }
 
   void inc_cursor_pos()

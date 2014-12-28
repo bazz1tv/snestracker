@@ -19,11 +19,26 @@ public:
       p = sp; 
   }
   
+  uint8_t dsp_read(const spc_addr_t a)
+  {
+    //p->write(0xf2, a, 1);
+    return p->get_dsp()->read(a);
+  }
+  uint8_t dsp_read2(const spc_addr_t a)
+  {
+    p->write(0xf2, a, 1);
+    return p->read(0xf3, 1);
+  }
   // should i make this inline?
   void dsp_write(const spc_addr_t a, const int v)  // a addr, v value
   {
-    p->write(0xf2, a);
-    p->write(0xf3, v);
+    p->get_dsp()->write(a, v);
+    //p->write(0xf3, v, 1);
+  }
+  void dsp_write2(const spc_addr_t a, const int v)  // a addr, v value
+  {
+    p->write(0xf2, a, 1);
+    p->write(0xf3, v, 1);
   }
 
   // voice 0

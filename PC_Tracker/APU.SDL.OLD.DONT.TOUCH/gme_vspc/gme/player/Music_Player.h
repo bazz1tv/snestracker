@@ -23,6 +23,10 @@ public:
 	
 // Optional functions
 
+	void ignore_silence()
+	{
+		gme_ignore_silence(emu_, 1);
+	}
 	// Number of tracks in current file, or 0 if no file loaded.
 	int track_count() const;
 	
@@ -39,7 +43,28 @@ public:
 	// Pointer to emulator
 	Music_Emu* emu() const { return emu_; }
 	Spc_Emu* spc_emu() const { return spc_emu_; }
-	
+
+	void spc_write(spc_addr_t addr, int data)
+	{
+		spc_emu_->write(addr, data, 1);
+	}
+	uint8_t spc_read(spc_addr_t addr)
+	{
+		
+		return spc_emu_->read(addr, 1);
+	}
+	uint8_t spc_read_dsp(spc_addr_t dspaddr)
+	{
+		//spc_emu_->write(0xf2, dspaddr, 1);
+		//return spc_emu_->read(0xf3);
+		return spc_emu_->read_dsp(dspaddr);
+	}
+	void spc_write_dsp(spc_addr_t dspaddr, int val)
+	{
+		//spc_emu_->write(0xf2, dspaddr, 1);
+		//return spc_emu_->read(0xf3);
+		spc_emu_->write_dsp(dspaddr, val);
+	}
 	// Set stereo depth, where 0.0 = none and 1.0 = maximum
 	void set_stereo_depth( double );
 	

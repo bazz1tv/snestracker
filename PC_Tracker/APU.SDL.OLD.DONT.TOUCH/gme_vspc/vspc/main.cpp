@@ -29,11 +29,97 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <math.h>
-#include "libspc.h"
-#include "id666.h"
 
-#include "spc_structs.h"
+//#include "libspc.h"
+//#include "id666.h"
+
+//#include "spc_structs.h"
 #include "SDL.h"
+
+typedef struct SPC_Config
+{
+  int sampling_rate;
+  int resolution;
+  int channels;
+  int is_interpolation;
+  int is_echo;
+} SPC_Config;
+
+SPC_Config spc_config = {
+    44100,
+    16,
+    2,
+    0, // interpolation
+    0 // echo
+};
+
+
+#include "gme/player/Music_Player.h"
+static Music_Player* player;
+int track = 1;
+uint8_t *IAPURAM;
+static bool paused;
+void handle_error( const char* );
+void handle_error( const char* error )
+{
+	if ( error )
+	{
+		// put error in window title
+		char str [256];
+		sprintf( str, "Error: %s", error );
+		fprintf( stderr, str );
+		SDL_WM_SetCaption( str, str );
+		
+		// wait for keyboard or mouse activity
+		SDL_Event e;
+		do
+		{
+			while ( !SDL_PollEvent( &e ) ) { }
+		}
+		while ( e.type != SDL_QUIT && e.type != SDL_KEYDOWN && e.type != SDL_MOUSEBUTTONDOWN );
+
+		exit( EXIT_FAILURE );
+	}
+}
+
+
+static void start_track( int track, const char* path )
+{
+	paused = false;
+	handle_error( player->start_track( track - 1 ) );
+	
+	// update window title with track info
+	
+	long seconds = player->track_info().length / 1000;
+	const char* game = player->track_info().game;
+	if ( !*game )
+	{
+		// extract filename
+		game = strrchr( path, '\\' ); // DOS
+		if ( !game )
+			game = strrchr( path, '/' ); // UNIX
+		if ( !game )
+			game = path;
+		else
+			game++; // skip path separator
+	}
+	
+	char title [512];
+	sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
+			game, track, player->track_count(), player->track_info().song,
+			seconds / 60, seconds % 60 );
+	SDL_WM_SetCaption( title, title );
+}
+
+void inc_ram(spc_addr_t addr, int i=1)
+{
+	player->spc_write(addr, (player->spc_read(addr))+i);
+}
+void dec_ram(spc_addr_t addr, int i=1)
+{
+	player->spc_write(addr, (player->spc_read(addr))-i);
+}
+
 
 #include "sdlfont.h"
 
@@ -58,22 +144,23 @@ int last_pc=-1;
 #define PROG_NAME_VERSION_STRING "vspcplay v1.31 patched by bazz"
 #define CREDITS "vspcplay v1.31 by Raphael Assenat (http://vspcplay.raphnet.net). APU emulation code from snes9x."
 
-SPC_Config spc_config = {
+/*SPC_Config spc_config = {
     44100,
     16,
     2,
     0, // interpolation
     0 // echo
-};
+};*/
 
 // those are bigger so I dont have to do a range test
 // each time I want to log the PC address (where I assume
 // a 5 byte instruction)
+// bazZ: dunno if we need this
 unsigned char used[0x10006];
 unsigned char used2[0x101];
 
-extern struct SAPU APU;
-extern struct SIAPU IAPU;
+//extern struct SAPU APU;
+//extern struct SIAPU IAPU;
 
 static unsigned char g_cfg_filler = 0x00;
 static int g_cfg_apply_block = 0;
@@ -105,9 +192,9 @@ SDL_Event event;
 SDL_Surface *screen=NULL;
 SDL_Surface *memsurface=NULL;
 unsigned char *memsurface_data=NULL;
-#define BUFFER_SIZE 65536
-static unsigned char audiobuf[BUFFER_SIZE];
-static int audio_buf_bytes=0, spc_buf_size;
+//#define BUFFER_SIZE 65536
+///static unsigned char audiobuf[BUFFER_SIZE];
+//static int audio_buf_bytes=0, spc_buf_size;
 
 Uint32 color_screen_white, color_screen_black, color_screen_cyan, color_screen_magenta, color_screen_yellow, color_screen_red;
 Uint32  color_screen_green;
@@ -159,7 +246,7 @@ void applyBlockMask(char *filename)
 	fclose(fptr);
 }
 
-void my_audio_callback(void *userdata, Uint8 *stream, int len)
+/*void my_audio_callback(void *userdata, Uint8 *stream, int len)
 {
 //	printf("Callback %d  audio_buf_bytes: %d\n", len, audio_buf_bytes);
 	
@@ -193,7 +280,7 @@ void my_audio_callback(void *userdata, Uint8 *stream, int len)
 		
 	}
 	audio_samples_written += len/4; // 16bit stereo
-}
+}*/
 
 int parse_args(int argc, char **argv)
 {
@@ -448,7 +535,7 @@ void do_scroller(int elaps_milli)
 
 int init_sdl()
 {
-	SDL_AudioSpec desired;
+	//SDL_AudioSpec desired;
 	Uint32 flags=0;
 	
 	/* SDL initialisation */
@@ -494,7 +581,7 @@ int init_sdl()
 	
 	if (!g_cfg_nosound) {
 		// audio
-		desired.freq = 44100;
+		/*desired.freq = 44100;
 		desired.format = AUDIO_S16SYS;
 		desired.channels = 2;
 		desired.samples = 1024;
@@ -504,14 +591,17 @@ int init_sdl()
 		if ( SDL_OpenAudio(&desired, NULL) < 0 ){
 			fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
 			return -1;
-		}
+		}*/
 
-		printf("sdl audio frag size: %d\n", desired.samples *4);
+		//printf("sdl audio frag size: %d\n", desired.samples *4);
 	}
 
 	dblclick::init();
 	SDL_EnableKeyRepeat( 500, 80 );
 	//SDL_AddTimer(800, dblclicktimer, 0);
+
+	
+
 	return 0;	
 }
 
@@ -538,7 +628,8 @@ int main(int argc, char **argv)
 	SDL_Rect tmprect;
 	SDL_Rect memrect;
 	char tmpbuf[100];
-	id666_tag tag;
+	//id666_tag tag;
+	track_info_t tag;
 	int song_time, cur_time; // in seconds
 	Uint32 current_ticks, song_started_ticks;
 	unsigned char packed_mask[32];
@@ -559,17 +650,33 @@ int main(int argc, char **argv)
 	
 	
 	/* REPLACE WITH BLARGG APU INIT */
-  spc_buf_size = SPC_init(&spc_config);
-	printf("spc buffer size: %d\n", spc_buf_size);
-	buf = malloc(spc_buf_size*2);
+  //spc_buf_size = SPC_init(&spc_config);
+	//printf("spc buffer size: %d\n", spc_buf_size);
+	//buf = malloc(spc_buf_size*2);
+
 	/* */
 	
 	init_sdl();
+
 	time_cur = time_last = SDL_GetTicks();
 
 	memsurface_data = (unsigned char *)malloc(512*512*4);
 	memset(memsurface_data, 0, 512*512*4);
 
+	// Create player
+	player = new Music_Player;
+	if ( !player )
+		handle_error( "Out of memory" );
+	handle_error( player->init() );
+
+
+	// Load file
+	const char* path = (argc > 1 ? argv [argc - 1] : "test.spc");
+	handle_error( player->load_file( path ) );
+	player->ignore_silence();
+	IAPURAM = player->spc_emu()->ram();
+	start_track( 1, path );
+/*
 reload:
 #ifdef WIN32
 	g_real_filename = strrchr(g_cfg_playlist[g_cur_entry], '\\');
@@ -602,12 +709,32 @@ reload:
 			if (g_cur_entry >= g_cfg_num_files) { g_cur_entry = 0; }
 			goto reload;
 		}
-		
-		read_id666(fptr, &tag); 
+		*/
+		//read_id666(fptr, &tag); 
+
+		tag = player->track_info();
+		/*struct track_info_t
+		{
+			long track_count;
+			
+			// times in milliseconds; -1 if unknown 
+			long length;
+			long intro_length;
+			long loop_length;
+			
+			// empty string if not available 
+			char system    [256];
+			char game      [256];
+			char song      [256];
+			char author    [256];
+			char copyright [256];
+			char comment   [256];
+			char dumper    [256];
+		};*/
 
 		/* decide how much time the song will play */
 		if (!g_cfg_ignoretagtime) {
-			song_time = atoi((const char *)tag.seconds_til_fadeout);
+			song_time = (int)tag.length; //atoi((const char *)tag.seconds_til_fadeout);
 			if (song_time <= 0) {
 				song_time = g_cfg_defaultsongtime;
 			}
@@ -619,20 +746,20 @@ reload:
 		song_time += g_cfg_extratime;
 
 		now_playing[0] = 0;
-		if (tag.title)
+		if (tag.song)
 		{
-			if (strlen((const char *)tag.title)) {
-				sprintf(now_playing, "Now playing: %s (%s), dumped by %s\n", tag.title, tag.game_title, tag.name_of_dumper);
+			if (strlen((const char *)tag.song)) {
+				sprintf(now_playing, "Now playing: %s (%s), dumped by %s\n", tag.song, tag.game, tag.dumper);
 			}		
 		}
 		if (strlen(now_playing)==0) {
 			sprintf(now_playing, "Now playing: %s\n", g_cfg_playlist[g_cur_entry]);
 		}
 		
-		fclose(fptr);
-	}
+		//fclose(fptr);
+	//}
 	
-    if (!SPC_load(g_cfg_playlist[g_cur_entry])) 
+  /*  if (!SPC_load(g_cfg_playlist[g_cur_entry])) 
 	{
 		printf("Failure\n");
 		if (g_cur_entry == g_cfg_num_files-1) {
@@ -646,7 +773,7 @@ reload:
 		}
 		if (g_cfg_num_files<=0) { printf ("penis2\n");goto clean; }
 		if (g_cur_entry >= g_cfg_num_files) { g_cur_entry = 0; }
-	}
+	}*/
 	memset(memsurface_data, 0, 512*512*4);
 	memset(used, 0, sizeof(used));
 	memset(used2, 0, sizeof(used2));
@@ -678,25 +805,25 @@ reload:
 
 		/* information */
 		sdlfont_drawString(screen, INFO_X, INFO_Y, "      - Info -", color_screen_white);
-		sprintf(tmpbuf, "Filename: %s", g_real_filename);
+		sprintf(tmpbuf, "Filename: %s", path);
 		sdlfont_drawString(screen, INFO_X, INFO_Y+8, tmpbuf, color_screen_white);
-		sprintf(tmpbuf, "Title...: %s", tag.title);
+		sprintf(tmpbuf, "Title...: %s", tag.song);
 		sdlfont_drawString(screen, INFO_X, INFO_Y+16, tmpbuf, color_screen_white);
-		sprintf(tmpbuf, "Game....: %s", tag.game_title);
+		sprintf(tmpbuf, "Game....: %s", tag.game);
 		sdlfont_drawString(screen, INFO_X, INFO_Y+24, tmpbuf, color_screen_white);
-		sprintf(tmpbuf, "Dumper..: %s", tag.name_of_dumper);
+		sprintf(tmpbuf, "Dumper..: %s", tag.dumper);
 		sdlfont_drawString(screen, INFO_X, INFO_Y+32, tmpbuf, color_screen_white);
-		sprintf(tmpbuf, "Comment.: %s", tag.comments);
+		sprintf(tmpbuf, "Comment.: %s", tag.comment);
 		sdlfont_drawString(screen, INFO_X, INFO_Y+40, tmpbuf, color_screen_white);
 		
-		sprintf(tmpbuf, "Echo....: %s", spc_config.is_echo ? "On" : "Off");	
-		sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, color_screen_white);
+		//sprintf(tmpbuf, "Echo....: %s", spc_config.is_echo ? "On" : "Off");	
+		//sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, color_screen_white);
 
-		sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");	
-		sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, color_screen_white);
+		//sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");	
+		//sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, color_screen_white);
 	
-		sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg_autowritemask ? "Yes" : "No");
-		sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, color_screen_white);
+		//sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg_autowritemask ? "Yes" : "No");
+		//sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, color_screen_white);
 
 		sprintf(tmpbuf, "Ignore tag time: %s", g_cfg_ignoretagtime ? "Yes" : "No");
 		sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, color_screen_white);
@@ -747,7 +874,7 @@ reload:
 			}
 			g_cur_entry++;
 			if (g_cur_entry>=g_cfg_num_files) { printf ("penis3\n"); } //goto clean; }
-			goto reload;
+			goto clean; //reload;
 		}
 		skip:
 		
@@ -796,6 +923,16 @@ reload:
 						break;
 					case SDL_KEYDOWN:
 					{
+						if (ev.key.keysym.sym == SDLK_u)
+						{
+							//player->spc_write_dsp(0x4c, 0);
+							player->spc_write_dsp(0x5c, 1);
+							player->spc_write_dsp(0x5c, 0);
+							player->spc_write_dsp(0x4c, 1);
+							//player->spc_write(0xf2, 0x4c);
+							//player->spc_write(0xf3, 0);
+							//player->spc_write(0xf3, 1);
+						}
 						if (mode == MODE_NAV)
 						{
 							if (ev.key.keysym.sym == SDLK_ESCAPE)
@@ -826,6 +963,8 @@ reload:
 								((scancode >= 'a') && (scancode <= 'f')) )
 							{
 								uint i=0;
+								int ram_tmp, addr;
+								addr = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
 
 								if ((scancode >= '0') && (scancode <= '9'))
 									i = scancode - '0';
@@ -834,21 +973,24 @@ reload:
 								else if ((scancode >= 'a') && (scancode <= 'f'))
 									i = (scancode - 'a') + 0x0a;  
 
+								ram_tmp = player->spc_read(addr);
 								if (mouse_hexdump::highnibble)
 								{
 									i <<= 4;
 									i &= 0xf0;
-									//IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= i;
-									IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0x0f;
+									//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0x0f;
+									ram_tmp &= 0x0f;
 								}
 								else
 								{
 									i &= 0x0f;
-									IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0xf0;
+									//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0xf0;
+									ram_tmp &= 0xf0;
 								}
 
-								IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
-								
+								//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
+								ram_tmp |= i;
+								player->spc_write(addr, ram_tmp);
 								
 								if (mouse_hexdump::horizontal) mouse_hexdump::inc_cursor_pos();
 	    					
@@ -869,7 +1011,8 @@ reload:
 					    	int i = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
 					    	while (i < (0x10000) )
 					    	{
-					    		IAPU.RAM[i-1] = IAPU.RAM[i];
+					    		player->spc_write(i-1, player->spc_read(i));
+					    		//IAPURAM[i-1] = IAPURAM[i];
 					    		i++;
 					    	}
 					    	mouse_hexdump::dec_cursor_pos();
@@ -882,7 +1025,8 @@ reload:
 					    	int i = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
 					    	while (i < (0x10000) )
 					    	{
-					    		IAPU.RAM[i] = IAPU.RAM[i+1];
+					    		player->spc_write(i, player->spc_read(i+1));
+					    		//IAPURAM[i] = IAPURAM[i+1];
 					    		i++;
 					    	}
 					    	//mouse_hexdump::dec_cursor_pos();
@@ -934,7 +1078,7 @@ reload:
 								{
 									i <<= 4;
 									i &= 0xf0;
-									//IAPU.RAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= i;
+									//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= i;
 									porttool::tmp[porttool::portnum] &= 0x0f;
 								}
 								else
@@ -1025,7 +1169,7 @@ reload:
 							{
 								//mode = MODE_NAV;
 								//cursor::stop_timer();
-								//IAPU.RAM[porttool::portaddress] = porttool::tmp[porttool::portnum];
+								//IAPURAM[porttool::portaddress] = porttool::tmp[porttool::portnum];
 								porttool::write();
 							}
 						}				
@@ -1117,7 +1261,7 @@ reload:
 									switch (x)
 									{
 										// i think single click takes care of this
-										//case 1: IAPU.RAM[0xf4]++; break;
+										//case 1: IAPURAM[0xf4]++; break;
 										case 2:
 										{
 											porttool::set_port(0);
@@ -1133,8 +1277,8 @@ reload:
 											mode = MODE_EDIT_APU_PORT;
 											cursor::start_timer();
 										} break;
-										//case 4: IAPU.RAM[0xf4]--; break;
-										//case 6: IAPU.RAM[0xf5]++; break;
+										//case 4: IAPURAM[0xf4]--; break;
+										//case 6: IAPURAM[0xf5]++; break;
 										case 7:
 										{
 											porttool::set_port(1);
@@ -1149,8 +1293,8 @@ reload:
 											mode = MODE_EDIT_APU_PORT;
 											cursor::start_timer();
 										} break;
-										//case 9: IAPU.RAM[0xf5]--; break;
-										//case 11: IAPU.RAM[0xf6]++; break;
+										//case 9: IAPURAM[0xf5]--; break;
+										//case 11: IAPURAM[0xf6]++; break;
 										case 12:
 										{
 											porttool::set_port(2);
@@ -1165,8 +1309,8 @@ reload:
 											mode = MODE_EDIT_APU_PORT;
 											cursor::start_timer();
 										} break;
-										//case 14: IAPU.RAM[0xf6]--; break;
-										//case 16: IAPU.RAM[0xf7]++; break;
+										//case 14: IAPURAM[0xf6]--; break;
+										//case 16: IAPURAM[0xf7]++; break;
 										case 17:
 										{
 											porttool::set_port(3);
@@ -1181,7 +1325,7 @@ reload:
 											mode = MODE_EDIT_APU_PORT;
 											cursor::start_timer();
 										} break;
-										//case 19: IAPU.RAM[0xf7]--; break;
+										//case 19: IAPURAM[0xf7]--; break;
 									}
 								}
 							}
@@ -1232,14 +1376,14 @@ reload:
 								{
 									switch (x)
 									{
-										case 1: IAPU.RAM[0xf4]++; break;
-										case 4: IAPU.RAM[0xf4]--; break;
-										case 6: IAPU.RAM[0xf5]++; break;
-										case 9: IAPU.RAM[0xf5]--; break;
-										case 11: IAPU.RAM[0xf6]++; break;
-										case 14: IAPU.RAM[0xf6]--; break;
-										case 16: IAPU.RAM[0xf7]++; break;
-										case 19: IAPU.RAM[0xf7]--; break;
+										case 1: inc_ram(0xf4); break;
+										case 4: dec_ram(0xf4); break;
+										case 6: inc_ram(0xf5); break;
+										case 9: dec_ram(0xf5); break;
+										case 11: inc_ram(0xf6); break;
+										case 14: dec_ram(0xf6); break;
+										case 16: inc_ram(0xf7); break;
+										case 19: dec_ram(0xf7); break;
 									}
 								}
 								if (ev.button.button == SDL_BUTTON_WHEELUP ||
@@ -1247,10 +1391,10 @@ reload:
 								{
 									Uint8 i;
 									if (ev.button.button == SDL_BUTTON_WHEELUP) { i=1; } else { i = -1; }
-									if (x>1 && x<4) { IAPU.RAM[0xf4] += i; }
-									if (x>6 && x<9) { IAPU.RAM[0xf5] += i; }
-									if (x>11 && x<14) { IAPU.RAM[0xf6] += i; }
-									if (x>16 && x<19) { IAPU.RAM[0xf7] += i; }
+									if (x>1 && x<4) { inc_ram(0xf4, i); }
+									if (x>6 && x<9) { inc_ram(0xf4, i); }
+									if (x>11 && x<14) { inc_ram(0xf4, i); }
+									if (x>16 && x<19) { inc_ram(0xf4, i); }
 								}
 							}	
 
@@ -1270,22 +1414,27 @@ reload:
 
 								if (x>=16 && x<=22) {  // restart
 									SDL_PauseAudio(1);
-									goto reload;
+									//goto reload;
+									track = 1;
+									start_track( track, path );
 								}
 
 								if (x>=26 && x<=29) {  // prev
 									SDL_PauseAudio(1);
 									g_cur_entry--;
 									if (g_cur_entry<0) { g_cur_entry = g_cfg_num_files-1; }
-									goto reload;
-
+									//goto reload;
+									track = 1;
+									start_track( track, path );
 								}
 
 								if (x>=33 && x<=36) { // next
 									SDL_PauseAudio(1);
 									g_cur_entry++;
 									if (g_cur_entry>=g_cfg_num_files) { g_cur_entry = 0; }
-									goto reload;
+									//goto reload;
+									track = 1;
+									start_track( track, path );
 								}
 
 								if (x>=41 && x<=50) { // write mask
@@ -1303,14 +1452,14 @@ reload:
 		} // !g_cfg_novideo
 
 		if (g_cfg_nosound) {			
-			SPC_update(&audiobuf[audio_buf_bytes]);			
+			/*SPC_update(&audiobuf[audio_buf_bytes]);			
 			audio_samples_written += spc_buf_size/4; // 16bit stereo
 			SPC_update(&audiobuf[audio_buf_bytes]);			
 			audio_samples_written += spc_buf_size/4; // 16bit stereo
 			SPC_update(&audiobuf[audio_buf_bytes]);			
 			audio_samples_written += spc_buf_size/4; // 16bit stereo
 			SPC_update(&audiobuf[audio_buf_bytes]);			
-			audio_samples_written += spc_buf_size/4; // 16bit stereo
+			audio_samples_written += spc_buf_size/4; // 16bit stereo*/
 		}
 		else
 		{	
@@ -1319,7 +1468,7 @@ reload:
 				// fill the buffer when possible
 				updates = 0;
 			
-				while (BUFFER_SIZE - audio_buf_bytes >= spc_buf_size )
+				/*while (BUFFER_SIZE - audio_buf_bytes >= spc_buf_size )
 				{
 					if (!g_cfg_novideo) {
 						if (SDL_MUSTLOCK(memsurface)) {
@@ -1338,7 +1487,7 @@ reload:
 							SDL_UnlockSurface(memsurface);
 						}
 					}					
-				}
+				}*/
 			}
 
 		}
@@ -1397,7 +1546,7 @@ reload:
 			}
 
 			// write the program counter
-			last_pc = (int)(IAPU.PC - IAPU.RAM);
+			last_pc = (int)player->spc_emu()->pc();  //(IAPU.PC - IAPURAM);
 			sprintf(tmpbuf, "PC: $%04x  ", last_pc);
 			sdlfont_drawString(screen, MEMORY_VIEW_X+8*12, MEMORY_VIEW_Y-10, tmpbuf, color_screen_white);
 
@@ -1415,10 +1564,10 @@ reload:
 			tmprect.h = 5;
 			for (i=0; i<8; i++)
 			{
-				unsigned short pitch = APU.DSP[2+(i*0x10)] | (APU.DSP[3+(i*0x10)]<<8);
+				unsigned short pitch = player->spc_read_dsp(2+(i*0x10)) | (player->spc_read_dsp(3+(i*0x10))<<8);
 				Uint32 cur_color;
 			
-				if (APU.DSP[0x5c]&(1<<i)) {
+				if (player->spc_read_dsp(0x5c)&(1<<i)) {
 					cur_color = color_screen_white;
 				} else {
 					cur_color = color_screen_gray;
@@ -1450,9 +1599,9 @@ reload:
 			tmprect.h=2;
 			for (i=0; i<8; i++)
 			{
-				unsigned char left_vol = APU.DSP[0+(i*0x10)];
-				unsigned char right_vol = APU.DSP[1+(i*0x10)];
-				unsigned char gain = APU.DSP[7+(i*0x10)];
+				unsigned char left_vol = player->spc_read_dsp(0+(i*0x10));
+				unsigned char right_vol = player->spc_read_dsp(1+(i*0x10));
+				unsigned char gain = player->spc_read_dsp(7+(i*0x10));
 
 				sprintf(tmpbuf,"%d:", i);
 				sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, color_screen_white);
@@ -1489,7 +1638,13 @@ reload:
 				for (i=0; i<128; i+=8)
 				{
 
-					unsigned char *st = &IAPU.RAM[hexdump_address+i];
+					unsigned char *st;
+					unsigned char sst;
+
+					
+					st = &IAPURAM[hexdump_address+i];
+					//uint8_t st = player->spc_read(hexdump_address+i);
+					//st = &sst;
 					// *st = ;
 					int p = MEMORY_VIEW_X+520, j;
 					//printf ("top_left of rect p = ")
@@ -1502,6 +1657,7 @@ reload:
 					//if (i==0)
 						//printf ("top-left of memory write-region: p_x = %d, tmp_y = %d\n", p, tmp); // top-left of memory write-region
 					for (j=0; j<8; j++) {
+
 						int idx = ((hexdump_address+i+j)&0xff00)<<4;	
 						Uint32 color;
 
@@ -1514,6 +1670,10 @@ reload:
 								
 						if ((hexdump_address+i+j) > 0xffff)
 							sprintf(tmpbuf, "   ");
+						else if (hexdump_address+i+j == 0xf3)
+						{
+							sprintf(tmpbuf, "%02X ", player->spc_read_dsp(IAPURAM[0xf2]));
+						}
 						else sprintf(tmpbuf, "%02X ", *st);
 						st++;
 
@@ -1536,12 +1696,12 @@ reload:
 			if (mode == MODE_EDIT_APU_PORT)
 	    	sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", porttool::tmp[0], porttool::tmp[1], porttool::tmp[2], porttool::tmp[3]);	
 			else 
-				sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", IAPU.RAM[0xf4], IAPU.RAM[0xf5], IAPU.RAM[0xf6], IAPU.RAM[0xf7]);		
+				sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", IAPURAM[0xf4], IAPURAM[0xf5], IAPURAM[0xf6], IAPURAM[0xf7]);		
 			
 			sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf, color_screen_white);
 			
-			sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", APU.OutPorts[0], APU.OutPorts[1], APU.OutPorts[2], APU.OutPorts[3]);		
-			sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, color_screen_white);
+			//sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", APU.OutPorts[0], APU.OutPorts[1], APU.OutPorts[2], APU.OutPorts[3]);		
+			//sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, color_screen_white);
 
 			current_ticks = audio_samples_written/44100;
 			sprintf(tmpbuf, "Time....: %0d:%02d / %0d:%02d", 
@@ -1564,12 +1724,14 @@ reload:
 			SDL_UpdateRect(screen, 0, 0, 0, 0);
 			time_last = time_cur;
 			if (g_cfg_nice) {  SDL_Delay(100); }
+			SDL_Delay( 1000 / 100 );
 		} // if !g_cfg_novideo
 	}
 clean:
-	SDL_PauseAudio(1);
+	delete player;
+	//SDL_PauseAudio(1);
 	SDL_Quit();
-    SPC_close();
+    //SPC_close();
 
     return 0;
 }

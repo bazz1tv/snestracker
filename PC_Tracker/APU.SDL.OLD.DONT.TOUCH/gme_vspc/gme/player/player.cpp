@@ -24,7 +24,7 @@ void handle_error( const char* );
 
 static bool paused;
 static Audio_Scope* scope;
-static Music_Player* player;
+Music_Player* player;
 static short scope_buf [scope_width * 2];
 
 static void init()

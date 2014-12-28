@@ -1,5 +1,6 @@
 // Game_Music_Emu 0.5.2. http://www.slack.net/~ant/
 
+#include "vspc/report.h"
 #include "Snes_Spc.h"
 
 #include <string.h>
@@ -237,8 +238,10 @@ inline void Snes_Spc::check_for_echo_access( spc_addr_t addr )
 
 // Read
 
-int Snes_Spc::read( spc_addr_t addr )
+int Snes_Spc::read( spc_addr_t addr, int external=0 )
 {
+	if (!external)
+		report_memread(addr);
 	int result = mem.ram [addr];
 	
 	if ( (rom_addr <= addr && addr < 0xFFFC || addr >= 0xFFFE) && rom_enabled )
@@ -278,6 +281,7 @@ int Snes_Spc::read( spc_addr_t addr )
 		check(( check_for_echo_access( addr ), true ));
 	}
 	
+
 	return result;
 }
 
@@ -294,8 +298,10 @@ void Snes_Spc::enable_rom( bool enable )
 	}
 }
 
-void Snes_Spc::write( spc_addr_t addr, int data )
+void Snes_Spc::write( spc_addr_t addr, int data, int external=0 )
 {
+	if (!external)
+		report_memwrite(addr);
 	// first page is very common
 	if ( addr < 0xF0 ) {
 		mem.ram [addr] = (uint8_t) data;
@@ -387,6 +393,7 @@ void Snes_Spc::write( spc_addr_t addr, int data )
 		case 0xF6:
 		case 0xF7:
 			// to do: handle output ports
+			mem.ram[addr] = data;
 			break;
 		
 		//case 0xF8: // verified on SNES that these are read/write (RAM)

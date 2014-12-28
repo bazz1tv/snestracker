@@ -50,14 +50,17 @@ public:
 	
 	void set_tempo( double );
 
-	uint8_t* ram();
+	
 	
 public:
 	Snes_Spc();
 	typedef BOOST::uint8_t uint8_t;
 
-	int  read( spc_addr_t );
-	void write( spc_addr_t, int );
+	int  read( spc_addr_t, int external );
+	void write( spc_addr_t, int, int external/*=0*/ );
+	uint8_t* ram();
+	long pc();
+	Spc_Dsp* get_dsp();
 private:
 	// timers
 	struct Timer
@@ -123,5 +126,7 @@ inline void Snes_Spc::mute_voices( int mask ) { dsp.mute_voices( mask ); }
 inline void Snes_Spc::set_gain( double v ) { dsp.set_gain( v ); }
 
 inline uint8_t* Snes_Spc::ram() { return mem.ram; };
+inline long Snes_Spc::pc() { return cpu.r.pc; }
+inline Spc_Dsp* Snes_Spc::get_dsp() { return &dsp; }
 
 #endif

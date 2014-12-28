@@ -2,7 +2,7 @@ CC=g++
 CPP=g++
 debug=-g
 gme_CFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `sdl-config --cflags`
-LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl-config --libs`
+LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl-config --libs` -lm
 
 vspc_CFLAGS=-O3 -funroll-loops -Wall -Ivspc `sdl-config --cflags` -Wall
 vspc_LDFLAGS=-g `sdl-config --libs` -lm
@@ -28,17 +28,17 @@ $(EXECUTABLE): $(OBJECTS)
 vspc/main.o: vspc/main.cpp vspc/mouse_hexdump.h vspc/gui/cursor.h vspc/gui/porttool.h vspc/mouse_hexdump_events.h vspc/sdl_dblclick.h\
 	vspc/sdl_dblclick_events.h vspc/sdl_userevents.h\
 	vspc/mode.h
-	$(CPP) $(vspc_CFLAGS) -c vspc/main.cpp -o vspc/main.o
+	$(CPP) $(CFLAGS) -c vspc/main.cpp -o vspc/main.o
 
 .cpp.o:
-	$(CC) $(gme_CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $< -o $@
 
 # Order matters.. do the ones with headers first
 %.o: %.c %.h
-	$(CC) $(vspc_CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 %.o: %.c
-	$(CC) $(vspc_CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
 %.o: %.cpp %.h

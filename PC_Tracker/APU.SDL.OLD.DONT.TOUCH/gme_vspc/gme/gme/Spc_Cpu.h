@@ -41,6 +41,8 @@ public:
 	// Access memory as the emulated CPU does
 	int  read ( spc_addr_t );
 	void write( spc_addr_t, int );
+	uint8_t READ_PROG (int pc);
+	uint16_t READ_PROG16 (int pc);
 	
 private:
 	// noncopyable
