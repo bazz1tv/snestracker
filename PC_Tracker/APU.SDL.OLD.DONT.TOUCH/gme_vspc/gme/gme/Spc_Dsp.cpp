@@ -27,6 +27,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 	#include BLARGG_ENABLE_OPTIMIZER
 #endif
 
+void Spc_Dsp::toggle_echo() { echoing = !echoing; }
+char Spc_Dsp::is_echoing() { return echoing; }
+
 Spc_Dsp::Spc_Dsp( uint8_t* ram_ ) : ram( ram_ )
 {
 	echoing=1;

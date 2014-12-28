@@ -36,8 +36,8 @@ public:
 	// Run DSP for 'count' samples. Write resulting samples to 'buf' if not NULL.
 	void run( long count, short* buf = NULL );
 
-	void toggle_echo() { echoing = !echoing; }
-	
+	void toggle_echo();
+	char is_echoing(); 	
 	
 // End of public interface
 private:

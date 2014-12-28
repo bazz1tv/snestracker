@@ -66,6 +66,7 @@ public:
 	uint8_t read_dsp(uint8_t dsp_addr);
 	void write_dsp(uint8_t dsp_addr, int val);
 	void toggle_echo();
+	char is_echoing();
 
 protected:
 	blargg_err_t load_mem_( byte const*, long );

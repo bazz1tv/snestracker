@@ -1,4 +1,4 @@
-.org $1000
+.org $2000
 Main:
     call Init
 infin:
@@ -16,7 +16,7 @@ Init:
     mov !$3001, a
     mov a, #$91
     mov !$3002, a
-    mov a, #$02    ; #$16
+    mov a, #$16
     mov !$3003, a
 
     mov $F2, #$00       ; left volume = 127

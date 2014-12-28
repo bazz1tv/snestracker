@@ -36,6 +36,12 @@
 //#include "spc_structs.h"
 #include "SDL.h"
 
+ #include "sdlfont.h"
+
+#include "sdl_dblclick.h"
+#include "mode.h"
+#include "mouse_hexdump.h"
+
 typedef struct SPC_Config
 {
   int sampling_rate;
@@ -53,6 +59,24 @@ SPC_Config spc_config = {
     0 // echo
 };
 
+namespace mouse
+{
+	int x,y;
+}
+
+void enter_edit_mode()
+{
+
+}
+void exit_edit_mode()
+{
+	if (submode == mouse_hexdump::EASY_EDIT)
+		mouse_hexdump::unlock();
+	mode = MODE_NAV;
+	submode = 0;
+	mouse_hexdump::draw_tmp_ram = 0;
+	cursor::stop_timer();
+}
 
 #include "gme/player/Music_Player.h"
 static Music_Player* player;
@@ -121,11 +145,7 @@ void dec_ram(spc_addr_t addr, int i=1)
 }
 
 
-#include "sdlfont.h"
 
-#include "sdl_dblclick.h"
-#include "mode.h"
-#include "mouse_hexdump.h"
 
 int last_pc=-1;
 
@@ -136,7 +156,7 @@ int last_pc=-1;
 #define MEMORY_VIEW_Y	40
 #include "gui/porttool.h"
 #define INFO_X			540
-#define INFO_Y			420
+#define INFO_Y			420 + 30
 
 // 5 minutes default
 #define DEFAULT_SONGTIME	(60*5) 
@@ -181,7 +201,7 @@ static char *g_real_filename=NULL; // holds the filename minus path
 
 
 
-int mode=0;
+int mode=0; int submode = 0;
  
 SDL_Event event;
 
@@ -617,8 +637,6 @@ void pack_mask(unsigned char packed_mask[32])
 	}
 }
 
-Uint16 hexdump_address=0x0000, hexdump_locked=0;
-
 int main(int argc, char **argv)
 {
   void *buf=NULL;
@@ -816,8 +834,7 @@ reload:
 		sprintf(tmpbuf, "Comment.: %s", tag.comment);
 		sdlfont_drawString(screen, INFO_X, INFO_Y+40, tmpbuf, color_screen_white);
 		
-		//sprintf(tmpbuf, "Echo....: %s", spc_config.is_echo ? "On" : "Off");	
-		//sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, color_screen_white);
+		
 
 		//sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");	
 		//sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, color_screen_white);
@@ -895,6 +912,7 @@ reload:
 						break;
 					case SDL_MOUSEMOTION:
 						{
+							mouse::x = ev.motion.x; mouse::y = ev.motion.y;
 							if (mode == MODE_NAV || mode == MODE_EDIT_MOUSE_HEXDUMP)
 							{
 								if (	ev.motion.x >= MEMORY_VIEW_X && 
@@ -908,11 +926,9 @@ reload:
 									x /= 2;
 									y /= 2;
 									cur_mouse_address = y*256+x;
-									if (!hexdump_locked) {
-										hexdump_address = cur_mouse_address;
-										int derp = (cur_mouse_address % 8);
-										if (derp >= 4) hexdump_address += (8-derp);
-										else hexdump_address -= derp;;
+									if (!mouse_hexdump::locked) {
+										mouse_hexdump::address = cur_mouse_address;
+										
 									}
 		//							printf("%d,%d: $%04X\n", x, y, y*256+x);
 								}
@@ -926,11 +942,8 @@ reload:
 						break;
 					case SDL_KEYDOWN:
 					{
-						if (ev.key.keysym.sym == SDLK_e)
-						{
-							//toggle echo
-							player->spc_emu()->toggle_echo();
-						}
+						int scancode = ev.key.keysym.sym;
+
 						if (ev.key.keysym.sym == SDLK_u)
 						{
 							//player->spc_write_dsp(0x4c, 0);
@@ -963,8 +976,8 @@ reload:
 							//player->spc_write_dsp(0x4c, 1);
 							//player->spc_write_dsp(0x03, 0x08);
 							
-							player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0xff);
-							player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x23);
+							player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0x00);
+							player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x2);
 							/*player->spc_write_dsp(dsp_reg::eon, 0x1);
 							player->spc_write_dsp(dsp_reg::flg, 0x00);
 							player->spc_write_dsp(dsp_reg::esa, 0x50);
@@ -981,11 +994,30 @@ reload:
 						}
 						if (mode == MODE_NAV)
 						{
+							if (ev.key.keysym.sym == SDLK_e)
+								player->spc_emu()->toggle_echo();
+							else if (ev.key.keysym.sym == SDLK_RETURN && // click in memory view. Toggle lock
+								(mouse::x >= MEMORY_VIEW_X && 
+										mouse::x < MEMORY_VIEW_X + 512 &&
+										mouse::y >= MEMORY_VIEW_Y &&
+										mouse::y < MEMORY_VIEW_Y + 512 ) )
+							{
+								//fprintf(stderr, "WOOT");
+								mouse_hexdump::highnibble = 1;
+				        mouse_hexdump::res_x = 0;
+								mouse_hexdump::res_y = 0;
+
+								// order matters .. call here: 
+								mouse_hexdump::lock();
+								mode = MODE_EDIT_MOUSE_HEXDUMP;
+								submode = mouse_hexdump::EASY_EDIT;
+								cursor::start_timer();
+							}
 							if (ev.key.keysym.sym == SDLK_ESCAPE)
 							{
-								if (hexdump_locked)
+								if (mouse_hexdump::locked)
 								{
-									hexdump_locked = 0;
+									mouse_hexdump::unlock(); 
 								}
 								else
 								{
@@ -1010,7 +1042,7 @@ reload:
 							{
 								uint i=0;
 								int addr;
-								addr = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
+								addr = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
 
 								if ((scancode >= '0') && (scancode <= '9'))
 									i = scancode - '0';
@@ -1034,17 +1066,17 @@ reload:
 								{
 									i <<= 4;
 									i &= 0xf0;
-									//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0x0f;
+									//IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0x0f;
 									mouse_hexdump::tmp_ram &= 0x0f;
 								}
 								else
 								{
 									i &= 0x0f;
-									//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0xf0;
+									//IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0xf0;
 									mouse_hexdump::tmp_ram &= 0xf0;
 								}
 
-								//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
+								//IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
 								mouse_hexdump::tmp_ram |= i;
 
 								if (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c))
@@ -1074,7 +1106,7 @@ reload:
 					    else if (scancode == SDLK_BACKSPACE)
 					    {
 					    	// eh
-					    	int i = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
+					    	int i = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
 					    	while (i < (0x10000) )
 					    	{
 					    		player->spc_write(i-1, player->spc_read(i));
@@ -1088,7 +1120,7 @@ reload:
 					    else if (scancode == SDLK_DELETE)
 					    {
 					    	// eh
-					    	int i = hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
+					    	int i = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
 					    	while (i < (0x10000) )
 					    	{
 					    		player->spc_write(i, player->spc_read(i+1));
@@ -1118,10 +1150,8 @@ reload:
 
 							if (ev.key.keysym.sym == SDLK_ESCAPE || ev.key.keysym.sym == SDLK_RETURN)
 							{
-								mode = MODE_NAV;
-								mouse_hexdump::draw_tmp_ram = 0;
-								cursor::stop_timer();
-								//hexdump_locked=0;
+								exit_edit_mode();
+								//locked=0;
 							}
 						}		
 						else if (mode == MODE_EDIT_APU_PORT)
@@ -1145,7 +1175,7 @@ reload:
 								{
 									i <<= 4;
 									i &= 0xf0;
-									//IAPURAM[hexdump_address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= i;
+									//IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= i;
 									porttool::tmp[porttool::portnum] &= 0x0f;
 								}
 								else
@@ -1230,7 +1260,7 @@ reload:
 								mode = MODE_NAV;
 								cursor::stop_timer();
 								porttool::reset_port();
-								//hexdump_locked=0;
+								//locked=0;
 							}
 							else if (ev.key.keysym.sym == SDLK_RETURN)
 							{
@@ -1265,7 +1295,7 @@ reload:
 				        // editor stuffz
 				        Uint8 oldmode = mode;
 				        mode = MODE_EDIT_MOUSE_HEXDUMP;
-				        hexdump_locked = 1;
+				        
 
 				        int res_x, res_y, highnibble;
 
@@ -1278,6 +1308,7 @@ reload:
 
 				        res_x = mouse_hexdump::rel_x / entry_width;
 				        res_y = mouse_hexdump::rel_y / entry_height;
+				        //res_y -= 7;
 				        int res_half = mouse_hexdump::rel_x % entry_width;
 				        int tmp = entry_width / 2;
 
@@ -1298,7 +1329,8 @@ reload:
 				        mouse_hexdump::res_x = res_x;
 								mouse_hexdump::res_y = res_y;
 
-				        
+								// order matters .. call here: 
+								mouse_hexdump::lock();
 
 				        if (mouse_hexdump::res_y == 16) mouse_hexdump::res_y = 15;
 
@@ -1400,6 +1432,19 @@ reload:
 					} break;
 					case SDL_MOUSEBUTTONDOWN:						
 						{
+							
+							
+							if (ev.button.button == SDL_BUTTON_WHEELUP)
+							{
+								mouse_hexdump::address -= 0x08;				
+								break;					
+							}
+							else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
+							{
+								mouse_hexdump::address += 0x08;
+								break;
+							}
+
 							if (mode == MODE_NAV)
 							{
 								// click in memory view. Toggle lock
@@ -1408,22 +1453,16 @@ reload:
 										ev.motion.y >= MEMORY_VIEW_Y &&
 										ev.motion.y < MEMORY_VIEW_Y + 512 )
 								{
-									hexdump_locked = (!hexdump_locked);
+									mouse_hexdump::toggle_lock();
 								}
 							}
-
+							
 							if (ev.motion.x >= (MOUSE_HEXDUMP_START_X - 2) && ev.motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
 				        ev.motion.y >= MOUSE_HEXDUMP_START_Y && ev.motion.y <= MOUSE_HEXDUMP_END_Y)
 							{
-								if (ev.button.button == SDL_BUTTON_WHEELUP)
+								if (ev.button.button == SDL_BUTTON_RIGHT)
 								{
-									hexdump_address -= 0x08;									
-								}
-								else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-									hexdump_address += 0x08;
-								else if (ev.button.button == SDL_BUTTON_RIGHT)
-								{
-									hexdump_locked = !hexdump_locked;
+									mouse_hexdump::toggle_lock();
 								}
 							}
 
@@ -1573,8 +1612,8 @@ reload:
 			SDL_BlitSurface(memsurface, NULL, screen, &memrect);	
 
 			// draw the 256 bytes block usage bar
-			tmprect.x = MEMORY_VIEW_X-3;
-			tmprect.w = 2; tmprect.h = 2;
+			tmprect.x = MEMORY_VIEW_X-1;
+			tmprect.w = 1; tmprect.h = 2;
 			tmp=0;
 			for (i=0; i<256; i++)
 			{
@@ -1662,7 +1701,7 @@ reload:
 			tmprect.x=MEMORY_VIEW_X+520;
 			tmprect.y=tmp;
 			tmprect.w=screen->w-tmprect.x;
-			tmprect.h=8*10;
+			tmprect.h=10*10;
 			SDL_FillRect(screen, &tmprect, color_screen_black);		
 			tmprect.w=2;
 			tmprect.h=2;
@@ -1691,16 +1730,61 @@ reload:
 				tmprect.y = tmp+(i*10)+6;
 				SDL_FillRect(screen, &tmprect, color_screen_magenta);
 			}
-			tmp += 8*10 + 8;
+			i=9;
+			// 
+			{
+				unsigned char left_vol = player->spc_read_dsp(dsp_reg::mvol_l);
+				unsigned char right_vol = player->spc_read_dsp(dsp_reg::mvol_r);
+				//unsigned char gain = player->spc_read_dsp(7+(i*0x10));
+
+				sprintf(tmpbuf,"M:");
+				sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, color_screen_white);
+				tmprect.x = MEMORY_VIEW_X+520+18;
+				tmprect.y = tmp+(i*10)+1;
+				tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
+
+				SDL_FillRect(screen, &tmprect, color_screen_yellow);
+
+				tmprect.x = MEMORY_VIEW_X+520+18;
+				tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
+				tmprect.y = tmp+(i*10)+4;
+				
+				SDL_FillRect(screen, &tmprect, color_screen_cyan);
+			}
+			i++;
+			{
+				unsigned char left_vol = player->spc_read_dsp(dsp_reg::evol_l);
+				unsigned char right_vol = player->spc_read_dsp(dsp_reg::evol_r);
+				//unsigned char gain = player->spc_read_dsp(7+(i*0x10));
+
+				sprintf(tmpbuf,"E:");
+				sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, color_screen_white);
+				tmprect.x = MEMORY_VIEW_X+520+18;
+				tmprect.y = tmp+(i*10)+1;
+				tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
+
+				SDL_FillRect(screen, &tmprect, color_screen_yellow);
+
+				tmprect.x = MEMORY_VIEW_X+520+18;
+				tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
+				tmprect.y = tmp+(i*10)+4;
+				
+				SDL_FillRect(screen, &tmprect, color_screen_cyan);
+			}
+
+			i++;
+
+			tmp += i*10 + 8;
 
 			sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -", color_screen_white);
-			if (hexdump_locked) {
+			if (mouse_hexdump::locked) {
 				sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, "locked", color_screen_red);
 			} else {
 				sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, "      ", color_screen_red);
 			}
 			
 			tmp+=9;
+			MOUSE_HEXDUMP_START_Y = tmp;
 			if (cur_mouse_address>=0)
 			{
 				
@@ -1709,37 +1793,37 @@ reload:
 
 					unsigned char *st;
 					unsigned char sst;
-
+					Uint16 cut_addr = (mouse_hexdump::address + i) & 0xffff;
 					
-					st = &IAPURAM[hexdump_address+i];
-					//uint8_t st = player->spc_read(hexdump_address+i);
+					st = &IAPURAM[cut_addr];
+					//uint8_t st = player->spc_read(cut_addr+i);
 					//st = &sst;
 					// *st = ;
 					int p = MEMORY_VIEW_X+520, j;
 					//printf ("top_left of rect p = ")
-					if ((hexdump_address+i) > 0xffff)
-						sprintf(tmpbuf, "    : ");
-					else
-						sprintf(tmpbuf, "%04X: ", hexdump_address+i);
+					//if ((cut_addr+i) > 0xffff)
+						//sprintf(tmpbuf, "    : ");
+					//else
+						sprintf(tmpbuf, "%04X: ", cut_addr);
 					sdlfont_drawString(screen, p, tmp, tmpbuf, color_screen_white);
 					p += 6*8;
 					//if (i==0)
 						//printf ("top-left of memory write-region: p_x = %d, tmp_y = %d\n", p, tmp); // top-left of memory write-region
 					for (j=0; j<8; j++) {
 
-						int idx = ((hexdump_address+i+j)&0xff00)<<4;	
+						int idx = ((cut_addr+j)&0xff00)<<4;	
 						Uint32 color;
 
-						idx += ((hexdump_address+i+j) % 256)<<3;
+						idx += ((cut_addr+j) % 256)<<3;
 						color = SDL_MapRGB(screen->format, 
 								0x7f + (memsurface_data[idx]>>1), 
 								0x7f + (memsurface_data[idx+1]>>1), 
 								0x7f + (memsurface_data[idx+2]>>1)
 								);
 								
-						if ((hexdump_address+i+j) > 0xffff)
-							sprintf(tmpbuf, "   ");
-						else if (hexdump_address+i+j == 0xf3)
+						//if ((cut_addr+i+j) > 0xffff)
+							//sprintf(tmpbuf, "   ");
+						if (cut_addr+j == 0xf3)
 						{
 							if (mouse_hexdump::draw_tmp_ram)
 								sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
@@ -1760,7 +1844,6 @@ reload:
 				
 			}
 
-
 			sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+8, " APU:", color_screen_white);
 			sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:", color_screen_white);
 
@@ -1774,13 +1857,16 @@ reload:
 			//sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", APU.OutPorts[0], APU.OutPorts[1], APU.OutPorts[2], APU.OutPorts[3]);		
 			//sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, color_screen_white);
 
-			current_ticks = audio_samples_written/44100;
+			//current_ticks = audio_samples_written/44100;
 			sprintf(tmpbuf, "Time....: %0d:%02d / %0d:%02d", 
 					(player->emu()->tell()/1000)/60,
 					((player->emu()->tell()/1000))%60,
 					song_time/60, song_time%60);
 			sdlfont_drawString(screen, INFO_X, INFO_Y+48, tmpbuf, color_screen_white);
 
+
+			sprintf(tmpbuf, "Echo....: %s", player->spc_emu()->is_echoing() ? "On " : "Off");	
+		sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, color_screen_white);
 			
 			if (mode == MODE_EDIT_MOUSE_HEXDUMP)
 			{
@@ -1791,6 +1877,9 @@ reload:
 	    	//fprintf (stderr, "yee");
 	    	porttool::draw_cursor(screen, color_screen_green);
 	    }
+
+	    //sprintf(tmpbuf, "(%d,%d)", mouse::x, mouse::y);
+	    //sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, color_screen_white);
 	    
 			SDL_UpdateRect(screen, 0, 0, 0, 0);
 			time_last = time_cur;

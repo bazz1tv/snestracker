@@ -2,7 +2,7 @@
 #include "gui/cursor.h"
 //#include "gme/player/Music_Player.h"
 #define PORTTOOL_X    540
-#define PORTTOOL_Y    380
+#define PORTTOOL_Y    380 + 40
 
 #define PORTTOOL_PORT0_X PORTTOOL_X + (8*7)
 #define PORTTOOL_PORT3_X_RIGHTMOST_LOBYTE PORTTOOL_X + (8*23)

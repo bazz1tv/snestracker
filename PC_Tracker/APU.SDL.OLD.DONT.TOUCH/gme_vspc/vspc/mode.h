@@ -5,4 +5,5 @@
 #define MODE_EDIT_APU_PORT 2
 
 extern int mode;
+extern int submode;
 

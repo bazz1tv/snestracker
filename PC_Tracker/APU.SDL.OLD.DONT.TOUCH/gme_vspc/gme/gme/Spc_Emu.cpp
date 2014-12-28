@@ -26,6 +26,7 @@ Spc_Dsp* Spc_Emu::dsp() { return apu.get_dsp(); }
 uint8_t Spc_Emu::read_dsp(uint8_t dsp_addr) { return apu.get_dsp()->read(dsp_addr); }
 void Spc_Emu::write_dsp(uint8_t dsp_addr, int val) { apu.get_dsp()->write(dsp_addr, val); }
 void Spc_Emu::toggle_echo() { dsp()->toggle_echo(); apu.clear_echo(); }
+char Spc_Emu::is_echoing() { return dsp()->is_echoing(); }
 
 Spc_Emu::Spc_Emu() : Spc_Dsp_Register_Map_Interface(&apu)
 {
