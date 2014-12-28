@@ -462,6 +462,7 @@ void Spc_Dsp::run( long count, short* out_buf )
 					break;
 				}
 				
+				// show read of sample data
 				report_memread(voice.addr);
 				int delta = ram [voice.addr];
 				if ( voice.block_remain & 1 )

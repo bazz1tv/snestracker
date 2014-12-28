@@ -976,8 +976,8 @@ reload:
 							//player->spc_write_dsp(0x4c, 1);
 							//player->spc_write_dsp(0x03, 0x08);
 							
-							player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0x00);
-							player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x2);
+							//player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0x00);
+							//player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x2);
 							/*player->spc_write_dsp(dsp_reg::eon, 0x1);
 							player->spc_write_dsp(dsp_reg::flg, 0x00);
 							player->spc_write_dsp(dsp_reg::esa, 0x50);
@@ -986,6 +986,8 @@ reload:
 							player->spc_write_dsp(dsp_reg::evol_l, 127);
 							player->spc_write_dsp(dsp_reg::evol_r, 127);
 							player->spc_write_dsp(dsp_reg::c0, 0x7f);*/
+							player->spc_write_dsp(dsp_reg::evol_l, 80);
+							player->spc_write_dsp(dsp_reg::evol_r, 80);
 							player->spc_write_dsp(dsp_reg::kon,0x1);
 
 							//player->spc_write(0xf2, 0x4c);
@@ -1701,7 +1703,7 @@ reload:
 			tmprect.x=MEMORY_VIEW_X+520;
 			tmprect.y=tmp;
 			tmprect.w=screen->w-tmprect.x;
-			tmprect.h=10*10;
+			tmprect.h=10*11;
 			SDL_FillRect(screen, &tmprect, color_screen_black);		
 			tmprect.w=2;
 			tmprect.h=2;
