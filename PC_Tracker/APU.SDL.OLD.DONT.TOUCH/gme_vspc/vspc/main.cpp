@@ -202,7 +202,7 @@ int last_pc=-1;
 #define MEMORY_VIEW_Y	40
 #include "gui/porttool.h"
 #define INFO_X			540
-#define INFO_Y			420 + 30
+#define INFO_Y			420 + 40
 
 // 5 minutes default
 #define DEFAULT_SONGTIME	(60*5) 
@@ -866,7 +866,7 @@ reload:
 		
 		sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", color_screen_white);
 
-		sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK");
+		sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - DSP MAP");
 		sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, color_screen_yellow);
 
 		/* information */
@@ -1611,6 +1611,11 @@ reload:
 								if (x>=41 && x<=50) { // write mask
 									write_mask(packed_mask);
 								}
+
+								if (x>=53 && x<=59) { // DSP MAP
+									//write_mask(packed_mask);
+									fprintf(stderr, "derp");
+								}
 							}
 						}
 						break;
@@ -2009,8 +2014,8 @@ reload:
 			
 			sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf, color_screen_white);
 			
-			//sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", APU.OutPorts[0], APU.OutPorts[1], APU.OutPorts[2], APU.OutPorts[3]);		
-			//sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, color_screen_white);
+			sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", 0,0,0,0); //APU.OutPorts[0], APU.OutPorts[1], APU.OutPorts[2], APU.OutPorts[3]);		
+			sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, color_screen_white);
 
 			//current_ticks = audio_samples_written/44100;
 			sprintf(tmpbuf, "Time....: %0d:%02d / %0d:%02d", 
