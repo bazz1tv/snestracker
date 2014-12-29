@@ -90,7 +90,7 @@ void handle_error( const char* error )
 	{
 		// put error in window title
 		char str [256];
-		//sprintf( str, "Error: %s", error );
+		sprintf( str, "Error: %s", error );
 		fprintf( stderr, "Error: %s", error );
 		SDL_WM_SetCaption( str, str );
 		

@@ -4,8 +4,8 @@ debug=-g
 gme_CFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `sdl-config --cflags`
 LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl-config --libs` -lm
 
-vspc_CFLAGS=-O3 -funroll-loops -Wall -Ivspc `sdl-config --cflags` -Wall
-vspc_LDFLAGS=-g `sdl-config --libs` -lm
+vspc_CFLAGS=$(debug) -O3 -funroll-loops -Wall -Ivspc `sdl-config --cflags` -Wall
+vspc_LDFLAGS=$(debug) `sdl-config --libs` -lm
 
 CFLAGS = $(gme_CFLAGS) $(vspc_CFLAGS)
 ####
