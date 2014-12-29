@@ -61,6 +61,29 @@ static void _sdlfont_drawChar(SDL_Surface *dst, int X, int Y, const char ch, Uin
 	}
 }
 
+static void _sdlfont_drawChar2c(SDL_Surface *dst, int X, int Y, const char ch, Uint32 color1, Uint32 color2)
+{
+	int x, y;
+	unsigned char *c;
+	
+	c = font_getChar2c(ch);
+	for (y=0; y<7; y++)
+	{
+		for (x=0; x<8; x++)
+		{
+			//char res = (*c)&(128>>x);
+			if ((*c)&(128>>x)) {
+				putpixel(dst, x+X, y+Y, color1);	
+			}
+			else if ( *(c+7) & (128>>x)  )
+			{
+				putpixel(dst, x+X, y+Y, color2);	
+			}
+		}
+		c++;
+	}
+}
+
 void sdlfont_drawString(SDL_Surface *dst, int x, int y, const char *string, Uint32 color)
 {
 	int n, len;
@@ -81,6 +104,35 @@ void sdlfont_drawString(SDL_Surface *dst, int x, int y, const char *string, Uint
 		if ((n*8)+x+8 >= dst->w) {
 		} else {
 			_sdlfont_drawChar(dst, x + (n*8), y, *string, color);
+		}
+		string++;
+	}
+	
+	if (SDL_MUSTLOCK(dst)) {
+		SDL_UnlockSurface(dst);
+	}
+}
+
+void sdlfont_drawString2c(SDL_Surface *dst, int x, int y, const char *string, Uint32 color1, Uint32 color2)
+{
+	int n, len;
+	SDL_Rect under;
+ 
+	len = strlen(string);
+
+	under.x = x; under.y = y;
+	under.h = 8; under.w = 8*len;
+	SDL_FillRect(dst, &under, 0);
+
+	if (SDL_MUSTLOCK(dst)) {
+		SDL_LockSurface(dst);
+	}
+
+	for (n=0; n<len; n++)
+	{
+		if ((n*8)+x+8 >= dst->w) {
+		} else {
+			_sdlfont_drawChar2c(dst, x + (n*8), y, *string, color1, color2);
 		}
 		string++;
 	}

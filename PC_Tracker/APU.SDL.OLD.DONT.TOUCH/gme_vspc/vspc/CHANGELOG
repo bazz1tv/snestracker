@@ -1,4 +1,6 @@
 -- v1.31 (by bazz)
+  Added "Inverse Phase Volume" Display (:)
+  Add Echo/Main volume bars.
   Incorporated Blargg's gme APU/player functionality.
   Added new "echo region" color highlight
 

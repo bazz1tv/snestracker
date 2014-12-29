@@ -217,7 +217,7 @@ unsigned char *memsurface_data=NULL;
 //static int audio_buf_bytes=0, spc_buf_size;
 
 Uint32 color_screen_white, color_screen_black, color_screen_cyan, color_screen_magenta, color_screen_yellow, color_screen_red;
-Uint32  color_screen_green;
+Uint32  color_screen_green, color_screen_blue;
 Uint32 color_screen_gray;
 Uint32 colorscale[12];
 
@@ -584,6 +584,7 @@ int init_sdl()
 		color_screen_gray = SDL_MapRGB(screen->format, 0x7f, 0x7f, 0x7f);
 		color_screen_red = SDL_MapRGB(screen->format, 0xff, 0x00, 0x00);
 		color_screen_green = SDL_MapRGB(screen->format, 0x00, 0xff, 0x00);
+		color_screen_blue = SDL_MapRGB(screen->format, 0x00, 0x00, 0xff);
 
 		colorscale[0] = SDL_MapRGB(screen->format, 0xff, 0x00, 0x00);
 		colorscale[1] = SDL_MapRGB(screen->format, 0xff, 0x7f, 0x00);
@@ -1696,7 +1697,11 @@ reload:
 			
 			sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices volumes:", color_screen_white);
 			sdlfont_drawString(screen, MEMORY_VIEW_X+520+(16*8), tmp, "Left", color_screen_yellow);
+			//sdlfont_drawString(screen, MEMORY_VIEW_X+520+(16*8)+(8*2)+1, tmp, "ft", color_screen_red);
+			
+
 			sdlfont_drawString(screen, MEMORY_VIEW_X+520+(20*8)+4, tmp, "Right", color_screen_cyan);
+			//sdlfont_drawString(screen, MEMORY_VIEW_X+520+(20*8)+4+(8*3)+1, tmp, "ht", color_screen_green);
 			sdlfont_drawString(screen, MEMORY_VIEW_X+520+(26*8), tmp, "Gain", color_screen_magenta);
 			tmp += 9;
 
@@ -1707,25 +1712,76 @@ reload:
 			SDL_FillRect(screen, &tmprect, color_screen_black);		
 			tmprect.w=2;
 			tmprect.h=2;
+
+			
+
+
+			#define L_FLAG 0
+			#define R_FLAG 1
+
 			for (i=0; i<8; i++)
 			{
+				Uint32 *Color1=&color_screen_white, *Color2 = &color_screen_white;
+				Uint32 *thecolor = &color_screen_gray;
+				unsigned char is_inverted=0;
 				unsigned char left_vol = player->spc_read_dsp(0+(i*0x10));
 				unsigned char right_vol = player->spc_read_dsp(1+(i*0x10));
 				unsigned char gain = player->spc_read_dsp(7+(i*0x10));
-
-				sprintf(tmpbuf,"%d:", i);
+				
+				
+				//Value -128 can be safely used
+				// for left vol
+				if (left_vol >= 0x80)
+				{
+					left_vol = (left_vol ^ 0xff) + 1;
+					is_inverted = 1 << L_FLAG;
+				}
+				// for right vol
+				if (right_vol >= 0x80)
+				{
+					right_vol = (right_vol ^ 0xff) + 1;
+					is_inverted |= 1 << R_FLAG;
+				}
+				sprintf(tmpbuf,"%d", i);
 				sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, color_screen_white);
+				
+				if (is_inverted & (1 << L_FLAG) )
+				{
+					Color1 = thecolor;
+				}
+				if (is_inverted & (1 << R_FLAG) )
+				{
+					Color2 = thecolor;
+				}
+				sprintf(tmpbuf,"\x1");
+				sdlfont_drawString2c(screen, MEMORY_VIEW_X+520 + 8, tmp + (i*10), tmpbuf, *Color1, *Color2);
+
 				tmprect.x = MEMORY_VIEW_X+520+18;
 				tmprect.y = tmp+(i*10);
 				tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
 
 				SDL_FillRect(screen, &tmprect, color_screen_yellow);
+				/*if (is_inverted & (1 << L_FLAG))
+				{
+					tmprect.x += tmprect.w+1;
+					tmprect.w = 2;
+					//tmprect.h
+					SDL_FillRect(screen, &tmprect, color_screen_green);
+				}*/
 
 				tmprect.x = MEMORY_VIEW_X+520+18;
 				tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
 				tmprect.y = tmp+(i*10)+3;
 				
 				SDL_FillRect(screen, &tmprect, color_screen_cyan);
+				/*
+				if (is_inverted & (1 << R_FLAG))
+				{
+					tmprect.x += tmprect.w+1;
+					tmprect.w = 2;
+					//tmprect.h
+					SDL_FillRect(screen, &tmprect, color_screen_red);
+				}*/
 
 				tmprect.x = MEMORY_VIEW_X+520+18;
 				tmprect.w = gain * (screen->w-tmprect.x-20)/255;
@@ -1735,12 +1791,44 @@ reload:
 			i=9;
 			// 
 			{
+				Uint32 *Color1=&color_screen_white, *Color2 = &color_screen_white;
+				Uint32 *thecolor = &color_screen_gray;
+				unsigned char is_inverted=0;
 				unsigned char left_vol = player->spc_read_dsp(dsp_reg::mvol_l);
 				unsigned char right_vol = player->spc_read_dsp(dsp_reg::mvol_r);
 				//unsigned char gain = player->spc_read_dsp(7+(i*0x10));
+				//Value -128 canNOT be safely used
+				// for left vol
+				if (left_vol >= 0x80)
+				{
+					left_vol = (left_vol ^ 0xff) + 1;
+					is_inverted = 1 << L_FLAG;
+				}
+				// for right vol
+				if (right_vol >= 0x80)
+				{
+					right_vol = (right_vol ^ 0xff) + 1;
+					is_inverted |= 1 << R_FLAG;
+				}
 
-				sprintf(tmpbuf,"M:");
+				if (is_inverted & (1 << L_FLAG) )
+				{
+					if (left_vol == 0x80)
+						Color1 = &color_screen_red; // this is bad value according to FullSNES
+					else Color1 = thecolor;
+				}
+				if (is_inverted & (1 << R_FLAG) )
+				{
+					if (right_vol == 0x80)
+						Color2 = &color_screen_red; // this is bad value according to FullSNES
+					Color2 = thecolor;
+				}
+
+				sprintf(tmpbuf,"M");
 				sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, color_screen_white);
+				sprintf(tmpbuf,"\x1");
+				sdlfont_drawString2c(screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, *Color1, *Color2);
+
 				tmprect.x = MEMORY_VIEW_X+520+18;
 				tmprect.y = tmp+(i*10)+1;
 				tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
@@ -1755,12 +1843,42 @@ reload:
 			}
 			i++;
 			{
+				Uint32 *Color1=&color_screen_white, *Color2 = &color_screen_white;
+				Uint32 *thecolor = &color_screen_gray;
+				unsigned char is_inverted=0;
 				unsigned char left_vol = player->spc_read_dsp(dsp_reg::evol_l);
 				unsigned char right_vol = player->spc_read_dsp(dsp_reg::evol_r);
 				//unsigned char gain = player->spc_read_dsp(7+(i*0x10));
 
-				sprintf(tmpbuf,"E:");
+				//unsigned char gain = player->spc_read_dsp(7+(i*0x10));
+				//Value -128 can be safely used
+				// for left vol
+				if (left_vol >= 0x80)
+				{
+					left_vol = (left_vol ^ 0xff) + 1;
+					is_inverted = 1 << L_FLAG;
+				}
+				// for right vol
+				if (right_vol >= 0x80)
+				{
+					right_vol = (right_vol ^ 0xff) + 1;
+					is_inverted |= 1 << R_FLAG;
+				}
+
+				if (is_inverted & (1 << L_FLAG) )
+				{
+					Color1 = thecolor;
+				}
+				if (is_inverted & (1 << R_FLAG) )
+				{
+					Color2 = thecolor;
+				}
+
+
+				sprintf(tmpbuf,"E");
 				sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, color_screen_white);
+				sprintf(tmpbuf,"\x1");
+				sdlfont_drawString2c(screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, *Color1, *Color2);
 				tmprect.x = MEMORY_VIEW_X+520+18;
 				tmprect.y = tmp+(i*10)+1;
 				tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
