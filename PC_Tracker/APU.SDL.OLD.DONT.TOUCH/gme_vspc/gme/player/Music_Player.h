@@ -35,6 +35,7 @@ public:
 	
 	// Pause/resume playing current track.
 	void pause( int );
+	void toggle_pause();
 	
 	// True if track ended
 	bool track_ended() const;
@@ -83,6 +84,10 @@ public:
 public:
 	Music_Player();
 	~Music_Player();
+	/*void set_path(char *str)
+	{
+		strcpy(path,str);
+	}*/
 private:
 	Music_Emu* emu_;
 	Spc_Emu* spc_emu_;
@@ -91,6 +96,7 @@ private:
 	int scope_buf_size;
 	bool paused;
 	track_info_t track_info_;
+	//char *path;
 	
 	void suspend();
 	void resume();

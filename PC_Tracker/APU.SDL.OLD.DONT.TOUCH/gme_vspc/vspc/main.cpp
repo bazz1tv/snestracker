@@ -41,43 +41,6 @@
 #include "sdl_dblclick.h"
 #include "mode.h"
 #include "mouse_hexdump.h"
-
-typedef struct SPC_Config
-{
-  int sampling_rate;
-  int resolution;
-  int channels;
-  int is_interpolation;
-  int is_echo;
-} SPC_Config;
-
-SPC_Config spc_config = {
-    44100,
-    16,
-    2,
-    0, // interpolation
-    0 // echo
-};
-
-namespace mouse
-{
-	int x,y;
-}
-
-void enter_edit_mode()
-{
-
-}
-void exit_edit_mode()
-{
-	if (submode == mouse_hexdump::EASY_EDIT)
-		mouse_hexdump::unlock();
-	mode = MODE_NAV;
-	submode = 0;
-	mouse_hexdump::draw_tmp_ram = 0;
-	cursor::stop_timer();
-}
-
 #include "gme/player/Music_Player.h"
 static Music_Player* player;
 int track = 1;
@@ -105,6 +68,89 @@ void handle_error( const char* error )
 		exit( EXIT_FAILURE );
 	}
 }
+
+struct coord
+{
+	int x,y;
+};
+
+namespace coords
+{
+	coord Voice0Vol;
+}
+
+namespace voices
+{
+	Uint8 muted_toggle_protect=0; // for toggle protection during MouseMoition event
+	Uint8 muted=0;
+
+	void checkmouse_mute(Uint16 &x,Uint16 &y)
+	{
+		char changed=0;
+		for (int i=0; i < 8; i++)
+		{
+			if (x >= (coords::Voice0Vol.x) && x <= (coords::Voice0Vol.x+8) &&
+				y >= (coords::Voice0Vol.y + (i*10)) && y <= (coords::Voice0Vol.y+8 + (i*10)) )
+			{
+				if (!(muted_toggle_protect & (1 << i)))
+				{
+					muted_toggle_protect |= 1<<i;
+					changed = 1;
+					voices::muted ^= (1<<i);
+				}
+			}
+			else
+			{
+				muted_toggle_protect &= ~(1<<i);
+			}
+		}
+		if (changed)
+			player->mute_voices(voices::muted);
+	}
+	
+}
+
+
+// DEPRECATED
+typedef struct SPC_Config
+{
+  int sampling_rate;
+  int resolution;
+  int channels;
+  int is_interpolation;
+  int is_echo;
+} SPC_Config;
+
+SPC_Config spc_config = {
+    44100,
+    16,
+    2,
+    0, // interpolation
+    0 // echo
+};
+
+namespace mouse
+{
+	int x,y;
+	char show=0;
+}
+void toggle_pause();
+void restart_track();
+void enter_edit_mode()
+{
+
+}
+void exit_edit_mode()
+{
+	if (submode == mouse_hexdump::EASY_EDIT)
+		mouse_hexdump::unlock();
+	mode = MODE_NAV;
+	submode = 0;
+	mouse_hexdump::draw_tmp_ram = 0;
+	cursor::stop_timer();
+}
+
+
 
 
 static void start_track( int track, const char* path )
@@ -195,7 +241,7 @@ static int g_cfg_novideo = 0;
 static int g_cfg_update_in_callback = 0;
 static int g_cfg_num_files = 0;
 static char **g_cfg_playlist = NULL;
-static int g_paused = 0;
+//static int g_paused = 0;
 static int g_cur_entry = 0;
 static char *g_real_filename=NULL; // holds the filename minus path
 
@@ -217,7 +263,7 @@ unsigned char *memsurface_data=NULL;
 //static int audio_buf_bytes=0, spc_buf_size;
 
 Uint32 color_screen_white, color_screen_black, color_screen_cyan, color_screen_magenta, color_screen_yellow, color_screen_red;
-Uint32  color_screen_green, color_screen_blue;
+Uint32  color_screen_green, color_screen_blue, color_screen_nearblack;
 Uint32 color_screen_gray;
 Uint32 colorscale[12];
 
@@ -577,6 +623,7 @@ int init_sdl()
 		
 		// precompute some colors
 		color_screen_black = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
+		color_screen_nearblack = SDL_MapRGB(screen->format, 0x50, 0x50, 0x50);
 		color_screen_white = SDL_MapRGB(screen->format, 0xff, 0xff, 0xff);
 		color_screen_yellow = SDL_MapRGB(screen->format, 0xff, 0xff, 0x00);
 		color_screen_cyan = SDL_MapRGB(screen->format, 0x00, 0xff, 0xff);
@@ -859,7 +906,7 @@ reload:
 	if (!g_cfg_nosound) {
 		SDL_PauseAudio(0);
 	}
-	g_paused = 0;
+	//g_paused = 0;
   for (;;) 
 	{
 		SDL_Event ev;
@@ -914,6 +961,11 @@ reload:
 					case SDL_MOUSEMOTION:
 						{
 							mouse::x = ev.motion.x; mouse::y = ev.motion.y;
+
+							if (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT))
+							{
+								voices::checkmouse_mute(ev.motion.x, ev.motion.y);
+							}
 							if (mode == MODE_NAV || mode == MODE_EDIT_MOUSE_HEXDUMP)
 							{
 								if (	ev.motion.x >= MEMORY_VIEW_X && 
@@ -943,8 +995,8 @@ reload:
 						break;
 					case SDL_KEYDOWN:
 					{
-						//int scancode = ev.key.keysym.sym;
-
+						int scancode = ev.key.keysym.sym;
+						
 						if (ev.key.keysym.sym == SDLK_u)
 						{
 							//player->spc_write_dsp(0x4c, 0);
@@ -997,7 +1049,20 @@ reload:
 						}
 						if (mode == MODE_NAV)
 						{
-							if (ev.key.keysym.sym == SDLK_e)
+							if (scancode == SDLK_c)
+							{
+								mouse::show = !mouse::show;
+							}
+							else if (scancode == SDLK_SPACE)
+							{
+								player->toggle_pause();
+							}
+							else if (scancode == SDLK_r)
+							{
+								player->start_track(0);	// based on only having 1 track
+								// in the program .. this would have to change otherwise
+							}
+							else if (ev.key.keysym.sym == SDLK_e)
 								player->spc_emu()->toggle_echo();
 							else if (ev.key.keysym.sym == SDLK_RETURN && // click in memory view. Toggle lock
 								(mouse::x >= MEMORY_VIEW_X && 
@@ -1448,6 +1513,10 @@ reload:
 								break;
 							}
 
+							voices::muted_toggle_protect = 0;
+							voices::checkmouse_mute(ev.motion.x, ev.motion.y);
+							
+
 							if (mode == MODE_NAV)
 							{
 								// click in memory view. Toggle lock
@@ -1514,18 +1583,11 @@ reload:
 								int x = ev.button.x / 8;
 								if (x>=1 && x<=4) { printf ("penis5\n");goto clean; } // exit
 								if (x>=8 && x<=12) { 
-									if (g_paused) { 
-										g_paused = 0; SDL_PauseAudio(0); 
-									} else {
-										g_paused = 1; SDL_PauseAudio(1);
-									}
+									toggle_pause();
 								} // pause
 
 								if (x>=16 && x<=22) {  // restart
-									SDL_PauseAudio(1);
-									//goto reload;
-									track = 1;
-									start_track( track, path );
+									restart_track();
 								}
 
 								if (x>=26 && x<=29) {  // prev
@@ -1560,46 +1622,7 @@ reload:
 			
 		} // !g_cfg_novideo
 
-		if (g_cfg_nosound) {			
-			/*SPC_update(&audiobuf[audio_buf_bytes]);			
-			audio_samples_written += spc_buf_size/4; // 16bit stereo
-			SPC_update(&audiobuf[audio_buf_bytes]);			
-			audio_samples_written += spc_buf_size/4; // 16bit stereo
-			SPC_update(&audiobuf[audio_buf_bytes]);			
-			audio_samples_written += spc_buf_size/4; // 16bit stereo
-			SPC_update(&audiobuf[audio_buf_bytes]);			
-			audio_samples_written += spc_buf_size/4; // 16bit stereo*/
-		}
-		else
-		{	
-			if (!g_cfg_update_in_callback && !g_paused)
-			{
-				// fill the buffer when possible
-				updates = 0;
-			
-				/*while (BUFFER_SIZE - audio_buf_bytes >= spc_buf_size )
-				{
-					if (!g_cfg_novideo) {
-						if (SDL_MUSTLOCK(memsurface)) {
-							SDL_LockSurface(memsurface);
-						}
-					}
-					while (BUFFER_SIZE - audio_buf_bytes >= spc_buf_size) {						
-						SDL_LockAudio();						
-						SPC_update(&audiobuf[audio_buf_bytes]);						
-						SDL_UnlockAudio();
-						audio_buf_bytes += spc_buf_size;
-					}
-					
-					if (!g_cfg_novideo) {
-						if (SDL_MUSTLOCK(memsurface)) {
-							SDL_UnlockSurface(memsurface);
-						}
-					}					
-				}*/
-			}
-
-		}
+		
 
 //return 0; // not reached		
 
@@ -1743,7 +1766,19 @@ reload:
 					is_inverted |= 1 << R_FLAG;
 				}
 				sprintf(tmpbuf,"%d", i);
-				sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, color_screen_white);
+				int x =MEMORY_VIEW_X+520, y = tmp + (i*10);
+				Uint32 *color;
+				if (voices::muted & (1<<i))
+					color = &color_screen_nearblack;
+				else 
+					color = &color_screen_white;
+
+				sdlfont_drawString(screen, x, y, tmpbuf, *color);
+				if (i==0)
+				{
+					coords::Voice0Vol.x = x;
+					coords::Voice0Vol.y = y;	
+				}
 				
 				if (is_inverted & (1 << L_FLAG) )
 				{
@@ -2001,8 +2036,14 @@ reload:
 	    	porttool::draw_cursor(screen, color_screen_green);
 	    }
 
-	    //sprintf(tmpbuf, "(%d,%d)", mouse::x, mouse::y);
-	    //sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, color_screen_white);
+	    if (mouse::show)
+	    {
+	    	if (mouse::x < (screen->w-40) && mouse::y < (screen->h - 8))
+	    	{	
+			    sprintf(tmpbuf, "(%d,%d)", mouse::x, mouse::y);
+			    sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, color_screen_white);
+			  }
+		  }
 	    
 			SDL_UpdateRect(screen, 0, 0, 0, 0);
 			time_last = time_cur;
@@ -2017,6 +2058,20 @@ clean:
     //SPC_close();
 
     return 0;
+}
+
+void toggle_pause()
+{
+	player->toggle_pause();
+}
+
+void restart_track()
+{
+	SDL_PauseAudio(1);
+	//goto reload;
+	//track = 1;
+	//start_track( track, path );
+	player->start_track(0);
 }
 
 

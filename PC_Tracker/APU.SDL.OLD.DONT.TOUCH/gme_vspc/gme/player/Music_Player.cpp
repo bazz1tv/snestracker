@@ -119,6 +119,11 @@ blargg_err_t Music_Player::start_track( int track )
 	return 0;
 }
 
+void Music_Player::toggle_pause()
+{
+	pause(!paused);
+}
+
 void Music_Player::pause( int b )
 {
 	paused = b;
