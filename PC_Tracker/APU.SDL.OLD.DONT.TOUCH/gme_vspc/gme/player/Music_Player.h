@@ -6,6 +6,8 @@
 
 #include "gme/Music_Emu.h"
 #include "gme/Spc_Emu.h"
+#include <vector>
+#include <iostream>
 
 class Music_Player {
 public:
@@ -80,6 +82,14 @@ public:
 	// Set buffer to copy samples from each buffer into, or NULL to disable
 	typedef short sample_t;
 	void set_scope_buffer( sample_t* buf, int size ) { scope_buf = buf; scope_buf_size = size; }
+
+	void inc_curtrack();
+	void dec_curtrack();
+	void play_prev();
+	void play_next();
+	void restart_track();
+	int get_curtrack();
+
 	
 public:
 	Music_Player();
@@ -96,7 +106,9 @@ private:
 	int scope_buf_size;
 	bool paused;
 	track_info_t track_info_;
+	int curtrack, filetrack;
 	//char *path;
+	std::vector<std::string> files;
 	
 	void suspend();
 	void resume();

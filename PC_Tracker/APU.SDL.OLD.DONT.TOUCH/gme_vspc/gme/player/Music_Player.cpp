@@ -36,11 +36,50 @@ static void sound_start();
 static void sound_stop();
 static void sound_cleanup();
 
+
+
+void Music_Player::restart_track()
+{
+	start_track(curtrack);
+}
+
+void Music_Player::play_prev()
+{
+	if (files.empty())
+		return;
+	if (filetrack == 0)
+		filetrack = files.size() - 1;
+	else filetrack--;
+
+	const char *str = files.at(filetrack).c_str();
+	load_file(str);
+	start_track(0);
+}
+
+void Music_Player::play_next()
+{
+	if (files.empty())
+		return;
+	if (filetrack == (files.size()-1))
+		filetrack = 0;
+	else filetrack++;
+
+	const char *str = files.at(filetrack).c_str();
+	load_file(str);
+	start_track(0);
+}
+
+int Music_Player::get_curtrack() { return curtrack; }
+void Music_Player::inc_curtrack() { curtrack++; }
+void Music_Player::dec_curtrack() { curtrack--; }
+
 Music_Player::Music_Player()
 {
 	emu_      = 0;
 	scope_buf = 0;
 	paused    = false;
+	curtrack = 0;
+	filetrack=0;
 }
 
 blargg_err_t Music_Player::init( long rate )
@@ -71,10 +110,44 @@ Music_Player::~Music_Player()
 blargg_err_t Music_Player::load_file( const char* path )
 {
 	stop();
+
+	// check if file is m3u 
+	char* ext;
+	char file1[500];
+	ext = strrchr(path,'.');
+	if (ext == NULL)
+		return "no . in filename";
+	ext++;
+
+	if (!strcmp(ext, "m3u"))
+	{
+		FILE *fp = fopen(path, "r");
+		if (fp == NULL)
+			return "cant open file";
+		while (fgets(file1, 500, fp) != NULL)
+		{	
+			// strip off new line
+			int i = strlen(file1);
+
+			if (file1[i-1] == 0x0a) file1[i-1] = 0;
+			std::string s (file1);
+			files.push_back(s);
+		}
+		//handle_error(player->load_file(files.at(0).c_str()));
+		path = files.at(0).c_str();
+	}
+	//else handle_error( player->load_file( path ) ); 
 	
 	RETURN_ERR( gme_open_file( path, &emu_, sample_rate ) );
 
 	spc_emu_ = (Spc_Emu*)emu_;
+
+	/*for (int i=i; i < track_count(); i++)
+	{
+		track_info_t info;
+		handle_error( gme_track_info( emu_, &info, i ) );
+		fprintf(stderr, )
+	}*/
 
 	
 	/*char m3u_path [256 + 5];
@@ -96,6 +169,7 @@ int Music_Player::track_count() const
 
 blargg_err_t Music_Player::start_track( int track )
 {
+	curtrack = track;
 	if ( emu_ )
 	{
 		// Sound must not be running when operating on emulator

@@ -29,21 +29,177 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <math.h>
-
-//#include "libspc.h"
-//#include "id666.h"
-
-//#include "spc_structs.h"
+#include <vector>
+#include <iostream>
 #include "SDL.h"
+#include "gme/player/Music_Player.h"
 
- #include "sdlfont.h"
+#include "sdlfont.h"
 
 #include "sdl_dblclick.h"
 #include "mode.h"
 #include "mouse_hexdump.h"
-#include "gme/player/Music_Player.h"
-static Music_Player* player;
-int track = 1;
+
+ int last_pc=-1;
+
+#define PACKAGE "spcview"
+#define VERSION "0.01"
+
+#define MEMORY_VIEW_X	16
+#define MEMORY_VIEW_Y	40
+#include "gui/porttool.h"
+#define INFO_X			540
+#define INFO_Y			420 + 40
+
+// 5 minutes default
+#define DEFAULT_SONGTIME	(60*5) 
+
+#define PROG_NAME_VERSION_STRING "vspcplay v1.31 patched by bazz"
+#define CREDITS "vspcplay v1.31 by Raphael Assenat (http://vspcplay.raphnet.net). APU emulation code from snes9x."
+
+/*SPC_Config spc_config = {
+    44100,
+    16,
+    2,
+    0, // interpolation
+    0 // echo
+};*/
+
+// those are bigger so I dont have to do a range test
+// each time I want to log the PC address (where I assume
+// a 5 byte instruction)
+// bazZ: dunno if we need this
+unsigned char used[0x10006];
+unsigned char used2[0x101];
+
+//extern struct SAPU APU;
+//extern struct SIAPU IAPU;
+
+static unsigned char g_cfg_filler = 0x00;
+static int g_cfg_apply_block = 0;
+static int g_cfg_statusline = 0;
+static int g_cfg_nice = 0;
+static int g_cfg_extratime = 0;
+static int g_cfg_ignoretagtime = 0;
+static int g_cfg_defaultsongtime = DEFAULT_SONGTIME;
+static int g_cfg_autowritemask = 0;
+static int g_cfg_nosound = 0;
+static int g_cfg_novideo = 0;
+static int g_cfg_update_in_callback = 0;
+static int g_cfg_num_files = 0;
+static char **g_cfg_playlist = NULL;
+//static int g_paused = 0;
+static int g_cur_entry = 0;
+static char *g_real_filename=NULL; // holds the filename minus path
+
+int mode=0; int submode = 0;
+ 
+SDL_Event event;
+
+
+
+const char* path;
+char tmpbuf[100];
+SDL_Surface *screen=NULL;
+SDL_Surface *memsurface=NULL;
+unsigned char *memsurface_data=NULL;
+//#define BUFFER_SIZE 65536
+///static unsigned char audiobuf[BUFFER_SIZE];
+//static int audio_buf_bytes=0, spc_buf_size;
+
+Uint32 color_screen_white, color_screen_black, color_screen_cyan, color_screen_magenta, color_screen_yellow, color_screen_red;
+Uint32  color_screen_green, color_screen_blue, color_screen_nearblack;
+Uint32 color_screen_dark_magenta, color_screen_dark_cyan, color_screen_dark_yellow;
+Uint32 color_screen_gray;
+Uint32 colorscale[12];
+
+namespace track
+{
+	static char now_playing[1024];
+	int song_time;
+	track_info_t tag;
+
+//int curtrack=0;
+
+
+void update_tag()
+{
+	tag = player->track_info();
+		/*struct track_info_t
+		{
+			long track_count;
+			
+			// times in milliseconds; -1 if unknown 
+			long length;
+			long intro_length;
+			long loop_length;
+			
+			// empty string if not available 
+			char system    [256];
+			char game      [256];
+			char song      [256];
+			char author    [256];
+			char copyright [256];
+			char comment   [256];
+			char dumper    [256];
+		};*/
+
+		/* decide how much time the song will play */
+		if (!g_cfg_ignoretagtime) {
+			song_time = (int)tag.length / 1000; //atoi((const char *)tag.seconds_til_fadeout);
+			if (song_time <= 0) {
+				song_time = g_cfg_defaultsongtime;
+			}
+		}
+		else {
+			song_time = g_cfg_defaultsongtime;
+		}
+
+		song_time += g_cfg_extratime;
+
+		now_playing[0] = 0;
+		if (tag.song)
+		{
+			if (strlen((const char *)tag.song)) {
+				sprintf(now_playing, "Now playing: %s (%s), dumped by %s\n", tag.song, tag.game, tag.dumper);
+			}		
+		}
+		if (strlen(now_playing)==0) {
+			sprintf(now_playing, "Now playing: %s\n", g_cfg_playlist[g_cur_entry]);
+		}
+		/* information */
+
+		// CLEAR THE BACKGROUND FIRST
+		//536,465
+		//800,519
+		SDL_Rect r;
+		r.x = 536;
+		r.y = 465;
+		r.w = 800-536;
+		r.h = 519-465;
+		SDL_FillRect(screen, &r, color_screen_black);
+
+		sdlfont_drawString(screen, INFO_X, INFO_Y, "      - Info -", color_screen_white);
+		sprintf(tmpbuf, "Filename: %s", path);
+		sdlfont_drawString(screen, INFO_X, INFO_Y+8, tmpbuf, color_screen_white);
+		sprintf(tmpbuf, "Title...: %s", track::tag.song);
+		sdlfont_drawString(screen, INFO_X, INFO_Y+16, tmpbuf, color_screen_white);
+		sprintf(tmpbuf, "Game....: %s", track::tag.game);
+		sdlfont_drawString(screen, INFO_X, INFO_Y+24, tmpbuf, color_screen_white);
+		sprintf(tmpbuf, "Dumper..: %s", track::tag.dumper);
+		sdlfont_drawString(screen, INFO_X, INFO_Y+32, tmpbuf, color_screen_white);
+		sprintf(tmpbuf, "Comment.: %s", track::tag.comment);
+		sdlfont_drawString(screen, INFO_X, INFO_Y+40, tmpbuf, color_screen_white);
+}
+}
+//#include "libspc.h"
+//#include "id666.h"
+
+//#include "spc_structs.h"
+
+
+Music_Player* player;
+//int track = 1;
 uint8_t *IAPURAM;
 static bool paused;
 void handle_error( const char* );
@@ -89,8 +245,8 @@ namespace voices
 		char changed=0;
 		for (int i=0; i < 8; i++)
 		{
-			if (x >= (coords::Voice0Vol.x) && x <= (coords::Voice0Vol.x+8) &&
-				y >= (coords::Voice0Vol.y + (i*10)) && y <= (coords::Voice0Vol.y+8 + (i*10)) )
+			if (x >= (coords::Voice0Vol.x) && x <= (coords::Voice0Vol.x+8+125) &&	// + 125 to cover the bar too
+				y >= (coords::Voice0Vol.y + (i*10)) && y <= (coords::Voice0Vol.y+9 + (i*10)) )
 			{
 				if (!(muted_toggle_protect & (1 << i)))
 				{
@@ -106,6 +262,39 @@ namespace voices
 		}
 		if (changed)
 			player->mute_voices(voices::muted);
+	}
+	void checkmouse_solo(Uint16 &x,Uint16 &y)
+	{
+		char changed=0;
+		for (int i=0; i < 8; i++)
+		{
+			if (x >= (coords::Voice0Vol.x) && x <= (coords::Voice0Vol.x+8+125) &&	// + 125 to cover the bar too
+				y >= (coords::Voice0Vol.y + (i*10) + 1) && y <= (coords::Voice0Vol.y+9 + (i*10)) )
+			{
+				fprintf(stderr, "muted = %02x\n, ~(1 << i) = 0x%02x\n", muted, ~(1 << i));
+					//muted_toggle_protect |= 1<<i;
+					changed = 1;
+					if (voices::muted == Uint8(~(1 << i)) )
+					{
+						muted = 0;
+						fprintf(stderr, "DERP");
+					}
+					else voices::muted = ~(1<<i);
+			}
+			
+		}
+		if (changed)
+			player->mute_voices(voices::muted);
+	}
+	void checkmouse(Uint16 &x, Uint16 &y, Uint8 &b)
+	{
+		if (b == SDL_BUTTON_LEFT) checkmouse_mute(x,y);
+		else if (b == SDL_BUTTON_RIGHT) checkmouse_solo(x,y);
+	}
+
+	Uint8 is_muted(int i)
+	{
+		return voices::muted & (1<<i);
 	}
 	
 }
@@ -193,79 +382,11 @@ void dec_ram(spc_addr_t addr, int i=1)
 
 
 
-int last_pc=-1;
-
-#define PACKAGE "spcview"
-#define VERSION "0.01"
-
-#define MEMORY_VIEW_X	16
-#define MEMORY_VIEW_Y	40
-#include "gui/porttool.h"
-#define INFO_X			540
-#define INFO_Y			420 + 40
-
-// 5 minutes default
-#define DEFAULT_SONGTIME	(60*5) 
-
-#define PROG_NAME_VERSION_STRING "vspcplay v1.31 patched by bazz"
-#define CREDITS "vspcplay v1.31 by Raphael Assenat (http://vspcplay.raphnet.net). APU emulation code from snes9x."
-
-/*SPC_Config spc_config = {
-    44100,
-    16,
-    2,
-    0, // interpolation
-    0 // echo
-};*/
-
-// those are bigger so I dont have to do a range test
-// each time I want to log the PC address (where I assume
-// a 5 byte instruction)
-// bazZ: dunno if we need this
-unsigned char used[0x10006];
-unsigned char used2[0x101];
-
-//extern struct SAPU APU;
-//extern struct SIAPU IAPU;
-
-static unsigned char g_cfg_filler = 0x00;
-static int g_cfg_apply_block = 0;
-static int g_cfg_statusline = 0;
-static int g_cfg_nice = 0;
-static int g_cfg_extratime = 0;
-static int g_cfg_ignoretagtime = 0;
-static int g_cfg_defaultsongtime = DEFAULT_SONGTIME;
-static int g_cfg_autowritemask = 0;
-static int g_cfg_nosound = 0;
-static int g_cfg_novideo = 0;
-static int g_cfg_update_in_callback = 0;
-static int g_cfg_num_files = 0;
-static char **g_cfg_playlist = NULL;
-//static int g_paused = 0;
-static int g_cur_entry = 0;
-static char *g_real_filename=NULL; // holds the filename minus path
-
-
-
-int mode=0; int submode = 0;
- 
-SDL_Event event;
 
 
 
 
 
-SDL_Surface *screen=NULL;
-SDL_Surface *memsurface=NULL;
-unsigned char *memsurface_data=NULL;
-//#define BUFFER_SIZE 65536
-///static unsigned char audiobuf[BUFFER_SIZE];
-//static int audio_buf_bytes=0, spc_buf_size;
-
-Uint32 color_screen_white, color_screen_black, color_screen_cyan, color_screen_magenta, color_screen_yellow, color_screen_red;
-Uint32  color_screen_green, color_screen_blue, color_screen_nearblack;
-Uint32 color_screen_gray;
-Uint32 colorscale[12];
 
 void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
@@ -312,41 +433,7 @@ void applyBlockMask(char *filename)
 	fclose(fptr);
 }
 
-/*void my_audio_callback(void *userdata, Uint8 *stream, int len)
-{
-//	printf("Callback %d  audio_buf_bytes: %d\n", len, audio_buf_bytes);
-	
-	if (g_cfg_update_in_callback)
-	{
-		while (len>audio_buf_bytes)
-		{
-			SPC_update(&audiobuf[audio_buf_bytes]);
-	//		printf("."); fflush(stdout);
-			audio_buf_bytes+=spc_buf_size;
-		}
-		memcpy(stream, audiobuf, len);
-		memmove(audiobuf, &audiobuf[len], audio_buf_bytes - len);
-		audio_buf_bytes -= len;
-	//		printf("."); fflush(stdout);
-	}
-	else
-	{
-		//SDL_LockAudio();
 
-		if (audio_buf_bytes<len) {
-			printf("Underrun\n");
-			memset(stream, 0, len);
-		//	SDL_UnlockAudio();
-			return;
-		}
-
-		memcpy(stream, audiobuf, len);
-		memmove(audiobuf, &audiobuf[len], audio_buf_bytes - len);
-		audio_buf_bytes -= len;
-		
-	}
-	audio_samples_written += len/4; // 16bit stereo
-}*/
 
 int parse_args(int argc, char **argv)
 {
@@ -525,8 +612,8 @@ void write_mask(unsigned char packed_mask[32])
 	fclose(msk_file);
 }
 
-static char now_playing[1024];
-static char *marquees[3] = { (char*)CREDITS, now_playing, NULL };
+
+static char *marquees[3] = { (char*)CREDITS, track::now_playing, NULL };
 static char *cur_marquee = NULL;
 static int cur_marquee_id = 0;
 
@@ -633,6 +720,10 @@ int init_sdl()
 		color_screen_green = SDL_MapRGB(screen->format, 0x00, 0xff, 0x00);
 		color_screen_blue = SDL_MapRGB(screen->format, 0x00, 0x00, 0xff);
 
+		color_screen_dark_yellow = SDL_MapRGB(screen->format, 0x50,0x50,0x00);
+		color_screen_dark_cyan = SDL_MapRGB(screen->format, 0x00, 0x50, 0x50);
+		color_screen_dark_magenta = SDL_MapRGB(screen->format, 0x50, 0x00, 0x50);
+
 		colorscale[0] = SDL_MapRGB(screen->format, 0xff, 0x00, 0x00);
 		colorscale[1] = SDL_MapRGB(screen->format, 0xff, 0x7f, 0x00);
 		colorscale[2] = SDL_MapRGB(screen->format, 0xff, 0xff, 0x00);
@@ -689,14 +780,14 @@ int main(int argc, char **argv)
 {
   //void *buf=NULL;
 	int tmp, i;
-	int updates;
+	//int updates;
 	int cur_mouse_address=0x0000;
 	SDL_Rect tmprect;
 	SDL_Rect memrect;
-	char tmpbuf[100];
+	
 	//id666_tag tag;
-	track_info_t tag;
-	int song_time, cur_time; // in seconds
+	
+	//, cur_time; // in seconds
 	Uint32 /*current_ticks,*/ song_started_ticks;
 	unsigned char packed_mask[32];
 	Uint32 time_last=0, time_cur=0;
@@ -736,13 +827,9 @@ int main(int argc, char **argv)
 	handle_error( player->init() );
 
 
-	// Load file
-	const char* path = (argc > 1 ? argv [argc - 1] : "test.spc");
-	handle_error( player->load_file( path ) );
-	player->ignore_silence();
-	IAPURAM = player->spc_emu()->ram();
-	start_track( 1, path );
-/*
+	
+	
+
 reload:
 #ifdef WIN32
 	g_real_filename = strrchr(g_cfg_playlist[g_cur_entry], '\\');
@@ -757,94 +844,31 @@ reload:
 		g_real_filename++;
 	}	
 	
-	{
-		FILE *fptr;
-		fptr = fopen(g_cfg_playlist[g_cur_entry], "rb");
-		if (fptr==NULL) {
-			printf("Failed to open %s\n", g_cfg_playlist[g_cur_entry]);
-				if (g_cur_entry == g_cfg_num_files-1) {
-				g_cfg_num_files--;
-			}
-			else
-			{
-				memmove(&g_cfg_playlist[g_cur_entry], &g_cfg_playlist[g_cur_entry+1], g_cfg_num_files-g_cur_entry);
-				g_cfg_num_files--;
-				g_cur_entry++;
-			}
-			if (g_cfg_num_files<=0) { printf ("penis1\n"); goto clean; }
-			if (g_cur_entry >= g_cfg_num_files) { g_cur_entry = 0; }
-			goto reload;
-		}
-		*/
+	
+		//FILE *fptr;
+		//fptr = fopen(g_cfg_playlist[g_cur_entry], "rb");
+		
+		
+		// Load file
+	path = g_cfg_playlist[g_cur_entry];
+	handle_error( player->load_file( g_cfg_playlist[g_cur_entry] ) );
+	//handle_error( player->load_file( path ) );
+	player->ignore_silence();
+	IAPURAM = player->spc_emu()->ram();
+	start_track( 1, path );
 		//read_id666(fptr, &tag); 
 
-		tag = player->track_info();
-		/*struct track_info_t
-		{
-			long track_count;
-			
-			// times in milliseconds; -1 if unknown 
-			long length;
-			long intro_length;
-			long loop_length;
-			
-			// empty string if not available 
-			char system    [256];
-			char game      [256];
-			char song      [256];
-			char author    [256];
-			char copyright [256];
-			char comment   [256];
-			char dumper    [256];
-		};*/
-
-		/* decide how much time the song will play */
-		if (!g_cfg_ignoretagtime) {
-			song_time = (int)tag.length / 1000; //atoi((const char *)tag.seconds_til_fadeout);
-			if (song_time <= 0) {
-				song_time = g_cfg_defaultsongtime;
-			}
-		}
-		else {
-			song_time = g_cfg_defaultsongtime;
-		}
-
-		song_time += g_cfg_extratime;
-
-		now_playing[0] = 0;
-		if (tag.song)
-		{
-			if (strlen((const char *)tag.song)) {
-				sprintf(now_playing, "Now playing: %s (%s), dumped by %s\n", tag.song, tag.game, tag.dumper);
-			}		
-		}
-		if (strlen(now_playing)==0) {
-			sprintf(now_playing, "Now playing: %s\n", g_cfg_playlist[g_cur_entry]);
-		}
+		
 		
 		//fclose(fptr);
 	//}
 	
-  /*  if (!SPC_load(g_cfg_playlist[g_cur_entry])) 
-	{
-		printf("Failure\n");
-		if (g_cur_entry == g_cfg_num_files-1) {
-			g_cfg_num_files--;
-		}
-		else
-		{
-			memmove(&g_cfg_playlist[g_cur_entry], &g_cfg_playlist[g_cur_entry+1], g_cfg_num_files-g_cur_entry);
-			g_cfg_num_files--;
-			g_cur_entry++;
-		}
-		if (g_cfg_num_files<=0) { printf ("penis2\n");goto clean; }
-		if (g_cur_entry >= g_cfg_num_files) { g_cur_entry = 0; }
-	}*/
+  
 	memset(memsurface_data, 0, 512*512*4);
 	memset(used, 0, sizeof(used));
 	memset(used2, 0, sizeof(used2));
 	cur_mouse_address =0;
-	cur_time = 0;
+	//cur_time = 0;
 	audio_samples_written = 0;
 	last_pc = -1;
 
@@ -869,18 +893,7 @@ reload:
 		sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - DSP MAP");
 		sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, color_screen_yellow);
 
-		/* information */
-		sdlfont_drawString(screen, INFO_X, INFO_Y, "      - Info -", color_screen_white);
-		sprintf(tmpbuf, "Filename: %s", path);
-		sdlfont_drawString(screen, INFO_X, INFO_Y+8, tmpbuf, color_screen_white);
-		sprintf(tmpbuf, "Title...: %s", tag.song);
-		sdlfont_drawString(screen, INFO_X, INFO_Y+16, tmpbuf, color_screen_white);
-		sprintf(tmpbuf, "Game....: %s", tag.game);
-		sdlfont_drawString(screen, INFO_X, INFO_Y+24, tmpbuf, color_screen_white);
-		sprintf(tmpbuf, "Dumper..: %s", tag.dumper);
-		sdlfont_drawString(screen, INFO_X, INFO_Y+32, tmpbuf, color_screen_white);
-		sprintf(tmpbuf, "Comment.: %s", tag.comment);
-		sdlfont_drawString(screen, INFO_X, INFO_Y+40, tmpbuf, color_screen_white);
+		
 		
 		
 
@@ -889,6 +902,8 @@ reload:
 	
 		//sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg_autowritemask ? "Yes" : "No");
 		//sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, color_screen_white);
+
+		track::update_tag();
 
 		sprintf(tmpbuf, "Ignore tag time: %s", g_cfg_ignoretagtime ? "Yes" : "No");
 		sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, color_screen_white);
@@ -917,16 +932,16 @@ reload:
 			printf("%s  %d / %d (%d %%)        \r", 
 					g_cfg_playlist[g_cur_entry],
 					audio_samples_written/44100,
-					song_time,
-					(audio_samples_written/44100)/(song_time));
+					track::song_time,
+					(audio_samples_written/44100)/(track::song_time));
 			fflush(stdout);
 		}
 		
 		/* Check if it is time to change tune.
 		 */		
-		if (audio_samples_written/44100 >= song_time) 
+		if (player->emu()->tell()/1000 >= track::song_time) 
 		{
-			goto skip;
+			//goto skip;
 			if (g_cfg_autowritemask) {
 				write_mask(packed_mask);
 				if (g_cfg_apply_block) {
@@ -938,10 +953,12 @@ reload:
 				SDL_PauseAudio(1);
 			}
 			g_cur_entry++;
-			if (g_cur_entry>=g_cfg_num_files) { printf ("penis3\n"); } //goto clean; }
-			goto clean; //reload;
+			if (g_cur_entry>=g_cfg_num_files) { printf ("penis3\n"); goto clean; }
+			goto reload;
+			//player->play_next();
+			//track::update_tag();
 		}
-		skip:
+		//skip:
 		
 		if (!g_cfg_novideo)
 		{
@@ -1514,7 +1531,9 @@ reload:
 							}
 
 							voices::muted_toggle_protect = 0;
-							voices::checkmouse_mute(ev.motion.x, ev.motion.y);
+							voices::checkmouse(ev.motion.x, ev.motion.y, ev.button.button);
+
+
 							
 
 							if (mode == MODE_NAV)
@@ -1594,18 +1613,35 @@ reload:
 									SDL_PauseAudio(1);
 									g_cur_entry--;
 									if (g_cur_entry<0) { g_cur_entry = g_cfg_num_files-1; }
-									//goto reload;
-									track = 1;
+									goto reload;
+									/*track = 1;
 									start_track( track, path );
+									//const char *str = track::files.at(track::dec()).c_str();
+									//start_track(1, str);
+									player->play_prev();
+									track::update_tag();*/
 								}
 
 								if (x>=33 && x<=36) { // next
 									SDL_PauseAudio(1);
+									//player->pause(1);
+									//usleep(500000);
+									
 									g_cur_entry++;
 									if (g_cur_entry>=g_cfg_num_files) { g_cur_entry = 0; }
-									//goto reload;
-									track = 1;
+									goto reload;
+									/*track = 1;
 									start_track( track, path );
+									//fprintf(stderr,"track_count = %d\n", player->track_count());
+									//fprintf(stderr, "cutrack = %d\n",player->get_curtrack());
+									player->play_next();
+									//player->inc_curtrack();
+									//const char *str = track::files.at(track::inc()).c_str();
+									//handle_error( player->load_file(str) );
+									//start_track(1, str);
+									track::update_tag();*/
+									//fprintf(stderr, "str = %s\n", str);
+									//player->start_track(0);
 								}
 
 								if (x>=41 && x<=50) { // write mask
@@ -1749,8 +1785,11 @@ reload:
 
 			for (i=0; i<8; i++)
 			{
-				Uint32 *Color1=&color_screen_white, *Color2 = &color_screen_white;
 				Uint32 *thecolor = &color_screen_gray;
+				Uint32 c1 = color_screen_white, c2 = *thecolor;
+				Uint32 *Color1=&c1, *Color2 = &c2;
+				//Uint32 col= SDL_MapRGB(screen->format, 0x2e, 0xfe, 0x9a);
+				
 				unsigned char is_inverted=0;
 				unsigned char left_vol = player->spc_read_dsp(0+(i*0x10));
 				unsigned char right_vol = player->spc_read_dsp(1+(i*0x10));
@@ -1773,7 +1812,7 @@ reload:
 				sprintf(tmpbuf,"%d", i);
 				int x =MEMORY_VIEW_X+520, y = tmp + (i*10);
 				Uint32 *color;
-				if (voices::muted & (1<<i))
+				if (voices::is_muted(i))
 					color = &color_screen_nearblack;
 				else 
 					color = &color_screen_white;
@@ -1794,13 +1833,30 @@ reload:
 					Color2 = thecolor;
 				}
 				sprintf(tmpbuf,"\x1");
-				sdlfont_drawString2c(screen, MEMORY_VIEW_X+520 + 8, tmp + (i*10), tmpbuf, *Color1, *Color2);
+				if (voices::is_muted(i))
+				{
+					Uint8 r1,g1,b1,r2,g2,b2;
+					SDL_GetRGB(*Color1, screen->format, &r1, &b1, &g1);
+					//r-=0x40;g-=0x40;b-=0x40;
+					*Color1 = SDL_MapRGB(screen->format,r1-0x60,g1-0x60,b1-0x60);
+					SDL_GetRGB(*Color2, screen->format, &r2, &b2, &g2);
+					//r-=0x60;g-=0x60;b-=0x60;
+					*Color2 = SDL_MapRGB(screen->format,r2-0x60,g2-0x60,b2-0x60);
+					
+				}
+					sdlfont_drawString2c(screen, MEMORY_VIEW_X+520 + 8, tmp + (i*10), tmpbuf, *Color1, *Color2);
+				
 
 				tmprect.x = MEMORY_VIEW_X+520+18;
 				tmprect.y = tmp+(i*10);
 				tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
 
-				SDL_FillRect(screen, &tmprect, color_screen_yellow);
+				
+				// L volume
+				if (voices::is_muted(i))
+					color = &color_screen_dark_yellow;
+				else color = &color_screen_yellow;
+				SDL_FillRect(screen, &tmprect, *color);
 				/*if (is_inverted & (1 << L_FLAG))
 				{
 					tmprect.x += tmprect.w+1;
@@ -1813,7 +1869,11 @@ reload:
 				tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
 				tmprect.y = tmp+(i*10)+3;
 				
-				SDL_FillRect(screen, &tmprect, color_screen_cyan);
+				if (voices::is_muted(i))
+					color = &color_screen_dark_cyan;
+				else color = &color_screen_cyan;
+				SDL_FillRect(screen, &tmprect, *color);
+				//SDL_FillRect(screen, &tmprect, color_screen_cyan);
 				/*
 				if (is_inverted & (1 << R_FLAG))
 				{
@@ -1826,7 +1886,11 @@ reload:
 				tmprect.x = MEMORY_VIEW_X+520+18;
 				tmprect.w = gain * (screen->w-tmprect.x-20)/255;
 				tmprect.y = tmp+(i*10)+6;
-				SDL_FillRect(screen, &tmprect, color_screen_magenta);
+				if (voices::is_muted(i))
+					color = &color_screen_dark_magenta;
+				else color = &color_screen_magenta;
+				SDL_FillRect(screen, &tmprect, *color);
+				//SDL_FillRect(screen, &tmprect, color_screen_magenta);
 			}
 			i=9;
 			// 
@@ -2021,7 +2085,7 @@ reload:
 			sprintf(tmpbuf, "Time....: %0d:%02d / %0d:%02d", 
 					int(player->emu()->tell()/1000)/60,
 					int((player->emu()->tell()/1000))%60,
-					song_time/60, song_time%60);
+					track::song_time/60, track::song_time%60);
 			sdlfont_drawString(screen, INFO_X, INFO_Y+48, tmpbuf, color_screen_white);
 
 
@@ -2030,6 +2094,8 @@ reload:
 
 			//sprintf(tmpbuf, "GAINV0..: %02x", player->spc_read_dsp(0x07));	
 			//sdlfont_drawString(screen, INFO_X, INFO_Y+56+8, tmpbuf, color_screen_white);
+
+			
 			
 			if (mode == MODE_EDIT_MOUSE_HEXDUMP)
 			{
@@ -2076,7 +2142,7 @@ void restart_track()
 	//goto reload;
 	//track = 1;
 	//start_track( track, path );
-	player->start_track(0);
+	player->restart_track();
 }
 
 
