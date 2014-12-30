@@ -102,7 +102,7 @@ SDL_Event event;
 
 
 const char* path;
-char tmpbuf[100];
+char tmpbuf[500];
 SDL_Surface *screen=NULL;
 SDL_Surface *memsurface=NULL;
 unsigned char *memsurface_data=NULL;
@@ -171,6 +171,7 @@ void update_tag()
 			char dumper    [256];
 		};*/
 
+
 		/* decide how much time the song will play */
 		if (!g_cfg_ignoretagtime) {
 			song_time = (int)tag.length / 1000; //atoi((const char *)tag.seconds_til_fadeout);
@@ -206,6 +207,8 @@ void update_tag()
 		r.h = 519-465;
 		SDL_FillRect(screen, &r, color_screen_black);
 
+		//fprintf(stderr, "comment = %s\n", tag.comment);
+		//fprintf(stderr, "path = %s\nsong = %s\ngame = %s\ndumper = %s\ncomment = %s")
 		sdlfont_drawString(screen, INFO_X, INFO_Y, "      - Info -", color_screen_white);
 		sprintf(tmpbuf, "Filename: %s", path);
 		sdlfont_drawString(screen, INFO_X, INFO_Y+8, tmpbuf, color_screen_white);
@@ -298,13 +301,13 @@ namespace voices
 			if (x >= (coords::Voice0Vol.x) && x <= (coords::Voice0Vol.x+8+125) &&	// + 125 to cover the bar too
 				y >= (coords::Voice0Vol.y + (i*10) + 1) && y <= (coords::Voice0Vol.y+9 + (i*10)) )
 			{
-				fprintf(stderr, "muted = %02x\n, ~(1 << i) = 0x%02x\n", muted, ~(1 << i));
+				//fprintf(stderr, "muted = %02x\n, ~(1 << i) = 0x%02x\n", muted, ~(1 << i));
 					//muted_toggle_protect |= 1<<i;
 					changed = 1;
 					if (voices::muted == Uint8(~(1 << i)) )
 					{
 						muted = 0;
-						fprintf(stderr, "DERP");
+						//fprintf(stderr, "DERP");
 					}
 					else voices::muted = ~(1<<i);
 			}
@@ -831,6 +834,7 @@ void reload()
 	//handle_error( player->load_file( path ) );
 	player->ignore_silence();
 	IAPURAM = player->spc_emu()->ram();
+	player->mute_voices(voices::muted);
 	start_track( 1, path );
 		//read_id666(fptr, &tag); 
 
@@ -890,9 +894,13 @@ void reload()
 		
 		sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -", color_screen_white);
 	}
+
+	
+
 	if (!g_cfg_nosound) {
 		SDL_PauseAudio(0);
 	}
+
 }
 
 int main(int argc, char **argv)
@@ -1821,14 +1829,18 @@ reload:
 			for (i=0; i<8; i++)
 			{
 				Uint32 *thecolor = &color_screen_gray;
-				Uint32 c1 = color_screen_white, c2 = *thecolor;
-				Uint32 *Color1=&c1, *Color2 = &c2;
+				Uint32 c1 = color_screen_white, c2 = *thecolor, c3 = color_screen_magenta;
+				Uint32 *Color1=&c1, *Color2 = &c1;
 				//Uint32 col= SDL_MapRGB(screen->format, 0x2e, 0xfe, 0x9a);
 				
 				unsigned char is_inverted=0;
 				unsigned char left_vol = player->spc_read_dsp(0+(i*0x10));
 				unsigned char right_vol = player->spc_read_dsp(1+(i*0x10));
-				unsigned char gain = player->spc_read_dsp(7+(i*0x10));
+				unsigned char adsr1 = player->spc_read_dsp(5+(i*0x10));
+				unsigned char gain;
+				if (adsr1 & 0x80) gain=0;
+				else gain = player->spc_read_dsp(7+(i*0x10));
+
 				
 				
 				//Value -128 can be safely used
@@ -1861,11 +1873,11 @@ reload:
 				
 				if (is_inverted & (1 << L_FLAG) )
 				{
-					Color1 = thecolor;
+					Color1 = &c2;
 				}
 				if (is_inverted & (1 << R_FLAG) )
 				{
-					Color2 = thecolor;
+					Color2 = &c2;
 				}
 				sprintf(tmpbuf,"\x1");
 				if (voices::is_muted(i))
@@ -1918,13 +1930,31 @@ reload:
 					SDL_FillRect(screen, &tmprect, color_screen_red);
 				}*/
 
+				// Gain needs customization
+				if (!(gain & 0x80))
+				{
+					// direct mode
+					gain = gain & 0x7f;
+				}
+				else
+				{
+					gain = gain & 0x1f;
+				}
+
+
 				tmprect.x = MEMORY_VIEW_X+520+18;
 				tmprect.w = gain * (screen->w-tmprect.x-20)/255;
 				tmprect.y = tmp+(i*10)+6;
 				if (voices::is_muted(i))
-					color = &color_screen_dark_magenta;
+				{
+					Uint8 r1,g1,b1;
+					SDL_GetRGB(c3, screen->format, &r1, &b1, &g1);
+					//r-=0x40;g-=0x40;b-=0x40;
+					c3 = SDL_MapRGB(screen->format,r1-0x60,g1-0x60,b1-0x60);
+					//color = &color_screen_dark_magenta;
+				}
 				else color = &color_screen_magenta;
-				SDL_FillRect(screen, &tmprect, *color);
+				SDL_FillRect(screen, &tmprect, c3);
 				//SDL_FillRect(screen, &tmprect, color_screen_magenta);
 			}
 			i=9;
