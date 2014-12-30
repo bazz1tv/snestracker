@@ -57,6 +57,9 @@
 #define PROG_NAME_VERSION_STRING "vspcplay v1.31 patched by bazz"
 #define CREDITS "vspcplay v1.31 by Raphael Assenat (http://vspcplay.raphnet.net). APU emulation code from snes9x."
 
+void prev_track();
+void next_track();
+
 /*SPC_Config spc_config = {
     44100,
     16,
@@ -121,9 +124,33 @@ namespace track
 
 //int curtrack=0;
 
-
+void update_window_title()
+{
+	// update window title with track info
+	
+	long seconds = player->track_info().length / 1000;
+	const char* game = player->track_info().game;
+	if ( !*game )
+	{
+		// extract filename
+		game = strrchr( path, '\\' ); // DOS
+		if ( !game )
+			game = strrchr( path, '/' ); // UNIX
+		if ( !game )
+			game = path;
+		else
+			game++; // skip path separator
+	}
+	
+	char title [512];
+	sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
+			game, g_cur_entry+1, g_cfg_num_files, player->track_info().song,
+			seconds / 60, seconds % 60 );
+	SDL_WM_SetCaption( title, title );
+}
 void update_tag()
 {
+	update_window_title();
 	tag = player->track_info();
 		/*struct track_info_t
 		{
@@ -775,62 +802,11 @@ void pack_mask(unsigned char packed_mask[32])
 		packed_mask[i/8] |=	128 >> (i%8);
 	}
 }
-
-int main(int argc, char **argv)
-{
-  //void *buf=NULL;
-	int tmp, i;
-	//int updates;
-	int cur_mouse_address=0x0000;
+int cur_mouse_address=0x0000;
 	SDL_Rect tmprect;
-	SDL_Rect memrect;
-	
-	//id666_tag tag;
-	
-	//, cur_time; // in seconds
-	Uint32 /*current_ticks,*/ song_started_ticks;
-	unsigned char packed_mask[32];
-	Uint32 time_last=0, time_cur=0;
-	
-	
-	//memset(used, 0, 65536);
-
-	printf("%s\n", PROG_NAME_VERSION_STRING);
-	
-	parse_args(argc, argv);
-
-	if (g_cfg_num_files < 1) {
-		printf("No files specified\n");
-		return 1;
-	}
-
-	
-	
-	/* REPLACE WITH BLARGG APU INIT */
-  //spc_buf_size = SPC_init(&spc_config);
-	//printf("spc buffer size: %d\n", spc_buf_size);
-	//buf = malloc(spc_buf_size*2);
-
-	/* */
-	
-	init_sdl();
-
-	time_cur = time_last = SDL_GetTicks();
-
-	memsurface_data = (unsigned char *)malloc(512*512*4);
-	memset(memsurface_data, 0, 512*512*4);
-
-	// Create player
-	player = new Music_Player;
-	if ( !player )
-		handle_error( "Out of memory" );
-	handle_error( player->init() );
-
-
-	
-	
-
-reload:
+void reload()
+{
+	//reload:
 #ifdef WIN32
 	g_real_filename = strrchr(g_cfg_playlist[g_cur_entry], '\\');
 #else
@@ -914,13 +890,70 @@ reload:
 		
 		sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -", color_screen_white);
 	}
-
-
-	song_started_ticks = 0;
-
 	if (!g_cfg_nosound) {
 		SDL_PauseAudio(0);
 	}
+}
+
+int main(int argc, char **argv)
+{
+  //void *buf=NULL;
+	int tmp, i;
+	//int updates;
+	
+	SDL_Rect memrect;
+	
+	//id666_tag tag;
+	
+	//, cur_time; // in seconds
+	
+	unsigned char packed_mask[32];
+	Uint32 time_last=0, time_cur=0;
+	
+	
+	//memset(used, 0, 65536);
+
+	printf("%s\n", PROG_NAME_VERSION_STRING);
+	
+	parse_args(argc, argv);
+
+	if (g_cfg_num_files < 1) {
+		printf("No files specified\n");
+		return 1;
+	}
+
+	
+	
+	/* REPLACE WITH BLARGG APU INIT */
+  //spc_buf_size = SPC_init(&spc_config);
+	//printf("spc buffer size: %d\n", spc_buf_size);
+	//buf = malloc(spc_buf_size*2);
+
+	/* */
+	
+	init_sdl();
+
+	time_cur = time_last = SDL_GetTicks();
+
+	memsurface_data = (unsigned char *)malloc(512*512*4);
+	memset(memsurface_data, 0, 512*512*4);
+
+	// Create player
+	player = new Music_Player;
+	if ( !player )
+		handle_error( "Out of memory" );
+	handle_error( player->init() );
+
+
+	
+reload:
+	reload();
+
+
+
+	//song_started_ticks = 0;
+
+	
 	//g_paused = 0;
   for (;;) 
 	{
@@ -1066,6 +1099,10 @@ reload:
 						}
 						if (mode == MODE_NAV)
 						{
+							if (scancode == SDLK_LEFT)
+								prev_track();
+							else if (scancode == SDLK_RIGHT)
+								next_track();
 							if (scancode == SDLK_c)
 							{
 								mouse::show = !mouse::show;
@@ -1607,13 +1644,13 @@ reload:
 
 								if (x>=16 && x<=22) {  // restart
 									restart_track();
+									//g_cur_entry=0;
+									//goto reload;
 								}
 
 								if (x>=26 && x<=29) {  // prev
 									SDL_PauseAudio(1);
-									g_cur_entry--;
-									if (g_cur_entry<0) { g_cur_entry = g_cfg_num_files-1; }
-									goto reload;
+									prev_track();
 									/*track = 1;
 									start_track( track, path );
 									//const char *str = track::files.at(track::dec()).c_str();
@@ -1627,9 +1664,7 @@ reload:
 									//player->pause(1);
 									//usleep(500000);
 									
-									g_cur_entry++;
-									if (g_cur_entry>=g_cfg_num_files) { g_cur_entry = 0; }
-									goto reload;
+									next_track();
 									/*track = 1;
 									start_track( track, path );
 									//fprintf(stderr,"track_count = %d\n", player->track_count());
@@ -2142,7 +2177,23 @@ void restart_track()
 	//goto reload;
 	//track = 1;
 	//start_track( track, path );
-	player->restart_track();
+	g_cur_entry=0;
+	reload();
+	//player->restart_track();
+}
+
+void prev_track()
+{
+	g_cur_entry--;
+									if (g_cur_entry<0) { g_cur_entry = g_cfg_num_files-1; }
+									reload();
+}
+
+void next_track()
+{
+	g_cur_entry++;
+									if (g_cur_entry>=g_cfg_num_files) { g_cur_entry = 0; }
+									reload();
 }
 
 
