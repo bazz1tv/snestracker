@@ -32,6 +32,7 @@
 #include <vector>
 #include <iostream>
 #include "SDL.h"
+#include "vspc/report.h"
 #include "gme/player/Music_Player.h"
 
 #include "sdlfont.h"
@@ -797,7 +798,7 @@ int init_sdl()
 	dblclick::init();
 	SDL_EnableKeyRepeat( 500, 80 );
 	//SDL_AddTimer(800, dblclicktimer, 0);
-
+	//memcursor::start_timer();
 	
 
 	return 0;	
@@ -1053,8 +1054,8 @@ reload:
 									y /= 2;
 									cur_mouse_address = y*256+x;
 									if (!mouse_hexdump::locked) {
-										mouse_hexdump::address = cur_mouse_address;
-										
+										//mouse_hexdump::address = cur_mouse_address;
+										mouse_hexdump::set_addr(cur_mouse_address);
 									}
 		//							printf("%d,%d: $%04X\n", x, y, y*256+x);
 								}
@@ -1600,12 +1601,14 @@ reload:
 							
 							if (ev.button.button == SDL_BUTTON_WHEELUP)
 							{
-								mouse_hexdump::address -= 0x08;				
+								mouse_hexdump::add_addr(-0x08);
+								//mouse_hexdump::address -= 0x08;				
 								break;					
 							}
 							else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
 							{
-								mouse_hexdump::address += 0x08;
+								mouse_hexdump::add_addr(0x08);
+								//mouse_hexdump::address += 0x08;
 								break;
 							}
 
@@ -2213,6 +2216,20 @@ reload:
 	    	//fprintf (stderr, "yee");
 	    	porttool::draw_cursor(screen, color_screen_green);
 	    }
+
+	    if (memcursor::toggle)
+	    {
+				/*int x,y;
+				y = mouse_hexdump::address / 256;
+				x = mouse_hexdump::address % 256;
+				x*=2; y*=2;
+				y += MEMORY_VIEW_Y;
+				x += MEMORY_VIEW_X;
+				sprintf(tmpbuf, ".");
+				sdlfont_drawString(screen, x-2,y-6,tmpbuf, color_screen_green);*/
+				report_memwrite(mouse_hexdump::address);
+	    }
+	    else report_off(mouse_hexdump::address);
 
 	    if (mouse::show)
 	    {

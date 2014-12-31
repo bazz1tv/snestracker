@@ -4,6 +4,7 @@
 #include "sdl_userevents.h"
 #include "gui/cursor.h"
 #include "mode.h"
+#include "report.h"
 
 #define MOUSE_HEXDUMP_START_X 584
 //#define MOUSE_HEXDUMP_START_Y 229 + 30
@@ -11,6 +12,48 @@
 #define MOUSE_HEXDUMP_END_Y 364 + 9 + 30
 #define MOUSE_HEXDUMP_ENTRY_X_INCREMENT 20 // but i think i like 16 programmatically
 #define MOUSE_HEXDUMP_ENTRY_Y_INCREMENT 9  // dunno what i like programmatically yet
+
+
+
+namespace report
+{
+  int bcolor=0; // backup color
+
+  int backup_color(int addr)
+  {
+    int r,g,b;
+    int idx = (((addr)&0xff00)<<4); idx+= ((addr)%256)<<3; 
+    r=memsurface_data[idx];
+    g=memsurface_data[idx+1];
+    b=memsurface_data[idx+2];
+    bcolor = (r << 16) | (g << 8) | b;
+    //fprintf(stderr, "bcol = %03x\n", bcolor);
+    return bcolor;
+  }
+
+
+void restore_color(int addr)
+{
+  int idx = (((addr)&0xff00)<<4); 
+  idx+= ((addr)%256)<<3;
+  int c[3];
+  c[0] = (bcolor >> 16);
+  c[1] = (bcolor >> 8) & 0xff;
+  c[2] = bcolor & 0xff;
+
+  //fprintf(stderr, "r = %d, g = %d, b = %d\n", c[0],c[1],c[2]);
+  //SDL_GetRGB(bcolor, memsurface->format, &c[0], &c[1], &c[2]); 
+  //Uint8 c = r1
+  for (int i=0; i < 3; i++) 
+  { 
+    memsurface_data[idx+i]=c[i]; 
+    memsurface_data[idx+2048+i]=c[i]; 
+    memsurface_data[idx+4+i]=c[i]; 
+    memsurface_data[idx+4+2048+i]=c[i]; 
+  }
+}
+}
+
 
 
 int MOUSE_HEXDUMP_START_Y;
@@ -32,6 +75,19 @@ namespace mouse_hexdump
   char locked=0;
   Uint16 address=0x0000;
 
+  void set_addr(int i)
+  {
+    report::restore_color(address);
+    address = i;
+    report::backup_color(address);
+  }
+  void add_addr(int i)
+  {
+    report::restore_color(address);
+    address += i;
+    report::backup_color(address);
+  }
+
   void dec_cursor_row();
   void inc_cursor_row();
 
@@ -40,15 +96,20 @@ namespace mouse_hexdump
     locked = !locked;
     if (locked)
     {
+      memcursor::start_timer();
       int derp = (mouse_hexdump::address % 8);
                     //if (derp >= 4) mouse_hexdump::address += (8-derp);
-                    /*else*/ mouse_hexdump::address -= derp;
+                    /*else*/ add_addr(-derp);
+    }
+    else
+    {
+      memcursor::stop_timer();
     }
   }
   void lock()
   {
     locked = 1;
-    
+    memcursor::start_timer();
       //int derp = (mouse_hexdump::address % 8);
                     //if (derp >= 4) mouse_hexdump::address += (8-derp);
                     /*else*/ //mouse_hexdump::address -= derp;
@@ -56,6 +117,7 @@ namespace mouse_hexdump
   }
   void unlock()
   {
+    memcursor::stop_timer();
     locked = 0;
   }
 
@@ -66,7 +128,7 @@ namespace mouse_hexdump
     if (res_y == 15)
     {
       //res_y;
-      mouse_hexdump::address += 8;
+      add_addr(+8); //mouse_hexdump::address += 8;
     }
     else res_y++;    
   }
@@ -77,7 +139,7 @@ namespace mouse_hexdump
     if (res_y == 0)
     {
       //res_y;
-      mouse_hexdump::address -= 8;
+      add_addr(-8);
     }
     else res_y--;    
   }
@@ -96,7 +158,7 @@ namespace mouse_hexdump
         if (res_y == 15)
         {
           //res_y;
-          mouse_hexdump::address += 8;
+          add_addr(8);
         }
         else res_y++;
 
@@ -123,7 +185,7 @@ namespace mouse_hexdump
         if (res_y == 0)
         {
           //res_y;
-          mouse_hexdump::address -= 8;
+          add_addr(-8);
         }
         else res_y--;
       }
@@ -157,3 +219,4 @@ namespace mouse_hexdump
   }
 
 }
+

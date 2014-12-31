@@ -1,6 +1,7 @@
 // snes_spc 0.9.0. http://www.slack.net/~ant/
 
 #include "vspc/report.h"
+#include <stdio.h>
 #include "Spc_Dsp.h"
 
 #include "blargg_endian.h"
@@ -303,6 +304,8 @@ inline void Spc_Dsp::decode_brr( voice_t* v )
 	report_memread(v->brr_addr+7);
 	report_memread(v->brr_addr+8);
 	int const header = m.t_brr_header;
+
+	if (header & 1) report_echomem(v->brr_addr+8); //fprintf(stderr,"0x%04x\n", v->brr_addr);
 	
 	// Write to next four samples in circular buffer
 	int* pos = &v->buf [v->buf_pos];
@@ -419,11 +422,14 @@ inline VOICE_CLOCK( V3a )
 {
 	m.t_pitch += (VREG(v->regs,pitchh) & 0x3F) << 8;
 }
+int derp;
 inline VOICE_CLOCK( V3b )
 {
 	// Read BRR header and byte
 	m.t_brr_byte   = m.ram [(v->brr_addr + v->brr_offset) & 0xFFFF];
 	m.t_brr_header = m.ram [v->brr_addr]; // brr_addr doesn't need masking
+	derp = v->brr_addr;
+	//fprintf (stderr,"header addr = 0x%04x\n", derp);
 }
 VOICE_CLOCK( V3c )
 {
@@ -472,6 +478,7 @@ VOICE_CLOCK( V3c )
 	// Immediate silence due to end of sample or soft reset
 	if ( REG(flg) & 0x80 || (m.t_brr_header & 3) == 1 )
 	{
+		//fprintf (stderr,"header addr = 0x%04x\n", derp);
 		v->env_mode = env_release;
 		v->env      = 0;
 	}
@@ -525,7 +532,9 @@ VOICE_CLOCK( V4 )
 			v->brr_addr = (v->brr_addr + brr_block_size) & 0xFFFF;
 			if ( m.t_brr_header & 1 )
 			{
+				//fprintf (stderr,"1 = 0x%04x\n", v->brr_addr);
 				v->brr_addr = m.t_brr_next_addr;
+				//fprintf (stderr,"2 = 0x%04x\n", v->brr_addr);
 				m.t_looped = v->vbit;
 			}
 			v->brr_offset = 1;
