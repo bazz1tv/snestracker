@@ -1100,8 +1100,8 @@ reload:
 							player->spc_write_dsp(dsp_reg::evol_l, 127);
 							player->spc_write_dsp(dsp_reg::evol_r, 127);
 							player->spc_write_dsp(dsp_reg::c0, 0x7f);*/
-							player->spc_write_dsp(dsp_reg::evol_l, 80);
-							player->spc_write_dsp(dsp_reg::evol_r, 80);
+							player->spc_write_dsp(dsp_reg::mvol_l, 0x80);
+							player->spc_write_dsp(dsp_reg::evol_r, 0x80);
 							player->spc_write_dsp(dsp_reg::kon,0x1);
 
 							//player->spc_write(0xf2, 0x4c);

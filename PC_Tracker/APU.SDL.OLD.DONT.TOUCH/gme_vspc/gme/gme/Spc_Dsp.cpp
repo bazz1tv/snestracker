@@ -567,8 +567,17 @@ skip_brr:
 		m.echo_offset = echo_offset;
 		
 		// FIR
-		int echo_in_l = GET_LE16SA( echo_ptr + 0 );
-		int echo_in_r = GET_LE16SA( echo_ptr + 2 );
+		int echo_in_l=0; 
+		int echo_in_r=0; 
+		if(echoing)
+		{
+			report_echomem(echo_ptr-ram);
+			report_echomem(echo_ptr+1-ram);
+			report_echomem(echo_ptr+2-ram);
+			report_echomem(echo_ptr+3-ram);
+			echo_in_l = GET_LE16SA( echo_ptr + 0 );
+			echo_in_r = GET_LE16SA( echo_ptr + 2 );
+		}
 		
 		int (*echo_hist_pos) [2] = m.echo_hist_pos;
 		if ( ++echo_hist_pos >= &m.echo_hist [echo_hist_size] )
