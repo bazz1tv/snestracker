@@ -2,6 +2,7 @@
 
 #include "Spc_Dsp.h"
 
+#include "vspc/report.h"
 #include "blargg_endian.h"
 #include <string.h>
 
@@ -235,11 +236,15 @@ void Spc_Dsp::run( int clock_count )
 		voice_t* v = m.voices;
 		uint8_t* v_regs = m.regs;
 		int vbit = 1;
+
 		do
 		{
 			#define SAMPLE_PTR(i) GET_LE16A( &dir [VREG(v_regs,srcn) * 4 + i * 2] )
 			
 			int brr_header = ram [v->brr_addr];
+			if (v->brr_addr)
+				report_memread(v->brr_addr);
+			
 			int kon_delay = v->kon_delay;
 			
 			// Pitch
@@ -460,6 +465,8 @@ void Spc_Dsp::run( int clock_count )
 				// BRR decode if necessary
 				if ( old_pos >= 0x4000 )
 				{
+					report_memread(v->brr_addr + v->brr_offset);
+					report_memread(v->brr_addr + v->brr_offset + 1);
 					// Arrange the four input nybbles in 0xABCD order for easy decoding
 					int nybbles = ram [(v->brr_addr + v->brr_offset) & 0xFFFF] * 0x100 +
 							ram [(v->brr_addr + v->brr_offset + 1) & 0xFFFF];
@@ -469,6 +476,7 @@ void Spc_Dsp::run( int clock_count )
 					int brr_offset = v->brr_offset;
 					if ( (brr_offset += 2) >= brr_block_size )
 					{
+
 						// Next BRR block
 						int brr_addr = (v->brr_addr + brr_block_size) & 0xFFFF;
 						assert( brr_offset == brr_block_size );
