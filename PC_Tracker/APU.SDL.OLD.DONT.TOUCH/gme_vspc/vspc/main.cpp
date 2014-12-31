@@ -1067,7 +1067,10 @@ reload:
 					case SDL_KEYDOWN:
 					{
 						int scancode = ev.key.keysym.sym;
-						
+						if (scancode == SDLK_m)
+						{
+							memcursor::toggle_disable();
+						}
 						if (ev.key.keysym.sym == SDLK_u)
 						{
 							//player->spc_write_dsp(0x4c, 0);
@@ -2216,20 +2219,17 @@ reload:
 	    }
 
 	    // toggle should be 0 ALWAYS when deactivated
-	    if ((memcursor::toggle & memcursor::TOGGLE_TOGGLE) && (memcursor::toggle & memcursor::TOGGLE_ACTIVE))
-	    {
-				/*int x,y;
-				y = mouse_hexdump::address / 256;
-				x = mouse_hexdump::address % 256;
-				x*=2; y*=2;
-				y += MEMORY_VIEW_Y;
-				x += MEMORY_VIEW_X;
-				sprintf(tmpbuf, ".");
-				sdlfont_drawString(screen, x-2,y-6,tmpbuf, color_screen_green);*/
-				//fprintf(stderr,"DER");
-				report_cursor(mouse_hexdump::address);
-	    }
-	    else if ((memcursor::toggle & memcursor::TOGGLE_ACTIVE) && memcursor::toggle & memcursor::TOGGLE_ACTIVE) report::restore_color(mouse_hexdump::address);
+	    //if (!memcursor::is_disabled())
+	    //{
+	    	if (memcursor::is_active())
+	    	{
+	    		if (memcursor::is_toggled())
+	    		{
+	    			report_cursor(mouse_hexdump::address);
+	    		}
+	    		else report::restore_color(mouse_hexdump::address);
+	    	}
+	    //}
 
 	    if (mouse::show)
 	    {

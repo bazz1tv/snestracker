@@ -3,48 +3,80 @@
 #include "sdlfont.h"
 //#include "../mouse_hexdump.h"
 
+//extern int mouse_hexdump::address;
+
 #define CURSOR_TOGGLE_TIMEWINDOW 300 // ms
 
 namespace memcursor
 {
-  enum { TOGGLE_TOGGLE =1,
-          TOGGLE_ACTIVE=(1 << 1) 
+  enum { FLAG_TOGGLED =1,
+          FLAG_ACTIVE=(1 << 1),
+          FLAG_DISABLED=(1 << 2),
+          FLAG_WAS_ACTIVE_BEFORE_DISABLING=(1 << 3)
         };
   const int interval = 300;
-  Uint8 toggle=0; // 1 = show cursor, 0 = hide
+  Uint8 flags=0; // 1 = show cursor, 0 = hide
   SDL_TimerID timerid=0;
+
+  
   
   // timer callback, dont worry about this
   Uint32 cursor_timer(Uint32 interval, void *param)
   {
     Uint8 *p = (Uint8 *) param;
-    *p ^= TOGGLE_TOGGLE;
+    *p ^= FLAG_TOGGLED;
     return interval;
   }
 
   void start_timer()
   {
-    //fprintf(stderr, "%d %d", TOGGLE_TOGGLE, TOGGLE_ACTIVE);
+    if (flags & FLAG_DISABLED)
+      return;
+    //fprintf(stderr, "%d %d", flags_flags, flags_ACTIVE);
     // always start with the cursor showing
     
     // is there a problem Removing an invalid timerid?? I think not..
     SDL_RemoveTimer(timerid);
     // i remove it when starting so I can have simple repeat-logic in the 
     // double click code
-    timerid = SDL_AddTimer(interval, &cursor_timer, &toggle);
-    toggle=TOGGLE_ACTIVE | TOGGLE_TOGGLE;
+    timerid = SDL_AddTimer(interval, &cursor_timer, &flags);
+    flags=FLAG_ACTIVE | FLAG_TOGGLED;
   }
+
   void stop_timer()
   {
-    
-    toggle &= ~(TOGGLE_TOGGLE | TOGGLE_ACTIVE);
+    //report::restore_color(mouse_hexdump::address);
+    flags &= ~(FLAG_TOGGLED | FLAG_ACTIVE);
     SDL_RemoveTimer(timerid);
-    // toggle must be set to 0 to prevent drawing to screen
+    // flags must be set to 0 to prevent drawing to screen
     
   }
-
-
-
+  char is_active() { return flags & FLAG_ACTIVE; }
+  char is_disabled() { return flags & FLAG_DISABLED; }
+  char is_toggled() { return flags & FLAG_TOGGLED; }
+  void disable(char c=1)
+  {
+    if (c)
+    {
+      if (is_active())
+        flags |= FLAG_WAS_ACTIVE_BEFORE_DISABLING;
+      else flags &= ~FLAG_WAS_ACTIVE_BEFORE_DISABLING;
+      stop_timer();
+      flags |= FLAG_DISABLED;
+    }
+    else
+    {
+      flags &= ~FLAG_DISABLED;
+      if (flags & FLAG_WAS_ACTIVE_BEFORE_DISABLING)
+        start_timer();
+    }
+    
+  }
+  void toggle_disable()
+  {
+    disable(!is_disabled());
+  }
+  
   
 } 
 
