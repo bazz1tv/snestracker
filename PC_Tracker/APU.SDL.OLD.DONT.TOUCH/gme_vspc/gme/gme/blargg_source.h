@@ -1,4 +1,9 @@
-// Included at the beginning of library source files, after all other #include lines
+/* Included at the beginning of library source files, after all other #include lines.
+Sets up helpful macros and services used in my source code. They don't need
+module an annoying module prefix on their names since they are defined after
+all other #include lines. */
+
+// snes_spc 0.9.0
 #ifndef BLARGG_SOURCE_H
 #define BLARGG_SOURCE_H
 
@@ -16,10 +21,11 @@
 
 // Like printf() except output goes to debug log file. Might be defined to do
 // nothing (not even evaluate its arguments).
-// void ddprintf( const char* format, ... );
-inline void blargg_ddprintf_( const char*, ... ) { }
+// void dprintf( const char* format, ... );
+static inline void blargg_dprintf_( const char*, ... ) { }
 #undef ddprintf
-#define ddprintf (1) ? (void) 0 : blargg_ddprintf_
+#define ddprintf (1) ? (void) 0 : blargg_dprintf_
+#define dprintf ddprintf
 
 // If enabled, evaluate expr and if false, make debug log entry with source file
 // and line. Meant for finding situations that should be examined further, but that
@@ -42,9 +48,25 @@ inline void blargg_ddprintf_( const char*, ... ) { }
 #undef min
 #undef max
 
+#define DEF_MIN_MAX( type ) \
+	static inline type min( type x, type y ) { if ( x < y ) return x; return y; }\
+	static inline type max( type x, type y ) { if ( y < x ) return x; return y; }
+
+DEF_MIN_MAX( int )
+DEF_MIN_MAX( unsigned )
+DEF_MIN_MAX( long )
+DEF_MIN_MAX( unsigned long )
+DEF_MIN_MAX( float )
+DEF_MIN_MAX( double )
+
+#undef DEF_MIN_MAX
+
+/*
 // using const references generates crappy code, and I am currenly only using these
 // for built-in types, so they take arguments by value
 
+// TODO: remove
+inline int min( int x, int y ) 
 template<class T>
 inline T min( T x, T y )
 {
@@ -60,6 +82,7 @@ inline T max( T x, T y )
 		return y;
 	return x;
 }
+*/
 
 // TODO: good idea? bad idea?
 #undef byte
@@ -70,7 +93,7 @@ typedef unsigned char byte;
 #define BLARGG_CHECK_ALLOC CHECK_ALLOC
 #define BLARGG_RETURN_ERR RETURN_ERR
 
-// BLARGG_SOURCE_BEGIN: If defined, #included, allowing redefition of ddprintf and check
+// BLARGG_SOURCE_BEGIN: If defined, #included, allowing redefition of dprintf and check
 #ifdef BLARGG_SOURCE_BEGIN
 	#include BLARGG_SOURCE_BEGIN
 #endif

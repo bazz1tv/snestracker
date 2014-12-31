@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
-#ifndef GME_TYPE_LIST
+/*#ifndef GME_TYPE_LIST
 
 // Default list of all supported game music types (copy this to blargg_config.h
 // if you want to modify it)
@@ -40,7 +40,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 	gme_vgm_type,\
 	gme_vgz_type
 
-#endif
+#endif*/
 
 static gme_type_t const gme_type_list_ [] = { GME_TYPE_LIST, 0 };
 

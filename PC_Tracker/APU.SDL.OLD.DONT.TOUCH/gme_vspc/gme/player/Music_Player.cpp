@@ -81,6 +81,9 @@ Music_Player::Music_Player()
 	curtrack 	    = 0;
 	filetrack	    = 0;
 	track_started = false;
+	spc_filter = new Spc_Filter;
+	spc_filter->set_gain(Spc_Filter::gain_unit * 1);
+	spc_filter->set_bass(Spc_Filter::bass_norm);
 }
 
 blargg_err_t Music_Player::init( long rate )
@@ -107,6 +110,7 @@ Music_Player::~Music_Player()
 	stop();
 	gme_delete(emu_);
 	sound_cleanup();
+	delete spc_filter;
 }
 
 blargg_err_t Music_Player::load_file( const char* path )
@@ -181,6 +185,7 @@ blargg_err_t Music_Player::start_track( int track )
 		sound_cleanup();
 		init(sample_rate);
 	}
+	spc_filter->clear();
 
 	curtrack = track;
 	if ( emu_ )
@@ -311,6 +316,7 @@ void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 	if ( self->emu_ )
 	{
 		if ( self->emu_->play( count, out ) ) { } // ignore error
+		self->spc_filter->run(out, count);
 		
 		if ( self->scope_buf )
 			memcpy( self->scope_buf, out, self->scope_buf_size * sizeof *self->scope_buf );

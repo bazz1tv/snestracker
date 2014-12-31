@@ -8,6 +8,7 @@
 #include "gme/Spc_Emu.h"
 #include <vector>
 #include <iostream>
+#include "gme/Spc_Filter.h"
 
 class Music_Player {
 public:
@@ -100,6 +101,7 @@ public:
 		strcpy(path,str);
 	}*/
 private:
+	Spc_Filter* spc_filter;
 	Music_Emu* emu_;
 	Spc_Emu* spc_emu_;
 	sample_t* scope_buf;

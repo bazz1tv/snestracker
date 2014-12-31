@@ -11,14 +11,13 @@ details. You should have received a copy of the GNU Lesser General Public
 License along with this module; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
-#include "vspc/report.h"
-
 //// Memory access
+#include "vspc/report.h"
 
 #if SPC_MORE_ACCURACY
 	#define SUSPICIOUS_OPCODE( name ) ((void) 0)
 #else
-	#define SUSPICIOUS_OPCODE( name ) ddprintf( "SPC: suspicious opcode: " name "\n" )
+	#define SUSPICIOUS_OPCODE( name ) dprintf( "SPC: suspicious opcode: " name "\n" )
 #endif
 
 #define CPU_READ( time, offset, addr )\
@@ -73,9 +72,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #define SET_PC( n )     (pc = ram + (n))
 #define GET_PC()        (pc - ram)
 #define READ_PC( pc )   (*(pc))
-
 #define READ_PC16( pc ) GET_LE16( pc )
-
 
 // TODO: remove non-wrapping versions?
 #define SPC_NO_SP_WRAPAROUND 0
@@ -127,8 +124,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 unsigned Snes_Spc::CPU_mem_bit( uint8_t const* pc, rel_time_t rel_time )
 {
-	//report_memread2(pc-RAM, *pc);
-	//report_memread2(pc+1-RAM, *pc);
 	unsigned addr = READ_PC16( pc );
 	unsigned t = READ( 0, addr & 0x1FFF ) >> (addr >> 13);
 	return t << 8 & 0x100;
@@ -166,8 +161,6 @@ int const nz_neg_mask = 0x880; // either bit set indicates N flag set
 	nz  = (in << 4 & 0x800) | (~in & z02);\
 }
 
-//#include <stdio.h>
-
 SPC_CPU_RUN_FUNC
 {
 	uint8_t* const ram = RAM;
@@ -204,13 +197,12 @@ loop:
 	check( (unsigned) y < 0x100 );
 	
 	opcode = *pc;
-	//fprintf(stderr, "0x%04x\n", pc-ram);
 	report_memread2(pc-ram, *pc);
 	if ( (rel_time += m.cycle_table [opcode]) > 0 )
 		goto out_of_time;
 	
-	#ifdef SPC_CPU_OPCODE_HOOK
-		SPC_CPU_OPCODE_HOOK( GET_PC(), opcode );
+	#ifdef Spc_Cpu_OPCODE_HOOK
+		Spc_Cpu_OPCODE_HOOK( GET_PC(), opcode );
 	#endif
 	/*
 	//SUB_CASE_COUNTER( 1 );
@@ -229,7 +221,6 @@ loop:
 	
 	// TODO: if PC is at end of memory, this will get wrong operand (very obscure)
 	data = *++pc;
-	//report_memread2(pc-RAM, *pc);
 	switch ( opcode )
 	{
 	
@@ -1195,7 +1186,7 @@ loop:
 		{
 			addr &= 0xFFFF;
 			SET_PC( addr );
-			ddprintf( "SPC: PC wrapped around\n" );
+			dprintf( "SPC: PC wrapped around\n" );
 			goto loop;
 		}
 	}
@@ -1216,7 +1207,7 @@ stop:
 	
 	// Uncache registers
 	if ( GET_PC() >= 0x10000 )
-		ddprintf( "SPC: PC wrapped around\n" );
+		dprintf( "SPC: PC wrapped around\n" );
 	m.cpu_regs.pc = (uint16_t) GET_PC();
 	m.cpu_regs.sp = ( uint8_t) GET_SP();
 	m.cpu_regs.a  = ( uint8_t) a;

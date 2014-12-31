@@ -1,34 +1,25 @@
 // SNES SPC-700 APU emulator
 
 // snes_spc 0.9.0
-#ifndef SNES_SPC_H
-#define SNES_SPC_H
+#ifndef Snes_Spc_H
+#define Snes_Spc_H
 
 #include "Spc_Dsp.h"
 #include "blargg_endian.h"
-#include "report.h"
 
 struct Snes_Spc {
 public:
 	typedef BOOST::uint8_t uint8_t;
 
 	// bazz addiotions
-	/*const uint8_t READ_PC(uint8_t *pc)
-{
-	report_memread2(pc-m.ram.ram, *pc);
-	return *pc;
-}
-const uint16_t READ_PC16(uint8_t *pc)
-{
-	report_memread2(pc-m.ram.ram, *pc);
-	report_memread2((pc+1)-m.ram.ram, *pc);
-	return GET_LE16( pc );
-}*/
 	uint8_t* ram();
 	Spc_Dsp* get_dsp();
 	long pc() { return m.cpu_regs.pc; }
 	int  read( int addr, int external) { return cpu_read(addr, 0, external); }
 	void write( int addr, int val, int external) { cpu_write(val, 0, addr, external ); } //external); } 
+
+	enum { gain_unit = Spc_Dsp::gain_unit };
+	void set_gain( int gain );
 	//
 	
 	// Must be called once before using
@@ -86,10 +77,7 @@ const uint16_t READ_PC16(uint8_t *pc)
 	// Sets tempo, where tempo_unit = normal, tempo_unit / 2 = half speed, etc.
 	enum { tempo_unit = 0x100 };
 	void set_tempo( int );
-	
-	enum { gain_unit = Spc_Dsp::gain_unit };
-	void set_gain( int gain );
-	
+
 // SPC music files
 
 	// Loads SPC data into emulator
@@ -244,7 +232,7 @@ private:
 	void cpu_write_smp_reg_( int data, rel_time_t, int addr );
 	void cpu_write_smp_reg ( int data, rel_time_t, int addr );
 	void cpu_write_high    ( int data, int i, rel_time_t );
-	void cpu_write         ( int data, int addr, rel_time_t, int external=0);
+	void cpu_write         ( int data, int addr, rel_time_t, int external=0 );
 	int cpu_read_smp_reg   ( int i, rel_time_t );
 	int cpu_read           ( int addr, rel_time_t, int external=0 );
 	unsigned CPU_mem_bit   ( uint8_t const* pc, rel_time_t );
@@ -273,11 +261,11 @@ private:
 	static char const signature [signature_size + 1];
 	
 	void save_regs( uint8_t out [reg_count] );
-
-	
 };
 
 #include <assert.h>
+
+inline void Snes_Spc::set_gain( int gain ) { dsp.set_gain( gain ); }
 
 inline int Snes_Spc::sample_count() const { return (m.extra_clocks >> 5) * 2; }
 
@@ -290,10 +278,8 @@ inline int Snes_Spc::read_port( time_t t, int port )
 inline void Snes_Spc::write_port( time_t t, int port, int data )
 {
 	assert( (unsigned) port < port_count );
-	run_until_( t ) [0x10 + port] = data;
+	/*run_until_( t )*/ (&(m.smp_regs[0]) [r_cpuio0]) [0x10 + port] = data;
 }
-
-inline void Snes_Spc::set_gain( int gain ) { dsp.set_gain( gain ); }
 
 inline void Snes_Spc::mute_voices( int mask ) { dsp.mute_voices( mask ); }
 	

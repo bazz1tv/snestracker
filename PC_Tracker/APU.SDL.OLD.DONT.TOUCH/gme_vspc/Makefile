@@ -12,7 +12,7 @@ CFLAGS = $(gme_CFLAGS) $(vspc_CFLAGS)
 gme_SOURCES= gme/gme/M3u_Playlist.cpp gme/gme/Data_Reader.cpp gme/gme/Multi_Buffer.cpp\
 gme/gme/Blip_Buffer.cpp gme/gme/Effects_Buffer.cpp gme/gme/Fir_Resampler.cpp\
 gme/gme/Music_Emu.cpp gme/gme/gme.cpp gme/gme/gme_File.cpp gme/gme/Snes_Spc.cpp\
-gme/gme/Spc_Cpu.cpp gme/gme/Spc_Dsp.cpp gme/gme/Spc_Emu.cpp gme/demo/Wave_Writer.cpp\
+gme/gme/Snes_Spc_misc.cpp gme/gme/Snes_Spc_state.cpp gme/gme/Spc_Filter.cpp gme/gme/Spc_Dsp.cpp gme/gme/Spc_Emu.cpp gme/demo/Wave_Writer.cpp\
 gme/player/Music_Player.cpp
 ###
 OBJECTS=$(gme_SOURCES:.cpp=.o)
@@ -36,8 +36,8 @@ gme/gme/Spc_Dsp.o: gme/gme/Spc_Dsp.cpp gme/gme/Spc_Dsp.h vspc/report.h
 gme/gme/Snes_Spc.o: gme/gme/Snes_Spc.cpp gme/gme/Snes_Spc.h vspc/report.h 
 	$(CPP) $(CFLAGS) -c $< -o $@
 
-gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h vspc/report.h 
-	$(CPP) $(CFLAGS) -c $< -o $@
+#gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h vspc/report.h 
+#	$(CPP) $(CFLAGS) -c $< -o $@
 
 %.o: %.cpp %.h
 	$(CPP) $(CFLAGS) -c $< -o $@

@@ -116,6 +116,11 @@ Uint32 color_screen_dark_magenta, color_screen_dark_cyan, color_screen_dark_yell
 Uint32 color_screen_gray;
 Uint32 colorscale[12];
 
+namespace porttool
+{
+
+}
+
 namespace track
 {
 	static char now_playing[1024];
@@ -388,7 +393,11 @@ static void start_track( int track, const char* path )
 		if ( !game )
 			game = strrchr( path, '/' ); // UNIX
 		if ( !game )
-			game = path;
+		{
+			if (path)
+				game = path;
+			else game = "";
+		}
 		else
 			game++; // skip path separator
 	}
@@ -954,7 +963,7 @@ int main(int argc, char **argv)
 	player = new Music_Player;
 	if ( !player )
 		handle_error( "Out of memory" );
-	handle_error( player->init() );
+	handle_error( player->init(44100) );
 
 
 	
@@ -1486,7 +1495,22 @@ reload:
 								int x, y;
 								x = te->button.x - (PORTTOOL_X + (8*5));
 								x /= 8;
-								porttool::x = ((PORTTOOL_X + (8*5)) + (x*8));
+
+								// prevent double click on +/- during port edit mode to cause cursor to show up
+								// on +/-
+								switch (x)
+								{
+									case 2:
+									case 3:
+									case 7:
+									case 8:
+									case 12:
+									case 13:
+									case 17:
+									case 18:
+										porttool::x = ((PORTTOOL_X + (8*5)) + (x*8));
+								}
+								//fprintf (stderr, "x = %d\n", porttool::x);
 								
 								y = te->button.y - PORTTOOL_Y;
 								y /= 8;
@@ -1634,14 +1658,14 @@ reload:
 								{
 									switch (x)
 									{
-										case 1: inc_ram(0xf4); break;
-										case 4: dec_ram(0xf4); break;
-										case 6: inc_ram(0xf5); break;
-										case 9: dec_ram(0xf5); break;
-										case 11: inc_ram(0xf6); break;
-										case 14: dec_ram(0xf6); break;
-										case 16: inc_ram(0xf7); break;
-										case 19: dec_ram(0xf7); break;
+										case 1: porttool::inc_port (0); break;
+										case 4: porttool::dec_port (0); break;
+										case 6: porttool::inc_port (1); break;
+										case 9: porttool::dec_port (1); break;
+										case 11: porttool::inc_port(2); break;
+										case 14: porttool::dec_port(2); break;
+										case 16: porttool::inc_port(3); break;
+										case 19: porttool::dec_port(3); break;
 									}
 								}
 								if (ev.button.button == SDL_BUTTON_WHEELUP ||
@@ -2153,13 +2177,13 @@ reload:
 			sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:", color_screen_white);
 
 			if (mode == MODE_EDIT_APU_PORT)
-	    	sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", porttool::tmp[0], porttool::tmp[1], porttool::tmp[2], porttool::tmp[3]);	
+				sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", porttool::tmp[0], porttool::tmp[1], porttool::tmp[2], porttool::tmp[3]);		
 			else 
-				sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", IAPURAM[0xf4], IAPURAM[0xf5], IAPURAM[0xf6], IAPURAM[0xf7]);		
+				sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", porttool::portdata[0], porttool::portdata[1], porttool::portdata[2], porttool::portdata[3]);	
 			
 			sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf, color_screen_white);
 			
-			sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", 0,0,0,0); //APU.OutPorts[0], APU.OutPorts[1], APU.OutPorts[2], APU.OutPorts[3]);		
+			sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", IAPURAM[0xf4], IAPURAM[0xf5], IAPURAM[0xf6], IAPURAM[0xf7]);		
 			sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, color_screen_white);
 
 			//current_ticks = audio_samples_written/44100;
@@ -2203,6 +2227,9 @@ reload:
 			//SDL_Delay( 1000 / 100 );
 		} // if !g_cfg_novideo
 	}
+
+	//while(1);
+
 clean:
 	delete player;
 	//SDL_PauseAudio(1);

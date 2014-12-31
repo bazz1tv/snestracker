@@ -1,22 +1,18 @@
-// Library configuration. Modify this file as necessary.
+// snes_spc 0.9.0 user configuration file. Don't replace when updating library.
 
+// snes_spc 0.9.0
 #ifndef BLARGG_CONFIG_H
 #define BLARGG_CONFIG_H
 
-// Uncomment to use zlib for transparent decompression of gzipped files
-//#define HAVE_ZLIB_H
-
-// Uncomment to support only the listed game music types. See gme_type_list.cpp
-// for a list of all types.
-//#define GME_TYPE_LIST gme_nsf_type, gme_gbs_type
 #define GME_TYPE_LIST \
-gme_spc_type
+  gme_spc_type
 
-// Uncomment to enable platform-specific optimizations
+
+// Uncomment to disable debugging checks
+//#define NDEBUG 1
+
+// Uncomment to enable platform-specific (and possibly non-portable) optimizations
 //#define BLARGG_NONPORTABLE 1
-
-// Uncomment to use faster, lower quality sound synthesis
-//#define BLIP_BUFFER_FAST 1
 
 // Uncomment if automatic byte-order determination doesn't work
 //#define BLARGG_BIG_ENDIAN 1

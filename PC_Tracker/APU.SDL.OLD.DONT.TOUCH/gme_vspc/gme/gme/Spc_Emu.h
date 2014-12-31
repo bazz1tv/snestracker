@@ -62,6 +62,8 @@ public:
 
 	int  read( int addr, int external=0) { return apu.read(addr, external); }
 	void write( int addr, int val, int external=0) { apu.write(addr, val, external); }
+	int read_port(int port) { return apu.read_port(0, port); }
+	void write_port(int port, int data) { apu.write_port(0, port, data); }
 
 	Spc_Dsp* dsp();
 	uint8_t read_dsp(uint8_t dsp_addr);

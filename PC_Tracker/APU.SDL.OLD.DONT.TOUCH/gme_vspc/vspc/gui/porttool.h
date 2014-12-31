@@ -15,6 +15,18 @@ namespace porttool
   Uint8 highnibble, portnum, portaddress, tmp[4];
   Uint8 horizontal=0;
   int x,y;
+  int portdata[4] = {0,0,0,0};
+
+  void inc_port(int port)
+  {
+    player->spc_emu()->write_port(port, ++portdata[port]);
+    tmp[port] = portdata[port];
+  }
+  void dec_port(int port)
+  {
+    player->spc_emu()->write_port(port, --portdata[port]);
+    tmp[port] = portdata[port];
+  }
 
   void draw_cursor(SDL_Surface *screen, Uint32 color)
   {
@@ -25,22 +37,35 @@ namespace porttool
       cursor::draw(screen, x, PORTTOOL_Y+8, color);
   }
 
+  void write(int i)
+  {
+    player->spc_emu()->write_port(i, tmp[i]);
+    portdata[i] = tmp[i];
+  }
   void write()
+  {
+    int i = portnum;
+    player->spc_emu()->write_port(i, tmp[i]);
+    portdata[i] = tmp[i];
+  }
+  void writeall()
   {
     for (int i=0; i < 4; i++)
     {
-      player->spc_write(0xf4 + i, tmp[i]);
+      //player->spc_write(0xf4 + i, tmp[i]);
+      player->spc_emu()->write_port(i, tmp[i]);
+      portdata[i] = tmp[i];
       //IAPU.RAM[0xf4 + i] = tmp[i];
     }
   }
 
   void reset_port()
   {
-    tmp[portnum] = player->spc_read(0xf4 + portnum);
+    tmp[portnum] = portdata[portnum];
   }
   void reset_port(Uint8 num)
   {
-    tmp[num] = player->spc_read(0xf4 + num);
+    tmp[num] = portdata[num];
   }
 
   void switch_port(Uint8 num)
@@ -56,7 +81,7 @@ namespace porttool
     portnum = num;
     //tmp[portnum] = IAPU.RAM[0xf4 + portnum];
     for (int i=0; i < 4; i++)
-      tmp[i] = player->spc_read(0xf4 + i);
+      tmp[i] = portdata[i]; //player->spc_emu()->write_port(i);
   }
 
   void inc_cursor_pos()
@@ -104,4 +129,6 @@ namespace porttool
       }
     }
   }
+
+
 }

@@ -1,6 +1,7 @@
 // Sets up common environment for Shay Green's libraries.
 // To change configuration options, modify blargg_config.h, not this file.
 
+// snes_spc 0.9.0
 #ifndef BLARGG_COMMON_H
 #define BLARGG_COMMON_H
 
@@ -14,6 +15,13 @@
 #include "blargg_config.h"
 #ifndef BLARGG_COMMON_H
 #define BLARGG_COMMON_H
+
+// BLARGG_RESTRICT: equivalent to restrict, where supported
+#if defined (__GNUC__) || _MSC_VER >= 1100
+	#define BLARGG_RESTRICT __restrict
+#else
+	#define BLARGG_RESTRICT
+#endif
 
 // STATIC_CAST(T,expr): Used in place of static_cast<T> (expr)
 #ifndef STATIC_CAST
@@ -38,10 +46,12 @@ public:
 	T* end() const { return begin_ + size_; }
 	blargg_err_t resize( size_t n )
 	{
+		// TODO: blargg_common.cpp to hold this as an outline function, ugh
 		void* p = realloc( begin_, n * sizeof (T) );
-		if ( !p && n )
+		if ( p )
+			begin_ = (T*) p;
+		else if ( n > size_ ) // realloc failure only a problem if expanding
 			return "Out of memory";
-		begin_ = (T*) p;
 		size_ = n;
 		return 0;
 	}
@@ -54,10 +64,11 @@ public:
 };
 
 #ifndef BLARGG_DISABLE_NOTHROW
-	#if __cplusplus < 199711
-		#define BLARGG_THROWS( spec )
-	#else
+	// throw spec mandatory in ISO C++ if operator new can return NULL
+	#if __cplusplus >= 199711 || defined (__GNUC__)
 		#define BLARGG_THROWS( spec ) throw spec
+	#else
+		#define BLARGG_THROWS( spec )
 	#endif
 	#define BLARGG_DISABLE_NOTHROW \
 		void* operator new ( size_t s ) BLARGG_THROWS(()) { return malloc( s ); }\
@@ -68,6 +79,7 @@ public:
 	#define BLARGG_NEW new (std::nothrow)
 #endif
 
+// BLARGG_4CHAR('a','b','c','d') = 'abcd' (four character integer constant)
 #define BLARGG_4CHAR( a, b, c, d ) \
 	((a&0xFF)*0x1000000L + (b&0xFF)*0x10000L + (c&0xFF)*0x100L + (d&0xFF))
 
@@ -110,18 +122,17 @@ public:
 #endif
 
 // blargg_long/blargg_ulong = at least 32 bits, int if it's big enough
-#include <limits.h>
 
-#if INT_MAX >= 0x7FFFFFFF
-	typedef int blargg_long;
-#else
+#if INT_MAX < 0x7FFFFFFF || LONG_MAX == 0x7FFFFFFF
 	typedef long blargg_long;
+#else
+	typedef int blargg_long;
 #endif
 
-#if UINT_MAX >= 0xFFFFFFFF
-	typedef unsigned blargg_ulong;
-#else
+#if UINT_MAX < 0xFFFFFFFF || ULONG_MAX == 0xFFFFFFFF
 	typedef unsigned long blargg_ulong;
+#else
+	typedef unsigned blargg_ulong;
 #endif
 
 // BOOST::int8_t etc.
