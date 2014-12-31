@@ -1182,7 +1182,7 @@ reload:
 						else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
 						{
 							int scancode = ev.key.keysym.sym;
-
+							fprintf(stderr, "O= 0x%04x\n", player->spc_read(0xFA));
 							if (scancode == 'h' || scancode == 'H')
 							{
 								mouse_hexdump::horizontal = !mouse_hexdump::horizontal;
@@ -1193,7 +1193,7 @@ reload:
 								uint i=0;
 								int addr;
 								addr = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
-
+								//fprintf(stderr, "addr = 0x%04x\n", addr);
 								if ((scancode >= '0') && (scancode <= '9'))
 									i = scancode - '0';
 								else if ((scancode >= 'A') && (scancode <= 'F'))
@@ -1229,7 +1229,7 @@ reload:
 								//IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
 								mouse_hexdump::tmp_ram |= i;
 
-								if (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c))
+								if ((addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c)))
 								{
 									if (!mouse_hexdump::highnibble)
 									{
@@ -1238,7 +1238,7 @@ reload:
 									}
 									else mouse_hexdump::draw_tmp_ram = 1;
 								}
-								else player->spc_write(addr, mouse_hexdump::tmp_ram);
+								else /*&IAPURAM[addr] = mouse_hexdump::tmp_ram;*/ player->spc_write(addr, mouse_hexdump::tmp_ram);
 								
 								if (mouse_hexdump::horizontal) mouse_hexdump::inc_cursor_pos();
 	    					
@@ -1634,8 +1634,9 @@ reload:
 										ev.motion.y >= MEMORY_VIEW_Y &&
 										ev.motion.y < MEMORY_VIEW_Y + 512 )
 								{
-									mouse_hexdump::toggle_lock();
+									// ORDER IMPORTANT
 									mouse_hexdump::set_addr(ev.motion.x, ev.motion.y);
+									mouse_hexdump::toggle_lock();
 								}
 							}
 							

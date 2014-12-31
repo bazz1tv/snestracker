@@ -74,7 +74,7 @@ spc.asm line 0043: unrecognized directive.            (#)
 0073   2082 8F 00 F3        mov $F3, #0
 0074   2085             
 0075   2085                 ;
-0076   2085 8F 00 FA        mov $FA, #0
+0076   2085 8F 20 FA        mov $FA, #$20
 0077   2088 8F 01 F1        mov $f1, #1
 0078   208B             
 0079   208B E8 00           mov a, #0
@@ -85,30 +85,31 @@ spc.asm line 0043: unrecognized directive.            (#)
 0084   2096 8F 01 F3        mov $F3, #$01
 0085   2099             
 0086   2099             loop:    
-0087   2099 E4 FD           mov a, $fd
-0088   209B F0 FC           beq loop
-0089   209D             
-0090   209D                 ; if a > 0
-0091   209D 60              clrc
-0092   209E 85 00 08        adc a, !$800
-0093   20A1 C5 00 08        mov !$800, a
-0094   20A4             
-0095   20A4 68 40           cmp a, #$40
-0096   20A6 D0 F1           bne loop
-0097   20A8             
-0098   20A8 E8 00           mov a, #0
-0099   20AA C5 00 08        mov !$800, a
-0100   20AD                 
-0101   20AD             
-0102   20AD                 #mov $F2, #$4C
+0087   2099                 #mov a, $fd
+spc.asm line 0087: unrecognized directive.            (#MOV)
+0088   2099 F0 FE           beq loop
+0089   209B             
+0090   209B                 ; if a > 0
+0091   209B 60              clrc
+0092   209C 85 00 08        adc a, !$800
+0093   209F C5 00 08        mov !$800, a
+0094   20A2             
+0095   20A2 68 40           cmp a, #$40
+0096   20A4 D0 F3           bne loop
+0097   20A6             
+0098   20A6 E8 00           mov a, #0
+0099   20A8 C5 00 08        mov !$800, a
+0100   20AB                 
+0101   20AB             
+0102   20AB                 #mov $F2, #$4C
 spc.asm line 0102: unrecognized directive.            (#MOV)
-0103   20AD                 #mov $f3, #0
+0103   20AB                 #mov $f3, #0
 spc.asm line 0103: unrecognized directive.            (#MOV)
-0104   20AD                 #mov $F3, #$02
+0104   20AB                 #mov $F3, #$02
 spc.asm line 0104: unrecognized directive.            (#MOV)
-0105   20AD                 
-0106   20AD             
-0107   20AD 2F EA           bra loop
-0108   20AF             
-0109   20AF             .END
-0110   20AF             EOFtasm: Number of errors = 4
+0105   20AB                 
+0106   20AB             
+0107   20AB 2F EC           bra loop
+0108   20AD             
+0109   20AD             .END
+0110   20AD             EOFtasm: Number of errors = 5

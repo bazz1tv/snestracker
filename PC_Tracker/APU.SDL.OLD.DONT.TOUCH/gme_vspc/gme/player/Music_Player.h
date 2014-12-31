@@ -57,7 +57,6 @@ public:
 	}
 	uint8_t spc_read(int addr)
 	{
-		
 		return spc_emu_->read(addr, 1);
 	}
 	uint8_t spc_read_dsp(int dspaddr)

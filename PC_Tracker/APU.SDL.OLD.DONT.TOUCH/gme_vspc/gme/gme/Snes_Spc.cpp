@@ -144,9 +144,10 @@ void Snes_Spc::enable_rom( int enable )
 		}
 #endif
 
-int Snes_Spc::dsp_read( rel_time_t time )
+int Snes_Spc::dsp_read( rel_time_t time, int external  )
 {
-	RUN_DSP( time, reg_times [REGS [r_dspaddr] & 0x7F] );
+	if (!external)
+		RUN_DSP( time, reg_times [REGS [r_dspaddr] & 0x7F] );
 	
 	int result = dsp.read( REGS [r_dspaddr] & 0x7F );
 	
@@ -182,7 +183,7 @@ inline void Snes_Spc::dsp_write( int data, rel_time_t time )
 	if ( REGS [r_dspaddr] <= 0x7F )
 		dsp.write( REGS [r_dspaddr], data );
 	else if ( !SPC_MORE_ACCURACY )
-		dprintf( "SPC wrote to DSP register > $7F\n" );
+		ddprintf( "SPC wrote to DSP register > $7F\n" );
 }
 
 
@@ -308,7 +309,7 @@ void Snes_Spc::cpu_write_smp_reg_( int data, rel_time_t time, int addr )
 						t->next_time == time + TIMER_MUL( t, 1 ) &&
 						((period - 1) | ~0x0F) & period )
 				{
-					//dprintf( "SPC pathological timer target write\n" );
+					//ddprintf( "SPC pathological timer target write\n" );
 					
 					// If the period is 3, 5, or 9, there's a probability this behavior won't occur,
 					// based on the previous period
@@ -337,7 +338,7 @@ void Snes_Spc::cpu_write_smp_reg_( int data, rel_time_t time, int addr )
 	case r_t1out:
 	case r_t2out:
 		if ( !SPC_MORE_ACCURACY )
-			dprintf( "SPC wrote to counter %d\n", (int) addr - r_t0out );
+			ddprintf( "SPC wrote to counter %d\n", (int) addr - r_t0out );
 		
 		if ( data < no_read_before_write  / 2 )
 			run_timer( &m.timers [addr - r_t0out], time - 1 )->counter = 0;
@@ -351,7 +352,7 @@ void Snes_Spc::cpu_write_smp_reg_( int data, rel_time_t time, int addr )
 	
 	case r_test:
 		if ( (uint8_t) data != 0x0A )
-			dprintf( "SPC wrote to test register\n" );
+			ddprintf( "SPC wrote to test register\n" );
 		break;
 	
 	case r_control:
@@ -456,18 +457,25 @@ void Snes_Spc::cpu_write( int data, int addr, rel_time_t time, int external/*=0*
 
 
 //// CPU read
-
+#include <stdio.h>
 inline int Snes_Spc::cpu_read_smp_reg( int reg, rel_time_t time )
 {
+	//fprintf (stderr, "0x%x\n", reg);
 	int result = REGS_IN [reg];
+	// ADDITION by bazz cause WTF.. the timer regs wasn't returning the proper value
+	if ( (unsigned) reg >= 0x0a && (unsigned) reg <= 0x0c)
+		result = REGS[reg];
+	// 	end bazz mod
 	reg -= r_dspaddr;
 	// DSP addr and data
 	if ( (unsigned) reg <= 1 ) // 4% 0xF2 and 0xF3
 	{
 		result = REGS [r_dspaddr];
 		if ( (unsigned) reg == 1 )
-			result = dsp_read( time ); // 0xF3
+			result = dsp_read( time, 1 ); // 0xF3
 	}
+
+	
 	return result;
 }
 
@@ -478,6 +486,7 @@ int Snes_Spc::cpu_read( int addr, rel_time_t time, int external/*=0*/ )
 		report_memread(addr);
 	// RAM
 	int result = RAM [addr];
+	//return result;
 	int reg = addr - 0xF0;
 	if ( reg >= 0 ) // 40%
 	{

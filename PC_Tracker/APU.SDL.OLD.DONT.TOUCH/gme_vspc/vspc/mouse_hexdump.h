@@ -76,7 +76,8 @@ namespace mouse_hexdump
       
       int derp = (mouse_hexdump::address % 8);
                     //if (derp >= 4) mouse_hexdump::address += (8-derp);
-                    /*else*/ add_addr(-derp);
+                    /*else*/ 
+      add_addr(-derp);
       memcursor::start_timer();
     }
     else

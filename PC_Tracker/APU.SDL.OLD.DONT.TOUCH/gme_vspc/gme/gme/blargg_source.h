@@ -25,7 +25,7 @@ all other #include lines. */
 static inline void blargg_dprintf_( const char*, ... ) { }
 #undef ddprintf
 #define ddprintf (1) ? (void) 0 : blargg_dprintf_
-#define dprintf ddprintf
+//#define dprintf ddprintf
 
 // If enabled, evaluate expr and if false, make debug log entry with source file
 // and line. Meant for finding situations that should be examined further, but that

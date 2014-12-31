@@ -16,7 +16,7 @@ public:
 	Spc_Dsp* get_dsp();
 	long pc() { return m.cpu_regs.pc; }
 	int  read( int addr, int external) { return cpu_read(addr, 0, external); }
-	void write( int addr, int val, int external) { cpu_write(val, 0, addr, external ); } //external); } 
+	void write( int addr, int val, int external) { cpu_write(val, addr,0, external ); } //external); } 
 
 	enum { gain_unit = Spc_Dsp::gain_unit };
 	void set_gain( int gain );
@@ -227,7 +227,7 @@ private:
 	
 	Timer* run_timer_      ( Timer* t, rel_time_t );
 	Timer* run_timer       ( Timer* t, rel_time_t );
-	int dsp_read           ( rel_time_t );
+	int dsp_read           ( rel_time_t, int external=0 );
 	void dsp_write         ( int data, rel_time_t );
 	void cpu_write_smp_reg_( int data, rel_time_t, int addr );
 	void cpu_write_smp_reg ( int data, rel_time_t, int addr );

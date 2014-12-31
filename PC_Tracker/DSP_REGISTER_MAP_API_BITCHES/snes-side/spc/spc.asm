@@ -73,7 +73,7 @@ Init:
     mov $F3, #0
 
     ;
-    mov $FA, #0
+    mov $FA, #$20
     mov $f1, #1
 
     mov a, #0
@@ -84,7 +84,7 @@ Init:
     mov $F3, #$01
 
 loop:    
-    mov a, $fd
+    #mov a, $fd
     beq loop
 
     ; if a > 0
