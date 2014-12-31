@@ -400,11 +400,11 @@ static void start_track( int track, const char* path )
 	SDL_WM_SetCaption( title, title );
 }
 
-void inc_ram(spc_addr_t addr, int i=1)
+void inc_ram(int addr, int i=1)
 {
 	player->spc_write(addr, (player->spc_read(addr))+i);
 }
-void dec_ram(spc_addr_t addr, int i=1)
+void dec_ram(int addr, int i=1)
 {
 	player->spc_write(addr, (player->spc_read(addr))-i);
 }
@@ -420,8 +420,8 @@ void dec_ram(spc_addr_t addr, int i=1)
 
 void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
-void report_memread(unsigned short address, unsigned char value);
-void report_memwrite(unsigned short address, unsigned char value);
+//void report_memread(unsigned short address, unsigned char value);
+//void report_memwrite(unsigned short address, unsigned char value);
 
 void fade_arrays()
 {

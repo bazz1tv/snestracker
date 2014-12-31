@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
-void Spc_Emu::disable_surround( bool b ) { apu.disable_surround( b ); }
+// bazz additions
 uint8_t* Spc_Emu::ram() { return apu.ram(); }
 long Spc_Emu::pc() { return apu.pc(); }
 Spc_Dsp* Spc_Emu::dsp() { return apu.get_dsp(); }
@@ -27,8 +27,9 @@ uint8_t Spc_Emu::read_dsp(uint8_t dsp_addr) { return apu.get_dsp()->read(dsp_add
 void Spc_Emu::write_dsp(uint8_t dsp_addr, int val) { apu.get_dsp()->write(dsp_addr, val); }
 void Spc_Emu::toggle_echo() { dsp()->toggle_echo(); apu.clear_echo(); }
 char Spc_Emu::is_echoing() { return dsp()->is_echoing(); }
+//
 
-Spc_Emu::Spc_Emu() : Spc_Dsp_Register_Map_Interface(&apu)
+Spc_Emu::Spc_Emu()
 {
 	set_type( gme_spc_type );
 	
@@ -225,7 +226,7 @@ struct Spc_File : Gme_Info_
 	blargg_err_t load_( Data_Reader& in )
 	{
 		long file_size = in.remain();
-		if ( file_size < Snes_Spc::spc_file_size )
+		if ( file_size < Snes_Spc::spc_min_file_size )
 			return gme_wrong_file_type;
 		RETURN_ERR( in.read( &header, Spc_Emu::header_size ) );
 		RETURN_ERR( check_spc_header( header.tag ) );
@@ -250,13 +251,14 @@ struct Spc_File : Gme_Info_
 static Music_Emu* new_spc_emu () { return BLARGG_NEW Spc_Emu ; }
 static Music_Emu* new_spc_file() { return BLARGG_NEW Spc_File; }
 
-gme_type_t_ const gme_spc_type [1] = { { "Super Nintendo", 1, &new_spc_emu, &new_spc_file, "SPC", 0 } };
+gme_type_t_ const gme_spc_type [1] = { "Super Nintendo", 1, &new_spc_emu, &new_spc_file, "SPC", 0 };
 
 // Setup
 
 blargg_err_t Spc_Emu::set_sample_rate_( long sample_rate )
 {
-	apu.set_gain( gain() );
+	RETURN_ERR( apu.init() );
+	apu.set_gain( (int) (gain() * Snes_Spc::gain_unit) );
 	if ( sample_rate != native_sample_rate )
 	{
 		RETURN_ERR( resampler.buffer_size( native_sample_rate / 20 * 2 ) );
@@ -277,14 +279,14 @@ blargg_err_t Spc_Emu::load_mem_( byte const* in, long size )
 	file_data = in;
 	file_size = size;
 	set_voice_count( Snes_Spc::voice_count );
-	if ( size < Snes_Spc::spc_file_size )
+	if ( size < Snes_Spc::spc_min_file_size )
 		return gme_wrong_file_type;
 	return check_spc_header( in );
 }
 
 // Emulation
 
-void Spc_Emu::set_tempo_( double t ) { apu.set_tempo( t ); }
+void Spc_Emu::set_tempo_( double t ) { apu.set_tempo( (int) (t * Snes_Spc::tempo_unit) ); }
 
 blargg_err_t Spc_Emu::start_track_( int track )
 {

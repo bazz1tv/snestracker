@@ -48,24 +48,24 @@ public:
 	Music_Emu* emu() const { return emu_; }
 	Spc_Emu* spc_emu() const { return spc_emu_; }
 
-	void spc_write(spc_addr_t addr, int data)
+	void spc_write(int addr, int data)
 	{
 		if (addr == 0xf3)
 			spc_write_dsp(spc_emu_->ram()[0xf2], data);
 		else spc_emu_->write(addr, data, 1);
 	}
-	uint8_t spc_read(spc_addr_t addr)
+	uint8_t spc_read(int addr)
 	{
 		
 		return spc_emu_->read(addr, 1);
 	}
-	uint8_t spc_read_dsp(spc_addr_t dspaddr)
+	uint8_t spc_read_dsp(int dspaddr)
 	{
 		//spc_emu_->write(0xf2, dspaddr, 1);
 		//return spc_emu_->read(0xf3);
 		return spc_emu_->read_dsp(dspaddr);
 	}
-	void spc_write_dsp(spc_addr_t dspaddr, int val)
+	void spc_write_dsp(int dspaddr, int val)
 	{
 		//spc_emu_->write(0xf2, dspaddr, 1);
 		//return spc_emu_->read(0xf3);

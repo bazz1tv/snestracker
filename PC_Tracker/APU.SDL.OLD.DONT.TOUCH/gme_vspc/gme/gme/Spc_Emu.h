@@ -15,7 +15,7 @@ public:
 	// handled by resampling the 32kHz output; emulation accuracy is not affected.
 	enum { native_sample_rate = 32000 };
 	
-	// SPC file header (ID666 binary)
+	// SPC file header
 	enum { header_size = 0x100 };
 	struct header_t
 	{
@@ -54,20 +54,23 @@ public:
 	byte const* trailer() const; // use track_info()
 	long trailer_size() const;
 
-public:
-	Spc_Emu();
-	~Spc_Emu();
-
-	int  read( spc_addr_t addr, int external=0) { return apu.read(addr, external); }
-	void write( spc_addr_t addr, int val, int external=0) { apu.write(addr, val, external); }
+	// bazz additions
 	uint8_t* ram();
 	long pc();
-	Spc_Dsp* dsp();
-	uint8_t read_dsp(uint8_t dsp_addr);
-	void write_dsp(uint8_t dsp_addr, int val);
 	void toggle_echo();
 	char is_echoing();
 
+	int  read( int addr, int external=0) { return apu.read(addr, external); }
+	void write( int addr, int val, int external=0) { apu.write(addr, val, external); }
+
+	Spc_Dsp* dsp();
+	uint8_t read_dsp(uint8_t dsp_addr);
+	void write_dsp(uint8_t dsp_addr, int val);
+	//
+
+public:
+	Spc_Emu();
+	~Spc_Emu();
 protected:
 	blargg_err_t load_mem_( byte const*, long );
 	blargg_err_t track_info_( track_info_t*, int track ) const;
@@ -84,8 +87,6 @@ private:
 	Snes_Spc apu;
 };
 
-//(spcemu..).apu.write()
-
-
+inline void Spc_Emu::disable_surround( bool b ) { apu.disable_surround( b ); }
 
 #endif
