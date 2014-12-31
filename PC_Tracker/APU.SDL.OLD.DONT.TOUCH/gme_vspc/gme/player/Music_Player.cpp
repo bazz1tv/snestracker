@@ -105,6 +105,7 @@ void Music_Player::stop()
 Music_Player::~Music_Player()
 {
 	stop();
+	gme_delete(emu_);
 	sound_cleanup();
 }
 
@@ -171,6 +172,16 @@ int Music_Player::track_count() const
 
 blargg_err_t Music_Player::start_track( int track )
 {
+	// I do this to clean up the sound buffer when "scrollin" to the next track..
+	// after a previous track was paused.. you would sometimes hear some of that old song
+	// data play before the new track.. temporary fix is to reallocate the sound device..
+	// permanent fix would be to add "fadeout after pause" or "fade in after play"
+	if (paused)
+	{
+		sound_cleanup();
+		init(sample_rate);
+	}
+
 	curtrack = track;
 	if ( emu_ )
 	{
@@ -197,7 +208,7 @@ blargg_err_t Music_Player::start_track( int track )
 				track_info_.length = (long) (2.5 * 60 * 1000);
 			//tmp->set_fade( track_info_.length );
 			//paused = false;
-			delete tmp;
+			gme_delete(tmp);
 		}
 		else	
 		{
@@ -344,6 +355,7 @@ static const char* sound_init( long sample_rate, int buf_size,
 
 static void sound_start()
 {
+	//SDL_UnlockAudio();
 	SDL_PauseAudio( false );
 }
 

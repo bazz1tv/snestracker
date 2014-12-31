@@ -809,6 +809,7 @@ int cur_mouse_address=0x0000;
 	SDL_Rect tmprect;
 void reload()
 {
+
 	//reload:
 #ifdef WIN32
 	g_real_filename = strrchr(g_cfg_playlist[g_cur_entry], '\\');
@@ -900,9 +901,9 @@ void reload()
 
 	
 
-	if (!g_cfg_nosound) {
+	/*if (!g_cfg_nosound) {
 		SDL_PauseAudio(0);
-	}
+	}*/
 
 }
 
@@ -994,7 +995,7 @@ reload:
 				}
 			}
 			if (!g_cfg_nosound) {
-				SDL_PauseAudio(1);
+				//SDL_PauseAudio(1);
 			}
 			g_cur_entry++;
 			if (g_cur_entry>=g_cfg_num_files) { printf ("penis3\n"); goto clean; }
@@ -1121,12 +1122,14 @@ reload:
 							else if (scancode == SDLK_SPACE)
 							{
 								//gme_seek(player->emu(), 20000);
+								//SDL_PauseAudio(1); 
 								player->toggle_pause();
 							}
 							else if (scancode == SDLK_r)
 							{
-								player->pause(0);
+								
 								player->start_track(0);	// based on only having 1 track
+								player->pause(0);
 								// in the program .. this would have to change otherwise
 							}
 							else if (ev.key.keysym.sym == SDLK_e)
@@ -1681,7 +1684,7 @@ reload:
 								}
 
 								if (x>=33 && x<=36) { // next
-									SDL_PauseAudio(1);
+									//SDL_PauseAudio(1);
 									//player->pause(1);
 									//usleep(500000);
 									
@@ -2230,6 +2233,7 @@ void restart_track()
 
 void prev_track()
 {
+	SDL_PauseAudio(true);
 	g_cur_entry--;
 	if (g_cur_entry<0) { g_cur_entry = g_cfg_num_files-1; }
 	reload();
@@ -2238,6 +2242,7 @@ void prev_track()
 
 void next_track()
 {
+	SDL_PauseAudio(true);
 	g_cur_entry++;
 	if (g_cur_entry>=g_cfg_num_files) { g_cur_entry = 0; }
 	reload();
