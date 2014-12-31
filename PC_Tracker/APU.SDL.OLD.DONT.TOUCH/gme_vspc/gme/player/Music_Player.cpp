@@ -306,7 +306,7 @@ void Music_Player::mute_voices( int mask )
 {
 	suspend();
 	emu_->mute_voices( mask );
-	emu_->ignore_silence( mask != 0 );
+	//emu_->ignore_silence( mask != 0 );
 	resume();
 }
 

@@ -842,9 +842,9 @@ void reload()
 	path = g_cfg_playlist[g_cur_entry];
 	handle_error( player->load_file( g_cfg_playlist[g_cur_entry] ) );
 	//handle_error( player->load_file( path ) );
-	player->ignore_silence();
+	
 	IAPURAM = player->spc_emu()->ram();
-	player->mute_voices(voices::muted);
+	
 
 	memset(memsurface_data, 0, 512*512*4);
 	memset(used, 0, sizeof(used));
@@ -855,6 +855,8 @@ void reload()
 	last_pc = -1;
 	
 	start_track( 1, path );
+	player->mute_voices(voices::muted);
+	player->ignore_silence();
 		//read_id666(fptr, &tag); 
 
 		

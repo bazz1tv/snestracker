@@ -293,7 +293,15 @@ inline void Spc_Dsp::decode_brr( voice_t* v )
 {
 	// Arrange the four input nybbles in 0xABCD order for easy decoding
 	int nybbles = m.t_brr_byte * 0x100 + m.ram [(v->brr_addr + v->brr_offset + 1) & 0xFFFF];
-	
+	report_memread(v->brr_addr);
+	report_memread(v->brr_addr+1);
+	report_memread(v->brr_addr+2);
+	report_memread(v->brr_addr+3);
+	report_memread(v->brr_addr+4);
+	report_memread(v->brr_addr+5);
+	report_memread(v->brr_addr+6);
+	report_memread(v->brr_addr+7);
+	report_memread(v->brr_addr+8);
 	int const header = m.t_brr_header;
 	
 	// Write to next four samples in circular buffer
