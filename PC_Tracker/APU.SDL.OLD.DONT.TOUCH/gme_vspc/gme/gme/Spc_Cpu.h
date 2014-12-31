@@ -127,8 +127,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 unsigned Snes_Spc::CPU_mem_bit( uint8_t const* pc, rel_time_t rel_time )
 {
-	report_memread2(pc-RAM, *pc);
-	report_memread2(pc+1-RAM, *pc);
+	//report_memread2(pc-RAM, *pc);
+	//report_memread2(pc+1-RAM, *pc);
 	unsigned addr = READ_PC16( pc );
 	unsigned t = READ( 0, addr & 0x1FFF ) >> (addr >> 13);
 	return t << 8 & 0x100;
@@ -166,6 +166,8 @@ int const nz_neg_mask = 0x880; // either bit set indicates N flag set
 	nz  = (in << 4 & 0x800) | (~in & z02);\
 }
 
+//#include <stdio.h>
+
 SPC_CPU_RUN_FUNC
 {
 	uint8_t* const ram = RAM;
@@ -202,7 +204,8 @@ loop:
 	check( (unsigned) y < 0x100 );
 	
 	opcode = *pc;
-	report_memread2(pc-RAM, *pc);
+	//fprintf(stderr, "0x%04x\n", pc-ram);
+	report_memread2(pc-ram, *pc);
 	if ( (rel_time += m.cycle_table [opcode]) > 0 )
 		goto out_of_time;
 	
@@ -226,7 +229,7 @@ loop:
 	
 	// TODO: if PC is at end of memory, this will get wrong operand (very obscure)
 	data = *++pc;
-	report_memread2(pc-RAM, *pc);
+	//report_memread2(pc-RAM, *pc);
 	switch ( opcode )
 	{
 	

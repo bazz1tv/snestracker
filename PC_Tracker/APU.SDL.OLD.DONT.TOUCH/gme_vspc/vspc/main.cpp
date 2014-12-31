@@ -835,6 +835,15 @@ void reload()
 	player->ignore_silence();
 	IAPURAM = player->spc_emu()->ram();
 	player->mute_voices(voices::muted);
+
+	memset(memsurface_data, 0, 512*512*4);
+	memset(used, 0, sizeof(used));
+	memset(used2, 0, sizeof(used2));
+	cur_mouse_address =0;
+	//cur_time = 0;
+	audio_samples_written = 0;
+	last_pc = -1;
+	
 	start_track( 1, path );
 		//read_id666(fptr, &tag); 
 
@@ -844,13 +853,7 @@ void reload()
 	//}
 	
   
-	memset(memsurface_data, 0, 512*512*4);
-	memset(used, 0, sizeof(used));
-	memset(used2, 0, sizeof(used2));
-	cur_mouse_address =0;
-	//cur_time = 0;
-	audio_samples_written = 0;
-	last_pc = -1;
+	
 
 	// draw one-time stuff
 	if (!g_cfg_novideo)
