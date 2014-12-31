@@ -315,8 +315,12 @@ void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 	Music_Player* self = (Music_Player*) data;
 	if ( self->emu_ )
 	{
-		if ( self->emu_->play( count, out ) ) { } // ignore error
-		//fprintf(stderr, "before: %d, ", *out);
+		if ( self->emu_->play( count, out ) ) { fprintf(stderr, "error");} // ignore error
+		//fprintf(stderr, "%d, ", *out);
+			/*for (count; count > 0; count -= 1)
+			{
+				out[count-1] -= 0x7000;
+			}*/
 		self->spc_filter->run(out, count);
 		//fprintf(stderr, "after: %d\n", *out);
 		

@@ -965,7 +965,7 @@ int main(int argc, char **argv)
 	player = new Music_Player;
 	if ( !player )
 		handle_error( "Out of memory" );
-	handle_error( player->init(44100) );
+	handle_error( player->init(32000) );
 
 
 	
@@ -1182,7 +1182,7 @@ reload:
 						else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
 						{
 							int scancode = ev.key.keysym.sym;
-							fprintf(stderr, "O= 0x%04x\n", player->spc_read(0xFA));
+							//fprintf(stderr, "O= 0x%04x\n", player->spc_read(0xFD));
 							if (scancode == 'h' || scancode == 'H')
 							{
 								mouse_hexdump::horizontal = !mouse_hexdump::horizontal;
@@ -2159,11 +2159,18 @@ reload:
 								
 						//if ((cut_addr+i+j) > 0xffff)
 							//sprintf(tmpbuf, "   ");
-						if (cut_addr+j == 0xf3)
+						int cur_addr = cut_addr+j;
+						if (cur_addr == 0xf3)
 						{
 							if (mouse_hexdump::draw_tmp_ram)
 								sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
 							else sprintf(tmpbuf, "%02X ", player->spc_read_dsp(IAPURAM[0xf2]));
+						}
+						else if (cur_addr >= 0xfd && cur_addr <= 0xff)	// Timer registers (not counters)
+						{
+							if (mouse_hexdump::draw_tmp_ram)
+								sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+							else sprintf(tmpbuf, "%02X ", player->spc_read(cur_addr));
 						}
 						else sprintf(tmpbuf, "%02X ", *st);
 						st++;

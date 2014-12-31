@@ -284,7 +284,6 @@ inline void Spc_Dsp::write( int addr, int data )
 	}
 }
 
-inline void Spc_Dsp::set_gain( int gain ) { m.gain = gain; }
 
 inline void Spc_Dsp::mute_voices( int mask ) { m.mute_mask = mask; }
 

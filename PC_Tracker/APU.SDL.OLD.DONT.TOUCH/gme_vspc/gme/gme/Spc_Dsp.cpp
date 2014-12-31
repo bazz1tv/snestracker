@@ -504,10 +504,10 @@ VOICE_CLOCK( V3c )
 inline void Spc_Dsp::voice_output( voice_t const* v, int ch )
 {
 	// Apply left/right volume
-	int amp = (m.t_output * (int8_t) VREG(v->regs,voll + ch)) >> 7;
+	int amp = (m.t_output * (int8_t) VREG(v->regs,voll + ch)) >> 7; // was >> 7 but bazz hated the sound
 	
 	// Add to output total
-	m.t_main_out [ch] += amp;
+	m.t_main_out [ch] += amp;// + m.gain;
 	CLAMP16( m.t_main_out [ch] );
 	
 	// Optionally add to echo total
@@ -682,8 +682,8 @@ ECHO_CLOCK( 25 )
 }
 inline int Spc_Dsp::echo_output( int ch )
 {
-	int out = (int16_t) (( ((m.t_main_out [ch] * (int8_t) REG(mvoll + ch * 0x10)) >> 7) * m.gain) >> 8) +
-			(int16_t) (( ((m.t_echo_in [ch] * (int8_t) REG(evoll + ch * 0x10)) >> 7) * m.gain) >> 8 );
+	int out = (int16_t) (( ((m.t_main_out [ch] * (int8_t) REG(mvoll + ch * 0x10)) >> 7) )) +
+			(int16_t) (( ((m.t_echo_in [ch] * (int8_t) REG(evoll + ch * 0x10)) >> 7) ));
 	CLAMP16( out );
 	return out;
 }
@@ -718,6 +718,11 @@ ECHO_CLOCK( 27 )
 		l = 0;
 		r = 0;
 	}
+
+	//l -= 0x8000;
+	//r -= 0x8000;
+	//CLAMP16(l);
+	//CLAMP16(r);
 	
 	// Output sample to DAC
 	#ifdef Spc_Dsp_OUT_HOOK
@@ -832,14 +837,14 @@ void Spc_Dsp::run( int clocks_remain )
 
 #endif
 
-
+void Spc_Dsp::set_gain( int gain ) { m.gain = gain; }
 //// Setup
 
 void Spc_Dsp::init( void* ram_64k )
 {
 	echoing=1;
 	m.ram = (uint8_t*) ram_64k;
-	set_gain( gain_unit + 0x100);
+	//set_gain( gain_unit * 0);
 	mute_voices( 0 );
 	disable_surround( false );
 	set_output( 0, 0 );
@@ -898,6 +903,7 @@ void Spc_Dsp::load( uint8_t const regs [register_count] )
 	m.t_esa   = REG(esa);
 	
 	soft_reset_common();
+	set_gain( gain_unit * 0.01);
 }
 
 void Spc_Dsp::reset() { load( initial_regs ); }
