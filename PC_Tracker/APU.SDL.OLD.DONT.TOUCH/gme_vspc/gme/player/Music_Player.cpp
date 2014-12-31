@@ -75,11 +75,12 @@ void Music_Player::dec_curtrack() { curtrack--; }
 
 Music_Player::Music_Player()
 {
-	emu_      = 0;
-	scope_buf = 0;
-	paused    = false;
-	curtrack = 0;
-	filetrack=0;
+	emu_          = 0;
+	scope_buf     = 0;
+	paused        = false;
+	curtrack 	    = 0;
+	filetrack	    = 0;
+	track_started = false;
 }
 
 blargg_err_t Music_Player::init( long rate )
@@ -112,6 +113,7 @@ blargg_err_t Music_Player::load_file( const char* path )
 	stop();
 
 	// check if file is m3u 
+	this->path = path;
 	char* ext;
 	char file1[500];
 	ext = strrchr(path,'.');
@@ -174,21 +176,54 @@ blargg_err_t Music_Player::start_track( int track )
 	{
 		// Sound must not be running when operating on emulator
 		sound_stop();
-		RETURN_ERR( emu_->start_track( track ) );
-		
-		// Calculate track length
-		if ( !emu_->track_info( &track_info_ ) )
+		if (paused)
 		{
+			track_started = false;
+			//
+			Music_Emu *tmp;
+			gme_open_file(path.c_str(), &tmp, gme_info_only);
+			tmp->start_track(track);
+			
+			// Calculate track length
+			if ( !tmp->track_info( &track_info_ ) )
+			{
+				if ( track_info_.length <= 0 )
+					track_info_.length = track_info_.intro_length +
+							track_info_.loop_length * 2;
+			}
+			// = derp;
+			//fprintf(stderr, "game = %s", derp.game);
 			if ( track_info_.length <= 0 )
-				track_info_.length = track_info_.intro_length +
-						track_info_.loop_length * 2;
+				track_info_.length = (long) (2.5 * 60 * 1000);
+			//tmp->set_fade( track_info_.length );
+			//paused = false;
+			delete tmp;
 		}
-		if ( track_info_.length <= 0 )
-			track_info_.length = (long) (2.5 * 60 * 1000);
-		emu_->set_fade( track_info_.length );
+		else	
+		{
+			track_started = true;
+			RETURN_ERR( emu_->start_track( track ) );
+			//track_started = true;
+			// Calculate track length
+			if ( !emu_->track_info( &track_info_ ) )
+			{
+				if ( track_info_.length <= 0 )
+					track_info_.length = track_info_.intro_length +
+							track_info_.loop_length * 2;
+			}
+			if ( track_info_.length <= 0 )
+				track_info_.length = (long) (2.5 * 60 * 1000);
+			emu_->set_fade( track_info_.length );
+			sound_start();
+		}
 		
-		paused = false;
-		sound_start();
+		//fprintf(stderr, "game = %s", track_info_.game);
+		
+		//paused = false;
+		//pause(pause);
+
+		
+		//pause(paused);
 	}
 	return 0;
 }
@@ -196,6 +231,12 @@ blargg_err_t Music_Player::start_track( int track )
 void Music_Player::toggle_pause()
 {
 	pause(!paused);
+	
+}
+
+bool Music_Player::is_paused()
+{
+	return paused;
 }
 
 void Music_Player::pause( int b )
@@ -204,7 +245,13 @@ void Music_Player::pause( int b )
 	if ( b )
 		sound_stop();
 	else
+	{
+		if (!track_started)
+		{
+			start_track(curtrack);
+		}
 		sound_start();
+	}
 }
 
 void Music_Player::suspend()

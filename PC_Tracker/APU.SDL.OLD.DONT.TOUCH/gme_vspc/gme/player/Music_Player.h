@@ -38,6 +38,7 @@ public:
 	// Pause/resume playing current track.
 	void pause( int );
 	void toggle_pause();
+	bool is_paused();
 	
 	// True if track ended
 	bool track_ended() const;
@@ -102,13 +103,17 @@ private:
 	Music_Emu* emu_;
 	Spc_Emu* spc_emu_;
 	sample_t* scope_buf;
+
 	long sample_rate;
 	int scope_buf_size;
 	bool paused;
 	track_info_t track_info_;
+	// byte alignment seems to matter, I've had app crash based on it..
+	// so always add variables at the END of the class to not disturb
 	int curtrack, filetrack;
-	//char *path;
-	std::vector<std::string> files;
+	std::vector<std::string> files;	// this is kind of unnecessary..
+	std::string path;
+	bool track_started;
 	
 	void suspend();
 	void resume();

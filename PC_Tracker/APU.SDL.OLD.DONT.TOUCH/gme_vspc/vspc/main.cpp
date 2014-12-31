@@ -375,8 +375,8 @@ void exit_edit_mode()
 static void start_track( int track, const char* path )
 {
 	paused = false;
+	//if (!player->is_paused())
 	handle_error( player->start_track( track - 1 ) );
-	
 	// update window title with track info
 	
 	long seconds = player->track_info().length / 1000;
@@ -1117,10 +1117,12 @@ reload:
 							}
 							else if (scancode == SDLK_SPACE)
 							{
+								//gme_seek(player->emu(), 20000);
 								player->toggle_pause();
 							}
 							else if (scancode == SDLK_r)
 							{
+								player->pause(0);
 								player->start_track(0);	// based on only having 1 track
 								// in the program .. this would have to change otherwise
 							}
@@ -1584,7 +1586,15 @@ reload:
 							if (mode == MODE_NAV)
 							{
 								// click in memory view. Toggle lock
-								if (	ev.motion.x >= MEMORY_VIEW_X && 
+								if (	ev.motion.x >= INFO_X+(10*8) && 
+										ev.motion.x < INFO_X+(13*8) &&
+										ev.motion.y >= INFO_Y+56 &&
+										ev.motion.y < INFO_Y+56+9 )
+								{
+									if (ev.button.button == SDL_BUTTON_LEFT)
+										player->spc_emu()->toggle_echo();
+								}
+								else if (	ev.motion.x >= MEMORY_VIEW_X && 
 										ev.motion.x < MEMORY_VIEW_X + 512 &&
 										ev.motion.y >= MEMORY_VIEW_Y &&
 										ev.motion.y < MEMORY_VIEW_Y + 512 )
@@ -2207,23 +2217,28 @@ void restart_track()
 	//goto reload;
 	//track = 1;
 	//start_track( track, path );
+
 	g_cur_entry=0;
+	player->pause(0);
 	reload();
+
 	//player->restart_track();
 }
 
 void prev_track()
 {
 	g_cur_entry--;
-									if (g_cur_entry<0) { g_cur_entry = g_cfg_num_files-1; }
-									reload();
+	if (g_cur_entry<0) { g_cur_entry = g_cfg_num_files-1; }
+	reload();
+	//player->pause(player->is_paused());							
 }
 
 void next_track()
 {
 	g_cur_entry++;
-									if (g_cur_entry>=g_cfg_num_files) { g_cur_entry = 0; }
-									reload();
+	if (g_cur_entry>=g_cfg_num_files) { g_cur_entry = 0; }
+	reload();
+	//player->pause(player->is_paused());
 }
 
 
