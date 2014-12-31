@@ -1,10 +1,14 @@
 -- v1.31 (by bazz)
+  
+  Scroll thru songs while paused
+  Added End-of-Sample markers
+  Added Memory Region Highlighter
   Added "Inverse Phase Volume" Display (:)
   Add Echo/Main volume bars.
   Incorporated Blargg's gme APU/player functionality.
   Added new "echo region" color highlight
 
-  Added keyboard writable Porttool
+  Added keyboard writable Porttool. Little clunky
   Modded mouse hex dump display to be >writable< , made it scrollable too,
     with overflow rollover.
 

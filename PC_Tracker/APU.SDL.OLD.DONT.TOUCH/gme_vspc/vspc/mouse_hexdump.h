@@ -6,6 +6,9 @@
 #include "mode.h"
 #include "report.h"
 
+#define MEMORY_VIEW_X 16
+#define MEMORY_VIEW_Y 40
+
 #define MOUSE_HEXDUMP_START_X 584
 //#define MOUSE_HEXDUMP_START_Y 229 + 30
 #define MOUSE_HEXDUMP_END_X 740
@@ -77,48 +80,57 @@ namespace mouse_hexdump
 
   void set_addr(int i)
   {
-    report::restore_color(address);
+    if (memcursor::toggle & memcursor::TOGGLE_ACTIVE)
+    {
+      report::restore_color(address);
+      memcursor::start_timer();
+    }
     address = i;
-    report::backup_color(address);
+    if (memcursor::toggle & memcursor::TOGGLE_ACTIVE)
+      report::backup_color(address);
+  }
+  void set_addr(int x, int y)
+  {
+    x-= MEMORY_VIEW_X;
+    y -= MEMORY_VIEW_Y;
+    x /= 2;
+    y /= 2;
+    set_addr(y*256+x);
   }
   void add_addr(int i)
   {
-    report::restore_color(address);
-    address += i;
-    report::backup_color(address);
+    set_addr(address+i);
   }
 
   void dec_cursor_row();
   void inc_cursor_row();
 
-  void toggle_lock()
+  void lock(char l=1)
   {
-    locked = !locked;
+    locked = l;
     if (locked)
     {
-      memcursor::start_timer();
+      
       int derp = (mouse_hexdump::address % 8);
                     //if (derp >= 4) mouse_hexdump::address += (8-derp);
                     /*else*/ add_addr(-derp);
+      memcursor::start_timer();
     }
     else
     {
+      report::restore_color(mouse_hexdump::address);
       memcursor::stop_timer();
     }
+    
   }
-  void lock()
+  void toggle_lock()
   {
-    locked = 1;
-    memcursor::start_timer();
-      //int derp = (mouse_hexdump::address % 8);
-                    //if (derp >= 4) mouse_hexdump::address += (8-derp);
-                    /*else*/ //mouse_hexdump::address -= derp;
-    //while (derp--) inc_cursor_row;
+    lock(!locked);
   }
+  
   void unlock()
   {
-    memcursor::stop_timer();
-    locked = 0;
+    lock(0);
   }
 
   void inc_cursor_row()

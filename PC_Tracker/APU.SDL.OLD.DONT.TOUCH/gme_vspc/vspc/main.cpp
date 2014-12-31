@@ -46,8 +46,7 @@
 #define PACKAGE "spcview"
 #define VERSION "0.01"
 
-#define MEMORY_VIEW_X	16
-#define MEMORY_VIEW_Y	40
+
 #include "gui/porttool.h"
 #define INFO_X			540
 #define INFO_Y			420 + 40
@@ -1048,14 +1047,12 @@ reload:
 										ev.motion.y < MEMORY_VIEW_Y + 512)
 								{
 									int x, y;
-									x = ev.motion.x - MEMORY_VIEW_X;
-									y = ev.motion.y - MEMORY_VIEW_Y;
-									x /= 2;
-									y /= 2;
-									cur_mouse_address = y*256+x;
+									x = ev.motion.x;// - MEMORY_VIEW_X;
+									y = ev.motion.y;// - MEMORY_VIEW_Y;
+									
 									if (!mouse_hexdump::locked) {
 										//mouse_hexdump::address = cur_mouse_address;
-										mouse_hexdump::set_addr(cur_mouse_address);
+										mouse_hexdump::set_addr(x,y);
 									}
 		//							printf("%d,%d: $%04X\n", x, y, y*256+x);
 								}
@@ -1635,6 +1632,7 @@ reload:
 										ev.motion.y < MEMORY_VIEW_Y + 512 )
 								{
 									mouse_hexdump::toggle_lock();
+									mouse_hexdump::set_addr(ev.motion.x, ev.motion.y);
 								}
 							}
 							
@@ -2217,7 +2215,8 @@ reload:
 	    	porttool::draw_cursor(screen, color_screen_green);
 	    }
 
-	    if (memcursor::toggle)
+	    // toggle should be 0 ALWAYS when deactivated
+	    if ((memcursor::toggle & memcursor::TOGGLE_TOGGLE) && (memcursor::toggle & memcursor::TOGGLE_ACTIVE))
 	    {
 				/*int x,y;
 				y = mouse_hexdump::address / 256;
@@ -2227,9 +2226,10 @@ reload:
 				x += MEMORY_VIEW_X;
 				sprintf(tmpbuf, ".");
 				sdlfont_drawString(screen, x-2,y-6,tmpbuf, color_screen_green);*/
-				report_memwrite(mouse_hexdump::address);
+				//fprintf(stderr,"DER");
+				report_cursor(mouse_hexdump::address);
 	    }
-	    else report_off(mouse_hexdump::address);
+	    else if ((memcursor::toggle & memcursor::TOGGLE_ACTIVE) && memcursor::toggle & memcursor::TOGGLE_ACTIVE) report::restore_color(mouse_hexdump::address);
 
 	    if (mouse::show)
 	    {
