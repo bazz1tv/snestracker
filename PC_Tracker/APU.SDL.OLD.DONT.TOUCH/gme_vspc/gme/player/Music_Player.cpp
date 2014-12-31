@@ -316,7 +316,9 @@ void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 	if ( self->emu_ )
 	{
 		if ( self->emu_->play( count, out ) ) { } // ignore error
+		//fprintf(stderr, "before: %d, ", *out);
 		self->spc_filter->run(out, count);
+		//fprintf(stderr, "after: %d\n", *out);
 		
 		if ( self->scope_buf )
 			memcpy( self->scope_buf, out, self->scope_buf_size * sizeof *self->scope_buf );
