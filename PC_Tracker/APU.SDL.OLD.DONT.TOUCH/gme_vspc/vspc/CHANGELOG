@@ -1,5 +1,8 @@
--- v1.31 (by bazz)
-  
+-- v1.32 (by bazz)
+  Possibly broke the masking...  
+
+  mute/solo voices!
+
   Scroll thru songs while paused
   Added End-of-Sample markers
   Added Memory Region Highlighter
@@ -7,14 +10,17 @@
   Add Echo/Main volume bars.
   Incorporated Blargg's gme APU/player functionality.
   Added new "echo region" color highlight
-
+  Fixed buggy Gain
   Added keyboard writable Porttool. Little clunky
   Modded mouse hex dump display to be >writable< , made it scrollable too,
     with overflow rollover.
+  Double Click Events
 
-  main()'s tmpbuf was too small causing Buffer Overflow at program startup. Fixed.. 
+  Fixed PC Tracking
 
   The SPC RAM is only 0x10000 bytes, But vSPCPLAY was confusingly going out of the bounds of the RAM array and actually displaying parts of the PC program's memory XD. Fixed
+
+  main()'s tmpbuf was too small causing Buffer Overflow at program startup. Fixed.. 
 
 -- v1.3
   Added command line options to replace the unused bytes in a spc file by a given pattern. By doing

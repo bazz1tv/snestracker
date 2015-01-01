@@ -54,8 +54,8 @@
 // 5 minutes default
 #define DEFAULT_SONGTIME	(60*5) 
 
-#define PROG_NAME_VERSION_STRING "vspcplay v1.31 patched by bazz"
-#define CREDITS "vspcplay v1.31 by Raphael Assenat (http://vspcplay.raphnet.net). APU emulation code from snes9x."
+#define PROG_NAME_VERSION_STRING "vspcplay v1.32 by bazz & Raph Assenat!"
+#define CREDITS "APU emulation code from Blargg's GME and Snes_Spc 0.9.0"
 
 void prev_track();
 void next_track();
