@@ -82,8 +82,8 @@ Music_Player::Music_Player()
 	filetrack	    = 0;
 	track_started = false;
 	spc_filter = new Spc_Filter;
-	spc_filter->set_gain(Spc_Filter::gain_unit * 1);
-	spc_filter->set_bass(Spc_Filter::bass_norm);
+	spc_filter->set_gain(Spc_Filter::gain_unit * 20);
+	spc_filter->set_bass(Spc_Filter::bass_max);
 }
 
 blargg_err_t Music_Player::init( long rate )
@@ -317,11 +317,12 @@ void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 	{
 		if ( self->emu_->play( count, out ) ) { fprintf(stderr, "error");} // ignore error
 		//fprintf(stderr, "%d, ", *out);
-			/*for (count; count > 0; count -= 1)
+			/*for (int i=count; i > 0; i -= 1)
 			{
-				out[count-1] -= 0x7000;
+				out[i-1] /= 20;
+				//out[count-1] *= 6;
 			}*/
-		self->spc_filter->run(out, count);
+		//self->spc_filter->run(out, count);
 		//fprintf(stderr, "after: %d\n", *out);
 		
 		if ( self->scope_buf )
