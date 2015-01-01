@@ -82,7 +82,7 @@ Music_Player::Music_Player()
 	filetrack	    = 0;
 	track_started = false;
 	spc_filter = new Spc_Filter;
-	spc_filter->set_gain(Spc_Filter::gain_unit * 20);
+	spc_filter->set_gain(Spc_Filter::gain_unit * 1);
 	spc_filter->set_bass(Spc_Filter::bass_max);
 }
 
@@ -317,9 +317,9 @@ void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 	{
 		if ( self->emu_->play( count, out ) ) { fprintf(stderr, "error");} // ignore error
 		//fprintf(stderr, "%d, ", *out);
-			/*for (int i=count; i > 0; i -= 1)
+			/*for (int i=0; i < count; i += 1)
 			{
-				out[i-1] /= 20;
+				out[i] *= 2;
 				//out[count-1] *= 6;
 			}*/
 		//self->spc_filter->run(out, count);
