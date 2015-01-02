@@ -67,7 +67,7 @@ void Mem_Surface::fade_arrays()
   int i;
   for (i=0; i<512*512*4; i++)
   {
-    if (data[i] > 0x40) { data[i]-=0x20; }
+    if (data[i] > 0x40) { data[i]--; }
   }
 }
 

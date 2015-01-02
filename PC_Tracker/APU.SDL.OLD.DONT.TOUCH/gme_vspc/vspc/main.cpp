@@ -44,11 +44,15 @@
 
 #define LOCKED_STR "locked"
 
+
 namespace screen_pos
 {
-	int locked_len = (strlen(LOCKED_STR)*8)+1;
-	int locked_x = MEMORY_VIEW_X+520+24*8;
-	int locked_y;
+	//typedef SDL_Rect coord;
+	#define NO_INIT 0
+	SDL_Rect voice0vol = {NO_INIT, NO_INIT,+8+125,10};
+	SDL_Rect voice0pitch = {NO_INIT,NO_INIT, 2*8,8 };
+	SDL_Rect locked = { MEMORY_VIEW_X+520+24*8, 0 ,(strlen(LOCKED_STR)*8)+1, 9};
+	#undef UN_INIT
 }
 
 
@@ -275,18 +279,11 @@ void handle_error( const char* error )
 	}
 }
 
-struct coord
-{
-	int x,y;
-};
 
-namespace coords
-{
-	coord Voice0Vol;
-}
 
 namespace voices
 {
+	Uint8 was_keyed_on=0;
 	Uint8 muted_toggle_protect=0; // for toggle protection during MouseMoition event
 	Uint8 muted=0;
 
@@ -295,8 +292,16 @@ namespace voices
 		char changed=0;
 		for (int i=0; i < 8; i++)
 		{
-			if (x >= (coords::Voice0Vol.x) && x <= (coords::Voice0Vol.x+8+125) &&	// + 125 to cover the bar too
-				y >= (coords::Voice0Vol.y + (i*10)) && y <= (coords::Voice0Vol.y+9 + (i*10)) )
+
+			SDL_Rect *r1 = &screen_pos::voice0vol;
+			SDL_Rect *r2 = &screen_pos::voice0pitch;
+			//fprintf(stderr, "%d %d %d %d\n", r2->x,r2->y,r2->w,r2->h);
+			if ( (x >= (r1->x) && x <= (r1->x + r1->w) &&	// + 125 to cover the bar too
+				y >= (r1->y + (i*r1->h)) && y <= (r1->y+((i*r1->h))+r1->h-1) )  ||
+				(
+					(x >= (r2->x) && x <= (r2->x+r2->w)) &&	// + 125 to cover the bar too
+					(y >= (r2->y + (i*r2->h)) && y <= (r2->y+(i*r2->h))+r2->h-1 )
+				) )
 			{
 				if (!(muted_toggle_protect & (1 << i)))
 				{
@@ -318,8 +323,8 @@ namespace voices
 		char changed=0;
 		for (int i=0; i < 8; i++)
 		{
-			if (x >= (coords::Voice0Vol.x) && x <= (coords::Voice0Vol.x+8+125) &&	// + 125 to cover the bar too
-				y >= (coords::Voice0Vol.y + (i*10) + 1) && y <= (coords::Voice0Vol.y+9 + (i*10)) )
+			if (x >= (screen_pos::voice0vol.x) && x <= (screen_pos::voice0vol.x+8+125) &&	// + 125 to cover the bar too
+				y >= (screen_pos::voice0vol.y + (i*10) + 1) && y <= (screen_pos::voice0vol.y+9 + (i*10)) )
 			{
 				//fprintf(stderr, "muted = %02x\n, ~(1 << i) = 0x%02x\n", muted, ~(1 << i));
 					//muted_toggle_protect |= 1<<i;
@@ -875,6 +880,7 @@ void reload()
 	last_pc = -1;
 	
 	start_track( 1, path );
+	voices::was_keyed_on = 0;
 	player->mute_voices(voices::muted);
 	player->ignore_silence();
 		//read_id666(fptr, &tag); 
@@ -939,9 +945,10 @@ void reload()
 	}*/
 
 }
-
+bool is_first_run=true;
 int main(int argc, char **argv)
 {
+	
   //void *buf=NULL;
 	int tmp, i;
 	//int updates;
@@ -1634,11 +1641,11 @@ reload:
 					} break;
 					case SDL_MOUSEBUTTONDOWN:						
 						{
-							//fprintf(stderr, "x: %d y: %d\n",screen_pos::locked_x,screen_pos::locked_y );
-							if (	ev.motion.x >= screen_pos::locked_x && 
-										ev.motion.x < screen_pos::locked_x + screen_pos::locked_len &&
-										ev.motion.y >= screen_pos::locked_y &&
-										ev.motion.y < screen_pos::locked_y + 9 )
+							//fprintf(stderr, "x: %d y: %d\n",screen_pos::locked.x,screen_pos::locked.y );
+							if (	ev.motion.x >= screen_pos::locked.x && 
+										ev.motion.x < screen_pos::locked.x + screen_pos::locked.w &&
+										ev.motion.y >= screen_pos::locked.y &&
+										ev.motion.y < screen_pos::locked.y + 9 )
 							{
 								//fprintf(stderr, "DERP");
 								if(mouse_hexdump::locked)
@@ -1877,22 +1884,23 @@ reload:
 			tmprect.h = 5;
 			for (i=0; i<8; i++)
 			{
+				
 				unsigned short pitch = (player->spc_read_dsp(2+(i*0x10)) | (player->spc_read_dsp(3+(i*0x10))<<8)) & 0x3fff; 
 				// I believe pitch is max 0x3fff but kirby is using higher values for some unknown reason...
 				//if (i == 7) fprintf (stderr, "pitch = 0x%04x", pitch);
-				Uint32 *cur_color=&color_screen_black; // &color_screen_white;
+				Uint32 *cur_color=&color_screen_white;
 
-				if (!voices::is_muted(i))
+				if (voices::is_muted(i))
 				{
-					uint8_t voice_base_addr = (i*0x10);
+					cur_color = &color_screen_nearblack;
+					/*uint8_t voice_base_addr = (i*0x10);
 					uint8_t outx = player->spc_read_dsp(voice_base_addr+0x09);
-					if (player->spc_read_dsp(0x4c)&(1<<i)) {
+					if (player->spc_read_dsp(0x4c)&(1<<i) && !(voices::was_keyed_on & i) ) {
 						cur_color = &color_screen_yellow;
+						voices::was_keyed_on |= 1<<i;
 					} else if (player->spc_read_dsp(0x5c)&(1<<i)) {
 						cur_color = &color_screen_gray;
-					}
-					else if (outx) {
-						cur_color = &color_screen_white;
+						voices::was_keyed_on &= ~(1<<i);
 					}
 					else // check if the sample is looping
 					{
@@ -1901,23 +1909,42 @@ reload:
 						// happens hundreds or thousands of times a second but the visual
 						// only catches it once in awhile.. but it's annoying and 
 						// I don't like it.. so I coded this to take up your CPU
-						uint16_t addr = player->spc_read_dsp(0x5d) * 0x100;
-						fprintf(stderr,"0x%04x,", addr);
-						uint8_t samp_index;
-						samp_index = player->spc_read_dsp(voice_base_addr+0x04);
-						fprintf(stderr,"0x%02x,", samp_index);
-						uint16_t *brr_header_addr = (uint16_t*)&IAPURAM[addr+(samp_index*4)];
-						if (IAPURAM[*brr_header_addr] & 2)
+						if (voices::was_keyed_on & (1<<i))
+						{
+							uint16_t addr = player->spc_read_dsp(0x5d) * 0x100;
+							//fprintf(stderr,"0x%04x,", addr);
+							uint8_t samp_index;
+							samp_index = player->spc_read_dsp(voice_base_addr+0x04);
+							//fprintf(stderr,"0x%02x,", samp_index);
+							uint16_t *brr_header_addr = (uint16_t*)&IAPURAM[addr+(samp_index*4)];
+							if (IAPURAM[*brr_header_addr] & 2)
+								cur_color = &color_screen_green;
+							else if (outx) 
+							{
+								cur_color = &color_screen_white;
+							}
+						}*/
+						/*else if (outx) 
+						{
 							cur_color = &color_screen_white;
+						}*/
 
-						fprintf(stderr,"0x%04x\n", *brr_header_addr);
+						//fprintf(stderr,"0x%04x\n", *brr_header_addr);
 
-					}
+					//}
 				}
 
-				
+				int x =MEMORY_VIEW_X+520;
+				int y = tmp+ (i*8);
 				sprintf(tmpbuf,"%d:",i);
-				sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*8), tmpbuf, *cur_color);
+				sdlfont_drawString(screen, x, y, tmpbuf, *cur_color);
+				if (::is_first_run && i == 0)
+				{
+					screen_pos::voice0pitch.x = x;
+					screen_pos::voice0pitch.y = y;
+					//screen_pos::voice0pitch.w = 2;
+					//screen_pos::voice0pitch.h = 9;	
+				}
 				
 				tmprect.y= tmp+(i*8)+2;
 				tmprect.x = MEMORY_VIEW_X+520+18;
@@ -1990,10 +2017,10 @@ reload:
 					color = &color_screen_white;
 
 				sdlfont_drawString(screen, x, y, tmpbuf, *color);
-				if (i==0)
+				if (::is_first_run && i == 0)
 				{
-					coords::Voice0Vol.x = x;
-					coords::Voice0Vol.y = y;	
+					screen_pos::voice0vol.x = x;
+					screen_pos::voice0vol.y = y;	
 				}
 				
 				if (is_inverted & (1 << L_FLAG) )
@@ -2189,7 +2216,7 @@ reload:
 			i++;
 
 			tmp += i*10 + 8;
-			screen_pos::locked_y = tmp;
+			screen_pos::locked.y = tmp;
 			sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -", color_screen_white);
 			if (mouse_hexdump::locked) {
 				
@@ -2332,6 +2359,7 @@ reload:
 			if (g_cfg_nice) {  SDL_Delay(100); }
 			//SDL_Delay( 1000 / 100 );
 		} // if !g_cfg_novideo
+		is_first_run = false;
 	}
 
 	//while(1);

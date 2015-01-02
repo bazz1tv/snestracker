@@ -1,3 +1,7 @@
+
+
 Voice Pitch Functionality should be same as on Volume
+
+lots of things SHOULDN"T be done/updated if paused
 
 Gain slider and clipping notifier
