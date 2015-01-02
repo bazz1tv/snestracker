@@ -39,7 +39,7 @@ namespace mouse_hexdump
   extern Uint8 horizontal; //=1;
 
   extern char locked;//=0;
-  extern Uint16 address;//=0x0000;
+  extern Uint16 address, addr_being_edited;//=0x0000;
 
   void set_addr(int i);
   void set_addr_from_cursor(int x, int y);

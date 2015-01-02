@@ -1,7 +1,9 @@
 #include "mouse_hexdump.h"
-
+#include "gme/player/Music_Player.h"
 
 int MOUSE_HEXDUMP_START_Y;
+extern uint8_t* IAPURAM;
+extern Music_Player *player;
 
 namespace mouse_hexdump
 {
@@ -15,7 +17,7 @@ namespace mouse_hexdump
   Uint8 horizontal=1;
 
   char locked=0;
-  Uint16 address=0x0000;
+  Uint16 address=0x0000, addr_being_edited=0x0000;
 
   void set_addr(int i)
   {
@@ -46,6 +48,7 @@ namespace mouse_hexdump
 
   void lock(char l/*=1*/, int x/*=0*/, int y/*=0*/)
   {
+    
     locked = l;
     if (locked)
     {
@@ -56,6 +59,7 @@ namespace mouse_hexdump
       cursor::start_timer();
 
       memcursor::start_timer();
+      mouse_hexdump::addr_being_edited = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
     }
     else
     {
@@ -86,7 +90,20 @@ namespace mouse_hexdump
   {
     lock(0);
   }
-
+  void update_editing_address()
+  {
+    mouse_hexdump::addr_being_edited = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
+    if ( (addr_being_edited == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr_being_edited==0xf1)
+    {
+      // only update the buffer the first time.. if we haven't started writing in a new value
+      if (!mouse_hexdump::draw_tmp_ram)
+      {
+        if (addr_being_edited == 0xf3)
+          mouse_hexdump::tmp_ram = player->spc_read(0xf2);
+        else mouse_hexdump::tmp_ram = player->spc_read(addr_being_edited);
+      }
+    }
+  }
   void inc_cursor_row()
   {
     cursor::toggle=1;
@@ -96,6 +113,7 @@ namespace mouse_hexdump
       add_addr(+8); //mouse_hexdump::address += 8;
     }
     else res_y++;    
+    update_editing_address();
   }
   void dec_cursor_row()
   {
@@ -106,6 +124,7 @@ namespace mouse_hexdump
       add_addr(-8);
     }
     else res_y--;    
+    update_editing_address();
   }
   void inc_cursor_pos()
   {
@@ -132,6 +151,7 @@ namespace mouse_hexdump
 
       highnibble = 1;
     }
+    update_editing_address();
   }
   void dec_cursor_pos()
   {
@@ -156,6 +176,8 @@ namespace mouse_hexdump
 
       highnibble = 0;
     }
+    
+    update_editing_address();
   }
 
   void draw_cursor(SDL_Surface *screen, Uint32 color)
