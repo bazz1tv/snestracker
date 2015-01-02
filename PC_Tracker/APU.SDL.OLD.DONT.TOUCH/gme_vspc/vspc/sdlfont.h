@@ -1,5 +1,5 @@
 #pragma once
-
+#include "SDL.h"
 // defined in main.cpp
 extern Uint32 color_screen_white, color_screen_black, color_screen_cyan, color_screen_magenta, color_screen_yellow, color_screen_red;
 extern Uint32  color_screen_green;

@@ -1,0 +1,195 @@
+#include "mouse_hexdump.h"
+
+
+int MOUSE_HEXDUMP_START_Y;
+//extern Uint16 mouse_hexdump::address;
+//extern struct SIAPU IAPU;
+namespace mouse_hexdump
+{
+  enum submodes { HARD_EDIT=0, EASY_EDIT=1 };
+  int tmp_ram; char draw_tmp_ram;
+  int rel_x; // = te->motion.x - MOUSE_HEXDUMP_START_X;
+  //rel_x+=2;
+  int rel_y; // = te->motion.y - MOUSE_HEXDUMP_START_Y;
+
+  int res_x;
+  int res_y;
+  Uint8 highnibble;
+  Uint8 horizontal=1;
+
+  char locked=0;
+  Uint16 address=0x0000;
+
+  void set_addr(int i)
+  {
+    if (memcursor::is_active())
+    {
+      report::restore_color(address);
+      memcursor::start_timer();
+    }
+    address = i;
+    if (memcursor::is_active())
+      report::backup_color(address);
+  }
+  void set_addr_from_cursor(int x, int y)
+  {
+    x-= MEMORY_VIEW_X;
+    y -= MEMORY_VIEW_Y;
+    x /= 2;
+    y /= 2;
+    set_addr(y*256+x);
+  }
+  void add_addr(int i)
+  {
+    set_addr(address+i);
+  }
+
+  void dec_cursor_row();
+  void inc_cursor_row();
+
+  void lock(char l=1, int x/*=0*/, int y/*=0*/)
+  {
+    locked = l;
+    if (locked)
+    {
+      
+      int derp = (mouse_hexdump::address % 8);
+                    //if (derp >= 4) mouse_hexdump::address += (8-derp);
+                    /*else*/ 
+      add_addr(-derp);
+
+      mode = MODE_EDIT_MOUSE_HEXDUMP;
+      cursor::start_timer();
+
+      memcursor::start_timer();
+    }
+    else
+    {
+      if (x && y)
+      {
+        if (  x >= MEMORY_VIEW_X && 
+                    x < MEMORY_VIEW_X + 512 &&
+                    y >= MEMORY_VIEW_Y &&
+                    y < MEMORY_VIEW_Y + 512 )
+        {
+          set_addr_from_cursor(x, y);
+        }
+      }
+      report::restore_color(mouse_hexdump::address);
+
+      mode = MODE_NAV;
+      cursor::stop_timer();
+
+      memcursor::stop_timer();
+    }
+    
+  }
+  void toggle_lock(int x/*=0*/, int y/*=0*/)
+  {
+    lock(!locked);
+  }
+  
+  void unlock()
+  {
+    lock(0);
+  }
+
+  void inc_cursor_row()
+  {
+    cursor::toggle=1;
+    
+    if (res_y == 15)
+    {
+      //res_y;
+      add_addr(+8); //mouse_hexdump::address += 8;
+    }
+    else res_y++;    
+  }
+  void dec_cursor_row()
+  {
+    cursor::toggle=1;
+    
+    if (res_y == 0)
+    {
+      //res_y;
+      add_addr(-8);
+    }
+    else res_y--;    
+  }
+  void inc_cursor_pos()
+  {
+    cursor::toggle=1;
+    if (highnibble)
+    {
+      highnibble = 0;
+    }
+    else
+    {
+      if (res_x == 7)
+      {
+        res_x = 0;
+        if (res_y == 15)
+        {
+          //res_y;
+          add_addr(8);
+        }
+        else res_y++;
+
+
+      }
+      else
+        res_x++;
+
+      highnibble = 1;
+    }
+  }
+  void dec_cursor_pos()
+  {
+    cursor::toggle=1;
+    if (!highnibble)
+    {
+      highnibble = 1;
+    }
+    else
+    {
+      if (res_x == 0)
+      {
+        res_x = 7;
+        if (res_y == 0)
+        {
+          //res_y;
+          add_addr(-8);
+        }
+        else res_y--;
+      }
+      else
+        res_x--;
+
+      highnibble = 0;
+    }
+  }
+
+  void draw_cursor(SDL_Surface *screen, Uint32 color)
+  {
+    if (mouse_hexdump::highnibble)
+    {
+      cursor::draw(screen, MOUSE_HEXDUMP_START_X + (mouse_hexdump::res_x * MOUSE_HEXDUMP_ENTRY_X_INCREMENT), MOUSE_HEXDUMP_START_Y + (mouse_hexdump::res_y * MOUSE_HEXDUMP_ENTRY_Y_INCREMENT), color);
+    }
+    else
+    {
+      cursor::draw(screen, MOUSE_HEXDUMP_START_X + (mouse_hexdump::res_x * MOUSE_HEXDUMP_ENTRY_X_INCREMENT + (7)), MOUSE_HEXDUMP_START_Y + (mouse_hexdump::res_y * MOUSE_HEXDUMP_ENTRY_Y_INCREMENT), color);
+    }
+  }
+
+//unused
+  void enter_edit_mode()
+  {
+    mode = MODE_EDIT_MOUSE_HEXDUMP;
+  }
+  void exit_edit_mode()
+  {
+
+  }
+
+}
+

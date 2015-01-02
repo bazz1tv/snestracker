@@ -16,7 +16,8 @@ gme/gme/Snes_Spc_misc.cpp gme/gme/Snes_Spc_state.cpp gme/gme/Spc_Filter.cpp gme/
 gme/player/Music_Player.cpp
 ###
 OBJECTS=$(gme_SOURCES:.cpp=.o)
-vspc_OBJECTS=  vspc/main.o vspc/font.o vspc/sdlfont.o vspc/report.o vspc/globals.o
+vspc_OBJECTS=  vspc/main.o vspc/font.o vspc/sdlfont.o vspc/report.o vspc/globals.o vspc/events.o vspc/track.o vspc/voices.o vspc/sdl_dblclick.o\
+vspc/gui/porttool.o vspc/gui/cursor.o
 OBJECTS += $(vspc_OBJECTS)
 EXECUTABLE=vspc_blargg
 

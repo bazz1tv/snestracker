@@ -359,7 +359,7 @@ void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 	if ( self->emu_ )
 	{
 		if ( self->emu_->play( count, out ) ) { } // ignore error
-		if (globals::filter_is_active)
+		if (::filter_is_active)
 			self->spc_filter->run(out, count);
 		
 		self->apply_gain(out, count);
