@@ -25,7 +25,6 @@ namespace porttool
 
   void draw_cursor(SDL_Surface *screen, Uint32 color)
   {
-    //fprintf(stderr, "myx = %d", x);
     if (highnibble)
       cursor::draw(screen, x, PORTTOOL_Y+8, color);
     else
@@ -47,10 +46,8 @@ namespace porttool
   {
     for (int i=0; i < 4; i++)
     {
-      //player->spc_write(0xf4 + i, tmp[i]);
       player->spc_emu()->write_port(i, tmp[i]);
       portdata[i] = tmp[i];
-      //IAPU.RAM[0xf4 + i] = tmp[i];
     }
   }
 
@@ -74,9 +71,8 @@ namespace porttool
   {
     porttool::portaddress = 0xf4 + num;
     portnum = num;
-    //tmp[portnum] = IAPU.RAM[0xf4 + portnum];
     for (int i=0; i < 4; i++)
-      tmp[i] = portdata[i]; //player->spc_emu()->write_port(i);
+      tmp[i] = portdata[i]; 
   }
 
   void inc_cursor_pos()

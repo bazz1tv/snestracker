@@ -6,7 +6,7 @@ int MOUSE_HEXDUMP_START_Y;
 //extern struct SIAPU IAPU;
 namespace mouse_hexdump
 {
-  enum submodes { HARD_EDIT=0, EASY_EDIT=1 };
+  //enum submodes { HARD_EDIT=0, EASY_EDIT=1 };
   int tmp_ram; char draw_tmp_ram;
   int rel_x; // = te->motion.x - MOUSE_HEXDUMP_START_X;
   //rel_x+=2;
@@ -47,7 +47,7 @@ namespace mouse_hexdump
   void dec_cursor_row();
   void inc_cursor_row();
 
-  void lock(char l=1, int x/*=0*/, int y/*=0*/)
+  void lock(char l/*=1*/, int x/*=0*/, int y/*=0*/)
   {
     locked = l;
     if (locked)

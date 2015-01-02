@@ -10,6 +10,33 @@ bool paused;
 
 Uint32 time_last=0, time_cur=0;
 
+namespace mouse
+{
+  int x,y;
+  char show=0;
+}
+
+void handle_error( const char* error )
+{
+  if ( error )
+  {
+    // put error in window title
+    char str [256];
+    sprintf( str, "Error: %s", error );
+    fprintf( stderr, "Error: %s", error );
+    SDL_WM_SetCaption( str, str );
+    
+    // wait for keyboard or mouse activity
+    SDL_Event e;
+    do
+    {
+      while ( !SDL_PollEvent( &e ) ) { }
+    }
+    while ( e.type != SDL_QUIT && e.type != SDL_KEYDOWN && e.type != SDL_MOUSEBUTTONDOWN );
+
+    exit( EXIT_FAILURE );
+  }
+}
 
 
 namespace screen_pos

@@ -48,43 +48,10 @@
 
 void prev_track();
 void next_track();
-
-
-//#include "libspc.h"
-//#include "id666.h"
-
-//#include "spc_structs.h"
-
+void toggle_pause();
+void restart_track();
 
 Music_Player* player;
-//int track = 1;
-
-
-void handle_error( const char* error )
-{
-	if ( error )
-	{
-		// put error in window title
-		char str [256];
-		sprintf( str, "Error: %s", error );
-		fprintf( stderr, "Error: %s", error );
-		SDL_WM_SetCaption( str, str );
-		
-		// wait for keyboard or mouse activity
-		SDL_Event e;
-		do
-		{
-			while ( !SDL_PollEvent( &e ) ) { }
-		}
-		while ( e.type != SDL_QUIT && e.type != SDL_KEYDOWN && e.type != SDL_MOUSEBUTTONDOWN );
-
-		exit( EXIT_FAILURE );
-	}
-}
-
-
-
-
 
 
 // DEPRECATED
@@ -105,27 +72,10 @@ SPC_Config spc_config = {
     0 // echo
 };
 
-namespace mouse
-{
-	int x,y;
-	char show=0;
-}
-void toggle_pause();
-void restart_track();
-void enter_edit_mode()
-{
 
-}
-void exit_edit_mode()
-{
-	if (submode == mouse_hexdump::EASY_EDIT)
-		mouse_hexdump::unlock();
-	mode = MODE_NAV;
-	submode = 0;
-	mouse_hexdump::draw_tmp_ram = 0;
-	cursor::stop_timer();
-	mouse_hexdump::unlock();
-}
+
+
+
 
 
 void start_track( int track, const char* path )
@@ -179,11 +129,6 @@ void dec_ram(int addr, int i=1)
 
 
 
-
-void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
-void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
-//void report_memread(unsigned short address, unsigned char value);
-//void report_memwrite(unsigned short address, unsigned char value);
 
 
 
@@ -304,7 +249,6 @@ int parse_args(int argc, char **argv)
 
 int init_sdl()
 {
-	//SDL_AudioSpec desired;
 	Uint32 flags=0;
 	
 	/* SDL initialisation */
@@ -353,29 +297,9 @@ int init_sdl()
 		colorscale[10] = SDL_MapRGB(screen->format, 0xff, 0x00, 0xff);
 		colorscale[11] = SDL_MapRGB(screen->format, 0xff, 0x00, 0x7f);
 	}
-	
-	if (!g_cfg_nosound) {
-		// audio
-		/*desired.freq = 44100;
-		desired.format = AUDIO_S16SYS;
-		desired.channels = 2;
-		desired.samples = 1024;
-		//desired.samples = 4096;
-		desired.callback = my_audio_callback;
-		desired.userdata = NULL;
-		if ( SDL_OpenAudio(&desired, NULL) < 0 ){
-			fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
-			return -1;
-		}*/
-
-		//printf("sdl audio frag size: %d\n", desired.samples *4);
-	}
 
 	dblclick::init();
 	SDL_EnableKeyRepeat( 500, 80 );
-	//SDL_AddTimer(800, dblclicktimer, 0);
-	//memcursor::start_timer();
-	
 
 	return 0;	
 }
@@ -384,60 +308,26 @@ int init_sdl()
 void reload();
 int main(int argc, char **argv)
 {
-	
-  //void *buf=NULL;
-	
-	//int updates;
-	
-	//SDL_Rect memrect;
-	
-	//id666_tag tag;
-	
-	//, cur_time; // in seconds
-	
-	
-	
-	
-	//memset(used, 0, 65536);
-
 	printf("%s\n", PROG_NAME_VERSION_STRING);
-	
 	parse_args(argc, argv);
 
 	if (g_cfg_num_files < 1) {
 		printf("No files specified\n");
 		return 1;
 	}
-
-	
-	
-	/* REPLACE WITH BLARGG APU INIT */
-  //spc_buf_size = SPC_init(&spc_config);
-	//printf("spc buffer size: %d\n", spc_buf_size);
-	//buf = malloc(spc_buf_size*2);
-
-	/* */
 	
 	init_sdl();
 
 	time_cur = time_last = SDL_GetTicks();
 
-	//memsurface_data = (unsigned char *)malloc(512*512*4);
-	//memset(memsurface_data, 0, 512*512*4);
 	memsurface.init();
 
 	// Create player
 	player = new Music_Player;
 	if ( !player )
 		handle_error( "Out of memory" );
-	handle_error( player->init(32000) );
+	handle_error( player->init(44100) );
 
-	
-
-	//song_started_ticks = 0;
-
-	
-	//g_paused = 0;
   if (mode <= MODE_EDIT_APU_PORT)
   {
   	base_mode_game_loop();
@@ -447,52 +337,13 @@ int main(int argc, char **argv)
 
   }
 
-	//while(1);
-
 clean:
 	delete player;
-	//SDL_PauseAudio(1);
 	SDL_Quit();
-    //SPC_close();
 
-    return 0;
+  return 0;
 }
 
-void toggle_pause()
-{
-	player->toggle_pause();
-}
 
-void restart_track()
-{
-	SDL_PauseAudio(1);
-	//goto reload;
-	//track = 1;
-	//start_track( track, path );
-
-	g_cur_entry=0;
-	player->pause(0);
-	reload();
-
-	//player->restart_track();
-}
-
-void prev_track()
-{
-	SDL_PauseAudio(true);
-	g_cur_entry--;
-	if (g_cur_entry<0) { g_cur_entry = g_cfg_num_files-1; }
-	reload();
-	//player->pause(player->is_paused());							
-}
-
-void next_track()
-{
-	SDL_PauseAudio(true);
-	g_cur_entry++;
-	if (g_cur_entry>=g_cfg_num_files) { g_cur_entry = 0; }
-	reload();
-	//player->pause(player->is_paused());
-}
 
 

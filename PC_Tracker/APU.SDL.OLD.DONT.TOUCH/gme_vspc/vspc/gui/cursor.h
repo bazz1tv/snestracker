@@ -25,9 +25,9 @@ namespace memcursor
   void start_timer();
 
   void stop_timer();
-  char is_active();// { return flags & FLAG_ACTIVE; }
-  char is_disabled(); // { return flags & FLAG_DISABLED; }
-  char is_toggled(); // { return flags & FLAG_TOGGLED; }
+  char is_active();
+  char is_disabled(); 
+  char is_toggled();
   void disable(char c=1);
   void toggle_disable();
   

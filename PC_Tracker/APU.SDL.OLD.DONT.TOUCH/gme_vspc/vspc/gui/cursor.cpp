@@ -1,18 +1,7 @@
 #include "gui/cursor.h"
 
-//#include "../mouse_hexdump.h"
-
-//extern int mouse_hexdump::address;
-
-//#define CURSOR_TOGGLE_TIMEWINDOW 300 // ms
-
 namespace memcursor
 {
-  /*enum { FLAG_TOGGLED =1,
-          FLAG_ACTIVE=(1 << 1),
-          FLAG_DISABLED=(1 << 2),
-          FLAG_WAS_ACTIVE_BEFORE_DISABLING=(1 << 3)
-        };*/
   const int interval = 300;
   Uint8 flags=0; // 1 = show cursor, 0 = hide
   SDL_TimerID timerid=0;
@@ -31,7 +20,7 @@ namespace memcursor
   {
     if (flags & FLAG_DISABLED)
       return;
-    //fprintf(stderr, "%d %d", flags_flags, flags_ACTIVE);
+    
     // always start with the cursor showing
     
     // is there a problem Removing an invalid timerid?? I think not..
@@ -97,18 +86,14 @@ namespace cursor
   {
     // always start with the cursor showing
     toggle = 1;
-    //if (timerid)
-      //return;
     // is there a problem Removing an invalid timerid?? I think not..
     SDL_RemoveTimer(timerid);
     // i remove it when starting so I can have simple repeat-logic in the 
     // double click code
     timerid = SDL_AddTimer(CURSOR_TOGGLE_TIMEWINDOW, &cursor_timer, &toggle);
-    //memcursor::start_timer();
   }
   void stop_timer()
   {
-    //memcursor::stop_timer();
     SDL_RemoveTimer(timerid);
     // toggle must be set to 0 to prevent drawing to screen
     toggle = 0;

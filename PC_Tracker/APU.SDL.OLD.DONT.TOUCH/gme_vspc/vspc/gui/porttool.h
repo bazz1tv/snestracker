@@ -9,7 +9,6 @@
 #define PORTTOOL_PORT3_X_RIGHTMOST_LOBYTE PORTTOOL_X + (8*23)
 // 8 = tile width
 
-//extern struct SIAPU IAPU;
 extern Music_Player* player;
 namespace porttool
 {
