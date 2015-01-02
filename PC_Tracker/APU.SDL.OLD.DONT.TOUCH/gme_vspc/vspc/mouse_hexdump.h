@@ -51,7 +51,7 @@ namespace mouse_hexdump
     if (memcursor::is_active())
       report::backup_color(address);
   }
-  void set_addr(int x, int y)
+  void set_addr_from_cursor(int x, int y)
   {
     x-= MEMORY_VIEW_X;
     y -= MEMORY_VIEW_Y;
@@ -67,7 +67,7 @@ namespace mouse_hexdump
   void dec_cursor_row();
   void inc_cursor_row();
 
-  void lock(char l=1)
+  void lock(char l=1, int x=0, int y=0)
   {
     locked = l;
     if (locked)
@@ -85,6 +85,16 @@ namespace mouse_hexdump
     }
     else
     {
+      if (x && y)
+      {
+        if (  x >= MEMORY_VIEW_X && 
+                    x < MEMORY_VIEW_X + 512 &&
+                    y >= MEMORY_VIEW_Y &&
+                    y < MEMORY_VIEW_Y + 512 )
+        {
+          set_addr_from_cursor(x, y);
+        }
+      }
       report::restore_color(mouse_hexdump::address);
 
       mode = MODE_NAV;
@@ -94,7 +104,7 @@ namespace mouse_hexdump
     }
     
   }
-  void toggle_lock()
+  void toggle_lock(int x=0, int y=0)
   {
     lock(!locked);
   }

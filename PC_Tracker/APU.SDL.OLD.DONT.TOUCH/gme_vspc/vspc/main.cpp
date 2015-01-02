@@ -42,6 +42,14 @@
 #include "mouse_hexdump.h"
 #include "globals.h"
 
+#define LOCKED_STR "locked"
+
+namespace screen_pos
+{
+	int locked_len = (strlen(LOCKED_STR)*8)+1;
+	int locked_x = MEMORY_VIEW_X+520+24*8;
+	int locked_y;
+}
 
 
 int last_pc=-1;
@@ -1067,7 +1075,7 @@ reload:
 									
 									if (!mouse_hexdump::locked) {
 										//mouse_hexdump::address = cur_mouse_address;
-										mouse_hexdump::set_addr(x,y);
+										mouse_hexdump::set_addr_from_cursor(x,y);
 									}
 		//							printf("%d,%d: $%04X\n", x, y, y*256+x);
 								}
@@ -1085,6 +1093,10 @@ reload:
 						if (scancode == SDLK_m)
 						{
 							memcursor::toggle_disable();
+						}
+						if (scancode == SDLK_k)
+						{
+							player->spc_write_dsp(dsp_reg::kon,0x0);
 						}
 						if (ev.key.keysym.sym == SDLK_u)
 						{
@@ -1495,6 +1507,7 @@ reload:
 				        	{
 				        		mode = MODE_NAV;
 				        		cursor::stop_timer();
+				        		mouse_hexdump::unlock();
 				        		break;
 				        	}
 				        }
@@ -1621,20 +1634,17 @@ reload:
 					} break;
 					case SDL_MOUSEBUTTONDOWN:						
 						{
-							
-							
-							if (ev.button.button == SDL_BUTTON_WHEELUP)
+							//fprintf(stderr, "x: %d y: %d\n",screen_pos::locked_x,screen_pos::locked_y );
+							if (	ev.motion.x >= screen_pos::locked_x && 
+										ev.motion.x < screen_pos::locked_x + screen_pos::locked_len &&
+										ev.motion.y >= screen_pos::locked_y &&
+										ev.motion.y < screen_pos::locked_y + 9 )
 							{
-								mouse_hexdump::add_addr(-0x08);
-								//mouse_hexdump::address -= 0x08;				
-								break;					
+								//fprintf(stderr, "DERP");
+								if(mouse_hexdump::locked)
+									mouse_hexdump::toggle_lock();
 							}
-							else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-							{
-								mouse_hexdump::add_addr(0x08);
-								//mouse_hexdump::address += 0x08;
-								break;
-							}
+							
 
 							voices::muted_toggle_protect = 0;
 							voices::checkmouse(ev.motion.x, ev.motion.y, ev.button.button);
@@ -1644,7 +1654,7 @@ reload:
 
 							if (mode == MODE_NAV)
 							{
-								// click in memory view. Toggle lock
+								
 								if (	ev.motion.x >= INFO_X+(10*8) && 
 										ev.motion.x < INFO_X+(13*8) &&
 										ev.motion.y >= INFO_Y+56 &&
@@ -1653,14 +1663,15 @@ reload:
 									if (ev.button.button == SDL_BUTTON_LEFT)
 										player->spc_emu()->toggle_echo();
 								}
+								// click in memory view. Toggle lock
 								else if (	ev.motion.x >= MEMORY_VIEW_X && 
 										ev.motion.x < MEMORY_VIEW_X + 512 &&
 										ev.motion.y >= MEMORY_VIEW_Y &&
 										ev.motion.y < MEMORY_VIEW_Y + 512 )
 								{
 									// ORDER IMPORTANT
-									mouse_hexdump::set_addr(ev.motion.x, ev.motion.y);
-									mouse_hexdump::toggle_lock();
+									//mouse_hexdump::set_addr(ev.motion.x, ev.motion.y);
+									mouse_hexdump::toggle_lock(ev.motion.x, ev.motion.y);
 								}
 							}
 							
@@ -1710,6 +1721,20 @@ reload:
 									if (x>16 && x<19) { inc_ram(0xf7, i); }
 								}
 							}	
+
+
+							if (ev.button.button == SDL_BUTTON_WHEELUP)
+							{
+								mouse_hexdump::add_addr(-0x08);
+								//mouse_hexdump::address -= 0x08;				
+								break;					
+							}
+							else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
+							{
+								mouse_hexdump::add_addr(0x08);
+								//mouse_hexdump::address += 0x08;
+								break;
+							}
 
 							/* menu bar */
 							if (
@@ -1855,16 +1880,44 @@ reload:
 				unsigned short pitch = (player->spc_read_dsp(2+(i*0x10)) | (player->spc_read_dsp(3+(i*0x10))<<8)) & 0x3fff; 
 				// I believe pitch is max 0x3fff but kirby is using higher values for some unknown reason...
 				//if (i == 7) fprintf (stderr, "pitch = 0x%04x", pitch);
-				Uint32 cur_color;
-			
-				if (player->spc_read_dsp(0x5c)&(1<<i)) {
-					cur_color = color_screen_white;
-				} else {
-					cur_color = color_screen_gray;
+				Uint32 *cur_color=&color_screen_black; // &color_screen_white;
+
+				if (!voices::is_muted(i))
+				{
+					uint8_t voice_base_addr = (i*0x10);
+					uint8_t outx = player->spc_read_dsp(voice_base_addr+0x09);
+					if (player->spc_read_dsp(0x4c)&(1<<i)) {
+						cur_color = &color_screen_yellow;
+					} else if (player->spc_read_dsp(0x5c)&(1<<i)) {
+						cur_color = &color_screen_gray;
+					}
+					else if (outx) {
+						cur_color = &color_screen_white;
+					}
+					else // check if the sample is looping
+					{
+						// I added this section because when outx reaches 0
+						// the voice will go black for split second. this actually
+						// happens hundreds or thousands of times a second but the visual
+						// only catches it once in awhile.. but it's annoying and 
+						// I don't like it.. so I coded this to take up your CPU
+						uint16_t addr = player->spc_read_dsp(0x5d) * 0x100;
+						fprintf(stderr,"0x%04x,", addr);
+						uint8_t samp_index;
+						samp_index = player->spc_read_dsp(voice_base_addr+0x04);
+						fprintf(stderr,"0x%02x,", samp_index);
+						uint16_t *brr_header_addr = (uint16_t*)&IAPURAM[addr+(samp_index*4)];
+						if (IAPURAM[*brr_header_addr] & 2)
+							cur_color = &color_screen_white;
+
+						fprintf(stderr,"0x%04x\n", *brr_header_addr);
+
+					}
 				}
+
 				
 				sprintf(tmpbuf,"%d:",i);
-				sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*8), tmpbuf, color_screen_white);
+				sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*8), tmpbuf, *cur_color);
 				
 				tmprect.y= tmp+(i*8)+2;
 				tmprect.x = MEMORY_VIEW_X+520+18;
@@ -2136,10 +2189,11 @@ reload:
 			i++;
 
 			tmp += i*10 + 8;
-
+			screen_pos::locked_y = tmp;
 			sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -", color_screen_white);
 			if (mouse_hexdump::locked) {
-				sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, "locked", color_screen_red);
+				
+				sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, LOCKED_STR, color_screen_red);
 			} else {
 				sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, "      ", color_screen_red);
 			}

@@ -419,9 +419,12 @@ int const bits_in_int = CHAR_BIT * sizeof (int);
 
 void Snes_Spc::cpu_write( int data, int addr, rel_time_t time, int external/*=0*/ )
 {
-	MEM_ACCESS( time, addr )
+	
 	if (!external)
+	{
+		MEM_ACCESS( time, addr )
 		report_memwrite(addr);
+	}
 	// RAM
 	RAM [addr] = (uint8_t) data;
 	int reg = addr - 0xF0;
@@ -481,9 +484,12 @@ inline int Snes_Spc::cpu_read_smp_reg( int reg, rel_time_t time )
 
 int Snes_Spc::cpu_read( int addr, rel_time_t time, int external/*=0*/ )
 {
-	MEM_ACCESS( time, addr )
+	
 	if (!external)
+	{
 		report_memread(addr);
+		MEM_ACCESS( time, addr )
+	}
 	// RAM
 	int result = RAM [addr];
 	//return result;
