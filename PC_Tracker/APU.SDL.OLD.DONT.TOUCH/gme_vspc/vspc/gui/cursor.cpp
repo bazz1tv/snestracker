@@ -29,6 +29,11 @@ namespace memcursor
     // double click code
     timerid = SDL_AddTimer(interval, &cursor_timer, &flags);
     flags=FLAG_ACTIVE | FLAG_TOGGLED;
+    if (timerid == cursor::timerid)
+    {
+      fprintf(stderr, "memcursor::timerID == cursor::timerid.. NOT FIXED\n");
+    }
+
   }
 
   void stop_timer()
@@ -77,6 +82,7 @@ namespace cursor
   // timer callback, dont worry about this
   Uint32 cursor_timer(Uint32 interval, void *param)
   {
+    //fprintf(stderr, "cursor toggle, ");
     Uint8 *p = (Uint8 *) param;
     *p = !*p;
     return interval;
@@ -92,6 +98,15 @@ namespace cursor
     // i remove it when starting so I can have simple repeat-logic in the 
     // double click code
     timerid = SDL_AddTimer(CURSOR_TOGGLE_TIMEWINDOW, &cursor_timer, &toggle);
+    //fprintf(stderr, "TIMER ON %d\n", timerid);
+
+    // fix a buf where both cursor::timerid and memcursor::timerid were
+    // getting the same ID.. I think this is OK fix.
+    if (timerid == memcursor::timerid)
+    {
+      //fprintf(stderr, "WTF");
+      timerid = SDL_AddTimer(CURSOR_TOGGLE_TIMEWINDOW, &cursor_timer, &toggle);
+    }
   }
   void stop_timer()
   {
@@ -99,6 +114,7 @@ namespace cursor
     SDL_RemoveTimer(timerid);
     // toggle must be set to 0 to prevent drawing to screen
     toggle = 0;
+    //fprintf(stderr, "TIMER OFF\n");
   }
 
   void draw(SDL_Surface *screen, int x, int y, Uint32 color)

@@ -925,7 +925,10 @@ void base_mode_game_loop()
               else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
               {
                 if (is_in_memory_window && ev.button.button == SDL_BUTTON_LEFT)
+                {
                   exit_edit_mode();
+                  mouse_hexdump::set_addr_from_cursor(ev.motion.x, ev.motion.y);
+                }
               }
               
               if (ev.motion.x >= (MOUSE_HEXDUMP_START_X - 2) && ev.motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&

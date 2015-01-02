@@ -1,3 +1,11 @@
+Start integrating
+app
+  debugger
+  tracker
+  player etc.
+
+Migrate to SDL2
+
 Catch SIGINT and clean up properly
 
 lots of things SHOULDN"T be done/updated if paused
