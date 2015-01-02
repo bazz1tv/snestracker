@@ -1,4 +1,4 @@
-
+Catch SIGINT and clean up properly
 
 Voice Pitch Functionality should be same as on Volume
 

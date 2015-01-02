@@ -233,7 +233,7 @@ void update_tag()
 
 		//fprintf(stderr, "comment = %s\n", tag.comment);
 		//fprintf(stderr, "path = %s\nsong = %s\ngame = %s\ndumper = %s\ncomment = %s")
-		sdlfont_drawString(screen, INFO_X, INFO_Y, "      - Info -", color_screen_white);
+		
 		sprintf(tmpbuf, "Filename: %s", path);
 		sdlfont_drawString(screen, INFO_X, INFO_Y+8, tmpbuf, color_screen_white);
 		sprintf(tmpbuf, "Title...: %s", track::tag.song);
@@ -303,11 +303,12 @@ namespace voices
 					(y >= (r2->y + (i*r2->h)) && y <= (r2->y+(i*r2->h))+r2->h-1 )
 				) )
 			{
-				if (!(muted_toggle_protect & (1 << i)))
+				// if the voice isnt being toggle protected
+				if (!(muted_toggle_protect & (1 << i)) )
 				{
 					muted_toggle_protect |= 1<<i;
 					changed = 1;
-					voices::muted ^= (1<<i);
+					voices::muted ^= (1<<i); // bit toggle
 				}
 			}
 			else
@@ -1796,7 +1797,8 @@ reload:
 
 								if (x>=53 && x<=59) { // DSP MAP
 									//write_mask(packed_mask);
-									fprintf(stderr, "derp");
+									//fprintf(stderr, "derp");
+									mode = MODE_DSP_MAP;
 								}
 							}
 						}

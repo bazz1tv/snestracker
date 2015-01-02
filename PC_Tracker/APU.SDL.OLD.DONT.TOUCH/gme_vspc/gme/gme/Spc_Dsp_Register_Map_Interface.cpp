@@ -116,7 +116,8 @@ struct reg_lut_t lut[] = {
   {0x4f,"c4"},
   {0x5f,"c5"},
   {0x6f,"c6"},
-  {0x7f,"c7"}
+  {0x7f,"c7"},
+  {0xff,"FF"}
 };
 
 }
