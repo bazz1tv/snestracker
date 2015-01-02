@@ -3,6 +3,7 @@
 #include "Spc_Filter.h"
 
 #include <string.h>
+#include <iostream>
 
 /* Copyright (C) 2007 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -28,6 +29,7 @@ Spc_Filter::Spc_Filter()
 
 void Spc_Filter::run( short* io, int count )
 {
+	//fprintf(stderr, "DERP");
 	require( (count & 1) == 0 ); // must be even
 	
 	int const gain = this->gain;
@@ -56,7 +58,9 @@ void Spc_Filter::run( short* io, int count )
 			if ( (short) s != s )
 				s = (s >> 31) ^ 0x7FFF;
 			
+			//fprintf(stderr,"before: %d", io[i]);
 			io [i] = (short) s;
+			//fprintf(stderr,"after: %d", io[i]);
 		}
 		
 		c->p1  = p1;

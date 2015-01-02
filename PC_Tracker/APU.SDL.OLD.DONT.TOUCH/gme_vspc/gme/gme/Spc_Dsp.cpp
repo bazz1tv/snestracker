@@ -470,8 +470,23 @@ VOICE_CLOCK( V3c )
 		if ( m.t_non & v->vbit )
 			output = (int16_t) (m.noise * 2);
 		
+		#if SMOOTH_VOLUME
+		const int smooth_bits = 5;
+		int smooth = calc_smooth( &v->smooth_env, v->env << smooth_bits );
+		
+		if ( v->env != 0 )
+			v->smooth_env_prev = output;
+		else
+			output = v->smooth_env_prev;
+
+		m.t_output = (output * smooth) >> (smooth_bits + 11) & ~1;
+#else
 		// Apply envelope
 		m.t_output = (output * v->env) >> 11 & ~1;
+#endif
+
+		// Apply envelope
+		//m.t_output = (output * v->env) >> 11 & ~1;
 		v->t_envx_out = (uint8_t) (v->env >> 4);
 	}
 	
@@ -503,8 +518,17 @@ VOICE_CLOCK( V3c )
 }
 inline void Spc_Dsp::voice_output( voice_t const* v, int ch )
 {
+#if SMOOTH_VOLUME
+	const int smooth_bits = 7;
+	int smooth = calc_smooth( &v->smooth_vol [ch],
+			(int8_t) VREG(v->regs,voll + ch) << smooth_bits );
+	int amp = (m.t_output * smooth) >> (smooth_bits + 7);
+#else
 	// Apply left/right volume
-	int amp = (m.t_output * (int8_t) VREG(v->regs,voll + ch)) >> 7; // was >> 7 but bazz hated the sound
+	int amp = (m.t_output * (int8_t) VREG(v->regs,voll + ch)) >> 7;
+#endif
+	// Apply left/right volume
+	//int amp = (m.t_output * (int8_t) VREG(v->regs,voll + ch)) >> 7; // was >> 7 but bazz hated the sound
 	
 	// Add to output total
 	m.t_main_out [ch] += amp;// + m.gain;
@@ -885,6 +909,39 @@ void Spc_Dsp::soft_reset()
 	soft_reset_common();
 }
 
+const int smooth_steps = 16;
+
+void Spc_Dsp::init_smooth( smooth_t* m )
+{
+	m->smooth = 0;
+	m->target = 0;
+	m->step   = 0;
+}
+
+int Spc_Dsp::calc_smooth( smooth_t* m, int target )
+{
+	if ( m->target != target )
+	{
+		m->target = target;
+		int delta = target - m->smooth;
+		m->step = delta / smooth_steps;
+	}
+	
+	if ( m->smooth < target )
+	{
+		m->smooth += m->step;
+		if ( m->smooth > target )
+			m->smooth = target;
+	}
+	else if ( m->smooth > target )
+	{
+		m->smooth += m->step;
+		if ( m->smooth < target )
+			m->smooth = target;
+	}
+	return m->smooth;
+}
+
 void Spc_Dsp::load( uint8_t const regs [register_count] )
 {
 	memcpy( m.regs, regs, sizeof m.regs );
@@ -897,6 +954,11 @@ void Spc_Dsp::load( uint8_t const regs [register_count] )
 		v->brr_offset = 1;
 		v->vbit       = 1 << i;
 		v->regs       = &m.regs [i * 0x10];
+
+		init_smooth( &v->smooth_vol [0] );
+		init_smooth( &v->smooth_vol [1] );
+		init_smooth( &v->smooth_env );
+		v->smooth_env_prev = 0;
 	}
 	m.new_kon = REG(kon);
 	m.t_dir   = REG(dir);

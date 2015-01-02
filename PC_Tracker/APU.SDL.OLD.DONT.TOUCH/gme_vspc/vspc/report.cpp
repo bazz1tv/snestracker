@@ -1,5 +1,52 @@
 #include "report.h"
 
+const SDL_Rect Mem_Surface::memrect = {MEMORY_VIEW_X, MEMORY_VIEW_Y,0,0};
+
+Mem_Surface::Mem_Surface()
+{
+  memsurface = NULL;
+  memsurface_data = NULL;
+}
+
+Mem_Surface::~Mem_Surface()
+{
+  SDL_FreeSurface(memsurface);
+  free(memsurface_data);
+}
+
+void Mem_Surface::draw(SDL_Surface *screen)
+{
+  // draw the memory read/write display area
+  SDL_BlitSurface(memsurface, NULL, screen, (SDL_Rect*)&memrect);  
+}
+void Mem_Surface::init()
+{
+  memsurface_data = (unsigned char *)malloc(512*512*4);
+  memset(memsurface_data, 0, 512*512*4);
+}
+void Mem_Surface::clear()
+{
+  memset(memsurface_data, 0, 512*512*4);
+  /*memset(used, 0, sizeof(used));
+  memset(used2, 0, sizeof(used2));*/
+}
+void Mem_Surface::init_video()
+{
+  #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+      memsurface = SDL_CreateRGBSurfaceFrom(memsurface_data,512,512,32,2048,0xFF000000,0x00FF0000,0x0000FF00,0x0);
+  #else
+      memsurface = SDL_CreateRGBSurfaceFrom(memsurface_data,512,512,32,2048,0xFF,0xFF00,0xFF0000,0x0);    
+  #endif
+}
+void Mem_Surface::fade_arrays()
+{
+  int i;
+  for (i=0; i<512*512*4; i++)
+  {
+    if (memsurface_data[i] > 0x40) { memsurface_data[i]--; }
+  }
+}
+
 namespace report
 {
   int bcolor=0; // backup color

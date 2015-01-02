@@ -26,6 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 #include "blargg_source.h"
 
+#include "vspc/globals.h"
+
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
 const int fill_rate = 45;
 
@@ -75,6 +77,7 @@ void Music_Player::dec_curtrack() { curtrack--; }
 
 Music_Player::Music_Player()
 {
+	gain = 1.0;
 	emu_          = 0;
 	scope_buf     = 0;
 	paused        = false;
@@ -310,20 +313,58 @@ void Music_Player::mute_voices( int mask )
 	resume();
 }
 
+#define round(x) ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
+#define CLAMP16( io )\
+{\
+	if ( (int16_t) io != io )\
+	{\
+		io = (io >> 31) ^ 0x7FFF;\
+		fprintf(stderr,"clamp!");\
+	}\
+}
+
+typedef short sample_t;
+inline sample_t TPMixSamples(sample_t a, sample_t b) {
+    return  
+            // If both samples are negative, mixed signal must have an amplitude between the lesser of A and B, and the minimum permissible negative amplitude
+            a < 0 && b < 0 ?
+                ((int)a + (int)b) - (((int)a * (int)b)/INT16_MIN) :
+ 
+            // If both samples are positive, mixed signal must have an amplitude between the greater of A and B, and the maximum permissible positive amplitude
+            ( a > 0 && b > 0 ?
+                ((int)a + (int)b) - (((int)a * (int)b)/INT16_MAX)
+ 
+            // If samples are on opposite sides of the 0-crossing, mixed signal should reflect that samples cancel each other out somewhat
+            :
+                a + b);
+}
+//extern double gain;
+
+void Music_Player::apply_gain(sample_t* out, int count )
+{
+	for (int i=0; i < count; i += 1)
+	{
+		double newsamp = out[i];
+		newsamp *= gain;
+		
+		long d = round(newsamp);
+		CLAMP16(d);
+		
+		out[i] = (sample_t)d;
+	}
+}
 void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 {
 	Music_Player* self = (Music_Player*) data;
 	if ( self->emu_ )
 	{
-		if ( self->emu_->play( count, out ) ) { fprintf(stderr, "error");} // ignore error
-		//fprintf(stderr, "%d, ", *out);
-			/*for (int i=0; i < count; i += 1)
-			{
-				out[i] *= 2;
-				//out[count-1] *= 6;
-			}*/
-		//self->spc_filter->run(out, count);
-		//fprintf(stderr, "after: %d\n", *out);
+		if ( self->emu_->play( count, out ) ) { } // ignore error
+		if (globals::filter_is_active)
+			self->spc_filter->run(out, count);
+		
+		self->apply_gain(out, count);
+		
+		
 		
 		if ( self->scope_buf )
 			memcpy( self->scope_buf, out, self->scope_buf_size * sizeof *self->scope_buf );

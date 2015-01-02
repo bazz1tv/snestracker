@@ -91,10 +91,13 @@ public:
 	void restart_track();
 	int get_curtrack();
 
+
+
 	
 public:
 	Music_Player();
 	~Music_Player();
+	double gain;
 	/*void set_path(char *str)
 	{
 		strcpy(path,str);
@@ -116,9 +119,11 @@ private:
 	std::string path;
 	bool track_started;
 	
+	
 	void suspend();
 	void resume();
 	static void fill_buffer( void*, sample_t*, int );
+  void apply_gain(sample_t* out, int count );
 };
 
 #endif

@@ -6,6 +6,8 @@
 
 #include "blargg_common.h"
 
+
+
 extern "C" { typedef void (*dsp_copy_func_t)( unsigned char** io, void* state, size_t ); }
 
 class Spc_Dsp {
@@ -19,6 +21,17 @@ public:
 	enum { gain_unit = 0x100 };
 	void set_gain( int gain );
 	//
+
+	struct smooth_t
+	{
+		int smooth;
+		int target;
+		int step;
+	};
+	
+	static void init_smooth( smooth_t* );
+	static int calc_smooth( smooth_t*, int target );
+	
 
 // Setup
 
@@ -126,6 +139,9 @@ public:
 		int env;                // current envelope level
 		int hidden_env;         // used by GAIN mode 7, very obscure quirk
 		uint8_t t_envx_out;
+		mutable smooth_t smooth_vol [2];
+		mutable smooth_t smooth_env;
+		mutable int smooth_env_prev;
 	};
 private:
 	enum { brr_block_size = 9 };

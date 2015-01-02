@@ -6,8 +6,7 @@
 #include "mode.h"
 #include "report.h"
 
-#define MEMORY_VIEW_X 16
-#define MEMORY_VIEW_Y 40
+
 
 #define MOUSE_HEXDUMP_START_X 584
 //#define MOUSE_HEXDUMP_START_Y 229 + 30
@@ -78,11 +77,19 @@ namespace mouse_hexdump
                     //if (derp >= 4) mouse_hexdump::address += (8-derp);
                     /*else*/ 
       add_addr(-derp);
+
+      mode = MODE_EDIT_MOUSE_HEXDUMP;
+      cursor::start_timer();
+
       memcursor::start_timer();
     }
     else
     {
       report::restore_color(mouse_hexdump::address);
+
+      mode = MODE_NAV;
+      cursor::stop_timer();
+
       memcursor::stop_timer();
     }
     

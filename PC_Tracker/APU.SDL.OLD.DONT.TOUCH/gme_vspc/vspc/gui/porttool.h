@@ -15,7 +15,7 @@ namespace porttool
   Uint8 highnibble, portnum, portaddress, tmp[4];
   Uint8 horizontal=0;
   int x,y;
-  int portdata[4] = {0,0,0,0};
+  Uint8 portdata[4] = {0,0,0,0};
 
   void inc_port(int port)
   {

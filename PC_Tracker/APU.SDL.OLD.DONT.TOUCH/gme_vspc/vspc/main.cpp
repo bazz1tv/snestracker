@@ -40,8 +40,11 @@
 #include "sdl_dblclick.h"
 #include "mode.h"
 #include "mouse_hexdump.h"
+#include "globals.h"
 
- int last_pc=-1;
+
+
+int last_pc=-1;
 
 #define PACKAGE "spcview"
 #define VERSION "0.01"
@@ -104,6 +107,10 @@ SDL_Event event;
 const char* path;
 char tmpbuf[500];
 SDL_Surface *screen=NULL;
+
+
+Mem_Surface crap;
+
 SDL_Surface *memsurface=NULL;
 unsigned char *memsurface_data=NULL;
 //#define BUFFER_SIZE 65536
@@ -372,6 +379,7 @@ void exit_edit_mode()
 	submode = 0;
 	mouse_hexdump::draw_tmp_ram = 0;
 	cursor::stop_timer();
+	mouse_hexdump::unlock();
 }
 
 
@@ -845,8 +853,9 @@ void reload()
 	
 	IAPURAM = player->spc_emu()->ram();
 	
-
+	// memsurface.init
 	memset(memsurface_data, 0, 512*512*4);
+
 	memset(used, 0, sizeof(used));
 	memset(used2, 0, sizeof(used2));
 	cur_mouse_address =0;
@@ -871,6 +880,7 @@ void reload()
 	if (!g_cfg_novideo)
 	{
 		SDL_FillRect(screen, NULL, 0);
+		//memsurface.initvideo
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		memsurface = SDL_CreateRGBSurfaceFrom(memsurface_data,512,512,32,2048,0xFF000000,0x00FF0000,0x0000FF00,0x0);
 #else
@@ -1081,7 +1091,7 @@ reload:
 							
 							//player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0xff);
 							//player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x63);
-							player->spc_write_dsp(dsp_reg::eon, 0x1);
+							/*player->spc_write_dsp(dsp_reg::eon, 0x1);
 							player->spc_write_dsp(dsp_reg::flg, 0x00);
 							player->spc_write_dsp(dsp_reg::esa, 0x50);
 							player->spc_write_dsp(dsp_reg::edl, 0x0f);
@@ -1089,14 +1099,18 @@ reload:
 							player->spc_write_dsp(dsp_reg::evol_l, 127);
 							player->spc_write_dsp(dsp_reg::evol_r, 127);
 							player->spc_write_dsp(dsp_reg::c0, 0x7f);
-							player->spc_write_dsp(dsp_reg::kon,0x1);
-
+							player->spc_write_dsp(dsp_reg::kon,0x1);*/
+							player->gain -= 0.01;
+							fprintf(stderr, "gain = %f", player->gain, INT16_MIN, INT16_MAX);
 							//player->spc_write(0xf2, 0x4c);
 							//player->spc_write(0xf3, 0);
 							//player->spc_write(0xf3, 1);
 						}
 						else if (ev.key.keysym.sym == SDLK_i)
 						{
+							player->gain += 0.01;
+							fprintf(stderr, "gain = %f", player->gain);
+
 							//player->spc_write_dsp(0x4c, 0);
 							//player->spc_write_dsp(0x5c, 1);
 							//player->spc_write_dsp(0x5c, 0);
@@ -1120,6 +1134,11 @@ reload:
 							//player->spc_write(0xf2, 0x4c);
 							//player->spc_write(0xf3, 0);
 							//player->spc_write(0xf3, 1);
+						}
+						else if (scancode == SDLK_o)
+						{
+							globals::filter_is_active = !globals::filter_is_active;
+							fprintf(stderr, "filter_is_active = %d", globals::filter_is_active);
 						}
 						if (mode == MODE_NAV)
 						{
@@ -1487,7 +1506,7 @@ reload:
 				        //fprintf (stderr, "(%d,%d, %d), ", mouse_hexdump::res_x, mouse_hexdump::res_y, mouse_hexdump::highnibble);
 
 				        // cursor::toggle = 1; done in start_timer
-				        cursor::start_timer();
+				        //cursor::start_timer();
 
 				      }
 
@@ -1665,14 +1684,14 @@ reload:
 								{
 									switch (x)
 									{
-										case 1: porttool::inc_port (0); break;
-										case 4: porttool::dec_port (0); break;
-										case 6: porttool::inc_port (1); break;
-										case 9: porttool::dec_port (1); break;
-										case 11: porttool::inc_port(2); break;
-										case 14: porttool::dec_port(2); break;
-										case 16: porttool::inc_port(3); break;
-										case 19: porttool::dec_port(3); break;
+										case 1: porttool::dec_port (0); break;
+										case 4: porttool::inc_port (0); break;
+										case 6: porttool::dec_port (1); break;
+										case 9: porttool::inc_port (1); break;
+										case 11: porttool::dec_port(2); break;
+										case 14: porttool::inc_port(2); break;
+										case 16: porttool::dec_port(3); break;
+										case 19: porttool::inc_port(3); break;
 									}
 								}
 								if (ev.button.button == SDL_BUTTON_WHEELUP ||
@@ -2191,9 +2210,9 @@ reload:
 			sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:", color_screen_white);
 
 			if (mode == MODE_EDIT_APU_PORT)
-				sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", porttool::tmp[0], porttool::tmp[1], porttool::tmp[2], porttool::tmp[3]);		
+				sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", porttool::tmp[0], porttool::tmp[1], porttool::tmp[2], porttool::tmp[3]);		
 			else 
-				sprintf(tmpbuf, " +%02X- +%02X- +%02X- +%02X-", porttool::portdata[0], porttool::portdata[1], porttool::portdata[2], porttool::portdata[3]);	
+				sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", porttool::portdata[0], porttool::portdata[1], porttool::portdata[2], porttool::portdata[3]);	
 			
 			sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf, color_screen_white);
 			

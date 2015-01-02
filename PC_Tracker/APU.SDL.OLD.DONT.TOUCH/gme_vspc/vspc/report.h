@@ -1,7 +1,10 @@
 #ifndef _report_h__
 #define _report_h__
 
-//#include "SDL.h"
+#define MEMORY_VIEW_X 16
+#define MEMORY_VIEW_Y 40
+
+#include "SDL.h"
 
 #ifdef __cplusplus
 extern "C" unsigned char *memsurface_data;
@@ -22,6 +25,21 @@ extern int last_pc;
 
 #define report_memwrite(addr) do { int idx = (((addr)&0xff00)<<4)+1; idx += ((addr) % 256)<<3; memsurface_data[idx]=0xff; memsurface_data[idx+4] = 0xff; memsurface_data[idx+2048]=0xff; memsurface_data[idx+2048+4] = 0xff; } while(0)
 #endif
+
+struct Mem_Surface
+{
+  static const SDL_Rect memrect;
+
+  Mem_Surface();
+  ~Mem_Surface();
+  void draw(SDL_Surface *screen);
+  void init();
+  void clear();
+  void init_video();
+  void fade_arrays();
+  SDL_Surface *memsurface;
+  unsigned char *memsurface_data;
+};
 
 
 

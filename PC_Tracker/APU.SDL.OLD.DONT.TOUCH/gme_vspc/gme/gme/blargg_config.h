@@ -4,6 +4,9 @@
 #ifndef BLARGG_CONFIG_H
 #define BLARGG_CONFIG_H
 
+// For snes DSP
+#define SMOOTH_VOLUME 1
+
 #define GME_TYPE_LIST \
   gme_spc_type
 

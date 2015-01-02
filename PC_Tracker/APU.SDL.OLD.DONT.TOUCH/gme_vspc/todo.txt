@@ -1,0 +1,3 @@
+Memsurface -> struct integration. 
+
+Gain slider and clipping notifier

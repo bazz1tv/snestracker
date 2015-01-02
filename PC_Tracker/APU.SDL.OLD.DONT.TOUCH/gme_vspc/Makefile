@@ -5,7 +5,7 @@ gme_CFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `sdl-config --cflags`
 LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl-config --libs` -lm
 
 vspc_CFLAGS=$(debug) -O3 -funroll-loops -Wall -Ivspc `sdl-config --cflags` -Wall
-vspc_LDFLAGS=$(debug) `sdl-config --libs` -lm
+vspc_LDFLAGS=$(debug) -I vspc `sdl-config --libs` -lm
 
 CFLAGS = $(gme_CFLAGS) $(vspc_CFLAGS)
 ####
@@ -16,7 +16,7 @@ gme/gme/Snes_Spc_misc.cpp gme/gme/Snes_Spc_state.cpp gme/gme/Spc_Filter.cpp gme/
 gme/player/Music_Player.cpp
 ###
 OBJECTS=$(gme_SOURCES:.cpp=.o)
-vspc_OBJECTS=  vspc/main.o vspc/font.o vspc/sdlfont.o vspc/report.o
+vspc_OBJECTS=  vspc/main.o vspc/font.o vspc/sdlfont.o vspc/report.o vspc/globals.o
 OBJECTS += $(vspc_OBJECTS)
 EXECUTABLE=vspc_blargg
 
