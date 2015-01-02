@@ -109,10 +109,10 @@ char tmpbuf[500];
 SDL_Surface *screen=NULL;
 
 
-Mem_Surface crap;
+Mem_Surface memsurface;
 
-SDL_Surface *memsurface=NULL;
-unsigned char *memsurface_data=NULL;
+//SDL_Surface *memsurface=NULL;
+//unsigned char *memsurface_data=NULL;
 //#define BUFFER_SIZE 65536
 ///static unsigned char audiobuf[BUFFER_SIZE];
 //static int audio_buf_bytes=0, spc_buf_size;
@@ -442,11 +442,13 @@ void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 
 void fade_arrays()
 {
-	int i;
+	/*int i;
 	for (i=0; i<512*512*4; i++)
 	{
 		if (memsurface_data[i] > 0x40) { memsurface_data[i]--; }
-	}
+	}*/
+	memsurface.fade_arrays();
+	// mem_marker.fade_arrays();
 }
 
 static int audio_samples_written=0;
@@ -854,7 +856,8 @@ void reload()
 	IAPURAM = player->spc_emu()->ram();
 	
 	// memsurface.init
-	memset(memsurface_data, 0, 512*512*4);
+	memsurface.clear();
+	//memset(memsurface_data, 0, 512*512*4);
 
 	memset(used, 0, sizeof(used));
 	memset(used2, 0, sizeof(used2));
@@ -880,12 +883,13 @@ void reload()
 	if (!g_cfg_novideo)
 	{
 		SDL_FillRect(screen, NULL, 0);
+		memsurface.init_video();
 		//memsurface.initvideo
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+/*#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		memsurface = SDL_CreateRGBSurfaceFrom(memsurface_data,512,512,32,2048,0xFF000000,0x00FF0000,0x0000FF00,0x0);
 #else
 		memsurface = SDL_CreateRGBSurfaceFrom(memsurface_data,512,512,32,2048,0xFF,0xFF00,0xFF0000,0x0);		
-#endif
+#endif*/
 	
 		tmprect.x = MEMORY_VIEW_X-1;
 		tmprect.y = MEMORY_VIEW_Y-1;
@@ -934,7 +938,7 @@ int main(int argc, char **argv)
 	int tmp, i;
 	//int updates;
 	
-	SDL_Rect memrect;
+	//SDL_Rect memrect;
 	
 	//id666_tag tag;
 	
@@ -968,8 +972,9 @@ int main(int argc, char **argv)
 
 	time_cur = time_last = SDL_GetTicks();
 
-	memsurface_data = (unsigned char *)malloc(512*512*4);
-	memset(memsurface_data, 0, 512*512*4);
+	//memsurface_data = (unsigned char *)malloc(512*512*4);
+	//memset(memsurface_data, 0, 512*512*4);
+	memsurface.init();
 
 	// Create player
 	player = new Music_Player;
@@ -1782,10 +1787,11 @@ reload:
 			do_scroller(time_cur - time_last);
 			
 			fade_arrays();			
-			memrect.x = MEMORY_VIEW_X; memrect.y = MEMORY_VIEW_Y;
+			//memrect.x = MEMORY_VIEW_X; memrect.y = MEMORY_VIEW_Y;
 			
 			// draw the memory read/write display area
-			SDL_BlitSurface(memsurface, NULL, screen, &memrect);	
+			memsurface.draw(screen);
+			//SDL_BlitSurface(memsurface, NULL, screen, &memrect);	
 
 			// draw the 256 bytes block usage bar
 			tmprect.x = MEMORY_VIEW_X-1;
@@ -1802,7 +1808,7 @@ reload:
 			}
 			
 			sprintf(tmpbuf, "Blocks used: %3d/256 (%.1f%%)  ", tmp, (float)tmp*100.0/256.0);
-			sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + memsurface->h + 2, tmpbuf, color_screen_white);
+			sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + memsurface.sdl_surface->h + 2, tmpbuf, color_screen_white);
 
 			if (1)
 			{
@@ -1816,7 +1822,7 @@ reload:
 						packed_mask[24], packed_mask[25], packed_mask[26], packed_mask[27],
 						packed_mask[28], packed_mask[29], packed_mask[30], packed_mask[31]);
 
-				sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + memsurface->h + 2 + 9, tmpbuf, color_screen_white);
+				sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + memsurface.sdl_surface->h + 2 + 9, tmpbuf, color_screen_white);
 			}
 			i = 32;
 
@@ -2171,9 +2177,9 @@ reload:
 
 						idx += ((cut_addr+j) % 256)<<3;
 						color = SDL_MapRGB(screen->format, 
-								0x7f + (memsurface_data[idx]>>1), 
-								0x7f + (memsurface_data[idx+1]>>1), 
-								0x7f + (memsurface_data[idx+2]>>1)
+								0x7f + (memsurface.data[idx]>>1), 
+								0x7f + (memsurface.data[idx+1]>>1), 
+								0x7f + (memsurface.data[idx+2]>>1)
 								);
 								
 						//if ((cut_addr+i+j) > 0xffff)
