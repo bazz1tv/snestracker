@@ -31,6 +31,11 @@ namespace porttool
       cursor::draw(screen, x, PORTTOOL_Y+8, color);
   }
 
+  void write(int i, uint8_t data)
+  {
+    player->spc_emu()->write_port(i, data);
+    portdata[i] = tmp[i] = data;
+  }
   void write(int i)
   {
     player->spc_emu()->write_port(i, tmp[i]);

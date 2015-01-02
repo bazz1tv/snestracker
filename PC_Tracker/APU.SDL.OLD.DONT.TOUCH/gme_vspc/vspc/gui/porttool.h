@@ -23,8 +23,9 @@ namespace porttool
 
   void draw_cursor(SDL_Surface *screen, Uint32 color);
 
-  void write(int i);
   void write();
+  void write(int i);
+  void write(int i, uint8_t data);
   void writeall();
 
   void reset_port();

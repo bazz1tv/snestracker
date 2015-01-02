@@ -84,7 +84,7 @@ void reload()
 
   memset(used, 0, sizeof(used));
   memset(used2, 0, sizeof(used2));
-  mouse_hexdump::address =0;
+  if (!mouse_hexdump::address)mouse_hexdump::address =0;
   last_pc = -1;
   
   start_track( 1, path );
@@ -435,26 +435,27 @@ void base_mode_game_loop()
               ::filter_is_active = !::filter_is_active;
               fprintf(stderr, "filter_is_active = %d", ::filter_is_active);
             }
+            else if (scancode == SDLK_SPACE)
+            {
+              player->toggle_pause();
+            }
+            else if (scancode == SDLK_r)
+            {
+              player->start_track(0); // based on only having 1 track
+              player->pause(0);
+              // in the program .. this would have to change otherwise
+            }
             if (mode == MODE_NAV)
             {
               if (scancode == SDLK_LEFT)
                 prev_track();
               else if (scancode == SDLK_RIGHT)
                 next_track();
-              if (scancode == SDLK_c)
+              else if (scancode == SDLK_c)
               {
                 mouse::show = !mouse::show;
               }
-              else if (scancode == SDLK_SPACE)
-              {
-                player->toggle_pause();
-              }
-              else if (scancode == SDLK_r)
-              {
-                player->start_track(0); // based on only having 1 track
-                player->pause(0);
-                // in the program .. this would have to change otherwise
-              }
+              
               else if (ev.key.keysym.sym == SDLK_e)
                 player->spc_emu()->toggle_echo();
               else if (ev.key.keysym.sym == SDLK_RETURN && // click in memory view. Toggle lock
@@ -509,13 +510,13 @@ void base_mode_game_loop()
                 else if ((scancode >= 'a') && (scancode <= 'f'))
                   i = (scancode - 'a') + 0x0a;  
 
-
-                if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr==0xf1)
+                // test reg is unimplemented but i'll leave this here..
+                if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7))
                 {
                   // only update the buffer the first time.. if we haven't started writing in a new value
                   if (!mouse_hexdump::draw_tmp_ram)
                   {
-                    if (addr == 0xf1)
+                    if (addr == 0xf1 || (addr >= 0xf4 && addr <= 0xf7))
                       mouse_hexdump::tmp_ram = IAPURAM[addr];
                     else mouse_hexdump::tmp_ram = player->spc_read(addr);
                   }
@@ -542,11 +543,16 @@ void base_mode_game_loop()
                 //IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
                 mouse_hexdump::tmp_ram |= i;
 
-                if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr==0xf1)
+                if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7))
                 {
                   if (!mouse_hexdump::highnibble)
                   {
-                    player->spc_write(addr, mouse_hexdump::tmp_ram);
+                    if (addr >= 0xf4 && addr <= 0xf7)
+                    {
+                      porttool::write(addr-0xf4, mouse_hexdump::tmp_ram);
+                      //player->spc_write_port()
+                    }
+                    else player->spc_write(addr, mouse_hexdump::tmp_ram);
                     mouse_hexdump::draw_tmp_ram = 0;
                   }
                   else mouse_hexdump::draw_tmp_ram = 1;
@@ -556,10 +562,10 @@ void base_mode_game_loop()
                 if (mouse_hexdump::horizontal) mouse_hexdump::inc_cursor_pos();
                 
               }
-              else if (scancode == SDLK_SPACE)
+              /*else if (scancode == SDLK_SPACE)
               {
                 mouse_hexdump::inc_cursor_pos();
-              }
+              }*/
               else if (scancode == SDLK_TAB)
               {
                 mouse_hexdump::inc_cursor_pos();
@@ -1431,49 +1437,7 @@ void base_mode_game_loop()
                 );
                 
             Uint16 cur_addr = cut_addr+j;
-            if (mode == MODE_EDIT_MOUSE_HEXDUMP)
-            {
-              if (cur_addr == mouse_hexdump::addr_being_edited)
-              {
-                if (cur_addr == 0xf3 )
-                {
-                  if (mouse_hexdump::draw_tmp_ram)
-                    sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
-                  else sprintf(tmpbuf, "%02X ", player->spc_read_dsp(IAPURAM[0xf2]));
-                }
-                else if (cur_addr == 0xf1 )
-                {
-                  if (mouse_hexdump::draw_tmp_ram)
-                    sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
-                  else sprintf(tmpbuf, "%02X ", *st);//sprintf(tmpbuf, "%02X ", player->spc_read(0xf1));
-                }
-                else if (cur_addr >= 0xfd && cur_addr <= 0xff)  // Timer registers (not counters)
-                {
-                  if (mouse_hexdump::draw_tmp_ram)
-                    sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
-                  else sprintf(tmpbuf, "%02X ", player->spc_read(cur_addr));
-                }
-                else sprintf(tmpbuf, "%02X ", *st);
-              }
-              else
-              { 
-                if (cur_addr == 0xf3 )
-                {
-                  sprintf(tmpbuf, "%02X ", player->spc_read_dsp(IAPURAM[0xf2]));
-                }
-                /*else if (cur_addr == 0xf1 )
-                {
-                  sprintf(tmpbuf, "%02X ", player->spc_read(0xf1));
-                }*/
-                else if (cur_addr >= 0xfd && cur_addr <= 0xff)  // Timer registers (not counters)
-                {
-                  sprintf(tmpbuf, "%02X ", player->spc_read(cur_addr));
-                }
-                else sprintf(tmpbuf, "%02X ", *st);
-              }
-              //else sprintf(tmpbuf, "%02X ", *st);
-            }
-            else
+            if (/*mode == MODE_EDIT_MOUSE_HEXDUMP*/ cur_addr != mouse_hexdump::addr_being_edited)
             {
                 if (cur_addr == 0xf3 )
                 {
@@ -1483,12 +1447,55 @@ void base_mode_game_loop()
                 {
                   sprintf(tmpbuf, "%02X ", player->spc_read(0xf1));
                 }*/
-                else if (cur_addr >= 0xfd && cur_addr <= 0xff)  // Timer registers (not counters)
+                /*else if (cur_addr >= 0xfd && cur_addr <= 0xff)  // Timer registers (not counters)
                 {
                   sprintf(tmpbuf, "%02X ", player->spc_read(cur_addr));
+                }*/
+                else if (cur_addr == 0xf0 )
+                {
+                  //if (mouse_hexdump::draw_tmp_ram)
+                    //sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+                  sprintf(tmpbuf, "%02X ", player->spc_read(0xf0));
                 }
                 else sprintf(tmpbuf, "%02X ", *st);
               
+              //else sprintf(tmpbuf, "%02X ", *st);
+            }
+            else // if (cur_addr == mouse_hexdump::addr_being_edited)
+            {
+              if (cur_addr == 0xf3 )
+              {
+                if (mouse_hexdump::draw_tmp_ram)
+                  sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+                else sprintf(tmpbuf, "%02X ", player->spc_read_dsp(IAPURAM[0xf2]));
+              }
+              else if (cur_addr == 0xf0 )
+              {
+                if (mouse_hexdump::draw_tmp_ram)
+                  sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+                else sprintf(tmpbuf, "%02X ", player->spc_read(cur_addr));
+              }
+              else if (cur_addr == 0xf1 || (cur_addr >= 0xf4 && cur_addr <= 0xf7))
+              {
+                if (mouse_hexdump::draw_tmp_ram)
+                  sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+                else sprintf(tmpbuf, "%02X ", *st);//sprintf(tmpbuf, "%02X ", player->spc_read(0xf1));
+              }
+              /*else if (cur_addr == 0xf0 )
+              {
+                if (mouse_hexdump::draw_tmp_ram)
+                  sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+                else sprintf(tmpbuf, "%02X ", player->spc_read(0xf0));
+              }*/
+              // had to take out the counter because it was too laggy.. too fast to look at anyways
+              // kinda pointless to have too
+              /*else if (cur_addr >= 0xfd && cur_addr <= 0xff)  // Timer registers (not counters)
+              {
+                if (mouse_hexdump::draw_tmp_ram)
+                  sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+                else sprintf(tmpbuf, "%02X ", player->spc_read(cur_addr));
+              }*/
+              else sprintf(tmpbuf, "%02X ", *st);
             }
 
 
@@ -1561,7 +1568,7 @@ void base_mode_game_loop()
       SDL_UpdateRect(screen, 0, 0, 0, 0);
       time_last = time_cur;
       if (g_cfg_nice) {  SDL_Delay(100); }
-      //SDL_Delay( 1000 / 100 );
+      SDL_Delay( 1000 / 100 );
     } // if !g_cfg_novideo
     is_first_run = false;
   }
