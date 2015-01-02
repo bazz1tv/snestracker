@@ -60,9 +60,5 @@ namespace mouse_hexdump
 
   void draw_cursor(SDL_Surface *screen, Uint32 color);
 
-//unused
-  void enter_edit_mode();
-  void exit_edit_mode();
-
 }
 

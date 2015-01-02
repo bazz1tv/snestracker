@@ -14,12 +14,13 @@ namespace voices
 
       SDL_Rect *r1 = &screen_pos::voice0vol;
       SDL_Rect *r2 = &screen_pos::voice0pitch;
-      //fprintf(stderr, "%d %d %d %d\n", r2->x,r2->y,r2->w,r2->h);
-      if ( (x >= (r1->x) && x <= (r1->x + r1->w) && // + 125 to cover the bar too
+      
+      // if we click on the number of the voice, whether in the Pitch or Volume section
+      if ( (x >= (r1->x) && x <= (r1->x + r1->w) &&
         y >= (r1->y + (i*r1->h)) && y <= (r1->y+((i*r1->h))+r1->h-1) )  ||
         (
-          (x >= (r2->x) && x <= (r2->x+r2->w)) && // + 125 to cover the bar too
-          (y >= (r2->y + (i*r2->h)) && y <= (r2->y+(i*r2->h))+r2->h-1 )
+          (x >= (r2->x) && x <= (r2->x+r2->w)) &&
+            (y >= (r2->y + (i*r2->h)) && y <= (r2->y+(i*r2->h))+r2->h-1 )
         ) )
       {
         // if the voice isnt being toggle protected
@@ -46,13 +47,10 @@ namespace voices
       if (x >= (screen_pos::voice0vol.x) && x <= (screen_pos::voice0vol.x+8+125) && // + 125 to cover the bar too
         y >= (screen_pos::voice0vol.y + (i*10) + 1) && y <= (screen_pos::voice0vol.y+9 + (i*10)) )
       {
-        //fprintf(stderr, "muted = %02x\n, ~(1 << i) = 0x%02x\n", muted, ~(1 << i));
-          //muted_toggle_protect |= 1<<i;
           changed = 1;
           if (voices::muted == Uint8(~(1 << i)) )
           {
             muted = 0;
-            //fprintf(stderr, "DERP");
           }
           else voices::muted = ~(1<<i);
       }
@@ -63,6 +61,7 @@ namespace voices
   }
   void checkmouse(Uint16 &x, Uint16 &y, Uint8 &b)
   {
+    voices::muted_toggle_protect = 0;
     if (b == SDL_BUTTON_LEFT) checkmouse_mute(x,y);
     else if (b == SDL_BUTTON_RIGHT) checkmouse_solo(x,y);
   }

@@ -33,7 +33,6 @@ namespace dblclick
 
   extern Uint8 numclicks; // =0;
   extern SDL_TimerID timerid;
-  //enum Event {  };
   
   // Timer Callback.. Resets double click possibility
   Uint32 dblclicktimer(Uint32 interval, void *param);

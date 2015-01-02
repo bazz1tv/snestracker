@@ -2,15 +2,12 @@
 
 
 int MOUSE_HEXDUMP_START_Y;
-//extern Uint16 mouse_hexdump::address;
-//extern struct SIAPU IAPU;
+
 namespace mouse_hexdump
 {
-  //enum submodes { HARD_EDIT=0, EASY_EDIT=1 };
   int tmp_ram; char draw_tmp_ram;
-  int rel_x; // = te->motion.x - MOUSE_HEXDUMP_START_X;
-  //rel_x+=2;
-  int rel_y; // = te->motion.y - MOUSE_HEXDUMP_START_Y;
+  int rel_x;
+  int rel_y;
 
   int res_x;
   int res_y;
@@ -52,10 +49,7 @@ namespace mouse_hexdump
     locked = l;
     if (locked)
     {
-      
       int derp = (mouse_hexdump::address % 8);
-                    //if (derp >= 4) mouse_hexdump::address += (8-derp);
-                    /*else*/ 
       add_addr(-derp);
 
       mode = MODE_EDIT_MOUSE_HEXDUMP;
@@ -79,7 +73,6 @@ namespace mouse_hexdump
 
       mode = MODE_NAV;
       cursor::stop_timer();
-
       memcursor::stop_timer();
     }
     
@@ -100,7 +93,6 @@ namespace mouse_hexdump
     
     if (res_y == 15)
     {
-      //res_y;
       add_addr(+8); //mouse_hexdump::address += 8;
     }
     else res_y++;    
@@ -111,7 +103,6 @@ namespace mouse_hexdump
     
     if (res_y == 0)
     {
-      //res_y;
       add_addr(-8);
     }
     else res_y--;    
@@ -130,7 +121,6 @@ namespace mouse_hexdump
         res_x = 0;
         if (res_y == 15)
         {
-          //res_y;
           add_addr(8);
         }
         else res_y++;
@@ -157,7 +147,6 @@ namespace mouse_hexdump
         res_x = 7;
         if (res_y == 0)
         {
-          //res_y;
           add_addr(-8);
         }
         else res_y--;
@@ -181,15 +170,7 @@ namespace mouse_hexdump
     }
   }
 
-//unused
-  void enter_edit_mode()
-  {
-    mode = MODE_EDIT_MOUSE_HEXDUMP;
-  }
-  void exit_edit_mode()
-  {
 
-  }
 
 }
 

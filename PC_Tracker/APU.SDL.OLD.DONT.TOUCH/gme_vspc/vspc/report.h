@@ -6,14 +6,6 @@
 
 #include "SDL.h"
 
-#if 0
-#define report_memread(addr) do { int idx = (((addr)&0xff00)<<4)+2; idx+= ((addr)%256)<<3; memsurface.data[idx]=0xff; memsurface.data[idx+2048]=0xff; memsurface.data[idx+4]=0xff; memsurface.data[idx+4+2048]=0xff; used2[((addr)&0xff00)>>8]=1; } while(0)
-
-#define report_memread2(addr, opcode) do { int i, idx; if ((addr)==last_pc) { break; } else { for (i=0; i<5; i++) { idx = (((addr)+i)&0xff00)<<4; idx+= (((addr)+i)%256)<<3; memsurface.data[idx]=0xff; memsurface.data[idx+2048]=0xff; memsurface.data[idx+4]=0xff; memsurface.data[idx+4+2048]=0xff; used2[((addr)&0xff00)>>8]=1;  } } } while(0)
-
-#define report_memwrite(addr) do { int idx = (((addr)&0xff00)<<4)+1; idx += ((addr) % 256)<<3; memsurface.data[idx]=0xff; memsurface.data[idx+4] = 0xff; memsurface.data[idx+2048]=0xff; memsurface.data[idx+2048+4] = 0xff; } while(0)
-#endif
-
 struct Mem_Surface
 {
   static SDL_Rect memrect;
@@ -30,19 +22,11 @@ struct Mem_Surface
   SDL_Surface *sdl_surface, *sdl_csurface;
 };
 
-#ifdef __cplusplus
-extern "C" Mem_Surface memsurface;
-extern "C" unsigned char used2[0x101];
-extern "C" unsigned char used[0x10006];
-extern "C" int last_pc;
-#else
-// BROKEN
-//extern 
-//extern unsigned char *memsurface.data;
+extern Mem_Surface memsurface;
 extern unsigned char used2[0x101];
 extern unsigned char used[0x10006];
 extern int last_pc;
-#endif
+
 
 
 

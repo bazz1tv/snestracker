@@ -9,6 +9,7 @@
 #include "gui/porttool.h"
 #include "mode.h"
 #include "mouse_hexdump.h"
+#include "colors.h"
 
 void toggle_pause();
 void restart_track();
@@ -50,19 +51,15 @@ void next_track()
 
 void exit_edit_mode()
 {
-  if (submode == mouse_hexdump::EASY_EDIT)
-    mouse_hexdump::unlock();
   mode = MODE_NAV;
   submode = 0;
   mouse_hexdump::draw_tmp_ram = 0;
-  cursor::stop_timer();
+
   mouse_hexdump::unlock();
 }
 
 void reload()
 {
-
-  //reload:
 #ifdef WIN32
   g_real_filename = strrchr(g_cfg_playlist[g_cur_entry], '\\');
 #else
@@ -75,10 +72,8 @@ void reload()
     // skip path sep
     g_real_filename++;
   } 
-  
     
-    
-    // Load file
+  // Load file
   path = g_cfg_playlist[g_cur_entry];
   handle_error( player->load_file( g_cfg_playlist[g_cur_entry] ) );
   
@@ -89,7 +84,7 @@ void reload()
 
   memset(used, 0, sizeof(used));
   memset(used2, 0, sizeof(used2));
-  cur_mouse_address =0;
+  mouse_hexdump::address =0;
   last_pc = -1;
   
   start_track( 1, path );
@@ -108,29 +103,29 @@ void reload()
     tmprect.y = MEMORY_VIEW_Y-1;
     tmprect.w = 512+2;
     tmprect.h = 512+2;
-    SDL_FillRect(screen, &tmprect, color_screen_white); 
+    SDL_FillRect(screen, &tmprect, colors::white); 
     
-    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", color_screen_white);
+    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", colors::white);
 
     sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - DSP MAP");
-    sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, color_screen_yellow);
+    sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, colors::yellow);
 
     //sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");  
-    //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, color_screen_white);
+    //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, colors::white);
   
     //sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg_autowritemask ? "Yes" : "No");
-    //sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, color_screen_white);
+    //sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, colors::white);
 
     track::update_tag();
 
     sprintf(tmpbuf, "Ignore tag time: %s", g_cfg_ignoretagtime ? "Yes" : "No");
-    sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, color_screen_white);
+    sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, colors::white);
 
     sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg_defaultsongtime/60, g_cfg_defaultsongtime%60);
-    sdlfont_drawString(screen, INFO_X, INFO_Y+88, tmpbuf, color_screen_white);
+    sdlfont_drawString(screen, INFO_X, INFO_Y+88, tmpbuf, colors::white);
 
     
-    sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -", color_screen_white);
+    sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -", colors::white);
   }
 }
 
@@ -270,7 +265,7 @@ void do_scroller(int elaps_milli)
 
   keep += elaps_milli;  
   
-  steps = keep*60/800;
+  steps = keep*60/900;
   if (!steps) { return; }
 
   elaps_milli = keep;
@@ -286,7 +281,7 @@ void do_scroller(int elaps_milli)
 
   angle = start_angle;
         
-  cs = player->emu()->tell() / 300;
+  cs = player->emu()->tell() / 1010;
   cs %= 12;
 
   // clear area 
@@ -294,7 +289,7 @@ void do_scroller(int elaps_milli)
   tmprect.y = 0;
   tmprect.w = screen->w;
   tmprect.h = 28;
-  SDL_FillRect(screen, &tmprect, color_screen_black);
+  SDL_FillRect(screen, &tmprect, colors::black);
   
   
   for (i=0; i<cur_len; i++)
@@ -303,7 +298,7 @@ void do_scroller(int elaps_milli)
     c[0] = cur_marquee[i];
     if (  (tmprect.x + i*8 + p > 0) && (tmprect.x + i*8 + p < screen->w) )
     {
-      sdlfont_drawString(screen, tmprect.x + i*8 + p, 12 + off, c, colorscale[cs]);
+      sdlfont_drawString(screen, tmprect.x + i*8 + p, 12 + off, c, colors::colorscale[cs]);
     }
     angle-=0.1;
   }
@@ -878,6 +873,15 @@ void base_mode_game_loop()
           } break;
           case SDL_MOUSEBUTTONDOWN:           
             {
+              voices::checkmouse(ev.motion.x, ev.motion.y, ev.button.button); 
+
+              bool is_in_memory_window= (ev.motion.x >= MEMORY_VIEW_X && 
+                    ev.motion.x < MEMORY_VIEW_X + 512 &&
+                    ev.motion.y >= MEMORY_VIEW_Y &&
+                    ev.motion.y < MEMORY_VIEW_Y + 512) ? true:false;
+
+              
+
               if (  ev.motion.x >= screen_pos::locked.x && 
                     ev.motion.x < screen_pos::locked.x + screen_pos::locked.w &&
                     ev.motion.y >= screen_pos::locked.y &&
@@ -886,15 +890,8 @@ void base_mode_game_loop()
                 if(mouse_hexdump::locked)
                   mouse_hexdump::toggle_lock();
               }
-              
 
-              voices::muted_toggle_protect = 0;
-              voices::checkmouse(ev.motion.x, ev.motion.y, ev.button.button);
-
-
-              
-
-              if (mode == MODE_NAV)
+              else if (mode == MODE_NAV)
               {
                 
                 if (  ev.motion.x >= INFO_X+(10*8) && 
@@ -906,14 +903,18 @@ void base_mode_game_loop()
                     player->spc_emu()->toggle_echo();
                 }
                 // click in memory view. Toggle lock
-                else if ( ev.motion.x >= MEMORY_VIEW_X && 
-                    ev.motion.x < MEMORY_VIEW_X + 512 &&
-                    ev.motion.y >= MEMORY_VIEW_Y &&
-                    ev.motion.y < MEMORY_VIEW_Y + 512 )
+                else if ( is_in_memory_window )
                 {
                   // ORDER IMPORTANT
-                  mouse_hexdump::toggle_lock(ev.motion.x, ev.motion.y);
+                  if (ev.button.button == SDL_BUTTON_LEFT)
+                    mouse_hexdump::toggle_lock(ev.motion.x, ev.motion.y);
                 }
+              }
+
+              else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
+              {
+                if (is_in_memory_window && ev.button.button == SDL_BUTTON_LEFT)
+                  exit_edit_mode();
               }
               
               if (ev.motion.x >= (MOUSE_HEXDUMP_START_X - 2) && ev.motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
@@ -926,7 +927,7 @@ void base_mode_game_loop()
               }
 
               /* porttool */
-              if (  (ev.button.x >= PORTTOOL_X + (8*5)) &&
+              else if (  (ev.button.x >= PORTTOOL_X + (8*5)) &&
                   ev.button.y >= PORTTOOL_Y && ev.button.y < (PORTTOOL_Y + 16) )
               {
                 int x, y;
@@ -962,7 +963,7 @@ void base_mode_game_loop()
               } 
 
 
-              if (ev.button.button == SDL_BUTTON_WHEELUP)
+              else if (ev.button.button == SDL_BUTTON_WHEELUP)
               {
                 mouse_hexdump::add_addr(-0x08);
                 break;          
@@ -974,7 +975,7 @@ void base_mode_game_loop()
               }
 
               /* menu bar */
-              if (
+              else if (
                 ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
               {
                 int x = ev.button.x / 8;
@@ -1033,13 +1034,13 @@ void base_mode_game_loop()
         tmprect.y = MEMORY_VIEW_Y + i * 2;
         if (used2[i])
         {
-          SDL_FillRect(screen, &tmprect, color_screen_white); 
+          SDL_FillRect(screen, &tmprect, colors::white); 
           tmp++;
         }
       }
       
       sprintf(tmpbuf, "Blocks used: %3d/256 (%.1f%%)  ", tmp, (float)tmp*100.0/256.0);
-      sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + memsurface.sdl_surface->h + 2, tmpbuf, color_screen_white);
+      sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + memsurface.sdl_surface->h + 2, tmpbuf, colors::white);
 
       if (1)
       {
@@ -1053,32 +1054,32 @@ void base_mode_game_loop()
             packed_mask[24], packed_mask[25], packed_mask[26], packed_mask[27],
             packed_mask[28], packed_mask[29], packed_mask[30], packed_mask[31]);
 
-        sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + memsurface.sdl_surface->h + 2 + 9, tmpbuf, color_screen_white);
+        sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + memsurface.sdl_surface->h + 2 + 9, tmpbuf, colors::white);
       }
       i = 32;
 
       // write the address under mouse cursor
-      if (cur_mouse_address >=0)
+      if (mouse_hexdump::address >=0)
       {
-        sprintf(tmpbuf, "Addr mouse: $%04X", cur_mouse_address);
-        sdlfont_drawString(screen, MEMORY_VIEW_X+8*(23), MEMORY_VIEW_Y-10, tmpbuf, color_screen_white);
+        sprintf(tmpbuf, "Addr mouse: $%04X", mouse_hexdump::address);
+        sdlfont_drawString(screen, MEMORY_VIEW_X+8*(23), MEMORY_VIEW_Y-10, tmpbuf, colors::white);
       }
 
       // write the program counter
       last_pc = (int)player->spc_emu()->pc(); 
       sprintf(tmpbuf, "PC: $%04x  ", last_pc);
-      sdlfont_drawString(screen, MEMORY_VIEW_X+8*12, MEMORY_VIEW_Y-10, tmpbuf, color_screen_white);
+      sdlfont_drawString(screen, MEMORY_VIEW_X+8*12, MEMORY_VIEW_Y-10, tmpbuf, colors::white);
 
       tmp = i+10; // y 
       
-      sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices pitchs:", color_screen_white);
+      sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices pitchs:", colors::white);
       tmp += 9;
       
       tmprect.x=MEMORY_VIEW_X+520;
       tmprect.y=tmp;
       tmprect.w=screen->w-tmprect.x;
       tmprect.h=8*8;
-      SDL_FillRect(screen, &tmprect, color_screen_black);
+      SDL_FillRect(screen, &tmprect, colors::black);
       tmprect.w=5;
       tmprect.h = 5;
       for (i=0; i<8; i++)
@@ -1086,18 +1087,18 @@ void base_mode_game_loop()
         
         unsigned short pitch = (player->spc_read_dsp(2+(i*0x10)) | (player->spc_read_dsp(3+(i*0x10))<<8)) & 0x3fff; 
         // I believe pitch is max 0x3fff but kirby is using higher values for some unknown reason...
-        Uint32 *cur_color=&color_screen_white;
+        Uint32 *cur_color=&colors::white;
 
         if (voices::is_muted(i))
         {
-          cur_color = &color_screen_nearblack;
+          cur_color = &colors::nearblack;
           /*uint8_t voice_base_addr = (i*0x10);
           uint8_t outx = player->spc_read_dsp(voice_base_addr+0x09);
           if (player->spc_read_dsp(0x4c)&(1<<i) && !(voices::was_keyed_on & i) ) {
-            cur_color = &color_screen_yellow;
+            cur_color = &colors::yellow;
             voices::was_keyed_on |= 1<<i;
           } else if (player->spc_read_dsp(0x5c)&(1<<i)) {
-            cur_color = &color_screen_gray;
+            cur_color = &colors::gray;
             voices::was_keyed_on &= ~(1<<i);
           }
           else // check if the sample is looping
@@ -1116,15 +1117,15 @@ void base_mode_game_loop()
               //fprintf(stderr,"0x%02x,", samp_index);
               uint16_t *brr_header_addr = (uint16_t*)&IAPURAM[addr+(samp_index*4)];
               if (IAPURAM[*brr_header_addr] & 2)
-                cur_color = &color_screen_green;
+                cur_color = &colors::green;
               else if (outx) 
               {
-                cur_color = &color_screen_white;
+                cur_color = &colors::white;
               }
             }*/
             /*else if (outx) 
             {
-              cur_color = &color_screen_white;
+              cur_color = &colors::white;
             }*/
 
             //fprintf(stderr,"0x%04x\n", *brr_header_addr);
@@ -1145,23 +1146,23 @@ void base_mode_game_loop()
         tmprect.y= tmp+(i*8)+2;
         tmprect.x = MEMORY_VIEW_X+520+18;
         tmprect.x += pitch*(screen->w-tmprect.x-20)/((0x10000)>>2);
-        SDL_FillRect(screen, &tmprect, color_screen_white);
+        SDL_FillRect(screen, &tmprect, colors::white);
         
       }
       tmp += 9*8;
       
-      sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices volumes:", color_screen_white);
-      sdlfont_drawString(screen, MEMORY_VIEW_X+520+(16*8), tmp, "Left", color_screen_yellow);      
+      sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices volumes:", colors::white);
+      sdlfont_drawString(screen, MEMORY_VIEW_X+520+(16*8), tmp, "Left", colors::yellow);      
 
-      sdlfont_drawString(screen, MEMORY_VIEW_X+520+(20*8)+4, tmp, "Right", color_screen_cyan);
-      sdlfont_drawString(screen, MEMORY_VIEW_X+520+(26*8), tmp, "Gain", color_screen_magenta);
+      sdlfont_drawString(screen, MEMORY_VIEW_X+520+(20*8)+4, tmp, "Right", colors::cyan);
+      sdlfont_drawString(screen, MEMORY_VIEW_X+520+(26*8), tmp, "Gain", colors::magenta);
       tmp += 9;
 
       tmprect.x=MEMORY_VIEW_X+520;
       tmprect.y=tmp;
       tmprect.w=screen->w-tmprect.x;
       tmprect.h=10*11;
-      SDL_FillRect(screen, &tmprect, color_screen_black);   
+      SDL_FillRect(screen, &tmprect, colors::black);   
       tmprect.w=2;
       tmprect.h=2;
 
@@ -1173,8 +1174,8 @@ void base_mode_game_loop()
 
       for (i=0; i<8; i++)
       {
-        Uint32 *thecolor = &color_screen_gray;
-        Uint32 c1 = color_screen_white, c2 = *thecolor, c3 = color_screen_magenta;
+        Uint32 *thecolor = &colors::gray;
+        Uint32 c1 = colors::white, c2 = *thecolor, c3 = colors::magenta;
         Uint32 *Color1=&c1, *Color2 = &c1;
         
         unsigned char is_inverted=0;
@@ -1204,9 +1205,9 @@ void base_mode_game_loop()
         int x =MEMORY_VIEW_X+520, y = tmp + (i*10);
         Uint32 *color;
         if (voices::is_muted(i))
-          color = &color_screen_nearblack;
+          color = &colors::nearblack;
         else 
-          color = &color_screen_white;
+          color = &colors::white;
 
         sdlfont_drawString(screen, x, y, tmpbuf, *color);
         if (::is_first_run && i == 0)
@@ -1243,8 +1244,8 @@ void base_mode_game_loop()
         
         // L volume
         if (voices::is_muted(i))
-          color = &color_screen_dark_yellow;
-        else color = &color_screen_yellow;
+          color = &colors::dark_yellow;
+        else color = &colors::yellow;
         SDL_FillRect(screen, &tmprect, *color);
 
         tmprect.x = MEMORY_VIEW_X+520+18;
@@ -1252,8 +1253,8 @@ void base_mode_game_loop()
         tmprect.y = tmp+(i*10)+3;
         
         if (voices::is_muted(i))
-          color = &color_screen_dark_cyan;
-        else color = &color_screen_cyan;
+          color = &colors::dark_cyan;
+        else color = &colors::cyan;
         SDL_FillRect(screen, &tmprect, *color);
 
         // Gain needs customization
@@ -1277,14 +1278,14 @@ void base_mode_game_loop()
           SDL_GetRGB(c3, screen->format, &r1, &b1, &g1);
           c3 = SDL_MapRGB(screen->format,r1-0x60,g1-0x60,b1-0x60);
         }
-        else color = &color_screen_magenta;
+        else color = &colors::magenta;
         SDL_FillRect(screen, &tmprect, c3);
       }
       i=9;
       // 
       {
-        Uint32 *Color1=&color_screen_white, *Color2 = &color_screen_white;
-        Uint32 *thecolor = &color_screen_gray;
+        Uint32 *Color1=&colors::white, *Color2 = &colors::white;
+        Uint32 *thecolor = &colors::gray;
         unsigned char is_inverted=0;
         unsigned char left_vol = player->spc_read_dsp(dsp_reg::mvol_l);
         unsigned char right_vol = player->spc_read_dsp(dsp_reg::mvol_r);
@@ -1306,18 +1307,18 @@ void base_mode_game_loop()
         if (is_inverted & (1 << L_FLAG) )
         {
           if (left_vol == 0x80)
-            Color1 = &color_screen_red; // this is bad value according to FullSNES
+            Color1 = &colors::red; // this is bad value according to FullSNES
           else Color1 = thecolor;
         }
         if (is_inverted & (1 << R_FLAG) )
         {
           if (right_vol == 0x80)
-            Color2 = &color_screen_red; // this is bad value according to FullSNES
+            Color2 = &colors::red; // this is bad value according to FullSNES
           Color2 = thecolor;
         }
 
         sprintf(tmpbuf,"M");
-        sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, color_screen_white);
+        sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, colors::white);
         sprintf(tmpbuf,"\x1");
         sdlfont_drawString2c(screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, *Color1, *Color2);
 
@@ -1325,18 +1326,18 @@ void base_mode_game_loop()
         tmprect.y = tmp+(i*10)+1;
         tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
 
-        SDL_FillRect(screen, &tmprect, color_screen_yellow);
+        SDL_FillRect(screen, &tmprect, colors::yellow);
 
         tmprect.x = MEMORY_VIEW_X+520+18;
         tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
         tmprect.y = tmp+(i*10)+4;
         
-        SDL_FillRect(screen, &tmprect, color_screen_cyan);
+        SDL_FillRect(screen, &tmprect, colors::cyan);
       }
       i++;
       {
-        Uint32 *Color1=&color_screen_white, *Color2 = &color_screen_white;
-        Uint32 *thecolor = &color_screen_gray;
+        Uint32 *Color1=&colors::white, *Color2 = &colors::white;
+        Uint32 *thecolor = &colors::gray;
         unsigned char is_inverted=0;
         unsigned char left_vol = player->spc_read_dsp(dsp_reg::evol_l);
         unsigned char right_vol = player->spc_read_dsp(dsp_reg::evol_r);
@@ -1366,37 +1367,37 @@ void base_mode_game_loop()
 
 
         sprintf(tmpbuf,"E");
-        sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, color_screen_white);
+        sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, colors::white);
         sprintf(tmpbuf,"\x1");
         sdlfont_drawString2c(screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, *Color1, *Color2);
         tmprect.x = MEMORY_VIEW_X+520+18;
         tmprect.y = tmp+(i*10)+1;
         tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
 
-        SDL_FillRect(screen, &tmprect, color_screen_yellow);
+        SDL_FillRect(screen, &tmprect, colors::yellow);
 
         tmprect.x = MEMORY_VIEW_X+520+18;
         tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
         tmprect.y = tmp+(i*10)+4;
         
-        SDL_FillRect(screen, &tmprect, color_screen_cyan);
+        SDL_FillRect(screen, &tmprect, colors::cyan);
       }
 
       i++;
 
       tmp += i*10 + 8;
       screen_pos::locked.y = tmp;
-      sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -", color_screen_white);
+      sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -", colors::white);
       if (mouse_hexdump::locked) {
         
-        sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, LOCKED_STR, color_screen_red);
+        sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, LOCKED_STR, colors::red);
       } else {
-        sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, "      ", color_screen_red);
+        sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, "      ", colors::red);
       }
       
       tmp+=9;
       MOUSE_HEXDUMP_START_Y = tmp;
-      if (cur_mouse_address>=0)
+      if (mouse_hexdump::address>=0)
       {
         
         for (i=0; i<128; i+=8)
@@ -1409,7 +1410,7 @@ void base_mode_game_loop()
           int p = MEMORY_VIEW_X+520;
           
           sprintf(tmpbuf, "%04X: ", cut_addr);
-          sdlfont_drawString(screen, p, tmp, tmpbuf, color_screen_white);
+          sdlfont_drawString(screen, p, tmp, tmpbuf, colors::white);
           p += 6*8;
 
           for (int j=0; j<8; j++) {
@@ -1450,38 +1451,38 @@ void base_mode_game_loop()
         
       }
 
-      sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+8, " APU:", color_screen_white);
-      sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:", color_screen_white);
+      sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+8, " APU:", colors::white);
+      sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:", colors::white);
 
       if (mode == MODE_EDIT_APU_PORT)
         sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", porttool::tmp[0], porttool::tmp[1], porttool::tmp[2], porttool::tmp[3]);    
       else 
         sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", porttool::portdata[0], porttool::portdata[1], porttool::portdata[2], porttool::portdata[3]);  
       
-      sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf, color_screen_white);
+      sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf, colors::white);
       
       sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", IAPURAM[0xf4], IAPURAM[0xf5], IAPURAM[0xf6], IAPURAM[0xf7]);   
-      sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, color_screen_white);
+      sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, colors::white);
 
       sprintf(tmpbuf, "Time....: %0d:%02d / %0d:%02d", 
           int(player->emu()->tell()/1000)/60,
           int((player->emu()->tell()/1000))%60,
           track::song_time/60, track::song_time%60);
-      sdlfont_drawString(screen, INFO_X, INFO_Y+48, tmpbuf, color_screen_white);
+      sdlfont_drawString(screen, INFO_X, INFO_Y+48, tmpbuf, colors::white);
 
 
       sprintf(tmpbuf, "Echo....: %s", player->spc_emu()->is_echoing() ? "On " : "Off"); 
-      sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, color_screen_white);
+      sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, colors::white);
 
       
       
       if (mode == MODE_EDIT_MOUSE_HEXDUMP)
       {
-        mouse_hexdump::draw_cursor(screen, color_screen_green);
+        mouse_hexdump::draw_cursor(screen, colors::green);
       }
       else if (mode == MODE_EDIT_APU_PORT)
       {
-        porttool::draw_cursor(screen, color_screen_green);
+        porttool::draw_cursor(screen, colors::green);
       }
 
       // toggle should be 0 ALWAYS when deactivated
@@ -1500,7 +1501,7 @@ void base_mode_game_loop()
         if (mouse::x < (screen->w-40) && mouse::y < (screen->h - 8))
         { 
           sprintf(tmpbuf, "(%d,%d)", mouse::x, mouse::y);
-          sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, color_screen_white);
+          sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, colors::white);
         }
       }
       

@@ -40,11 +40,12 @@
 #include "sdl_dblclick.h"
 #include "mode.h"
 #include "mouse_hexdump.h"
- #include "gui/porttool.h"
+#include "gui/porttool.h"
 #include "globals.h"
 
 #include "events.h"
 #include "track.h"
+#include "colors.h"
 
 void prev_track();
 void next_track();
@@ -71,12 +72,6 @@ SPC_Config spc_config = {
     0, // interpolation
     0 // echo
 };
-
-
-
-
-
-
 
 void start_track( int track, const char* path )
 {
@@ -120,17 +115,6 @@ void dec_ram(int addr, int i=1)
 {
 	player->spc_write(addr, (player->spc_read(addr))-i);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -268,34 +252,7 @@ int init_sdl()
 
 		SDL_WM_SetCaption(PROG_NAME_VERSION_STRING, NULL);
 		
-		// precompute some colors
-		color_screen_black = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
-		color_screen_nearblack = SDL_MapRGB(screen->format, 0x50, 0x50, 0x50);
-		color_screen_white = SDL_MapRGB(screen->format, 0xff, 0xff, 0xff);
-		color_screen_yellow = SDL_MapRGB(screen->format, 0xff, 0xff, 0x00);
-		color_screen_cyan = SDL_MapRGB(screen->format, 0x00, 0xff, 0xff);
-		color_screen_magenta = SDL_MapRGB(screen->format, 0xff, 0x00, 0xff);
-		color_screen_gray = SDL_MapRGB(screen->format, 0x7f, 0x7f, 0x7f);
-		color_screen_red = SDL_MapRGB(screen->format, 0xff, 0x00, 0x00);
-		color_screen_green = SDL_MapRGB(screen->format, 0x00, 0xff, 0x00);
-		color_screen_blue = SDL_MapRGB(screen->format, 0x00, 0x00, 0xff);
-
-		color_screen_dark_yellow = SDL_MapRGB(screen->format, 0x50,0x50,0x00);
-		color_screen_dark_cyan = SDL_MapRGB(screen->format, 0x00, 0x50, 0x50);
-		color_screen_dark_magenta = SDL_MapRGB(screen->format, 0x50, 0x00, 0x50);
-
-		colorscale[0] = SDL_MapRGB(screen->format, 0xff, 0x00, 0x00);
-		colorscale[1] = SDL_MapRGB(screen->format, 0xff, 0x7f, 0x00);
-		colorscale[2] = SDL_MapRGB(screen->format, 0xff, 0xff, 0x00);
-		colorscale[3] = SDL_MapRGB(screen->format, 0x7f, 0xff, 0x00);
-		colorscale[4] = SDL_MapRGB(screen->format, 0x00, 0xff, 0x00);
-		colorscale[5] = SDL_MapRGB(screen->format, 0x00, 0xff, 0x7f);
-		colorscale[6] = SDL_MapRGB(screen->format, 0x00, 0xff, 0xff);
-		colorscale[7] = SDL_MapRGB(screen->format, 0x00, 0x7f, 0xff);
-		colorscale[8] = SDL_MapRGB(screen->format, 0x00, 0x00, 0xff);
-		colorscale[9] = SDL_MapRGB(screen->format, 0x7f, 0x00, 0xff);
-		colorscale[10] = SDL_MapRGB(screen->format, 0xff, 0x00, 0xff);
-		colorscale[11] = SDL_MapRGB(screen->format, 0xff, 0x00, 0x7f);
+		colors::precompute();
 	}
 
 	dblclick::init();

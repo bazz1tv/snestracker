@@ -49,15 +49,6 @@ extern int last_pc; //=-1;
 #define CREDITS "APU emulation code from Blargg's GME and Snes_Spc 0.9.0"
 
 
-
-/*SPC_Config spc_config = {
-    44100,
-    16,
-    2,
-    0, // interpolation
-    0 // echo
-};*/
-
 // those are bigger so I dont have to do a range test
 // each time I want to log the PC address (where I assume
 // a 5 byte instruction)
@@ -101,19 +92,9 @@ extern Mem_Surface memsurface;
 
 extern Uint32 time_last, time_cur;
 
-//SDL_Surface *memsurface=NULL;
-//unsigned char *memsurface_data=NULL;
-//#define BUFFER_SIZE 65536
-///extern unsigned char audiobuf[BUFFER_SIZE];
-//extern int audio_buf_bytes=0, spc_buf_size;
 
-extern Uint32 color_screen_white, color_screen_black, color_screen_cyan, color_screen_magenta, color_screen_yellow, color_screen_red;
-extern Uint32  color_screen_green, color_screen_blue, color_screen_nearblack;
-extern Uint32 color_screen_dark_magenta, color_screen_dark_cyan, color_screen_dark_yellow;
-extern Uint32 color_screen_gray;
-extern Uint32 colorscale[12];
 
-extern int cur_mouse_address;//=0x0000;
+
 extern SDL_Rect tmprect;//;
 
 extern bool is_first_run;//=true;

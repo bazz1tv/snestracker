@@ -84,6 +84,7 @@ namespace cursor
 
   void start_timer()
   {
+    //fprintf(stderr, "cursor timer ON\n");
     // always start with the cursor showing
     toggle = 1;
     // is there a problem Removing an invalid timerid?? I think not..
@@ -94,6 +95,7 @@ namespace cursor
   }
   void stop_timer()
   {
+    //fprintf(stderr, "cursor timer OFF\n");
     SDL_RemoveTimer(timerid);
     // toggle must be set to 0 to prevent drawing to screen
     toggle = 0;
