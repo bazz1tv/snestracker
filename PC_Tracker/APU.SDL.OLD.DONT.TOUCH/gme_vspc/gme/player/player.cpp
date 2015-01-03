@@ -76,7 +76,7 @@ static void start_track( int track, const char* path )
 	sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
 			game, track, player->track_count(), player->track_info().song,
 			seconds / 60, seconds % 60 );
-	SDL_WM_SetCaption( title, title );
+	//SDL_WM_SetCaption( title, title );
 }
 
 int main( int argc, char** argv )
@@ -177,9 +177,7 @@ int main( int argc, char** argv )
 						stereo_depth = 0;
 					player->set_stereo_depth( stereo_depth );
 					break;
-
-
-				
+		
 				case SDLK_g: 
 				{
 					//player->spc_emu()->write_flg(0x8);
@@ -228,7 +226,7 @@ void handle_error( const char* error )
 		char str [256];
 		sprintf( str, "Error: %s", error );
 		fprintf( stderr, str );
-		SDL_WM_SetCaption( str, str );
+		//SDL_WM_SetCaption( str, str );
 		
 		// wait for keyboard or mouse activity
 		SDL_Event e;

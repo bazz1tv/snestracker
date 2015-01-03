@@ -1,3 +1,6 @@
+Clickable "E:" to mute, now make it "darken" including the colons inverse phase volume, and including volume bars
+Look at Voice volume darkening for example.. And try to abstract the code
+
 Start integrating
 app
   debugger
@@ -9,7 +12,7 @@ Migrate to SDL2
   (hopefully not  problem )
 
   SDL_WM_SetCaption is gone,
-  
+
   SDL_PushEvent() now returns 1 on success instead of 0.
 
   When calling SDL_SetColorKey(), you should pass SDL_TRUE instead of SDL_SRCCOLORKEY.
