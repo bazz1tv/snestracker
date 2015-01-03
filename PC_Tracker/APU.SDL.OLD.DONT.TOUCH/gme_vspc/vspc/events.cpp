@@ -30,6 +30,8 @@ void draw_mouseover_hexdump();
 void draw_porttool();
 void draw_time_and_echo_status();
 
+void sub_color(Uint32 *c, Uint8 subval);
+
 void toggle_pause();
 void restart_track();
 void prev_track();
@@ -1228,7 +1230,7 @@ void draw_program_counter()
 void draw_voices_pitchs()
 {
   tmp = i+10; // y 
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices pitchs:", colors::white);
+  sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices pitches:", colors::white);
   tmp += 9;
   
   tmprect.x=MEMORY_VIEW_X+520;
@@ -1243,7 +1245,8 @@ void draw_voices_pitchs()
     
     unsigned short pitch = (player->spc_read_dsp(2+(i*0x10)) | (player->spc_read_dsp(3+(i*0x10))<<8)) & 0x3fff; 
     // I believe pitch is max 0x3fff but kirby is using higher values for some unknown reason...
-    Uint32 *cur_color=&colors::gray;
+    //Uint32 gray = colors::gray;
+    Uint32 *cur_color= &colors::gray;
 
     uint8_t voice_base_addr = (i*0x10);
     uint8_t outx = player->spc_read_dsp(voice_base_addr+0x09);
@@ -1306,7 +1309,15 @@ void draw_voices_pitchs()
 
     if (voices::is_muted(i))
     {
+      /* I would use sub color here to
+      get a view of the activity but the mute happens at the DSP level
+      it invokes KOFF on the muted channel making it impossible to get its
+      real status without hacking it at deep level */
+      /* i will leave out the pointers in the color logic still ... altho
+      the pointers are faster and can be used if the pointed-to-value is
+      not changed */
       cur_color = &colors::nearblack;
+      //sub_color(&cur_color, 0x60);
     }
 
     int x =MEMORY_VIEW_X+520;
@@ -1322,7 +1333,10 @@ void draw_voices_pitchs()
     tmprect.y= tmp+(i*8)+2;
     tmprect.x = MEMORY_VIEW_X+520+18;
     tmprect.x += pitch*(screen->w-tmprect.x-20)/((0x10000)>>2);
-    SDL_FillRect(screen, &tmprect, colors::white);
+    if (voices::is_muted(i))
+      SDL_FillRect(screen, &tmprect, colors::nearblack);
+    else
+      SDL_FillRect(screen, &tmprect, colors::white);
     
   }
 }
@@ -1396,18 +1410,8 @@ void draw_voices_volumes()
     sprintf(tmpbuf,"\x1");
     if (voices::is_muted(i))
     {
-      Uint8 r,g,b;
-      SDL_GetRGB(*Color1, screen->format, &r, &b, &g);
-      // CAP at ZERO
-      *Color1 = SDL_MapRGB(screen->format,
-        r-0x60 >= 0 ? (r-0x60):0,
-        g-0x60 >= 0 ? (g-0x60):0,
-        b-0x60 >= 0 ? (b-0x60):0);
-      SDL_GetRGB(*Color2, screen->format, &r, &b, &g);
-      *Color2 = SDL_MapRGB(screen->format,
-        r-0x60 >= 0 ? (r-0x60):0,
-        g-0x60 >= 0 ? (g-0x60):0,
-        b-0x60 >= 0 ? (b-0x60):0);
+      sub_color(Color1,0x60);
+      sub_color(Color2,0x60);
     }
     sdlfont_drawString2c(screen, MEMORY_VIEW_X+520 + 8, tmp + (i*10), tmpbuf, *Color1, *Color2);
     
@@ -1705,4 +1709,15 @@ void draw_time_and_echo_status()
 
   sprintf(tmpbuf, "Echo....: %s", player->spc_emu()->is_echoing() ? "On " : "Off"); 
   sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, colors::white);
+}
+
+void sub_color(Uint32 *c, Uint8 subval)
+{
+  Uint8 r,g,b;
+  SDL_GetRGB(*c, screen->format, &r, &b, &g);
+      // CAP at ZERO
+      *c = SDL_MapRGB(screen->format,
+        r-subval >= 0x10 ? (r-subval):0x10,
+        g-subval >= 0x10 ? (g-subval):0x10,
+        b-subval >= 0x10 ? (b-subval):0x10);
 }
