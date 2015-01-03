@@ -359,7 +359,7 @@ void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 	if ( self->emu_ )
 	{
 		if ( self->emu_->play( count, out ) ) { } // ignore error
-		if (::filter_is_active)
+		if (self->filter_is_active)
 			self->spc_filter->run(out, count);
 		
 		self->apply_gain(out, count);
@@ -427,3 +427,5 @@ static void sound_cleanup()
 	sound_stop();
 	SDL_CloseAudio();
 }
+
+
