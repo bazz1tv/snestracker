@@ -6,6 +6,8 @@ app
 
 Migrate to SDL2
 
+Scrolling text at bottom-right when text is too long to read
+
 Catch SIGINT and clean up properly
 
 lots of things SHOULDN"T be done/updated if paused

@@ -14,4 +14,8 @@ namespace voices
   void checkmouse(Uint16 &x, Uint16 &y, Uint8 &b);
 
   Uint8 is_muted(int i);
+  void toggle_mute(uint8_t m);  // channel num
+  void toggle_mute_all();
+  void mute_all();
+  void unmute_all();
 }

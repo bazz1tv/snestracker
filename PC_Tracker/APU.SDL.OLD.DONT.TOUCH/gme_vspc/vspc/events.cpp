@@ -10,6 +10,7 @@
 #include "mode.h"
 #include "mouse_hexdump.h"
 #include "colors.h"
+#include "platform.h"
 
 void toggle_pause();
 void restart_track();
@@ -447,6 +448,19 @@ void base_mode_game_loop()
             }
             if (mode == MODE_NAV)
             {
+              // VOICES!!! 
+              if ((scancode >= '0') && (scancode <= '9'))
+              {
+                uint8_t i = scancode - '0';
+                if (!i)
+                  voices::toggle_mute_all();
+                if (i > 0 && i < 9)
+                  voices::toggle_mute(i); // channel num
+                //else
+                  //voices::mute_all();
+              }
+
+
               if (scancode == SDLK_LEFT)
                 prev_track();
               else if (scancode == SDLK_RIGHT)
@@ -468,10 +482,13 @@ void base_mode_game_loop()
                 mouse_hexdump::res_x = 0;
                 mouse_hexdump::res_y = 0;
 
-                // order matters .. call here: 
-                mouse_hexdump::lock();
                 mode = MODE_EDIT_MOUSE_HEXDUMP;
                 submode = mouse_hexdump::EASY_EDIT;
+                // order matters .. call here: 
+                mouse_hexdump::lock();
+                //mouse_hexdump::addr_being_edited = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x
+                //mouse_hexdump::res_x = 1; //mouse_hexdump::address_remainder;
+                
                 cursor::start_timer();
               }
               if (ev.key.keysym.sym == SDLK_ESCAPE)
@@ -492,11 +509,19 @@ void base_mode_game_loop()
             else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
             {
               int scancode = ev.key.keysym.sym;
-              if (scancode == 'h' || scancode == 'H')
+              if (ev.key.keysym.mod & (CMD_CTRL_KEY))  // GUI in SDL2
+              {
+                fprintf(stderr, "EOO");
+                if (scancode == SDLK_LEFT)
+                  prev_track();
+                else if (scancode == SDLK_RIGHT)
+                  next_track();
+              }
+              else if (scancode == 'h' || scancode == 'H')
               {
                 mouse_hexdump::horizontal = !mouse_hexdump::horizontal;
               }
-              if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
+              else if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
                 ((scancode >= 'a') && (scancode <= 'f')) )
               {
                 uint i=0;
@@ -771,12 +796,13 @@ void base_mode_game_loop()
                   }
                 }
                 
-                mouse_hexdump::highnibble = highnibble;
-                mouse_hexdump::res_x = res_x;
-                mouse_hexdump::res_y = res_y;
+               
 
                 // order matters .. call here: 
                 mouse_hexdump::lock();
+                 mouse_hexdump::highnibble = highnibble;
+                mouse_hexdump::res_x = res_x;
+                mouse_hexdump::res_y = res_y;
 
                 if (mouse_hexdump::res_y == 16) mouse_hexdump::res_y = 15;
               }
@@ -918,7 +944,9 @@ void base_mode_game_loop()
                 {
                   // ORDER IMPORTANT
                   if (ev.button.button == SDL_BUTTON_LEFT)
+                  {
                     mouse_hexdump::toggle_lock(ev.motion.x, ev.motion.y);
+                  }
                 }
               }
 
@@ -1101,42 +1129,56 @@ void base_mode_game_loop()
         
         unsigned short pitch = (player->spc_read_dsp(2+(i*0x10)) | (player->spc_read_dsp(3+(i*0x10))<<8)) & 0x3fff; 
         // I believe pitch is max 0x3fff but kirby is using higher values for some unknown reason...
-        Uint32 *cur_color=&colors::white;
+        Uint32 *cur_color=&colors::gray;
 
-        if (voices::is_muted(i))
+        uint8_t voice_base_addr = (i*0x10);
+        uint8_t outx = player->spc_read_dsp(voice_base_addr+0x09);
+        uint8_t envx = player->spc_read_dsp(voice_base_addr+0x08);
+
+        if (player->spc_read_dsp(0x4c)&(1<<i) && !(voices::was_keyed_on & i) )
         {
-          cur_color = &colors::nearblack;
-          /*uint8_t voice_base_addr = (i*0x10);
-          uint8_t outx = player->spc_read_dsp(voice_base_addr+0x09);
-          if (player->spc_read_dsp(0x4c)&(1<<i) && !(voices::was_keyed_on & i) ) {
-            cur_color = &colors::yellow;
-            voices::was_keyed_on |= 1<<i;
-          } else if (player->spc_read_dsp(0x5c)&(1<<i)) {
-            cur_color = &colors::gray;
-            voices::was_keyed_on &= ~(1<<i);
-          }
-          else // check if the sample is looping
+          cur_color = &colors::white;
+          voices::was_keyed_on |= 1<<i;
+        } else if (player->spc_read_dsp(0x5c)&(1<<i)) {
+          //cur_color = &colors::gray;
+          voices::was_keyed_on &= ~(1<<i);
+          //if (i==1)
+            //fprintf(stderr, "KEYOFF\n");
+        }
+
+        if (outx || envx) 
+        {
+          cur_color = &colors::white;
+        }
+        else // check if the sample is looping
+        {
+          
+          // I added this section because when outx reaches 0
+          // the voice will go black for split second. this actually
+          // happens hundreds or thousands of times a second but the visual
+          // only catches it once in awhile.. but it's annoying and 
+          // I don't like it.. so I coded this to take up your CPU
+          if (voices::was_keyed_on & (1<<i))
           {
-            // I added this section because when outx reaches 0
-            // the voice will go black for split second. this actually
-            // happens hundreds or thousands of times a second but the visual
-            // only catches it once in awhile.. but it's annoying and 
-            // I don't like it.. so I coded this to take up your CPU
-            if (voices::was_keyed_on & (1<<i))
+            uint16_t addr = player->spc_read_dsp(0x5d) * 0x100;
+            //fprintf(stderr,"0x%04x,", addr);
+            uint8_t samp_index;
+            samp_index = player->spc_read_dsp(voice_base_addr+0x04);
+            //fprintf(stderr,"0x%02x,", samp_index);
+            uint16_t *brr_header_addr = (uint16_t*)&IAPURAM[addr+(samp_index*4)];
+            if (IAPURAM[*brr_header_addr] & 2)
+              cur_color = &colors::white;
+            /*else if (outx) 
             {
-              uint16_t addr = player->spc_read_dsp(0x5d) * 0x100;
-              //fprintf(stderr,"0x%04x,", addr);
-              uint8_t samp_index;
-              samp_index = player->spc_read_dsp(voice_base_addr+0x04);
-              //fprintf(stderr,"0x%02x,", samp_index);
-              uint16_t *brr_header_addr = (uint16_t*)&IAPURAM[addr+(samp_index*4)];
-              if (IAPURAM[*brr_header_addr] & 2)
-                cur_color = &colors::green;
-              else if (outx) 
-              {
-                cur_color = &colors::white;
-              }
+              cur_color = &colors::white;
             }*/
+          }
+          else
+          {
+            //if (i==1)
+              //fprintf(stderr, "WHAT");
+            // the note is truly dead
+          }
             /*else if (outx) 
             {
               cur_color = &colors::white;
@@ -1145,6 +1187,12 @@ void base_mode_game_loop()
             //fprintf(stderr,"0x%04x\n", *brr_header_addr);
 
           //}
+        }
+
+
+        if (voices::is_muted(i))
+        {
+          cur_color = &colors::nearblack;
         }
 
         int x =MEMORY_VIEW_X+520;
@@ -1553,9 +1601,9 @@ void base_mode_game_loop()
       {
         if (memcursor::is_toggled())
         {
-          report_cursor(mouse_hexdump::address);
+          report_cursor(mouse_hexdump::addr_being_edited);
         }
-        else report::restore_color(mouse_hexdump::address);
+        else report::restore_color(mouse_hexdump::addr_being_edited);
       }
       
 
@@ -1571,7 +1619,7 @@ void base_mode_game_loop()
       SDL_UpdateRect(screen, 0, 0, 0, 0);
       time_last = time_cur;
       if (g_cfg_nice) {  SDL_Delay(100); }
-      SDL_Delay( 1000 / 100 );
+      //SDL_Delay( 1000 / 100 );
     } // if !g_cfg_novideo
     is_first_run = false;
   }

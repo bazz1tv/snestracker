@@ -18,17 +18,19 @@ namespace mouse_hexdump
 
   char locked=0;
   Uint16 address=0x0000, addr_being_edited=0x0000;
+  Uint8 address_remainder=0;
 
   void set_addr(int i)
   {
     if (memcursor::is_active())
     {
-      report::restore_color(address);
+      report::restore_color(addr_being_edited);
       memcursor::start_timer();
     }
     address = i;
-    if (memcursor::is_active())
-      report::backup_color(address);
+    //if (memcursor::is_active())
+      //report::backup_color(addr_being_edited);
+    update_editing_address();
   }
   void set_addr_from_cursor(int x, int y)
   {
@@ -52,8 +54,13 @@ namespace mouse_hexdump
     locked = l;
     if (locked)
     {
-      int derp = (mouse_hexdump::address % 8);
-      add_addr(-derp);
+       res_y = 0;
+      if (submode != EASY_EDIT)
+      {
+        address_remainder = address % 8;
+        add_addr(-address_remainder);
+        res_x = address_remainder;
+      }
 
       mode = MODE_EDIT_MOUSE_HEXDUMP;
       cursor::start_timer();
@@ -73,7 +80,7 @@ namespace mouse_hexdump
           set_addr_from_cursor(x, y);
         }
       }
-      report::restore_color(mouse_hexdump::address);
+      report::restore_color(mouse_hexdump::addr_being_edited);
 
       mode = MODE_NAV;
       cursor::stop_timer();
@@ -83,7 +90,7 @@ namespace mouse_hexdump
   }
   void toggle_lock(int x/*=0*/, int y/*=0*/)
   {
-    lock(!locked);
+    lock(!locked, x, y);
   }
   
   void unlock()
@@ -92,8 +99,9 @@ namespace mouse_hexdump
   }
   void update_editing_address()
   {
+    report::restore_color(mouse_hexdump::addr_being_edited);
     mouse_hexdump::addr_being_edited = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
-    if ( (addr_being_edited == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr_being_edited==0xf1)
+    if ( (addr_being_edited == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr_being_edited==0xf1 || addr_being_edited == 0xf0)
     {
       // only update the buffer the first time.. if we haven't started writing in a new value
       if (!mouse_hexdump::draw_tmp_ram)
