@@ -30,7 +30,7 @@ void draw_mouseover_hexdump();
 void draw_porttool();
 void draw_time_and_echo_status();
 
-void sub_color(Uint32 *c, Uint8 subval);
+
 
 void toggle_pause();
 void restart_track();
@@ -1317,7 +1317,7 @@ void draw_voices_pitchs()
       the pointers are faster and can be used if the pointed-to-value is
       not changed */
       cur_color = &colors::nearblack;
-      //sub_color(&cur_color, 0x60);
+      //colors::subtract(&cur_color, 0x60);
     }
 
     int x =MEMORY_VIEW_X+520;
@@ -1410,8 +1410,8 @@ void draw_voices_volumes()
     sprintf(tmpbuf,"\x1");
     if (voices::is_muted(i))
     {
-      sub_color(Color1,0x60);
-      sub_color(Color2,0x60);
+      colors::subtractp(Color1,0x60);
+      colors::subtractp(Color2,0x60);
     }
     sdlfont_drawString2c(screen, MEMORY_VIEW_X+520 + 8, tmp + (i*10), tmpbuf, *Color1, *Color2);
     
@@ -1530,8 +1530,11 @@ void draw_echo_volume()
 {
   i++;
   {
-    Uint32 *Color1=&colors::white, *Color2 = &colors::white;
-    Uint32 *thecolor = &colors::gray;
+    Uint32 Color1=colors::white;
+    Uint32 Color2=colors::white;// = &colors::white;
+    Uint32 *leftbarvol_col=&colors::yellow;
+    Uint32 *rightbarvol_col=&colors::cyan;
+    //Uint32 thecolor = &
     unsigned char is_inverted=0;
     unsigned char left_vol = player->spc_read_dsp(dsp_reg::evol_l);
     unsigned char right_vol = player->spc_read_dsp(dsp_reg::evol_r);
@@ -1552,33 +1555,47 @@ void draw_echo_volume()
 
     if (is_inverted & (1 << L_FLAG) )
     {
-      Color1 = thecolor;
+      Color1 = colors::gray;
     }
     if (is_inverted & (1 << R_FLAG) )
     {
-      Color2 = thecolor;
+      Color2 = colors::gray;
     }
 
     //
+    Uint32 *c;
     sprintf(tmpbuf,"E");
     if (::is_first_run)
     {
       screen_pos::echoE.y = tmp+(i*10);
     }
-    sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, colors::white);
+
+    if (player->spc_emu()->is_echoing())
+    {
+      c = &colors::white;
+    }
+    else
+    {
+      c = &colors::nearblack;
+      colors::subtractp(&Color1, 0x60);
+      colors::subtractp(&Color2, 0x60);
+      leftbarvol_col=&colors::dark_yellow;
+      rightbarvol_col=&colors::dark_cyan;
+    }
+    sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, *c);
     sprintf(tmpbuf,"\x1");
-    sdlfont_drawString2c(screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, *Color1, *Color2);
+    sdlfont_drawString2c(screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, Color1, Color2);
     tmprect.x = MEMORY_VIEW_X+520+18;
     tmprect.y = tmp+(i*10)+1;
     tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
 
-    SDL_FillRect(screen, &tmprect, colors::yellow);
+    SDL_FillRect(screen, &tmprect, *leftbarvol_col);
 
     tmprect.x = MEMORY_VIEW_X+520+18;
     tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
     tmprect.y = tmp+(i*10)+4;
     
-    SDL_FillRect(screen, &tmprect, colors::cyan);
+    SDL_FillRect(screen, &tmprect, *rightbarvol_col);
   }
 }
 
@@ -1711,13 +1728,4 @@ void draw_time_and_echo_status()
   sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, colors::white);
 }
 
-void sub_color(Uint32 *c, Uint8 subval)
-{
-  Uint8 r,g,b;
-  SDL_GetRGB(*c, screen->format, &r, &b, &g);
-      // CAP at ZERO
-      *c = SDL_MapRGB(screen->format,
-        r-subval >= 0x10 ? (r-subval):0x10,
-        g-subval >= 0x10 ? (g-subval):0x10,
-        b-subval >= 0x10 ? (b-subval):0x10);
-}
+

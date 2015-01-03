@@ -10,6 +10,8 @@ Uint32 dark_magenta, dark_cyan, dark_yellow;
 Uint32 gray;
 Uint32 colorscale[12];
 
+
+
 void precompute()
 {
   // precompute some colors
@@ -40,6 +42,28 @@ void precompute()
   colorscale[9] = SDL_MapRGB(screen->format, 0x7f, 0x00, 0xff);
   colorscale[10] = SDL_MapRGB(screen->format, 0xff, 0x00, 0xff);
   colorscale[11] = SDL_MapRGB(screen->format, 0xff, 0x00, 0x7f);
+}
+
+Uint32 subtract(Uint32 *c, Uint8 subval)
+{
+  Uint8 r,g,b;
+  SDL_GetRGB(*c, screen->format, &r, &b, &g);
+      // CAP at ZERO
+      return SDL_MapRGB(screen->format,
+        r-subval >= 0x10 ? (r-subval):0x10,
+        g-subval >= 0x10 ? (g-subval):0x10,
+        b-subval >= 0x10 ? (b-subval):0x10);
+}
+
+void subtractp(Uint32 *c, Uint8 subval)
+{
+  Uint8 r,g,b;
+  SDL_GetRGB(*c, screen->format, &r, &b, &g);
+      // CAP at ZERO
+      *c = SDL_MapRGB(screen->format,
+        r-subval >= 0x10 ? (r-subval):0x10,
+        g-subval >= 0x10 ? (g-subval):0x10,
+        b-subval >= 0x10 ? (b-subval):0x10);
 }
 
 }

@@ -11,4 +11,7 @@ namespace colors
   extern Uint32 colorscale[12];
 
   void precompute();
+  // belongs in color namespace
+  Uint32 subtract(Uint32 *c, Uint8 subval);
+  void subtractp(Uint32 *c, Uint8 subval);
 }
