@@ -19,13 +19,13 @@ Migrate to SDL2
 
   SDLMod is now SDL_Keymod and its "META" keys (the "Windows" keys) are now called the "GUI" keys.
 
+  Strip double click event stuffz
+
   The first change, simply enough, is that the mousewheel is no longer a button. This was a mistake of history, and we've corrected it in SDL 2.0. Look for SDL_MOUSEWHEEL events. We support both vertical and horizontal wheels, and some platforms can treat two-finger scrolling on a trackpad as wheel input, too. You will no longer receive SDL_BUTTONDOWN events for mouse wheels, and buttons 4 and 5 are real mouse buttons now.
 
 
 
 Scrolling text at bottom-right when text is too long to read
-
-Catch SIGINT and clean up properly
 
 lots of things SHOULDN"T be done/updated if paused
 

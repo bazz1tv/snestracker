@@ -1,14 +1,3 @@
-/* How to play game music files with Music_Player (requires SDL library)
-
-Run program with path to a game music file.
-
-Left/Right  Change track
-Space       Pause/unpause
-E           Normal/slight stereo echo/more stereo echo
--/=         Adjust tempo
-1-9         Toggle channel on/off
-0           Reset tempo and turn channels back on */
-
 int const scope_width = 512;
 
 #include "Music_Player.h"
