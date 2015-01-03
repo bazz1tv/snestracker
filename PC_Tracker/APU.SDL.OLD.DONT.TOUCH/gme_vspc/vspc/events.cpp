@@ -1129,9 +1129,6 @@ reload:
                 
               } 
 
-
-              
-
               /* menu bar */
               else if (
                 ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
@@ -1344,7 +1341,8 @@ void draw_voices_pitchs()
       real status without hacking it at deep level */
       /* i will leave out the pointers in the color logic still ... altho
       the pointers are faster and can be used if the pointed-to-value is
-      not changed */
+      not changed
+      :P pointers are back */
       cur_color = &colors::nearblack;
       //colors::subtract(&cur_color, 0x60);
     }
