@@ -14,7 +14,7 @@ extern bool paused;
 #define LOCKED_STR "locked"
 
 void handle_error( const char* );
-void start_track( int track, const char* path );
+//void start_track( int track, const char* path );
 
 namespace mouse {
   extern int x,y;

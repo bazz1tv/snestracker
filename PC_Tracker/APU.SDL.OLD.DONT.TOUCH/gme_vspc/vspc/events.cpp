@@ -153,7 +153,7 @@ void reload()
   //if (!mouse_hexdump::address)mouse_hexdump::address =0;
   last_pc = -1;
   
-  start_track( 1, path );
+  track::start( 1, path );
   voices::was_keyed_on = 0;
   player->mute_voices(voices::muted);
   player->ignore_silence();
@@ -331,7 +331,7 @@ void do_scroller(int elaps_milli)
 
   keep += elaps_milli;  
   
-  steps = keep*60/900;
+  steps = keep*60/1000;
   if (!steps) { return; }
 
   elaps_milli = keep;
@@ -347,7 +347,7 @@ void do_scroller(int elaps_milli)
 
   angle = start_angle;
         
-  cs = player->emu()->tell() / 1010;
+  cs = player->emu()->tell() / 1000;
   cs %= 12;
 
   // clear area 
@@ -374,6 +374,7 @@ void do_scroller(int elaps_milli)
   if (p<cur_min) {
     if (marquees[cur_marquee_id+1]!=NULL) {
       cur_marquee = marquees[++cur_marquee_id];
+      p = screen->w;
     }
     else {
       p = screen->w;
@@ -515,6 +516,7 @@ reload:
             }
             else if (scancode == SDLK_r)
             {
+              memsurface.clear();
               player->start_track(0); // based on only having 1 track
               player->pause(0);
               // in the program .. this would have to change otherwise
@@ -1228,7 +1230,7 @@ reload:
       SDL_RenderPresent(sdlRenderer);
       time_last = time_cur;
       if (g_cfg_nice) {  SDL_Delay(100); }
-      //SDL_Delay( 1000 / 100 );
+      SDL_Delay( 1000 / 100 );
     } // if !g_cfg_novideo
     is_first_run = false;
   }

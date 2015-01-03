@@ -65,7 +65,8 @@ static void start_track( int track, const char* path )
 	sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
 			game, track, player->track_count(), player->track_info().song,
 			seconds / 60, seconds % 60 );
-	//SDL_WM_SetCaption( title, title );
+
+	SDL_SetWindowTitle(sdlWindow, title);
 }
 
 int main( int argc, char** argv )
@@ -207,24 +208,4 @@ int main( int argc, char** argv )
 	return 0;
 }
 
-void handle_error( const char* error )
-{
-	if ( error )
-	{
-		// put error in window title
-		char str [256];
-		sprintf( str, "Error: %s", error );
-		fprintf( stderr, str );
-		//SDL_WM_SetCaption( str, str );
-		
-		// wait for keyboard or mouse activity
-		SDL_Event e;
-		do
-		{
-			while ( !SDL_PollEvent( &e ) ) { }
-		}
-		while ( e.type != SDL_QUIT && e.type != SDL_KEYDOWN && e.type != SDL_MOUSEBUTTONDOWN );
 
-		exit( EXIT_FAILURE );
-	}
-}

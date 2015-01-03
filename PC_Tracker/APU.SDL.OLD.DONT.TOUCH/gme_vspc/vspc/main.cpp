@@ -52,37 +52,7 @@ SPC_Config spc_config = {
     0 // echo
 };
 
-void start_track( int track, const char* path )
-{
-	paused = false;
-	//if (!player->is_paused())
-	handle_error( player->start_track( track - 1 ) );
-	// update window title with track info
-	
-	long seconds = player->track_info().length / 1000;
-	const char* game = player->track_info().game;
-	if ( !*game )
-	{
-		// extract filename
-		game = strrchr( path, '\\' ); // DOS
-		if ( !game )
-			game = strrchr( path, '/' ); // UNIX
-		if ( !game )
-		{
-			if (path)
-				game = path;
-			else game = "";
-		}
-		else
-			game++; // skip path separator
-	}
-	
-	char title [512];
-	sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
-			game, track, player->track_count(), player->track_info().song,
-			seconds / 60, seconds % 60 );
-	//SDL_WM_SetCaption( title, title );
-}
+
 
 
 
@@ -264,8 +234,7 @@ int init_sdl()
                                             SDL_TEXTUREACCESS_STREAMING,
                                             800, 600);
 
-		//SDL_WM_SetCaption(PROG_NAME_VERSION_STRING, NULL);
-		
+		SDL_SetWindowTitle(sdlWindow, PROG_NAME_VERSION_STRING);
 		colors::precompute();
 	}
 

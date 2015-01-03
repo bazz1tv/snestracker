@@ -6,6 +6,38 @@ namespace track
   int song_time;
   track_info_t tag;
 
+void start( int track, const char* path )
+{
+  paused = false;
+  //if (!player->is_paused())
+  handle_error( player->start_track( track - 1 ) );
+  // update window title with track info
+  
+  long seconds = player->track_info().length / 1000;
+  const char* game = player->track_info().game;
+  if ( !*game )
+  {
+    // extract filename
+    game = strrchr( path, '\\' ); // DOS
+    if ( !game )
+      game = strrchr( path, '/' ); // UNIX
+    if ( !game )
+    {
+      if (path)
+        game = path;
+      else game = "";
+    }
+    else
+      game++; // skip path separator
+  }
+  
+  char title [512];
+  sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
+      game, track, player->track_count(), player->track_info().song,
+      seconds / 60, seconds % 60 );
+  SDL_SetWindowTitle(sdlWindow, title);
+}
+
 // update window title with track info
 void update_window_title()
 {
@@ -28,7 +60,7 @@ void update_window_title()
   sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
       game, g_cur_entry+1, g_cfg_num_files, player->track_info().song,
       seconds / 60, seconds % 60 );
-  //SDL_WM_SetCaption( title, title );
+  SDL_SetWindowTitle(sdlWindow, title);
 }
 void update_tag()
 {

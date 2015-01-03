@@ -12,6 +12,7 @@ namespace track
   extern track_info_t tag;
 
 void update_window_title();
+void start( int track, const char* path );
 
 void update_tag();
 }

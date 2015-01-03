@@ -35,7 +35,22 @@ extern int last_pc;
 
 
 #define report_memread(addr) do { int idx = (((addr)&0xff00)<<4)+2; idx+= ((addr)%256)<<3; memsurface.data[idx]=0xff; memsurface.data[idx+2048]=0xff; memsurface.data[idx+4]=0xff; memsurface.data[idx+4+2048]=0xff; used2[((addr)&0xff00)>>8]=1; used[(addr)&0xffff]=1; } while(0)
-#define report_echomem(addr) do { int idx = (((addr)&0xff00)<<4); idx+= ((addr)%256)<<3; for (int i=0; i < 2; i++) { memsurface.data[idx+i]=0xff; memsurface.data[idx+2048+i]=0xff; memsurface.data[idx+4+i]=0xff; memsurface.data[idx+4+2048+i]=0xff; } } while(0)
+#define report_echomem(addr) do\
+{\
+int idx = (((addr)&0xff00)<<4);\
+idx+= ((addr)%256)<<3;\
+for (int i=0; i < 2; i++)\
+{\
+  memsurface.data[idx+i]=0xff;\
+  memsurface.data[idx+2048+i]=0xff;\
+  memsurface.data[idx+4+i]=0xff;\
+  memsurface.data[idx+4+2048+i]=0xff;\
+}\
+/*memsurface.data[idx+2]=60;\
+memsurface.data[idx+2048+2]=60;\
+memsurface.data[idx+4+2]=60;\
+memsurface.data[idx+4+2048+2]=60;*/\
+} while(0)
 
 
 
