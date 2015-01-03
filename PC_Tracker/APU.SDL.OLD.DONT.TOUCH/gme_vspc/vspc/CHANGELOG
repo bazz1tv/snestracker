@@ -1,6 +1,9 @@
 -- v1.32 (by bazz)
   Possibly broke the masking...  
 
+  Better hexdump editing
+  Voice activity monitoring
+
   mute/solo voices!
 
   Scroll thru songs while paused

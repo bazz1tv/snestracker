@@ -48,7 +48,7 @@ namespace mouse_hexdump
   void dec_cursor_row();
   void inc_cursor_row();
 
-  void lock(char l/*=1*/, int x/*=0*/, int y/*=0*/)
+  void lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*=0*/, uint8_t ry/*=0*/)
   {
     
     locked = l;
@@ -57,9 +57,16 @@ namespace mouse_hexdump
        res_y = 0;
       if (submode != EASY_EDIT)
       {
-        address_remainder = address % 8;
-        add_addr(-address_remainder);
-        res_x = address_remainder;
+        if (rx || ry)
+        {
+          res_x = rx; res_y = ry;
+        }
+        else
+        {
+          address_remainder = address % 8;
+          add_addr(-address_remainder);
+          res_x = 0; // address_remainder;
+        }
       }
 
       mode = MODE_EDIT_MOUSE_HEXDUMP;

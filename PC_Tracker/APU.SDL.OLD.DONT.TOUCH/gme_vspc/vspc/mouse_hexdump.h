@@ -51,7 +51,7 @@ namespace mouse_hexdump
   void dec_cursor_row();
   void inc_cursor_row();
 
-  void lock(char l=1, int x=0, int y=0);
+  void lock(char l=1, int x=0, int y=0, uint8_t rx=0, uint8_t ry=0);
   void toggle_lock(int x=0, int y=0);
   
   void unlock();

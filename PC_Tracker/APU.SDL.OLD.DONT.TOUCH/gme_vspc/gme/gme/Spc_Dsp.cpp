@@ -763,7 +763,7 @@ ECHO_CLOCK( 28 )
 }
 inline void Spc_Dsp::echo_write( int ch )
 {
-	if ( !(m.t_echo_enabled & 0x20) )
+	if ( !(m.t_echo_enabled & 0x20) /*&& echoing*/ )
 		SET_LE16A( ECHO_PTR( ch ), m.t_echo_out [ch] );
 	m.t_echo_out [ch] = 0;
 }

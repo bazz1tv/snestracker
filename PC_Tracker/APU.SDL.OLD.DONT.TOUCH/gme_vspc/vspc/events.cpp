@@ -85,7 +85,7 @@ void reload()
 
   memset(used, 0, sizeof(used));
   memset(used2, 0, sizeof(used2));
-  if (!mouse_hexdump::address)mouse_hexdump::address =0;
+  //if (!mouse_hexdump::address)mouse_hexdump::address =0;
   last_pc = -1;
   
   start_track( 1, path );
@@ -319,6 +319,8 @@ void do_scroller(int elaps_milli)
 void base_mode_game_loop()
 {
   unsigned char packed_mask[32];
+  // this is the address that shows up after "Addr Mouse"
+  uint16_t mouse_addr=0; 
 
   reload:
   reload();
@@ -387,9 +389,16 @@ void base_mode_game_loop()
                   int x, y;
                   x = ev.motion.x;
                   y = ev.motion.y;
+
+                  x-= MEMORY_VIEW_X;
+                  y -= MEMORY_VIEW_Y;
+                  x /= 2;
+                  y /= 2;
+                  //set_addr(y*256+x);
                   
+                  mouse_addr = y*256+x;
                   if (!mouse_hexdump::locked) {
-                    mouse_hexdump::set_addr_from_cursor(x,y);
+                    mouse_hexdump::set_addr(mouse_addr); //_from_cursor(x,y);
                   }
                 }
               }
@@ -527,6 +536,7 @@ void base_mode_game_loop()
                 uint i=0;
                 //int addr;
                 Uint16 addr = mouse_hexdump::addr_being_edited;
+                fprintf(stderr, "Addr = %04x\n", addr);
                 
                 if ((scancode >= '0') && (scancode <= '9'))
                   i = scancode - '0';
@@ -536,14 +546,17 @@ void base_mode_game_loop()
                   i = (scancode - 'a') + 0x0a;  
 
                 // test reg is unimplemented but i'll leave this here..
-                if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7))
+                if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || 
+                  addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7)  )
                 {
                   // only update the buffer the first time.. if we haven't started writing in a new value
                   if (!mouse_hexdump::draw_tmp_ram)
                   {
-                    if (addr == 0xf1 || (addr >= 0xf4 && addr <= 0xf7))
+                    if (addr == 0xf1 || (addr >= 0xf4 && addr <= 0xf7)  )
                       mouse_hexdump::tmp_ram = IAPURAM[addr];
                     else mouse_hexdump::tmp_ram = player->spc_read(addr);
+
+                    fprintf(stderr, "tmpram = 0x%02x\n", mouse_hexdump::tmp_ram);
                   }
                 }
                 else 
@@ -568,7 +581,8 @@ void base_mode_game_loop()
                 //IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
                 mouse_hexdump::tmp_ram |= i;
 
-                if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7))
+                if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || 
+                  addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7)  )
                 {
                   if (!mouse_hexdump::highnibble)
                   {
@@ -577,7 +591,11 @@ void base_mode_game_loop()
                       porttool::write(addr-0xf4, mouse_hexdump::tmp_ram);
                       //player->spc_write_port()
                     }
-                    else player->spc_write(addr, mouse_hexdump::tmp_ram);
+                    else 
+                    {
+                      player->spc_write(addr, mouse_hexdump::tmp_ram);
+                      fprintf(stderr, "WRite");
+                    }
                     mouse_hexdump::draw_tmp_ram = 0;
                   }
                   else mouse_hexdump::draw_tmp_ram = 1;
@@ -799,11 +817,12 @@ void base_mode_game_loop()
                
 
                 // order matters .. call here: 
-                mouse_hexdump::lock();
-                 mouse_hexdump::highnibble = highnibble;
-                mouse_hexdump::res_x = res_x;
-                mouse_hexdump::res_y = res_y;
+                mouse_hexdump::lock(1,0,0,res_x,res_y);
+                mouse_hexdump::highnibble = highnibble;
+                //mouse_hexdump::res_x = res_x;
+                //mouse_hexdump::res_y = res_y;
 
+                
                 if (mouse_hexdump::res_y == 16) mouse_hexdump::res_y = 15;
               }
 
@@ -1103,7 +1122,7 @@ void base_mode_game_loop()
       // write the address under mouse cursor
       if (mouse_hexdump::address >=0)
       {
-        sprintf(tmpbuf, "Addr mouse: $%04X", mouse_hexdump::address);
+        sprintf(tmpbuf, "Addr mouse: $%04X", mouse_addr);
         sdlfont_drawString(screen, MEMORY_VIEW_X+8*(23), MEMORY_VIEW_Y-10, tmpbuf, colors::white);
       }
 
@@ -1498,7 +1517,7 @@ void base_mode_game_loop()
                 {
                   sprintf(tmpbuf, "%02X ", player->spc_read(0xf1));
                 }*/
-                /*else if (cur_addr >= 0xfd && cur_addr <= 0xff)  // Timer registers (not counters)
+                /*else if (cur_addr >= 0xfa && cur_addr <= 0xfc)  // Timer registers (not counters)
                 {
                   sprintf(tmpbuf, "%02X ", player->spc_read(cur_addr));
                 }*/
@@ -1532,6 +1551,12 @@ void base_mode_game_loop()
                   sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
                 else sprintf(tmpbuf, "%02X ", *st);//sprintf(tmpbuf, "%02X ", player->spc_read(0xf1));
               }
+              /*else if (cur_addr >= 0xfa && cur_addr <= 0xfc)  // Timer registers (not counters)
+              {
+                if (mouse_hexdump::draw_tmp_ram)
+                  sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+                else sprintf(tmpbuf, "%02X ", *st);
+              }*/
               /*else if (cur_addr == 0xf0 )
               {
                 if (mouse_hexdump::draw_tmp_ram)
