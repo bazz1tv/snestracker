@@ -18,6 +18,8 @@ static void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 	int bpp = surface->format->BytesPerPixel;
 	Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
 
+	pixel |= 0xff000000;
+
 	switch (bpp)
 	{
 		case 1:

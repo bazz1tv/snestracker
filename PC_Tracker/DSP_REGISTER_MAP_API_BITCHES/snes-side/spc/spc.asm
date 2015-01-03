@@ -40,7 +40,7 @@ Init:
     
 
 
-    # Voice 1
+    ; Voice 1
 
     mov $F2, #$10       ; left volume = 127
     mov $F3, #1
@@ -84,7 +84,7 @@ Init:
     mov $F3, #$01
 
 loop:    
-    #mov a, $fd
+    mov a, $fd
     beq loop
 
     ; if a > 0
@@ -99,9 +99,9 @@ loop:
     mov !$800, a
     
 
-    #mov $F2, #$4C
-    #mov $f3, #0
-    #mov $F3, #$02
+    mov $F2, #$4C
+    mov $f3, #0
+    mov $F3, #$01
     
 
     bra loop

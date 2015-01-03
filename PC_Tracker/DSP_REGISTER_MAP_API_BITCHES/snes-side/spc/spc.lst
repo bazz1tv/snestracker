@@ -40,8 +40,7 @@
 0040   2049                 
 0041   2049             
 0042   2049             
-0043   2049                 # Voice 1
-spc.asm line 0043: unrecognized directive.            (#)
+0043   2049                 ; Voice 1
 0044   2049             
 0045   2049 8F 10 F2        mov $F2, #$10       ; left volume = 127
 0046   204C 8F 01 F3        mov $F3, #1
@@ -85,31 +84,27 @@ spc.asm line 0043: unrecognized directive.            (#)
 0084   2096 8F 01 F3        mov $F3, #$01
 0085   2099             
 0086   2099             loop:    
-0087   2099                 #mov a, $fd
-spc.asm line 0087: unrecognized directive.            (#MOV)
-0088   2099 F0 FE           beq loop
-0089   209B             
-0090   209B                 ; if a > 0
-0091   209B 60              clrc
-0092   209C 85 00 08        adc a, !$800
-0093   209F C5 00 08        mov !$800, a
-0094   20A2             
-0095   20A2 68 40           cmp a, #$40
-0096   20A4 D0 F3           bne loop
-0097   20A6             
-0098   20A6 E8 00           mov a, #0
-0099   20A8 C5 00 08        mov !$800, a
-0100   20AB                 
-0101   20AB             
-0102   20AB                 #mov $F2, #$4C
-spc.asm line 0102: unrecognized directive.            (#MOV)
-0103   20AB                 #mov $f3, #0
-spc.asm line 0103: unrecognized directive.            (#MOV)
-0104   20AB                 #mov $F3, #$02
-spc.asm line 0104: unrecognized directive.            (#MOV)
-0105   20AB                 
-0106   20AB             
-0107   20AB 2F EC           bra loop
-0108   20AD             
-0109   20AD             .END
-0110   20AD             EOFtasm: Number of errors = 5
+0087   2099 E4 FD           mov a, $fd
+0088   209B F0 FC           beq loop
+0089   209D             
+0090   209D                 ; if a > 0
+0091   209D 60              clrc
+0092   209E 85 00 08        adc a, !$800
+0093   20A1 C5 00 08        mov !$800, a
+0094   20A4             
+0095   20A4 68 40           cmp a, #$40
+0096   20A6 D0 F1           bne loop
+0097   20A8             
+0098   20A8 E8 00           mov a, #0
+0099   20AA C5 00 08        mov !$800, a
+0100   20AD                 
+0101   20AD             
+0102   20AD 8F 4C F2        mov $F2, #$4C
+0103   20B0 8F 00 F3        mov $f3, #0
+0104   20B3 8F 01 F3        mov $F3, #$01
+0105   20B6                 
+0106   20B6             
+0107   20B6 2F E1           bra loop
+0108   20B8             
+0109   20B8             .END
+0110   20B8             EOFtasm: Number of errors = 0

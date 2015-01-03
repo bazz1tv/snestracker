@@ -247,7 +247,7 @@ int init_sdl()
 			exit(0);
 		}*/
 
-		SDL_CreateWindowAndRenderer(640, 480, 0, &sdlWindow, &sdlRenderer);
+		SDL_CreateWindowAndRenderer(800, 600, 0, &sdlWindow, &sdlRenderer);
 		if (sdlWindow == NULL || sdlRenderer == NULL)
 		{
 			fprintf(stderr, "FCK\n");

@@ -1003,7 +1003,7 @@ reload:
                 y = ev.button.y - PORTTOOL_Y;
                 y /= 8;
                 Uint8 i;
-                  if (ev.wheel.y > 0) { i=1; } else { i = -1; }
+                  if (ev.wheel.y < 0) { i=1; } else { i = -1; }
                   if (x>1 && x<4) { inc_ram(0xf4, i); }
                   if (x>6 && x<9) { inc_ram(0xf5, i); }
                   if (x>11 && x<14) { inc_ram(0xf6, i); }
@@ -1011,7 +1011,7 @@ reload:
               }
               else
               {
-                if (ev.wheel.y < 0)
+                if (ev.wheel.y > 0)
                 {
                   mouse_hexdump::add_addr(-0x08);
                   break;          
@@ -1150,7 +1150,7 @@ reload:
 
                 if (x>=53 && x<=59) { // DSP MAP
                   //write_mask(packed_mask);
-                  mode = MODE_DSP_MAP;
+                  //mode = MODE_DSP_MAP;
                 }
               }
             }
