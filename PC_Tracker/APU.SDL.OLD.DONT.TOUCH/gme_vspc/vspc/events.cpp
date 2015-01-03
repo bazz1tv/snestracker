@@ -996,20 +996,29 @@ reload:
           case SDL_MOUSEWHEEL:
           {
             // GLOBAL SHIT
-            if (  (ev.button.x >= PORTTOOL_X + (8*5)) &&
-                  ev.button.y >= PORTTOOL_Y && ev.button.y < (PORTTOOL_Y + 16) )
+            if (  (mouse::x >= PORTTOOL_X + (8*5)) &&
+                  mouse::y >= PORTTOOL_Y && mouse::y < (PORTTOOL_Y + 16) )
               {
                 int x, y;
-                x = ev.button.x - (PORTTOOL_X + (8*5));
+                x = mouse::x - (PORTTOOL_X + (8*5));
                 x /= 8;
-                y = ev.button.y - PORTTOOL_Y;
+                y = mouse::y - PORTTOOL_Y;
                 y /= 8;
                 Uint8 i;
-                  if (ev.wheel.y < 0) { i=1; } else { i = -1; }
-                  if (x>1 && x<4) { inc_ram(0xf4, i); }
-                  if (x>6 && x<9) { inc_ram(0xf5, i); }
-                  if (x>11 && x<14) { inc_ram(0xf6, i); }
-                  if (x>16 && x<19) { inc_ram(0xf7, i); }
+                  if (ev.wheel.y > 0)
+                  {
+                    if (x>1 && x<4) {   porttool::inc_port(0); }
+                    if (x>6 && x<9) {   porttool::inc_port(1); }
+                    if (x>11 && x<14) { porttool::inc_port(2); }
+                    if (x>16 && x<19) { porttool::inc_port(3); }
+                  }
+                  else if (ev.wheel.y < 0)
+                  {
+                    if (x>1 && x<4) {   porttool::dec_port(0); }
+                    if (x>6 && x<9) {   porttool::dec_port(1); }
+                    if (x>11 && x<14) { porttool::dec_port(2); }
+                    if (x>16 && x<19) { porttool::dec_port(3); }
+                  }
               }
               else
               {
