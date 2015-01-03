@@ -81,7 +81,7 @@ void start_track( int track, const char* path )
 	sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
 			game, track, player->track_count(), player->track_info().song,
 			seconds / 60, seconds % 60 );
-	SDL_WM_SetCaption( title, title );
+	//SDL_WM_SetCaption( title, title );
 }
 
 
@@ -208,7 +208,9 @@ int parse_args(int argc, char **argv)
 }
 
 
-
+SDL_Window *sdlWindow=NULL;
+SDL_Renderer *sdlRenderer=NULL;
+SDL_Texture *sdlTexture=NULL;
 int init_sdl()
 {
 	Uint32 flags=0;
@@ -218,23 +220,57 @@ int init_sdl()
 	if (!g_cfg_novideo) { flags |= SDL_INIT_VIDEO; }
 	if (!g_cfg_nosound) { flags |= SDL_INIT_AUDIO; }
 
-	SDL_Init(flags);	
+	if (SDL_Init(flags) != 0) {
+        fprintf(stderr,
+                "\nUnable to initialize SDL:  %s\n",
+                SDL_GetError()
+               );
+        return 1;
+    }
+    atexit(SDL_Quit);
 
 	if (!g_cfg_novideo) {
 		// video
-		screen = SDL_SetVideoMode(800, 600, 0, SDL_SWSURFACE); //SDL_HWSURFACE | SDL_DOUBLEBUF);
+		/*screen = SDL_SetVideoMode(800, 600, 0, SDL_SWSURFACE); //SDL_HWSURFACE | SDL_DOUBLEBUF);
 		if (screen == NULL) {
 			printf("Failed to set video mode\n");
 			return 0;
+		}*/
+		/*sdlWindow = SDL_CreateWindow(PROG_NAME_VERSION_STRING,
+                          SDL_WINDOWPOS_CENTERED,
+                          SDL_WINDOWPOS_CENTERED,
+                          800, 600,
+                          0);
+		if (sdlWindow == NULL)
+		{
+			fprintf(stderr, "FUCK!");
+			exit(0);
+		}*/
+
+		SDL_CreateWindowAndRenderer(640, 480, 0, &sdlWindow, &sdlRenderer);
+		if (sdlWindow == NULL || sdlRenderer == NULL)
+		{
+			fprintf(stderr, "FCK\n");
+			exit(1);
 		}
 
-		SDL_WM_SetCaption(PROG_NAME_VERSION_STRING, NULL);
+		screen = SDL_CreateRGBSurface(0, 800, 600, 32,
+                                        0x00FF0000,
+                                        0x0000FF00,
+                                        0x000000FF,
+                                        0xFF000000);
+		sdlTexture = SDL_CreateTexture(sdlRenderer,
+                                            SDL_PIXELFORMAT_RGB888,
+                                            SDL_TEXTUREACCESS_STREAMING,
+                                            800, 600);
+
+		//SDL_WM_SetCaption(PROG_NAME_VERSION_STRING, NULL);
 		
 		colors::precompute();
 	}
 
 	dblclick::init();
-	SDL_EnableKeyRepeat( 500, 80 );
+	//SDL_EnableKeyRepeat( 500, 80 );
 
 	return 0;	
 }

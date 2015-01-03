@@ -49,6 +49,9 @@ extern int last_pc; //=-1;
 #define PROG_NAME_VERSION_STRING "vspcplay v1.32 by bazz & Raph Assenat!"
 #define CREDITS "APU emulation code from Blargg's GME and Snes_Spc 0.9.0"
 
+extern SDL_Window *sdlWindow;
+extern SDL_Renderer *sdlRenderer;
+extern SDL_Texture *sdlTexture;
 
 // those are bigger so I dont have to do a range test
 // each time I want to log the PC address (where I assume

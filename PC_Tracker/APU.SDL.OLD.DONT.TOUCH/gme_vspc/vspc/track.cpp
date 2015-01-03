@@ -28,7 +28,7 @@ void update_window_title()
   sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
       game, g_cur_entry+1, g_cfg_num_files, player->track_info().song,
       seconds / 60, seconds % 60 );
-  SDL_WM_SetCaption( title, title );
+  //SDL_WM_SetCaption( title, title );
 }
 void update_tag()
 {

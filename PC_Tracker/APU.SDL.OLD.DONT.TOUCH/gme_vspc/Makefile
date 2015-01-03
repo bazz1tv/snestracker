@@ -1,11 +1,11 @@
 CC=g++
 CPP=g++
 debug=-g
-gme_CFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `sdl-config --cflags`
-LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl-config --libs` -lm
+gme_CFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `sdl2-config --cflags`
+LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl2-config --libs` -lm
 
-vspc_CFLAGS=$(debug) -O3 -funroll-loops -Wall -Ivspc `sdl-config --cflags` -Wall
-vspc_LDFLAGS=$(debug) -I vspc `sdl-config --libs` -lm
+vspc_CFLAGS=$(debug) -O3 -funroll-loops -Wall -Ivspc `sdl2-config --cflags` -Wall
+vspc_LDFLAGS=$(debug) -I vspc `sdl2-config --libs` -lm
 
 CFLAGS = $(gme_CFLAGS) $(vspc_CFLAGS)
 ####

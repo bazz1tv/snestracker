@@ -441,7 +441,7 @@ reload:
 
               if (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT))
               {
-                voices::checkmouse_mute(ev.motion.x, ev.motion.y);
+                voices::checkmouse_mute((Uint16&)ev.motion.x, (Uint16&)ev.motion.y);
               }
               if (mode == MODE_NAV || mode == MODE_EDIT_MOUSE_HEXDUMP)
               {
@@ -991,9 +991,41 @@ reload:
               }
             }
           } break;
+          case SDL_MOUSEWHEEL:
+          {
+            // GLOBAL SHIT
+            if (  (ev.button.x >= PORTTOOL_X + (8*5)) &&
+                  ev.button.y >= PORTTOOL_Y && ev.button.y < (PORTTOOL_Y + 16) )
+              {
+                int x, y;
+                x = ev.button.x - (PORTTOOL_X + (8*5));
+                x /= 8;
+                y = ev.button.y - PORTTOOL_Y;
+                y /= 8;
+                Uint8 i;
+                  if (ev.wheel.y > 0) { i=1; } else { i = -1; }
+                  if (x>1 && x<4) { inc_ram(0xf4, i); }
+                  if (x>6 && x<9) { inc_ram(0xf5, i); }
+                  if (x>11 && x<14) { inc_ram(0xf6, i); }
+                  if (x>16 && x<19) { inc_ram(0xf7, i); }
+              }
+              else
+              {
+                if (ev.wheel.y < 0)
+                {
+                  mouse_hexdump::add_addr(-0x08);
+                  break;          
+                }
+                else
+                {
+                  mouse_hexdump::add_addr(0x08);
+                  break;
+                }
+              }
+          } break;
           case SDL_MOUSEBUTTONDOWN:           
             {
-              voices::checkmouse(ev.motion.x, ev.motion.y, ev.button.button); 
+              voices::checkmouse((Uint16&)ev.motion.x, (Uint16&)ev.motion.y, ev.button.button); 
 
               bool is_in_memory_window= (ev.motion.x >= MEMORY_VIEW_X && 
                     ev.motion.x < MEMORY_VIEW_X + 512 &&
@@ -1083,29 +1115,11 @@ reload:
                     case 19: porttool::inc_port(3); break;
                   }
                 }
-                if (ev.button.button == SDL_BUTTON_WHEELUP ||
-                  ev.button.button == SDL_BUTTON_WHEELDOWN)
-                {
-                  Uint8 i;
-                  if (ev.button.button == SDL_BUTTON_WHEELUP) { i=1; } else { i = -1; }
-                  if (x>1 && x<4) { inc_ram(0xf4, i); }
-                  if (x>6 && x<9) { inc_ram(0xf5, i); }
-                  if (x>11 && x<14) { inc_ram(0xf6, i); }
-                  if (x>16 && x<19) { inc_ram(0xf7, i); }
-                }
+                
               } 
 
 
-              if (ev.button.button == SDL_BUTTON_WHEELUP)
-              {
-                mouse_hexdump::add_addr(-0x08);
-                break;          
-              }
-              else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-              {
-                mouse_hexdump::add_addr(0x08);
-                break;
-              }
+              
 
               /* menu bar */
               else if (
@@ -1207,7 +1221,11 @@ reload:
         }
       }
       
-      SDL_UpdateRect(screen, 0, 0, 0, 0);
+      //SDL_UpdateRect(screen, 0, 0, 0, 0);
+      SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
+      SDL_RenderClear(sdlRenderer);
+      SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+      SDL_RenderPresent(sdlRenderer);
       time_last = time_cur;
       if (g_cfg_nice) {  SDL_Delay(100); }
       //SDL_Delay( 1000 / 100 );
