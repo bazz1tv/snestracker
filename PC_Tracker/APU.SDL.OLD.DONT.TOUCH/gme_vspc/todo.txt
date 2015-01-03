@@ -30,3 +30,13 @@ Scrolling text at bottom-right when text is too long to read
 lots of things SHOULDN"T be done/updated if paused
 
 Gain slider and clipping notifier
+
+Tracker features------
+----------------
+Custom FIR Filters (save to file)
+-- add these FIR filters "Nintendo official"
+--
+0: 7F 00 00 00 00 00 00 00
+1: 58 BF DB F0 FE 07 0C 0C
+2: 0C 21 2B 2B 13 FE F3 F9
+3: 34 33 00 D9 E5 01 FC EB

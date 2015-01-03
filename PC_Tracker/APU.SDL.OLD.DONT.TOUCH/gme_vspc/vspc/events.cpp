@@ -598,7 +598,7 @@ reload:
                 uint i=0;
                 //int addr;
                 Uint16 addr = mouse_hexdump::addr_being_edited;
-                fprintf(stderr, "Addr = %04x\n", addr);
+                //fprintf(stderr, "Addr = %04x\n", addr);
                 
                 if ((scancode >= '0') && (scancode <= '9'))
                   i = scancode - '0';
