@@ -2,12 +2,13 @@
 
 
   
-  
-  // timer callback, dont worry about this
-  Uint32 Mem_Cursor::cursor_timer(Uint32 interval, void *param)
+  Uint32 Mem_Cursor::cursor_timerCB(Uint32 interval, void *param)
   {
-    Uint8 *p = (Uint8 *) param;
-    *p ^= FLAG_TOGGLED;
+    return ((Mem_Cursor *) param)->cursor_timer(interval); 
+  }
+  Uint32 Mem_Cursor::cursor_timer(Uint32 interval)
+  {
+    flags ^= FLAG_TOGGLED;
     return interval;
   }
 
@@ -22,9 +23,9 @@
     SDL_RemoveTimer(timerid);
     // i remove it when starting so I can have simple repeat-logic in the 
     // double click code
-    timerid = SDL_AddTimer(interval, &cursor_timer, &flags);
+    timerid = SDL_AddTimer(interval, &cursor_timerCB, this);
     flags=FLAG_ACTIVE | FLAG_TOGGLED;
-    if (timerid == cursor::timerid)
+    if (timerid == timerid)
     {
       fprintf(stderr, "memcursor::timerID == cursor::timerid.. NOT FIXED\n");
     }
@@ -66,15 +67,17 @@
   }
   
   
-} 
+ 
 
-  
+  Uint32 Cursor::cursor_timerCB(Uint32 interval, void *param)
+  {
+    return ((Cursor *) param)->cursor_timer(interval); 
+  }
   // timer callback, dont worry about this
-  Uint32 Cursor::cursor_timer(Uint32 interval, void *param)
+  Uint32 Cursor::cursor_timer(Uint32 interval)
   {
     //fprintf(stderr, "cursor toggle, ");
-    Uint8 *p = (Uint8 *) param;
-    *p = !*p;
+    toggle = !toggle;
     return interval;
   }
 
@@ -87,16 +90,18 @@
     SDL_RemoveTimer(timerid);
     // i remove it when starting so I can have simple repeat-logic in the 
     // double click code
-    timerid = SDL_AddTimer(CURSOR_TOGGLE_TIMEWINDOW, &cursor_timer, &toggle);
+    timerid = SDL_AddTimer(CURSOR_TOGGLE_TIMEWINDOW, &cursor_timerCB, this);
     //fprintf(stderr, "TIMER ON %d\n", timerid);
 
     // fix a buf where both cursor::timerid and memcursor::timerid were
     // getting the same ID.. I think this is OK fix.
+    
+    /* DONT WORY ABOUT THIS FOR NOW
     if (timerid == memcursor::timerid)
     {
       //fprintf(stderr, "WTF");
       timerid = SDL_AddTimer(CURSOR_TOGGLE_TIMEWINDOW, &cursor_timer, &toggle);
-    }
+    }*/
   }
   void Cursor::stop_timer()
   {
@@ -109,12 +114,12 @@
 
   void Cursor::draw(SDL_Surface *screen, int x, int y, Uint32 color)
   {
-    if (cursor::toggle)
+    if (toggle)
     {
         sdlfont_drawString(screen, x, y, "\x5B", color);
     }
   }
 
   //Uint8 Cursor::
-} 
+
 

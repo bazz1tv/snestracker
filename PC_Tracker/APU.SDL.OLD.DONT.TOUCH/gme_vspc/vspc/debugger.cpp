@@ -7,7 +7,13 @@
 
 Debugger::Debugger(int &argc, char **argv, Music_Player *player,
   SDL_Window *win, SDL_Renderer *renderer, SDL_Texture *text, SDL_Surface *screen) : 
-player(player), sdlRenderer(renderer),sdlTexture(text),screen(screen)
+player(player), sdlRenderer(renderer),sdlTexture(text),screen(screen),
+IAPURAM(player->spc_emu()->ram()),
+main_memory_area(screen,player),
+mouseover_hexdump_area(screen,player),
+voice_control(player),
+port_tool(player, screen, cursor)
+
 {
   int res;
   static struct option long_options[] = {
@@ -37,13 +43,13 @@ player(player), sdlRenderer(renderer),sdlTexture(text),screen(screen)
     switch(res)
     {
       case 0:
-        g_cfg_nosound = 1;
+        g_cfg.nosound = 1;
         break;
       case 1:
-        g_cfg_novideo = 2;
+        g_cfg.novideo = 2;
         break;
       case 2:
-        g_cfg_update_in_callback = 1;
+        g_cfg.update_in_callback = 1;
         break;
       case 4:
         //spc_config.is_interpolation = 1;
@@ -52,31 +58,31 @@ player(player), sdlRenderer(renderer),sdlTexture(text),screen(screen)
         //spc_config.is_echo = 1;
         break;
       case 5:
-        g_cfg_autowritemask = 1;
+        g_cfg.autowritemask = 1;
         break;
       case 6:
-        g_cfg_defaultsongtime = atoi(optarg);
+        g_cfg.defaultsongtime = atoi(optarg);
         break;
       case 7:
-        g_cfg_ignoretagtime = 1;
+        g_cfg.ignoretagtime = 1;
         break;
       case 8:
-        g_cfg_extratime = atoi(optarg);
+        g_cfg.extratime = atoi(optarg);
         break;
       case 9:
-        g_cfg_nice = 1;
+        g_cfg.nice = 1;
         break;
       case 10:
-        g_cfg_autowritemask = 1;
+        g_cfg.autowritemask = 1;
         break;
       case 11:
-        g_cfg_statusline = 1;
+        g_cfg.statusline = 1;
         break;
       case 12:
-        g_cfg_apply_block = 1;
+        g_cfg.apply_block = 1;
         break;
       case 14:
-        g_cfg_filler = strtol(optarg, NULL, 0);
+        g_cfg.filler = strtol(optarg, NULL, 0);
         break;
       case 'h':
         printf("Usage: ./vspcplay [options] files...\n");
@@ -111,8 +117,8 @@ player(player), sdlRenderer(renderer),sdlTexture(text),screen(screen)
     }
   }
 
-  g_cfg_num_files = argc-optind;
-  g_cfg_playlist = &argv[optind];
+  g_cfg.num_files = argc-optind;
+  g_cfg.playlist = &argv[optind];
 }
 
 
@@ -136,7 +142,7 @@ void Debugger::prev_track()
 {
   SDL_PauseAudio(true);
   g_cur_entry--;
-  if (g_cur_entry<0) { g_cur_entry = g_cfg_num_files-1; }
+  if (g_cur_entry<0) { g_cur_entry = g_cfg.num_files-1; }
   reload();
 }
 
@@ -144,7 +150,7 @@ void Debugger::next_track()
 {
   SDL_PauseAudio(true);
   g_cur_entry++;
-  if (g_cur_entry>=g_cfg_num_files) { g_cur_entry = 0; }
+  if (g_cur_entry>=g_cfg.num_files) { g_cur_entry = 0; }
   reload();
 }
 
@@ -205,12 +211,12 @@ void Debugger::draw_mouse_address()
 void Debugger::reload()
 {
 #ifdef WIN32
-  g_real_filename = strrchr(g_cfg_playlist[g_cur_entry], '\\');
+  g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '\\');
 #else
-  g_real_filename = strrchr(g_cfg_playlist[g_cur_entry], '/');
+  g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '/');
 #endif
   if (!g_real_filename) {
-    g_real_filename = g_cfg_playlist[g_cur_entry];
+    g_real_filename = g_cfg.playlist[g_cur_entry];
   }
   else {
     // skip path sep
@@ -218,8 +224,8 @@ void Debugger::reload()
   } 
     
   // Load file
-  path = g_cfg_playlist[g_cur_entry];
-  handle_error( player->load_file( g_cfg_playlist[g_cur_entry] ) );
+  path = g_cfg.playlist[g_cur_entry];
+  handle_error( player->load_file( g_cfg.playlist[g_cur_entry] ) );
   
   IAPURAM = player->spc_emu()->ram();
   
@@ -232,13 +238,13 @@ void Debugger::reload()
   last_pc = -1;
   
   start_track( 1, path );
-  voices::was_keyed_on = 0;
-  player->mute_voices(voices::muted);
+  voice_control.was_keyed_on = 0;
+  player->mute_voices(voice_control.muted);
   player->ignore_silence();
   
 
   // draw one-time stuff
-  if (!g_cfg_novideo)
+  if (!g_cfg.novideo)
   {
     SDL_FillRect(screen, NULL, 0);
     report::memsurface.init_video();
@@ -257,15 +263,15 @@ void Debugger::reload()
     //sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");  
     //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, colors::white);
   
-    //sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg_autowritemask ? "Yes" : "No");
+    //sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg.autowritemask ? "Yes" : "No");
     //sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, colors::white);
 
     update_track_tag();
 
-    sprintf(tmpbuf, "Ignore tag time: %s", g_cfg_ignoretagtime ? "Yes" : "No");
+    sprintf(tmpbuf, "Ignore tag time: %s", g_cfg.ignoretagtime ? "Yes" : "No");
     sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, colors::white);
 
-    sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg_defaultsongtime/60, g_cfg_defaultsongtime%60);
+    sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg.defaultsongtime/60, g_cfg.defaultsongtime%60);
     sdlfont_drawString(screen, INFO_X, INFO_Y+88, tmpbuf, colors::white);
 
     
@@ -298,7 +304,7 @@ void Debugger::applyBlockMask(char *filename)
   unsigned char nul_arr[256];
   int i;
 
-  memset(nul_arr, g_cfg_filler, 256);
+  memset(nul_arr, g_cfg.filler, 256);
   
   fptr = fopen(filename, "r+");
   if (!fptr) { perror("fopen"); }
@@ -328,7 +334,7 @@ void Debugger::write_mask(unsigned char packed_mask[32])
   char filename[1024];
   unsigned char tmp;
   int i;
-  strncpy(filename, g_cfg_playlist[g_cur_entry], 1024);
+  strncpy(filename, g_cfg.playlist[g_cur_entry], 1024);
 #ifdef WIN32
   sep = strrchr(filename, '\\');
 #else
@@ -473,9 +479,9 @@ reload:
 
     pack_mask(packed_mask);
     
-    if (g_cfg_statusline) {
+    if (g_cfg.statusline) {
       printf("%s  %d / %d (%d %%)        \r", 
-          g_cfg_playlist[g_cur_entry],
+          g_cfg.playlist[g_cur_entry],
           audio_samples_written/44100,
           song_time,
           (audio_samples_written/44100)/(song_time));
@@ -486,19 +492,19 @@ reload:
      */   
     if (player->emu()->tell()/1000 >= song_time) 
     {
-      if (g_cfg_autowritemask) {
+      if (g_cfg.autowritemask) {
         write_mask(packed_mask);
-        if (g_cfg_apply_block) {
-          printf("Applying mask on file %s using $%02X as filler\n", g_cfg_playlist[g_cur_entry], g_cfg_filler);
-          applyBlockMask(g_cfg_playlist[g_cur_entry]);
+        if (g_cfg.apply_block) {
+          printf("Applying mask on file %s using $%02X as filler\n", g_cfg.playlist[g_cur_entry], g_cfg.filler);
+          applyBlockMask(g_cfg.playlist[g_cur_entry]);
         }
       }
       g_cur_entry++;
-      if (g_cur_entry>=g_cfg_num_files) { printf ("penis3\n"); goto clean; }
+      if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); goto clean; }
       goto reload;
     }
     
-    if (!g_cfg_novideo)
+    if (!g_cfg.novideo)
     {
       while (SDL_PollEvent(&ev))
       {
@@ -506,7 +512,7 @@ reload:
         switch (ev.type)
         {
           case SDL_QUIT:
-            if (!g_cfg_nosound) {
+            if (!g_cfg.nosound) {
               SDL_PauseAudio(1);
             }
             printf ("penis4\n");
@@ -518,7 +524,7 @@ reload:
 
               if (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT))
               {
-                voices::checkmouse_mute((Uint16&)ev.motion.x, (Uint16&)ev.motion.y);
+                voice_control.checkmouse_mute((Uint16&)ev.motion.x, (Uint16&)ev.motion.y);
               }
               if (mode == MODE_NAV || mode == MODE_EDIT_MOUSE_HEXDUMP)
               {
@@ -604,11 +610,11 @@ reload:
               {
                 uint8_t i = scancode - '0';
                 if (!i)
-                  voices::toggle_mute_all();
+                  voice_control.toggle_mute_all();
                 if (i > 0 && i < 9)
-                  voices::toggle_mute(i); // channel num
+                  voice_control.toggle_mute(i); // channel num
                 //else
-                  //voices::mute_all();
+                  //voice_control.mute_all();
               }
 
 
@@ -650,7 +656,7 @@ reload:
                 }
                 else
                 {
-                  if (!g_cfg_nosound) {
+                  if (!g_cfg.nosound) {
                     SDL_PauseAudio(1);
                   }
                   goto clean;
@@ -730,7 +736,7 @@ reload:
                   {
                     if (addr >= 0xf4 && addr <= 0xf7)
                     {
-                      porttool::write(addr-0xf4, mouse_hexdump::tmp_ram);
+                      port_tool.write(addr-0xf4, mouse_hexdump::tmp_ram);
                       //player->spc_write_port()
                     }
                     else 
@@ -811,7 +817,7 @@ reload:
 
               if (scancode == 'h' || scancode == 'H')
               {
-                porttool::horizontal = !porttool::horizontal;
+                port_tool.horizontal = !port_tool.horizontal;
               }
 
               if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
@@ -821,82 +827,82 @@ reload:
 
                 i = utility::scancode_to_hex(scancode); 
 
-                if (porttool::highnibble)
+                if (port_tool.highnibble)
                 {
                   i <<= 4;
                   i &= 0xf0;
                   //IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= i;
-                  porttool::tmp[porttool::portnum] &= 0x0f;
+                  port_tool.tmp[port_tool.portnum] &= 0x0f;
                 }
                 else
                 {
                   i &= 0x0f;
-                  porttool::tmp[porttool::portnum] &= 0xf0;
+                  port_tool.tmp[port_tool.portnum] &= 0xf0;
                 }
 
-                porttool::tmp[porttool::portnum] |= i;
+                port_tool.tmp[port_tool.portnum] |= i;
                 
-                if (porttool::horizontal) porttool::inc_cursor_pos();
+                if (port_tool.horizontal) port_tool.inc_cursor_pos();
               }
               else if (scancode == SDLK_SPACE)
               {
-                porttool::inc_cursor_pos();
+                port_tool.inc_cursor_pos();
               }
               else if (scancode == SDLK_TAB)
               {
-                porttool::inc_cursor_pos();
-                porttool::inc_cursor_pos();
+                port_tool.inc_cursor_pos();
+                port_tool.inc_cursor_pos();
               }
               else if (scancode == SDLK_BACKSPACE)
               {
-                if (porttool::highnibble == 0)
+                if (port_tool.highnibble == 0)
                 {
-                  porttool::tmp[porttool::portnum] &= 0x0f;
-                  porttool::dec_cursor_pos();
+                  port_tool.tmp[port_tool.portnum] &= 0x0f;
+                  port_tool.dec_cursor_pos();
                 }
               }
               else if (scancode == SDLK_DELETE)
               {
-                if (porttool::highnibble)
+                if (port_tool.highnibble)
                 {
-                  porttool::tmp[porttool::portnum] &= 0x0f;
+                  port_tool.tmp[port_tool.portnum] &= 0x0f;
                 }
-                else porttool::tmp[porttool::portnum] &= 0xf0;
+                else port_tool.tmp[port_tool.portnum] &= 0xf0;
               }
               else if (scancode == SDLK_LEFT)
               {
-                porttool::dec_cursor_pos();
+                port_tool.dec_cursor_pos();
               }
               else if (scancode == SDLK_RIGHT)
               {
-                porttool::inc_cursor_pos();
+                port_tool.inc_cursor_pos();
               }
               else if (scancode == SDLK_UP)
               {
-                if (porttool::highnibble)
+                if (port_tool.highnibble)
                 {
-                  porttool::tmp[porttool::portnum] += 0x10;
+                  port_tool.tmp[port_tool.portnum] += 0x10;
                 }
                 else
                 {
-                  Uint8 tmp = porttool::tmp[porttool::portnum] + 1;
+                  Uint8 tmp = port_tool.tmp[port_tool.portnum] + 1;
                   tmp &= 0x0f;
-                  porttool::tmp[porttool::portnum] &= 0xf0;
-                  porttool::tmp[porttool::portnum] |= tmp;
+                  port_tool.tmp[port_tool.portnum] &= 0xf0;
+                  port_tool.tmp[port_tool.portnum] |= tmp;
                 }
               }
               else if (scancode == SDLK_DOWN)
               {
-                if (porttool::highnibble)
+                if (port_tool.highnibble)
                 {
-                  porttool::tmp[porttool::portnum] -= 0x10;
+                  port_tool.tmp[port_tool.portnum] -= 0x10;
                 }
                 else
                 {
-                  Uint8 tmp = porttool::tmp[porttool::portnum] - 1;
+                  Uint8 tmp = port_tool.tmp[port_tool.portnum] - 1;
                   tmp &= 0x0f;
-                  porttool::tmp[porttool::portnum] &= 0xf0;
-                  porttool::tmp[porttool::portnum] |= tmp;
+                  port_tool.tmp[port_tool.portnum] &= 0xf0;
+                  port_tool.tmp[port_tool.portnum] |= tmp;
                 }
               }
 
@@ -904,11 +910,11 @@ reload:
               {
                 mode = MODE_NAV;
                 cursor::stop_timer();
-                porttool::reset_port();
+                port_tool.reset_port();
               }
               else if (ev.key.keysym.sym == SDLK_RETURN)
               {
-                porttool::write();
+                port_tool.write();
               }
             }       
           }
@@ -988,7 +994,7 @@ reload:
                   case 13:
                   case 17:
                   case 18:
-                    porttool::x = ((PORTTOOL_X + (8*5)) + (x*8));
+                    port_tool.x = ((PORTTOOL_X + (8*5)) + (x*8));
                 }
                 
                 y = te->button.y - PORTTOOL_Y;
@@ -1002,16 +1008,16 @@ reload:
                     //case 1: IAPURAM[0xf4]++; break;
                     case 2:
                     {
-                      porttool::set_port(0);
+                      port_tool.set_port(0);
 
-                      porttool::highnibble = 1;
+                      port_tool.highnibble = 1;
                       mode = MODE_EDIT_APU_PORT;
                       cursor::start_timer();
                     } break;
                     case 3:
                     {
-                      porttool::set_port(0);
-                      porttool::highnibble = 0;
+                      port_tool.set_port(0);
+                      port_tool.highnibble = 0;
                       mode = MODE_EDIT_APU_PORT;
                       cursor::start_timer();
                     } break;
@@ -1019,15 +1025,15 @@ reload:
                     //case 6: IAPURAM[0xf5]++; break;
                     case 7:
                     {
-                      porttool::set_port(1);
-                      porttool::highnibble = 1;
+                      port_tool.set_port(1);
+                      port_tool.highnibble = 1;
                       mode = MODE_EDIT_APU_PORT;
                       cursor::start_timer();
                     } break;
                     case 8:
                     {
-                      porttool::set_port(1);
-                      porttool::highnibble = 0;
+                      port_tool.set_port(1);
+                      port_tool.highnibble = 0;
                       mode = MODE_EDIT_APU_PORT;
                       cursor::start_timer();
                     } break;
@@ -1035,15 +1041,15 @@ reload:
                     //case 11: IAPURAM[0xf6]++; break;
                     case 12:
                     {
-                      porttool::set_port(2);
-                      porttool::highnibble = 1;
+                      port_tool.set_port(2);
+                      port_tool.highnibble = 1;
                       mode = MODE_EDIT_APU_PORT;
                       cursor::start_timer();
                     } break;
                     case 13:
                     {
-                      porttool::set_port(2);
-                      porttool::highnibble = 0;
+                      port_tool.set_port(2);
+                      port_tool.highnibble = 0;
                       mode = MODE_EDIT_APU_PORT;
                       cursor::start_timer();
                     } break;
@@ -1051,15 +1057,15 @@ reload:
                     //case 16: IAPURAM[0xf7]++; break;
                     case 17:
                     {
-                      porttool::set_port(3);
-                      porttool::highnibble = 1;
+                      port_tool.set_port(3);
+                      port_tool.highnibble = 1;
                       mode = MODE_EDIT_APU_PORT;
                       cursor::start_timer();
                     } break;
                     case 18:
                     {
-                      porttool::set_port(3);
-                      porttool::highnibble = 0;
+                      port_tool.set_port(3);
+                      port_tool.highnibble = 0;
                       mode = MODE_EDIT_APU_PORT;
                       cursor::start_timer();
                     } break;
@@ -1083,17 +1089,17 @@ reload:
                 Uint8 i;
                   if (ev.wheel.y > 0)
                   {
-                    if (x>1 && x<4) {   porttool::inc_port(0); }
-                    if (x>6 && x<9) {   porttool::inc_port(1); }
-                    if (x>11 && x<14) { porttool::inc_port(2); }
-                    if (x>16 && x<19) { porttool::inc_port(3); }
+                    if (x>1 && x<4) {   port_tool.inc_port(0); }
+                    if (x>6 && x<9) {   port_tool.inc_port(1); }
+                    if (x>11 && x<14) { port_tool.inc_port(2); }
+                    if (x>16 && x<19) { port_tool.inc_port(3); }
                   }
                   else if (ev.wheel.y < 0)
                   {
-                    if (x>1 && x<4) {   porttool::dec_port(0); }
-                    if (x>6 && x<9) {   porttool::dec_port(1); }
-                    if (x>11 && x<14) { porttool::dec_port(2); }
-                    if (x>16 && x<19) { porttool::dec_port(3); }
+                    if (x>1 && x<4) {   port_tool.dec_port(0); }
+                    if (x>6 && x<9) {   port_tool.dec_port(1); }
+                    if (x>11 && x<14) { port_tool.dec_port(2); }
+                    if (x>16 && x<19) { port_tool.dec_port(3); }
                   }
               }
               else
@@ -1112,7 +1118,7 @@ reload:
           } break;
           case SDL_MOUSEBUTTONDOWN:           
             {
-              voices::checkmouse((Uint16&)ev.motion.x, (Uint16&)ev.motion.y, ev.button.button); 
+              voice_control.checkmouse((Uint16&)ev.motion.x, (Uint16&)ev.motion.y, ev.button.button); 
 
               bool is_in_memory_window= (ev.motion.x >= MEMORY_VIEW_X && 
                     ev.motion.x < MEMORY_VIEW_X + 512 &&
@@ -1192,14 +1198,14 @@ reload:
                 {
                   switch (x)
                   {
-                    case 1: porttool::dec_port (0); break;
-                    case 4: porttool::inc_port (0); break;
-                    case 6: porttool::dec_port (1); break;
-                    case 9: porttool::inc_port (1); break;
-                    case 11: porttool::dec_port(2); break;
-                    case 14: porttool::inc_port(2); break;
-                    case 16: porttool::dec_port(3); break;
-                    case 19: porttool::inc_port(3); break;
+                    case 1: port_tool.dec_port (0); break;
+                    case 4: port_tool.inc_port (0); break;
+                    case 6: port_tool.dec_port (1); break;
+                    case 9: port_tool.inc_port (1); break;
+                    case 11: port_tool.dec_port(2); break;
+                    case 14: port_tool.inc_port(2); break;
+                    case 16: port_tool.dec_port(3); break;
+                    case 19: port_tool.inc_port(3); break;
                   }
                 }
                 
@@ -1244,9 +1250,9 @@ reload:
         }
       } // while (pollevent)
       
-    } // !g_cfg_novideo
+    } // !g_cfg.novideo
 
-    if (!g_cfg_novideo)
+    if (!g_cfg.novideo)
     {
       time_cur = SDL_GetTicks();
       do_scroller(time_cur - time_last);
@@ -1282,7 +1288,7 @@ reload:
       }
       else if (mode == MODE_EDIT_APU_PORT)
       {
-        porttool::draw_cursor(screen, colors::green);
+        port_tool.draw_cursor(screen, colors::green);
       }
 
       // toggle should be 0 ALWAYS when deactivated
@@ -1311,9 +1317,9 @@ reload:
       SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
       SDL_RenderPresent(sdlRenderer);
       time_last = time_cur;
-      if (g_cfg_nice) {  SDL_Delay(100); }
+      if (g_cfg.nice) {  SDL_Delay(100); }
       SDL_Delay( 1000 / 100 );
-    } // if !g_cfg_novideo
+    } // if !g_cfg.novideo
     is_first_run = false;
   }
 
@@ -1354,13 +1360,13 @@ void Debugger::draw_voices_pitchs()
     uint8_t outx = player->spc_read_dsp(voice_base_addr+0x09);
     uint8_t envx = player->spc_read_dsp(voice_base_addr+0x08);
 
-    if (player->spc_read_dsp(0x4c)&(1<<i) && !(voices::was_keyed_on & i) )
+    if (player->spc_read_dsp(0x4c)&(1<<i) && !(voice_control.was_keyed_on & i) )
     {
       cur_color = &colors::white;
-      voices::was_keyed_on |= 1<<i;
+      voice_control.was_keyed_on |= 1<<i;
     } else if (player->spc_read_dsp(0x5c)&(1<<i)) {
       //cur_color = &colors::gray;
-      voices::was_keyed_on &= ~(1<<i);
+      voice_control.was_keyed_on &= ~(1<<i);
       //if (i==1)
         //fprintf(stderr, "KEYOFF\n");
     }
@@ -1377,7 +1383,7 @@ void Debugger::draw_voices_pitchs()
       // happens hundreds or thousands of times a second but the visual
       // only catches it once in awhile.. but it's annoying and 
       // I don't like it.. so I coded this to take up your CPU
-      if (voices::was_keyed_on & (1<<i))
+      if (voice_control.was_keyed_on & (1<<i))
       {
         uint16_t addr = player->spc_read_dsp(0x5d) * 0x100;
         //fprintf(stderr,"0x%04x,", addr);
@@ -1409,7 +1415,7 @@ void Debugger::draw_voices_pitchs()
     }
 
 
-    if (voices::is_muted(i))
+    if (voice_control.is_muted(i))
     {
       /* I would use sub color here to
       get a view of the activity but the mute happens at the DSP level
@@ -1436,7 +1442,7 @@ void Debugger::draw_voices_pitchs()
     tmprect.y= tmp+(i*8)+2;
     tmprect.x = MEMORY_VIEW_X+520+18;
     tmprect.x += pitch*(screen->w-tmprect.x-20)/((0x10000)>>2);
-    if (voices::is_muted(i))
+    if (voice_control.is_muted(i))
       SDL_FillRect(screen, &tmprect, colors::nearblack);
     else
       SDL_FillRect(screen, &tmprect, colors::white);
@@ -1498,7 +1504,7 @@ void Debugger::draw_voices_volumes()
     int y = tmp + (i*10);
     Uint32 *color;
 
-    if (voices::is_muted(i))
+    if (voice_control.is_muted(i))
       color = &colors::nearblack;
     else 
       color = &colors::white;
@@ -1511,7 +1517,7 @@ void Debugger::draw_voices_volumes()
     }
     
     sprintf(tmpbuf,"\x1");
-    if (voices::is_muted(i))
+    if (voice_control.is_muted(i))
     {
       colors::subtractp(Color1,0x60);
       colors::subtractp(Color2,0x60);
@@ -1525,7 +1531,7 @@ void Debugger::draw_voices_volumes()
 
     
     // L volume
-    if (voices::is_muted(i))
+    if (voice_control.is_muted(i))
       color = &colors::dark_yellow;
     else color = &colors::yellow;
     SDL_FillRect(screen, &tmprect, *color);
@@ -1534,7 +1540,7 @@ void Debugger::draw_voices_volumes()
     tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
     tmprect.y = tmp+(i*10)+3;
     
-    if (voices::is_muted(i))
+    if (voice_control.is_muted(i))
       color = &colors::dark_cyan;
     else color = &colors::cyan;
     SDL_FillRect(screen, &tmprect, *color);
@@ -1554,7 +1560,7 @@ void Debugger::draw_voices_volumes()
     tmprect.x = MEMORY_VIEW_X+520+18;
     tmprect.w = gain * (screen->w-tmprect.x-20)/255;
     tmprect.y = tmp+(i*10)+6;
-    if (voices::is_muted(i))
+    if (voice_control.is_muted(i))
     {
       Uint8 r1,g1,b1;
       SDL_GetRGB(c3, screen->format, &r1, &b1, &g1);
@@ -1808,9 +1814,9 @@ void Debugger::draw_porttool()
   sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:", colors::white);
 
   if (mode == MODE_EDIT_APU_PORT)
-    sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", porttool::tmp[0], porttool::tmp[1], porttool::tmp[2], porttool::tmp[3]);    
+    sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", port_tool.tmp[0], port_tool.tmp[1], port_tool.tmp[2], port_tool.tmp[3]);    
   else 
-    sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", porttool::portdata[0], porttool::portdata[1], porttool::portdata[2], porttool::portdata[3]);  
+    sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", port_tool.portdata[0], port_tool.portdata[1], port_tool.portdata[2], port_tool.portdata[3]);  
   
   sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf, colors::white);
   
@@ -1885,7 +1891,7 @@ void Debugger::update_window_title()
   
   char title [512];
   sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
-      game, g_cur_entry+1, g_cfg_num_files, player->track_info().song,
+      game, g_cur_entry+1, g_cfg.num_files, player->track_info().song,
       seconds / 60, seconds % 60 );
   SDL_SetWindowTitle(sdlWindow, title);
 }
@@ -1896,17 +1902,17 @@ void Debugger::update_track_tag()
 
 
   /* decide how much time the song will play */
-  if (!g_cfg_ignoretagtime) {
+  if (!g_cfg.ignoretagtime) {
     song_time = (int)tag.length / 1000; //atoi((const char *)tag.seconds_til_fadeout);
     if (song_time <= 0) {
-      song_time = g_cfg_defaultsongtime;
+      song_time = g_cfg.defaultsongtime;
     }
   }
   else {
-    song_time = g_cfg_defaultsongtime;
+    song_time = g_cfg.defaultsongtime;
   }
 
-  song_time += g_cfg_extratime;
+  song_time += g_cfg.extratime;
 
   now_playing[0] = 0;
   if (tag.song)
@@ -1916,7 +1922,7 @@ void Debugger::update_track_tag()
     }   
   }
   if (strlen(now_playing)==0) {
-    sprintf(now_playing, "Now playing: %s\n", g_cfg_playlist[g_cur_entry]);
+    sprintf(now_playing, "Now playing: %s\n", g_cfg.playlist[g_cur_entry]);
   }
   /* information */
 

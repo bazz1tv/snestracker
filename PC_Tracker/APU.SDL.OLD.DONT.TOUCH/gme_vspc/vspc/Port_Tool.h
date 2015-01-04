@@ -9,13 +9,20 @@
 #define PORTTOOL_PORT3_X_RIGHTMOST_LOBYTE PORTTOOL_X + (8*23)
 // 8 = tile width
 
-extern Music_Player* player;
-namespace porttool
+//extern Music_Player* player;
+struct Port_Tool
 {
-  extern Uint8 highnibble, portnum, portaddress, tmp[4];
-  extern Uint8 horizontal;//=0;
-  extern int x,y;
-  extern Uint8 portdata[4];// = {0,0,0,0};
+  Port_Tool(Music_Player *player, SDL_Surface *screen, Cursor *cursor);
+
+  Uint8 highnibble, portnum, portaddress, tmp[4];
+  Uint8 horizontal=0;
+  int x,y;
+  Uint8 portdata[4] = {0,0,0,0};
+
+  // deps
+  Music_Player *player;
+  SDL_Surface *screen;
+  Cursor *cursor;
 
   void inc_port(int port);
   
@@ -39,4 +46,4 @@ namespace porttool
   void dec_cursor_pos();
 
 
-}
+};

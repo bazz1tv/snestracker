@@ -4,10 +4,10 @@ debug=-g
 gme_CFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `sdl2-config --cflags`
 LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl2-config --libs` -lm
 
-vspc_CFLAGS=$(debug) -O3 -funroll-loops -Wall -Ivspc `sdl2-config --cflags` -Wall
-vspc_LDFLAGS=$(debug) -I vspc `sdl2-config --libs` -lm
+vspc_CFLAGS=$(debug) -I vspc/memory -O3 -funroll-loops -Wall -Ivspc `sdl2-config --cflags` -Wall
+vspc_LDFLAGS=$(debug) `sdl2-config --libs` -lm
 
-CFLAGS = $(gme_CFLAGS) $(vspc_CFLAGS)
+CFLAGS = $(gme_CFLAGS) $(vspc_CFLAGS) -Wno-c++11-extensions
 ####
 gme_SOURCES= gme/gme/M3u_Playlist.cpp gme/gme/Data_Reader.cpp gme/gme/Multi_Buffer.cpp\
 gme/gme/Blip_Buffer.cpp gme/gme/Effects_Buffer.cpp gme/gme/Fir_Resampler.cpp\
@@ -16,9 +16,9 @@ gme/gme/Snes_Spc_misc.cpp gme/gme/Snes_Spc_state.cpp gme/gme/Spc_Filter.cpp gme/
 gme/player/Music_Player.cpp
 ###
 OBJECTS=$(gme_SOURCES:.cpp=.o)
-vspc_OBJECTS=  vspc/main.o vspc/font.o vspc/sdlfont.o vspc/report.o vspc/globals.o vspc/track.o vspc/voices.o vspc/sdl_dblclick.o\
-vspc/gui/porttool.o vspc/gui/cursor.o vspc/mouse_hexdump.o vspc/colors.o\
-vspc/debugger.o vspc/app.o vspc/error.o vspc/utility.o
+vspc_OBJECTS=  vspc/main.o vspc/font.o vspc/sdlfont.o vspc/report.o vspc/globals.o vspc/Voice_Control.o vspc/sdl_dblclick.o\
+vspc/Port_Tool.o vspc/gui/cursor.o vspc/memory/MouseOver_HexDump_Area.o vspc/colors.o\
+vspc/debugger.o vspc/app.o vspc/error.o vspc/utility.o vspc/memory/Main_Memory_Area.o
 OBJECTS += $(vspc_OBJECTS)
 EXECUTABLE=vspc_blargg
 
@@ -27,7 +27,7 @@ all: $(gme_SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS) 
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
-vspc/main.o: vspc/main.cpp vspc/mouse_hexdump.h vspc/gui/cursor.h vspc/gui/porttool.h vspc/mouse_hexdump_events.h vspc/sdl_dblclick.h\
+vspc/main.o: vspc/main.cpp vspc/gui/cursor.h vspc/mouse_hexdump_events.h vspc/sdl_dblclick.h\
 	vspc/sdl_dblclick_events.h vspc/sdl_userevents.h\
 	vspc/mode.h
 	$(CPP) $(CFLAGS) -c vspc/main.cpp -o vspc/main.o

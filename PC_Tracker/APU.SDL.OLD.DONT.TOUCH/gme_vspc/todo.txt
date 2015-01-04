@@ -1,31 +1,16 @@
+Debugger Feature: Right click address that is being read/written and find out from where is the program accessing this memory.
+
+If I click on "Time" I extend play-time by 1 min
+
 Figuring out how to implement higher level audio algorithms..
 like "pan from left to right over this course of this pattern for example"
 
 Clickable "E:" to mute, now make it "darken" including the colons inverse phase volume, and including volume bars
 Look at Voice volume darkening for example.. And try to abstract the code
 
-Start integrating
-app
-  debugger
-  tracker
-  player etc.
 
 Migrate to SDL2
-  The audio callback does NOT start with a fully initialized buffer anymore.
-  (hopefully not  problem )
-
-  SDL_WM_SetCaption is gone,
-
-  SDL_PushEvent() now returns 1 on success instead of 0.
-
-  When calling SDL_SetColorKey(), you should pass SDL_TRUE instead of SDL_SRCCOLORKEY.
-
-  SDLMod is now SDL_Keymod and its "META" keys (the "Windows" keys) are now called the "GUI" keys.
-
   Strip double click event stuffz
-
-  The first change, simply enough, is that the mousewheel is no longer a button. This was a mistake of history, and we've corrected it in SDL 2.0. Look for SDL_MOUSEWHEEL events. We support both vertical and horizontal wheels, and some platforms can treat two-finger scrolling on a trackpad as wheel input, too. You will no longer receive SDL_BUTTONDOWN events for mouse wheels, and buttons 4 and 5 are real mouse buttons now.
-
 
 
 Scrolling text at bottom-right when text is too long to read

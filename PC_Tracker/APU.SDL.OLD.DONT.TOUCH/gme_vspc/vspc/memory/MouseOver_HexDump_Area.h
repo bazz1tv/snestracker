@@ -7,7 +7,18 @@
 #include "mode.h"
 #include "report.h"
 #include "gui/cursor.h"
+#include "memory.h"
 
+namespace screen_pos
+{
+  //typedef SDL_Rect coord;
+  #define NO_INIT 0
+  extern SDL_Rect voice0vol;   // = {NO_INIT, NO_INIT,+8+125,10};
+  extern SDL_Rect voice0pitch; //= {NO_INIT,NO_INIT, 2*8,8 };
+  extern SDL_Rect locked;      // = { MEMORY_VIEW_X+520+24*8, 0 ,(strlen(LOCKED_STR)*8)+1, 9};
+  extern SDL_Rect echoE;
+  #undef UN_INIT
+}
 
 
 #define MOUSE_HEXDUMP_START_X 584
@@ -26,56 +37,27 @@
 //extern int MOUSE_HEXDUMP_START_Y;
 //extern Uint16 mouse_hexdump::address;
 //extern struct SIAPU IAPU;
-class MainMemoryArea
+
+
+struct MouseOver_HexDump_Area : Memory
 {
-  Memory(SDL_Surface *screen, Music_Player *player, uint8_t* IAPURAM);
+  MouseOver_HexDump_Area(Music_Player *player, SDL_Surface *screen/*, Uint16 &address, Uint16 &address_being_edited*/);
 
-  void set_addr(int i);
-  void set_addr_from_cursor(int x, int y);
-  void add_addr(int i);
-
-  void dec_cursor_row();
-  void inc_cursor_row();
-
-  void lock(char l=1, int x=0, int y=0, uint8_t rx=0, uint8_t ry=0);
-  void toggle_lock(int x=0, int y=0);
-  
-  void unlock();
-
+  void update_editing_address();
+  void draw_cursor(SDL_Surface *screen, Uint32 color);
   void inc_cursor_row();
   void dec_cursor_row();
   void inc_cursor_pos();
   void dec_cursor_pos();
-  
-
-  Music_Player *player;
-  SDL_Surface *screen;
-  uint8_t *IAPURAM;
-  
-
-  
-  
-
-  char locked=0;
-  Uint16 address=0x0000, addr_being_edited=0x0000;
-  Uint8 address_remainder=0;
-};
-
-struct MouseOverHexDumpArea
-{
-  MouseOverHexdumpArea(Main_Memory_Area *main_mem_area, Music_Player *player, SDL_Surface *screen, uint8_t *IAPURAM);
-
-  void update_editing_address();
-  void draw_cursor(SDL_Surface *screen, Uint32 color);
 
 
   enum submodes { HARD_EDIT=0, EASY_EDIT=1 };
 
 
   //deps
-  Music_Player *player;
+  /*Music_Player *player;
   SDL_Surface *screen;
-  uint8_t *IAPURAM;
+  uint8_t *IAPURAM;*/
   //unique
   Cursor cursor;
   int tmp_ram; char draw_tmp_ram;
@@ -87,6 +69,7 @@ struct MouseOverHexDumpArea
   Uint8 highnibble;
   Uint8 horizontal=1;
   int MOUSE_HEXDUMP_START_Y;
+  //Uint16 &address, &addr_being_edited;
 }; 
 
 

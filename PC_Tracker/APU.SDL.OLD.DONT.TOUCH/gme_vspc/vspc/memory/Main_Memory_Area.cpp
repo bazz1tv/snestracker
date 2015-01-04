@@ -6,24 +6,24 @@
 //extern Music_Player *player;
 
 
-MainMemoryArea::MainMemoryArea(SDL_Surface *screen, Music_Player *player) :
-    screen(screen), player(player), IAPURAM(player->spc_emu()->ram())
+MainMemoryArea::MainMemoryArea(SDL_Surface *screen, Music_Player *player, Uint16 &address, Uint16 &address_being_edited) :
+screen(screen), player(player), 
+address(address), address_being_edited(address_being_edited)
+IAPURAM(player->spc_emu()->ram())
 {
 
 }
 
 
+
 void Main_Memory_Area::set_addr(int i)
 {
-  if (memcursor::is_active())
+  if (memcursor.is_active())
   {
     report::restore_color(addr_being_edited);
-    memcursor::start_timer();
+    memcursor.start_timer();
   }
   address = i;
-  //if (memcursor::is_active())
-    //report::backup_color(addr_being_edited);
-  update_editing_address();
 }
 void Main_Memory_Area::set_addr_from_cursor(int x, int y)
 {
@@ -65,8 +65,8 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
     mode = MODE_EDIT_Main_Memory_Area;
     cursor::start_timer();
 
-    memcursor::start_timer();
-    Main_Memory_Area::addr_being_edited = Main_Memory_Area::address+(Main_Memory_Area::res_y*8)+Main_Memory_Area::res_x;
+    memcursor.start_timer();
+    addr_being_edited = address+(res_y*8)+res_x;
   }
   else
   {
@@ -80,11 +80,11 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
         set_addr_from_cursor(x, y);
       }
     }
-    report::restore_color(Main_Memory_Area::addr_being_edited);
+    report::restore_color(addr_being_edited);
 
     mode = MODE_NAV;
     cursor::stop_timer();
-    memcursor::stop_timer();
+    memcursor.stop_timer();
   }
   
 }
