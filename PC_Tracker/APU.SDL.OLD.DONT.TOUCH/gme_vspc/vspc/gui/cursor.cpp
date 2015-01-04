@@ -25,10 +25,10 @@
     // double click code
     timerid = SDL_AddTimer(interval, &cursor_timerCB, this);
     flags=FLAG_ACTIVE | FLAG_TOGGLED;
-    if (timerid == timerid)
+    /*if (timerid == timerid)
     {
       fprintf(stderr, "memcursor::timerID == cursor::timerid.. NOT FIXED\n");
-    }
+    }*/
 
   }
 

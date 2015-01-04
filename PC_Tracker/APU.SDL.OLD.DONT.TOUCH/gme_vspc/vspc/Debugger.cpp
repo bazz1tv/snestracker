@@ -120,6 +120,9 @@ port_tool(player, screen, &mouseover_hexdump_area.cursor)
 
   g_cfg.num_files = argc-optind;
   g_cfg.playlist = &argv[optind];
+
+  time_cur = time_last = SDL_GetTicks();
+  report::memsurface.init();
 }
 
 

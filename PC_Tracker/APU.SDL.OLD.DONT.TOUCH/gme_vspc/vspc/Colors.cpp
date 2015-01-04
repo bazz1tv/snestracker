@@ -7,8 +7,9 @@ Uint32 Colors::dark_magenta, Colors::dark_cyan, Colors::dark_yellow;
 Uint32 Colors::gray;
 Uint32 Colors::colorscale[12];
 
-void Colors::precompute(SDL_Surface *screen)
+void Colors::precompute(SDL_Surface *cscreen)
 {
+  screen = cscreen;
   // precompute some colors
   black = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
   nearblack = SDL_MapRGB(screen->format, 0x50, 0x50, 0x50);

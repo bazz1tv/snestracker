@@ -13,7 +13,7 @@ struct Colors
   static Uint32 gray;
   static Uint32 colorscale[12];
 
-  static void precompute(SDL_Surface *screen);
+  static void precompute(SDL_Surface *cscreen);
   // belongs in color namespace
   static Uint32 subtract(Uint32 *c, Uint8 subval);
   static void subtractp(Uint32 *c, Uint8 subval);
