@@ -1,6 +1,6 @@
 // snes_spc 0.9.0. http://www.slack.net/~ant/
 
-#include "vspc/report.h"
+#include "debugger/report.h"
 #include <stdio.h>
 #include "Spc_Dsp.h"
 

@@ -48,11 +48,20 @@ struct Debugger : Debugger_Base
   void dec_ram(int addr, int i);
   void reload();
 
+  // external deps
+  Music_Player *player=NULL;
+  SDL_Window *sdlWindow=NULL;
+  SDL_Renderer *sdlRenderer=NULL;
+  SDL_Texture *sdlTexture=NULL;
+  SDL_Surface *screen;
+
   // How to package this as an entity?
-  Voice_Control voice_control;
-  Port_Tool port_tool;
+  
   Main_Memory_Area main_memory_area;
   MouseOver_HexDump_Area mouseover_hexdump_area;
+  Port_Tool port_tool;
+  Voice_Control voice_control;
+  
   //Uint16 address, addr_being_edited; // shared variable between main_memory_area and mouseover_hexdump_area
 
   // TRACK STUFFZZ  
@@ -64,12 +73,7 @@ struct Debugger : Debugger_Base
   void update_track_tag();
 
 
-// external deps
-  Music_Player *player=NULL;
-  SDL_Window *sdlWindow=NULL;
-  SDL_Renderer *sdlRenderer=NULL;
-  SDL_Texture *sdlTexture=NULL;
-  SDL_Surface *screen;
+
 
   
 

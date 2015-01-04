@@ -20,6 +20,7 @@ struct Memory : public Debugger_Base
   static Music_Player *player;
   static SDL_Surface *screen;
   static uint8_t *IAPURAM;
+  
   static Uint16 address; //=0x0000;
   static Uint16 addr_being_edited;
   static int rel_x;

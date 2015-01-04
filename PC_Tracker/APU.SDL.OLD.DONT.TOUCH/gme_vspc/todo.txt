@@ -1,3 +1,6 @@
+Strip Functional operation from Display operation in classes/structs.
+Maybe i can subclass. struct Debugger_Voice_Control : public Voice_Control
+
 Debugger Feature: Right click address that is being read/written and find out from where is the program accessing this memory.
 
 If I click on "Time" I extend play-time by 1 min

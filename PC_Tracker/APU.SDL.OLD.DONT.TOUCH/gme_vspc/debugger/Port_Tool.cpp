@@ -7,8 +7,8 @@
 //extern Music_Player* player;
 Port_Tool::Port_Tool(Music_Player *player, SDL_Surface *screen, Cursor *cursor) : 
 player(player),
-cursor(cursor),
-screen(screen)
+screen(screen),
+cursor(cursor)
 {
 
 }

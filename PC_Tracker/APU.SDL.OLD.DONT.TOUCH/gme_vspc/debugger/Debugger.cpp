@@ -9,12 +9,11 @@
 Debugger::Debugger(int &argc, char **argv, Music_Player *player,
   SDL_Window *win, SDL_Renderer *renderer, SDL_Texture *text, SDL_Surface *screen) : 
 player(player), sdlRenderer(renderer),sdlTexture(text),screen(screen),
-IAPURAM(player->spc_emu()->ram()),
 main_memory_area(screen,player),
 mouseover_hexdump_area(player,screen),
+port_tool(player, screen, &mouseover_hexdump_area.cursor),
 voice_control(player),
-port_tool(player, screen, &mouseover_hexdump_area.cursor)
-
+IAPURAM(player->spc_emu()->ram())
 {
   int res;
   static struct option long_options[] = {
@@ -565,7 +564,7 @@ reload:
             }
             if (scancode == SDLK_k)
             {
-              player->spc_write_dsp(dsp_reg::kon,0x0);
+              player->spc_write_dsp(dsp_reg::koff,0xff);
             }
             if (ev.key.keysym.sym == SDLK_u)
             {
@@ -1090,7 +1089,7 @@ reload:
                 x /= 8;
                 y = mouse::y - PORTTOOL_Y;
                 y /= 8;
-                Uint8 i;
+                //Uint8 i;
                   if (ev.wheel.y > 0)
                   {
                     if (x>1 && x<4) {   port_tool.inc_port(0); }

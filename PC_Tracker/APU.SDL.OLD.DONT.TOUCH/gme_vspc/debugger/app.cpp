@@ -15,8 +15,7 @@ App::App(SDL_Window **sdlWindow, int &argc, char **argv, int w, int h, int sampl
     exit(1);
   }
   handle_error( player.init(samplerate) );
-  if ( 
-    ((debugger = new Debugger(argc, argv, &player, this->sdlWindow, sdlRenderer, sdlTexture, screen)) == NULL) ) 
+  if ( (debugger = new Debugger(argc, argv, &player, this->sdlWindow, sdlRenderer, sdlTexture, screen)) == NULL)  
   {
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Uh-Oh", "Out of Memory?!?!", this->sdlWindow);
   }  
@@ -53,7 +52,7 @@ int App::init_sdl(SDL_Window **sdlWindow, int width, int height)
     return 0;
   }*/
 
-  SDL_CreateWindowAndRenderer(width, height, 0, sdlWindow, &sdlRenderer);
+  SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_FULLSCREEN, sdlWindow, &sdlRenderer);
   if (sdlWindow == NULL || sdlRenderer == NULL)
   {
     fprintf(stderr, "FCK\n");

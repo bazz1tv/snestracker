@@ -11,4 +11,7 @@ struct Debugger_Base
   };
   static int mode;// =0;
   static int submode;// =  0;
+  /*static Music_Player *player;
+  static SDL_Surface *screen;
+  static uint8_t *IAPURAM;*/
 };

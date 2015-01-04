@@ -2,9 +2,11 @@
 
 Cursor Memory::cursor;
 
+// Cannot decide if this belongs in Debugger_Base
 Music_Player *Memory::player;
 SDL_Surface *Memory::screen;
 uint8_t *Memory::IAPURAM;
+
 Uint16 Memory::address; //=0x0000;
 Uint16 Memory::addr_being_edited;
 int Memory::rel_x;

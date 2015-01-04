@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 #include "blargg_source.h"
 
-#include "vspc/globals.h"
+#include "debugger/globals.h"
 
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
 const int fill_rate = 45;
