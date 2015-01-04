@@ -19,7 +19,7 @@ gme/player/Music_Player.cpp
 ###
 OBJECTS=$(gme_SOURCES:.cpp=.o)
 debugger_OBJECTS= main.o app.o debugger/font.o debugger/sdlfont.o debugger/report.o debugger/globals.o debugger/Voice_Control.o debugger/sdl_dblclick.o\
-debugger/Port_Tool.o debugger/gui/cursor.o debugger/memory/MouseOver_HexDump_Area.o debugger/Colors.o\
+debugger/Port_Tool.o debugger/gui/cursor.o debugger/memory/Mouse_Hexdump_Area.o debugger/Colors.o\
 debugger/Debugger_Base.o debugger/Debugger.o  debugger/error.o debugger/utility.o debugger/memory/Main_Memory_Area.o\
 debugger/memory/memory.o
 OBJECTS += $(debugger_OBJECTS)

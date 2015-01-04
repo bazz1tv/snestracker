@@ -9,7 +9,7 @@
 #include "sdl_dblclick.h"
 #include "Port_Tool.h"
 #include "mode.h"
-#include "MouseOver_HexDump_Area.h"
+#include "Mouse_Hexdump_Area.h"
 #include "Main_Memory_Area.h"
 #include "Colors.h"
 #include "platform.h"
@@ -58,7 +58,7 @@ struct Debugger : Debugger_Base
   // How to package this as an entity?
   
   Main_Memory_Area main_memory_area;
-  MouseOver_HexDump_Area mouseover_hexdump_area;
+  Mouse_Hexdump_Area mouseover_hexdump_area;
   Port_Tool port_tool;
   Voice_Control voice_control;
   

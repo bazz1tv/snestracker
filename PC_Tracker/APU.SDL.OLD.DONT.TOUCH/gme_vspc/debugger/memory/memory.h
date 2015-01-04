@@ -17,6 +17,8 @@ struct Memory : public Debugger_Base
 
   enum submodes { HARD_EDIT=0, EASY_EDIT=1 };
 
+  // All of the static variables are stuff I want shared between the 
+  // Main Memory Area and Mouse Hexdump area
   //static Mem_Cursor memcursor;
   static Cursor cursor;
 

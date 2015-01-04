@@ -1,20 +1,20 @@
-#include "MouseOver_HexDump_Area.h"
-int MouseOver_HexDump_Area::MOUSE_HEXDUMP_START_Y;
+#include "Mouse_Hexdump_Area.h"
+int Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y;
 
 
-MouseOver_HexDump_Area::MouseOver_HexDump_Area(/*Main_Memory_Area *main_mem_area,*/ 
+Mouse_Hexdump_Area::Mouse_Hexdump_Area(/*Main_Memory_Area *main_mem_area,*/ 
 Music_Player *player, SDL_Surface *screen/*, Uint16 &addr_being_edited*/) :
 Memory(player,screen)
 {
   
 }
 
-/*void MouseOver_HexDump_Area::update_tmp_ram()
+/*void Mouse_Hexdump_Area::update_tmp_ram()
 {
 
 }*/
 
-void MouseOver_HexDump_Area::update_editing_address()
+void Mouse_Hexdump_Area::update_editing_address()
 {
   report::restore_color(addr_being_edited);
   addr_being_edited = address+(res_y*8)+res_x;
@@ -40,7 +40,7 @@ void MouseOver_HexDump_Area::update_editing_address()
   }
   //else tmp_ram = IAPURAM[addr_being_edited];
 }
-void MouseOver_HexDump_Area::inc_cursor_row()
+void Mouse_Hexdump_Area::inc_cursor_row()
 {
   old_addr = addr_being_edited;
   cursor.toggle=1;
@@ -52,7 +52,7 @@ void MouseOver_HexDump_Area::inc_cursor_row()
   else res_y++;    
   update_editing_address();
 }
-void MouseOver_HexDump_Area::dec_cursor_row()
+void Mouse_Hexdump_Area::dec_cursor_row()
 {
   old_addr = addr_being_edited;
   cursor.toggle=1;
@@ -64,7 +64,7 @@ void MouseOver_HexDump_Area::dec_cursor_row()
   else res_y--;    
   update_editing_address();
 }
-void MouseOver_HexDump_Area::inc_cursor_pos()
+void Mouse_Hexdump_Area::inc_cursor_pos()
 {
   old_addr = addr_being_edited;
   cursor.toggle=1;
@@ -92,7 +92,7 @@ void MouseOver_HexDump_Area::inc_cursor_pos()
   }
   update_editing_address();
 }
-void MouseOver_HexDump_Area::dec_cursor_pos()
+void Mouse_Hexdump_Area::dec_cursor_pos()
 {
   old_addr = addr_being_edited;
   cursor.toggle=1;
@@ -120,7 +120,7 @@ void MouseOver_HexDump_Area::dec_cursor_pos()
   update_editing_address();
 }
 
-void MouseOver_HexDump_Area::draw_cursor(SDL_Surface *screen, Uint32 color)
+void Mouse_Hexdump_Area::draw_cursor(SDL_Surface *screen, Uint32 color)
 {
   if (highnibble)
   {

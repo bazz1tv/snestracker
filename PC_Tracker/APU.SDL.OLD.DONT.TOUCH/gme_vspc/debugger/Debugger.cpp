@@ -3,8 +3,7 @@
 #include "utility.h"
 
 
-#define IS_SPECIAL_ADDRESSES(addr) ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) ||\ 
-addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7) )
+
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -935,7 +934,7 @@ reload:
             {
               SDL_Event *te = (SDL_Event *)ev.user.data1;
               if (te->motion.x >= (MOUSE_HEXDUMP_START_X - 2) && te->motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
-                te->motion.y >= MouseOver_HexDump_Area::MOUSE_HEXDUMP_START_Y && te->motion.y <= MOUSE_HEXDUMP_END_Y)
+                te->motion.y >= Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y && te->motion.y <= MOUSE_HEXDUMP_END_Y)
               {
                 // editor stuffz
                 Uint8 oldmode = mode;
@@ -949,7 +948,7 @@ reload:
 
                 mouseover_hexdump_area.rel_x = te->motion.x - MOUSE_HEXDUMP_START_X;
                 mouseover_hexdump_area.rel_x+=2;
-                mouseover_hexdump_area.rel_y = te->motion.y - MouseOver_HexDump_Area::MOUSE_HEXDUMP_START_Y;
+                mouseover_hexdump_area.rel_y = te->motion.y - Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y;
 
                 res_x = mouseover_hexdump_area.rel_x / entry_width;
                 res_y = mouseover_hexdump_area.rel_y / entry_height;
@@ -1185,7 +1184,7 @@ reload:
               }
               
               if (ev.motion.x >= (MOUSE_HEXDUMP_START_X - 2) && ev.motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
-                ev.motion.y >= MouseOver_HexDump_Area::MOUSE_HEXDUMP_START_Y && ev.motion.y <= MOUSE_HEXDUMP_END_Y)
+                ev.motion.y >= Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y && ev.motion.y <= MOUSE_HEXDUMP_END_Y)
               {
                 if (ev.button.button == SDL_BUTTON_RIGHT)
                 {
@@ -1738,7 +1737,7 @@ void Debugger::draw_mouseover_hexdump()
   }
   
   tmp+=9;
-  MouseOver_HexDump_Area::MOUSE_HEXDUMP_START_Y = tmp;
+  Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y = tmp;
   if (mouseover_hexdump_area.address>=0)
   {
     
