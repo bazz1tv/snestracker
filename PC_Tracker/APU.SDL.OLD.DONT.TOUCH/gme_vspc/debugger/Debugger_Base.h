@@ -11,7 +11,8 @@ struct Debugger_Base
     MODE_NAV=0,
     MODE_EDIT_MOUSE_HEXDUMP,
     MODE_EDIT_APU_PORT,
-    MODE_DSP_MAP  
+    MODE_DSP_MAP,
+    MODE_QUIT  
   };
   static int mode;// =0;
   static int submode;// =  0;
@@ -34,6 +35,7 @@ struct Debugger_Base
   } g_cfg;
 
   static int g_paused;// = 0;
+  static bool quitting;
   // CAREFUL WITH THIS ONE:
   static uint8_t *IAPURAM;
   // IT CAN ONLY BE VALID AFTER THE MUSIC_PLAYER STARTS A TRACK!!

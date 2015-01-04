@@ -9,4 +9,5 @@ Debugger_Base::Cfg Debugger_Base::g_cfg;// = { 0,0,0,0,0,0,DEFAULT_SONGTIME,0,0,
 
 int Debugger_Base::g_paused = 0;
 uint8_t * Debugger_Base::IAPURAM=NULL;
+bool Debugger_Base::quitting=false;
 //Music_Player * Debugger_Base::player=NULL;

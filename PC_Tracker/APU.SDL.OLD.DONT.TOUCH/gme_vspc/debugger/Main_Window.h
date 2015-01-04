@@ -20,6 +20,8 @@ struct Main_Window : public Debugger_Base, public Render_Context, public Player_
 {
   Main_Window(int &argc, char **argv);
   void run();
+  void receive_event(SDL_Event &ev);
+  void draw();
 
   void draw_program_counter();
   void draw_voices_pitchs();

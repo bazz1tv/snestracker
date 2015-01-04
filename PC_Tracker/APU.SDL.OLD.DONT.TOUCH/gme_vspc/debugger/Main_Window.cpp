@@ -7,871 +7,866 @@
 #define L_FLAG 0
 #define R_FLAG 1
 
-void Main_Window::run()
+void Main_Window::receive_event(SDL_Event &ev)
 {
-
-
-//
-
-reload:
-  reload();
-  
-  for (;;) 
+  dblclick::check_event(&ev);
+  switch (ev.type)
   {
-    
-    SDL_Event ev;
-
-    pack_mask(packed_mask);
-    
-    if (g_cfg.statusline) {
-      printf("%s / %d         \r", 
-          g_cfg.playlist[g_cur_entry],
-          /*audio_samples_written/44100,*/
-          song_time
-          /*(audio_samples_written/44100)/(song_time)*/);
-      fflush(stdout);
-    }
-    
-    /* Check if it is time to change tune.
-     */   
-    if (player->emu()->tell()/1000 >= song_time) 
-    {
-      if (g_cfg.autowritemask) {
-        write_mask(packed_mask);
-        if (g_cfg.apply_block) {
-          printf("Applying mask on file %s using $%02X as filler\n", g_cfg.playlist[g_cur_entry], g_cfg.filler);
-          applyBlockMask(g_cfg.playlist[g_cur_entry]);
-        }
+    case SDL_QUIT:
+      if (!g_cfg.nosound) {
+        SDL_PauseAudio(1);
       }
-      g_cur_entry++;
-      if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); goto clean; }
-      goto reload;
-    }
-    
-    if (!g_cfg.novideo)
-    {
-      while (SDL_PollEvent(&ev))
+      printf ("penis4\n");
+      quitting = true;
+      break;
+    case SDL_MOUSEMOTION:
       {
-        dblclick::check_event(&ev);
-        switch (ev.type)
+        mouse::x = ev.motion.x; mouse::y = ev.motion.y;
+
+        if (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT))
         {
-          case SDL_QUIT:
+          voice_control.checkmouse_mute((Uint16&)ev.motion.x, (Uint16&)ev.motion.y);
+        }
+        if (mode == MODE_NAV || mode == MODE_EDIT_MOUSE_HEXDUMP)
+        {
+          if (  ev.motion.x >= MEMORY_VIEW_X && 
+              ev.motion.x < MEMORY_VIEW_X + 512 &&
+              ev.motion.y >= MEMORY_VIEW_Y &&
+              ev.motion.y < MEMORY_VIEW_Y + 512)
+          {
+            int x, y;
+            x = ev.motion.x;
+            y = ev.motion.y;
+
+            x-= MEMORY_VIEW_X;
+            y -= MEMORY_VIEW_Y;
+            x /= 2;
+            y /= 2;
+            //set_addr(y*256+x);
+            
+            mouse_addr = y*256+x;
+            if (!main_memory_area.locked) {
+              mouseover_hexdump_area.set_addr(mouse_addr); //_from_cursor(x,y);
+            }
+          }
+        }
+      
+      }
+      break;
+    case SDL_KEYDOWN:
+    {
+      int scancode = ev.key.keysym.sym;
+      if (scancode == SDLK_m)
+      {
+        main_memory_area.memcursor.toggle_disable();
+      }
+      if (scancode == SDLK_k)
+      {
+        player->spc_write_dsp(dsp_reg::koff,0xff);
+      }
+      if (ev.key.keysym.sym == SDLK_u)
+      {
+        //player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0xff);
+        //player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x63);
+        /*player->spc_write_dsp(dsp_reg::eon, 0x1);
+        player->spc_write_dsp(dsp_reg::flg, 0x00);
+        player->spc_write_dsp(dsp_reg::esa, 0x50);
+        player->spc_write_dsp(dsp_reg::edl, 0x0f);
+        player->spc_write_dsp(dsp_reg::efb, 0x40);
+        player->spc_write_dsp(dsp_reg::evol_l, 127);
+        player->spc_write_dsp(dsp_reg::evol_r, 127);
+        player->spc_write_dsp(dsp_reg::c0, 0x7f);
+        player->spc_write_dsp(dsp_reg::kon,0x1);*/
+        player->gain -= 0.01;
+        fprintf(stderr, "gain = %f", player->gain, INT16_MIN, INT16_MAX);
+        //player->spc_write(0xf2, 0x4c);
+        //player->spc_write(0xf3, 0);
+        //player->spc_write(0xf3, 1);
+      }
+      else if (ev.key.keysym.sym == SDLK_i)
+      {
+        player->gain += 0.01;
+        fprintf(stderr, "gain = %f", player->gain);
+      }
+      else if (scancode == SDLK_o)
+      {
+        player->filter_is_active = !player->filter_is_active;
+        fprintf(stderr, "filter_is_active = %d", player->filter_is_active);
+      }
+      else if (scancode == SDLK_SPACE)
+      {
+        player->toggle_pause();
+      }
+      else if (scancode == SDLK_r)
+      {
+        report::memsurface.clear();
+        player->start_track(0); // based on only having 1 track
+        player->pause(0);
+        // in the program .. this would have to change otherwise
+      }
+      if (mode == MODE_NAV)
+      {
+        // VOICES!!! 
+        if ((scancode >= '0') && (scancode <= '9'))
+        {
+          uint8_t i = scancode - '0';
+          if (!i)
+            voice_control.toggle_mute_all();
+          if (i > 0 && i < 9)
+            voice_control.toggle_mute(i); // channel num
+          //else
+            //voice_control.mute_all();
+        }
+
+
+        if (scancode == SDLK_LEFT)
+          prev_track();
+        else if (scancode == SDLK_RIGHT)
+          next_track();
+        else if (scancode == SDLK_c)
+        {
+          mouse::show = !mouse::show;
+        }
+        
+        else if (ev.key.keysym.sym == SDLK_e)
+          player->spc_emu()->toggle_echo();
+        else if (ev.key.keysym.sym == SDLK_RETURN && // click in memory view. Toggle lock
+          (mouse::x >= MEMORY_VIEW_X && 
+              mouse::x < MEMORY_VIEW_X + 512 &&
+              mouse::y >= MEMORY_VIEW_Y &&
+              mouse::y < MEMORY_VIEW_Y + 512 ) )
+        {
+          mouseover_hexdump_area.highnibble = 1;
+          mouseover_hexdump_area.res_x = 0;
+          mouseover_hexdump_area.res_y = 0;
+
+          mode = MODE_EDIT_MOUSE_HEXDUMP;
+          submode = mouseover_hexdump_area.EASY_EDIT;
+          // order matters .. call here: 
+          main_memory_area.lock();
+          //mouseover_hexdump_area.addr_being_edited = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x
+          //mouseover_hexdump_area.res_x = 1; //mouseover_hexdump_area.address_remainder;
+          
+          mouseover_hexdump_area.cursor.start_timer();
+        }
+        if (ev.key.keysym.sym == SDLK_ESCAPE)
+        {
+          if (main_memory_area.locked)
+          {
+            main_memory_area.unlock(); 
+          }
+          else
+          {
             if (!g_cfg.nosound) {
               SDL_PauseAudio(1);
             }
-            printf ("penis4\n");
-            goto clean;
-            break;
-          case SDL_MOUSEMOTION:
-            {
-              mouse::x = ev.motion.x; mouse::y = ev.motion.y;
-
-              if (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT))
-              {
-                voice_control.checkmouse_mute((Uint16&)ev.motion.x, (Uint16&)ev.motion.y);
-              }
-              if (mode == MODE_NAV || mode == MODE_EDIT_MOUSE_HEXDUMP)
-              {
-                if (  ev.motion.x >= MEMORY_VIEW_X && 
-                    ev.motion.x < MEMORY_VIEW_X + 512 &&
-                    ev.motion.y >= MEMORY_VIEW_Y &&
-                    ev.motion.y < MEMORY_VIEW_Y + 512)
-                {
-                  int x, y;
-                  x = ev.motion.x;
-                  y = ev.motion.y;
-
-                  x-= MEMORY_VIEW_X;
-                  y -= MEMORY_VIEW_Y;
-                  x /= 2;
-                  y /= 2;
-                  //set_addr(y*256+x);
-                  
-                  mouse_addr = y*256+x;
-                  if (!main_memory_area.locked) {
-                    mouseover_hexdump_area.set_addr(mouse_addr); //_from_cursor(x,y);
-                  }
-                }
-              }
-            
-            }
-            break;
-          case SDL_KEYDOWN:
-          {
-            int scancode = ev.key.keysym.sym;
-            if (scancode == SDLK_m)
-            {
-              main_memory_area.memcursor.toggle_disable();
-            }
-            if (scancode == SDLK_k)
-            {
-              player->spc_write_dsp(dsp_reg::koff,0xff);
-            }
-            if (ev.key.keysym.sym == SDLK_u)
-            {
-              //player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0xff);
-              //player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x63);
-              /*player->spc_write_dsp(dsp_reg::eon, 0x1);
-              player->spc_write_dsp(dsp_reg::flg, 0x00);
-              player->spc_write_dsp(dsp_reg::esa, 0x50);
-              player->spc_write_dsp(dsp_reg::edl, 0x0f);
-              player->spc_write_dsp(dsp_reg::efb, 0x40);
-              player->spc_write_dsp(dsp_reg::evol_l, 127);
-              player->spc_write_dsp(dsp_reg::evol_r, 127);
-              player->spc_write_dsp(dsp_reg::c0, 0x7f);
-              player->spc_write_dsp(dsp_reg::kon,0x1);*/
-              player->gain -= 0.01;
-              fprintf(stderr, "gain = %f", player->gain, INT16_MIN, INT16_MAX);
-              //player->spc_write(0xf2, 0x4c);
-              //player->spc_write(0xf3, 0);
-              //player->spc_write(0xf3, 1);
-            }
-            else if (ev.key.keysym.sym == SDLK_i)
-            {
-              player->gain += 0.01;
-              fprintf(stderr, "gain = %f", player->gain);
-            }
-            else if (scancode == SDLK_o)
-            {
-              player->filter_is_active = !player->filter_is_active;
-              fprintf(stderr, "filter_is_active = %d", player->filter_is_active);
-            }
-            else if (scancode == SDLK_SPACE)
-            {
-              player->toggle_pause();
-            }
-            else if (scancode == SDLK_r)
-            {
-              report::memsurface.clear();
-              player->start_track(0); // based on only having 1 track
-              player->pause(0);
-              // in the program .. this would have to change otherwise
-            }
-            if (mode == MODE_NAV)
-            {
-              // VOICES!!! 
-              if ((scancode >= '0') && (scancode <= '9'))
-              {
-                uint8_t i = scancode - '0';
-                if (!i)
-                  voice_control.toggle_mute_all();
-                if (i > 0 && i < 9)
-                  voice_control.toggle_mute(i); // channel num
-                //else
-                  //voice_control.mute_all();
-              }
-
-
-              if (scancode == SDLK_LEFT)
-                prev_track();
-              else if (scancode == SDLK_RIGHT)
-                next_track();
-              else if (scancode == SDLK_c)
-              {
-                mouse::show = !mouse::show;
-              }
-              
-              else if (ev.key.keysym.sym == SDLK_e)
-                player->spc_emu()->toggle_echo();
-              else if (ev.key.keysym.sym == SDLK_RETURN && // click in memory view. Toggle lock
-                (mouse::x >= MEMORY_VIEW_X && 
-                    mouse::x < MEMORY_VIEW_X + 512 &&
-                    mouse::y >= MEMORY_VIEW_Y &&
-                    mouse::y < MEMORY_VIEW_Y + 512 ) )
-              {
-                mouseover_hexdump_area.highnibble = 1;
-                mouseover_hexdump_area.res_x = 0;
-                mouseover_hexdump_area.res_y = 0;
-
-                mode = MODE_EDIT_MOUSE_HEXDUMP;
-                submode = mouseover_hexdump_area.EASY_EDIT;
-                // order matters .. call here: 
-                main_memory_area.lock();
-                //mouseover_hexdump_area.addr_being_edited = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x
-                //mouseover_hexdump_area.res_x = 1; //mouseover_hexdump_area.address_remainder;
-                
-                mouseover_hexdump_area.cursor.start_timer();
-              }
-              if (ev.key.keysym.sym == SDLK_ESCAPE)
-              {
-                if (main_memory_area.locked)
-                {
-                  main_memory_area.unlock(); 
-                }
-                else
-                {
-                  if (!g_cfg.nosound) {
-                    SDL_PauseAudio(1);
-                  }
-                  goto clean;
-                }
-              }
-            }
-            else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
-            {
-              int scancode = ev.key.keysym.sym;
-              if (ev.key.keysym.mod & (CMD_CTRL_KEY))  // GUI in SDL2
-              {
-                fprintf(stderr, "EOO");
-                if (scancode == SDLK_LEFT)
-                  prev_track();
-                else if (scancode == SDLK_RIGHT)
-                  next_track();
-              }
-              else if (scancode == 'h' || scancode == 'H')
-              {
-                mouseover_hexdump_area.horizontal = !mouseover_hexdump_area.horizontal;
-              }
-              else if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
-                ((scancode >= 'a') && (scancode <= 'f')) )
-              {
-                uint i=0;
-                //int addr;
-                Uint16 addr = mouseover_hexdump_area.addr_being_edited;
-                //fprintf(stderr, "Addr = %04x\n", addr);
-                
-                if ((scancode >= '0') && (scancode <= '9'))
-                  i = scancode - '0';
-                else if ((scancode >= 'A') && (scancode <= 'F'))
-                  i = (scancode - 'A') + 0x0a;
-                else if ((scancode >= 'a') && (scancode <= 'f'))
-                  i = (scancode - 'a') + 0x0a;  
-
-                // test reg is unimplemented but i'll leave this here..
-                if ( IS_SPECIAL_ADDRESSES(addr) )
-                {
-                  // only update the buffer the first time.. if we haven't started writing in a new value
-                  if (!mouseover_hexdump_area.draw_tmp_ram)
-                  {
-                    if (addr == 0xf1 || (addr >= 0xf4 && addr <= 0xf7)  )
-                      mouseover_hexdump_area.tmp_ram = IAPURAM[addr];
-                    else mouseover_hexdump_area.tmp_ram = player->spc_read(addr);
-
-                    fprintf(stderr, "tmpram = 0x%02x\n", mouseover_hexdump_area.tmp_ram);
-                  }
-                }
-                else 
-                {
-                  if (mouseover_hexdump_area.draw_tmp_ram) mouseover_hexdump_area.draw_tmp_ram = 0;
-                  mouseover_hexdump_area.tmp_ram = player->spc_read(addr);
-                }
-                if (mouseover_hexdump_area.highnibble)
-                {
-                  i <<= 4;
-                  i &= 0xf0;
-                  //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= 0x0f;
-                  mouseover_hexdump_area.tmp_ram &= 0x0f;
-                }
-                else
-                {
-                  i &= 0x0f;
-                  //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= 0xf0;
-                  mouseover_hexdump_area.tmp_ram &= 0xf0;
-                }
-
-                //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] |= i;
-                mouseover_hexdump_area.tmp_ram |= i;
-
-                if ( IS_SPECIAL_ADDRESSES(addr) )
-                {
-                  if (!mouseover_hexdump_area.highnibble)
-                  {
-                    if (addr >= 0xf4 && addr <= 0xf7)
-                    {
-                      port_tool.write(addr-0xf4, mouseover_hexdump_area.tmp_ram);
-                      //player->spc_write_port()
-                    }
-                    else 
-                    {
-                      player->spc_write(addr, mouseover_hexdump_area.tmp_ram);
-                      fprintf(stderr, "WRite");
-                    }
-                    mouseover_hexdump_area.draw_tmp_ram = 0;
-                  }
-                  else mouseover_hexdump_area.draw_tmp_ram = 1;
-                }
-                else player->spc_write(addr, mouseover_hexdump_area.tmp_ram);
-                
-                if (mouseover_hexdump_area.horizontal) mouseover_hexdump_area.inc_cursor_pos();
-                
-              }
-              /*else if (scancode == SDLK_SPACE)
-              {
-                mouseover_hexdump_area.inc_cursor_pos();
-              }*/
-              else if (scancode == SDLK_TAB)
-              {
-                mouseover_hexdump_area.inc_cursor_pos();
-                mouseover_hexdump_area.inc_cursor_pos();
-              }
-              else if (scancode == SDLK_BACKSPACE)
-              {
-                // eh
-                int i = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x;
-                while (i < (0x10000) )
-                {
-                  player->spc_write(i-1, player->spc_read(i));
-                  //IAPURAM[i-1] = IAPURAM[i];
-                  i++;
-                }
-                mouseover_hexdump_area.dec_cursor_pos();
-                mouseover_hexdump_area.dec_cursor_pos();
-                mouseover_hexdump_area.highnibble=1;
-              }
-              else if (scancode == SDLK_DELETE)
-              {
-                // eh
-                int i = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x;
-                while (i < (0x10000) )
-                {
-                  player->spc_write(i, player->spc_read(i+1));
-                  //IAPURAM[i] = IAPURAM[i+1];
-                  i++;
-                }
-                mouseover_hexdump_area.highnibble=1;
-              }
-              else if (scancode == SDLK_LEFT)
-              {
-                mouseover_hexdump_area.dec_cursor_pos();
-              }
-              else if (scancode == SDLK_RIGHT)
-              {
-                mouseover_hexdump_area.inc_cursor_pos();
-              }
-              else if (scancode == SDLK_UP)
-              {
-                mouseover_hexdump_area.dec_cursor_row();
-              }
-              else if (scancode == SDLK_DOWN)
-              {
-                mouseover_hexdump_area.inc_cursor_row();
-              }
-
-              if (ev.key.keysym.sym == SDLK_ESCAPE)
-              {
-                exit_edit_mode();
-              }
-              else if (scancode == SDLK_RETURN)
-              {
-
-                exit_edit_mode();
-              }
-            }   
-            else if (mode == MODE_EDIT_APU_PORT)
-            {
-
-              int scancode = ev.key.keysym.sym;
-
-              if (scancode == 'h' || scancode == 'H')
-              {
-                port_tool.horizontal = !port_tool.horizontal;
-              }
-
-              if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
-                ((scancode >= 'a') && (scancode <= 'f')))
-              {
-                Uint8 i;
-
-                i = Utility::scancode_to_hex(scancode); 
-
-                if (port_tool.highnibble)
-                {
-                  i <<= 4;
-                  i &= 0xf0;
-                  //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= i;
-                  port_tool.tmp[port_tool.portnum] &= 0x0f;
-                }
-                else
-                {
-                  i &= 0x0f;
-                  port_tool.tmp[port_tool.portnum] &= 0xf0;
-                }
-
-                port_tool.tmp[port_tool.portnum] |= i;
-                
-                if (port_tool.horizontal) port_tool.inc_cursor_pos();
-              }
-              else if (scancode == SDLK_SPACE)
-              {
-                port_tool.inc_cursor_pos();
-              }
-              else if (scancode == SDLK_TAB)
-              {
-                port_tool.inc_cursor_pos();
-                port_tool.inc_cursor_pos();
-              }
-              else if (scancode == SDLK_BACKSPACE)
-              {
-                if (port_tool.highnibble == 0)
-                {
-                  port_tool.tmp[port_tool.portnum] &= 0x0f;
-                  port_tool.dec_cursor_pos();
-                }
-              }
-              else if (scancode == SDLK_DELETE)
-              {
-                if (port_tool.highnibble)
-                {
-                  port_tool.tmp[port_tool.portnum] &= 0x0f;
-                }
-                else port_tool.tmp[port_tool.portnum] &= 0xf0;
-              }
-              else if (scancode == SDLK_LEFT)
-              {
-                port_tool.dec_cursor_pos();
-              }
-              else if (scancode == SDLK_RIGHT)
-              {
-                port_tool.inc_cursor_pos();
-              }
-              else if (scancode == SDLK_UP)
-              {
-                if (port_tool.highnibble)
-                {
-                  port_tool.tmp[port_tool.portnum] += 0x10;
-                }
-                else
-                {
-                  Uint8 tmp = port_tool.tmp[port_tool.portnum] + 1;
-                  tmp &= 0x0f;
-                  port_tool.tmp[port_tool.portnum] &= 0xf0;
-                  port_tool.tmp[port_tool.portnum] |= tmp;
-                }
-              }
-              else if (scancode == SDLK_DOWN)
-              {
-                if (port_tool.highnibble)
-                {
-                  port_tool.tmp[port_tool.portnum] -= 0x10;
-                }
-                else
-                {
-                  Uint8 tmp = port_tool.tmp[port_tool.portnum] - 1;
-                  tmp &= 0x0f;
-                  port_tool.tmp[port_tool.portnum] &= 0xf0;
-                  port_tool.tmp[port_tool.portnum] |= tmp;
-                }
-              }
-
-              if (ev.key.keysym.sym == SDLK_ESCAPE)
-              {
-                mode = MODE_NAV;
-                mouseover_hexdump_area.cursor.stop_timer();
-                port_tool.reset_port();
-              }
-              else if (ev.key.keysym.sym == SDLK_RETURN)
-              {
-                port_tool.write();
-              }
-            }       
+            quitting = true;
           }
-            break;
-        
-          case SDL_USEREVENT:
-          {
-            if (ev.user.code == UserEvents::mouse_react)
-            {
-              SDL_Event *te = (SDL_Event *)ev.user.data1;
-              if (te->motion.x >= (MOUSE_HEXDUMP_START_X - 2) && te->motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
-                te->motion.y >= Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y && te->motion.y <= MOUSE_HEXDUMP_END_Y)
-              {
-                // editor stuffz
-                Uint8 oldmode = mode;
-                mode = MODE_EDIT_MOUSE_HEXDUMP;
-                
-
-                int res_x, res_y, highnibble;
-
-                const int entry_width = MOUSE_HEXDUMP_ENTRY_X_INCREMENT;
-                const int entry_height = MOUSE_HEXDUMP_ENTRY_Y_INCREMENT;
-
-                mouseover_hexdump_area.rel_x = te->motion.x - MOUSE_HEXDUMP_START_X;
-                mouseover_hexdump_area.rel_x+=2;
-                mouseover_hexdump_area.rel_y = te->motion.y - Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y;
-
-                res_x = mouseover_hexdump_area.rel_x / entry_width;
-                res_y = mouseover_hexdump_area.rel_y / entry_height;
-
-                int res_half = mouseover_hexdump_area.rel_x % entry_width;
-                int tmp = entry_width / 2;
-
-                if (res_half < tmp) highnibble = 1;
-                else highnibble = 0;
-
-                if (oldmode == MODE_EDIT_MOUSE_HEXDUMP)
-                {
-                  if (res_x == mouseover_hexdump_area.res_x && res_y == mouseover_hexdump_area.res_y && highnibble == mouseover_hexdump_area.highnibble)
-                  {
-                    mode = MODE_NAV;
-                    mouseover_hexdump_area.cursor.stop_timer();
-                    main_memory_area.unlock();
-                    break;
-                  }
-                }
-                
-               
-
-                // order matters .. call here: 
-                main_memory_area.lock(1,0,0,res_x,res_y);
-                mouseover_hexdump_area.highnibble = highnibble;
-                //mouseover_hexdump_area.res_x = res_x;
-                //mouseover_hexdump_area.res_y = res_y;
-
-                
-                if (mouseover_hexdump_area.res_y == 16) mouseover_hexdump_area.res_y = 15;
-              }
-
-              /* porttool */
-              else if ( (te->button.x >= PORTTOOL_X + (8*5)) &&
-                  te->button.y >= PORTTOOL_Y && te->button.y < (PORTTOOL_Y + 16))
-              {
-                int x, y;
-                x = te->button.x - (PORTTOOL_X + (8*5));
-                x /= 8;
-
-                // prevent double click on +/- during port edit mode to cause cursor to show up
-                // on +/-
-                switch (x)
-                {
-                  case 2:
-                  case 3:
-                  case 7:
-                  case 8:
-                  case 12:
-                  case 13:
-                  case 17:
-                  case 18:
-                    port_tool.x = ((PORTTOOL_X + (8*5)) + (x*8));
-                }
-                
-                y = te->button.y - PORTTOOL_Y;
-                y /= 8;
-
-                if (te->button.button == SDL_BUTTON_LEFT)
-                {
-                  switch (x)
-                  {
-                    // i think single click takes care of this
-                    //case 1: IAPURAM[0xf4]++; break;
-                    case 2:
-                    {
-                      port_tool.set_port(0);
-
-                      port_tool.highnibble = 1;
-                      mode = MODE_EDIT_APU_PORT;
-                      mouseover_hexdump_area.cursor.start_timer();
-                    } break;
-                    case 3:
-                    {
-                      port_tool.set_port(0);
-                      port_tool.highnibble = 0;
-                      mode = MODE_EDIT_APU_PORT;
-                      mouseover_hexdump_area.cursor.start_timer();
-                    } break;
-                    //case 4: IAPURAM[0xf4]--; break;
-                    //case 6: IAPURAM[0xf5]++; break;
-                    case 7:
-                    {
-                      port_tool.set_port(1);
-                      port_tool.highnibble = 1;
-                      mode = MODE_EDIT_APU_PORT;
-                      mouseover_hexdump_area.cursor.start_timer();
-                    } break;
-                    case 8:
-                    {
-                      port_tool.set_port(1);
-                      port_tool.highnibble = 0;
-                      mode = MODE_EDIT_APU_PORT;
-                      mouseover_hexdump_area.cursor.start_timer();
-                    } break;
-                    //case 9: IAPURAM[0xf5]--; break;
-                    //case 11: IAPURAM[0xf6]++; break;
-                    case 12:
-                    {
-                      port_tool.set_port(2);
-                      port_tool.highnibble = 1;
-                      mode = MODE_EDIT_APU_PORT;
-                      mouseover_hexdump_area.cursor.start_timer();
-                    } break;
-                    case 13:
-                    {
-                      port_tool.set_port(2);
-                      port_tool.highnibble = 0;
-                      mode = MODE_EDIT_APU_PORT;
-                      mouseover_hexdump_area.cursor.start_timer();
-                    } break;
-                    //case 14: IAPURAM[0xf6]--; break;
-                    //case 16: IAPURAM[0xf7]++; break;
-                    case 17:
-                    {
-                      port_tool.set_port(3);
-                      port_tool.highnibble = 1;
-                      mode = MODE_EDIT_APU_PORT;
-                      mouseover_hexdump_area.cursor.start_timer();
-                    } break;
-                    case 18:
-                    {
-                      port_tool.set_port(3);
-                      port_tool.highnibble = 0;
-                      mode = MODE_EDIT_APU_PORT;
-                      mouseover_hexdump_area.cursor.start_timer();
-                    } break;
-                    //case 19: IAPURAM[0xf7]--; break;
-                  }
-                }
-              }
-            }
-          } break;
-          case SDL_MOUSEWHEEL:
-          {
-            // GLOBAL SHIT
-            if (  (mouse::x >= PORTTOOL_X + (8*5)) &&
-                  mouse::y >= PORTTOOL_Y && mouse::y < (PORTTOOL_Y + 16) )
-              {
-                int x, y;
-                x = mouse::x - (PORTTOOL_X + (8*5));
-                x /= 8;
-                y = mouse::y - PORTTOOL_Y;
-                y /= 8;
-                //Uint8 i;
-                  if (ev.wheel.y > 0)
-                  {
-                    if (x>1 && x<4) {   port_tool.inc_port(0); }
-                    if (x>6 && x<9) {   port_tool.inc_port(1); }
-                    if (x>11 && x<14) { port_tool.inc_port(2); }
-                    if (x>16 && x<19) { port_tool.inc_port(3); }
-                  }
-                  else if (ev.wheel.y < 0)
-                  {
-                    if (x>1 && x<4) {   port_tool.dec_port(0); }
-                    if (x>6 && x<9) {   port_tool.dec_port(1); }
-                    if (x>11 && x<14) { port_tool.dec_port(2); }
-                    if (x>16 && x<19) { port_tool.dec_port(3); }
-                  }
-              }
-              else
-              {
-                if (ev.wheel.y > 0)
-                {
-                  mouseover_hexdump_area.add_addr(-0x08);
-                  break;          
-                }
-                else
-                {
-                  mouseover_hexdump_area.add_addr(0x08);
-                  break;
-                }
-              }
-          } break;
-          case SDL_MOUSEBUTTONDOWN:           
-            {
-              voice_control.checkmouse((Uint16&)ev.motion.x, (Uint16&)ev.motion.y, ev.button.button); 
-
-              bool is_in_memory_window= (ev.motion.x >= MEMORY_VIEW_X && 
-                    ev.motion.x < MEMORY_VIEW_X + 512 &&
-                    ev.motion.y >= MEMORY_VIEW_Y &&
-                    ev.motion.y < MEMORY_VIEW_Y + 512) ? true:false;
-
-              
-
-              if (  ev.motion.x >= Screen::locked.x && 
-                    ev.motion.x < Screen::locked.x + Screen::locked.w &&
-                    ev.motion.y >= Screen::locked.y &&
-                    ev.motion.y < Screen::locked.y + 9 )
-              {
-                if(main_memory_area.locked)
-                  main_memory_area.toggle_lock();
-              }
-              else if (  ev.motion.x >= Screen::echoE.x && 
-                    ev.motion.x < Screen::echoE.x + Screen::echoE.w &&
-                    ev.motion.y >= Screen::echoE.y &&
-                    ev.motion.y < (Screen::echoE.y + Screen::echoE.h) )
-              {
-                // toggle_echo()
-                player->spc_emu()->toggle_echo();
-              }
-
-              else if (mode == MODE_NAV)
-              {
-                
-                if (  ev.motion.x >= INFO_X+(10*8) && 
-                    ev.motion.x < INFO_X+(13*8) &&
-                    ev.motion.y >= INFO_Y+56 &&
-                    ev.motion.y < INFO_Y+56+9 )
-                {
-                  if (ev.button.button == SDL_BUTTON_LEFT)
-                    player->spc_emu()->toggle_echo();
-                }
-                // click in memory view. Toggle lock
-                else if ( is_in_memory_window )
-                {
-                  // ORDER IMPORTANT
-                  if (ev.button.button == SDL_BUTTON_LEFT)
-                  {
-                    main_memory_area.toggle_lock(ev.motion.x, ev.motion.y);
-                  }
-                }
-              }
-
-              else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
-              {
-                if (is_in_memory_window && ev.button.button == SDL_BUTTON_LEFT)
-                {
-                  exit_edit_mode();
-                  main_memory_area.set_addr_from_cursor(ev.motion.x, ev.motion.y);
-                }
-              }
-              
-              if (ev.motion.x >= (MOUSE_HEXDUMP_START_X - 2) && ev.motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
-                ev.motion.y >= Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y && ev.motion.y <= MOUSE_HEXDUMP_END_Y)
-              {
-                if (ev.button.button == SDL_BUTTON_RIGHT)
-                {
-                  main_memory_area.toggle_lock();
-                }
-              }
-
-              /* porttool */
-              else if (  (ev.button.x >= PORTTOOL_X + (8*5)) &&
-                  ev.button.y >= PORTTOOL_Y && ev.button.y < (PORTTOOL_Y + 16) )
-              {
-                int x, y;
-                x = ev.button.x - (PORTTOOL_X + (8*5));
-                x /= 8;
-                y = ev.button.y - PORTTOOL_Y;
-                y /= 8;
-              
-                if (ev.button.button == SDL_BUTTON_LEFT)
-                {
-                  switch (x)
-                  {
-                    case 1: port_tool.dec_port (0); break;
-                    case 4: port_tool.inc_port (0); break;
-                    case 6: port_tool.dec_port (1); break;
-                    case 9: port_tool.inc_port (1); break;
-                    case 11: port_tool.dec_port(2); break;
-                    case 14: port_tool.inc_port(2); break;
-                    case 16: port_tool.dec_port(3); break;
-                    case 19: port_tool.inc_port(3); break;
-                  }
-                }
-                
-              } 
-
-              /* menu bar */
-              else if (
-                ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
-              {
-                int x = ev.button.x / 8;
-                if (x>=1 && x<=4) { printf ("penis5\n");goto clean; } // exit
-                if (x>=8 && x<=12) { 
-                  toggle_pause();
-                } // pause
-
-                if (x>=16 && x<=22) {  // restart
-                  restart_track();
-                }
-
-                if (x>=26 && x<=29) {  // prev
-                  SDL_PauseAudio(1);
-                  prev_track();
-                }
-
-                if (x>=33 && x<=36) { // next
-                  next_track();
-                }
-
-                if (x>=41 && x<=50) { // write mask
-                  write_mask(packed_mask);
-                }
-
-                if (x>=53 && x<=59) { // DSP MAP
-                  //write_mask(packed_mask);
-                  //mode = MODE_DSP_MAP;
-                }
-              }
-            }
-            break;
-            default:
-            break;
         }
-      } // while (pollevent)
-      
-    } // !g_cfg.novideo
-
-    if (!g_cfg.novideo)
-    {
-      time_cur = SDL_GetTicks();
-      do_scroller(time_cur - time_last);
-      
-      fade_arrays();      
-      
-      // draw the memory read/write display area
-      report::memsurface.draw(screen);
-
-      draw_block_usage_bar();
-
-      // The following are correlated from i and tmp. DO NOT MESS WITH THAT
-      // base height
-      i = 32;      
-      draw_mouse_address();
-      draw_program_counter();
-      draw_voices_pitchs(); // tmp is fucked with inside this function. DONT MESS
-      draw_voices_volumes();
-      draw_main_volume();
-      draw_echo_volume();
-      draw_mouseover_hexdump();
-      draw_porttool();
-      draw_time_and_echo_status();
-
-      
-
-
-      
-      
-      if (mode == MODE_EDIT_MOUSE_HEXDUMP)
-      {
-        mouseover_hexdump_area.draw_cursor(screen, Colors::green);
       }
+      else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
+      {
+        int scancode = ev.key.keysym.sym;
+        if (ev.key.keysym.mod & (CMD_CTRL_KEY))  // GUI in SDL2
+        {
+          fprintf(stderr, "EOO");
+          if (scancode == SDLK_LEFT)
+            prev_track();
+          else if (scancode == SDLK_RIGHT)
+            next_track();
+        }
+        else if (scancode == 'h' || scancode == 'H')
+        {
+          mouseover_hexdump_area.horizontal = !mouseover_hexdump_area.horizontal;
+        }
+        else if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
+          ((scancode >= 'a') && (scancode <= 'f')) )
+        {
+          uint i=0;
+          //int addr;
+          Uint16 addr = mouseover_hexdump_area.addr_being_edited;
+          //fprintf(stderr, "Addr = %04x\n", addr);
+          
+          if ((scancode >= '0') && (scancode <= '9'))
+            i = scancode - '0';
+          else if ((scancode >= 'A') && (scancode <= 'F'))
+            i = (scancode - 'A') + 0x0a;
+          else if ((scancode >= 'a') && (scancode <= 'f'))
+            i = (scancode - 'a') + 0x0a;  
+
+          // test reg is unimplemented but i'll leave this here..
+          if ( IS_SPECIAL_ADDRESSES(addr) )
+          {
+            // only update the buffer the first time.. if we haven't started writing in a new value
+            if (!mouseover_hexdump_area.draw_tmp_ram)
+            {
+              if (addr == 0xf1 || (addr >= 0xf4 && addr <= 0xf7)  )
+                mouseover_hexdump_area.tmp_ram = IAPURAM[addr];
+              else mouseover_hexdump_area.tmp_ram = player->spc_read(addr);
+
+              fprintf(stderr, "tmpram = 0x%02x\n", mouseover_hexdump_area.tmp_ram);
+            }
+          }
+          else 
+          {
+            if (mouseover_hexdump_area.draw_tmp_ram) mouseover_hexdump_area.draw_tmp_ram = 0;
+            mouseover_hexdump_area.tmp_ram = player->spc_read(addr);
+          }
+          if (mouseover_hexdump_area.highnibble)
+          {
+            i <<= 4;
+            i &= 0xf0;
+            //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= 0x0f;
+            mouseover_hexdump_area.tmp_ram &= 0x0f;
+          }
+          else
+          {
+            i &= 0x0f;
+            //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= 0xf0;
+            mouseover_hexdump_area.tmp_ram &= 0xf0;
+          }
+
+          //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] |= i;
+          mouseover_hexdump_area.tmp_ram |= i;
+
+          if ( IS_SPECIAL_ADDRESSES(addr) )
+          {
+            if (!mouseover_hexdump_area.highnibble)
+            {
+              if (addr >= 0xf4 && addr <= 0xf7)
+              {
+                port_tool.write(addr-0xf4, mouseover_hexdump_area.tmp_ram);
+                //player->spc_write_port()
+              }
+              else 
+              {
+                player->spc_write(addr, mouseover_hexdump_area.tmp_ram);
+                fprintf(stderr, "WRite");
+              }
+              mouseover_hexdump_area.draw_tmp_ram = 0;
+            }
+            else mouseover_hexdump_area.draw_tmp_ram = 1;
+          }
+          else player->spc_write(addr, mouseover_hexdump_area.tmp_ram);
+          
+          if (mouseover_hexdump_area.horizontal) mouseover_hexdump_area.inc_cursor_pos();
+          
+        }
+        /*else if (scancode == SDLK_SPACE)
+        {
+          mouseover_hexdump_area.inc_cursor_pos();
+        }*/
+        else if (scancode == SDLK_TAB)
+        {
+          mouseover_hexdump_area.inc_cursor_pos();
+          mouseover_hexdump_area.inc_cursor_pos();
+        }
+        else if (scancode == SDLK_BACKSPACE)
+        {
+          // eh
+          int i = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x;
+          while (i < (0x10000) )
+          {
+            player->spc_write(i-1, player->spc_read(i));
+            //IAPURAM[i-1] = IAPURAM[i];
+            i++;
+          }
+          mouseover_hexdump_area.dec_cursor_pos();
+          mouseover_hexdump_area.dec_cursor_pos();
+          mouseover_hexdump_area.highnibble=1;
+        }
+        else if (scancode == SDLK_DELETE)
+        {
+          // eh
+          int i = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x;
+          while (i < (0x10000) )
+          {
+            player->spc_write(i, player->spc_read(i+1));
+            //IAPURAM[i] = IAPURAM[i+1];
+            i++;
+          }
+          mouseover_hexdump_area.highnibble=1;
+        }
+        else if (scancode == SDLK_LEFT)
+        {
+          mouseover_hexdump_area.dec_cursor_pos();
+        }
+        else if (scancode == SDLK_RIGHT)
+        {
+          mouseover_hexdump_area.inc_cursor_pos();
+        }
+        else if (scancode == SDLK_UP)
+        {
+          mouseover_hexdump_area.dec_cursor_row();
+        }
+        else if (scancode == SDLK_DOWN)
+        {
+          mouseover_hexdump_area.inc_cursor_row();
+        }
+
+        if (ev.key.keysym.sym == SDLK_ESCAPE)
+        {
+          exit_edit_mode();
+        }
+        else if (scancode == SDLK_RETURN)
+        {
+
+          exit_edit_mode();
+        }
+      }   
       else if (mode == MODE_EDIT_APU_PORT)
       {
-        port_tool.draw_cursor(screen, Colors::green);
-      }
 
-      // toggle should be 0 ALWAYS when deactivated
-      if (main_memory_area.memcursor.is_active())
-      {
-        if (main_memory_area.memcursor.is_toggled())
+        int scancode = ev.key.keysym.sym;
+
+        if (scancode == 'h' || scancode == 'H')
         {
-          report_cursor(mouseover_hexdump_area.addr_being_edited);
+          port_tool.horizontal = !port_tool.horizontal;
         }
-        else report::restore_color(mouseover_hexdump_area.addr_being_edited);
-      }
-      
 
-      if (mouse::show)
+        if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
+          ((scancode >= 'a') && (scancode <= 'f')))
+        {
+          Uint8 i;
+
+          i = Utility::scancode_to_hex(scancode); 
+
+          if (port_tool.highnibble)
+          {
+            i <<= 4;
+            i &= 0xf0;
+            //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= i;
+            port_tool.tmp[port_tool.portnum] &= 0x0f;
+          }
+          else
+          {
+            i &= 0x0f;
+            port_tool.tmp[port_tool.portnum] &= 0xf0;
+          }
+
+          port_tool.tmp[port_tool.portnum] |= i;
+          
+          if (port_tool.horizontal) port_tool.inc_cursor_pos();
+        }
+        else if (scancode == SDLK_SPACE)
+        {
+          port_tool.inc_cursor_pos();
+        }
+        else if (scancode == SDLK_TAB)
+        {
+          port_tool.inc_cursor_pos();
+          port_tool.inc_cursor_pos();
+        }
+        else if (scancode == SDLK_BACKSPACE)
+        {
+          if (port_tool.highnibble == 0)
+          {
+            port_tool.tmp[port_tool.portnum] &= 0x0f;
+            port_tool.dec_cursor_pos();
+          }
+        }
+        else if (scancode == SDLK_DELETE)
+        {
+          if (port_tool.highnibble)
+          {
+            port_tool.tmp[port_tool.portnum] &= 0x0f;
+          }
+          else port_tool.tmp[port_tool.portnum] &= 0xf0;
+        }
+        else if (scancode == SDLK_LEFT)
+        {
+          port_tool.dec_cursor_pos();
+        }
+        else if (scancode == SDLK_RIGHT)
+        {
+          port_tool.inc_cursor_pos();
+        }
+        else if (scancode == SDLK_UP)
+        {
+          if (port_tool.highnibble)
+          {
+            port_tool.tmp[port_tool.portnum] += 0x10;
+          }
+          else
+          {
+            Uint8 tmp = port_tool.tmp[port_tool.portnum] + 1;
+            tmp &= 0x0f;
+            port_tool.tmp[port_tool.portnum] &= 0xf0;
+            port_tool.tmp[port_tool.portnum] |= tmp;
+          }
+        }
+        else if (scancode == SDLK_DOWN)
+        {
+          if (port_tool.highnibble)
+          {
+            port_tool.tmp[port_tool.portnum] -= 0x10;
+          }
+          else
+          {
+            Uint8 tmp = port_tool.tmp[port_tool.portnum] - 1;
+            tmp &= 0x0f;
+            port_tool.tmp[port_tool.portnum] &= 0xf0;
+            port_tool.tmp[port_tool.portnum] |= tmp;
+          }
+        }
+
+        if (ev.key.keysym.sym == SDLK_ESCAPE)
+        {
+          mode = MODE_NAV;
+          mouseover_hexdump_area.cursor.stop_timer();
+          port_tool.reset_port();
+        }
+        else if (ev.key.keysym.sym == SDLK_RETURN)
+        {
+          port_tool.write();
+        }
+      }       
+    }
+      break;
+
+    case SDL_USEREVENT:
+    {
+      if (ev.user.code == UserEvents::mouse_react)
       {
-        if (mouse::x < (screen->w-40) && mouse::y < (screen->h - 8))
-        { 
-          sprintf(tmpbuf, "(%d,%d)", mouse::x, mouse::y);
-          sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, Colors::white);
+        SDL_Event *te = (SDL_Event *)ev.user.data1;
+        if (te->motion.x >= (MOUSE_HEXDUMP_START_X - 2) && te->motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
+          te->motion.y >= Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y && te->motion.y <= MOUSE_HEXDUMP_END_Y)
+        {
+          // editor stuffz
+          Uint8 oldmode = mode;
+          mode = MODE_EDIT_MOUSE_HEXDUMP;
+          
+
+          int res_x, res_y, highnibble;
+
+          const int entry_width = MOUSE_HEXDUMP_ENTRY_X_INCREMENT;
+          const int entry_height = MOUSE_HEXDUMP_ENTRY_Y_INCREMENT;
+
+          mouseover_hexdump_area.rel_x = te->motion.x - MOUSE_HEXDUMP_START_X;
+          mouseover_hexdump_area.rel_x+=2;
+          mouseover_hexdump_area.rel_y = te->motion.y - Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y;
+
+          res_x = mouseover_hexdump_area.rel_x / entry_width;
+          res_y = mouseover_hexdump_area.rel_y / entry_height;
+
+          int res_half = mouseover_hexdump_area.rel_x % entry_width;
+          int tmp = entry_width / 2;
+
+          if (res_half < tmp) highnibble = 1;
+          else highnibble = 0;
+
+          if (oldmode == MODE_EDIT_MOUSE_HEXDUMP)
+          {
+            if (res_x == mouseover_hexdump_area.res_x && res_y == mouseover_hexdump_area.res_y && highnibble == mouseover_hexdump_area.highnibble)
+            {
+              mode = MODE_NAV;
+              mouseover_hexdump_area.cursor.stop_timer();
+              main_memory_area.unlock();
+              break;
+            }
+          }
+          
+         
+
+          // order matters .. call here: 
+          main_memory_area.lock(1,0,0,res_x,res_y);
+          mouseover_hexdump_area.highnibble = highnibble;
+          //mouseover_hexdump_area.res_x = res_x;
+          //mouseover_hexdump_area.res_y = res_y;
+
+          
+          if (mouseover_hexdump_area.res_y == 16) mouseover_hexdump_area.res_y = 15;
+        }
+
+        /* porttool */
+        else if ( (te->button.x >= PORTTOOL_X + (8*5)) &&
+            te->button.y >= PORTTOOL_Y && te->button.y < (PORTTOOL_Y + 16))
+        {
+          int x, y;
+          x = te->button.x - (PORTTOOL_X + (8*5));
+          x /= 8;
+
+          // prevent double click on +/- during port edit mode to cause cursor to show up
+          // on +/-
+          switch (x)
+          {
+            case 2:
+            case 3:
+            case 7:
+            case 8:
+            case 12:
+            case 13:
+            case 17:
+            case 18:
+              port_tool.x = ((PORTTOOL_X + (8*5)) + (x*8));
+          }
+          
+          y = te->button.y - PORTTOOL_Y;
+          y /= 8;
+
+          if (te->button.button == SDL_BUTTON_LEFT)
+          {
+            switch (x)
+            {
+              // i think single click takes care of this
+              //case 1: IAPURAM[0xf4]++; break;
+              case 2:
+              {
+                port_tool.set_port(0);
+
+                port_tool.highnibble = 1;
+                mode = MODE_EDIT_APU_PORT;
+                mouseover_hexdump_area.cursor.start_timer();
+              } break;
+              case 3:
+              {
+                port_tool.set_port(0);
+                port_tool.highnibble = 0;
+                mode = MODE_EDIT_APU_PORT;
+                mouseover_hexdump_area.cursor.start_timer();
+              } break;
+              //case 4: IAPURAM[0xf4]--; break;
+              //case 6: IAPURAM[0xf5]++; break;
+              case 7:
+              {
+                port_tool.set_port(1);
+                port_tool.highnibble = 1;
+                mode = MODE_EDIT_APU_PORT;
+                mouseover_hexdump_area.cursor.start_timer();
+              } break;
+              case 8:
+              {
+                port_tool.set_port(1);
+                port_tool.highnibble = 0;
+                mode = MODE_EDIT_APU_PORT;
+                mouseover_hexdump_area.cursor.start_timer();
+              } break;
+              //case 9: IAPURAM[0xf5]--; break;
+              //case 11: IAPURAM[0xf6]++; break;
+              case 12:
+              {
+                port_tool.set_port(2);
+                port_tool.highnibble = 1;
+                mode = MODE_EDIT_APU_PORT;
+                mouseover_hexdump_area.cursor.start_timer();
+              } break;
+              case 13:
+              {
+                port_tool.set_port(2);
+                port_tool.highnibble = 0;
+                mode = MODE_EDIT_APU_PORT;
+                mouseover_hexdump_area.cursor.start_timer();
+              } break;
+              //case 14: IAPURAM[0xf6]--; break;
+              //case 16: IAPURAM[0xf7]++; break;
+              case 17:
+              {
+                port_tool.set_port(3);
+                port_tool.highnibble = 1;
+                mode = MODE_EDIT_APU_PORT;
+                mouseover_hexdump_area.cursor.start_timer();
+              } break;
+              case 18:
+              {
+                port_tool.set_port(3);
+                port_tool.highnibble = 0;
+                mode = MODE_EDIT_APU_PORT;
+                mouseover_hexdump_area.cursor.start_timer();
+              } break;
+              //case 19: IAPURAM[0xf7]--; break;
+            }
+          }
         }
       }
-      
-      //SDL_UpdateRect(screen, 0, 0, 0, 0);
-      SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
-      SDL_RenderClear(sdlRenderer);
-      SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-      SDL_RenderPresent(sdlRenderer);
-      time_last = time_cur;
-      if (g_cfg.nice) {  SDL_Delay(100); }
-      //SDL_Delay( 1000 / 100 );
-    } // if !g_cfg.novideo
-    is_first_run = false;
+    } break;
+    case SDL_MOUSEWHEEL:
+    {
+      // GLOBAL SHIT
+      if (  (mouse::x >= PORTTOOL_X + (8*5)) &&
+            mouse::y >= PORTTOOL_Y && mouse::y < (PORTTOOL_Y + 16) )
+        {
+          int x, y;
+          x = mouse::x - (PORTTOOL_X + (8*5));
+          x /= 8;
+          y = mouse::y - PORTTOOL_Y;
+          y /= 8;
+          //Uint8 i;
+            if (ev.wheel.y > 0)
+            {
+              if (x>1 && x<4) {   port_tool.inc_port(0); }
+              if (x>6 && x<9) {   port_tool.inc_port(1); }
+              if (x>11 && x<14) { port_tool.inc_port(2); }
+              if (x>16 && x<19) { port_tool.inc_port(3); }
+            }
+            else if (ev.wheel.y < 0)
+            {
+              if (x>1 && x<4) {   port_tool.dec_port(0); }
+              if (x>6 && x<9) {   port_tool.dec_port(1); }
+              if (x>11 && x<14) { port_tool.dec_port(2); }
+              if (x>16 && x<19) { port_tool.dec_port(3); }
+            }
+        }
+        else
+        {
+          if (ev.wheel.y > 0)
+          {
+            mouseover_hexdump_area.add_addr(-0x08);
+            break;          
+          }
+          else
+          {
+            mouseover_hexdump_area.add_addr(0x08);
+            break;
+          }
+        }
+    } break;
+    case SDL_MOUSEBUTTONDOWN:           
+      {
+        voice_control.checkmouse((Uint16&)ev.motion.x, (Uint16&)ev.motion.y, ev.button.button); 
+
+        bool is_in_memory_window= (ev.motion.x >= MEMORY_VIEW_X && 
+              ev.motion.x < MEMORY_VIEW_X + 512 &&
+              ev.motion.y >= MEMORY_VIEW_Y &&
+              ev.motion.y < MEMORY_VIEW_Y + 512) ? true:false;
+
+        
+
+        if (  ev.motion.x >= Screen::locked.x && 
+              ev.motion.x < Screen::locked.x + Screen::locked.w &&
+              ev.motion.y >= Screen::locked.y &&
+              ev.motion.y < Screen::locked.y + 9 )
+        {
+          if(main_memory_area.locked)
+            main_memory_area.toggle_lock();
+        }
+        else if (  ev.motion.x >= Screen::echoE.x && 
+              ev.motion.x < Screen::echoE.x + Screen::echoE.w &&
+              ev.motion.y >= Screen::echoE.y &&
+              ev.motion.y < (Screen::echoE.y + Screen::echoE.h) )
+        {
+          // toggle_echo()
+          player->spc_emu()->toggle_echo();
+        }
+
+        else if (mode == MODE_NAV)
+        {
+          
+          if (  ev.motion.x >= INFO_X+(10*8) && 
+              ev.motion.x < INFO_X+(13*8) &&
+              ev.motion.y >= INFO_Y+56 &&
+              ev.motion.y < INFO_Y+56+9 )
+          {
+            if (ev.button.button == SDL_BUTTON_LEFT)
+              player->spc_emu()->toggle_echo();
+          }
+          // click in memory view. Toggle lock
+          else if ( is_in_memory_window )
+          {
+            // ORDER IMPORTANT
+            if (ev.button.button == SDL_BUTTON_LEFT)
+            {
+              main_memory_area.toggle_lock(ev.motion.x, ev.motion.y);
+            }
+          }
+        }
+
+        else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
+        {
+          if (is_in_memory_window && ev.button.button == SDL_BUTTON_LEFT)
+          {
+            exit_edit_mode();
+            main_memory_area.set_addr_from_cursor(ev.motion.x, ev.motion.y);
+          }
+        }
+        
+        if (ev.motion.x >= (MOUSE_HEXDUMP_START_X - 2) && ev.motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
+          ev.motion.y >= Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y && ev.motion.y <= MOUSE_HEXDUMP_END_Y)
+        {
+          if (ev.button.button == SDL_BUTTON_RIGHT)
+          {
+            main_memory_area.toggle_lock();
+          }
+        }
+
+        /* porttool */
+        else if (  (ev.button.x >= PORTTOOL_X + (8*5)) &&
+            ev.button.y >= PORTTOOL_Y && ev.button.y < (PORTTOOL_Y + 16) )
+        {
+          int x, y;
+          x = ev.button.x - (PORTTOOL_X + (8*5));
+          x /= 8;
+          y = ev.button.y - PORTTOOL_Y;
+          y /= 8;
+        
+          if (ev.button.button == SDL_BUTTON_LEFT)
+          {
+            switch (x)
+            {
+              case 1: port_tool.dec_port (0); break;
+              case 4: port_tool.inc_port (0); break;
+              case 6: port_tool.dec_port (1); break;
+              case 9: port_tool.inc_port (1); break;
+              case 11: port_tool.dec_port(2); break;
+              case 14: port_tool.inc_port(2); break;
+              case 16: port_tool.dec_port(3); break;
+              case 19: port_tool.inc_port(3); break;
+            }
+          }
+          
+        } 
+
+        /* menu bar */
+        else if (
+          ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
+        {
+          int x = ev.button.x / 8;
+          if (x>=1 && x<=4) { printf ("penis5\n"); quitting=true; } // exit
+          if (x>=8 && x<=12) { 
+            toggle_pause();
+          } // pause
+
+          if (x>=16 && x<=22) {  // restart
+            restart_track();
+          }
+
+          if (x>=26 && x<=29) {  // prev
+            SDL_PauseAudio(1);
+            prev_track();
+          }
+
+          if (x>=33 && x<=36) { // next
+            next_track();
+          }
+
+          if (x>=41 && x<=50) { // write mask
+            write_mask(packed_mask);
+          }
+
+          if (x>=53 && x<=59) { // DSP MAP
+            //write_mask(packed_mask);
+            //mode = MODE_DSP_MAP;
+          }
+        }
+      }
+      break;
+      default:
+      break;
   }
+}
+
+void Main_Window::run()
+{
+
+//reload:
+  //reload();
+  
+
+  pack_mask(packed_mask);
+  
+  if (g_cfg.statusline) {
+    printf("%s / %d         \r", 
+        g_cfg.playlist[g_cur_entry],
+        /*audio_samples_written/44100,*/
+        song_time
+        /*(audio_samples_written/44100)/(song_time)*/);
+    fflush(stdout);
+  }
+  
+  /* Check if it is time to change tune.
+   */   
+  if (player->emu()->tell()/1000 >= song_time) 
+  {
+    if (g_cfg.autowritemask) {
+      write_mask(packed_mask);
+      if (g_cfg.apply_block) {
+        printf("Applying mask on file %s using $%02X as filler\n", g_cfg.playlist[g_cur_entry], g_cfg.filler);
+        applyBlockMask(g_cfg.playlist[g_cur_entry]);
+      }
+    }
+    g_cur_entry++;
+    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; }
+    //goto reload;
+    reload();
+  }
+
+  
+
 
   clean:
   ;
+}
+
+void Main_Window::draw()
+{
+  if (!g_cfg.novideo)
+  {
+    time_cur = SDL_GetTicks();
+    do_scroller(time_cur - time_last);
+    
+    fade_arrays();      
+    
+    // draw the memory read/write display area
+    report::memsurface.draw(screen);
+
+    draw_block_usage_bar();
+
+    // The following are correlated from i and tmp. DO NOT MESS WITH THAT
+    // base height
+    i = 32;      
+    draw_mouse_address();
+    draw_program_counter();
+    draw_voices_pitchs(); // tmp is fucked with inside this function. DONT MESS
+    draw_voices_volumes();
+    draw_main_volume();
+    draw_echo_volume();
+    draw_mouseover_hexdump();
+    draw_porttool();
+    draw_time_and_echo_status();
+
+    
+
+
+    
+    
+    if (mode == MODE_EDIT_MOUSE_HEXDUMP)
+    {
+      mouseover_hexdump_area.draw_cursor(screen, Colors::green);
+    }
+    else if (mode == MODE_EDIT_APU_PORT)
+    {
+      port_tool.draw_cursor(screen, Colors::green);
+    }
+
+    // toggle should be 0 ALWAYS when deactivated
+    if (main_memory_area.memcursor.is_active())
+    {
+      if (main_memory_area.memcursor.is_toggled())
+      {
+        report_cursor(mouseover_hexdump_area.addr_being_edited);
+      }
+      else report::restore_color(mouseover_hexdump_area.addr_being_edited);
+    }
+    
+
+    if (mouse::show)
+    {
+      if (mouse::x < (screen->w-40) && mouse::y < (screen->h - 8))
+      { 
+        sprintf(tmpbuf, "(%d,%d)", mouse::x, mouse::y);
+        sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, Colors::white);
+      }
+    }
+    
+    //SDL_UpdateRect(screen, 0, 0, 0, 0);
+    SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
+    SDL_RenderClear(sdlRenderer);
+    SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+    SDL_RenderPresent(sdlRenderer);
+    time_last = time_cur;
+    if (g_cfg.nice) {  SDL_Delay(100); }
+    //SDL_Delay( 1000 / 100 );
+  } // if !g_cfg.novideo
+  is_first_run = false;
 }
 
 Main_Window::Main_Window(int &argc, char **argv) : 

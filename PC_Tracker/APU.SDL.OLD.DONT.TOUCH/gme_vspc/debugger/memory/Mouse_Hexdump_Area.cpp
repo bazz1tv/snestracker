@@ -9,11 +9,17 @@ int Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y;
 
 }*/
 
+void Mouse_Hexdump_Area::add_addr(int i)
+{
+  address += i;
+  update_editing_address();
+}
+
 void Mouse_Hexdump_Area::update_editing_address()
 {
   report::restore_color(addr_being_edited);
   addr_being_edited = address+(res_y*8)+res_x;
-
+  //fprintf(stderr,"DERP");
   //update_tmp_ram();
   if ( IS_SPECIAL_ADDRESSES(addr_being_edited) )//(addr_being_edited == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr_being_edited==0xf1 || addr_being_edited == 0xf0)
   {

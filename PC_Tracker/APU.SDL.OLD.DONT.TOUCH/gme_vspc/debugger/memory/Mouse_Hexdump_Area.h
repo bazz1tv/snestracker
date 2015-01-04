@@ -47,7 +47,7 @@ struct Mouse_Hexdump_Area : Memory
   void dec_cursor_row();
   void inc_cursor_pos();
   void dec_cursor_pos();
-
+  void add_addr(int i);
 
   
 

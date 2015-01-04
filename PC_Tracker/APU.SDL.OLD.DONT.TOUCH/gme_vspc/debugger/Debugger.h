@@ -20,6 +20,7 @@ struct Debugger : Debugger_Base
 public:
   Debugger(int &argc, char **argv); // , Music_Player *player, SDL_Window *, SDL_Renderer *, SDL_Texture *, SDL_Surface*);
   void run();
+  void handle_events();
 
   Main_Window main_window;
 };

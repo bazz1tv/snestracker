@@ -20,7 +20,13 @@ main_window(argc,argv)
 
 void Debugger::run()
 {
-  main_window.run();
+  main_window.reload();
+  while (!quitting)
+  {
+    main_window.run();
+    handle_events();
+    main_window.draw();
+  }
 }
 
 void Debugger::handle_events()
@@ -28,6 +34,7 @@ void Debugger::handle_events()
   SDL_Event ev;
   while (SDL_PollEvent(&ev))
   {
+    main_window.receive_event(ev);
   }
 }
 

@@ -9,7 +9,7 @@
 Main_Memory_Area::Main_Memory_Area(Mouse_Hexdump_Area *mouse_hexdump_area) :
 mouse_hexdump_area(mouse_hexdump_area)
 {
-  
+
 }
 
 
@@ -63,6 +63,7 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
     cursor.start_timer();
 
     memcursor.start_timer();
+    report::restore_color(addr_being_edited);
     addr_being_edited = address+(res_y*8)+res_x;
   }
   else
@@ -77,7 +78,7 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
         set_addr_from_cursor(x, y);
       }
     }
-    report::restore_color(addr_being_edited);
+    
 
     mode = MODE_NAV;
     cursor.stop_timer();
