@@ -469,9 +469,6 @@ void Debugger::do_scroller(int elaps_milli)
 
 void Debugger::run()
 {
-  
-  // this is the address that shows up after "Addr Mouse"
-
 reload:
   reload();
   

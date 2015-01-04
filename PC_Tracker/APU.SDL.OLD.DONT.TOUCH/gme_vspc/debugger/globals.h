@@ -21,8 +21,8 @@ namespace mouse {
 
 //extern  //=-1;
 
-#define PACKAGE "spcview"
-#define VERSION "0.01"
+//#define PACKAGE "spcview"
+#define VERSION "1.33"
 
 
 
