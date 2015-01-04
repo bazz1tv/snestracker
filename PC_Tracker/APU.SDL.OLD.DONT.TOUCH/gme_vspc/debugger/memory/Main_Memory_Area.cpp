@@ -6,7 +6,11 @@
 //extern Music_Player *player;
 
 
-
+Main_Memory_Area::Main_Memory_Area(Mouse_Hexdump_Area *mouse_hexdump_area) :
+mouse_hexdump_area(mouse_hexdump_area)
+{
+  
+}
 
 
 
@@ -18,6 +22,8 @@ void Main_Memory_Area::set_addr(int i)
     memcursor.start_timer();
   }
   Memory::set_addr(i);
+  // shared variables, but not all of them
+  mouse_hexdump_area->update_editing_address();
 }
 void Main_Memory_Area::set_addr_from_cursor(int x, int y)
 {

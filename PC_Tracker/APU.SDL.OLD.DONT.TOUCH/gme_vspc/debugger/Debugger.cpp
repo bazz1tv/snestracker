@@ -23,6 +23,14 @@ void Debugger::run()
   main_window.run();
 }
 
+void Debugger::handle_events()
+{
+  SDL_Event ev;
+  while (SDL_PollEvent(&ev))
+  {
+  }
+}
+
 
 
 

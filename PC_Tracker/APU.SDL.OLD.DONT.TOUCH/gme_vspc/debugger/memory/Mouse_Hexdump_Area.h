@@ -38,6 +38,7 @@ namespace Screen
 
 struct Mouse_Hexdump_Area : Memory
 {
+  //friend class Main_Memory_Area;
   //Mouse_Hexdump_Area(Music_Player *player, SDL_Surface *screen/*, Uint16 &address, Uint16 &address_being_edited*/);
 
   void update_editing_address();

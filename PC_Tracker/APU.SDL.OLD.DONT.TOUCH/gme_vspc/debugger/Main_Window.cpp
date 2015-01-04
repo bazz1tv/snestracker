@@ -7,467 +7,6 @@
 #define L_FLAG 0
 #define R_FLAG 1
 
-Main_Window::Main_Window(int &argc, char **argv) : 
-port_tool(&mouseover_hexdump_area.cursor)
-{
-  int res;
-  static struct option long_options[] = {
-    {"nosound", 0, 0, 0},
-    {"novideo", 0, 0, 1},
-    {"update_in_callback", 0, 0, 2},
-    {"echo", 0, 0, 3},
-    {"interpolation", 0, 0, 4},
-    {"savemask", 0, 0, 5},
-    {"default_time", 1, 0, 6},
-    {"ignore_tag_time", 0, 0, 7},
-    {"extra_time", 1, 0, 8},
-    {"yield", 0, 0, 9},
-    {"auto_write_mask", 0, 0, 10},
-    {"status_line", 0, 0, 11},
-    {"help", 0, 0, 'h'},
-    {"apply_mask_block", 0, 0, 12},
-    {"apply_mask_byte", 0, 0, 13},
-    {"filler", 1, 0, 14},
-    {0,0,0,0}
-  };
-
-  if (screen == NULL)
-  {
-    fprintf(stderr, "1 = %d, 2 = %d\n", screen, Render_Context::screen);
-    exit(1);
-  }
-
-  while ((res=getopt_long(argc, argv, "h",
-        long_options, NULL))!=-1)
-  {
-    switch(res)
-    {
-      case 0:
-        g_cfg.nosound = 1;
-        break;
-      case 1:
-        g_cfg.novideo = 2;
-        break;
-      case 2:
-        g_cfg.update_in_callback = 1;
-        break;
-      case 4:
-        //spc_config.is_interpolation = 1;
-        break;
-      case 3:
-        //spc_config.is_echo = 1;
-        break;
-      case 5:
-        g_cfg.autowritemask = 1;
-        break;
-      case 6:
-        g_cfg.defaultsongtime = atoi(optarg);
-        break;
-      case 7:
-        g_cfg.ignoretagtime = 1;
-        break;
-      case 8:
-        g_cfg.extratime = atoi(optarg);
-        break;
-      case 9:
-        g_cfg.nice = 1;
-        break;
-      case 10:
-        g_cfg.autowritemask = 1;
-        break;
-      case 11:
-        g_cfg.statusline = 1;
-        break;
-      case 12:
-        g_cfg.apply_block = 1;
-        break;
-      case 14:
-        g_cfg.filler = strtol(optarg, NULL, 0);
-        break;
-      case 'h':
-        printf("Usage: ./vspcplay [options] files...\n");
-        printf("\n");
-        printf("Valid options:\n");
-        printf(" -h, --help     Print help\n");
-        printf(" --nosound      Dont output sound\n");
-        printf(" --novideo      Dont open video window\n");
-        printf(" --update_in_callback   Update spc sound buffer inside\n");
-        printf("                        sdl audio callback\n");
-        printf(" --interpolation  Use sound interpolatoin\n");
-        printf(" --echo           Enable echo\n");
-        printf(" --auto_write_mask   Write mask file automatically when a\n");
-        printf("                     tune ends due to playtime from tag or\n");
-        printf("                     default play time.\n");
-        printf(" --default_time t    Set the default play time in seconds\n");
-        printf("                     for when there is not id666 tag. (default: %d\n", DEFAULT_SONGTIME);
-        printf(" --ignore_tag_time   Ignore the time from the id666 tag and\n");
-        printf("                     use default time\n");
-        printf(" --extra_time t      Set the number of extra seconds to play (relative to\n");
-        printf("                     the tag time or default time).\n");
-        printf(" --nice              Try to use less cpu for graphics\n");
-        printf(" --status_line       Enable a text mode status line\n");
-        printf("\n!!! Careful with those!, they can ruin your sets so backup first!!!\n");
-        printf(" --apply_mask_block  Apply the mask to the file (replace unreport::used blocks(256 bytes) with a pattern)\n");
-        printf(" --filler val        Set the pattern byte value. Use with the option above. Default 0\n");
-        printf("\n");
-        printf("The mask will be applied when the tune ends due to playtime from tag\n");
-        printf("or default playtime.\n");
-        exit(0);
-        break;
-    }
-  }
-
-  g_cfg.num_files = argc-optind;
-  g_cfg.playlist = &argv[optind];
-
-  time_cur = time_last = SDL_GetTicks();
-  report::memsurface.init();
-}
-
-
-
-
-
-void Main_Window::toggle_pause()
-{
-  player->toggle_pause();
-}
-
-void Main_Window::restart_track()
-{
-  SDL_PauseAudio(1);
-  g_cur_entry=0;
-  player->pause(0);
-  reload();
-}
-
-void Main_Window::prev_track()
-{
-  SDL_PauseAudio(true);
-  g_cur_entry--;
-  if (g_cur_entry<0) { g_cur_entry = g_cfg.num_files-1; }
-  reload();
-}
-
-void Main_Window::next_track()
-{
-  SDL_PauseAudio(true);
-  g_cur_entry++;
-  if (g_cur_entry>=g_cfg.num_files) { g_cur_entry = 0; }
-  reload();
-}
-
-void Main_Window::exit_edit_mode()
-{
-  mode = MODE_NAV;
-  submode = 0;
-  mouseover_hexdump_area.draw_tmp_ram = 0;
-
-  main_memory_area.unlock();
-}
-
-void Main_Window::draw_block_usage_bar()
-{
-  // draw the 256 bytes block usage bar
-  tmprect.x = MEMORY_VIEW_X-1;
-  tmprect.w = 1; tmprect.h = 2;
-  int tmp=0;
-  for (int i=0; i<256; i++)
-  {
-    tmprect.y = MEMORY_VIEW_Y + i * 2;
-    if (report::used2[i])
-    {
-      SDL_FillRect(screen, &tmprect, Colors::white); 
-      tmp++;
-    }
-  }
-  
-  sprintf(tmpbuf, "Blocks report::used: %3d/256 (%.1f%%)  ", tmp, (float)tmp*100.0/256.0);
-  sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2, tmpbuf, Colors::white);
-
-  if (1)
-  {
-    sprintf(tmpbuf, "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
-        packed_mask[0], packed_mask[1], packed_mask[2], packed_mask[3],
-        packed_mask[4], packed_mask[5], packed_mask[6], packed_mask[7],
-        packed_mask[8], packed_mask[9], packed_mask[10], packed_mask[11],
-        packed_mask[12], packed_mask[13], packed_mask[14], packed_mask[15],
-        packed_mask[16], packed_mask[17], packed_mask[18], packed_mask[19],
-        packed_mask[20], packed_mask[21], packed_mask[22], packed_mask[23],
-        packed_mask[24], packed_mask[25], packed_mask[26], packed_mask[27],
-        packed_mask[28], packed_mask[29], packed_mask[30], packed_mask[31]);
-
-    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2 + 9, tmpbuf, Colors::white);
-  }
-}
-
-void Main_Window::draw_mouse_address()
-{
-  // write the address under mouse cursor
-  if (mouseover_hexdump_area.address >=0)
-  {
-    sprintf(tmpbuf, "Addr mouse: $%04X", mouse_addr);
-    sdlfont_drawString(screen, MEMORY_VIEW_X+8*(23), MEMORY_VIEW_Y-10, tmpbuf, Colors::white);
-  }
-}
-
-void Main_Window::reload()
-{
-#ifdef WIN32
-  g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '\\');
-#else
-  g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '/');
-#endif
-  if (!g_real_filename) {
-    g_real_filename = g_cfg.playlist[g_cur_entry];
-  }
-  else {
-    // skip path sep
-    g_real_filename++;
-  } 
-    
-  // Load file
-  path = g_cfg.playlist[g_cur_entry];
-  handle_error( player->load_file( g_cfg.playlist[g_cur_entry] ) );
-  
-  IAPURAM = player->spc_emu()->ram();
-  //Memory::IAPURAM = IAPURAM;
-  
-  // report::memsurface.init
-  report::memsurface.clear();
-
-  memset(report::used, 0, sizeof(report::used));
-  memset(report::used2, 0, sizeof(report::used2));
-  //if (!mouseover_hexdump_area.address)mouseover_hexdump_area.address =0;
-  report::last_pc = -1;
-  
-  start_track( 1, path );
-  voice_control.was_keyed_on = 0;
-  player->mute_voices(voice_control.muted);
-  player->ignore_silence();
-  
-
-  // draw one-time stuff
-  if (!g_cfg.novideo)
-  {
-    SDL_FillRect(screen, NULL, 0);
-    report::memsurface.init_video();
-    
-    tmprect.x = MEMORY_VIEW_X-1;
-    tmprect.y = MEMORY_VIEW_Y-1;
-    tmprect.w = 512+2;
-    tmprect.h = 512+2;
-    SDL_FillRect(screen, &tmprect, Colors::white); 
-    
-    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
-
-    sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - DSP MAP");
-    sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
-
-    //sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");  
-    //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, Colors::white);
-  
-    //sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg.autowritemask ? "Yes" : "No");
-    //sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, Colors::white);
-
-    update_track_tag();
-
-    sprintf(tmpbuf, "Ignore tag time: %s", g_cfg.ignoretagtime ? "Yes" : "No");
-    sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, Colors::white);
-
-    sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg.defaultsongtime/60, g_cfg.defaultsongtime%60);
-    sdlfont_drawString(screen, INFO_X, INFO_Y+88, tmpbuf, Colors::white);
-
-    
-    sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -", Colors::white);
-  }
-}
-
-void Main_Window::pack_mask(unsigned char packed_mask[32])
-{
-  int i;
-  
-  memset(packed_mask, 0, 32);
-  for (i=0; i<256; i++)
-  {
-    if (report::used2[i])
-    packed_mask[i/8] |= 128 >> (i%8);
-  }
-}
-
-void Main_Window::fade_arrays()
-{
-  report::memsurface.fade_arrays();
-}
-
-static int audio_samples_written=0;
-
-void Main_Window::applyBlockMask(char *filename)
-{
-  FILE *fptr;
-  unsigned char nul_arr[256];
-  int i;
-
-  memset(nul_arr, g_cfg.filler, 256);
-  
-  fptr = fopen(filename, "r+");
-  if (!fptr) { perror("fopen"); }
-
-  printf("[");
-  for (i=0; i<256; i++)
-  {
-    fseek(fptr, 0x100+(i*256), SEEK_SET);
-    
-    if (!report::used2[i]) {
-      printf(".");
-      fwrite(nul_arr, 256, 1, fptr);
-    } else {
-      printf("o");
-    }
-    fflush(stdout);
-  }
-  printf("]\n");
-  
-  fclose(fptr);
-}
-
-void Main_Window::write_mask(unsigned char packed_mask[32])
-{
-  FILE *msk_file;
-  char *sep;
-  char filename[1024];
-  unsigned char tmp;
-  int i;
-  strncpy(filename, g_cfg.playlist[g_cur_entry], 1024);
-#ifdef WIN32
-  sep = strrchr(filename, '\\');
-#else
-  sep = strrchr(filename, '/');
-#endif
-  // keep only the path
-  if (sep) { sep++; *sep = 0; } 
-  else { 
-    filename[0] = 0; 
-  }
-
-  // add the filename
-  strncat(filename, g_real_filename, 1024);
-
-  // but remove the extension if any
-  sep = strrchr(filename, '.');
-  if (sep) { *sep = 0; }
-
-  // and use the .msk extension
-  strncat(filename, ".msk", 1024);
-
-  msk_file = fopen(filename, "wb");
-  if (!msk_file) {
-    perror("fopen");
-  }
-  else
-  {
-    fwrite(packed_mask, 32, 1, msk_file);
-  }
-
-  printf("Writing mask to '%s'\n", filename);
-
-  // the first 32 bytes are for the 256BytesBlock mask
-  printf("256 Bytes-wide block mask:\n");
-  for (i=0; i<32; i++) {
-    printf("%02X",packed_mask[i]);
-  }
-  printf("\n");
-
-  printf("Byte level mask..."); fflush(stdout);
-  memset(packed_mask, 0, 32);
-  for (i=0; i<65536; i+=8)
-  {
-    tmp = 0;
-    if (report::used[i]) tmp |= 128;
-    if (report::used[i+1]) tmp |= 64;
-    if (report::used[i+2]) tmp |= 32;
-    if (report::used[i+3]) tmp |= 16;
-    if (report::used[i+4]) tmp |= 8;
-    if (report::used[i+5]) tmp |= 4;
-    if (report::used[i+6]) tmp |= 2;
-    if (report::used[i+7]) tmp |= 1;
-    fwrite(&tmp, 1, 1, msk_file);
-  }
-  printf("Done.\n");
-  fclose(msk_file);
-}
-
-
-
-
-void Main_Window::do_scroller(int elaps_milli)
-{
-  int i;
-  char c[2] = { 0, 0 }; 
-  static int cs;
-  static int p = 0;
-  static int cur_len;
-  static int cur_min;
-  SDL_Rect tmprect;
-  static float start_angle = 0.0;
-  float angle;
-  int off;
-  int steps;
-  static int keep=0;
-
-  keep += elaps_milli;  
-  
-  steps = keep*60/1000;
-  if (!steps) { return; }
-
-  elaps_milli = keep;
-  keep=0;
-
-  if (cur_marquee == NULL) { 
-    cur_marquee = marquees[cur_marquee_id]; 
-    p = screen->w;
-  }
-  
-  cur_len = strlen(cur_marquee);
-  cur_min = -cur_len*8;
-
-  angle = start_angle;
-        
-  cs = player->emu()->tell() / 1000;
-  cs %= 12;
-
-  // clear area 
-  tmprect.x = 0;
-  tmprect.y = 0;
-  tmprect.w = screen->w;
-  tmprect.h = 28;
-  SDL_FillRect(screen, &tmprect, Colors::black);
-  
-  
-  for (i=0; i<cur_len; i++)
-  {
-    off = sin(angle)*8.0;
-    c[0] = cur_marquee[i];
-    if (  (tmprect.x + i*8 + p > 0) && (tmprect.x + i*8 + p < screen->w) )
-    {
-      sdlfont_drawString(screen, tmprect.x + i*8 + p, 12 + off, c, Colors::colorscale[cs]);
-    }
-    angle-=0.1;
-  }
-  start_angle += steps * 0.02;
-  p-=steps;
-
-  if (p<cur_min) {
-    if (marquees[cur_marquee_id+1]!=NULL) {
-      cur_marquee = marquees[++cur_marquee_id];
-      p = screen->w;
-    }
-    else {
-      p = screen->w;
-    }
-  }
-}
-
 void Main_Window::run()
 {
 
@@ -485,11 +24,11 @@ reload:
     pack_mask(packed_mask);
     
     if (g_cfg.statusline) {
-      printf("%s  %d / %d (%d %%)        \r", 
+      printf("%s / %d         \r", 
           g_cfg.playlist[g_cur_entry],
-          audio_samples_written/44100,
-          song_time,
-          (audio_samples_written/44100)/(song_time));
+          /*audio_samples_written/44100,*/
+          song_time
+          /*(audio_samples_written/44100)/(song_time)*/);
       fflush(stdout);
     }
     
@@ -1326,7 +865,7 @@ reload:
       SDL_RenderPresent(sdlRenderer);
       time_last = time_cur;
       if (g_cfg.nice) {  SDL_Delay(100); }
-      SDL_Delay( 1000 / 100 );
+      //SDL_Delay( 1000 / 100 );
     } // if !g_cfg.novideo
     is_first_run = false;
   }
@@ -1334,6 +873,469 @@ reload:
   clean:
   ;
 }
+
+Main_Window::Main_Window(int &argc, char **argv) : 
+main_memory_area(&mouseover_hexdump_area),
+port_tool(&mouseover_hexdump_area.cursor)
+{
+  int res;
+  static struct option long_options[] = {
+    {"nosound", 0, 0, 0},
+    {"novideo", 0, 0, 1},
+    {"update_in_callback", 0, 0, 2},
+    {"echo", 0, 0, 3},
+    {"interpolation", 0, 0, 4},
+    {"savemask", 0, 0, 5},
+    {"default_time", 1, 0, 6},
+    {"ignore_tag_time", 0, 0, 7},
+    {"extra_time", 1, 0, 8},
+    {"yield", 0, 0, 9},
+    {"auto_write_mask", 0, 0, 10},
+    {"status_line", 0, 0, 11},
+    {"help", 0, 0, 'h'},
+    {"apply_mask_block", 0, 0, 12},
+    {"apply_mask_byte", 0, 0, 13},
+    {"filler", 1, 0, 14},
+    {0,0,0,0}
+  };
+
+  if (screen == NULL)
+  {
+    fprintf(stderr, "Debugger::MainWindows::screen is Null\n"); //screen, Render_Context::screen);
+    exit(1);
+  }
+
+  while ((res=getopt_long(argc, argv, "h",
+        long_options, NULL))!=-1)
+  {
+    switch(res)
+    {
+      case 0:
+        g_cfg.nosound = 1;
+        break;
+      case 1:
+        g_cfg.novideo = 2;
+        break;
+      case 2:
+        g_cfg.update_in_callback = 1;
+        break;
+      case 4:
+        //spc_config.is_interpolation = 1;
+        break;
+      case 3:
+        //spc_config.is_echo = 1;
+        break;
+      case 5:
+        g_cfg.autowritemask = 1;
+        break;
+      case 6:
+        g_cfg.defaultsongtime = atoi(optarg);
+        break;
+      case 7:
+        g_cfg.ignoretagtime = 1;
+        break;
+      case 8:
+        g_cfg.extratime = atoi(optarg);
+        break;
+      case 9:
+        g_cfg.nice = 1;
+        break;
+      case 10:
+        g_cfg.autowritemask = 1;
+        break;
+      case 11:
+        g_cfg.statusline = 1;
+        break;
+      case 12:
+        g_cfg.apply_block = 1;
+        break;
+      case 14:
+        g_cfg.filler = strtol(optarg, NULL, 0);
+        break;
+      case 'h':
+        printf("Usage: ./vspcplay [options] files...\n");
+        printf("\n");
+        printf("Valid options:\n");
+        printf(" -h, --help     Print help\n");
+        printf(" --nosound      Dont output sound\n");
+        printf(" --novideo      Dont open video window\n");
+        printf(" --update_in_callback   Update spc sound buffer inside\n");
+        printf("                        sdl audio callback\n");
+        printf(" --interpolation  Use sound interpolatoin\n");
+        printf(" --echo           Enable echo\n");
+        printf(" --auto_write_mask   Write mask file automatically when a\n");
+        printf("                     tune ends due to playtime from tag or\n");
+        printf("                     default play time.\n");
+        printf(" --default_time t    Set the default play time in seconds\n");
+        printf("                     for when there is not id666 tag. (default: %d\n", DEFAULT_SONGTIME);
+        printf(" --ignore_tag_time   Ignore the time from the id666 tag and\n");
+        printf("                     use default time\n");
+        printf(" --extra_time t      Set the number of extra seconds to play (relative to\n");
+        printf("                     the tag time or default time).\n");
+        printf(" --nice              Try to use less cpu for graphics\n");
+        printf(" --status_line       Enable a text mode status line\n");
+        printf("\n!!! Careful with those!, they can ruin your sets so backup first!!!\n");
+        printf(" --apply_mask_block  Apply the mask to the file (replace unreport::used blocks(256 bytes) with a pattern)\n");
+        printf(" --filler val        Set the pattern byte value. Use with the option above. Default 0\n");
+        printf("\n");
+        printf("The mask will be applied when the tune ends due to playtime from tag\n");
+        printf("or default playtime.\n");
+        exit(0);
+        break;
+    }
+  }
+
+  g_cfg.num_files = argc-optind;
+  g_cfg.playlist = &argv[optind];
+
+  time_cur = time_last = SDL_GetTicks();
+  report::memsurface.init();
+}
+
+
+
+
+
+void Main_Window::toggle_pause()
+{
+  player->toggle_pause();
+}
+
+void Main_Window::restart_track()
+{
+  SDL_PauseAudio(1);
+  g_cur_entry=0;
+  player->pause(0);
+  reload();
+}
+
+void Main_Window::prev_track()
+{
+  SDL_PauseAudio(true);
+  g_cur_entry--;
+  if (g_cur_entry<0) { g_cur_entry = g_cfg.num_files-1; }
+  reload();
+}
+
+void Main_Window::next_track()
+{
+  SDL_PauseAudio(true);
+  g_cur_entry++;
+  if (g_cur_entry>=g_cfg.num_files) { g_cur_entry = 0; }
+  reload();
+}
+
+void Main_Window::exit_edit_mode()
+{
+  mode = MODE_NAV;
+  submode = 0;
+  mouseover_hexdump_area.draw_tmp_ram = 0;
+
+  main_memory_area.unlock();
+}
+
+void Main_Window::draw_block_usage_bar()
+{
+  // draw the 256 bytes block usage bar
+  tmprect.x = MEMORY_VIEW_X-1;
+  tmprect.w = 1; tmprect.h = 2;
+  int tmp=0;
+  for (int i=0; i<256; i++)
+  {
+    tmprect.y = MEMORY_VIEW_Y + i * 2;
+    if (report::used2[i])
+    {
+      SDL_FillRect(screen, &tmprect, Colors::white); 
+      tmp++;
+    }
+  }
+  
+  sprintf(tmpbuf, "Blocks report::used: %3d/256 (%.1f%%)  ", tmp, (float)tmp*100.0/256.0);
+  sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2, tmpbuf, Colors::white);
+
+  if (1)
+  {
+    sprintf(tmpbuf, "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+        packed_mask[0], packed_mask[1], packed_mask[2], packed_mask[3],
+        packed_mask[4], packed_mask[5], packed_mask[6], packed_mask[7],
+        packed_mask[8], packed_mask[9], packed_mask[10], packed_mask[11],
+        packed_mask[12], packed_mask[13], packed_mask[14], packed_mask[15],
+        packed_mask[16], packed_mask[17], packed_mask[18], packed_mask[19],
+        packed_mask[20], packed_mask[21], packed_mask[22], packed_mask[23],
+        packed_mask[24], packed_mask[25], packed_mask[26], packed_mask[27],
+        packed_mask[28], packed_mask[29], packed_mask[30], packed_mask[31]);
+
+    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2 + 9, tmpbuf, Colors::white);
+  }
+}
+
+void Main_Window::draw_mouse_address()
+{
+  // write the address under mouse cursor
+  if (mouseover_hexdump_area.address >=0)
+  {
+    sprintf(tmpbuf, "Addr mouse: $%04X", mouse_addr);
+    sdlfont_drawString(screen, MEMORY_VIEW_X+8*(23), MEMORY_VIEW_Y-10, tmpbuf, Colors::white);
+  }
+}
+
+void Main_Window::reload()
+{
+#ifdef WIN32
+  g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '\\');
+#else
+  g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '/');
+#endif
+  if (!g_real_filename) {
+    g_real_filename = g_cfg.playlist[g_cur_entry];
+  }
+  else {
+    // skip path sep
+    g_real_filename++;
+  } 
+    
+  // Load file
+  path = g_cfg.playlist[g_cur_entry];
+  handle_error( player->load_file( g_cfg.playlist[g_cur_entry] ) );
+  
+  IAPURAM = player->spc_emu()->ram();
+  //Memory::IAPURAM = IAPURAM;
+  
+  // report::memsurface.init
+  report::memsurface.clear();
+
+  memset(report::used, 0, sizeof(report::used));
+  memset(report::used2, 0, sizeof(report::used2));
+  //if (!mouseover_hexdump_area.address)mouseover_hexdump_area.address =0;
+  report::last_pc = -1;
+  
+  start_track( 1, path );
+  voice_control.was_keyed_on = 0;
+  player->mute_voices(voice_control.muted);
+  player->ignore_silence();
+  
+
+  // draw one-time stuff
+  if (!g_cfg.novideo)
+  {
+    SDL_FillRect(screen, NULL, 0);
+    report::memsurface.init_video();
+    
+    tmprect.x = MEMORY_VIEW_X-1;
+    tmprect.y = MEMORY_VIEW_Y-1;
+    tmprect.w = 512+2;
+    tmprect.h = 512+2;
+    SDL_FillRect(screen, &tmprect, Colors::white); 
+    
+    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
+
+    sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - DSP MAP");
+    sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
+
+    //sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");  
+    //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, Colors::white);
+  
+    //sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg.autowritemask ? "Yes" : "No");
+    //sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, Colors::white);
+
+    update_track_tag();
+
+    sprintf(tmpbuf, "Ignore tag time: %s", g_cfg.ignoretagtime ? "Yes" : "No");
+    sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, Colors::white);
+
+    sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg.defaultsongtime/60, g_cfg.defaultsongtime%60);
+    sdlfont_drawString(screen, INFO_X, INFO_Y+88, tmpbuf, Colors::white);
+
+    
+    sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -", Colors::white);
+  }
+}
+
+void Main_Window::pack_mask(unsigned char packed_mask[32])
+{
+  int i;
+  
+  memset(packed_mask, 0, 32);
+  for (i=0; i<256; i++)
+  {
+    if (report::used2[i])
+    packed_mask[i/8] |= 128 >> (i%8);
+  }
+}
+
+void Main_Window::fade_arrays()
+{
+  report::memsurface.fade_arrays();
+}
+
+
+void Main_Window::applyBlockMask(char *filename)
+{
+  FILE *fptr;
+  unsigned char nul_arr[256];
+  int i;
+
+  memset(nul_arr, g_cfg.filler, 256);
+  
+  fptr = fopen(filename, "r+");
+  if (!fptr) { perror("fopen"); }
+
+  printf("[");
+  for (i=0; i<256; i++)
+  {
+    fseek(fptr, 0x100+(i*256), SEEK_SET);
+    
+    if (!report::used2[i]) {
+      printf(".");
+      fwrite(nul_arr, 256, 1, fptr);
+    } else {
+      printf("o");
+    }
+    fflush(stdout);
+  }
+  printf("]\n");
+  
+  fclose(fptr);
+}
+
+void Main_Window::write_mask(unsigned char packed_mask[32])
+{
+  FILE *msk_file;
+  char *sep;
+  char filename[1024];
+  unsigned char tmp;
+  int i;
+  strncpy(filename, g_cfg.playlist[g_cur_entry], 1024);
+#ifdef WIN32
+  sep = strrchr(filename, '\\');
+#else
+  sep = strrchr(filename, '/');
+#endif
+  // keep only the path
+  if (sep) { sep++; *sep = 0; } 
+  else { 
+    filename[0] = 0; 
+  }
+
+  // add the filename
+  strncat(filename, g_real_filename, 1024);
+
+  // but remove the extension if any
+  sep = strrchr(filename, '.');
+  if (sep) { *sep = 0; }
+
+  // and use the .msk extension
+  strncat(filename, ".msk", 1024);
+
+  msk_file = fopen(filename, "wb");
+  if (!msk_file) {
+    perror("fopen");
+  }
+  else
+  {
+    fwrite(packed_mask, 32, 1, msk_file);
+  }
+
+  printf("Writing mask to '%s'\n", filename);
+
+  // the first 32 bytes are for the 256BytesBlock mask
+  printf("256 Bytes-wide block mask:\n");
+  for (i=0; i<32; i++) {
+    printf("%02X",packed_mask[i]);
+  }
+  printf("\n");
+
+  printf("Byte level mask..."); fflush(stdout);
+  memset(packed_mask, 0, 32);
+  for (i=0; i<65536; i+=8)
+  {
+    tmp = 0;
+    if (report::used[i]) tmp |= 128;
+    if (report::used[i+1]) tmp |= 64;
+    if (report::used[i+2]) tmp |= 32;
+    if (report::used[i+3]) tmp |= 16;
+    if (report::used[i+4]) tmp |= 8;
+    if (report::used[i+5]) tmp |= 4;
+    if (report::used[i+6]) tmp |= 2;
+    if (report::used[i+7]) tmp |= 1;
+    fwrite(&tmp, 1, 1, msk_file);
+  }
+  printf("Done.\n");
+  fclose(msk_file);
+}
+
+
+
+
+void Main_Window::do_scroller(int elaps_milli)
+{
+  int i;
+  char c[2] = { 0, 0 }; 
+  static int cs;
+  static int p = 0;
+  static int cur_len;
+  static int cur_min;
+  SDL_Rect tmprect;
+  static float start_angle = 0.0;
+  float angle;
+  int off;
+  int steps;
+  static int keep=0;
+
+  keep += elaps_milli;  
+  
+  steps = keep*60/1000;
+  if (!steps) { return; }
+
+  elaps_milli = keep;
+  keep=0;
+
+  if (cur_marquee == NULL) { 
+    cur_marquee = marquees[cur_marquee_id]; 
+    p = screen->w;
+  }
+  
+  cur_len = strlen(cur_marquee);
+  cur_min = -cur_len*8;
+
+  angle = start_angle;
+        
+  cs = player->emu()->tell() / 1000;
+  cs %= 12;
+
+  // clear area 
+  tmprect.x = 0;
+  tmprect.y = 0;
+  tmprect.w = screen->w;
+  tmprect.h = 28;
+  SDL_FillRect(screen, &tmprect, Colors::black);
+  
+  
+  for (i=0; i<cur_len; i++)
+  {
+    off = sin(angle)*8.0;
+    c[0] = cur_marquee[i];
+    if (  (tmprect.x + i*8 + p > 0) && (tmprect.x + i*8 + p < screen->w) )
+    {
+      sdlfont_drawString(screen, tmprect.x + i*8 + p, 12 + off, c, Colors::colorscale[cs]);
+    }
+    angle-=0.1;
+  }
+  start_angle += steps * 0.02;
+  p-=steps;
+
+  if (p<cur_min) {
+    if (marquees[cur_marquee_id+1]!=NULL) {
+      cur_marquee = marquees[++cur_marquee_id];
+      p = screen->w;
+    }
+    else {
+      p = screen->w;
+    }
+  }
+}
+
+
 
 void Main_Window::draw_program_counter()
 {
