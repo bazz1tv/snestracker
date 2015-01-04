@@ -3,8 +3,8 @@
 Cursor Memory::cursor;
 
 // Cannot decide if this belongs in Debugger_Base
-Music_Player *Memory::player=NULL;
-SDL_Surface *Memory::screen=NULL;
+//Music_Player *Memory::player=NULL;
+//SDL_Surface *Memory::screen=NULL;
 uint8_t *Memory::IAPURAM=NULL;
 
 Uint16 Memory::address=0; //=0x0000;

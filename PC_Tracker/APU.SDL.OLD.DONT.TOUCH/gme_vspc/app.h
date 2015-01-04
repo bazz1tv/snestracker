@@ -2,7 +2,7 @@
 #include "gme/player/Music_Player.h"
 #include "Debugger.h"
 
-class App
+class App : public Render_Context
 {
 public:
   App(SDL_Window **sdlWindow, int &argc, char **argv, int w, int h, int samplerate=44100);
@@ -16,10 +16,7 @@ private:
   // Tracker tracker;
   Debugger *debugger=NULL;
   Music_Player player;
-  SDL_Window *sdlWindow=NULL;
-  SDL_Renderer *sdlRenderer=NULL;
-  SDL_Texture *sdlTexture=NULL;
-  SDL_Surface *screen = NULL;
+  
 
 private:
   int init_sdl();

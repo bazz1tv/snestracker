@@ -14,10 +14,9 @@
 #include "Colors.h"
 #include "platform.h"
 
-struct Debugger : Debugger_Base
+struct Main_Window : Debugger_Base
 {
-public:
-  Debugger(int &argc, char **argv, Music_Player *player, SDL_Window *, SDL_Renderer *, SDL_Texture *, SDL_Surface*);
+  Main_Window(int &argc, char **argv, Music_Player *player, SDL_Window *, SDL_Renderer *, SDL_Texture *, SDL_Surface*);
   void run();
 
   void draw_program_counter();

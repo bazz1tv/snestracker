@@ -1,6 +1,7 @@
 #ifndef _report_h__
 #define _report_h__
 
+// Should be inside of Main_Memory_View .. but keeping it here for now while I do other things
 #define MEMORY_VIEW_X 16
 #define MEMORY_VIEW_Y 40
 
@@ -12,6 +13,7 @@ I cannot encapsulate this because the DSP needs to be able to access it
 
 struct Mem_Surface
 {
+public:
   static SDL_Rect memrect;
 
   Mem_Surface();

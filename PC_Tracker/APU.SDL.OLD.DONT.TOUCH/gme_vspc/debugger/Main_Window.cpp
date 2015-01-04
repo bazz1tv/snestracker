@@ -1,4 +1,4 @@
-#include "Debugger.h"
+#include "Main_Window.h"
 #include <getopt.h>
 #include "utility.h"
 #include "Screen.h"
@@ -7,7 +7,7 @@
 #define L_FLAG 0
 #define R_FLAG 1
 
-Debugger::Debugger(int &argc, char **argv, Music_Player *player,
+Main_Window::Main_Window(int &argc, char **argv, Music_Player *player,
   SDL_Window *win, SDL_Renderer *renderer, SDL_Texture *text, SDL_Surface *screen) : 
 player(player), sdlWindow(win), sdlRenderer(renderer),sdlTexture(text),screen(screen),
 main_memory_area(screen,player),
@@ -128,12 +128,12 @@ voice_control(player)
 
 
 
-void Debugger::toggle_pause()
+void Main_Window::toggle_pause()
 {
   player->toggle_pause();
 }
 
-void Debugger::restart_track()
+void Main_Window::restart_track()
 {
   SDL_PauseAudio(1);
   g_cur_entry=0;
@@ -141,7 +141,7 @@ void Debugger::restart_track()
   reload();
 }
 
-void Debugger::prev_track()
+void Main_Window::prev_track()
 {
   SDL_PauseAudio(true);
   g_cur_entry--;
@@ -149,7 +149,7 @@ void Debugger::prev_track()
   reload();
 }
 
-void Debugger::next_track()
+void Main_Window::next_track()
 {
   SDL_PauseAudio(true);
   g_cur_entry++;
@@ -157,7 +157,7 @@ void Debugger::next_track()
   reload();
 }
 
-void Debugger::exit_edit_mode()
+void Main_Window::exit_edit_mode()
 {
   mode = MODE_NAV;
   submode = 0;
@@ -166,7 +166,7 @@ void Debugger::exit_edit_mode()
   main_memory_area.unlock();
 }
 
-void Debugger::draw_block_usage_bar()
+void Main_Window::draw_block_usage_bar()
 {
   // draw the 256 bytes block usage bar
   tmprect.x = MEMORY_VIEW_X-1;
@@ -201,7 +201,7 @@ void Debugger::draw_block_usage_bar()
   }
 }
 
-void Debugger::draw_mouse_address()
+void Main_Window::draw_mouse_address()
 {
   // write the address under mouse cursor
   if (mouseover_hexdump_area.address >=0)
@@ -211,7 +211,7 @@ void Debugger::draw_mouse_address()
   }
 }
 
-void Debugger::reload()
+void Main_Window::reload()
 {
 #ifdef WIN32
   g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '\\');
@@ -283,7 +283,7 @@ void Debugger::reload()
   }
 }
 
-void Debugger::pack_mask(unsigned char packed_mask[32])
+void Main_Window::pack_mask(unsigned char packed_mask[32])
 {
   int i;
   
@@ -295,14 +295,14 @@ void Debugger::pack_mask(unsigned char packed_mask[32])
   }
 }
 
-void Debugger::fade_arrays()
+void Main_Window::fade_arrays()
 {
   report::memsurface.fade_arrays();
 }
 
 static int audio_samples_written=0;
 
-void Debugger::applyBlockMask(char *filename)
+void Main_Window::applyBlockMask(char *filename)
 {
   FILE *fptr;
   unsigned char nul_arr[256];
@@ -331,7 +331,7 @@ void Debugger::applyBlockMask(char *filename)
   fclose(fptr);
 }
 
-void Debugger::write_mask(unsigned char packed_mask[32])
+void Main_Window::write_mask(unsigned char packed_mask[32])
 {
   FILE *msk_file;
   char *sep;
@@ -400,7 +400,7 @@ void Debugger::write_mask(unsigned char packed_mask[32])
 
 
 
-void Debugger::do_scroller(int elaps_milli)
+void Main_Window::do_scroller(int elaps_milli)
 {
   int i;
   char c[2] = { 0, 0 }; 
@@ -468,7 +468,7 @@ void Debugger::do_scroller(int elaps_milli)
   }
 }
 
-void Debugger::run()
+void Main_Window::run()
 {
 
 
@@ -1335,7 +1335,7 @@ reload:
   ;
 }
 
-void Debugger::draw_program_counter()
+void Main_Window::draw_program_counter()
 {
   // write the program counter
   report::last_pc = (int)player->spc_emu()->pc(); 
@@ -1343,7 +1343,7 @@ void Debugger::draw_program_counter()
   sdlfont_drawString(screen, MEMORY_VIEW_X+8*12, MEMORY_VIEW_Y-10, tmpbuf, Colors::white);
 }
 
-void Debugger::draw_voices_pitchs()
+void Main_Window::draw_voices_pitchs()
 {
   tmp = i+10; // y 
   sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices pitches:", Colors::white);
@@ -1458,7 +1458,7 @@ void Debugger::draw_voices_pitchs()
   }
 }
 
-void Debugger::draw_voices_volumes()
+void Main_Window::draw_voices_volumes()
 {
   tmp += 9*8;
 
@@ -1579,13 +1579,13 @@ void Debugger::draw_voices_volumes()
   }
 }
 
-void Debugger::draw_global_volumes()
+void Main_Window::draw_global_volumes()
 {
   draw_main_volume();
   draw_echo_volume();
 }
 
-void Debugger::draw_main_volume()
+void Main_Window::draw_main_volume()
 {
   i=9;
   // 
@@ -1643,7 +1643,7 @@ void Debugger::draw_main_volume()
   }
 }
 
-void Debugger::draw_echo_volume()
+void Main_Window::draw_echo_volume()
 {
   i++;
   {
@@ -1722,7 +1722,7 @@ void Debugger::draw_echo_volume()
 #undef L_FLAG
 #undef R_FLAG
 
-void Debugger::draw_mouseover_hexdump()
+void Main_Window::draw_mouseover_hexdump()
 {
   i++;
 
@@ -1816,7 +1816,7 @@ void Debugger::draw_mouseover_hexdump()
   }
 }
 
-void Debugger::draw_porttool()
+void Main_Window::draw_porttool()
 {
   sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+8, " APU:", Colors::white);
   sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:", Colors::white);
@@ -1832,7 +1832,7 @@ void Debugger::draw_porttool()
   sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, Colors::white);
 }
 
-void Debugger::draw_time_and_echo_status()
+void Main_Window::draw_time_and_echo_status()
 {
   sprintf(tmpbuf, "Time....: %0d:%02d / %0d:%02d", 
       int(player->emu()->tell()/1000)/60,
@@ -1847,7 +1847,7 @@ void Debugger::draw_time_and_echo_status()
 
 
 
-void Debugger::start_track( int track, const char* path )
+void Main_Window::start_track( int track, const char* path )
 {
   paused = false;
   //if (!player->is_paused())
@@ -1880,7 +1880,7 @@ void Debugger::start_track( int track, const char* path )
 }
 
 // update window title with track info
-void Debugger::update_window_title()
+void Main_Window::update_window_title()
 {
 
   long seconds = player->track_info().length / 1000;
@@ -1903,7 +1903,7 @@ void Debugger::update_window_title()
       seconds / 60, seconds % 60 );
   SDL_SetWindowTitle(sdlWindow, title);
 }
-void Debugger::update_track_tag()
+void Main_Window::update_track_tag()
 {
   update_window_title();
   tag = player->track_info();
