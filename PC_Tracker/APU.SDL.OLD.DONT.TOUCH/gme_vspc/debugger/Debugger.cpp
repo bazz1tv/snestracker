@@ -3,14 +3,12 @@
 #include "utility.h"
 
 
-
-
 #define L_FLAG 0
 #define R_FLAG 1
 
 Debugger::Debugger(int &argc, char **argv, Music_Player *player,
   SDL_Window *win, SDL_Renderer *renderer, SDL_Texture *text, SDL_Surface *screen) : 
-player(player), sdlRenderer(renderer),sdlTexture(text),screen(screen),
+player(player), sdlWindow(win), sdlRenderer(renderer),sdlTexture(text),screen(screen),
 main_memory_area(screen,player),
 mouseover_hexdump_area(player,screen),
 port_tool(player, screen, &mouseover_hexdump_area.cursor),
@@ -1876,7 +1874,7 @@ void Debugger::start_track( int track, const char* path )
   sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
       game, track, player->track_count(), player->track_info().song,
       seconds / 60, seconds % 60 );
-  SDL_SetWindowTitle(sdlWindow, title);
+  SDL_SetWindowTitle(this->sdlWindow, title);
 }
 
 // update window title with track info
