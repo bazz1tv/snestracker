@@ -9,7 +9,7 @@
 #include "gui/cursor.h"
 #include "memory.h"
 
-namespace screen_pos
+namespace Screen
 { 
   extern SDL_Rect voice0vol;   // = {NO_INIT, NO_INIT,+8+125,10};
   extern SDL_Rect voice0pitch; //= {NO_INIT,NO_INIT, 2*8,8 };

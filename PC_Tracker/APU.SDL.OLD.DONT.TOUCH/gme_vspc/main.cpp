@@ -10,6 +10,8 @@ int main(int argc, char **argv)
 {
   init_sdl(Render_Context::sdlWindow, Render_Context::sdlRenderer, 
     Render_Context::sdlTexture, Render_Context::screen, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+  fprintf(stderr, "screen = %d\n", Render_Context::screen);
   App app(argc, argv);
   app.run();
 }
@@ -31,33 +33,33 @@ int init_sdl(SDL_Window *sdlWindow, SDL_Renderer *sdlRenderer, SDL_Texture *sdlT
   }
   atexit(SDL_Quit);
 
-  SDL_CreateWindowAndRenderer(width, height, 0, &sdlWindow, &sdlRenderer);
-  if (sdlWindow == NULL || sdlRenderer == NULL)
+  SDL_CreateWindowAndRenderer(width, height, 0, &Render_Context::sdlWindow, &Render_Context::sdlRenderer);
+  if (Render_Context::sdlWindow == NULL || Render_Context::sdlRenderer == NULL)
   {
     fprintf(stderr, "FCK\n");
     return -1;
   }
   //sdlWindow = *sdlWindow;
 
-  screen = SDL_CreateRGBSurface(0, width, height, 32,
+  Render_Context::screen = SDL_CreateRGBSurface(0, width, height, 32,
                                       0x00FF0000,
                                       0x0000FF00,
                                       0x000000FF,
                                       0xFF000000);
-  sdlTexture = SDL_CreateTexture(sdlRenderer,
+  Render_Context::sdlTexture = SDL_CreateTexture(Render_Context::sdlRenderer,
                                           SDL_PIXELFORMAT_RGB888,
                                           SDL_TEXTUREACCESS_STREAMING,
                                           width, height);
 
-  if (screen == NULL || sdlTexture == NULL)
+  if (Render_Context::screen == 0 || Render_Context::sdlTexture == NULL)
   {
     fprintf(stderr, "MAn we have SDL init problems :\\. I couldn't allocate a screen or Texture :\\\n");
     return -1;
   }
 
-  SDL_SetWindowTitle(sdlWindow, PROG_NAME_VERSION_STRING);
+  SDL_SetWindowTitle(Render_Context::sdlWindow, PROG_NAME_VERSION_STRING);
   
-  Colors::precompute(screen);
+  Colors::precompute(Render_Context::screen);
 
   dblclick::init();
 

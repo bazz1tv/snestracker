@@ -9,8 +9,8 @@ Voice_Control::Voice_Control()
 void Voice_Control::checkmouse_mute(Uint16 &x,Uint16 &y)
 {
   char changed=0;
-  SDL_Rect *r1 = &screen_pos::voice0vol;
-  SDL_Rect *r2 = &screen_pos::voice0pitch;
+  SDL_Rect *r1 = &Screen::voice0vol;
+  SDL_Rect *r2 = &Screen::voice0pitch;
   for (int i=0; i < 8; i++)
   { 
     // if we click on the number of the voice, whether in the Pitch or Volume section
@@ -40,8 +40,8 @@ void Voice_Control::checkmouse_mute(Uint16 &x,Uint16 &y)
 void Voice_Control::checkmouse_solo(Uint16 &x,Uint16 &y)
 {
   char changed=0;
-  SDL_Rect *r1 = &screen_pos::voice0vol;
-  SDL_Rect *r2 = &screen_pos::voice0pitch;
+  SDL_Rect *r1 = &Screen::voice0vol;
+  SDL_Rect *r2 = &Screen::voice0pitch;
   for (int i=0; i < 8; i++)
   {
     if ( (x >= (r1->x) && x <= (r1->x + r1->w) &&

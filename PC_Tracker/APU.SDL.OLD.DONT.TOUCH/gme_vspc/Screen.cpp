@@ -1,6 +1,6 @@
 #include "Screen.h"
 
-#define LOCKED_STR "locked"
+
 
 namespace Screen
 {

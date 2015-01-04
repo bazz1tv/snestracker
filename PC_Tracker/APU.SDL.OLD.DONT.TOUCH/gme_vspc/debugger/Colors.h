@@ -1,11 +1,11 @@
 #pragma once
 
 #include "SDL.h"
-
-struct Colors
+#include "Render_Context.h"
+struct Colors : public Render_Context
 {
   //Colors(SDL_Surface *cscreen);
-  static SDL_Surface *screen;
+  //static SDL_Surface *screen;
 
   static Uint32 white, black, cyan, magenta, yellow, red;
   static Uint32 green, blue, nearblack;

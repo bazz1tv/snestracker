@@ -2,7 +2,7 @@
 #include "gme/player/Music_Player.h"
 #include "Debugger.h"
 
-class App : public Render_Context
+class App : public Render_Context, public Player_Context
 {
 public:
   App(int &argc, char **argv, int samplerate=44100);

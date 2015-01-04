@@ -31,6 +31,11 @@ port_tool(&mouseover_hexdump_area.cursor)
     {0,0,0,0}
   };
 
+  if (screen == NULL)
+  {
+    fprintf(stderr, "1 = %d, 2 = %d\n", screen, Render_Context::screen);
+    exit(1);
+  }
 
   while ((res=getopt_long(argc, argv, "h",
         long_options, NULL))!=-1)
@@ -226,7 +231,7 @@ void Main_Window::reload()
   handle_error( player->load_file( g_cfg.playlist[g_cur_entry] ) );
   
   IAPURAM = player->spc_emu()->ram();
-  Memory::IAPURAM = IAPURAM;
+  //Memory::IAPURAM = IAPURAM;
   
   // report::memsurface.init
   report::memsurface.clear();
@@ -1130,18 +1135,18 @@ reload:
 
               
 
-              if (  ev.motion.x >= screen_pos::locked.x && 
-                    ev.motion.x < screen_pos::locked.x + screen_pos::locked.w &&
-                    ev.motion.y >= screen_pos::locked.y &&
-                    ev.motion.y < screen_pos::locked.y + 9 )
+              if (  ev.motion.x >= Screen::locked.x && 
+                    ev.motion.x < Screen::locked.x + Screen::locked.w &&
+                    ev.motion.y >= Screen::locked.y &&
+                    ev.motion.y < Screen::locked.y + 9 )
               {
                 if(main_memory_area.locked)
                   main_memory_area.toggle_lock();
               }
-              else if (  ev.motion.x >= screen_pos::echoE.x && 
-                    ev.motion.x < screen_pos::echoE.x + screen_pos::echoE.w &&
-                    ev.motion.y >= screen_pos::echoE.y &&
-                    ev.motion.y < (screen_pos::echoE.y + screen_pos::echoE.h) )
+              else if (  ev.motion.x >= Screen::echoE.x && 
+                    ev.motion.x < Screen::echoE.x + Screen::echoE.w &&
+                    ev.motion.y >= Screen::echoE.y &&
+                    ev.motion.y < (Screen::echoE.y + Screen::echoE.h) )
               {
                 // toggle_echo()
                 player->spc_emu()->toggle_echo();
@@ -1438,8 +1443,8 @@ void Main_Window::draw_voices_pitchs()
     sdlfont_drawString(screen, x, y, tmpbuf, *cur_color);
     if (is_first_run && i == 0)
     {
-      screen_pos::voice0pitch.x = x;
-      screen_pos::voice0pitch.y = y;
+      Screen::voice0pitch.x = x;
+      Screen::voice0pitch.y = y;
     }
     
     tmprect.y= tmp+(i*8)+2;
@@ -1515,8 +1520,8 @@ void Main_Window::draw_voices_volumes()
     sdlfont_drawString(screen, x, y, tmpbuf, *color);
     if (is_first_run && i == 0)
     {
-      screen_pos::voice0vol.x = x;
-      screen_pos::voice0vol.y = y;  
+      Screen::voice0vol.x = x;
+      Screen::voice0vol.y = y;  
     }
     
     sprintf(tmpbuf,"\x1");
@@ -1679,7 +1684,7 @@ void Main_Window::draw_echo_volume()
     sprintf(tmpbuf,"E");
     if (is_first_run)
     {
-      screen_pos::echoE.y = tmp+(i*10);
+      Screen::echoE.y = tmp+(i*10);
     }
 
     if (player->spc_emu()->is_echoing())
@@ -1722,7 +1727,7 @@ void Main_Window::draw_mouseover_hexdump()
   i++;
 
   tmp += i*10 + 8;
-  screen_pos::locked.y = tmp;
+  Screen::locked.y = tmp;
   sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -", Colors::white);
   if (main_memory_area.locked) {
     
@@ -1774,7 +1779,7 @@ void Main_Window::draw_mouseover_hexdump()
             }
             else sprintf(tmpbuf, "%02X ", *st);
         }
-        else 
+        else  /* Some registers like being read directly form RAM.. others like going thru the API */
         {
           if (cur_addr == 0xf3 )
           {
@@ -1788,7 +1793,8 @@ void Main_Window::draw_mouseover_hexdump()
               sprintf(tmpbuf, "%02X ", mouseover_hexdump_area.tmp_ram);
             else sprintf(tmpbuf, "%02X ", player->spc_read(cur_addr));
           }
-          else if (cur_addr == 0xf1 || (cur_addr >= 0xf4 && cur_addr <= 0xf7))
+          else if (cur_addr == 0xf1 || (cur_addr >= 0xf4 && cur_addr <= 0xf7) || 
+            (cur_addr >= 0xfa && cur_addr <= 0xfc))
           {
             if (mouseover_hexdump_area.draw_tmp_ram)
               sprintf(tmpbuf, "%02X ", mouseover_hexdump_area.tmp_ram);

@@ -4,6 +4,8 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
+#define LOCKED_STR "locked"
+
 namespace Screen
 {
   //typedef SDL_Rect coord;

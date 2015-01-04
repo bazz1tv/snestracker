@@ -2,7 +2,7 @@
 #include "SDL.h"
 #include "globals.h"
 #include "Player_Context.h"
-namespace screen_pos
+namespace Screen
 {
   //typedef SDL_Rect coord;
   //#define NO_INIT 0

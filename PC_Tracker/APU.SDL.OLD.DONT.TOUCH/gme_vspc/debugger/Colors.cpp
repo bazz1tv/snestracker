@@ -1,6 +1,6 @@
 #include "Colors.h"
 
-SDL_Surface *Colors::screen=NULL;
+//SDL_Surface *Colors::screen=NULL;
 Uint32 Colors::white, Colors::black, Colors::cyan, Colors::magenta, Colors::yellow, Colors::red;
 Uint32 Colors::green, Colors::blue, Colors::nearblack;
 Uint32 Colors::dark_magenta, Colors::dark_cyan, Colors::dark_yellow;

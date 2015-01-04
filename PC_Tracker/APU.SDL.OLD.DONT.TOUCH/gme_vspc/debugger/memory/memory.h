@@ -8,7 +8,7 @@
 #include "Player_Context.h"
 
 #define IS_SPECIAL_ADDRESSES(addr) ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) ||\
-addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7) )
+addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7) || (addr >= 0xfa && addr <= 0xfc)  )
 
 struct Memory : public Debugger_Base, public Render_Context, public Player_Context
 {

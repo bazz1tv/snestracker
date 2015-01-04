@@ -22,6 +22,8 @@ void Mouse_Hexdump_Area::update_editing_address()
     { 
       if (addr_being_edited == 0xf3)
         tmp_ram = player->spc_read(0xf2);
+      //else if (addr_being_edited >= 0xfa && addr_being_edited <= 0xfc)
+        //tmp_ram = IAPURAM[addr_being_edited];
       else tmp_ram = player->spc_read(addr_being_edited);
     }
     if (old_addr != addr_being_edited)
