@@ -6,12 +6,7 @@
 //extern Music_Player *player;
 
 
-Main_Memory_Area::Main_Memory_Area(SDL_Surface *screen, Music_Player *player) : //, Uint16 &address/*, Uint16 &address_being_edited*/) : 
-//address(address), address_being_edited(address_being_edited)
-Memory(player,screen)
-{
 
-}
 
 
 

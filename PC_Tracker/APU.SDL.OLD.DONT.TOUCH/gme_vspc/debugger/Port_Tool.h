@@ -1,6 +1,8 @@
 #pragma once
 #include "gui/cursor.h"
 #include "gme/player/Music_Player.h"
+#include "Player_Context.h"
+#include "Render_Context.h"
 //#include "gme/player/Music_Player.h"
 #define PORTTOOL_X    540
 #define PORTTOOL_Y    380 + 40
@@ -10,9 +12,9 @@
 // 8 = tile width
 
 //extern Music_Player* player;
-struct Port_Tool
+struct Port_Tool : public Render_Context, public Player_Context
 {
-  Port_Tool(Music_Player *player, SDL_Surface *screen, Cursor *cursor);
+  Port_Tool(Cursor *cursor);
 
   Uint8 highnibble, portnum, portaddress, tmp[4];
   Uint8 horizontal=0;
@@ -20,8 +22,8 @@ struct Port_Tool
   Uint8 portdata[4] = {0,0,0,0};
 
   // deps
-  Music_Player *player;
-  SDL_Surface *screen;
+  //Music_Player *player;
+  //SDL_Surface *screen;
   Cursor *cursor;
 
   void inc_port(int port);

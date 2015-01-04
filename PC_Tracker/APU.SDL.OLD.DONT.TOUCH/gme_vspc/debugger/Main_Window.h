@@ -13,10 +13,12 @@
 #include "Main_Memory_Area.h"
 #include "Colors.h"
 #include "platform.h"
+#include "Render_Context.h"
+#include "Player_Context.h"
 
-struct Main_Window : Debugger_Base
+struct Main_Window : public Debugger_Base, public Render_Context, public Player_Context
 {
-  Main_Window(int &argc, char **argv, Music_Player *player, SDL_Window *, SDL_Renderer *, SDL_Texture *, SDL_Surface*);
+  Main_Window(int &argc, char **argv);
   void run();
 
   void draw_program_counter();
@@ -49,11 +51,6 @@ struct Main_Window : Debugger_Base
   void reload();
 
   // external deps
-  Music_Player *player=NULL;
-  SDL_Window *sdlWindow=NULL;
-  SDL_Renderer *sdlRenderer=NULL;
-  SDL_Texture *sdlTexture=NULL;
-  SDL_Surface *screen;
 
   // How to package this as an entity?
   
@@ -78,23 +75,9 @@ struct Main_Window : Debugger_Base
   
 
   // trim later. Get working now
-  struct {
-    unsigned char filler = 0x00;
-    int apply_block = 0;
-    int statusline = 0;
-    int nice = 0;
-    int extratime = 0;
-    int ignoretagtime = 0;
-    int defaultsongtime = DEFAULT_SONGTIME;
-    int autowritemask = 0;
-    int nosound = 0;
-    int novideo = 0;
-    int update_in_callback = 0;
-    int num_files = 0;
-    char **playlist = NULL;
-  } g_cfg;
+  
 
-  int g_paused = 0;
+ 
   int g_cur_entry = 0;
   char *g_real_filename=NULL; // holds the filename minus path
 
@@ -103,7 +86,6 @@ struct Main_Window : Debugger_Base
   unsigned char packed_mask[32];
   uint16_t mouse_addr=0; 
 
-  uint8_t *IAPURAM;
   bool paused;
   //int last_pc;
   Uint32 time_last=0, time_cur=0;

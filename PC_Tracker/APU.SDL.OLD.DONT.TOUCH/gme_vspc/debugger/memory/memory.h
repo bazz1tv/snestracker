@@ -5,13 +5,14 @@
 #include "Debugger_Base.h"
 #include "gui/cursor.h"
 #include "Render_Context.h"
+#include "Player_Context.h"
 
 #define IS_SPECIAL_ADDRESSES(addr) ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) ||\
 addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7) )
 
-struct Memory : public Debugger_Base, public Render_Context
+struct Memory : public Debugger_Base, public Render_Context, public Player_Context
 {
-  Memory(Music_Player *cplayer, SDL_Surface *cscreen);
+  Memory();
 
   void set_addr(int i);
   void add_addr(int i);
@@ -23,8 +24,8 @@ struct Memory : public Debugger_Base, public Render_Context
   //static Mem_Cursor memcursor;
   static Cursor cursor;
 
-  static Music_Player *player;
-  uint8_t *IAPURAM;
+  //static Music_Player *player;
+  //uint8_t *IAPURAM;
   
   static Uint16 address; //=0x0000;
   static Uint16 addr_being_edited;

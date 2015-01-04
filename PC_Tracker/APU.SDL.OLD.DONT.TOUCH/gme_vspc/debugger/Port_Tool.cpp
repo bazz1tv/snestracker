@@ -5,9 +5,7 @@
 
 //extern struct SIAPU IAPU;
 //extern Music_Player* player;
-Port_Tool::Port_Tool(Music_Player *player, SDL_Surface *screen, Cursor *cursor) : 
-player(player),
-screen(screen),
+Port_Tool::Port_Tool(Cursor *cursor) :
 cursor(cursor)
 {
 

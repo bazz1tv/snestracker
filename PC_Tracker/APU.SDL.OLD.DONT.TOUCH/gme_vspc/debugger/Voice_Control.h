@@ -1,6 +1,7 @@
 #pragma once
 #include "SDL.h"
 #include "globals.h"
+#include "Player_Context.h"
 namespace screen_pos
 {
   //typedef SDL_Rect coord;
@@ -11,11 +12,11 @@ namespace screen_pos
   extern SDL_Rect echoE;
   //#undef UN_INIT
 }
-struct Voice_Control
+struct Voice_Control : public Player_Context
 {
-  Voice_Control(Music_Player *player);
+  Voice_Control();
 
-  Music_Player *player;
+  //Music_Player *player;
   Uint8 was_keyed_on=0;
   Uint8 muted_toggle_protect=0; // for toggle protection during MouseMoition event
   Uint8 muted=0;

@@ -2,12 +2,7 @@
 int Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y;
 
 
-Mouse_Hexdump_Area::Mouse_Hexdump_Area(/*Main_Memory_Area *main_mem_area,*/ 
-Music_Player *player, SDL_Surface *screen/*, Uint16 &addr_being_edited*/) :
-Memory(player,screen)
-{
-  
-}
+
 
 /*void Mouse_Hexdump_Area::update_tmp_ram()
 {

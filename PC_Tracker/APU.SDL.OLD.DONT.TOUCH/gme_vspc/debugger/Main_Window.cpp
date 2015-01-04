@@ -7,13 +7,8 @@
 #define L_FLAG 0
 #define R_FLAG 1
 
-Main_Window::Main_Window(int &argc, char **argv, Music_Player *player,
-  SDL_Window *win, SDL_Renderer *renderer, SDL_Texture *text, SDL_Surface *screen) : 
-player(player), sdlWindow(win), sdlRenderer(renderer),sdlTexture(text),screen(screen),
-main_memory_area(screen,player),
-mouseover_hexdump_area(player,screen),
-port_tool(player, screen, &mouseover_hexdump_area.cursor),
-voice_control(player)
+Main_Window::Main_Window(int &argc, char **argv) : 
+port_tool(&mouseover_hexdump_area.cursor)
 {
   int res;
   static struct option long_options[] = {

@@ -38,7 +38,7 @@ namespace screen_pos
 
 struct Mouse_Hexdump_Area : Memory
 {
-  Mouse_Hexdump_Area(Music_Player *player, SDL_Surface *screen/*, Uint16 &address, Uint16 &address_being_edited*/);
+  //Mouse_Hexdump_Area(Music_Player *player, SDL_Surface *screen/*, Uint16 &address, Uint16 &address_being_edited*/);
 
   void update_editing_address();
   void draw_cursor(SDL_Surface *screen, Uint32 color);

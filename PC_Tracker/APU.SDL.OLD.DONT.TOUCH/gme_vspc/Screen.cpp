@@ -1,4 +1,7 @@
 #include "Screen.h"
+
+#define LOCKED_STR "locked"
+
 namespace Screen
 {
   // 8 is the char width in pixels

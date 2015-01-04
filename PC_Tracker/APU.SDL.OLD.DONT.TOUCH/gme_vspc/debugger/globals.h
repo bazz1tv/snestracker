@@ -8,7 +8,7 @@
 //namespace globals
 
 
-#define LOCKED_STR "locked"
+
 
 void handle_error( const char* );
 

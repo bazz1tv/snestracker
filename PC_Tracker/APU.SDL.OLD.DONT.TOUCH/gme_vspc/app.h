@@ -5,7 +5,7 @@
 class App : public Render_Context
 {
 public:
-  App(SDL_Window **sdlWindow, int &argc, char **argv, int w, int h, int samplerate=44100);
+  App(int &argc, char **argv, int samplerate=44100);
   //~App();
   void run();
   int init();
@@ -14,7 +14,7 @@ public:
 private:
   //int parse_args(int argc, char **argv);
   // Tracker tracker;
-  Debugger *debugger=NULL;
+  Debugger debugger;
   Music_Player player;
   
 

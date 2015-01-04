@@ -7,7 +7,7 @@
 struct Main_Memory_Area : Memory
 {
 public:
-  Main_Memory_Area(SDL_Surface *screen, Music_Player *player/*, Uint16 &address*/);
+  //Main_Memory_Area(SDL_Surface *screen, Music_Player *player/*, Uint16 &address*/);
 
   void set_addr(int i);
   void set_addr_from_cursor(int x, int y);

@@ -1,8 +1,7 @@
 #include "Voice_Control.h"
 #include "gme/player/Music_Player.h"
 
-Voice_Control::Voice_Control(Music_Player *player)  : 
-player(player)
+Voice_Control::Voice_Control()
 {
 
 }
