@@ -1,4 +1,6 @@
 -- v1.32 (by bazz)
+  migrated to SDL2
+
   Added Blargg & I's personal SMOOTH_VOLUME DSP fix, to cut out annoying
   crackling that is notice-able with headphones on. This will become an
   optional setting down the line.. It's currently a compile-time feature

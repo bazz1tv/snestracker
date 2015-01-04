@@ -1,22 +1,17 @@
 #include "gui/cursor.h"
 
-namespace memcursor
-{
-  const int interval = 300;
-  Uint8 flags=0; // 1 = show cursor, 0 = hide
-  SDL_TimerID timerid=0;
 
   
   
   // timer callback, dont worry about this
-  Uint32 cursor_timer(Uint32 interval, void *param)
+  Uint32 Mem_Cursor::cursor_timer(Uint32 interval, void *param)
   {
     Uint8 *p = (Uint8 *) param;
     *p ^= FLAG_TOGGLED;
     return interval;
   }
 
-  void start_timer()
+  void Mem_Cursor::start_timer()
   {
     if (flags & FLAG_DISABLED)
       return;
@@ -36,7 +31,7 @@ namespace memcursor
 
   }
 
-  void stop_timer()
+  void Mem_Cursor::stop_timer()
   {
     //report::restore_color(mouse_hexdump::address);
     flags &= ~(FLAG_TOGGLED | FLAG_ACTIVE);
@@ -44,10 +39,10 @@ namespace memcursor
     // flags must be set to 0 to prevent drawing to screen
     
   }
-  char is_active() { return flags & FLAG_ACTIVE; }
-  char is_disabled() { return flags & FLAG_DISABLED; }
-  char is_toggled() { return flags & FLAG_TOGGLED; }
-  void disable(char c/*=1*/)
+  char Mem_Cursor::is_active() { return flags & FLAG_ACTIVE; }
+  char Mem_Cursor::is_disabled() { return flags & FLAG_DISABLED; }
+  char Mem_Cursor::is_toggled() { return flags & FLAG_TOGGLED; }
+  void Mem_Cursor::disable(char c/*=1*/)
   {
     if (c)
     {
@@ -65,7 +60,7 @@ namespace memcursor
     }
     
   }
-  void toggle_disable()
+  void Mem_Cursor::toggle_disable()
   {
     disable(!is_disabled());
   }
@@ -73,14 +68,9 @@ namespace memcursor
   
 } 
 
-
-namespace cursor
-{
-  Uint8 toggle=0; // 1 = show cursor, 0 = hide
-  SDL_TimerID timerid=0;
   
   // timer callback, dont worry about this
-  Uint32 cursor_timer(Uint32 interval, void *param)
+  Uint32 Cursor::cursor_timer(Uint32 interval, void *param)
   {
     //fprintf(stderr, "cursor toggle, ");
     Uint8 *p = (Uint8 *) param;
@@ -88,7 +78,7 @@ namespace cursor
     return interval;
   }
 
-  void start_timer()
+  void Cursor::start_timer()
   {
     //fprintf(stderr, "cursor timer ON\n");
     // always start with the cursor showing
@@ -108,7 +98,7 @@ namespace cursor
       timerid = SDL_AddTimer(CURSOR_TOGGLE_TIMEWINDOW, &cursor_timer, &toggle);
     }
   }
-  void stop_timer()
+  void Cursor::stop_timer()
   {
     //fprintf(stderr, "cursor timer OFF\n");
     SDL_RemoveTimer(timerid);
@@ -117,7 +107,7 @@ namespace cursor
     //fprintf(stderr, "TIMER OFF\n");
   }
 
-  void draw(SDL_Surface *screen, int x, int y, Uint32 color)
+  void Cursor::draw(SDL_Surface *screen, int x, int y, Uint32 color)
   {
     if (cursor::toggle)
     {
@@ -125,16 +115,6 @@ namespace cursor
     }
   }
 
-  Uint8 scancode_to_hex(int &scancode)
-  {
-      if ((scancode >= '0') && (scancode <= '9'))
-        return scancode - '0';
-      else if ((scancode >= 'A') && (scancode <= 'F'))
-        return (scancode - 'A') + 0x0a;
-      else if ((scancode >= 'a') && (scancode <= 'f'))
-        return (scancode - 'a') + 0x0a;
-
-    return 0xff; 
-  }
+  //Uint8 Cursor::
 } 
 
