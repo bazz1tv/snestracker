@@ -3,6 +3,9 @@
 #include "utility.h"
 
 
+#define IS_SPECIAL_ADDRESSES(addr) ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) ||\ 
+addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7) )
+
 #define L_FLAG 0
 #define R_FLAG 1
 
@@ -12,8 +15,7 @@ player(player), sdlRenderer(renderer),sdlTexture(text),screen(screen),
 main_memory_area(screen,player),
 mouseover_hexdump_area(player,screen),
 port_tool(player, screen, &mouseover_hexdump_area.cursor),
-voice_control(player),
-IAPURAM(player->spc_emu()->ram())
+voice_control(player)
 {
   int res;
   static struct option long_options[] = {
@@ -231,6 +233,7 @@ void Debugger::reload()
   handle_error( player->load_file( g_cfg.playlist[g_cur_entry] ) );
   
   IAPURAM = player->spc_emu()->ram();
+  Memory::IAPURAM = IAPURAM;
   
   // report::memsurface.init
   report::memsurface.clear();
@@ -697,8 +700,7 @@ reload:
                   i = (scancode - 'a') + 0x0a;  
 
                 // test reg is unimplemented but i'll leave this here..
-                if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || 
-                  addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7)  )
+                if ( IS_SPECIAL_ADDRESSES(addr) )
                 {
                   // only update the buffer the first time.. if we haven't started writing in a new value
                   if (!mouseover_hexdump_area.draw_tmp_ram)
@@ -732,8 +734,7 @@ reload:
                 //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] |= i;
                 mouseover_hexdump_area.tmp_ram |= i;
 
-                if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || 
-                  addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7)  )
+                if ( IS_SPECIAL_ADDRESSES(addr) )
                 {
                   if (!mouseover_hexdump_area.highnibble)
                   {
@@ -808,8 +809,13 @@ reload:
                 mouseover_hexdump_area.inc_cursor_row();
               }
 
-              if (ev.key.keysym.sym == SDLK_ESCAPE || ev.key.keysym.sym == SDLK_RETURN)
+              if (ev.key.keysym.sym == SDLK_ESCAPE)
               {
+                exit_edit_mode();
+              }
+              else if (scancode == SDLK_RETURN)
+              {
+
                 exit_edit_mode();
               }
             }   

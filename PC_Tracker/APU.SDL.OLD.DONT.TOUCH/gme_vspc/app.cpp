@@ -52,7 +52,7 @@ int App::init_sdl(SDL_Window **sdlWindow, int width, int height)
     return 0;
   }*/
 
-  SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_FULLSCREEN, sdlWindow, &sdlRenderer);
+  SDL_CreateWindowAndRenderer(width, height, 0, sdlWindow, &sdlRenderer);
   if (sdlWindow == NULL || sdlRenderer == NULL)
   {
     fprintf(stderr, "FCK\n");

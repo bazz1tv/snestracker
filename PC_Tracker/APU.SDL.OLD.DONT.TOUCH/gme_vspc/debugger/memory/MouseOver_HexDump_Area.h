@@ -57,10 +57,11 @@ struct MouseOver_HexDump_Area : Memory
   uint8_t *IAPURAM;*/
   //unique
   
-  int tmp_ram; char draw_tmp_ram;
+  int tmp_ram=0; char draw_tmp_ram=0;
   
-  Uint8 highnibble;
+  Uint8 highnibble=1;
   Uint8 horizontal=1;
+  int old_addr=0;
 static  int MOUSE_HEXDUMP_START_Y;
   //Uint16 &address, &addr_being_edited;
 }; 

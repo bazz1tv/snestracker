@@ -3,17 +3,17 @@
 Cursor Memory::cursor;
 
 // Cannot decide if this belongs in Debugger_Base
-Music_Player *Memory::player;
-SDL_Surface *Memory::screen;
-uint8_t *Memory::IAPURAM;
+Music_Player *Memory::player=NULL;
+SDL_Surface *Memory::screen=NULL;
+uint8_t *Memory::IAPURAM=NULL;
 
-Uint16 Memory::address; //=0x0000;
-Uint16 Memory::addr_being_edited;
-int Memory::rel_x;
-int Memory::rel_y;
+Uint16 Memory::address=0; //=0x0000;
+Uint16 Memory::addr_being_edited=0;
+int Memory::rel_x=0;
+int Memory::rel_y=0;
 
-int Memory::res_x;
-int Memory::res_y;
+int Memory::res_x=0;
+int Memory::res_y=0;
 
 Memory::Memory(Music_Player *cplayer, SDL_Surface *cscreen)
 {

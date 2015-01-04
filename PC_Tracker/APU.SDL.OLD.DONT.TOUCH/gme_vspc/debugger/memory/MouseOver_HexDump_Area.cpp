@@ -9,24 +9,40 @@ Memory(player,screen)
   
 }
 
+/*void MouseOver_HexDump_Area::update_tmp_ram()
+{
+
+}*/
 
 void MouseOver_HexDump_Area::update_editing_address()
 {
   report::restore_color(addr_being_edited);
   addr_being_edited = address+(res_y*8)+res_x;
-  if ( (addr_being_edited == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr_being_edited==0xf1 || addr_being_edited == 0xf0)
+
+  //update_tmp_ram();
+  if ( IS_SPECIAL_ADDRESSES(addr_being_edited) )//(addr_being_edited == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr_being_edited==0xf1 || addr_being_edited == 0xf0)
   {
     // only update the buffer the first time.. if we haven't started writing in a new value
     if (!draw_tmp_ram)
-    {
+    { 
       if (addr_being_edited == 0xf3)
         tmp_ram = player->spc_read(0xf2);
       else tmp_ram = player->spc_read(addr_being_edited);
     }
+    if (old_addr != addr_being_edited)
+    {
+      /* let's talk about old_addr != addr_being_edit.. basically if the user was editing one of these special registers above
+      Well those special registers are "careful" where we don't want to submit the value until the whole byte has been explicitly
+      set unlike others where we immediately update the hi/lo nibble.. now.. if we were editing one of these special addresses/registers..
+      and then we moved on to another address.. this logic will reset the tmpram boolean and update the tmpram value...*/
+      draw_tmp_ram=0;
+    }
   }
+  //else tmp_ram = IAPURAM[addr_being_edited];
 }
 void MouseOver_HexDump_Area::inc_cursor_row()
 {
+  old_addr = addr_being_edited;
   cursor.toggle=1;
   
   if (res_y == 15)
@@ -38,6 +54,7 @@ void MouseOver_HexDump_Area::inc_cursor_row()
 }
 void MouseOver_HexDump_Area::dec_cursor_row()
 {
+  old_addr = addr_being_edited;
   cursor.toggle=1;
   
   if (res_y == 0)
@@ -49,6 +66,7 @@ void MouseOver_HexDump_Area::dec_cursor_row()
 }
 void MouseOver_HexDump_Area::inc_cursor_pos()
 {
+  old_addr = addr_being_edited;
   cursor.toggle=1;
   if (highnibble)
   {
@@ -76,6 +94,7 @@ void MouseOver_HexDump_Area::inc_cursor_pos()
 }
 void MouseOver_HexDump_Area::dec_cursor_pos()
 {
+  old_addr = addr_being_edited;
   cursor.toggle=1;
   if (!highnibble)
   {
