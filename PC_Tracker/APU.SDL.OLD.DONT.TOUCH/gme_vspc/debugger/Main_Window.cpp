@@ -157,6 +157,7 @@ void Main_Window::receive_event(SDL_Event &ev)
           }
           else
           {
+            fprintf(stderr, "penis2\n");
             if (!g_cfg.nosound) {
               SDL_PauseAudio(1);
             }
