@@ -1,6 +1,6 @@
 #include "SDL.h"
 #include "gme/player/Music_Player.h"
-#include "debugger.h"
+#include "Debugger.h"
 
 class App
 {

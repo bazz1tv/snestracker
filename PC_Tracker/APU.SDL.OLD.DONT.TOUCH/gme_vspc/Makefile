@@ -17,8 +17,9 @@ gme/player/Music_Player.cpp
 ###
 OBJECTS=$(gme_SOURCES:.cpp=.o)
 vspc_OBJECTS=  vspc/main.o vspc/font.o vspc/sdlfont.o vspc/report.o vspc/globals.o vspc/Voice_Control.o vspc/sdl_dblclick.o\
-vspc/Port_Tool.o vspc/gui/cursor.o vspc/memory/MouseOver_HexDump_Area.o vspc/colors.o\
-vspc/debugger.o vspc/app.o vspc/error.o vspc/utility.o vspc/memory/Main_Memory_Area.o
+vspc/Port_Tool.o vspc/gui/cursor.o vspc/memory/MouseOver_HexDump_Area.o vspc/Colors.o\
+vspc/Debugger_Base.o vspc/Debugger.o vspc/app.o vspc/error.o vspc/utility.o vspc/memory/Main_Memory_Area.o\
+vspc/memory/memory.o
 OBJECTS += $(vspc_OBJECTS)
 EXECUTABLE=vspc_blargg
 

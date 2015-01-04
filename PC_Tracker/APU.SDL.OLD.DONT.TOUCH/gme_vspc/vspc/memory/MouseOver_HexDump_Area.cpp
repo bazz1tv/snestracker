@@ -1,7 +1,9 @@
 #include "MouseOver_HexDump_Area.h"
+int MouseOver_HexDump_Area::MOUSE_HEXDUMP_START_Y;
+
 
 MouseOver_HexDump_Area::MouseOver_HexDump_Area(/*Main_Memory_Area *main_mem_area,*/ 
-  Music_Player *player, SDL_Surface *screen, Uint16 &addr_being_edited) :
+Music_Player *player, SDL_Surface *screen/*, Uint16 &addr_being_edited*/) :
 Memory(player,screen)
 {
   

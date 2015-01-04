@@ -19,7 +19,6 @@ namespace mouse {
 
 
 
-
 //extern  //=-1;
 
 #define PACKAGE "spcview"

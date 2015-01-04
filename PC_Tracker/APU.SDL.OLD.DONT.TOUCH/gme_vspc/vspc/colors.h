@@ -2,16 +2,19 @@
 
 #include "SDL.h"
 
-namespace colors
+struct Colors
 {
-  extern Uint32 white, black, cyan, magenta, yellow, red;
-  extern Uint32 green, blue, nearblack;
-  extern Uint32 dark_magenta, dark_cyan, dark_yellow;
-  extern Uint32 gray;
-  extern Uint32 colorscale[12];
+  //Colors(SDL_Surface *cscreen);
+  static SDL_Surface *screen;
 
-  void precompute();
+  static Uint32 white, black, cyan, magenta, yellow, red;
+  static Uint32 green, blue, nearblack;
+  static Uint32 dark_magenta, dark_cyan, dark_yellow;
+  static Uint32 gray;
+  static Uint32 colorscale[12];
+
+  static void precompute(SDL_Surface *screen);
   // belongs in color namespace
-  Uint32 subtract(Uint32 *c, Uint8 subval);
-  void subtractp(Uint32 *c, Uint8 subval);
-}
+  static Uint32 subtract(Uint32 *c, Uint8 subval);
+  static void subtractp(Uint32 *c, Uint8 subval);
+};

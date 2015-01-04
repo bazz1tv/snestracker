@@ -78,7 +78,10 @@ int App::init_sdl(SDL_Window **sdlWindow, int width, int height)
   }
 
   SDL_SetWindowTitle(this->sdlWindow, PROG_NAME_VERSION_STRING);
-  colors::precompute();
+  
+  Colors::precompute(screen);
+  //Colors::precompute();
+  //Colors::precompute();
 
   dblclick::init();
   //SDL_EnableKeyRepeat( 500, 80 );

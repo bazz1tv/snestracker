@@ -1,5 +1,6 @@
-#include "debugger.h"
+#include "Debugger.h"
 #include <getopt.h>
+#include "utility.h"
 
 
 #define L_FLAG 0
@@ -10,9 +11,9 @@ Debugger::Debugger(int &argc, char **argv, Music_Player *player,
 player(player), sdlRenderer(renderer),sdlTexture(text),screen(screen),
 IAPURAM(player->spc_emu()->ram()),
 main_memory_area(screen,player),
-mouseover_hexdump_area(screen,player),
+mouseover_hexdump_area(player,screen),
 voice_control(player),
-port_tool(player, screen, cursor)
+port_tool(player, screen, &mouseover_hexdump_area.cursor)
 
 {
   int res;
@@ -158,9 +159,9 @@ void Debugger::exit_edit_mode()
 {
   mode = MODE_NAV;
   submode = 0;
-  mouse_hexdump::draw_tmp_ram = 0;
+  mouseover_hexdump_area.draw_tmp_ram = 0;
 
-  mouse_hexdump::unlock();
+  main_memory_area.unlock();
 }
 
 void Debugger::draw_block_usage_bar()
@@ -174,13 +175,13 @@ void Debugger::draw_block_usage_bar()
     tmprect.y = MEMORY_VIEW_Y + i * 2;
     if (report::used2[i])
     {
-      SDL_FillRect(screen, &tmprect, colors::white); 
+      SDL_FillRect(screen, &tmprect, Colors::white); 
       tmp++;
     }
   }
   
   sprintf(tmpbuf, "Blocks report::used: %3d/256 (%.1f%%)  ", tmp, (float)tmp*100.0/256.0);
-  sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2, tmpbuf, colors::white);
+  sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2, tmpbuf, Colors::white);
 
   if (1)
   {
@@ -194,17 +195,17 @@ void Debugger::draw_block_usage_bar()
         packed_mask[24], packed_mask[25], packed_mask[26], packed_mask[27],
         packed_mask[28], packed_mask[29], packed_mask[30], packed_mask[31]);
 
-    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2 + 9, tmpbuf, colors::white);
+    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2 + 9, tmpbuf, Colors::white);
   }
 }
 
 void Debugger::draw_mouse_address()
 {
   // write the address under mouse cursor
-  if (mouse_hexdump::address >=0)
+  if (mouseover_hexdump_area.address >=0)
   {
     sprintf(tmpbuf, "Addr mouse: $%04X", mouse_addr);
-    sdlfont_drawString(screen, MEMORY_VIEW_X+8*(23), MEMORY_VIEW_Y-10, tmpbuf, colors::white);
+    sdlfont_drawString(screen, MEMORY_VIEW_X+8*(23), MEMORY_VIEW_Y-10, tmpbuf, Colors::white);
   }
 }
 
@@ -234,8 +235,8 @@ void Debugger::reload()
 
   memset(report::used, 0, sizeof(report::used));
   memset(report::used2, 0, sizeof(report::used2));
-  //if (!mouse_hexdump::address)mouse_hexdump::address =0;
-  last_pc = -1;
+  //if (!mouseover_hexdump_area.address)mouseover_hexdump_area.address =0;
+  report::last_pc = -1;
   
   start_track( 1, path );
   voice_control.was_keyed_on = 0;
@@ -253,29 +254,29 @@ void Debugger::reload()
     tmprect.y = MEMORY_VIEW_Y-1;
     tmprect.w = 512+2;
     tmprect.h = 512+2;
-    SDL_FillRect(screen, &tmprect, colors::white); 
+    SDL_FillRect(screen, &tmprect, Colors::white); 
     
-    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", colors::white);
+    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
 
     sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - DSP MAP");
-    sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, colors::yellow);
+    sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
 
     //sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");  
-    //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, colors::white);
+    //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, Colors::white);
   
     //sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg.autowritemask ? "Yes" : "No");
-    //sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, colors::white);
+    //sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, Colors::white);
 
     update_track_tag();
 
     sprintf(tmpbuf, "Ignore tag time: %s", g_cfg.ignoretagtime ? "Yes" : "No");
-    sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, colors::white);
+    sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, Colors::white);
 
     sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg.defaultsongtime/60, g_cfg.defaultsongtime%60);
-    sdlfont_drawString(screen, INFO_X, INFO_Y+88, tmpbuf, colors::white);
+    sdlfont_drawString(screen, INFO_X, INFO_Y+88, tmpbuf, Colors::white);
 
     
-    sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -", colors::white);
+    sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -", Colors::white);
   }
 }
 
@@ -437,7 +438,7 @@ void Debugger::do_scroller(int elaps_milli)
   tmprect.y = 0;
   tmprect.w = screen->w;
   tmprect.h = 28;
-  SDL_FillRect(screen, &tmprect, colors::black);
+  SDL_FillRect(screen, &tmprect, Colors::black);
   
   
   for (i=0; i<cur_len; i++)
@@ -446,7 +447,7 @@ void Debugger::do_scroller(int elaps_milli)
     c[0] = cur_marquee[i];
     if (  (tmprect.x + i*8 + p > 0) && (tmprect.x + i*8 + p < screen->w) )
     {
-      sdlfont_drawString(screen, tmprect.x + i*8 + p, 12 + off, c, colors::colorscale[cs]);
+      sdlfont_drawString(screen, tmprect.x + i*8 + p, 12 + off, c, Colors::colorscale[cs]);
     }
     angle-=0.1;
   }
@@ -544,8 +545,8 @@ reload:
                   //set_addr(y*256+x);
                   
                   mouse_addr = y*256+x;
-                  if (!mouse_hexdump::locked) {
-                    mouse_hexdump::set_addr(mouse_addr); //_from_cursor(x,y);
+                  if (!main_memory_area.locked) {
+                    mouseover_hexdump_area.set_addr(mouse_addr); //_from_cursor(x,y);
                   }
                 }
               }
@@ -557,7 +558,7 @@ reload:
             int scancode = ev.key.keysym.sym;
             if (scancode == SDLK_m)
             {
-              memcursor::toggle_disable();
+              main_memory_area.memcursor.toggle_disable();
             }
             if (scancode == SDLK_k)
             {
@@ -635,24 +636,24 @@ reload:
                     mouse::y >= MEMORY_VIEW_Y &&
                     mouse::y < MEMORY_VIEW_Y + 512 ) )
               {
-                mouse_hexdump::highnibble = 1;
-                mouse_hexdump::res_x = 0;
-                mouse_hexdump::res_y = 0;
+                mouseover_hexdump_area.highnibble = 1;
+                mouseover_hexdump_area.res_x = 0;
+                mouseover_hexdump_area.res_y = 0;
 
                 mode = MODE_EDIT_MOUSE_HEXDUMP;
-                submode = mouse_hexdump::EASY_EDIT;
+                submode = mouseover_hexdump_area.EASY_EDIT;
                 // order matters .. call here: 
-                mouse_hexdump::lock();
-                //mouse_hexdump::addr_being_edited = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x
-                //mouse_hexdump::res_x = 1; //mouse_hexdump::address_remainder;
+                main_memory_area.lock();
+                //mouseover_hexdump_area.addr_being_edited = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x
+                //mouseover_hexdump_area.res_x = 1; //mouseover_hexdump_area.address_remainder;
                 
-                cursor::start_timer();
+                mouseover_hexdump_area.cursor.start_timer();
               }
               if (ev.key.keysym.sym == SDLK_ESCAPE)
               {
-                if (mouse_hexdump::locked)
+                if (main_memory_area.locked)
                 {
-                  mouse_hexdump::unlock(); 
+                  main_memory_area.unlock(); 
                 }
                 else
                 {
@@ -676,14 +677,14 @@ reload:
               }
               else if (scancode == 'h' || scancode == 'H')
               {
-                mouse_hexdump::horizontal = !mouse_hexdump::horizontal;
+                mouseover_hexdump_area.horizontal = !mouseover_hexdump_area.horizontal;
               }
               else if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
                 ((scancode >= 'a') && (scancode <= 'f')) )
               {
                 uint i=0;
                 //int addr;
-                Uint16 addr = mouse_hexdump::addr_being_edited;
+                Uint16 addr = mouseover_hexdump_area.addr_being_edited;
                 //fprintf(stderr, "Addr = %04x\n", addr);
                 
                 if ((scancode >= '0') && (scancode <= '9'))
@@ -698,111 +699,111 @@ reload:
                   addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7)  )
                 {
                   // only update the buffer the first time.. if we haven't started writing in a new value
-                  if (!mouse_hexdump::draw_tmp_ram)
+                  if (!mouseover_hexdump_area.draw_tmp_ram)
                   {
                     if (addr == 0xf1 || (addr >= 0xf4 && addr <= 0xf7)  )
-                      mouse_hexdump::tmp_ram = IAPURAM[addr];
-                    else mouse_hexdump::tmp_ram = player->spc_read(addr);
+                      mouseover_hexdump_area.tmp_ram = IAPURAM[addr];
+                    else mouseover_hexdump_area.tmp_ram = player->spc_read(addr);
 
-                    fprintf(stderr, "tmpram = 0x%02x\n", mouse_hexdump::tmp_ram);
+                    fprintf(stderr, "tmpram = 0x%02x\n", mouseover_hexdump_area.tmp_ram);
                   }
                 }
                 else 
                 {
-                  if (mouse_hexdump::draw_tmp_ram) mouse_hexdump::draw_tmp_ram = 0;
-                  mouse_hexdump::tmp_ram = player->spc_read(addr);
+                  if (mouseover_hexdump_area.draw_tmp_ram) mouseover_hexdump_area.draw_tmp_ram = 0;
+                  mouseover_hexdump_area.tmp_ram = player->spc_read(addr);
                 }
-                if (mouse_hexdump::highnibble)
+                if (mouseover_hexdump_area.highnibble)
                 {
                   i <<= 4;
                   i &= 0xf0;
-                  //IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0x0f;
-                  mouse_hexdump::tmp_ram &= 0x0f;
+                  //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= 0x0f;
+                  mouseover_hexdump_area.tmp_ram &= 0x0f;
                 }
                 else
                 {
                   i &= 0x0f;
-                  //IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= 0xf0;
-                  mouse_hexdump::tmp_ram &= 0xf0;
+                  //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= 0xf0;
+                  mouseover_hexdump_area.tmp_ram &= 0xf0;
                 }
 
-                //IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] |= i;
-                mouse_hexdump::tmp_ram |= i;
+                //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] |= i;
+                mouseover_hexdump_area.tmp_ram |= i;
 
                 if ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || 
                   addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7)  )
                 {
-                  if (!mouse_hexdump::highnibble)
+                  if (!mouseover_hexdump_area.highnibble)
                   {
                     if (addr >= 0xf4 && addr <= 0xf7)
                     {
-                      port_tool.write(addr-0xf4, mouse_hexdump::tmp_ram);
+                      port_tool.write(addr-0xf4, mouseover_hexdump_area.tmp_ram);
                       //player->spc_write_port()
                     }
                     else 
                     {
-                      player->spc_write(addr, mouse_hexdump::tmp_ram);
+                      player->spc_write(addr, mouseover_hexdump_area.tmp_ram);
                       fprintf(stderr, "WRite");
                     }
-                    mouse_hexdump::draw_tmp_ram = 0;
+                    mouseover_hexdump_area.draw_tmp_ram = 0;
                   }
-                  else mouse_hexdump::draw_tmp_ram = 1;
+                  else mouseover_hexdump_area.draw_tmp_ram = 1;
                 }
-                else player->spc_write(addr, mouse_hexdump::tmp_ram);
+                else player->spc_write(addr, mouseover_hexdump_area.tmp_ram);
                 
-                if (mouse_hexdump::horizontal) mouse_hexdump::inc_cursor_pos();
+                if (mouseover_hexdump_area.horizontal) mouseover_hexdump_area.inc_cursor_pos();
                 
               }
               /*else if (scancode == SDLK_SPACE)
               {
-                mouse_hexdump::inc_cursor_pos();
+                mouseover_hexdump_area.inc_cursor_pos();
               }*/
               else if (scancode == SDLK_TAB)
               {
-                mouse_hexdump::inc_cursor_pos();
-                mouse_hexdump::inc_cursor_pos();
+                mouseover_hexdump_area.inc_cursor_pos();
+                mouseover_hexdump_area.inc_cursor_pos();
               }
               else if (scancode == SDLK_BACKSPACE)
               {
                 // eh
-                int i = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
+                int i = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x;
                 while (i < (0x10000) )
                 {
                   player->spc_write(i-1, player->spc_read(i));
                   //IAPURAM[i-1] = IAPURAM[i];
                   i++;
                 }
-                mouse_hexdump::dec_cursor_pos();
-                mouse_hexdump::dec_cursor_pos();
-                mouse_hexdump::highnibble=1;
+                mouseover_hexdump_area.dec_cursor_pos();
+                mouseover_hexdump_area.dec_cursor_pos();
+                mouseover_hexdump_area.highnibble=1;
               }
               else if (scancode == SDLK_DELETE)
               {
                 // eh
-                int i = mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x;
+                int i = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x;
                 while (i < (0x10000) )
                 {
                   player->spc_write(i, player->spc_read(i+1));
                   //IAPURAM[i] = IAPURAM[i+1];
                   i++;
                 }
-                mouse_hexdump::highnibble=1;
+                mouseover_hexdump_area.highnibble=1;
               }
               else if (scancode == SDLK_LEFT)
               {
-                mouse_hexdump::dec_cursor_pos();
+                mouseover_hexdump_area.dec_cursor_pos();
               }
               else if (scancode == SDLK_RIGHT)
               {
-                mouse_hexdump::inc_cursor_pos();
+                mouseover_hexdump_area.inc_cursor_pos();
               }
               else if (scancode == SDLK_UP)
               {
-                mouse_hexdump::dec_cursor_row();
+                mouseover_hexdump_area.dec_cursor_row();
               }
               else if (scancode == SDLK_DOWN)
               {
-                mouse_hexdump::inc_cursor_row();
+                mouseover_hexdump_area.inc_cursor_row();
               }
 
               if (ev.key.keysym.sym == SDLK_ESCAPE || ev.key.keysym.sym == SDLK_RETURN)
@@ -825,13 +826,13 @@ reload:
               {
                 Uint8 i;
 
-                i = utility::scancode_to_hex(scancode); 
+                i = Utility::scancode_to_hex(scancode); 
 
                 if (port_tool.highnibble)
                 {
                   i <<= 4;
                   i &= 0xf0;
-                  //IAPURAM[mouse_hexdump::address+(mouse_hexdump::res_y*8)+mouse_hexdump::res_x] &= i;
+                  //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= i;
                   port_tool.tmp[port_tool.portnum] &= 0x0f;
                 }
                 else
@@ -909,7 +910,7 @@ reload:
               if (ev.key.keysym.sym == SDLK_ESCAPE)
               {
                 mode = MODE_NAV;
-                cursor::stop_timer();
+                mouseover_hexdump_area.cursor.stop_timer();
                 port_tool.reset_port();
               }
               else if (ev.key.keysym.sym == SDLK_RETURN)
@@ -926,7 +927,7 @@ reload:
             {
               SDL_Event *te = (SDL_Event *)ev.user.data1;
               if (te->motion.x >= (MOUSE_HEXDUMP_START_X - 2) && te->motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
-                te->motion.y >= MOUSE_HEXDUMP_START_Y && te->motion.y <= MOUSE_HEXDUMP_END_Y)
+                te->motion.y >= MouseOver_HexDump_Area::MOUSE_HEXDUMP_START_Y && te->motion.y <= MOUSE_HEXDUMP_END_Y)
               {
                 // editor stuffz
                 Uint8 oldmode = mode;
@@ -938,14 +939,14 @@ reload:
                 const int entry_width = MOUSE_HEXDUMP_ENTRY_X_INCREMENT;
                 const int entry_height = MOUSE_HEXDUMP_ENTRY_Y_INCREMENT;
 
-                mouse_hexdump::rel_x = te->motion.x - MOUSE_HEXDUMP_START_X;
-                mouse_hexdump::rel_x+=2;
-                mouse_hexdump::rel_y = te->motion.y - MOUSE_HEXDUMP_START_Y;
+                mouseover_hexdump_area.rel_x = te->motion.x - MOUSE_HEXDUMP_START_X;
+                mouseover_hexdump_area.rel_x+=2;
+                mouseover_hexdump_area.rel_y = te->motion.y - MouseOver_HexDump_Area::MOUSE_HEXDUMP_START_Y;
 
-                res_x = mouse_hexdump::rel_x / entry_width;
-                res_y = mouse_hexdump::rel_y / entry_height;
+                res_x = mouseover_hexdump_area.rel_x / entry_width;
+                res_y = mouseover_hexdump_area.rel_y / entry_height;
 
-                int res_half = mouse_hexdump::rel_x % entry_width;
+                int res_half = mouseover_hexdump_area.rel_x % entry_width;
                 int tmp = entry_width / 2;
 
                 if (res_half < tmp) highnibble = 1;
@@ -953,11 +954,11 @@ reload:
 
                 if (oldmode == MODE_EDIT_MOUSE_HEXDUMP)
                 {
-                  if (res_x == mouse_hexdump::res_x && res_y == mouse_hexdump::res_y && highnibble == mouse_hexdump::highnibble)
+                  if (res_x == mouseover_hexdump_area.res_x && res_y == mouseover_hexdump_area.res_y && highnibble == mouseover_hexdump_area.highnibble)
                   {
                     mode = MODE_NAV;
-                    cursor::stop_timer();
-                    mouse_hexdump::unlock();
+                    mouseover_hexdump_area.cursor.stop_timer();
+                    main_memory_area.unlock();
                     break;
                   }
                 }
@@ -965,13 +966,13 @@ reload:
                
 
                 // order matters .. call here: 
-                mouse_hexdump::lock(1,0,0,res_x,res_y);
-                mouse_hexdump::highnibble = highnibble;
-                //mouse_hexdump::res_x = res_x;
-                //mouse_hexdump::res_y = res_y;
+                main_memory_area.lock(1,0,0,res_x,res_y);
+                mouseover_hexdump_area.highnibble = highnibble;
+                //mouseover_hexdump_area.res_x = res_x;
+                //mouseover_hexdump_area.res_y = res_y;
 
                 
-                if (mouse_hexdump::res_y == 16) mouse_hexdump::res_y = 15;
+                if (mouseover_hexdump_area.res_y == 16) mouseover_hexdump_area.res_y = 15;
               }
 
               /* porttool */
@@ -1012,14 +1013,14 @@ reload:
 
                       port_tool.highnibble = 1;
                       mode = MODE_EDIT_APU_PORT;
-                      cursor::start_timer();
+                      mouseover_hexdump_area.cursor.start_timer();
                     } break;
                     case 3:
                     {
                       port_tool.set_port(0);
                       port_tool.highnibble = 0;
                       mode = MODE_EDIT_APU_PORT;
-                      cursor::start_timer();
+                      mouseover_hexdump_area.cursor.start_timer();
                     } break;
                     //case 4: IAPURAM[0xf4]--; break;
                     //case 6: IAPURAM[0xf5]++; break;
@@ -1028,14 +1029,14 @@ reload:
                       port_tool.set_port(1);
                       port_tool.highnibble = 1;
                       mode = MODE_EDIT_APU_PORT;
-                      cursor::start_timer();
+                      mouseover_hexdump_area.cursor.start_timer();
                     } break;
                     case 8:
                     {
                       port_tool.set_port(1);
                       port_tool.highnibble = 0;
                       mode = MODE_EDIT_APU_PORT;
-                      cursor::start_timer();
+                      mouseover_hexdump_area.cursor.start_timer();
                     } break;
                     //case 9: IAPURAM[0xf5]--; break;
                     //case 11: IAPURAM[0xf6]++; break;
@@ -1044,14 +1045,14 @@ reload:
                       port_tool.set_port(2);
                       port_tool.highnibble = 1;
                       mode = MODE_EDIT_APU_PORT;
-                      cursor::start_timer();
+                      mouseover_hexdump_area.cursor.start_timer();
                     } break;
                     case 13:
                     {
                       port_tool.set_port(2);
                       port_tool.highnibble = 0;
                       mode = MODE_EDIT_APU_PORT;
-                      cursor::start_timer();
+                      mouseover_hexdump_area.cursor.start_timer();
                     } break;
                     //case 14: IAPURAM[0xf6]--; break;
                     //case 16: IAPURAM[0xf7]++; break;
@@ -1060,14 +1061,14 @@ reload:
                       port_tool.set_port(3);
                       port_tool.highnibble = 1;
                       mode = MODE_EDIT_APU_PORT;
-                      cursor::start_timer();
+                      mouseover_hexdump_area.cursor.start_timer();
                     } break;
                     case 18:
                     {
                       port_tool.set_port(3);
                       port_tool.highnibble = 0;
                       mode = MODE_EDIT_APU_PORT;
-                      cursor::start_timer();
+                      mouseover_hexdump_area.cursor.start_timer();
                     } break;
                     //case 19: IAPURAM[0xf7]--; break;
                   }
@@ -1106,12 +1107,12 @@ reload:
               {
                 if (ev.wheel.y > 0)
                 {
-                  mouse_hexdump::add_addr(-0x08);
+                  mouseover_hexdump_area.add_addr(-0x08);
                   break;          
                 }
                 else
                 {
-                  mouse_hexdump::add_addr(0x08);
+                  mouseover_hexdump_area.add_addr(0x08);
                   break;
                 }
               }
@@ -1132,8 +1133,8 @@ reload:
                     ev.motion.y >= screen_pos::locked.y &&
                     ev.motion.y < screen_pos::locked.y + 9 )
               {
-                if(mouse_hexdump::locked)
-                  mouse_hexdump::toggle_lock();
+                if(main_memory_area.locked)
+                  main_memory_area.toggle_lock();
               }
               else if (  ev.motion.x >= screen_pos::echoE.x && 
                     ev.motion.x < screen_pos::echoE.x + screen_pos::echoE.w &&
@@ -1161,7 +1162,7 @@ reload:
                   // ORDER IMPORTANT
                   if (ev.button.button == SDL_BUTTON_LEFT)
                   {
-                    mouse_hexdump::toggle_lock(ev.motion.x, ev.motion.y);
+                    main_memory_area.toggle_lock(ev.motion.x, ev.motion.y);
                   }
                 }
               }
@@ -1171,16 +1172,16 @@ reload:
                 if (is_in_memory_window && ev.button.button == SDL_BUTTON_LEFT)
                 {
                   exit_edit_mode();
-                  mouse_hexdump::set_addr_from_cursor(ev.motion.x, ev.motion.y);
+                  main_memory_area.set_addr_from_cursor(ev.motion.x, ev.motion.y);
                 }
               }
               
               if (ev.motion.x >= (MOUSE_HEXDUMP_START_X - 2) && ev.motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
-                ev.motion.y >= MOUSE_HEXDUMP_START_Y && ev.motion.y <= MOUSE_HEXDUMP_END_Y)
+                ev.motion.y >= MouseOver_HexDump_Area::MOUSE_HEXDUMP_START_Y && ev.motion.y <= MOUSE_HEXDUMP_END_Y)
               {
                 if (ev.button.button == SDL_BUTTON_RIGHT)
                 {
-                  mouse_hexdump::toggle_lock();
+                  main_memory_area.toggle_lock();
                 }
               }
 
@@ -1284,21 +1285,21 @@ reload:
       
       if (mode == MODE_EDIT_MOUSE_HEXDUMP)
       {
-        mouse_hexdump::draw_cursor(screen, colors::green);
+        mouseover_hexdump_area.draw_cursor(screen, Colors::green);
       }
       else if (mode == MODE_EDIT_APU_PORT)
       {
-        port_tool.draw_cursor(screen, colors::green);
+        port_tool.draw_cursor(screen, Colors::green);
       }
 
       // toggle should be 0 ALWAYS when deactivated
-      if (memcursor::is_active())
+      if (main_memory_area.memcursor.is_active())
       {
-        if (memcursor::is_toggled())
+        if (main_memory_area.memcursor.is_toggled())
         {
-          report_cursor(mouse_hexdump::addr_being_edited);
+          report_cursor(mouseover_hexdump_area.addr_being_edited);
         }
-        else report::restore_color(mouse_hexdump::addr_being_edited);
+        else report::restore_color(mouseover_hexdump_area.addr_being_edited);
       }
       
 
@@ -1307,7 +1308,7 @@ reload:
         if (mouse::x < (screen->w-40) && mouse::y < (screen->h - 8))
         { 
           sprintf(tmpbuf, "(%d,%d)", mouse::x, mouse::y);
-          sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, colors::white);
+          sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, Colors::white);
         }
       }
       
@@ -1330,22 +1331,22 @@ reload:
 void Debugger::draw_program_counter()
 {
   // write the program counter
-  last_pc = (int)player->spc_emu()->pc(); 
-  sprintf(tmpbuf, "PC: $%04x  ", last_pc);
-  sdlfont_drawString(screen, MEMORY_VIEW_X+8*12, MEMORY_VIEW_Y-10, tmpbuf, colors::white);
+  report::last_pc = (int)player->spc_emu()->pc(); 
+  sprintf(tmpbuf, "PC: $%04x  ", report::last_pc);
+  sdlfont_drawString(screen, MEMORY_VIEW_X+8*12, MEMORY_VIEW_Y-10, tmpbuf, Colors::white);
 }
 
 void Debugger::draw_voices_pitchs()
 {
   tmp = i+10; // y 
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices pitches:", colors::white);
+  sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices pitches:", Colors::white);
   tmp += 9;
   
   tmprect.x=MEMORY_VIEW_X+520;
   tmprect.y=tmp;
   tmprect.w=screen->w-tmprect.x;
   tmprect.h=8*8;
-  SDL_FillRect(screen, &tmprect, colors::black);
+  SDL_FillRect(screen, &tmprect, Colors::black);
   tmprect.w=5;
   tmprect.h = 5;
   for (i=0; i<8; i++)
@@ -1353,8 +1354,8 @@ void Debugger::draw_voices_pitchs()
     
     unsigned short pitch = (player->spc_read_dsp(2+(i*0x10)) | (player->spc_read_dsp(3+(i*0x10))<<8)) & 0x3fff; 
     // I believe pitch is max 0x3fff but kirby is using higher values for some unknown reason...
-    //Uint32 gray = colors::gray;
-    Uint32 *cur_color= &colors::gray;
+    //Uint32 gray = Colors::gray;
+    Uint32 *cur_color= &Colors::gray;
 
     uint8_t voice_base_addr = (i*0x10);
     uint8_t outx = player->spc_read_dsp(voice_base_addr+0x09);
@@ -1362,10 +1363,10 @@ void Debugger::draw_voices_pitchs()
 
     if (player->spc_read_dsp(0x4c)&(1<<i) && !(voice_control.was_keyed_on & i) )
     {
-      cur_color = &colors::white;
+      cur_color = &Colors::white;
       voice_control.was_keyed_on |= 1<<i;
     } else if (player->spc_read_dsp(0x5c)&(1<<i)) {
-      //cur_color = &colors::gray;
+      //cur_color = &Colors::gray;
       voice_control.was_keyed_on &= ~(1<<i);
       //if (i==1)
         //fprintf(stderr, "KEYOFF\n");
@@ -1373,7 +1374,7 @@ void Debugger::draw_voices_pitchs()
 
     if (outx || envx) 
     {
-      cur_color = &colors::white;
+      cur_color = &Colors::white;
     }
     else // check if the sample is looping
     {
@@ -1392,10 +1393,10 @@ void Debugger::draw_voices_pitchs()
         //fprintf(stderr,"0x%02x,", samp_index);
         uint16_t *brr_header_addr = (uint16_t*)&IAPURAM[addr+(samp_index*4)];
         if (IAPURAM[*brr_header_addr] & 2)
-          cur_color = &colors::white;
+          cur_color = &Colors::white;
         /*else if (outx) 
         {
-          cur_color = &colors::white;
+          cur_color = &Colors::white;
         }*/
       }
       else
@@ -1406,7 +1407,7 @@ void Debugger::draw_voices_pitchs()
       }
         /*else if (outx) 
         {
-          cur_color = &colors::white;
+          cur_color = &Colors::white;
         }*/
 
         //fprintf(stderr,"0x%04x\n", *brr_header_addr);
@@ -1425,8 +1426,8 @@ void Debugger::draw_voices_pitchs()
       the pointers are faster and can be report::used if the pointed-to-value is
       not changed
       :P pointers are back */
-      cur_color = &colors::nearblack;
-      //colors::subtract(&cur_color, 0x60);
+      cur_color = &Colors::nearblack;
+      //Colors::subtract(&cur_color, 0x60);
     }
 
     int x =MEMORY_VIEW_X+520;
@@ -1443,9 +1444,9 @@ void Debugger::draw_voices_pitchs()
     tmprect.x = MEMORY_VIEW_X+520+18;
     tmprect.x += pitch*(screen->w-tmprect.x-20)/((0x10000)>>2);
     if (voice_control.is_muted(i))
-      SDL_FillRect(screen, &tmprect, colors::nearblack);
+      SDL_FillRect(screen, &tmprect, Colors::nearblack);
     else
-      SDL_FillRect(screen, &tmprect, colors::white);
+      SDL_FillRect(screen, &tmprect, Colors::white);
     
   }
 }
@@ -1454,24 +1455,24 @@ void Debugger::draw_voices_volumes()
 {
   tmp += 9*8;
 
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices volumes:", colors::white);
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520+(16*8), tmp, "Left", colors::yellow);      
+  sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices volumes:", Colors::white);
+  sdlfont_drawString(screen, MEMORY_VIEW_X+520+(16*8), tmp, "Left", Colors::yellow);      
 
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520+(20*8)+4, tmp, "Right", colors::cyan);
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520+(26*8), tmp, "Gain", colors::magenta);
+  sdlfont_drawString(screen, MEMORY_VIEW_X+520+(20*8)+4, tmp, "Right", Colors::cyan);
+  sdlfont_drawString(screen, MEMORY_VIEW_X+520+(26*8), tmp, "Gain", Colors::magenta);
   tmp += 9;
 
   tmprect.x=MEMORY_VIEW_X+520;
   tmprect.y=tmp;
   tmprect.w=screen->w-tmprect.x;
   tmprect.h=10*11;
-  SDL_FillRect(screen, &tmprect, colors::black);   
+  SDL_FillRect(screen, &tmprect, Colors::black);   
   tmprect.w=2;
   tmprect.h=2;
 
   for (i=0; i<8; i++)
   {
-    Uint32 c1 = colors::white, c2 = colors::gray, c3 = colors::magenta;
+    Uint32 c1 = Colors::white, c2 = Colors::gray, c3 = Colors::magenta;
     Uint32 *Color1=&c1, *Color2 = &c1;
     
     unsigned char is_inverted=0;
@@ -1505,9 +1506,9 @@ void Debugger::draw_voices_volumes()
     Uint32 *color;
 
     if (voice_control.is_muted(i))
-      color = &colors::nearblack;
+      color = &Colors::nearblack;
     else 
-      color = &colors::white;
+      color = &Colors::white;
 
     sdlfont_drawString(screen, x, y, tmpbuf, *color);
     if (is_first_run && i == 0)
@@ -1519,8 +1520,8 @@ void Debugger::draw_voices_volumes()
     sprintf(tmpbuf,"\x1");
     if (voice_control.is_muted(i))
     {
-      colors::subtractp(Color1,0x60);
-      colors::subtractp(Color2,0x60);
+      Colors::subtractp(Color1,0x60);
+      Colors::subtractp(Color2,0x60);
     }
     sdlfont_drawString2c(screen, MEMORY_VIEW_X+520 + 8, tmp + (i*10), tmpbuf, *Color1, *Color2);
     
@@ -1532,8 +1533,8 @@ void Debugger::draw_voices_volumes()
     
     // L volume
     if (voice_control.is_muted(i))
-      color = &colors::dark_yellow;
-    else color = &colors::yellow;
+      color = &Colors::dark_yellow;
+    else color = &Colors::yellow;
     SDL_FillRect(screen, &tmprect, *color);
 
     tmprect.x = MEMORY_VIEW_X+520+18;
@@ -1541,8 +1542,8 @@ void Debugger::draw_voices_volumes()
     tmprect.y = tmp+(i*10)+3;
     
     if (voice_control.is_muted(i))
-      color = &colors::dark_cyan;
-    else color = &colors::cyan;
+      color = &Colors::dark_cyan;
+    else color = &Colors::cyan;
     SDL_FillRect(screen, &tmprect, *color);
 
     // Gain needs customization
@@ -1582,8 +1583,8 @@ void Debugger::draw_main_volume()
   i=9;
   // 
   {
-    Uint32 *Color1=&colors::white, *Color2 = &colors::white;
-    Uint32 *thecolor = &colors::gray;
+    Uint32 *Color1=&Colors::white, *Color2 = &Colors::white;
+    Uint32 *thecolor = &Colors::gray;
     unsigned char is_inverted=0;
     unsigned char left_vol = player->spc_read_dsp(dsp_reg::mvol_l);
     unsigned char right_vol = player->spc_read_dsp(dsp_reg::mvol_r);
@@ -1606,18 +1607,18 @@ void Debugger::draw_main_volume()
     if (is_inverted & (1 << L_FLAG) )
     {
       if (left_vol == 0x80)
-        Color1 = &colors::red; // this is bad value according to FullSNES
+        Color1 = &Colors::red; // this is bad value according to FullSNES
       else Color1 = thecolor;
     }
     if (is_inverted & (1 << R_FLAG) )
     {
       if (right_vol == 0x80)
-        Color2 = &colors::red; // this is bad value according to FullSNES
+        Color2 = &Colors::red; // this is bad value according to FullSNES
       Color2 = thecolor;
     }
 
     sprintf(tmpbuf,"M");
-    sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, colors::white);
+    sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, Colors::white);
     sprintf(tmpbuf,"\x1");
     sdlfont_drawString2c(screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, *Color1, *Color2);
 
@@ -1625,13 +1626,13 @@ void Debugger::draw_main_volume()
     tmprect.y = tmp+(i*10)+1;
     tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
 
-    SDL_FillRect(screen, &tmprect, colors::yellow);
+    SDL_FillRect(screen, &tmprect, Colors::yellow);
 
     tmprect.x = MEMORY_VIEW_X+520+18;
     tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
     tmprect.y = tmp+(i*10)+4;
     
-    SDL_FillRect(screen, &tmprect, colors::cyan);
+    SDL_FillRect(screen, &tmprect, Colors::cyan);
   }
 }
 
@@ -1639,10 +1640,10 @@ void Debugger::draw_echo_volume()
 {
   i++;
   {
-    Uint32 Color1=colors::white;
-    Uint32 Color2=colors::white;// = &colors::white;
-    Uint32 *leftbarvol_col=&colors::yellow;
-    Uint32 *rightbarvol_col=&colors::cyan;
+    Uint32 Color1=Colors::white;
+    Uint32 Color2=Colors::white;// = &Colors::white;
+    Uint32 *leftbarvol_col=&Colors::yellow;
+    Uint32 *rightbarvol_col=&Colors::cyan;
     //Uint32 thecolor = &
     unsigned char is_inverted=0;
     unsigned char left_vol = player->spc_read_dsp(dsp_reg::evol_l);
@@ -1664,11 +1665,11 @@ void Debugger::draw_echo_volume()
 
     if (is_inverted & (1 << L_FLAG) )
     {
-      Color1 = colors::gray;
+      Color1 = Colors::gray;
     }
     if (is_inverted & (1 << R_FLAG) )
     {
-      Color2 = colors::gray;
+      Color2 = Colors::gray;
     }
 
     //
@@ -1681,15 +1682,15 @@ void Debugger::draw_echo_volume()
 
     if (player->spc_emu()->is_echoing())
     {
-      c = &colors::white;
+      c = &Colors::white;
     }
     else
     {
-      c = &colors::nearblack;
-      colors::subtractp(&Color1, 0x60);
-      colors::subtractp(&Color2, 0x60);
-      leftbarvol_col=&colors::dark_yellow;
-      rightbarvol_col=&colors::dark_cyan;
+      c = &Colors::nearblack;
+      Colors::subtractp(&Color1, 0x60);
+      Colors::subtractp(&Color2, 0x60);
+      leftbarvol_col=&Colors::dark_yellow;
+      rightbarvol_col=&Colors::dark_cyan;
     }
     sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, *c);
     sprintf(tmpbuf,"\x1");
@@ -1720,30 +1721,30 @@ void Debugger::draw_mouseover_hexdump()
 
   tmp += i*10 + 8;
   screen_pos::locked.y = tmp;
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -", colors::white);
-  if (mouse_hexdump::locked) {
+  sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -", Colors::white);
+  if (main_memory_area.locked) {
     
-    sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, LOCKED_STR, colors::red);
+    sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, LOCKED_STR, Colors::red);
   } else {
-    sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, "      ", colors::red);
+    sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, "      ", Colors::red);
   }
   
   tmp+=9;
-  MOUSE_HEXDUMP_START_Y = tmp;
-  if (mouse_hexdump::address>=0)
+  MouseOver_HexDump_Area::MOUSE_HEXDUMP_START_Y = tmp;
+  if (mouseover_hexdump_area.address>=0)
   {
     
     for (i=0; i<128; i+=8)
     {
       unsigned char *st;
-      Uint16 cut_addr = (mouse_hexdump::address + i) & 0xffff;
+      Uint16 cut_addr = (mouseover_hexdump_area.address + i) & 0xffff;
       
       st = &IAPURAM[cut_addr];
       
       int p = MEMORY_VIEW_X+520;
       
       sprintf(tmpbuf, "%04X: ", cut_addr);
-      sdlfont_drawString(screen, p, tmp, tmpbuf, colors::white);
+      sdlfont_drawString(screen, p, tmp, tmpbuf, Colors::white);
       p += 6*8;
 
       for (int j=0; j<8; j++) {
@@ -1759,7 +1760,7 @@ void Debugger::draw_mouseover_hexdump()
             );
             
         Uint16 cur_addr = cut_addr+j;
-        if (cur_addr != mouse_hexdump::addr_being_edited)
+        if (cur_addr != mouseover_hexdump_area.addr_being_edited)
         {
             if (cur_addr == 0xf3 )
             {
@@ -1775,20 +1776,20 @@ void Debugger::draw_mouseover_hexdump()
         {
           if (cur_addr == 0xf3 )
           {
-            if (mouse_hexdump::draw_tmp_ram)
-              sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+            if (mouseover_hexdump_area.draw_tmp_ram)
+              sprintf(tmpbuf, "%02X ", mouseover_hexdump_area.tmp_ram);
             else sprintf(tmpbuf, "%02X ", player->spc_read_dsp(IAPURAM[0xf2]));
           }
           else if (cur_addr == 0xf0 )
           {
-            if (mouse_hexdump::draw_tmp_ram)
-              sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+            if (mouseover_hexdump_area.draw_tmp_ram)
+              sprintf(tmpbuf, "%02X ", mouseover_hexdump_area.tmp_ram);
             else sprintf(tmpbuf, "%02X ", player->spc_read(cur_addr));
           }
           else if (cur_addr == 0xf1 || (cur_addr >= 0xf4 && cur_addr <= 0xf7))
           {
-            if (mouse_hexdump::draw_tmp_ram)
-              sprintf(tmpbuf, "%02X ", mouse_hexdump::tmp_ram);
+            if (mouseover_hexdump_area.draw_tmp_ram)
+              sprintf(tmpbuf, "%02X ", mouseover_hexdump_area.tmp_ram);
             else sprintf(tmpbuf, "%02X ", *st);
           }
           else sprintf(tmpbuf, "%02X ", *st);
@@ -1810,18 +1811,18 @@ void Debugger::draw_mouseover_hexdump()
 
 void Debugger::draw_porttool()
 {
-  sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+8, " APU:", colors::white);
-  sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:", colors::white);
+  sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+8, " APU:", Colors::white);
+  sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:", Colors::white);
 
   if (mode == MODE_EDIT_APU_PORT)
     sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", port_tool.tmp[0], port_tool.tmp[1], port_tool.tmp[2], port_tool.tmp[3]);    
   else 
     sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", port_tool.portdata[0], port_tool.portdata[1], port_tool.portdata[2], port_tool.portdata[3]);  
   
-  sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf, colors::white);
+  sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf, Colors::white);
   
   sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", IAPURAM[0xf4], IAPURAM[0xf5], IAPURAM[0xf6], IAPURAM[0xf7]);   
-  sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, colors::white);
+  sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf, Colors::white);
 }
 
 void Debugger::draw_time_and_echo_status()
@@ -1830,11 +1831,11 @@ void Debugger::draw_time_and_echo_status()
       int(player->emu()->tell()/1000)/60,
       int((player->emu()->tell()/1000))%60,
       song_time/60, song_time%60);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+48, tmpbuf, colors::white);
+  sdlfont_drawString(screen, INFO_X, INFO_Y+48, tmpbuf, Colors::white);
 
 
   sprintf(tmpbuf, "Echo....: %s", player->spc_emu()->is_echoing() ? "On " : "Off"); 
-  sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, colors::white);
+  sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf, Colors::white);
 }
 
 
@@ -1934,21 +1935,21 @@ void Debugger::update_track_tag()
   r.y = 465;
   r.w = 800-536;
   r.h = 519-465;
-  SDL_FillRect(screen, &r, colors::black);
+  SDL_FillRect(screen, &r, Colors::black);
 
   //fprintf(stderr, "comment = %s\n", tag.comment);
   //fprintf(stderr, "path = %s\nsong = %s\ngame = %s\ndumper = %s\ncomment = %s")
   
   sprintf(tmpbuf, "Filename: %s", path);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+8, tmpbuf, colors::white);
+  sdlfont_drawString(screen, INFO_X, INFO_Y+8, tmpbuf, Colors::white);
   sprintf(tmpbuf, "Title...: %s", tag.song);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+16, tmpbuf, colors::white);
+  sdlfont_drawString(screen, INFO_X, INFO_Y+16, tmpbuf, Colors::white);
   sprintf(tmpbuf, "Game....: %s", tag.game);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+24, tmpbuf, colors::white);
+  sdlfont_drawString(screen, INFO_X, INFO_Y+24, tmpbuf, Colors::white);
   sprintf(tmpbuf, "Dumper..: %s", tag.dumper);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+32, tmpbuf, colors::white);
+  sdlfont_drawString(screen, INFO_X, INFO_Y+32, tmpbuf, Colors::white);
   sprintf(tmpbuf, "Comment.: %s", tag.comment);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+40, tmpbuf, colors::white);
+  sdlfont_drawString(screen, INFO_X, INFO_Y+40, tmpbuf, Colors::white);
 }
 
 namespace screen_pos

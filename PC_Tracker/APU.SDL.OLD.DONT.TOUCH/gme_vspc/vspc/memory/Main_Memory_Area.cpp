@@ -1,15 +1,14 @@
 #include "Main_Memory_Area.h"
 #include "gme/player/Music_Player.h"
-
+#include "report.h"
 
 //extern uint8_t* IAPURAM;
 //extern Music_Player *player;
 
 
-MainMemoryArea::MainMemoryArea(SDL_Surface *screen, Music_Player *player, Uint16 &address, Uint16 &address_being_edited) :
-screen(screen), player(player), 
-address(address), address_being_edited(address_being_edited)
-IAPURAM(player->spc_emu()->ram())
+Main_Memory_Area::Main_Memory_Area(SDL_Surface *screen, Music_Player *player) : //, Uint16 &address/*, Uint16 &address_being_edited*/) : 
+//address(address), address_being_edited(address_being_edited)
+Memory(player,screen)
 {
 
 }
@@ -23,7 +22,7 @@ void Main_Memory_Area::set_addr(int i)
     report::restore_color(addr_being_edited);
     memcursor.start_timer();
   }
-  address = i;
+  Memory::set_addr(i);
 }
 void Main_Memory_Area::set_addr_from_cursor(int x, int y)
 {
@@ -33,10 +32,7 @@ void Main_Memory_Area::set_addr_from_cursor(int x, int y)
   y /= 2;
   set_addr(y*256+x);
 }
-void Main_Memory_Area::add_addr(int i)
-{
-  set_addr(address+i);
-}
+
 
 //void dec_cursor_row();
 //void inc_cursor_row();
@@ -62,8 +58,8 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
       }
     }
 
-    mode = MODE_EDIT_Main_Memory_Area;
-    cursor::start_timer();
+    mode = MODE_EDIT_MOUSE_HEXDUMP;
+    cursor.start_timer();
 
     memcursor.start_timer();
     addr_being_edited = address+(res_y*8)+res_x;
@@ -83,7 +79,7 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
     report::restore_color(addr_being_edited);
 
     mode = MODE_NAV;
-    cursor::stop_timer();
+    cursor.stop_timer();
     memcursor.stop_timer();
   }
   

@@ -71,31 +71,34 @@ void Mem_Surface::fade_arrays()
   }
 }
 
-extern Mem_Surface memsurface;
+
 
 void report_cursor(int addr)
 {
   int idx = (((addr)&0xff00)<<4);
   idx+= ((addr)%256)<<3;
-  memsurface.cdata[idx]=0x0;
-  memsurface.cdata[idx+2048]=0x0;
-  memsurface.cdata[idx+4]=0x00;
-  memsurface.cdata[idx+4+2048]=0x00;
-  memsurface.cdata[idx+1]=0xff;
-  memsurface.cdata[idx+2048+1]=0xff;
-  memsurface.cdata[idx+4+1]=0xff;
-  memsurface.cdata[idx+4+2048+1]=0xff;
-  memsurface.cdata[idx+2]=0x0;
-  memsurface.cdata[idx+2048+2]=0x0;
-  memsurface.cdata[idx+4+2]=0x0;
-  memsurface.cdata[idx+4+2048+2]=0x0;
+  report::memsurface.cdata[idx]=0x0;
+  report::memsurface.cdata[idx+2048]=0x0;
+  report::memsurface.cdata[idx+4]=0x00;
+  report::memsurface.cdata[idx+4+2048]=0x00;
+  report::memsurface.cdata[idx+1]=0xff;
+  report::memsurface.cdata[idx+2048+1]=0xff;
+  report::memsurface.cdata[idx+4+1]=0xff;
+  report::memsurface.cdata[idx+4+2048+1]=0xff;
+  report::memsurface.cdata[idx+2]=0x0;
+  report::memsurface.cdata[idx+2048+2]=0x0;
+  report::memsurface.cdata[idx+4+2]=0x0;
+  report::memsurface.cdata[idx+4+2048+2]=0x0;
  
 }
 
 namespace report
 {
 
-
+  unsigned char used2[0x101];
+  unsigned char used[0x10006];
+  Mem_Surface memsurface;
+  int last_pc = -1;
   int bcolor=0; // backup color
 
   // backup colors is no longer an issue
@@ -103,9 +106,9 @@ namespace report
   {
     /*int r,g,b;
     int idx = (((addr)&0xff00)<<4); idx+= ((addr)%256)<<3; 
-    r=memsurface.data[idx];
-    g=memsurface.data[idx+1];
-    b=memsurface.data[idx+2];
+    r=report::memsurface.data[idx];
+    g=report::memsurface.data[idx+1];
+    b=report::memsurface.data[idx+2];
     bcolor = (r << 16) | (g << 8) | b;
     //fprintf(stderr, "bcol = %03x\n", bcolor);
     return bcolor;*/
@@ -128,10 +131,10 @@ void restore_color(int addr)
   //Uint8 c = r1
   for (int i=0; i < 3; i++) 
   { 
-    memsurface.cdata[idx+i]=0; 
-    memsurface.cdata[idx+2048+i]=0; 
-    memsurface.cdata[idx+4+i]=0; 
-    memsurface.cdata[idx+4+2048+i]=0; 
+    report::memsurface.cdata[idx+i]=0; 
+    report::memsurface.cdata[idx+2048+i]=0; 
+    report::memsurface.cdata[idx+4+i]=0; 
+    report::memsurface.cdata[idx+4+2048+i]=0; 
   }
 }
 }

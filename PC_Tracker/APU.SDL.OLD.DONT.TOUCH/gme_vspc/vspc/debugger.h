@@ -11,10 +11,10 @@
 #include "mode.h"
 #include "MouseOver_HexDump_Area.h"
 #include "Main_Memory_Area.h"
-#include "colors.h"
+#include "Colors.h"
 #include "platform.h"
 
-struct Debugger
+struct Debugger : Debugger_Base
 {
   Debugger(int &argc, char **argv, Music_Player *player, SDL_Window *, SDL_Renderer *, SDL_Texture *, SDL_Surface*);
   void run();
@@ -75,9 +75,9 @@ struct Debugger
 
   // trim later. Get working now
   struct {
-    unsigned char g_cfg_filler = 0x00;
-    int g_cfg_apply_block = 0;
-    int g_cfg_statusline = 0;
+    unsigned char filler = 0x00;
+    int apply_block = 0;
+    int statusline = 0;
     int nice = 0;
     int extratime = 0;
     int ignoretagtime = 0;
@@ -87,7 +87,7 @@ struct Debugger
     int novideo = 0;
     int update_in_callback = 0;
     int num_files = 0;
-    char **g_cfg_playlist = NULL;
+    char **playlist = NULL;
   } g_cfg;
 
   int g_paused = 0;
@@ -101,10 +101,9 @@ struct Debugger
 
   uint8_t *IAPURAM;
   bool paused;
-  int last_pc;
+  //int last_pc;
   Uint32 time_last=0, time_cur=0;
-  int mode =0;
-  int submode =  0;
+  
   bool is_first_run=true;
   const char* path;
   char tmpbuf[500];

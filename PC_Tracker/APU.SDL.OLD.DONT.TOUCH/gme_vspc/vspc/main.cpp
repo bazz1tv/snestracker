@@ -1,5 +1,5 @@
 #include "app.h"
-#include "colors.h"
+#include "Colors.h"
 
 SDL_Window *sdlWindow;
 

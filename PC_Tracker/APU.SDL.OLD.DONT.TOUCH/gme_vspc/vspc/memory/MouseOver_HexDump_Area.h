@@ -51,7 +51,7 @@ struct MouseOver_HexDump_Area : Memory
   void dec_cursor_pos();
 
 
-  enum submodes { HARD_EDIT=0, EASY_EDIT=1 };
+  
 
 
   //deps
@@ -59,16 +59,12 @@ struct MouseOver_HexDump_Area : Memory
   SDL_Surface *screen;
   uint8_t *IAPURAM;*/
   //unique
-  Cursor cursor;
+  
   int tmp_ram; char draw_tmp_ram;
-  int rel_x;
-  int rel_y;
-
-  int res_x;
-  int res_y;
+  
   Uint8 highnibble;
   Uint8 horizontal=1;
-  int MOUSE_HEXDUMP_START_Y;
+static  int MOUSE_HEXDUMP_START_Y;
   //Uint16 &address, &addr_being_edited;
 }; 
 
