@@ -645,8 +645,12 @@ inline void Spc_Dsp::echo_read( int ch )
 	int s=0; 
 	if(echoing)
 	{
-		report_echomem(m.t_echo_ptr + ch * 2);
-		report_echomem(m.t_echo_ptr + ch * 2 + 1);
+		// only report the echo region color if echo is ON in SPC
+		if (!(m.t_echo_enabled & 0x20))
+		{
+			report_echomem(m.t_echo_ptr + ch * 2);
+			report_echomem(m.t_echo_ptr + ch * 2 + 1);
+		}
 		s = GET_LE16SA( ECHO_PTR( ch ) );
 	}
 	// second copy simplifies wrap-around handling
