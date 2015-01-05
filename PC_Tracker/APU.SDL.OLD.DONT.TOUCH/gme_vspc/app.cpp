@@ -13,3 +13,15 @@ void App::run()
   debugger.run();
 }
 
+App::~App()
+{
+  if (screen)
+    SDL_FreeSurface(screen);
+  if (sdlTexture)
+    SDL_DestroyTexture(sdlTexture);
+  if (sdlRenderer)
+    SDL_DestroyRenderer(sdlRenderer);
+  if(sdlWindow)
+    SDL_DestroyWindow(sdlWindow);
+}
+

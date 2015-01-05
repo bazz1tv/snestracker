@@ -6,7 +6,7 @@ class App : public Render_Context, public Player_Context
 {
 public:
   App(int &argc, char **argv, int samplerate=44100);
-  //~App();
+  ~App();
   void run();
   int init();
   int init_sdl(SDL_Window **, int,int);

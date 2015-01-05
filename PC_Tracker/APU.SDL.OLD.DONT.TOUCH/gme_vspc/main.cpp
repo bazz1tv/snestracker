@@ -34,13 +34,15 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
   }
   atexit(SDL_Quit);
 
-  SDL_CreateWindowAndRenderer(width, height, 0, sdlWindow, sdlRenderer);
+  SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, sdlWindow, sdlRenderer);
   if (*sdlWindow == NULL || *sdlRenderer == NULL)
   {
     fprintf(stderr, "FCK\n");
     return -1;
   }
   //sdlWindow = *sdlWindow;
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");  // make the scaled rendering look smoother.
+  SDL_RenderSetLogicalSize(*sdlRenderer, width, height);
 
   *screen = SDL_CreateRGBSurface(0, width, height, 32,
                                       0x00FF0000,

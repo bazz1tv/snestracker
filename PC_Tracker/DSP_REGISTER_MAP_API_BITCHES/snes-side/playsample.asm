@@ -18,7 +18,15 @@ Start:
     
     rep #$10
     sep #$20
-    
+peep:
+    rep #$30
+    lda #$FFAA
+    ldx #$d0D0
+    ldy #$BABE
+    sep #$30
+    rep #$30
+    rep #$30
+    sep #$20
     
     
     ; set backdrop to white, know that progress is made

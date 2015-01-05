@@ -26,6 +26,7 @@ void Debugger::run()
     main_window.run();
     handle_events();
     main_window.draw();
+    SDL_Delay( 1000 / 100 );
   }
 }
 
