@@ -251,7 +251,7 @@ struct Spc_File : Gme_Info_
 static Music_Emu* new_spc_emu () { return BLARGG_NEW Spc_Emu ; }
 static Music_Emu* new_spc_file() { return BLARGG_NEW Spc_File; }
 
-gme_type_t_ const gme_spc_type [1] = { "Super Nintendo", 1, &new_spc_emu, &new_spc_file, "SPC", 0 };
+gme_type_t_ const gme_spc_type [1] = { { "Super Nintendo", 1, &new_spc_emu, &new_spc_file, "SPC", 0 } };
 
 // Setup
 

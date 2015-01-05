@@ -1,110 +1,141 @@
 0001   2000             .org $2000
-0002   2000             Main:
-0003   2000 3F 05 20        call Init
-0004   2003             infin:
-0005   2003 2F FE           bra infin
-0006   2005                 
-0007   2005             Init:
-0008   2005                 
-0009   2005                 
-0010   2005 8F 5D F2        mov $F2, #$5D   ; starting address = $3000
-0011   2008 8F 30 F3        mov $F3, #$30
-0012   200B                 
-0013   200B E8 00           mov a, #$00
-0014   200D C5 00 30        mov !$3000, a
-0015   2010 E8 02           mov a, #$02
-0016   2012 C5 01 30        mov !$3001, a
-0017   2015 E8 91           mov a, #$91
-0018   2017 C5 02 30        mov !$3002, a
-0019   201A E8 16           mov a, #$16
-0020   201C C5 03 30        mov !$3003, a
-0021   201F             
-0022   201F 8F 00 F2        mov $F2, #$00       ; left volume = 127
-0023   2022 8F 7F F3        mov $F3, #127
-0024   2025 8F 01 F2        mov $F2, #$01       ; right volume = 127 
-0025   2028 8F 7F F3        mov $F3, #127
-0026   202B             
-0027   202B 8F 02 F2        mov $F2, #$02       ; pitch (low byte) 
-0028   202E 8F 00 F3        mov $F3, #$00 
-0029   2031 8F 03 F2        mov $F2, #$03       ; pitch (high byte) 
-0030   2034 8F 10 F3        mov $F3, #$10
-0031   2037                 
-0032   2037 8F 04 F2        mov $F2, #$04       ; source number = 0 
-0033   203A 8F 00 F3        mov $F3, #$00
-0034   203D                 
-0035   203D                 
-0036   203D 8F 05 F2        mov $F2, #$05 
-0037   2040 8F 00 F3        mov $F3, #$00 
-0038   2043 8F 07 F2        mov $F2, #$07 
-0039   2046 8F 1F F3        mov $F3, #$1f   ; set GAIN, direct mode (bit7=0), full volume
-0040   2049                 
-0041   2049             
-0042   2049             
-0043   2049                 ; Voice 1
-0044   2049             
-0045   2049 8F 10 F2        mov $F2, #$10       ; left volume = 127
-0046   204C 8F 01 F3        mov $F3, #1
-0047   204F 8F 11 F2        mov $F2, #$11       ; right volume = 127 
-0048   2052 8F 01 F3        mov $F3, #1
-0049   2055             
-0050   2055 8F 12 F2        mov $F2, #$12       ; pitch (low byte) 
-0051   2058 8F 00 F3        mov $F3, #$00 
-0052   205B 8F 13 F2        mov $F2, #$13       ; pitch (high byte) 
-0053   205E 8F 10 F3        mov $F3, #$10
-0054   2061                 
-0055   2061 8F 14 F2        mov $F2, #$14       ; source number = 0 
-0056   2064 8F 00 F3        mov $F3, #$00
-0057   2067                 
-0058   2067                 
-0059   2067 8F 15 F2        mov $F2, #$15 
-0060   206A 8F 00 F3        mov $F3, #$00 
-0061   206D 8F 17 F2        mov $F2, #$17 
-0062   2070 8F 1F F3        mov $F3, #$1f   ; set GAIN, direct mode (bit7=0), full volume
-0063   2073                 
-0064   2073 8F 0C F2        mov $F2, #$0C 
-0065   2076 8F 7F F3        mov $F3, #127   ; L/R vol 100% both voices 
-0066   2079 8F 1C F2        mov $F2, #$1C
-0067   207C 8F 7F F3        mov $F3, #127
-0068   207F                 
-0069   207F                 
-0070   207F                 
-0071   207F             
-0072   207F 8F 6C F2        mov $F2, #$6C   ; turn off mute
-0073   2082 8F 00 F3        mov $F3, #0
-0074   2085             
-0075   2085                 ;
-0076   2085 8F 20 FA        mov $FA, #$20
-0077   2088 8F 01 F1        mov $f1, #1
-0078   208B             
-0079   208B E8 00           mov a, #0
-0080   208D C5 00 08        mov !$800, a
-0081   2090             
-0082   2090 8F 4C F2        mov $F2, #$4C
-0083   2093 8F 00 F3        mov $f3, #0
-0084   2096 8F 01 F3        mov $F3, #$01
-0085   2099             
-0086   2099             loop:    
-0087   2099 E4 FD           mov a, $fd
-0088   209B F0 FC           beq loop
-0089   209D             
-0090   209D                 ; if a > 0
-0091   209D 60              clrc
-0092   209E 85 00 08        adc a, !$800
-0093   20A1 C5 00 08        mov !$800, a
-0094   20A4             
-0095   20A4 68 40           cmp a, #$40
-0096   20A6 D0 F1           bne loop
-0097   20A8             
-0098   20A8 E8 00           mov a, #0
-0099   20AA C5 00 08        mov !$800, a
-0100   20AD                 
-0101   20AD             
-0102   20AD 8F 4C F2        mov $F2, #$4C
-0103   20B0 8F 00 F3        mov $f3, #0
-0104   20B3 8F 01 F3        mov $F3, #$01
-0105   20B6                 
-0106   20B6             
-0107   20B6 2F E1           bra loop
-0108   20B8             
-0109   20B8             .END
-0110   20B8             EOFtasm: Number of errors = 0
+0002   2000             
+0003   2000                 
+0004   2000             Init:
+0005   2000                 ; clear loop
+0006   2000 8F 00 04        mov $4, #0
+0007   2003 8F 02 05        mov $5, #2   ; $200
+0008   2006 8F 00 06        mov $6, #$00 ; sample size in bytes
+0009   2009 8F 02 07        mov $7, #$02 ; decw
+0010   200C 8F 1C 08        mov $8, #$1c ; interval of $100
+0011   200F E8 00           mov a, #0
+0012   2011 8D 00           mov y, #0
+0013   2013                 ; begin loop
+0014   2013             bak:
+0015   2013 FD              mov y,a
+0016   2014 F7 04           mov a, [$4]+Y
+0017   2016 28 FD           and a, #~2
+0018   2018 D7 04           mov [$4]+Y,A
+0019   201A DD              mov a,y
+0020   201B 60              clrc
+0021   201C 88 09           adc a, #9
+0022   201E 90 F3           bcc bak
+0023   2020 8B 08           dec $08
+0024   2022 F0 04           beq donez 
+0025   2024 AB 05           inc $05
+0026   2026 2F EB           bra bak
+0027   2028             donez:
+0028   2028 E8 3B           mov a, #$3B; #$3B ;#$39
+0029   202A C5 90 1D        mov !$1d90, a
+0030   202D 8F 5D F2        mov $F2, #$5D   ; starting address = $3000
+0031   2030 8F 30 F3        mov $F3, #$30
+0032   2033             
+0033   2033                 ;mov a, !$200
+0034   2033                 ;and a, #$FD
+0035   2033                 ;mov !$200, a
+0036   2033                 
+0037   2033 E8 00           mov a, #$00
+0038   2035 C5 00 30        mov !$3000, a
+0039   2038 E8 02           mov a, #$02
+0040   203A C5 01 30        mov !$3001, a
+0041   203D E8 91           mov a, #$91
+0042   203F C5 02 30        mov !$3002, a
+0043   2042 E8 16           mov a, #$16
+0044   2044 C5 03 30        mov !$3003, a
+0045   2047             
+0046   2047 8F 00 F2        mov $F2, #$00       ; left volume = 127
+0047   204A 8F 7F F3        mov $F3, #127
+0048   204D 8F 01 F2        mov $F2, #$01       ; right volume = 127 
+0049   2050 8F 7F F3        mov $F3, #127
+0050   2053             
+0051   2053 8F 02 F2        mov $F2, #$02       ; pitch (low byte) 
+0052   2056 8F 00 F3        mov $F3, #$00 
+0053   2059 8F 03 F2        mov $F2, #$03       ; pitch (high byte) 
+0054   205C 8F 10 F3        mov $F3, #$10
+0055   205F                 
+0056   205F 8F 04 F2        mov $F2, #$04       ; source number = 0 
+0057   2062 8F 00 F3        mov $F3, #$00
+0058   2065                 
+0059   2065                 
+0060   2065 8F 05 F2        mov $F2, #$05 
+0061   2068 8F 00 F3        mov $F3, #$00 
+0062   206B 8F 07 F2        mov $F2, #$07 
+0063   206E 8F 1F F3        mov $F3, #$1f   ; set GAIN, direct mode (bit7=0), full volume
+0064   2071                 
+0065   2071             
+0066   2071             
+0067   2071                 ; Voice 1
+0068   2071             
+0069   2071 8F 10 F2        mov $F2, #$10       ; left volume = 127
+0070   2074 8F 01 F3        mov $F3, #1
+0071   2077 8F 11 F2        mov $F2, #$11       ; right volume = 127 
+0072   207A 8F 01 F3        mov $F3, #1
+0073   207D             
+0074   207D 8F 12 F2        mov $F2, #$12       ; pitch (low byte) 
+0075   2080 8F 00 F3        mov $F3, #$00 
+0076   2083 8F 13 F2        mov $F2, #$13       ; pitch (high byte) 
+0077   2086 8F 10 F3        mov $F3, #$10
+0078   2089                 
+0079   2089 8F 14 F2        mov $F2, #$14       ; source number = 0 
+0080   208C 8F 00 F3        mov $F3, #$00
+0081   208F                 
+0082   208F                 
+0083   208F 8F 15 F2        mov $F2, #$15 
+0084   2092 8F 00 F3        mov $F3, #$00 
+0085   2095 8F 17 F2        mov $F2, #$17 
+0086   2098 8F 1F F3        mov $F3, #$1f   ; set GAIN, direct mode (bit7=0), full volume
+0087   209B                 
+0088   209B 8F 0C F2        mov $F2, #$0C 
+0089   209E 8F 7F F3        mov $F3, #127   ; L/R vol 100% both voices 
+0090   20A1 8F 1C F2        mov $F2, #$1C
+0091   20A4 8F 7F F3        mov $F3, #127
+0092   20A7                 
+0093   20A7                 
+0094   20A7                 
+0095   20A7             
+0096   20A7 8F 6C F2        mov $F2, #$6C   ; turn off mute
+0097   20AA 8F 00 F3        mov $F3, #0
+0098   20AD             
+0099   20AD                 ;
+0100   20AD 8F 20 FA        mov $FA, #$20
+0101   20B0 8F 01 F1        mov $f1, #1
+0102   20B3             
+0103   20B3 E8 00           mov a, #0
+0104   20B5 C5 00 08        mov !$800, a
+0105   20B8             
+0106   20B8 8F 4C F2        mov $F2, #$4C
+0107   20BB 8F 00 F3        mov $f3, #0
+0108   20BE 8F 01 F3        mov $F3, #$01
+0109   20C1             
+0110   20C1             loop:    
+0111   20C1 E4 FD           mov a, $fd
+0112   20C3 F0 FC           beq loop
+0113   20C5             
+0114   20C5                 ; if a > 0
+0115   20C5 60              clrc
+0116   20C6 85 00 08        adc a, !$800
+0117   20C9 C5 00 08        mov !$800, a
+0118   20CC             
+0119   20CC 68 40           cmp a, #$40
+0120   20CE D0 F1           bne loop
+0121   20D0             
+0122   20D0 E8 00           mov a, #0
+0123   20D2 C5 00 08        mov !$800, a
+0124   20D5                 
+0125   20D5                 ;mov $F2, #$04       ; source number = 0 
+0126   20D5                 ;mov $F3, #$01
+0127   20D5             
+0128   20D5                 ;mov $F2, #$4C
+0129   20D5                 ;mov $f3, #0
+0130   20D5                 ;mov $F2, #$5C
+0131   20D5                 ;mov a, $f3
+0132   20D5                 ;beq up
+0133   20D5                 ;mov $f3, #$00
+0134   20D5 2F EA           bra loop
+0135   20D7             up:
+0136   20D7 8F 01 F3        mov $f3, #1
+0137   20DA             
+0138   20DA 2F E5           bra loop
+0139   20DC             
+0140   20DC             .END
+0141   20DC             EOFtasm: Number of errors = 0

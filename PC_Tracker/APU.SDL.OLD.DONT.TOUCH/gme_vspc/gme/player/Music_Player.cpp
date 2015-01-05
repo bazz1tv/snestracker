@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 #include "blargg_source.h"
 
-#include "vspc/globals.h"
+#include "debugger/globals.h"
 
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
 const int fill_rate = 45;
@@ -359,7 +359,7 @@ void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 	if ( self->emu_ )
 	{
 		if ( self->emu_->play( count, out ) ) { } // ignore error
-		if (::filter_is_active)
+		if (self->filter_is_active)
 			self->spc_filter->run(out, count);
 		
 		self->apply_gain(out, count);
@@ -427,3 +427,5 @@ static void sound_cleanup()
 	sound_stop();
 	SDL_CloseAudio();
 }
+
+

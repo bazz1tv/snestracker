@@ -10,8 +10,19 @@
 #include <iostream>
 #include "gme/Spc_Filter.h"
 
+
+
+// should be in the player
+void prev_track();
+void next_track();
+void toggle_pause();
+void restart_track();
+
+//
+
 class Music_Player {
 public:
+	bool filter_is_active=false;
 	// Initialize player and set sample rate
 	blargg_err_t init( long sample_rate = 44100 );
 	
@@ -70,6 +81,15 @@ public:
 		//spc_emu_->write(0xf2, dspaddr, 1);
 		//return spc_emu_->read(0xf3);
 		spc_emu_->write_dsp(dspaddr, val);
+	}
+
+	void inc_ram(int addr, int i=1)
+	{
+	  spc_write(addr, (spc_read(addr))+i);
+	}
+	void dec_ram(int addr, int i=1)
+	{
+	  spc_write(addr, (spc_read(addr))-i);
 	}
 	// Set stereo depth, where 0.0 = none and 1.0 = maximum
 	void set_stereo_depth( double );

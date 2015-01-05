@@ -5,6 +5,7 @@
 
 namespace dsp_reg
 {
+  extern int how_many;
 enum {
   voice0_vol_l=0,
   voice0_vol_r=1,
@@ -123,8 +124,8 @@ enum {
 };
 
   struct reg_lut_t {
-  uint8_t addr;
-  char *name;
+  int addr;
+  const char *name;
   //char *altname;
 };
 

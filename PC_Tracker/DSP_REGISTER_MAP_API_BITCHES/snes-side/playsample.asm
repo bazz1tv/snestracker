@@ -4,7 +4,7 @@
 ;== Include SNES Initialization routines ==
 .INCLUDE "InitSNES.asm"
 
-
+.define tmp $00
 ;============================================================================
 ; Main Code
 ;============================================================================
@@ -18,7 +18,15 @@ Start:
     
     rep #$10
     sep #$20
-    
+peep:
+    rep #$30
+    lda #$FFAA
+    ldx #$d0D0
+    ldy #$BABE
+    sep #$30
+    rep #$30
+    rep #$30
+    sep #$20
     
     
     ; set backdrop to white, know that progress is made
@@ -35,15 +43,20 @@ merp:
     sta $2100
     
 Loop:
+	lda #4
     jmp Loop
 
 LoadMusic:
 	; loop until spc is ready
  
-	REP #$20	; 16-bit akku
+	;REP #$20	; 16-bit akku
 scr_checkready:
-	lda #$BBAA
-	cmp $2140
+	sep #$20
+	lda $2141
+	xba
+	lda $2140
+	rep #$20
+	cmp #$BBAA
 	bne scr_checkready
  
 	SEP #$20	; 8-bit akku
@@ -62,7 +75,16 @@ scr_firstblock:
 	ldx.w spx_binary, y
 	iny
 	iny
+
+	phy
+	phx
+	sep #$10
+	plx
 	stx $2142
+	plx
+	stx $2143
+	rep #$10
+	ply
 	sta $2140
  
 scr_check2:
@@ -90,15 +112,15 @@ scr_check3:
 scr_data_loop:
 	lda spx_binary, y
 	iny
-	;sta REG_APUI01
+	sta $2141
 	xba			; counter
  
 
  
 	ina
-	REP #$20
+	;REP #$20
 	sta $2140
-	SEP #$20
+	;SEP #$20
  
 scr_check4:
 	cmp $2140
@@ -120,7 +142,15 @@ derp:
  	lda #1
 	sta $2141
 
- 	stx $2142
+	phy
+	phx
+	sep #$10
+	plx
+	stx $2142
+	plx
+	stx $2143
+	rep #$10
+	ply
 	ldx.w spx_binary, y
 	iny
 	iny
@@ -145,7 +175,15 @@ scr_terminate:
 	stz $2141
 	ldx.w spx_binary, y
  
+ 	phy
+	phx
+	sep #$10
+	plx
 	stx $2142
+	plx
+	stx $2143
+	rep #$10
+	ply
 	xba
 	ina
 scr_nz2:
@@ -173,11 +211,11 @@ scr_check6:
 ; correct WLA format directives
 
 spx_binary:
-    .dw $200, 1530 ; 1080;7065; 1530
-    .INCBIN "../samples/blip.brr"
-    .dw $1000, 133
+    .dw $200, 7065; 1530
+    .INCBIN "../samples/piano.bin"
+    .dw $2000, 230
     .INCBIN "spc/SPC.OBJ"
-    .dw $0000, $1000
+    .dw $0000, $2000
 
 
 ;spx_binary2: 

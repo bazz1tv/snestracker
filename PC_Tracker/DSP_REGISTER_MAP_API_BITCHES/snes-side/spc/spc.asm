@@ -1,14 +1,38 @@
 .org $2000
-Main:
-    call Init
-infin:
-    bra infin
+
     
 Init:
-    
-    
+    ; clear loop
+    mov $4, #0
+    mov $5, #2   ; $200
+    mov $6, #$00 ; sample size in bytes
+    mov $7, #$02 ; decw
+    mov $8, #$1c ; interval of $100
+    mov a, #0
+    mov y, #0
+    ; begin loop
+bak:
+    mov y,a
+    mov a, [$4]+Y
+    and a, #~2
+    mov [$4]+Y,A
+    mov a,y
+    clrc
+    adc a, #9
+    bcc bak
+    dec $08
+    beq donez 
+    inc $05
+    bra bak
+donez:
+    mov a, #$3B; #$3B ;#$39
+    mov !$1d90, a
     mov $F2, #$5D   ; starting address = $3000
     mov $F3, #$30
+
+    ;mov a, !$200
+    ;and a, #$FD
+    ;mov !$200, a
     
     mov a, #$00
     mov !$3000, a
@@ -98,11 +122,18 @@ loop:
     mov a, #0
     mov !$800, a
     
+    ;mov $F2, #$04       ; source number = 0 
+    ;mov $F3, #$01
 
-    mov $F2, #$4C
-    mov $f3, #0
-    mov $F3, #$01
-    
+    ;mov $F2, #$4C
+    ;mov $f3, #0
+    ;mov $F2, #$5C
+    ;mov a, $f3
+    ;beq up
+    ;mov $f3, #$00
+    bra loop
+up:
+    mov $f3, #1
 
     bra loop
 
