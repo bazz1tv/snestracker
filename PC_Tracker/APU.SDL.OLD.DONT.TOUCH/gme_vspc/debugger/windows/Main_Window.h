@@ -16,7 +16,7 @@
 #include "Player_Context.h"
 #include "Experience.h"
 
-struct Main_Window : public Debugger_Base, public Render_Context, public Player_Context,
+struct Main_Window : public BaseD, public Render_Context, public Player_Context,
 public Experience
 {
   enum modes 
@@ -76,7 +76,7 @@ public Experience
   //Uint16 address, addr_being_edited; // shared variable between main_memory_area and mouseover_hexdump_area
 
   // TRACK STUFFZZ  
-  char now_playing[1024];
+  
   
   void update_window_title();
   //void start_track( int track, const char* path );

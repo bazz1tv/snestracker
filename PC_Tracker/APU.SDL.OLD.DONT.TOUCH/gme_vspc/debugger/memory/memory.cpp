@@ -2,7 +2,7 @@
 
 Cursor Memory::cursor;
 
-// Cannot decide if this belongs in Debugger_Base
+// Cannot decide if this belongs in BaseD
 //Music_Player *Memory::player=NULL;
 //SDL_Surface *Memory::screen=NULL;
 //uint8_t *Memory::IAPURAM=NULL;

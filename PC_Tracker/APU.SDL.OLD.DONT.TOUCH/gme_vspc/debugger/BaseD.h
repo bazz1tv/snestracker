@@ -10,7 +10,7 @@
 
 struct Main_Window;
 struct Dsp_Window;
-struct Debugger_Base : public Render_Context, public Player_Context
+struct BaseD : public Render_Context, public Player_Context
 {
   enum GrandMode
   {
@@ -19,7 +19,7 @@ struct Debugger_Base : public Render_Context, public Player_Context
   };
   void reload();
   void start_track( int track, const char* path );
-  void change_grand_mode(int mode);
+  void switch_mode(int mode);
   void draw_menu_bar();
   void toggle_pause();
   void restart_track(); // goes to beginning of playlist too
@@ -40,6 +40,7 @@ struct Debugger_Base : public Render_Context, public Player_Context
   //static bool new_track_started;
   static Voice_Control voice_control;
   static unsigned char packed_mask[32];
+  static char now_playing[1024];
   
   static int grand_mode;// =0;
   //static int submode;// =  0;

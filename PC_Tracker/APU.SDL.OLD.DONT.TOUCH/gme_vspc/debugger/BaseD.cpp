@@ -1,35 +1,36 @@
-#include "Debugger_Base.h"
-/*Music_Player *Debugger_Base::player;
-SDL_Surface *Debugger_Base::screen;
-uint8_t *Debugger_Base::IAPURAM;*/
+#include "BaseD.h"
+/*Music_Player *BaseD::player;
+SDL_Surface *BaseD::screen;
+uint8_t *BaseD::IAPURAM;*/
 #include "Main_Window.h"
 
-int Debugger_Base::grand_mode=GrandMode::MAIN;
-//int Debugger_Base::submode=0;
-Debugger_Base::Cfg Debugger_Base::g_cfg;// = { 0,0,0,0,0,0,DEFAULT_SONGTIME,0,0,0,0,0,NULL };
+int BaseD::grand_mode=GrandMode::MAIN;
+//int BaseD::submode=0;
+BaseD::Cfg BaseD::g_cfg;// = { 0,0,0,0,0,0,DEFAULT_SONGTIME,0,0,0,0,0,NULL };
 
-int Debugger_Base::g_paused = 0;
-uint8_t * Debugger_Base::IAPURAM=NULL;
-bool Debugger_Base::quitting=false;
-unsigned char Debugger_Base::packed_mask[32];
+int BaseD::g_paused = 0;
+uint8_t * BaseD::IAPURAM=NULL;
+bool BaseD::quitting=false;
+unsigned char BaseD::packed_mask[32];
 
-int Debugger_Base::g_cur_entry= 0;
-bool Debugger_Base::paused;
+int BaseD::g_cur_entry= 0;
+bool BaseD::paused;
 
-int Debugger_Base::song_time;
-track_info_t Debugger_Base::tag;
-char * Debugger_Base::g_real_filename=NULL;
-//bool Debugger_Base::is_onetime_draw_necessary=false;
+int BaseD::song_time;
+track_info_t BaseD::tag;
+char * BaseD::g_real_filename=NULL;
+char BaseD::now_playing[1024];
+//bool BaseD::is_onetime_draw_necessary=false;
 
 
-Experience * Debugger_Base::exp=NULL;
-Main_Window * Debugger_Base::main_window=NULL;
-Dsp_Window * Debugger_Base::dsp_window=NULL;
+Experience * BaseD::exp=NULL;
+Main_Window * BaseD::main_window=NULL;
+Dsp_Window * BaseD::dsp_window=NULL;
 
-const char * Debugger_Base::path=NULL;
-Voice_Control Debugger_Base::voice_control;
+const char * BaseD::path=NULL;
+Voice_Control BaseD::voice_control;
 
-void Debugger_Base::update_track_tag()
+void BaseD::update_track_tag()
 {
   //update_window_title();
   tag = player->track_info();
@@ -47,9 +48,20 @@ void Debugger_Base::update_track_tag()
   }
 
   song_time += g_cfg.extratime;
+
+  now_playing[0] = 0;
+  if (tag.song)
+  {
+    if (strlen((const char *)tag.song)) {
+      sprintf(now_playing, "Now playing: %s (%s), dumped by %s\n", tag.song, tag.game, tag.dumper);
+    }   
+  }
+  if (strlen(now_playing)==0) {
+    sprintf(now_playing, "Now playing: %s\n", g_cfg.playlist[g_cur_entry]);
+  }
 }
 
-void Debugger_Base::start_track( int track, const char* path )
+void BaseD::start_track( int track, const char* path )
 {
   paused = false;
   //if (!player->is_paused())
@@ -81,7 +93,7 @@ void Debugger_Base::start_track( int track, const char* path )
   SDL_SetWindowTitle(sdlWindow, title);
 }
 
-void Debugger_Base::reload()
+void BaseD::reload()
 {
   if (g_cfg.playlist[g_cur_entry] == NULL)
     exit (2);
@@ -136,6 +148,8 @@ void Debugger_Base::reload()
 
   //main_window->is_onetime_draw_necessary=true;
   update_track_tag();
+  if (grand_mode == MAIN)
+    main_window->draw_track_tag();
 
   char title [512];
   sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
@@ -144,12 +158,12 @@ void Debugger_Base::reload()
   SDL_SetWindowTitle(sdlWindow, title);
 }
 
-void Debugger_Base::toggle_pause()
+void BaseD::toggle_pause()
 {
   player->toggle_pause();
 }
 
-void Debugger_Base::restart_track()
+void BaseD::restart_track()
 {
   SDL_PauseAudio(1);
   g_cur_entry=0;
@@ -157,7 +171,7 @@ void Debugger_Base::restart_track()
   reload();
 }
 
-void Debugger_Base::prev_track()
+void BaseD::prev_track()
 {
   SDL_PauseAudio(true);
   g_cur_entry--;
@@ -165,7 +179,7 @@ void Debugger_Base::prev_track()
   reload();
 }
 
-void Debugger_Base::next_track()
+void BaseD::next_track()
 {
   SDL_PauseAudio(true);
   g_cur_entry++;
@@ -173,13 +187,13 @@ void Debugger_Base::next_track()
   reload();
 }
 
-void Debugger_Base::draw_menu_bar()
+void BaseD::draw_menu_bar()
 {
   sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - DSP MAP");
   sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
 }
 
-void Debugger_Base::restart_current_track()
+void BaseD::restart_current_track()
 {
   report::memsurface.clear();
   player->start_track(0); // based on only having 1 track
@@ -187,7 +201,7 @@ void Debugger_Base::restart_current_track()
   // in the program .. this would have to change otherwise
 }
 
-void Debugger_Base::change_grand_mode(int mode)
+void BaseD::switch_mode(int mode)
 {
   grand_mode = mode;
   clear_screen();

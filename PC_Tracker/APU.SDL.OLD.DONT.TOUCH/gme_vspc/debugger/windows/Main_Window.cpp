@@ -209,6 +209,13 @@ void Main_Window::receive_event(SDL_Event &ev)
             //voice_control.mute_all();
         }
 
+        switch (scancode)
+        {
+          case SDLK_d:
+          BaseD::switch_mode(GrandMode::DSP_MAP);
+          break;
+        }
+
 
         if (scancode == SDLK_LEFT)
           prev_track();
@@ -837,7 +844,7 @@ void Main_Window::receive_event(SDL_Event &ev)
           if (x>=53 && x<=59) { // DSP MAP
             //write_mask(packed_mask);
             //mode = MODE_DSP_MAP;
-            change_grand_mode(GrandMode::DSP_MAP);
+            switch_mode(GrandMode::DSP_MAP);
           }
         }
       }
@@ -1089,7 +1096,7 @@ void Main_Window::draw_mouse_address()
 void Main_Window::reload()
 {
   fprintf(stderr, "DERP");
-  Debugger_Base::reload();
+  BaseD::reload();
   draw_track_tag();
 }
 
@@ -1098,6 +1105,7 @@ void Main_Window::one_time_draw()
   // draw one-time stuff
   //if (!g_cfg.novideo)
   //{
+  
     SDL_FillRect(screen, NULL, 0);
     
     
@@ -1812,18 +1820,9 @@ void Main_Window::update_window_title()
 }
 void Main_Window::draw_track_tag()
 {
-  //Debugger_Base::update_track_tag();
-  fprintf(stderr, "EEEE");
-  now_playing[0] = 0;
-  if (tag.song)
-  {
-    if (strlen((const char *)tag.song)) {
-      sprintf(now_playing, "Now playing: %s (%s), dumped by %s\n", tag.song, tag.game, tag.dumper);
-    }   
-  }
-  if (strlen(now_playing)==0) {
-    sprintf(now_playing, "Now playing: %s\n", g_cfg.playlist[g_cur_entry]);
-  }
+  //BaseD::update_track_tag();
+  //fprintf(stderr, "EEEE");
+  
   /* information */
 
   // CLEAR THE BACKGROUND FIRST

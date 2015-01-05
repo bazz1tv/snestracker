@@ -14,8 +14,8 @@ Debugger::Debugger(int &argc, char **argv) : //, Music_Player *player,
 //mouseover_hexdump_area(player,screen),
 main_window(argc,argv)
 {
-  Debugger_Base::main_window = &main_window;
-  Debugger_Base::dsp_window = &dsp_window;
+  BaseD::main_window = &main_window;
+  BaseD::dsp_window = &dsp_window;
   exp = &main_window;
 }
 

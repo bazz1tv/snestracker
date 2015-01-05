@@ -16,7 +16,7 @@
 #include "Dsp_Window.h"
 #include "Experience.h"
 
-struct Debugger : Debugger_Base
+struct Debugger : BaseD
 {
 public:
   Debugger(int &argc, char **argv); // , Music_Player *player, SDL_Window *, SDL_Renderer *, SDL_Texture *, SDL_Surface*);

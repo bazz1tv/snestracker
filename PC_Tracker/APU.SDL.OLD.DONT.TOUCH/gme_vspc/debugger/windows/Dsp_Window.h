@@ -1,11 +1,11 @@
 #pragma once
-#include "Debugger_Base.h"
+#include "BaseD.h"
 #include "gme/Spc_Dsp_Register_Map_Interface.h"
 #include "sdl_dblclick.h"
 #include "Colors.h"
 #include "sdlfont.h"
 #include "Experience.h"
-struct Dsp_Window : public Debugger_Base, public Render_Context, public Player_Context,
+struct Dsp_Window : public BaseD, public Render_Context, public Player_Context,
 public Experience
 {
   void run();

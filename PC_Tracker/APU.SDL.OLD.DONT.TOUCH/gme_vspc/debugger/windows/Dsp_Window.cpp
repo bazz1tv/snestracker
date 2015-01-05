@@ -219,7 +219,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
       switch (scancode)
       {
         case SDLK_ESCAPE:
-          change_grand_mode(GrandMode::MAIN);
+          switch_mode(GrandMode::MAIN);
           break;
 
         case SDLK_SPACE: // toggle pause
@@ -254,6 +254,9 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           player->spc_write_dsp(dsp_reg::koff,val);
           break;
         }
+        case SDLK_d:
+          BaseD::switch_mode(GrandMode::MAIN);
+          break;
         default:
           break;
       }
@@ -302,7 +305,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           if (x>=53 && x<=59) { // DSP MAP
             //write_mask(packed_mask);
             //mode = MODE_DSP_MAP;
-            change_grand_mode(GrandMode::MAIN);
+            switch_mode(GrandMode::MAIN);
           }
         }
       }
