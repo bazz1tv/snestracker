@@ -1,14 +1,19 @@
 #include "Dsp_Window.h"
 
-#define incprint(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=9;
+#define CHAR_HEIGHT 9
+#define CHAR_WIDTH 8
+#define TILE_WIDTH CHAR_WIDTH
+#define TILE_HEIGHT CHAR_HEIGHT
+
+#define incprint(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
 
 void Dsp_Window::run()
 {
   uint i=10,remember_i1, remember_i2, remember_i3;
-  int x = 10, remember_x = 10;
+  int x = 10, remember_x = 10, remember_x2;
   sprintf(tmpbuf,"               General DSP    ");
   incprint(x);
-  i+=9;
+  i+=CHAR_HEIGHT;
   // Read all DSP registers
   uint8_t v;
  
@@ -20,7 +25,7 @@ void Dsp_Window::run()
   sprintf(tmpbuf,"Mvol_R: $%02X",v);
   incprint(x)
   //
-  i+=9; remember_i1 = i;
+  i+=CHAR_HEIGHT; remember_i1 = i;
   // echo vol
   v = player->spc_read_dsp(dsp_reg::evol_l);
   sprintf(tmpbuf,"Evol_L: $%02X",v);
@@ -29,7 +34,7 @@ void Dsp_Window::run()
   sprintf(tmpbuf,"Evol_R: $%02X",v);
   incprint(x)
   //
-  i+=9; remember_i2 = i;
+  i+=CHAR_HEIGHT; remember_i2 = i;
   // random
   v = player->spc_read_dsp(dsp_reg::flg);
   sprintf(tmpbuf,"FLG...: $%02X",v);
@@ -44,9 +49,9 @@ void Dsp_Window::run()
   sprintf(tmpbuf,"ENDX..: $%02X",v);
   incprint(x)
   //
-  remember_i3=i;
+  remember_i3=i+TILE_HEIGHT;
   i = remember_i2;
-  x += 15*8;
+  x += 15*CHAR_WIDTH;
   // echo
   v = player->spc_read_dsp(dsp_reg::eon);
   sprintf(tmpbuf,"EON...: $%02X",v);
@@ -61,8 +66,8 @@ void Dsp_Window::run()
   sprintf(tmpbuf,"EFB...: $%02X",v);
   incprint(x)
   //
-  i = remember_i1-9;
-  x+= 15*8;
+  i = remember_i1-CHAR_HEIGHT;
+  x+= 15*CHAR_WIDTH;
   //
   v = player->spc_read_dsp(dsp_reg::c0);
   sprintf(tmpbuf,"C0: $%02X",v);
@@ -89,8 +94,15 @@ void Dsp_Window::run()
   sprintf(tmpbuf,"C7: $%02X",v);
   incprint(x)
   //
+  //remember_x2 = x;
+  i += (CHAR_HEIGHT*3);
+  x = remember_x + ( ((3*14*CHAR_WIDTH)+(10*CHAR_WIDTH))/2) - (strlen("Voices")/2*TILE_WIDTH) ;
+  sprintf(tmpbuf, "Voices");
+  incprint(x)
+
+
   x = remember_x;
-  remember_i3+= (9*4);
+  remember_i3+= (CHAR_HEIGHT*4);
   for (int voice=0; voice < 8; voice++)
   {
     if (voice < 4)
@@ -98,13 +110,16 @@ void Dsp_Window::run()
     else
     {
       if (voice == 4)
+      {
+        remember_x2 = x;
         x = remember_x;
-      i = remember_i3 + (14*9);
+      }
+      i = remember_i3 + (14*CHAR_HEIGHT);
     }
     uint8_t n=0;
-    sprintf(tmpbuf," Voice %d",voice);
+    sprintf(tmpbuf,"    %d",voice);
     incprint(x)
-    sprintf(tmpbuf,"---------");
+    sprintf(tmpbuf,"   ");
     incprint(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"vol_L: $%02X",v);
@@ -137,9 +152,43 @@ void Dsp_Window::run()
     sprintf(tmpbuf,"outx.: $%02X",v);
     incprint(x)
 
-    x += 14*8;
+    x += (strlen(tmpbuf)+4)*CHAR_WIDTH;
   }
   
+  x = remember_x2;
+  // DIR
+  
+  i=TILE_HEIGHT*6 + 10;
+  sprintf(tmpbuf, "              DIRECTORY");
+  incprint(x)
+  i+=TILE_HEIGHT;
+  v = player->spc_read_dsp(dsp_reg::dir);
+  uint16_t *dir = (uint16_t*)&IAPURAM[v*0x100];
+  uint16_t *p;
+  int row_complete=0;
+  int tmp=i;
+
+  assert (((screen->h/CHAR_HEIGHT)-4) > 8);
+  for (int row=0,fakerow=0; fakerow < 8*4*2; row++)
+  {
+    if (row != 0 && !(fakerow % 8))
+    {
+      row_complete++;
+      if (row_complete==4)
+      {
+        row_complete=0;
+        x+=CHAR_WIDTH*21;
+        i = tmp;
+      }
+      else { i+=CHAR_HEIGHT; row++; }
+    }
+    p = dir;
+    dir++;
+    sprintf(tmpbuf, "$%02X: $%04X,$%04X", fakerow, *p, *dir);
+    incprint(x)
+    dir++;
+    fakerow++;
+  }
 
 }
 
@@ -279,9 +328,9 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         if (
           ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
         {
-          int x = ev.button.x / 8;
+          int x = ev.button.x / CHAR_WIDTH;
           if (x>=1 && x<=4) { printf ("penis5\n"); quitting=true; } // exit
-          if (x>=8 && x<=12) { 
+          if (x>=CHAR_WIDTH && x<=12) { 
             toggle_pause();
           } // pause
 
