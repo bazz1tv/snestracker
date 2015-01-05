@@ -126,21 +126,22 @@ void Wave_Writer::close()
 		unsigned char header [header_size] =
 		{
 			'R','I','F','F',
-			rs,rs>>8,           // length of rest of file
-			rs>>16,rs>>24,
+			static_cast<unsigned char>(rs),static_cast<unsigned char>(rs>>8),           // length of rest of file
+			static_cast<unsigned char>(rs>>16),static_cast<unsigned char>(rs>>24),
 			'W','A','V','E',
 			'f','m','t',' ',
 			0x10,0,0,0,         // size of fmt chunk
 			1,0,                // uncompressed format
-			chan_count,0,       // channel count
-			rate,rate >> 8,     // sample rate
-			rate>>16,rate>>24,
-			bps,bps>>8,         // bytes per second
-			bps>>16,bps>>24,
-			frame_size,0,       // bytes per sample frame
+			static_cast<unsigned char>(chan_count),0,       // channel count
+			static_cast<unsigned char>(rate),static_cast<unsigned char>(rate >> 8),     // sample rate
+			static_cast<unsigned char>(rate>>16),static_cast<unsigned char>(rate>>24),
+			static_cast<unsigned char>(bps),static_cast<unsigned char>(bps>>8),         // bytes per second
+			static_cast<unsigned char>(bps>>16),static_cast<unsigned char>(bps>>24),
+			static_cast<unsigned char>(frame_size),0,       // bytes per sample frame
 			16,0,               // bits per sample
 			'd','a','t','a',
-			ds,ds>>8,ds>>16,ds>>24// size of sample data
+			static_cast<unsigned char>(ds),static_cast<unsigned char>(ds>>8),
+			static_cast<unsigned char>(ds>>16),static_cast<unsigned char>(ds>>24) // size of sample data
 			// ...              // sample data
 		};
 		
