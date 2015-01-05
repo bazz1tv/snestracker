@@ -50,8 +50,17 @@ void Dsp_Window::run()
   incprint(x)
   //
   remember_i3=i+TILE_HEIGHT;
-  i = remember_i2;
+  i = remember_i2-(3*TILE_HEIGHT);
   x += 15*CHAR_WIDTH;
+  //pmon,non
+  v = player->spc_read_dsp(dsp_reg::non);
+  sprintf(tmpbuf,"NON...: $%02X",v);
+  incprint(x)
+  v = player->spc_read_dsp(dsp_reg::pmon);
+  sprintf(tmpbuf,"PMON..: $%02X",v);
+  incprint(x)
+  //
+  i+=TILE_HEIGHT;
   // echo
   v = player->spc_read_dsp(dsp_reg::eon);
   sprintf(tmpbuf,"EON...: $%02X",v);
