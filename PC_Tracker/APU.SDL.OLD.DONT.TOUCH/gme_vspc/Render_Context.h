@@ -8,5 +8,6 @@ public:
   static SDL_Renderer *sdlRenderer;//  =NULL;
   static SDL_Texture *sdlTexture;//    =NULL;
   static SDL_Surface *screen;//        = NULL;
+  static char tmpbuf[500];
 };
 

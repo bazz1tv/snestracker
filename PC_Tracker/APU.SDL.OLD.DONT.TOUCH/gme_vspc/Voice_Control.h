@@ -2,7 +2,16 @@
 #include "SDL.h"
 #include "globals.h"
 #include "Player_Context.h"
-#include "Screen.h"
+namespace Screen
+{
+  //typedef SDL_Rect coord;
+  //#define NO_INIT 0
+  extern SDL_Rect voice0vol;   // = {NO_INIT, NO_INIT,+8+125,10};
+  extern SDL_Rect voice0pitch; //= {NO_INIT,NO_INIT, 2*8,8 };
+  extern SDL_Rect locked;      // = { MEMORY_VIEW_X+520+24*8, 0 ,(strlen(LOCKED_STR)*8)+1, 9};
+  extern SDL_Rect echoE;
+  //#undef UN_INIT
+}
 struct Voice_Control : public Player_Context
 {
   Voice_Control();

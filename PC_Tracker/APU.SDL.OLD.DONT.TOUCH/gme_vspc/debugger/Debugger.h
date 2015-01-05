@@ -8,12 +8,13 @@
 #include <math.h>
 #include "sdl_dblclick.h"
 #include "Port_Tool.h"
-#include "mode.h"
 #include "Mouse_Hexdump_Area.h"
 #include "Main_Memory_Area.h"
 #include "Colors.h"
 #include "platform.h"
 #include "Main_Window.h"
+#include "Dsp_Window.h"
+#include "Experience.h"
 
 struct Debugger : Debugger_Base
 {
@@ -23,5 +24,6 @@ public:
   void handle_events();
 
   Main_Window main_window;
+  Dsp_Window dsp_window;
 };
 

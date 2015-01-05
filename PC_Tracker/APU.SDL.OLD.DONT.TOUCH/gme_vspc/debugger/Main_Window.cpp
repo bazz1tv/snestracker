@@ -7,6 +7,79 @@
 #define L_FLAG 0
 #define R_FLAG 1
 
+void Main_Window::draw()
+{
+  if (!g_cfg.novideo)
+  {
+    time_cur = SDL_GetTicks();
+    do_scroller(time_cur - time_last);
+    
+    fade_arrays();      
+    
+    // draw the memory read/write display area
+    report::memsurface.draw(screen);
+
+    draw_block_usage_bar();
+
+    // The following are correlated from i and tmp. DO NOT MESS WITH THAT
+    // base height
+    i = 32 + SCREEN_Y_OFFSET;      
+    draw_mouse_address();
+    draw_program_counter();
+    draw_voices_pitchs(); // tmp is fucked with inside this function. DONT MESS
+    draw_voices_volumes();
+    draw_main_volume();
+    draw_echo_volume();
+    draw_mouseover_hexdump();
+    draw_porttool();
+    draw_time_and_echo_status();
+
+    
+
+
+    
+    
+    if (mode == MODE_EDIT_MOUSE_HEXDUMP)
+    {
+      mouseover_hexdump_area.draw_cursor(screen, Colors::green);
+    }
+    else if (mode == MODE_EDIT_APU_PORT)
+    {
+      port_tool.draw_cursor(screen, Colors::green);
+    }
+
+    // toggle should be 0 ALWAYS when deactivated
+    if (main_memory_area.memcursor.is_active())
+    {
+      if (main_memory_area.memcursor.is_toggled())
+      {
+        report_cursor(mouseover_hexdump_area.addr_being_edited);
+      }
+      else report::restore_color(mouseover_hexdump_area.addr_being_edited);
+    }
+    
+
+    if (mouse::show)
+    {
+      if (mouse::x < (screen->w-40) && mouse::y < (screen->h - 8))
+      { 
+        sprintf(tmpbuf, "(%d,%d)", mouse::x, mouse::y);
+        sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, Colors::white);
+      }
+    }
+    
+    //SDL_UpdateRect(screen, 0, 0, 0, 0);
+    SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
+    SDL_RenderClear(sdlRenderer);
+    SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+    SDL_RenderPresent(sdlRenderer);
+    time_last = time_cur;
+    if (g_cfg.nice) {  SDL_Delay(100); }
+    //SDL_Delay( 1000 / 100 );
+  } // if !g_cfg.novideo
+  is_first_run = false;
+}
+
 void Main_Window::receive_event(SDL_Event &ev)
 {
   dblclick::check_event(&ev);
@@ -45,7 +118,7 @@ void Main_Window::receive_event(SDL_Event &ev)
             //set_addr(y*256+x);
             
             mouse_addr = y*256+x;
-            if (!main_memory_area.locked) {
+            if (!locked()) {
               mouseover_hexdump_area.set_addr(mouse_addr); //_from_cursor(x,y);
             }
           }
@@ -62,7 +135,21 @@ void Main_Window::receive_event(SDL_Event &ev)
       }
       if (scancode == SDLK_k)
       {
-        player->spc_write_dsp(dsp_reg::koff,0xff);
+        SCREEN_X_OFFSET--;
+        //player->spc_write_dsp(dsp_reg::koff,0xff);
+      }
+      else if (scancode == SDLK_l)
+      {
+        SCREEN_X_OFFSET++;
+      }
+      if (scancode == SDLK_n)
+      {
+        SCREEN_Y_OFFSET--;
+        //player->spc_write_dsp(dsp_reg::koff,0xff);
+      }
+      else if (scancode == SDLK_m)
+      {
+        SCREEN_Y_OFFSET++;
       }
       if (ev.key.keysym.sym == SDLK_u)
       {
@@ -141,9 +228,9 @@ void Main_Window::receive_event(SDL_Event &ev)
           mouseover_hexdump_area.res_y = 0;
 
           mode = MODE_EDIT_MOUSE_HEXDUMP;
-          submode = mouseover_hexdump_area.EASY_EDIT;
+          mouseover_hexdump_area.submode = Mouse_Hexdump_Area::EASY_EDIT;
           // order matters .. call here: 
-          main_memory_area.lock();
+          lock();
           //mouseover_hexdump_area.addr_being_edited = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x
           //mouseover_hexdump_area.res_x = 1; //mouseover_hexdump_area.address_remainder;
           
@@ -151,9 +238,9 @@ void Main_Window::receive_event(SDL_Event &ev)
         }
         if (ev.key.keysym.sym == SDLK_ESCAPE)
         {
-          if (main_memory_area.locked)
+          if (locked())
           {
-            main_memory_area.unlock(); 
+            unlock(); 
           }
           else
           {
@@ -462,7 +549,7 @@ void Main_Window::receive_event(SDL_Event &ev)
             {
               mode = MODE_NAV;
               mouseover_hexdump_area.cursor.stop_timer();
-              main_memory_area.unlock();
+              unlock();
               break;
             }
           }
@@ -470,7 +557,7 @@ void Main_Window::receive_event(SDL_Event &ev)
          
 
           // order matters .. call here: 
-          main_memory_area.lock(1,0,0,res_x,res_y);
+          lock(1,0,0,res_x,res_y);
           mouseover_hexdump_area.highnibble = highnibble;
           //mouseover_hexdump_area.res_x = res_x;
           //mouseover_hexdump_area.res_y = res_y;
@@ -637,8 +724,8 @@ void Main_Window::receive_event(SDL_Event &ev)
               ev.motion.y >= Screen::locked.y &&
               ev.motion.y < Screen::locked.y + 9 )
         {
-          if(main_memory_area.locked)
-            main_memory_area.toggle_lock();
+          if(locked())
+            unlock();
         }
         else if (  ev.motion.x >= Screen::echoE.x && 
               ev.motion.x < Screen::echoE.x + Screen::echoE.w &&
@@ -666,7 +753,7 @@ void Main_Window::receive_event(SDL_Event &ev)
             // ORDER IMPORTANT
             if (ev.button.button == SDL_BUTTON_LEFT)
             {
-              main_memory_area.toggle_lock(ev.motion.x, ev.motion.y);
+              toggle_lock(ev.motion.x, ev.motion.y);
             }
           }
         }
@@ -685,7 +772,7 @@ void Main_Window::receive_event(SDL_Event &ev)
         {
           if (ev.button.button == SDL_BUTTON_RIGHT)
           {
-            main_memory_area.toggle_lock();
+            toggle_lock();
           }
         }
 
@@ -746,6 +833,7 @@ void Main_Window::receive_event(SDL_Event &ev)
           if (x>=53 && x<=59) { // DSP MAP
             //write_mask(packed_mask);
             //mode = MODE_DSP_MAP;
+            change_grand_mode(GrandMode::DSP_MAP);
           }
         }
       }
@@ -785,7 +873,7 @@ void Main_Window::run()
       }
     }
     g_cur_entry++;
-    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; }
+    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; return; }
     //goto reload;
     reload();
   }
@@ -797,78 +885,30 @@ void Main_Window::run()
   ;
 }
 
-void Main_Window::draw()
+void Main_Window::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*=0*/, uint8_t ry/*=0*/)
 {
-  if (!g_cfg.novideo)
+  main_memory_area.lock(l,x,y,rx,ry);
+  if (locked())
   {
-    time_cur = SDL_GetTicks();
-    do_scroller(time_cur - time_last);
-    
-    fade_arrays();      
-    
-    // draw the memory read/write display area
-    report::memsurface.draw(screen);
-
-    draw_block_usage_bar();
-
-    // The following are correlated from i and tmp. DO NOT MESS WITH THAT
-    // base height
-    i = 32;      
-    draw_mouse_address();
-    draw_program_counter();
-    draw_voices_pitchs(); // tmp is fucked with inside this function. DONT MESS
-    draw_voices_volumes();
-    draw_main_volume();
-    draw_echo_volume();
-    draw_mouseover_hexdump();
-    draw_porttool();
-    draw_time_and_echo_status();
-
-    
-
-
-    
-    
-    if (mode == MODE_EDIT_MOUSE_HEXDUMP)
-    {
-      mouseover_hexdump_area.draw_cursor(screen, Colors::green);
-    }
-    else if (mode == MODE_EDIT_APU_PORT)
-    {
-      port_tool.draw_cursor(screen, Colors::green);
-    }
-
-    // toggle should be 0 ALWAYS when deactivated
-    if (main_memory_area.memcursor.is_active())
-    {
-      if (main_memory_area.memcursor.is_toggled())
-      {
-        report_cursor(mouseover_hexdump_area.addr_being_edited);
-      }
-      else report::restore_color(mouseover_hexdump_area.addr_being_edited);
-    }
-    
-
-    if (mouse::show)
-    {
-      if (mouse::x < (screen->w-40) && mouse::y < (screen->h - 8))
-      { 
-        sprintf(tmpbuf, "(%d,%d)", mouse::x, mouse::y);
-        sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, Colors::white);
-      }
-    }
-    
-    //SDL_UpdateRect(screen, 0, 0, 0, 0);
-    SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
-    SDL_RenderClear(sdlRenderer);
-    SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-    SDL_RenderPresent(sdlRenderer);
-    time_last = time_cur;
-    if (g_cfg.nice) {  SDL_Delay(100); }
-    //SDL_Delay( 1000 / 100 );
-  } // if !g_cfg.novideo
-  is_first_run = false;
+    mode = MODE_EDIT_MOUSE_HEXDUMP;
+  }
+  else
+  {
+    mode = MODE_NAV;
+  }
+  
 }
+void Main_Window::toggle_lock(int x/*=0*/, int y/*=0*/)
+{
+  lock(!locked(), x, y);
+}
+
+void Main_Window::unlock()
+{
+  lock(0);
+}
+
+
 
 Main_Window::Main_Window(int &argc, char **argv) : 
 main_memory_area(&mouseover_hexdump_area),
@@ -1024,10 +1064,10 @@ void Main_Window::next_track()
 void Main_Window::exit_edit_mode()
 {
   mode = MODE_NAV;
-  submode = 0;
+  mouseover_hexdump_area.submode = 0;
   mouseover_hexdump_area.draw_tmp_ram = 0;
 
-  main_memory_area.unlock();
+  unlock();
 }
 
 void Main_Window::draw_block_usage_bar()
@@ -1727,7 +1767,7 @@ void Main_Window::draw_mouseover_hexdump()
   tmp += i*10 + 8;
   Screen::locked.y = tmp;
   sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -", Colors::white);
-  if (main_memory_area.locked) {
+  if (locked()) {
     
     sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, LOCKED_STR, Colors::red);
   } else {

@@ -17,7 +17,7 @@ struct Memory : public Debugger_Base, public Render_Context, public Player_Conte
   void set_addr(int i);
   void add_addr(int i);
 
-  enum submodes { HARD_EDIT=0, EASY_EDIT=1 };
+  
 
   // All of the static variables are stuff I want shared between the 
   // Main Memory Area and Mouse Hexdump area

@@ -3,12 +3,8 @@
 #include "gme/player/Music_Player.h"
 #include "Player_Context.h"
 #include "Render_Context.h"
-//#include "gme/player/Music_Player.h"
-#define PORTTOOL_X    540
-#define PORTTOOL_Y    380 + 40
+#include "Screen.h"
 
-#define PORTTOOL_PORT0_X PORTTOOL_X + (8*7)
-#define PORTTOOL_PORT3_X_RIGHTMOST_LOBYTE PORTTOOL_X + (8*23)
 // 8 = tile width
 
 //extern Music_Player* player;

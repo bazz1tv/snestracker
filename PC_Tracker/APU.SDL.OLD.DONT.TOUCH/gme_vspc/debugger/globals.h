@@ -26,8 +26,7 @@ namespace mouse {
 
 
 
-#define INFO_X      540
-#define INFO_Y      420 + 40
+
 
 // 5 minutes default
 #define DEFAULT_SONGTIME  (60*5) 

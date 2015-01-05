@@ -1,5 +1,14 @@
+Logical Coordinates System
+
+Have a "Content section and Header section" like on a website
+DSP Map
+
+
+
 Strip Functional operation from Display operation in classes/structs.
 Maybe i can subclass. struct Debugger_Voice_Control : public Voice_Control
+
+Gain slider and clipping notifier
 
 Debugger Feature: Right click address that is being read/written and find out from where is the program accessing this memory.
 
@@ -7,9 +16,6 @@ If I click on "Time" I extend play-time by 1 min
 
 Figuring out how to implement higher level audio algorithms..
 like "pan from left to right over this course of this pattern for example"
-
-Clickable "E:" to mute, now make it "darken" including the colons inverse phase volume, and including volume bars
-Look at Voice volume darkening for example.. And try to abstract the code
 
 
 Migrate to SDL2
@@ -20,9 +26,9 @@ Scrolling text at bottom-right when text is too long to read
 
 lots of things SHOULDN"T be done/updated if paused
 
-Gain slider and clipping notifier
 
 Tracker features------
+multiple effect columns
 ----------------
 Custom FIR Filters (save to file)
 -- add these FIR filters "Nintendo official"

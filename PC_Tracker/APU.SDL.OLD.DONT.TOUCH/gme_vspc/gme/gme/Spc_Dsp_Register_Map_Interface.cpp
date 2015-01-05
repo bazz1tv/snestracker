@@ -2,9 +2,10 @@
 
 namespace dsp_reg
 {
-struct reg_lut_t lut[] = {
+  int how_many=41;
+ reg_lut_t lut[] = {
   {0,"voice0_vol_l"},
-  {1,"voice0_vol_l"},
+  {1,"voice0_vol_r"},
   {2,"voice0_pitch_lo"},
   {3,"voice0_pitch_hi"},
   {4,"voice0_srcn"},

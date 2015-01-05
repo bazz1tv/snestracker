@@ -8,16 +8,24 @@
 #include <math.h>
 #include "sdl_dblclick.h"
 #include "Port_Tool.h"
-#include "mode.h"
 #include "Mouse_Hexdump_Area.h"
 #include "Main_Memory_Area.h"
 #include "Colors.h"
 #include "platform.h"
 #include "Render_Context.h"
 #include "Player_Context.h"
+#include "Experience.h"
 
-struct Main_Window : public Debugger_Base, public Render_Context, public Player_Context
+struct Main_Window : public Debugger_Base, public Render_Context, public Player_Context,
+public Experience
 {
+  enum modes 
+  { 
+    MODE_NAV=0,
+    MODE_EDIT_MOUSE_HEXDUMP,
+    MODE_EDIT_APU_PORT
+    //MODE_QUIT  
+  };
   Main_Window(int &argc, char **argv);
   void run();
   void receive_event(SDL_Event &ev);
@@ -40,6 +48,11 @@ struct Main_Window : public Debugger_Base, public Render_Context, public Player_
   void applyBlockMask(char *filename);
   void fade_arrays();
   void pack_mask(unsigned char packed_mask[32]);
+
+  void lock(char l=1, int x=0, int y=0, uint8_t rx=0, uint8_t ry=0);
+  void toggle_lock(int x=0, int y=0);
+  void unlock();
+  bool locked() { return main_memory_area.locked; }
 
 
 
@@ -71,7 +84,7 @@ struct Main_Window : public Debugger_Base, public Render_Context, public Player_
   void start_track( int track, const char* path );
   void update_track_tag();
 
-
+  int mode=0;
 
 
   
@@ -94,7 +107,6 @@ struct Main_Window : public Debugger_Base, public Render_Context, public Player_
   
   bool is_first_run=true;
   const char* path;
-  char tmpbuf[500];
 
   char *marquees[3] = { (char*)CREDITS, now_playing, NULL };
   char *cur_marquee = NULL;

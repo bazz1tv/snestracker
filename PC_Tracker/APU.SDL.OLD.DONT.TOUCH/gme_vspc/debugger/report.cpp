@@ -25,8 +25,9 @@ Mem_Surface::~Mem_Surface()
 void Mem_Surface::draw(SDL_Surface *screen)
 {
   // draw the memory read/write display area
-  //SDL_Rect memrect;
+ // SDL_Rect memrect;
   //memrect.x = MEMORY_VIEW_X; memrect.y = MEMORY_VIEW_Y;
+
   //fprintf(stderr, "%d %d %d %d", memrect.x, memrect.y, memrect.w, memrect.h);
   
   SDL_BlitSurface(sdl_surface, NULL, screen, &memrect);  

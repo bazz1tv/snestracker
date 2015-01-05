@@ -45,7 +45,7 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
   if (locked)
   {
      res_y = 0;
-    if (submode != EASY_EDIT)
+    if (mouse_hexdump_area->submode != Mouse_Hexdump_Area::EASY_EDIT)
     {
       if (rx || ry)
       {
@@ -59,7 +59,7 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
       }
     }
 
-    mode = MODE_EDIT_MOUSE_HEXDUMP;
+    //mode = MODE_EDIT_MOUSE_HEXDUMP;
     cursor.start_timer();
 
     memcursor.start_timer();
@@ -79,8 +79,8 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
       }
     }
     
-
-    mode = MODE_NAV;
+    report::restore_color(addr_being_edited);
+    //mode = MODE_NAV;
     cursor.stop_timer();
     memcursor.stop_timer();
   }

@@ -14,18 +14,23 @@ Debugger::Debugger(int &argc, char **argv) : //, Music_Player *player,
 //mouseover_hexdump_area(player,screen),
 main_window(argc,argv)
 {
-  
+  Debugger_Base::main_window = &main_window;
+  Debugger_Base::dsp_window = &dsp_window;
+  exp = &main_window;
 }
 
 
 void Debugger::run()
 {
+  // gotta call this once to initialize important stuffz
   main_window.reload();
+
   while (!quitting)
   {
-    main_window.run();
+    exp->run();
     handle_events();
-    main_window.draw();
+    exp->draw();
+
     SDL_Delay( 1000 / 100 );
   }
 }
@@ -35,7 +40,7 @@ void Debugger::handle_events()
   SDL_Event ev;
   while (SDL_PollEvent(&ev))
   {
-    main_window.receive_event(ev);
+    exp->receive_event(ev);
   }
 }
 

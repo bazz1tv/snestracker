@@ -3,19 +3,23 @@
 #include "Player_Context.h"
 #include "gme/player/Music_Player.h"
 #include "globals.h"
+//#include "Main_Window.h"
+//#include "Dsp_Window.h"
+#include "Experience.h"
 
+struct Main_Window;
+struct Dsp_Window;
 struct Debugger_Base
 {
-  enum modes 
-  { 
-    MODE_NAV=0,
-    MODE_EDIT_MOUSE_HEXDUMP,
-    MODE_EDIT_APU_PORT,
-    MODE_DSP_MAP,
-    MODE_QUIT  
+  enum GrandMode
+  {
+    MAIN=0,
+    DSP_MAP
   };
-  static int mode;// =0;
-  static int submode;// =  0;
+  void change_grand_mode(int mode);
+  
+  static int grand_mode;// =0;
+  //static int submode;// =  0;
   
   // trim later. Get working now
   static struct Cfg {
@@ -33,6 +37,10 @@ struct Debugger_Base
     int num_files = 0;
     char **playlist = NULL;
   } g_cfg;
+
+  static Experience *exp;
+  static Main_Window *main_window;
+  static Dsp_Window *dsp_window;
 
   static int g_paused;// = 0;
   static bool quitting;
