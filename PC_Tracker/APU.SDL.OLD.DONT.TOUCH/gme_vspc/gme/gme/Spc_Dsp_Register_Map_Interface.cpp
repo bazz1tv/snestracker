@@ -2,7 +2,7 @@
 
 namespace dsp_reg
 {
-  int how_many=41;
+  int how_many=24 + (10*8);
  reg_lut_t lut[] = {
   {0,"voice0_vol_l"},
   {1,"voice0_vol_r"},
@@ -91,7 +91,7 @@ namespace dsp_reg
   {0x77,"voice7_gain"},
   {0x78,"voice7_envx"},
   {0x79,"voice7_outx"},
-
+// 10 * 8
   {0x0c,"mvol_l"},
   {0x1c,"mvol_r"},
   {0x2c,"evol_l"},

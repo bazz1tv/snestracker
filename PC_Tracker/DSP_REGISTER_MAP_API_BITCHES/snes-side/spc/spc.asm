@@ -25,7 +25,7 @@ bak:
     inc $05
     bra bak
 donez:
-    mov a, #$39; #$3B ;#$39
+    mov a, #$3B; #$3B ;#$39
     mov !$1d90, a
     mov $F2, #$5D   ; starting address = $3000
     mov $F3, #$30
@@ -125,12 +125,15 @@ loop:
     ;mov $F2, #$04       ; source number = 0 
     ;mov $F3, #$01
 
-    mov $F2, #$4C
-    mov $f3, #0
-    mov $F2, #$5C
-    mov $F3, #$01
-    mov $f3, #$00
-    
+    ;mov $F2, #$4C
+    ;mov $f3, #0
+    ;mov $F2, #$5C
+    ;mov a, $f3
+    ;beq up
+    ;mov $f3, #$00
+    bra loop
+up:
+    mov $f3, #1
 
     bra loop
 

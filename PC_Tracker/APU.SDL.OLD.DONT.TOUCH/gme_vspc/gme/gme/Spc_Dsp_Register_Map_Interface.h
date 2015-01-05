@@ -124,7 +124,7 @@ enum {
 };
 
   struct reg_lut_t {
-  uint8_t addr;
+  int addr;
   const char *name;
   //char *altname;
 };

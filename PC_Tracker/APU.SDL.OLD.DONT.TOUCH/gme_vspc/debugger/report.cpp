@@ -35,11 +35,12 @@ void Mem_Surface::draw(SDL_Surface *screen)
 }
 void Mem_Surface::init()
 {
-  
+  fprintf(stderr,"YIPEE\n");
   data = (unsigned char *)malloc(512*512*4);
   memset(data, 0, 512*512*4);
   cdata = (unsigned char *)malloc(512*512*4);
   memset(cdata, 0, 512*512*4);
+  init_video();
 }
 void Mem_Surface::clear()
 {

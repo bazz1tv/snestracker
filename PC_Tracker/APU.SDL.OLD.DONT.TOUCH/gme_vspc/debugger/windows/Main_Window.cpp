@@ -135,21 +135,27 @@ void Main_Window::receive_event(SDL_Event &ev)
       }
       if (scancode == SDLK_k)
       {
-        SCREEN_X_OFFSET--;
+        //SCREEN_X_OFFSET--;
         //player->spc_write_dsp(dsp_reg::koff,0xff);
       }
       else if (scancode == SDLK_l)
       {
-        SCREEN_X_OFFSET++;
+        //SCREEN_X_OFFSET++;
       }
       if (scancode == SDLK_n)
       {
-        SCREEN_Y_OFFSET--;
+        //SCREEN_Y_OFFSET--;
         //player->spc_write_dsp(dsp_reg::koff,0xff);
+        static int val=0;
+        val = !val;
+        player->spc_write_dsp(dsp_reg::kon,val);
       }
       else if (scancode == SDLK_m)
       {
-        SCREEN_Y_OFFSET++;
+        //SCREEN_Y_OFFSET++;
+        static int val=0;
+        val = !val;
+        player->spc_write_dsp(dsp_reg::koff,val);
       }
       if (ev.key.keysym.sym == SDLK_u)
       {
@@ -186,9 +192,7 @@ void Main_Window::receive_event(SDL_Event &ev)
       }
       else if (scancode == SDLK_r)
       {
-        report::memsurface.clear();
-        player->start_track(0); // based on only having 1 track
-        player->pause(0);
+        restart_current_track();
         // in the program .. this would have to change otherwise
       }
       if (mode == MODE_NAV)
@@ -875,14 +879,8 @@ void Main_Window::run()
     g_cur_entry++;
     if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; return; }
     //goto reload;
-    reload();
+    this->reload();
   }
-
-  
-
-
-  clean:
-  ;
 }
 
 void Main_Window::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*=0*/, uint8_t ry/*=0*/)
@@ -1032,34 +1030,7 @@ port_tool(&mouseover_hexdump_area.cursor)
 
 
 
-void Main_Window::toggle_pause()
-{
-  player->toggle_pause();
-}
 
-void Main_Window::restart_track()
-{
-  SDL_PauseAudio(1);
-  g_cur_entry=0;
-  player->pause(0);
-  reload();
-}
-
-void Main_Window::prev_track()
-{
-  SDL_PauseAudio(true);
-  g_cur_entry--;
-  if (g_cur_entry<0) { g_cur_entry = g_cfg.num_files-1; }
-  reload();
-}
-
-void Main_Window::next_track()
-{
-  SDL_PauseAudio(true);
-  g_cur_entry++;
-  if (g_cur_entry>=g_cfg.num_files) { g_cur_entry = 0; }
-  reload();
-}
 
 void Main_Window::exit_edit_mode()
 {
@@ -1117,45 +1088,18 @@ void Main_Window::draw_mouse_address()
 
 void Main_Window::reload()
 {
-#ifdef WIN32
-  g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '\\');
-#else
-  g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '/');
-#endif
-  if (!g_real_filename) {
-    g_real_filename = g_cfg.playlist[g_cur_entry];
-  }
-  else {
-    // skip path sep
-    g_real_filename++;
-  } 
-    
-  // Load file
-  path = g_cfg.playlist[g_cur_entry];
-  handle_error( player->load_file( g_cfg.playlist[g_cur_entry] ) );
-  
-  IAPURAM = player->spc_emu()->ram();
-  //Memory::IAPURAM = IAPURAM;
-  
-  // report::memsurface.init
-  report::memsurface.clear();
+  fprintf(stderr, "DERP");
+  Debugger_Base::reload();
+  draw_track_tag();
+}
 
-  memset(report::used, 0, sizeof(report::used));
-  memset(report::used2, 0, sizeof(report::used2));
-  //if (!mouseover_hexdump_area.address)mouseover_hexdump_area.address =0;
-  report::last_pc = -1;
-  
-  start_track( 1, path );
-  voice_control.was_keyed_on = 0;
-  player->mute_voices(voice_control.muted);
-  player->ignore_silence();
-  
-
+void Main_Window::one_time_draw()
+{
   // draw one-time stuff
-  if (!g_cfg.novideo)
-  {
+  //if (!g_cfg.novideo)
+  //{
     SDL_FillRect(screen, NULL, 0);
-    report::memsurface.init_video();
+    
     
     tmprect.x = MEMORY_VIEW_X-1;
     tmprect.y = MEMORY_VIEW_Y-1;
@@ -1165,8 +1109,9 @@ void Main_Window::reload()
     
     sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
 
-    sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - DSP MAP");
-    sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
+    draw_track_tag();
+    
+    draw_menu_bar();
 
     //sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");  
     //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, Colors::white);
@@ -1174,7 +1119,7 @@ void Main_Window::reload()
     //sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg.autowritemask ? "Yes" : "No");
     //sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, Colors::white);
 
-    update_track_tag();
+    
 
     sprintf(tmpbuf, "Ignore tag time: %s", g_cfg.ignoretagtime ? "Yes" : "No");
     sdlfont_drawString(screen, INFO_X, INFO_Y+80, tmpbuf, Colors::white);
@@ -1184,7 +1129,7 @@ void Main_Window::reload()
 
     
     sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -", Colors::white);
-  }
+  //}
 }
 
 void Main_Window::pack_mask(unsigned char packed_mask[32])
@@ -1406,58 +1351,11 @@ void Main_Window::draw_voices_pitchs()
     uint8_t outx = player->spc_read_dsp(voice_base_addr+0x09);
     uint8_t envx = player->spc_read_dsp(voice_base_addr+0x08);
 
-    if (player->spc_read_dsp(0x4c)&(1<<i) && !(voice_control.was_keyed_on & i) )
-    {
-      cur_color = &Colors::white;
-      voice_control.was_keyed_on |= 1<<i;
-    } else if (player->spc_read_dsp(0x5c)&(1<<i)) {
-      //cur_color = &Colors::gray;
-      voice_control.was_keyed_on &= ~(1<<i);
-      //if (i==1)
-        //fprintf(stderr, "KEYOFF\n");
-    }
+   
 
     if (outx || envx) 
     {
       cur_color = &Colors::white;
-    }
-    else // check if the sample is looping
-    {
-      
-      // I added this section because when outx reaches 0
-      // the voice will go black for split second. this actually
-      // happens hundreds or thousands of times a second but the visual
-      // only catches it once in awhile.. but it's annoying and 
-      // I don't like it.. so I coded this to take up your CPU
-      if (voice_control.was_keyed_on & (1<<i))
-      {
-        uint16_t addr = player->spc_read_dsp(0x5d) * 0x100;
-        //fprintf(stderr,"0x%04x,", addr);
-        uint8_t samp_index;
-        samp_index = player->spc_read_dsp(voice_base_addr+0x04);
-        //fprintf(stderr,"0x%02x,", samp_index);
-        uint16_t *brr_header_addr = (uint16_t*)&IAPURAM[addr+(samp_index*4)];
-        if (IAPURAM[*brr_header_addr] & 2)
-          cur_color = &Colors::white;
-        /*else if (outx) 
-        {
-          cur_color = &Colors::white;
-        }*/
-      }
-      else
-      {
-        //if (i==1)
-          //fprintf(stderr, "WHAT");
-        // the note is truly dead
-      }
-        /*else if (outx) 
-        {
-          cur_color = &Colors::white;
-        }*/
-
-        //fprintf(stderr,"0x%04x\n", *brr_header_addr);
-
-      //}
     }
 
 
@@ -1886,37 +1784,7 @@ void Main_Window::draw_time_and_echo_status()
 
 
 
-void Main_Window::start_track( int track, const char* path )
-{
-  paused = false;
-  //if (!player->is_paused())
-  handle_error( player->start_track( track - 1 ) );
-  // update window title with track info
-  
-  long seconds = player->track_info().length / 1000;
-  const char* game = player->track_info().game;
-  if ( !*game )
-  {
-    // extract filename
-    game = strrchr( path, '\\' ); // DOS
-    if ( !game )
-      game = strrchr( path, '/' ); // UNIX
-    if ( !game )
-    {
-      if (path)
-        game = path;
-      else game = "";
-    }
-    else
-      game++; // skip path separator
-  }
-  
-  char title [512];
-  sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
-      game, track, player->track_count(), player->track_info().song,
-      seconds / 60, seconds % 60 );
-  SDL_SetWindowTitle(this->sdlWindow, title);
-}
+
 
 // update window title with track info
 void Main_Window::update_window_title()
@@ -1942,25 +1810,10 @@ void Main_Window::update_window_title()
       seconds / 60, seconds % 60 );
   SDL_SetWindowTitle(sdlWindow, title);
 }
-void Main_Window::update_track_tag()
+void Main_Window::draw_track_tag()
 {
-  update_window_title();
-  tag = player->track_info();
-
-
-  /* decide how much time the song will play */
-  if (!g_cfg.ignoretagtime) {
-    song_time = (int)tag.length / 1000; //atoi((const char *)tag.seconds_til_fadeout);
-    if (song_time <= 0) {
-      song_time = g_cfg.defaultsongtime;
-    }
-  }
-  else {
-    song_time = g_cfg.defaultsongtime;
-  }
-
-  song_time += g_cfg.extratime;
-
+  //Debugger_Base::update_track_tag();
+  fprintf(stderr, "EEEE");
   now_playing[0] = 0;
   if (tag.song)
   {

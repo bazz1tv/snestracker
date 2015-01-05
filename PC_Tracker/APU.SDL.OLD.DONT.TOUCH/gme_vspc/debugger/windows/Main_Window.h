@@ -31,6 +31,8 @@ public Experience
   void receive_event(SDL_Event &ev);
   void draw();
 
+  void one_time_draw();
+
   void draw_program_counter();
   void draw_voices_pitchs();
   void draw_voices_volumes();
@@ -56,10 +58,7 @@ public Experience
 
 
 
-  void toggle_pause();
-  void restart_track();
-  void prev_track();
-  void next_track();
+  
   void exit_edit_mode();
   void inc_ram(int addr, int i);
   void dec_ram(int addr, int i);
@@ -72,17 +71,16 @@ public Experience
   Main_Memory_Area main_memory_area;
   Mouse_Hexdump_Area mouseover_hexdump_area;
   Port_Tool port_tool;
-  Voice_Control voice_control;
+  
   
   //Uint16 address, addr_being_edited; // shared variable between main_memory_area and mouseover_hexdump_area
 
   // TRACK STUFFZZ  
   char now_playing[1024];
-  int song_time;
-  track_info_t tag;
+  
   void update_window_title();
-  void start_track( int track, const char* path );
-  void update_track_tag();
+  //void start_track( int track, const char* path );
+  void draw_track_tag();
 
   int mode=0;
 
@@ -93,24 +91,25 @@ public Experience
   
 
  
-  int g_cur_entry = 0;
-  char *g_real_filename=NULL; // holds the filename minus path
+  bool is_onetime_draw_necessary=true;
+   // holds the filename minus path
 
   int tmp=0, i=0;
   SDL_Rect tmprect;
-  unsigned char packed_mask[32];
+  
   uint16_t mouse_addr=0; 
 
-  bool paused;
+  
   //int last_pc;
   Uint32 time_last=0, time_cur=0;
   
   bool is_first_run=true;
-  const char* path;
+  
 
-  char *marquees[3] = { (char*)CREDITS, now_playing, NULL };
+  
   char *cur_marquee = NULL;
   int cur_marquee_id = 0;
+  char *marquees[3] = { (char*)CREDITS, now_playing, NULL };
 
 };
 

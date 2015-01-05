@@ -24,6 +24,7 @@ void Debugger::run()
 {
   // gotta call this once to initialize important stuffz
   main_window.reload();
+  main_window.one_time_draw();
 
   while (!quitting)
   {
@@ -31,7 +32,7 @@ void Debugger::run()
     handle_events();
     exp->draw();
 
-    SDL_Delay( 1000 / 100 );
+    //SDL_Delay( 1000 / 100 );
   }
 }
 

@@ -25,7 +25,7 @@
 0025   2024 AB 05           inc $05
 0026   2026 2F EB           bra bak
 0027   2028             donez:
-0028   2028 E8 39           mov a, #$39; #$3B ;#$39
+0028   2028 E8 3B           mov a, #$3B; #$3B ;#$39
 0029   202A C5 90 1D        mov !$1d90, a
 0030   202D 8F 5D F2        mov $F2, #$5D   ; starting address = $3000
 0031   2030 8F 30 F3        mov $F3, #$30
@@ -125,14 +125,17 @@
 0125   20D5                 ;mov $F2, #$04       ; source number = 0 
 0126   20D5                 ;mov $F3, #$01
 0127   20D5             
-0128   20D5 8F 4C F2        mov $F2, #$4C
-0129   20D8 8F 00 F3        mov $f3, #0
-0130   20DB 8F 5C F2        mov $F2, #$5C
-0131   20DE 8F 01 F3        mov $F3, #$01
-0132   20E1 8F 00 F3        mov $f3, #$00
-0133   20E4                 
-0134   20E4             
-0135   20E4 2F DB           bra loop
-0136   20E6             
-0137   20E6             .END
-0138   20E6             EOFtasm: Number of errors = 0
+0128   20D5                 ;mov $F2, #$4C
+0129   20D5                 ;mov $f3, #0
+0130   20D5                 ;mov $F2, #$5C
+0131   20D5                 ;mov a, $f3
+0132   20D5                 ;beq up
+0133   20D5                 ;mov $f3, #$00
+0134   20D5 2F EA           bra loop
+0135   20D7             up:
+0136   20D7 8F 01 F3        mov $f3, #1
+0137   20DA             
+0138   20DA 2F E5           bra loop
+0139   20DC             
+0140   20DC             .END
+0141   20DC             EOFtasm: Number of errors = 0

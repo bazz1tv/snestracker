@@ -12,5 +12,6 @@ public Experience
   void draw();
   void receive_event(SDL_Event &ev);
 
-  uint8_t vals[41]; // num of DSP regs
+  //char derp;
+  unsigned char vals[30 + (10*8)]; // num of DSP regs
 };
