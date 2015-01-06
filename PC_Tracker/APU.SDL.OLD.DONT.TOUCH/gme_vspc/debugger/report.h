@@ -74,6 +74,7 @@ namespace report
   extern Mem_Surface memsurface;
   extern unsigned char used2[0x101];
   extern unsigned char used[0x10006];
+  extern uint16_t BRR_Headers[100]; // this gets init'd in APP constructor
 
   int backup_color(int addr);
 

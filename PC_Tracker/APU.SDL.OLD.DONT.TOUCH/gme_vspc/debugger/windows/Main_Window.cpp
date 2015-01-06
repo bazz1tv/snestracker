@@ -67,6 +67,12 @@ void Main_Window::draw()
         sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf, Colors::white);
       }
     }
+
+    if (main_memory_main_memory_context_menu_is_active)
+    {
+      //draw_context_menu();
+
+    }
     
     //SDL_UpdateRect(screen, 0, 0, 0, 0);
     SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
@@ -83,6 +89,46 @@ void Main_Window::draw()
 void Main_Window::receive_event(SDL_Event &ev)
 {
   dblclick::check_event(&ev);
+
+  if (main_memory_context_menu_is_active)
+  {
+    switch (ev.type)
+    {
+      case SDL_QUIT:
+      if (!g_cfg.nosound) {
+        SDL_PauseAudio(1);
+      }
+      printf ("penis4\n");
+      quitting = true;
+      break;
+
+      case SDL_MOUSEMOTION:
+      {
+        mouse::x = ev.motion.x; mouse::y = ev.motion.y;
+      } break;
+
+      case SDL_KEYDOWN:
+      {
+        int scancode = ev.key.keysym.sym;
+        switch (scancode)
+        {
+          case SDLK_RETURN:
+          // act same as left mouse button click use a goto lol
+          break;
+        }
+      } break;
+
+      case SDL_MOUSEBUTTONDOWN:
+      {
+
+      }
+      break;
+      default:break;
+    }
+    return;
+  }
+
+
   switch (ev.type)
   {
     case SDL_QUIT:
@@ -129,6 +175,7 @@ void Main_Window::receive_event(SDL_Event &ev)
     case SDL_KEYDOWN:
     {
       int scancode = ev.key.keysym.sym;
+
       if (scancode == SDLK_m)
       {
         main_memory_area.memcursor.toggle_disable();
@@ -766,6 +813,13 @@ void Main_Window::receive_event(SDL_Event &ev)
             {
               toggle_lock(ev.motion.x, ev.motion.y);
             }
+            else if (ev.button.button == SDL_BUTTON_RIGHT)
+            {
+              // prototype 
+              // activate_context_menu()
+              main_memory_context_menu_is_active = true;
+              main_memory_context_menu.preload(ev.button.x, ev.button.y);
+            }
           }
         }
 
@@ -917,8 +971,11 @@ void Main_Window::unlock()
 
 Main_Window::Main_Window(int &argc, char **argv) : 
 main_memory_area(&mouseover_hexdump_area),
-port_tool(&mouseover_hexdump_area.cursor)
+port_tool(&mouseover_hexdump_area.cursor),
 {
+  //main_memory_context_menu.push("")
+
+
   int res;
   static struct option long_options[] = {
     {"nosound", 0, 0, 0},

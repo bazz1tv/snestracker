@@ -7,6 +7,7 @@
 
 #define incprint(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
 
+
 void Dsp_Window::run()
 {
   uint i=10,remember_i1, remember_i2, remember_i3;

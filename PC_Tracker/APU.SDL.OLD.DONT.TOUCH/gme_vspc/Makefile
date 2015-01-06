@@ -24,7 +24,7 @@ debugger_OBJECTS= main.o app.o debugger/font.o debugger/sdlfont.o debugger/repor
 debugger/Port_Tool.o debugger/gui/cursor.o debugger/memory/Mouse_Hexdump_Area.o debugger/Colors.o\
 debugger/BaseD.o debugger/Debugger.o  debugger/error.o debugger/utility.o debugger/memory/Main_Memory_Area.o\
 debugger/memory/memory.o Render_Context.o Player_Context.o debugger/windows/Main_Window.o Screen.o\
-debugger/windows/Dsp_Window.o
+debugger/windows/Dsp_Window.o gui/Context_Menu.o debugger/gui/Main_Memory_Context_Menu.o
 OBJECTS += $(debugger_OBJECTS)
 EXECUTABLE=std
 

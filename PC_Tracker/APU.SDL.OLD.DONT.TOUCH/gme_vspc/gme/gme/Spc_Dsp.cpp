@@ -305,7 +305,23 @@ inline void Spc_Dsp::decode_brr( voice_t* v )
 	report_memread(v->brr_addr+8);
 	int const header = m.t_brr_header;
 
-	if (header & 1) report_echomem(v->brr_addr+8); //fprintf(stderr,"0x%04x\n", v->brr_addr);
+	// trick to get white, because the sample is also read, BLUE + YELLOW = WHITE
+	if (header & 1)
+	{
+		uint16_t very_end = v->brr_addr+8;
+		report_echomem(very_end); //fprintf(stderr,"0x%04x\n", v->brr_addr);
+		
+		for (int i=0; i < BRR_HEADER_MAX; i++)
+		{
+			if (!report::BRR_Headers[i])
+			{
+				report::BRR_Headers[i] = very_end;
+				break;
+			}
+			else if (report::BRR_Headers[i] == very_end)
+				break;
+		}
+	}
 	
 	// Write to next four samples in circular buffer
 	int* pos = &v->buf [v->buf_pos];
