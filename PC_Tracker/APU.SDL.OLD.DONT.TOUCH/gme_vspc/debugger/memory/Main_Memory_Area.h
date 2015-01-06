@@ -6,12 +6,7 @@
 #include "memory/Mouse_Hexdump_Area.h"
 #include "gui/Context_Menu.h"
 
-static int demo(void *data)
-{
-  fprintf(stderr, "HI :)");
-
-  return 0;
-}
+int demo(void *data);
 
 struct Main_Memory_Area : Memory
 {
@@ -35,11 +30,12 @@ public:
   Mouse_Hexdump_Area *mouse_hexdump_area;
   char locked=0;
   Uint8 address_remainder=0;
+  uint16_t address_when_right_click=0;
 
   Context_Menu context_menu;
   Context_Menu_Item context_menu_items[5] = 
   {
-    {"RIP BRR",true, &demo},
+    {"RIP BRR",true, &demo, &address_when_right_click},
     {"Rip BRR+",true},
     {"Rip Instrument",true},
     {"Play Sample",true},

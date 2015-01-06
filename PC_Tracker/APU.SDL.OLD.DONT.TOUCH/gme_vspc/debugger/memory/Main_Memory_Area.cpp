@@ -5,6 +5,79 @@
 //extern uint8_t* IAPURAM;
 //extern Music_Player *player;
 
+int demo(void *data)
+{
+  uint16_t *address = (uint16_t *)data;
+  assert (address != 0);
+  // determine if right-click happened on a BRR Sample
+  // find the closest entry in array that is above the user's clicked address..
+  uint16_t lowest_offset_above=0xffff, lowest_offset_below=0xffff;
+  bool can_show_brr_context=false;
+  uint8_t lowest_brr_array_index, lowest_srcn_array_index;
+  for (uint8_t i=0; i < report::BRR_HEADER_MAX; i++)
+  {
+    if (report::BRR_Headers[i] == 0xffff)
+      break;
+    
+    if (report::BRR_Headers[i] > *address)
+    {
+      uint16_t offset = report::BRR_Headers[i] - *address; //@init = 0xffff-0xffff
+      if (offset < lowest_offset_above)
+      {
+        lowest_offset_above = offset;
+        lowest_brr_array_index = i;
+      }
+    }
+    
+  }
+
+
+  if (lowest_offset_above != 0xffff)
+  {
+    // POTENTIAL
+    for (int i=0; i < report::SRCN_MAX; i++)
+    {
+      if (report::SRCN_used[i] == 0xffff)
+      break;
+    
+      if (report::SRCN_used[i] < *address)
+      {
+        uint16_t offset =  *address - report::SRCN_used[i]; //@init = 0xffff-0xffff
+        if (offset < lowest_offset_below)
+        {
+          lowest_offset_below = offset;
+          lowest_srcn_array_index = i;
+          can_show_brr_context = true;
+        }
+      }
+    }
+
+    if (can_show_brr_context)
+    {
+      fprintf(stderr, "address = %04X\nBRR sample located from %04X-%04X\n", 
+        *address,
+        report::SRCN_used[lowest_srcn_array_index], 
+        report::BRR_Headers[lowest_brr_array_index]);
+    }
+
+    /*uint16_t dir = (uint16_t)player->spc_read_dsp(dsp_reg::dir)*0x100;
+    // checking the voices' SRCN (*4)
+    for (int i=0; i < 8; i++)
+    {
+      uint16_t srcn = player->spc_read_dsp(i*0x10+04);
+      uint16_t dir_entry = srcn*4;
+      if (IAPURAM[dir+dir_entry] < address)
+      {
+        // should have an array of ALL SRCN used during song
+        // MUST reinitialize  BRR_Headers array at BaseD::reload()
+      }
+    }*/
+  }
+  // even if user clicks before a BRR sample.. this logic will just download the
+  // next sample in memory
+  return 0;
+}
+
 
 Main_Memory_Area::Main_Memory_Area(Mouse_Hexdump_Area *mouse_hexdump_area) :
 mouse_hexdump_area(mouse_hexdump_area),

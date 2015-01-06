@@ -114,6 +114,7 @@ void Main_Window::receive_event(SDL_Event &ev)
         {
           case SDLK_RETURN:
           // act same as left mouse button click use a goto lol
+          main_memory_area.context_menu.do_thing();
           break;
 
           case SDLK_ESCAPE:
@@ -128,15 +129,7 @@ void Main_Window::receive_event(SDL_Event &ev)
         {
           case SDL_BUTTON_LEFT:
           {
-            Context_Menu_Item *p = main_memory_area.context_menu.highlighted_item;
-            if (p != NULL)
-            {
-              if (p->clickable_text.action)
-              {
-                p->clickable_text.action(NULL);
-              }
-            }
-            main_memory_area.context_menu.is_active = false;
+            main_memory_area.context_menu.do_thing();
           }
           break;
 
@@ -339,7 +332,7 @@ void Main_Window::receive_event(SDL_Event &ev)
         int scancode = ev.key.keysym.sym;
         if (ev.key.keysym.mod & (CMD_CTRL_KEY))  // GUI in SDL2
         {
-          fprintf(stderr, "EOO");
+          //fprintf(stderr, "EOO");
           if (scancode == SDLK_LEFT)
             prev_track();
           else if (scancode == SDLK_RIGHT)
@@ -841,6 +834,7 @@ void Main_Window::receive_event(SDL_Event &ev)
             {
               // prototype 
               // activate_context_menu()
+              main_memory_area.address_when_right_click = main_memory_area.address;
               main_memory_area.context_menu.is_active = true;
               main_memory_area.context_menu.preload(ev.button.x, ev.button.y);
             }

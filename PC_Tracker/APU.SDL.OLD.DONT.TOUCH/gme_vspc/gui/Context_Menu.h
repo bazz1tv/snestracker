@@ -4,7 +4,7 @@
 
 struct Context_Menu_Item
 {
-  Context_Menu_Item(const char *str, bool is_active, int (*action)(void *)=NULL);
+  Context_Menu_Item(const char *str, bool is_active, int (*action)(void *)=NULL, void *data=NULL);
   Clickable_Text clickable_text;
   bool is_visible=false;
 };
@@ -17,6 +17,7 @@ struct Context_Menu
   void push(Clickable_Text &ref);
   void push(char *str);
   void draw(SDL_Surface *screen);
+  void do_thing(void *data=NULL);
   //std::vector<Clickable_Text> items;
   Context_Menu_Item *items=NULL;
   SDL_Rect rect;

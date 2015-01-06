@@ -4,12 +4,24 @@
 
 #include "globals.h"
 
-Context_Menu_Item::Context_Menu_Item(const char *str, bool is_visible, int (*action)(void *)/*=NULL*/) : 
-clickable_text(str, action), is_visible(is_visible)
+Context_Menu_Item::Context_Menu_Item(const char *str, bool is_visible, int (*action)(void *)/*=NULL*/, void* data/*=NULL*/) : 
+clickable_text(str, action, data), is_visible(is_visible)
 {
 
 }
 
+void Context_Menu::do_thing(void *data/*=NULL*/)
+{
+  Context_Menu_Item *p = highlighted_item;
+  if (p != NULL)
+  {
+    if (p->clickable_text.action)
+    {
+      p->clickable_text.do_thing();
+    }
+  }
+  is_active = false;
+}
 void Context_Menu::draw(SDL_Surface *screen)
 {
   int i=0, drawn=0;

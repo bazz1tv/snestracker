@@ -20,3 +20,9 @@ data(data)
   rect.x = x;
   rect.y = y;
 }
+void Clickable_Text::do_thing(void *newdata/*=NULL*/)
+{
+  if (!newdata)
+    action(data);
+  else action(newdata);
+}

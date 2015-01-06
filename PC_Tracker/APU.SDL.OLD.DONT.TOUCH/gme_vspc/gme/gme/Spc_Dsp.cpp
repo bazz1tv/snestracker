@@ -311,9 +311,9 @@ inline void Spc_Dsp::decode_brr( voice_t* v )
 		uint16_t very_end = v->brr_addr+8;
 		report_echomem(very_end); //fprintf(stderr,"0x%04x\n", v->brr_addr);
 		
-		for (int i=0; i < BRR_HEADER_MAX; i++)
+		for (int i=0; i < report::BRR_HEADER_MAX; i++)
 		{
-			if (!report::BRR_Headers[i])
+			if (report::BRR_Headers[i] == 0xffff)
 			{
 				report::BRR_Headers[i] = very_end;
 				break;
@@ -418,7 +418,21 @@ MISC_CLOCK( 30 )
 
 inline VOICE_CLOCK( V1 )
 {
+	// bazz log all srcn used
 	m.t_dir_addr = m.t_dir * 0x100 + m.t_srcn * 4;
+	uint16_t *p = (uint16_t*)&m.ram[m.t_dir_addr];
+
+	for (int i=0; i < report::SRCN_MAX; i++)
+	{
+		if (report::SRCN_used[i] == 0xffff)
+		{
+			report::SRCN_used[i] = *p;
+			break;
+		}
+		else if (report::SRCN_used[i] == *p)
+			break;
+	}
+	
 	m.t_srcn = VREG(v->regs,srcn);
 }
 inline VOICE_CLOCK( V2 )

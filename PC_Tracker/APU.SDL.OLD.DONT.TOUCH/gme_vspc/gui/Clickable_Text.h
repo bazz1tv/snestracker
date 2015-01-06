@@ -13,5 +13,6 @@ struct Clickable_Text
   // maybz function pointer?
   // must be static class function, or reg. global function, or somethin.
   // it can be in namespace
+  void do_thing(void *newdata=NULL);
   int (*action)(void* data);
 };

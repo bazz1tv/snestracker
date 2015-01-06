@@ -96,13 +96,14 @@ void report_cursor(int addr)
 
 namespace report
 {
-
+  //const int BRR_HEADER_MAX, SRCN_MAX;
   unsigned char used2[0x101];
   unsigned char used[0x10006];
   Mem_Surface memsurface;
   int last_pc = -1;
   int bcolor=0; // backup color
   uint16_t BRR_Headers[BRR_HEADER_MAX]; // this gets init in APP constructor
+  uint16_t SRCN_used[SRCN_MAX];
 
   // backup colors is no longer an issue
   int backup_color(int addr)
