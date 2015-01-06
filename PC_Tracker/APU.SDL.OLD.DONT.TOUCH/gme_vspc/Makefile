@@ -11,21 +11,12 @@ debugger_CFLAGS=$(debug) -Idebugger/memory -Idebugger/windows -O3\
 
 debugger_LDFLAGS=$(debug) `sdl2-config --libs` -lm
 
-CFLAGS = -std=c++11 $(gme_CFLAGS) $(debugger_CFLAGS) -Wno-c++11-extensions
+CFLAGS = -std=c++11 $(gme_CFLAGS) $(debugger_CFLAGS) -MMD -MP
 ####
-gme_SOURCES= gme/gme/M3u_Playlist.cpp gme/gme/Data_Reader.cpp gme/gme/Multi_Buffer.cpp\
-gme/gme/Blip_Buffer.cpp gme/gme/Effects_Buffer.cpp gme/gme/Fir_Resampler.cpp\
-gme/gme/Music_Emu.cpp gme/gme/gme.cpp gme/gme/gme_File.cpp gme/gme/Snes_Spc.cpp\
-gme/gme/Snes_Spc_misc.cpp gme/gme/Snes_Spc_state.cpp gme/gme/Spc_Filter.cpp gme/gme/Spc_Dsp.cpp gme/gme/Spc_Emu.cpp gme/demo/Wave_Writer.cpp\
-gme/player/Music_Player.cpp gme/gme/Spc_Dsp_Register_Map_Interface.o
+SOURCES=$(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp)
 ###
-OBJECTS=$(gme_SOURCES:.cpp=.o)
-debugger_OBJECTS= main.o app.o debugger/font.o debugger/sdlfont.o debugger/report.o debugger/globals.o debugger/Voice_Control.o debugger/sdl_dblclick.o\
-debugger/Port_Tool.o debugger/gui/cursor.o debugger/memory/Mouse_Hexdump_Area.o debugger/Colors.o\
-debugger/BaseD.o debugger/Debugger.o  debugger/error.o debugger/utility.o debugger/memory/Main_Memory_Area.o\
-debugger/memory/memory.o Render_Context.o Player_Context.o debugger/windows/Main_Window.o Screen.o\
-debugger/windows/Dsp_Window.o gui/Context_Menu.o gui/Clickable_Text.o
-OBJECTS += $(debugger_OBJECTS)
+OBJECTS=$(SOURCES:.cpp=.o)
+#OBJECTS += $(debugger_OBJECTS)
 EXECUTABLE=std
 
 all: $(gme_SOURCES) $(EXECUTABLE)
@@ -33,34 +24,13 @@ all: $(gme_SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS) 
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
-# pull in dependency info for *existing* .o files
--include $(OBJS:.o=.d)
-
 #gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h debugger/report.h 
 #	$(CPP) $(CFLAGS) -c $< -o $@
-
-%.o: %.cpp %.h
-	$(CPP) $(CFLAGS) -c $< -o $@
-	gcc -MM $(CFLAGS) $*.c > $*.d
-	@mv -f $*.d $*.d.tmp
-	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
-	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
-	sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
-	@rm -f $*.d.tmp
+# Use the dependency files created by the -MMD option to gcc.
 
 
 %.o: %.cpp
 	$(CPP) $(CFLAGS) -c $< -o $@
-	gcc -MM $(CFLAGS) $*.c > $*.d
-	@mv -f $*.d $*.d.tmp
-	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
-	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
-	sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
-	@rm -f $*.d.tmp
-
-#.cpp.o:
-#	echo "DMER"
-#	$(CC) $(CFLAGS) $< -o $@
 
 # Order matters.. do the ones with headers first
 #%.o: %.c %.h
@@ -75,5 +45,8 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm -f $(EXECUTABLE); #gme/gme/*.o gme/demo/*.o gme/player/*.o debugger/*.o
-	find . -name "*.o" -o -name '*.d'| xargs rm -rf
+	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 
+
+# DO NOT DELETE THIS LINE -- make depend depends on it.
+-include $(SOURCES:.cpp=.d) 

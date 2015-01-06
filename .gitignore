@@ -2,3 +2,4 @@
 *.sym
 .DS_Store
 *.srm
+*.d
