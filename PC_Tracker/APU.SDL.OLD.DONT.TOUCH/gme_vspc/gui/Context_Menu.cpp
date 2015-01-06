@@ -45,7 +45,7 @@ void Context_Menu::draw(SDL_Surface *screen)
       if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
       {
         //fprintf(stderr,"DERP1");
-        if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + items[i].clickable_text.rect.h))
+        if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
         {
           //fprintf(stderr,"DERP2");
           // draw the highlighter

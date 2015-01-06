@@ -288,6 +288,11 @@ inline void Spc_Dsp::run_envelope( voice_t* const v )
 }
 
 
+// magic opcodes
+// 2f fe 8f 00 04
+
+// e8 01 2f fc 8f 00 04
+
 //// BRR Decoding
 
 inline void Spc_Dsp::decode_brr( voice_t* v )
@@ -421,16 +426,39 @@ inline VOICE_CLOCK( V1 )
 	// bazz log all srcn used
 	m.t_dir_addr = m.t_dir * 0x100 + m.t_srcn * 4;
 	uint16_t *p = (uint16_t*)&m.ram[m.t_dir_addr];
+	uint16_t *loop_addr = (uint16_t*) &m.ram[m.t_dir_addr+2];
 
+	uint8_t flag=0;
 	for (int i=0; i < report::SRCN_MAX; i++)
 	{
+		//1 
 		if (report::SRCN_used[i] == 0xffff)
 		{
 			report::SRCN_used[i] = *p;
-			break;
+			flag |= 1;
+			if (flag == 3)
+				break;
 		}
 		else if (report::SRCN_used[i] == *p)
-			break;
+		{
+			flag |= 1;
+			if (flag == 3)
+				break;
+		}
+		//2
+		if (report::LOOP_used[i] == 0xffff)
+		{
+			report::LOOP_used[i] = *loop_addr;
+			flag |= 2;
+			if (flag == 3)
+				break;
+		}
+		else if (report::LOOP_used[i] == *loop_addr)
+		{
+			flag |= 2;
+			if (flag == 3)
+				break;
+		}
 	}
 	
 	m.t_srcn = VREG(v->regs,srcn);

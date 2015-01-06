@@ -46,6 +46,12 @@ void Mem_Surface::clear()
 {
   memset(data, 0, 512*512*4);
   memset(cdata, 0, 512*512*4);
+  for (int i=0; i < report::BRR_HEADER_MAX; i++)
+    report::BRR_Headers[i] = 0xffff;  // init to ROM address, brr would never be there
+  for (int i=0; i < report::SRCN_MAX; i++)
+    report::SRCN_used[i] = 0xffff;  // init to ROM address, brr would never be there
+  for (int i=0; i < report::SRCN_MAX; i++)
+    report::LOOP_used[i] = 0xffff;  // init to ROM address, brr would never be there
   /*memset(used, 0, sizeof(used));
   memset(used2, 0, sizeof(used2));*/
 }
@@ -104,6 +110,7 @@ namespace report
   int bcolor=0; // backup color
   uint16_t BRR_Headers[BRR_HEADER_MAX]; // this gets init in APP constructor
   uint16_t SRCN_used[SRCN_MAX];
+  uint16_t LOOP_used[SRCN_MAX];
 
   // backup colors is no longer an issue
   int backup_color(int addr)

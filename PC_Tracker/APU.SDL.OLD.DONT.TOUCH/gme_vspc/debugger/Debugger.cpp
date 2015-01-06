@@ -32,7 +32,7 @@ void Debugger::run()
     handle_events();
     exp->draw();
 
-    //SDL_Delay( 1000 / 100 );
+    SDL_Delay( 1000 / 100 );
   }
 }
 

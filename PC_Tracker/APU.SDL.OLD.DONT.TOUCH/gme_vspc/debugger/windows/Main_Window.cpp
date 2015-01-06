@@ -7,6 +7,10 @@
 #define L_FLAG 0
 #define R_FLAG 1
 
+#define PC_STR "PC: $%04x  "
+#define PC_X MEMORY_VIEW_X+8*12
+#define PC_Y MEMORY_VIEW_Y-10
+
 void Main_Window::draw()
 {
   if (!g_cfg.novideo)
@@ -68,10 +72,10 @@ void Main_Window::draw()
       }
     }
 
-    if (main_memory_area.context_menu.is_active)
+    if (main_memory_area.context.menu.is_active)
     {
-      //draw_context_menu();
-      main_memory_area.context_menu.draw(screen);
+      //draw_context.menu();
+      main_memory_area.context.menu.draw(screen);
     }
     
     //SDL_UpdateRect(screen, 0, 0, 0, 0);
@@ -90,7 +94,7 @@ void Main_Window::receive_event(SDL_Event &ev)
 {
   dblclick::check_event(&ev);
 
-  if (main_memory_area.context_menu.is_active)
+  if (main_memory_area.context.menu.is_active)
   {
     switch (ev.type)
     {
@@ -114,11 +118,11 @@ void Main_Window::receive_event(SDL_Event &ev)
         {
           case SDLK_RETURN:
           // act same as left mouse button click use a goto lol
-          main_memory_area.context_menu.do_thing();
+          main_memory_area.context.menu.do_thing();
           break;
 
           case SDLK_ESCAPE:
-          main_memory_area.context_menu.is_active = false;
+          main_memory_area.context.menu.is_active = false;
           break;
         }
       } break;
@@ -129,7 +133,7 @@ void Main_Window::receive_event(SDL_Event &ev)
         {
           case SDL_BUTTON_LEFT:
           {
-            main_memory_area.context_menu.do_thing();
+            main_memory_area.context.menu.do_thing();
           }
           break;
 
@@ -591,8 +595,16 @@ void Main_Window::receive_event(SDL_Event &ev)
     {
       if (ev.user.code == UserEvents::mouse_react)
       {
-        SDL_Event *te = (SDL_Event *)ev.user.data1;
-        if (te->motion.x >= (MOUSE_HEXDUMP_START_X - 2) && te->motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
+        SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
+        
+        if (te->motion.x >= PC_X && te->motion.x < (PC_X + (strlen(PC_STR)*TILE_WIDTH)) &&
+         te->motion.y >= PC_Y && te->motion.y < (PC_Y+TILE_HEIGHT) )
+        {
+          main_memory_area.address = report::last_pc; mode = MODE_EDIT_MOUSE_HEXDUMP;
+          lock();
+        }
+
+        else if (te->motion.x >= (MOUSE_HEXDUMP_START_X - 2) && te->motion.x <= (MOUSE_HEXDUMP_END_X + 2) &&
           te->motion.y >= Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y && te->motion.y <= MOUSE_HEXDUMP_END_Y)
         {
           // editor stuffz
@@ -792,7 +804,17 @@ void Main_Window::receive_event(SDL_Event &ev)
               ev.motion.y >= MEMORY_VIEW_Y &&
               ev.motion.y < MEMORY_VIEW_Y + 512) ? true:false;
 
-        
+        if ( is_in_memory_window )
+        {
+          if (ev.button.button == SDL_BUTTON_RIGHT)
+          {
+            // prototype 
+            // activate_context.menu()
+            main_memory_area.log_the_fucking_address_for_the_fucking_context_window();
+            main_memory_area.context.menu.is_active = true;
+            main_memory_area.context.menu.preload(ev.button.x, ev.button.y);
+          }
+        } 
 
         if (  ev.motion.x >= Screen::locked.x && 
               ev.motion.x < Screen::locked.x + Screen::locked.w &&
@@ -829,14 +851,6 @@ void Main_Window::receive_event(SDL_Event &ev)
             if (ev.button.button == SDL_BUTTON_LEFT)
             {
               toggle_lock(ev.motion.x, ev.motion.y);
-            }
-            else if (ev.button.button == SDL_BUTTON_RIGHT)
-            {
-              // prototype 
-              // activate_context_menu()
-              main_memory_area.address_when_right_click = main_memory_area.address;
-              main_memory_area.context_menu.is_active = true;
-              main_memory_area.context_menu.preload(ev.button.x, ev.button.y);
             }
           }
         }
@@ -991,7 +1005,7 @@ Main_Window::Main_Window(int &argc, char **argv) :
 main_memory_area(&mouseover_hexdump_area),
 port_tool(&mouseover_hexdump_area.cursor)
 {
-  //main_memory_context_menu.push("")
+  //main_memory_context.menu.push("")
 
 
   int res;
@@ -1405,8 +1419,8 @@ void Main_Window::draw_program_counter()
 {
   // write the program counter
   report::last_pc = (int)player->spc_emu()->pc(); 
-  sprintf(tmpbuf, "PC: $%04x  ", report::last_pc);
-  sdlfont_drawString(screen, MEMORY_VIEW_X+8*12, MEMORY_VIEW_Y-10, tmpbuf, Colors::white);
+  sprintf(tmpbuf, PC_STR, report::last_pc);
+  sdlfont_drawString(screen, PC_X, PC_Y, tmpbuf, Colors::white);
 }
 
 void Main_Window::draw_voices_pitchs()

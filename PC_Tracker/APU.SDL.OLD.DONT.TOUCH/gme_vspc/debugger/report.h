@@ -67,17 +67,20 @@ report::memsurface.data[idx+4+2048+2]=60;*/\
 void report_cursor(int addr);
 
 
-
+// Memsurface and the other entities are coupled together OK!! 
+// ie. memsurface.clear() will also clear BRR_Headers SRCN LOOP_used arrays..
+// it doesn't make sense to call one but not the other!! 
 namespace report
 {
-  static const int BRR_HEADER_MAX=100, SRCN_MAX=0x100;
+  static const int BRR_HEADER_MAX=100, SRCN_MAX=0x200;
   extern int last_pc;
   extern int bcolor; // backup color
   extern Mem_Surface memsurface;
   extern unsigned char used2[0x101];
   extern unsigned char used[0x10006];
   extern uint16_t BRR_Headers[BRR_HEADER_MAX]; // this gets init'd in APP constructor
-  extern uint16_t SRCN_used[SRCN_MAX];
+  extern uint16_t SRCN_used[SRCN_MAX];  // SRC addresses used
+  extern uint16_t LOOP_used[SRCN_MAX];  // loop addressed used
 
   int backup_color(int addr);
 

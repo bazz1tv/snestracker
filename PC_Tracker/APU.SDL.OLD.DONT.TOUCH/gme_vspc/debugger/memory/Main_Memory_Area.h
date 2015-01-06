@@ -7,6 +7,7 @@
 #include "gui/Context_Menu.h"
 
 int demo(void *data);
+int play_sample(void *data);
 
 struct Main_Memory_Area : Memory
 {
@@ -24,21 +25,30 @@ public:
   void unlock();
   //void update_editing_address();
   
-
+  //void processContextEvents(SDL_Event &ev);
   
   Mem_Cursor memcursor;
   Mouse_Hexdump_Area *mouse_hexdump_area;
   char locked=0;
   Uint8 address_remainder=0;
-  uint16_t address_when_right_click=0;
 
-  Context_Menu context_menu;
-  Context_Menu_Item context_menu_items[5] = 
+  void log_the_fucking_address_for_the_fucking_context_window();
+
+  struct Context
   {
-    {"RIP BRR",true, &demo, &address_when_right_click},
-    {"Rip BRR+",true},
-    {"Rip Instrument",true},
-    {"Play Sample",true},
-    {"",false}
-  };
+    Context() : menu(menu_items) {}
+    // for tcontext menu
+    uint16_t addr_when_user_right_clicked=0;
+    uint8_t voice_to_play=0;
+
+    Context_Menu menu;
+    Context_Menu_Item menu_items[5] = 
+    {
+      {"RIP BRR",true, &demo, &addr_when_user_right_clicked},
+      {"Rip BRR+",true},
+      {"Rip Instrument",true},
+      {"Play Sample",true, &play_sample},
+      {"",false}
+    };
+  } context;
 };

@@ -3,10 +3,7 @@
 App::App(int &argc, char **argv, int samplerate/*=44100*/) : 
 debugger(argc,argv)
 {
-  for (int i=0; i < report::BRR_HEADER_MAX; i++)
-    report::BRR_Headers[i] = 0xffff;  // init to ROM address, brr would never be there
-  for (int i=0; i < report::SRCN_MAX; i++)
-    report::SRCN_used[i] = 0xffff;  // init to ROM address, brr would never be there
+  //report::init();
   //SDL_SetColorKey(screen, SDL_TRUE, 0);
   Player_Context::player = &player;
   handle_error(player.init(samplerate) );

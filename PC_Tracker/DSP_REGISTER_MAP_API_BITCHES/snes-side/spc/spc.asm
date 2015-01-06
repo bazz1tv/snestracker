@@ -2,6 +2,8 @@
 
     
 Init:
+    ;and a, #$ff
+    bra Init
     ; clear loop
     mov $4, #0
     mov $5, #2   ; $200
@@ -131,9 +133,12 @@ loop:
     ;mov a, $f3
     ;beq up
     ;mov $f3, #$00
+derp:
+    bra derp;
     bra loop
 up:
     mov $f3, #1
+
 
     bra loop
 
