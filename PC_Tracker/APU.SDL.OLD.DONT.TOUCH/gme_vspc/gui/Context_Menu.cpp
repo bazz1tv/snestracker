@@ -4,8 +4,8 @@
 
 #include "globals.h"
 
-Context_Menu_Item::Context_Menu_Item(const char *str, bool is_visible) : 
-clickable_text(str), is_visible(is_visible)
+Context_Menu_Item::Context_Menu_Item(const char *str, bool is_visible, int (*action)(void *)/*=NULL*/) : 
+clickable_text(str, action), is_visible(is_visible)
 {
 
 }

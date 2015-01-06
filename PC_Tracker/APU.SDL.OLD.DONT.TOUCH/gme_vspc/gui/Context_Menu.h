@@ -4,7 +4,7 @@
 
 struct Context_Menu_Item
 {
-  Context_Menu_Item(const char *str, bool is_active);
+  Context_Menu_Item(const char *str, bool is_active, int (*action)(void *)=NULL);
   Clickable_Text clickable_text;
   bool is_visible=false;
 };

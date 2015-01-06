@@ -131,7 +131,10 @@ void Main_Window::receive_event(SDL_Event &ev)
             Context_Menu_Item *p = main_memory_area.context_menu.highlighted_item;
             if (p != NULL)
             {
-
+              if (p->clickable_text.action)
+              {
+                p->clickable_text.action(NULL);
+              }
             }
             main_memory_area.context_menu.is_active = false;
           }
