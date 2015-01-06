@@ -15,10 +15,13 @@
 #include "Render_Context.h"
 #include "Player_Context.h"
 #include "Experience.h"
+#include "gui/Context_Menu.h"
 
 
 
-struct Main_Window : public BaseD, public Render_Context, public Player_Context,
+
+struct Main_Window : public BaseD, public Render_Context, 
+public Player_Context,
 public Experience
 {
   enum modes 
@@ -73,9 +76,6 @@ public Experience
   Main_Memory_Area main_memory_area;
   Mouse_Hexdump_Area mouseover_hexdump_area;
   Port_Tool port_tool;
-
-  ContextMenu main_memory_context_menu;
-  
   
   //Uint16 address, addr_being_edited; // shared variable between main_memory_area and mouseover_hexdump_area
 
@@ -88,7 +88,7 @@ public Experience
 
   int mode=0;
 
-  bool main_memory_context_menu_is_active=false;
+  //bool main_memory_context_menu_is_active=false;
   
 
   // trim later. Get working now

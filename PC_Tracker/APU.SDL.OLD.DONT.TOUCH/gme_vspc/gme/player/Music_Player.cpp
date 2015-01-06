@@ -313,7 +313,7 @@ void Music_Player::mute_voices( int mask )
 	resume();
 }
 
-#define round(x) ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
+#define round(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 #define CLAMP16( io )\
 {\
 	if ( (int16_t) io != io )\
@@ -347,7 +347,7 @@ void Music_Player::apply_gain(sample_t* out, int count )
 		double newsamp = out[i];
 		newsamp *= gain;
 		
-		long d = round(newsamp);
+		int d = round(newsamp);
 		CLAMP16(d);
 		
 		out[i] = (sample_t)d;
@@ -372,7 +372,6 @@ void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 }
 
 // Sound output driver using SDL
-
 #include "SDL.h"
 
 static sound_callback_t sound_callback;

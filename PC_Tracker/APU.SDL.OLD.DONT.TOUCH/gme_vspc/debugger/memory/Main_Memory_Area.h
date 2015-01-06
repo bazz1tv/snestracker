@@ -4,6 +4,7 @@
 #include "memory.h" 
 #include "gui/cursor.h"
 #include "memory/Mouse_Hexdump_Area.h"
+#include "gui/Context_Menu.h"
 
 struct Main_Memory_Area : Memory
 {
@@ -25,11 +26,16 @@ public:
   
   Mem_Cursor memcursor;
   Mouse_Hexdump_Area *mouse_hexdump_area;
-  
-
-  
-  
-
   char locked=0;
   Uint8 address_remainder=0;
+
+  Context_Menu context_menu;
+  Context_Menu_Item context_menu_items[5] = 
+  {
+    {"RIP BRR",true},
+    {"Rip BRR+",true},
+    {"Rip Instrument",true},
+    {"Play Sample",true},
+    {"",false}
+  };
 };

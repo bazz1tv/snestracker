@@ -1,13 +1,26 @@
 #pragma once
 #include "gui/Clickable_Text.h"
-struct ContextMenu
+#include <vector>
+
+struct Context_Menu_Item
 {
-  struct
-  {
-    int x,y;
-  } created;  // the mouse coordinate when context menu was created
-  ContextMenu();
-  preload(int &x, int &y);
+  Context_Menu_Item(const char *str, bool is_active);
+  Clickable_Text clickable_text;
+  bool is_visible=false;
+};
+
+struct Context_Menu
+{
+  SDL_Rect created_at;  // the mouse coordinate when context menu was created
+  Context_Menu(Context_Menu_Item *array);
+  void preload(int &x, int &y, bool use_cache=false);
   void push(Clickable_Text &ref);
-  vector<Clickable_Text> items;
+  void push(char *str);
+  void draw(SDL_Surface *screen);
+  //std::vector<Clickable_Text> items;
+  Context_Menu_Item *items=NULL;
+  SDL_Rect rect;
+  bool is_active=false;
+  int greatest_length=0, visible_items=0;
+  Context_Menu_Item *highlighted_item=NULL;
 };

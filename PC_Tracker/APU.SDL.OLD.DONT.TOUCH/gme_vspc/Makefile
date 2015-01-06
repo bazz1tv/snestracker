@@ -24,7 +24,7 @@ debugger_OBJECTS= main.o app.o debugger/font.o debugger/sdlfont.o debugger/repor
 debugger/Port_Tool.o debugger/gui/cursor.o debugger/memory/Mouse_Hexdump_Area.o debugger/Colors.o\
 debugger/BaseD.o debugger/Debugger.o  debugger/error.o debugger/utility.o debugger/memory/Main_Memory_Area.o\
 debugger/memory/memory.o Render_Context.o Player_Context.o debugger/windows/Main_Window.o Screen.o\
-debugger/windows/Dsp_Window.o gui/Context_Menu.o debugger/gui/Main_Memory_Context_Menu.o
+debugger/windows/Dsp_Window.o gui/Context_Menu.o gui/Clickable_Text.o
 OBJECTS += $(debugger_OBJECTS)
 EXECUTABLE=std
 
@@ -33,41 +33,47 @@ all: $(gme_SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS) 
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
-main.o: Screen.h main.cpp debugger/gui/cursor.h debugger/mouse_hexdump_events.h debugger/sdl_dblclick.h\
-	debugger/sdl_dblclick_events.h debugger/sdl_userevents.h
-	$(CPP) $(CFLAGS) -c main.cpp -o main.o
-
-gme/gme/Spc_Dsp.o: gme/gme/Spc_Dsp.cpp gme/gme/Spc_Dsp.h debugger/report.h 
-	$(CPP) $(CFLAGS) -c $< -o $@
-
-gme/gme/Snes_Spc.o: gme/gme/Snes_Spc.cpp gme/gme/Snes_Spc.h debugger/report.h 
-	$(CPP) $(CFLAGS) -c $< -o $@
+# pull in dependency info for *existing* .o files
+-include $(OBJS:.o=.d)
 
 #gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h debugger/report.h 
 #	$(CPP) $(CFLAGS) -c $< -o $@
 
 %.o: %.cpp %.h
 	$(CPP) $(CFLAGS) -c $< -o $@
-	
-.cpp.o:
-	$(CC) $(CFLAGS) $< -o $@
-
-# Order matters.. do the ones with headers first
-%.o: %.c %.h
-	$(CC) $(CFLAGS) -c $< -o $@
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-
+	gcc -MM $(CFLAGS) $*.c > $*.d
+	@mv -f $*.d $*.d.tmp
+	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
+	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
+	sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
+	@rm -f $*.d.tmp
 
 
 %.o: %.cpp
 	$(CPP) $(CFLAGS) -c $< -o $@
+	gcc -MM $(CFLAGS) $*.c > $*.d
+	@mv -f $*.d $*.d.tmp
+	@sed -e 's|.*:|$*.o:|' < $*.d.tmp > $*.d
+	@sed -e 's/.*://' -e 's/\\$$//' < $*.d.tmp | fmt -1 | \
+	sed -e 's/^ *//' -e 's/$$/:/' >> $*.d
+	@rm -f $*.d.tmp
+
+#.cpp.o:
+#	echo "DMER"
+#	$(CC) $(CFLAGS) $< -o $@
+
+# Order matters.. do the ones with headers first
+#%.o: %.c %.h
+#	echo "FLE"
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+#%.o: %.c
+#	echo "FLF"
+#	$(CC) $(CFLAGS) -c $< -o $@
 	
 
 
 clean:
 	rm -f $(EXECUTABLE); #gme/gme/*.o gme/demo/*.o gme/player/*.o debugger/*.o
-	find . -name "*.o" | xargs rm -rf
+	find . -name "*.o" -o -name '*.d'| xargs rm -rf
 

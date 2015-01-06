@@ -1,10 +1,5 @@
 #include "Dsp_Window.h"
 
-#define CHAR_HEIGHT 9
-#define CHAR_WIDTH 8
-#define TILE_WIDTH CHAR_WIDTH
-#define TILE_HEIGHT CHAR_HEIGHT
-
 #define incprint(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
 
 

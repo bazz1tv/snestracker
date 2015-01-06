@@ -12,7 +12,7 @@ void Main_Memory_Context_Menu::preload(int &x, int &y, uint16_t &address)
 
   // determine if right-click happened on a BRR Sample
   // find the closest entry in array that is above the user's clicked address..
-  uint16_t lowest_offset=0xffff;
+  /*uint16_t lowest_offset=0xffff;
   bool can_show_brr_context=false;
   uint8_t lowest_brr_index;
   for (uint8_t i=0; i < BRR_HEADER_MAX; i++)
@@ -50,7 +50,7 @@ void Main_Memory_Context_Menu::preload(int &x, int &y, uint16_t &address)
       }
 
     }
-  }
+  }*/
   // even if user clicks before a BRR sample.. this logic will just download the
   // next sample in memory
 

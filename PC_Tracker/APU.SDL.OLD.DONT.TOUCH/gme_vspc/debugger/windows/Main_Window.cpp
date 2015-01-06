@@ -68,10 +68,10 @@ void Main_Window::draw()
       }
     }
 
-    if (main_memory_main_memory_context_menu_is_active)
+    if (main_memory_area.context_menu.is_active)
     {
       //draw_context_menu();
-
+      main_memory_area.context_menu.draw(screen);
     }
     
     //SDL_UpdateRect(screen, 0, 0, 0, 0);
@@ -90,7 +90,7 @@ void Main_Window::receive_event(SDL_Event &ev)
 {
   dblclick::check_event(&ev);
 
-  if (main_memory_context_menu_is_active)
+  if (main_memory_area.context_menu.is_active)
   {
     switch (ev.type)
     {
@@ -115,12 +115,33 @@ void Main_Window::receive_event(SDL_Event &ev)
           case SDLK_RETURN:
           // act same as left mouse button click use a goto lol
           break;
+
+          case SDLK_ESCAPE:
+          main_memory_area.context_menu.is_active = false;
+          break;
         }
       } break;
 
       case SDL_MOUSEBUTTONDOWN:
       {
+        switch (ev.button.button)
+        {
+          case SDL_BUTTON_LEFT:
+          {
+            Context_Menu_Item *p = main_memory_area.context_menu.highlighted_item;
+            if (p != NULL)
+            {
 
+            }
+            main_memory_area.context_menu.is_active = false;
+          }
+          break;
+
+          case SDL_BUTTON_RIGHT:
+          break;
+
+          default:break;
+        }
       }
       break;
       default:break;
@@ -217,7 +238,7 @@ void Main_Window::receive_event(SDL_Event &ev)
         player->spc_write_dsp(dsp_reg::evol_r, 127);
         player->spc_write_dsp(dsp_reg::c0, 0x7f);
         player->spc_write_dsp(dsp_reg::kon,0x1);*/
-        player->gain -= 0.01;
+        player->gain -= 0.1;
         fprintf(stderr, "gain = %f", player->gain, INT16_MIN, INT16_MAX);
         //player->spc_write(0xf2, 0x4c);
         //player->spc_write(0xf3, 0);
@@ -225,7 +246,7 @@ void Main_Window::receive_event(SDL_Event &ev)
       }
       else if (ev.key.keysym.sym == SDLK_i)
       {
-        player->gain += 0.01;
+        player->gain += 0.1;
         fprintf(stderr, "gain = %f", player->gain);
       }
       else if (scancode == SDLK_o)
@@ -817,8 +838,8 @@ void Main_Window::receive_event(SDL_Event &ev)
             {
               // prototype 
               // activate_context_menu()
-              main_memory_context_menu_is_active = true;
-              main_memory_context_menu.preload(ev.button.x, ev.button.y);
+              main_memory_area.context_menu.is_active = true;
+              main_memory_area.context_menu.preload(ev.button.x, ev.button.y);
             }
           }
         }
@@ -971,7 +992,7 @@ void Main_Window::unlock()
 
 Main_Window::Main_Window(int &argc, char **argv) : 
 main_memory_area(&mouseover_hexdump_area),
-port_tool(&mouseover_hexdump_area.cursor),
+port_tool(&mouseover_hexdump_area.cursor)
 {
   //main_memory_context_menu.push("")
 

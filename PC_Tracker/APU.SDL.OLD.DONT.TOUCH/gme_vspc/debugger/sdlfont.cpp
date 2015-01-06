@@ -86,7 +86,7 @@ static void _sdlfont_drawChar2c(SDL_Surface *dst, int X, int Y, const char ch, U
 	}
 }
 
-void sdlfont_drawString(SDL_Surface *dst, int x, int y, const char *string, Uint32 color)
+void sdlfont_drawString(SDL_Surface *dst, int x, int y, const char *string, Uint32 color, bool prefill)
 {
 	int n, len;
 	SDL_Rect under;
@@ -95,7 +95,8 @@ void sdlfont_drawString(SDL_Surface *dst, int x, int y, const char *string, Uint
 
 	under.x = x; under.y = y;
 	under.h = 8; under.w = 8*len;
-	SDL_FillRect(dst, &under, 0);
+	if (prefill)
+		SDL_FillRect(dst, &under, 0);
 
 	if (SDL_MUSTLOCK(dst)) {
 		SDL_LockSurface(dst);

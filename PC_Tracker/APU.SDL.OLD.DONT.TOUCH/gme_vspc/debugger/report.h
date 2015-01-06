@@ -67,6 +67,7 @@ report::memsurface.data[idx+4+2048+2]=60;*/\
 void report_cursor(int addr);
 
 
+#define BRR_HEADER_MAX 50
 namespace report
 {
   extern int last_pc;
@@ -74,7 +75,7 @@ namespace report
   extern Mem_Surface memsurface;
   extern unsigned char used2[0x101];
   extern unsigned char used[0x10006];
-  extern uint16_t BRR_Headers[100]; // this gets init'd in APP constructor
+  extern uint16_t BRR_Headers[BRR_HEADER_MAX]; // this gets init'd in APP constructor
 
   int backup_color(int addr);
 

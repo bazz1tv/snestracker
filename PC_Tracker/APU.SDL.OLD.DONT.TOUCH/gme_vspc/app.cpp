@@ -5,6 +5,7 @@ debugger(argc,argv)
 {
   for (int i=0; i < BRR_HEADER_MAX; i++)
     report::BRR_Headers[i] = 0xffff;  // init to ROM address, brr would never be there
+  //SDL_SetColorKey(screen, SDL_TRUE, 0);
   Player_Context::player = &player;
   handle_error(player.init(samplerate) );
 }

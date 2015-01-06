@@ -7,7 +7,8 @@
 
 
 Main_Memory_Area::Main_Memory_Area(Mouse_Hexdump_Area *mouse_hexdump_area) :
-mouse_hexdump_area(mouse_hexdump_area)
+mouse_hexdump_area(mouse_hexdump_area),
+context_menu(context_menu_items)
 {
 
 }

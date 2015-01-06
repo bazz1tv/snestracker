@@ -1,21 +1,15 @@
 #pragma once
 #include <SDL.h>
-struct ClickableText 
+#include <string>
+#include "sdlfont.h"
+
+struct Clickable_Text 
 {
-  ClickableText(std::string str)
-  {
-    rect.w = strlen(str)*CHAR_WIDTH; // could add padding
-    rect.h = CHAR_HEIGHT;
-  }
-  ClickableText(std::string str, int x, int y)
-  {
-    rect.w = strlen(str)*CHAR_WIDTH; // could add padding
-    rect.h = CHAR_HEIGHT;
-    rect.x = x;
-    rect.y = y;
-  }
+  Clickable_Text(std::string str, int (*action)(void *data)=NULL, void *data=NULL);
+  Clickable_Text(std::string str, int x, int y, int (*action)(void *data)=NULL, void *data=NULL);
   SDL_Rect rect;
   std::string str;
+  void *data;
   // maybz function pointer?
   // must be static class function, or reg. global function, or somethin.
   // it can be in namespace
