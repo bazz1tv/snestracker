@@ -228,3 +228,112 @@ void BaseD::switch_mode(int mode)
     }
   }
 }
+
+
+void BaseD::pack_mask(unsigned char packed_mask[32])
+{
+  int i;
+  
+  memset(packed_mask, 0, 32);
+  for (i=0; i<256; i++)
+  {
+    if (report::used2[i])
+    packed_mask[i/8] |= 128 >> (i%8);
+  }
+}
+
+void BaseD::applyBlockMask(char *filename)
+{
+  FILE *fptr;
+  unsigned char nul_arr[256];
+  int i;
+
+  memset(nul_arr, g_cfg.filler, 256);
+  
+  fptr = fopen(filename, "r+");
+  if (!fptr) { perror("fopen"); }
+
+  printf("[");
+  for (i=0; i<256; i++)
+  {
+    fseek(fptr, 0x100+(i*256), SEEK_SET);
+    
+    if (!report::used2[i]) {
+      printf(".");
+      fwrite(nul_arr, 256, 1, fptr);
+    } else {
+      printf("o");
+    }
+    fflush(stdout);
+  }
+  printf("]\n");
+  
+  fclose(fptr);
+}
+
+
+void BaseD::write_mask(unsigned char packed_mask[32])
+{
+  FILE *msk_file;
+  char *sep;
+  char filename[1024];
+  unsigned char tmp;
+  int i;
+  strncpy(filename, g_cfg.playlist[g_cur_entry], 1024);
+#ifdef WIN32
+  sep = strrchr(filename, '\\');
+#else
+  sep = strrchr(filename, '/');
+#endif
+  // keep only the path
+  if (sep) { sep++; *sep = 0; } 
+  else { 
+    filename[0] = 0; 
+  }
+
+  // add the filename
+  strncat(filename, g_real_filename, 1024);
+
+  // but remove the extension if any
+  sep = strrchr(filename, '.');
+  if (sep) { *sep = 0; }
+
+  // and use the .msk extension
+  strncat(filename, ".msk", 1024);
+
+  msk_file = fopen(filename, "wb");
+  if (!msk_file) {
+    perror("fopen");
+  }
+  else
+  {
+    fwrite(packed_mask, 32, 1, msk_file);
+  }
+
+  printf("Writing mask to '%s'\n", filename);
+
+  // the first 32 bytes are for the 256BytesBlock mask
+  printf("256 Bytes-wide block mask:\n");
+  for (i=0; i<32; i++) {
+    printf("%02X",packed_mask[i]);
+  }
+  printf("\n");
+
+  printf("Byte level mask..."); fflush(stdout);
+  memset(packed_mask, 0, 32);
+  for (i=0; i<65536; i+=8)
+  {
+    tmp = 0;
+    if (report::used[i]) tmp |= 128;
+    if (report::used[i+1]) tmp |= 64;
+    if (report::used[i+2]) tmp |= 32;
+    if (report::used[i+3]) tmp |= 16;
+    if (report::used[i+4]) tmp |= 8;
+    if (report::used[i+5]) tmp |= 4;
+    if (report::used[i+6]) tmp |= 2;
+    if (report::used[i+7]) tmp |= 1;
+    fwrite(&tmp, 1, 1, msk_file);
+  }
+  printf("Done.\n");
+  fclose(msk_file);
+}

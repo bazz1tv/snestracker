@@ -17,6 +17,9 @@ struct BaseD : public Render_Context, public Player_Context
     MAIN=0,
     DSP_MAP
   };
+  void pack_mask(unsigned char packed_mask[32]);
+  void applyBlockMask(char *filename);
+  void write_mask(unsigned char packed_mask[32]);
   void reload();
   void start_track( int track, const char* path );
   void switch_mode(int mode);

@@ -5,13 +5,29 @@
 // unused // static void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 static void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 
-/* unused // static void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {
 	putpixel(surface, x, y, pixel);
 	putpixel(surface, x + 1, y, pixel);
 	putpixel(surface, x, y + 1, pixel);
 	putpixel(surface, x + 1, y + 1, pixel);
-}*/
+}
+
+void put44pixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+{
+	for (int yy=y; yy < y+8; yy++)
+	{
+		putpixel(surface, x, yy, pixel);
+		putpixel(surface, x+1, yy, pixel);
+		putpixel(surface, x+2, yy, pixel);
+		putpixel(surface, x+3, yy, pixel);
+		putpixel(surface, x+4, yy, pixel);
+		putpixel(surface, x+5, yy, pixel);
+		putpixel(surface, x+6, yy, pixel);
+		putpixel(surface, x+7, yy, pixel);
+	}
+	
+}
 
 static void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {

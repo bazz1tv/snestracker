@@ -42,7 +42,7 @@ void Colors::precompute(SDL_Surface *cscreen)
   colorscale[11] = SDL_MapRGB(screen->format, 0xff, 0x00, 0x7f);
 
   // white
-  voice[0] = SDL_MapRGB(screen->format,153,203,255);
+  voice[0] = SDL_MapRGB(screen->format,153,153,255);
   // orange
   voice[1] = SDL_MapRGB(screen->format, 255, 160, 0);
   // yellow

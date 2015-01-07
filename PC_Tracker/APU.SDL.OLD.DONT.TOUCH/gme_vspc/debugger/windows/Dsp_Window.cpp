@@ -27,12 +27,38 @@ void print_binary(SDL_Surface *screen, int x, int y, uint8_t v, bool use_colors=
 
 void Dsp_Window::run()
 {
+  /* Check if it is time to change tune.
+   */   
+  if (player->emu()->tell()/1000 >= song_time) 
+  {
+    if (g_cfg.autowritemask) {
+      write_mask(packed_mask);
+      if (g_cfg.apply_block) {
+        printf("Applying mask on file %s using $%02X as filler\n", g_cfg.playlist[g_cur_entry], g_cfg.filler);
+        applyBlockMask(g_cfg.playlist[g_cur_entry]);
+      }
+    }
+    g_cur_entry++;
+    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; return; }
+    //goto reload;
+    this->reload();
+  }
+
+  #define GENERAL_DSP_STR "General DSP"
+  #define GEN_DSP_ENTRY_STR "Mvol_L: $%02X"
+
   uint8_t srcn[MAX_VOICES];
-  uint i=10,remember_i1, remember_i2, remember_i3, remember_i4;
-  int x = 10, remember_x = 10, remember_x2;
-  sprintf(tmpbuf,"               General DSP    ");
-  incprint(x);
-  i+=CHAR_HEIGHT;
+  uint i=10, o_i = i, remember_i1, remember_i2, remember_i3, remember_i4;
+  int x = 10, o_x = x, remember_x = 10, remember_x2;
+
+
+  // pretend we wrote title here
+  //sprintf(tmpbuf,GENERAL_DSP_STR);
+  //incprint(x);
+  inc
+  inc
+  inc
+  inc
   remember_i4=i;
   // Read all DSP registers
   uint8_t v;
@@ -74,7 +100,38 @@ void Dsp_Window::run()
   v = player->spc_read_dsp(dsp_reg::flg);
   sprintf(tmpbuf,"FLG...: %%");
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
-  print_binary(screen, x,i,v, false);
+  //print_binary(screen, x,i,v, false);
+  int tmpx = x+(9*TILE_WIDTH);
+  for (int z=7; z >= 0; z--)
+  {
+    switch (z)
+    {
+      case 7:
+        sdlfont_drawString(screen, tmpx,i-TILE_HEIGHT, "R", Colors::white);
+        break;
+      case 6:
+        sdlfont_drawString(screen, tmpx,i-TILE_HEIGHT, "M", Colors::white);
+        break;
+      case 5:
+        sdlfont_drawString(screen, tmpx,i-TILE_HEIGHT, "E", Colors::white);
+        break;
+      case 2:
+        sdlfont_drawString(screen, tmpx,i-TILE_HEIGHT, "N", Colors::white);
+        break;
+      case 4:
+      {
+        sdlfont_drawString(screen, tmpx,i, " ", Colors::white);
+        tmpx+=TILE_WIDTH;
+      } break;
+
+      default:break;
+    }
+    if (v & (1 << z))
+      sdlfont_drawString(screen, tmpx,i, "1", Colors::white);
+    else
+      sdlfont_drawString(screen, tmpx,i, "0", Colors::white);
+    tmpx+=TILE_WIDTH;
+  }
   inc
   i += TILE_HEIGHT;
   v = player->spc_read_dsp(dsp_reg::kon);
@@ -143,21 +200,35 @@ void Dsp_Window::run()
   incprint(x)
   //
   //remember_x2 = x;
-  i += (CHAR_HEIGHT*4);
-  x = remember_x + ( ((3*14*CHAR_WIDTH)+(10*CHAR_WIDTH))/2) - (strlen("Voices")/2*TILE_WIDTH) ;
-  sprintf(tmpbuf, "Voices");
-  incprint(x)
 
+  // now draw title 
+  sprintf(tmpbuf, GEN_DSP_ENTRY_STR, i); // i is any variable for this
+  int strlen_dsp_entry = strlen(tmpbuf);
+  int max_x = x + (strlen_dsp_entry*TILE_WIDTH);
+  int whole_length = max_x - remember_x;
+  sprintf(tmpbuf,GENERAL_DSP_STR);
+  int strlen_dsp_header = strlen(tmpbuf);
+  int header_x = (whole_length/2 - (strlen_dsp_header*CHAR_WIDTH)/2) + remember_x;
+  sdlfont_drawString(screen, header_x,o_i, tmpbuf, Colors::white);
+
+  //i += (CHAR_HEIGHT*4); use for GEN DSP
+  i = remember_i4;
+  
+  //x = remember_x + ( - (strlen("Voices")*TILE_WIDTH/2) ;
+  //sprintf(tmpbuf, "Voices");
+  //incprint(x)
+  inc;
 
   x = remember_x;
-  remember_i3+= (CHAR_HEIGHT*5);
-  for (int voice=0; voice < 8; voice++)
+  remember_i3 = remember_i4 + (15*CHAR_HEIGHT);//+= (CHAR_HEIGHT*5);
+  int voice_header_i = remember_i3 - (TILE_HEIGHT*2);
+  for (int voice=MAX_VOICES-1; voice >= 0; voice--)
   {
-    if (voice < 4)
+    if (voice >= 4)
       i = remember_i3;
     else
     {
-      if (voice == 4)
+      if (voice == 3)
       {
         remember_x2 = x;
         x = remember_x;
@@ -201,11 +272,18 @@ void Dsp_Window::run()
     sprintf(tmpbuf,"outx.: $%02X",v);
     incprint(x)
 
-    x += (strlen(tmpbuf)+4)*CHAR_WIDTH;
-  }
+    x += (strlen(tmpbuf)+3)*CHAR_WIDTH;
+  } x -= (strlen(tmpbuf)+3)*CHAR_WIDTH;
+
+  // have max_X at this point
+  max_x = strlen_dsp_entry*TILE_WIDTH + x;
+  x = remember_x + (max_x/2 - (strlen("Voices")*TILE_WIDTH/2));
+  x -= TILE_WIDTH; // cause i didnt like the orig result
+  sdlfont_drawString(screen, x,voice_header_i, "Voices", Colors::white);
   
-  x = remember_x2;
+  
   // DIR
+  x = remember_x2+(TILE_WIDTH*6);
   v = player->spc_read_dsp(dsp_reg::dir);
   uint16_t dir_ram_addr = v*0x100;
   uint16_t *dir = (uint16_t*)&IAPURAM[dir_ram_addr];
@@ -214,10 +292,30 @@ void Dsp_Window::run()
   int row_complete=0;
   
   
-  i=TILE_HEIGHT*6 + 10;
-  sprintf(tmpbuf, "              DIRECTORY ($%04X)", dir_ram_addr);
-  incprint(x)
-  i+=TILE_HEIGHT;
+  i=TILE_HEIGHT*7 + 10;
+
+  #define TEMPLATE_DIR_ENTRY_STR "$%02X: $%04X,$%04X"
+  #define TEMPLATE_DIR_STR "DIRECTORY ($%04X)"
+
+  int PIXEL_START_X = (x-TILE_WIDTH)-((MAX_VOICES-1)*5);
+  sprintf(tmpbuf, TEMPLATE_DIR_ENTRY_STR, i, i, i);
+  int template_dir_entry_strlen = strlen(tmpbuf);
+  int next_column_x = (CHAR_WIDTH) * (template_dir_entry_strlen+7);
+
+  sprintf(tmpbuf, TEMPLATE_DIR_STR, i);
+  int template_dir_strlen = strlen(tmpbuf);
+  fprintf(stderr, "template_dir_strlen = %d\n", template_dir_strlen);
+  // CENTER TEXT
+  // GET ENTIRE LENGTH / 2 - strlen(str)/2
+  // GET ENTIRE LENGTH
+  int entire_length = (x+next_column_x+(template_dir_entry_strlen*TILE_WIDTH)) - PIXEL_START_X;
+  //fprintf(stderr, "Entire length = %d", entire_length);
+  int center_x  = ((entire_length/2) - ((template_dir_strlen*TILE_WIDTH)/2)) + PIXEL_START_X;
+
+  sprintf(tmpbuf, TEMPLATE_DIR_STR, dir_ram_addr);
+  incprint(center_x)
+  inc
+  inc
   
   int tmp=i;
 
@@ -230,7 +328,7 @@ void Dsp_Window::run()
       if (row_complete==4)
       {
         row_complete=0;
-        x+=CHAR_WIDTH*21;
+        x+=next_column_x;
         i = tmp;
       }
       else { i+=CHAR_HEIGHT; row++; }
@@ -243,15 +341,18 @@ void Dsp_Window::run()
     {
       if ( srcn[voice_iter] == (dir_index/2) )
       {
+        put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i/*+(TILE_HEIGHT/2)-2*/, Colors::voice[voice_iter]);
         //fprintf(stderr, "voice %d SRCN: %02X, dir_index*2 = %04X")
         is_voice_dir_entry = true;
-        break;
+        //break;
       }
+      else  /* ((x-TILE_WIDTH)-((MAX_VOICES-1)*5))+(voice_iter*5) */
+        put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i/*+(TILE_HEIGHT/2)-2*/, Colors::nearblack);
     }
 
     //p = dir;
     //dir++;
-    sprintf(tmpbuf, "$%02X: $%04X,$%04X", fakerow, dir[dir_index], dir[dir_index+1]);
+    sprintf(tmpbuf, TEMPLATE_DIR_ENTRY_STR, fakerow, dir[dir_index], dir[dir_index+1]);
     if (is_voice_dir_entry)
     {
       // print specific voice color
@@ -260,7 +361,7 @@ void Dsp_Window::run()
     }
     else 
     {
-      sdlfont_drawString(screen, x,i, tmpbuf, Colors::gray);
+      sdlfont_drawString(screen, x,i, tmpbuf, Colors::nearblack);
       inc
     }
     dir_index+=2;

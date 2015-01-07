@@ -51,10 +51,8 @@ public Experience
 
   void draw_block_usage_bar();
   void do_scroller(int elaps_milli);
-  void write_mask(unsigned char packed_mask[32]);
-  void applyBlockMask(char *filename);
   void fade_arrays();
-  void pack_mask(unsigned char packed_mask[32]);
+  
 
   void lock(char l=1, int x=0, int y=0, uint8_t rx=0, uint8_t ry=0);
   void toggle_lock(int x=0, int y=0);
