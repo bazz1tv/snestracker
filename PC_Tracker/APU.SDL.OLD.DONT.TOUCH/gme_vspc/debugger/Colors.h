@@ -12,6 +12,7 @@ struct Colors : public Render_Context
   static Uint32 dark_magenta, dark_cyan, dark_yellow;
   static Uint32 gray;
   static Uint32 colorscale[12];
+  static Uint32 voice[8];
 
   static void precompute(SDL_Surface *cscreen);
   // belongs in color namespace

@@ -6,6 +6,8 @@ Uint32 Colors::green, Colors::blue, Colors::nearblack;
 Uint32 Colors::dark_magenta, Colors::dark_cyan, Colors::dark_yellow;
 Uint32 Colors::gray;
 Uint32 Colors::colorscale[12];
+Uint32 Colors::voice[8];
+
 
 void Colors::precompute(SDL_Surface *cscreen)
 {
@@ -38,6 +40,24 @@ void Colors::precompute(SDL_Surface *cscreen)
   colorscale[9] = SDL_MapRGB(screen->format, 0x7f, 0x00, 0xff);
   colorscale[10] = SDL_MapRGB(screen->format, 0xff, 0x00, 0xff);
   colorscale[11] = SDL_MapRGB(screen->format, 0xff, 0x00, 0x7f);
+
+  // white
+  voice[0] = SDL_MapRGB(screen->format,153,203,255);
+  // orange
+  voice[1] = SDL_MapRGB(screen->format, 255, 160, 0);
+  // yellow
+  voice[2] = yellow;
+  // geen
+  voice[3] = green;
+  // blue
+  voice[4] = cyan;
+  // magenta
+  voice[5] = magenta;
+  // red
+  voice[6] = red;
+  // gray
+  voice[7] = SDL_MapRGB(screen->format, 0,250,154);
+
 }
 
 Uint32 Colors::subtract(Uint32 *c, Uint8 subval)

@@ -1,15 +1,39 @@
 #include "Dsp_Window.h"
 
 #define incprint(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
+#define incprint_voice(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::voice[voice]); i+=CHAR_HEIGHT;
+#define inc i+=CHAR_HEIGHT;
+#define MAX_VOICES 8
 
+void print_binary(SDL_Surface *screen, int x, int y, uint8_t v, bool use_colors=true)
+{
+  int tmpx = x+(9*TILE_WIDTH);
+
+  for (int z=7; z >= 0; z--)
+  {
+    Uint32 *col = use_colors ? &Colors::voice[z] : &Colors::white;
+    if (z == 3)
+    {
+      sdlfont_drawString(screen, tmpx,y, " ", Colors::voice[z]);
+      tmpx+=TILE_WIDTH;
+    }
+    if (v & (1 << z))
+      sdlfont_drawString(screen, tmpx,y, "1", *col);
+    else
+      sdlfont_drawString(screen, tmpx,y, "0", Colors::white);
+    tmpx+=TILE_WIDTH;
+  }
+}
 
 void Dsp_Window::run()
 {
-  uint i=10,remember_i1, remember_i2, remember_i3;
+  uint8_t srcn[MAX_VOICES];
+  uint i=10,remember_i1, remember_i2, remember_i3, remember_i4;
   int x = 10, remember_x = 10, remember_x2;
   sprintf(tmpbuf,"               General DSP    ");
   incprint(x);
   i+=CHAR_HEIGHT;
+  remember_i4=i;
   // Read all DSP registers
   uint8_t v;
  
@@ -32,35 +56,6 @@ void Dsp_Window::run()
   //
   i+=CHAR_HEIGHT; remember_i2 = i;
   // random
-  v = player->spc_read_dsp(dsp_reg::flg);
-  sprintf(tmpbuf,"FLG...: $%02X",v);
-  incprint(x)
-  v = player->spc_read_dsp(dsp_reg::kon);
-  sprintf(tmpbuf,"KON...: $%02X",v);
-  incprint(x)
-  v = player->spc_read_dsp(dsp_reg::koff);
-  sprintf(tmpbuf,"KOFF..: $%02X",v);
-  incprint(x)
-  v = player->spc_read_dsp(dsp_reg::endx);
-  sprintf(tmpbuf,"ENDX..: $%02X",v);
-  incprint(x)
-  //
-  remember_i3=i+TILE_HEIGHT;
-  i = remember_i2-(3*TILE_HEIGHT);
-  x += 15*CHAR_WIDTH;
-  //pmon,non
-  v = player->spc_read_dsp(dsp_reg::non);
-  sprintf(tmpbuf,"NON...: $%02X",v);
-  incprint(x)
-  v = player->spc_read_dsp(dsp_reg::pmon);
-  sprintf(tmpbuf,"PMON..: $%02X",v);
-  incprint(x)
-  //
-  i+=TILE_HEIGHT;
-  // echo
-  v = player->spc_read_dsp(dsp_reg::eon);
-  sprintf(tmpbuf,"EON...: $%02X",v);
-  incprint(x)
   v = player->spc_read_dsp(dsp_reg::esa);
   sprintf(tmpbuf,"ESA...: $%02X",v);
   incprint(x)
@@ -70,9 +65,57 @@ void Dsp_Window::run()
   v = player->spc_read_dsp(dsp_reg::efb);
   sprintf(tmpbuf,"EFB...: $%02X",v);
   incprint(x)
+  
   //
-  i = remember_i1-CHAR_HEIGHT;
-  x+= 15*CHAR_WIDTH;
+  remember_i3=i+TILE_HEIGHT;
+  //i = remember_i2-(3*TILE_HEIGHT);
+  i = remember_i4;
+  x += 15*CHAR_WIDTH;
+  v = player->spc_read_dsp(dsp_reg::flg);
+  sprintf(tmpbuf,"FLG...: %%");
+  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
+  print_binary(screen, x,i,v, false);
+  inc
+  i += TILE_HEIGHT;
+  v = player->spc_read_dsp(dsp_reg::kon);
+  sprintf(tmpbuf,"KON...: %%");
+  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
+  print_binary(screen, x,i,v);
+  inc
+  v = player->spc_read_dsp(dsp_reg::koff);
+  sprintf(tmpbuf,"KOFF..: %%");
+  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
+  print_binary(screen, x,i,v);
+  inc
+  //pmon,non
+  v = player->spc_read_dsp(dsp_reg::non);
+  sprintf(tmpbuf,"NON...: %%");
+  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
+  print_binary(screen, x,i,v);
+  inc
+  v = player->spc_read_dsp(dsp_reg::pmon);
+  sprintf(tmpbuf,"PMON..: %%");
+  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
+  print_binary(screen, x,i,v);
+  inc
+  //
+  i+=TILE_HEIGHT;
+  // echo
+  v = player->spc_read_dsp(dsp_reg::eon);
+  sprintf(tmpbuf,"EON...: %%");
+  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
+  print_binary(screen, x,i,v);
+  inc
+
+  v = player->spc_read_dsp(dsp_reg::endx);
+  sprintf(tmpbuf,"ENDX..: %%");
+  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
+  print_binary(screen, x,i,v);
+  inc
+  
+  //
+  i = remember_i1-(CHAR_HEIGHT*3);
+  x+= (15+8)*CHAR_WIDTH;
   //
   v = player->spc_read_dsp(dsp_reg::c0);
   sprintf(tmpbuf,"C0: $%02X",v);
@@ -100,14 +143,14 @@ void Dsp_Window::run()
   incprint(x)
   //
   //remember_x2 = x;
-  i += (CHAR_HEIGHT*3);
+  i += (CHAR_HEIGHT*4);
   x = remember_x + ( ((3*14*CHAR_WIDTH)+(10*CHAR_WIDTH))/2) - (strlen("Voices")/2*TILE_WIDTH) ;
   sprintf(tmpbuf, "Voices");
   incprint(x)
 
 
   x = remember_x;
-  remember_i3+= (CHAR_HEIGHT*4);
+  remember_i3+= (CHAR_HEIGHT*5);
   for (int voice=0; voice < 8; voice++)
   {
     if (voice < 4)
@@ -123,7 +166,7 @@ void Dsp_Window::run()
     }
     uint8_t n=0;
     sprintf(tmpbuf,"    %d",voice);
-    incprint(x)
+    incprint_voice(x)
     sprintf(tmpbuf,"   ");
     incprint(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
@@ -139,6 +182,7 @@ void Dsp_Window::run()
     sprintf(tmpbuf,"p_hi.: $%02X",v);
     incprint(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
+    srcn[voice] = v;
     sprintf(tmpbuf,"srcn.: $%02X",v);
     incprint(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
@@ -162,15 +206,19 @@ void Dsp_Window::run()
   
   x = remember_x2;
   // DIR
-  
-  i=TILE_HEIGHT*6 + 10;
-  sprintf(tmpbuf, "              DIRECTORY");
-  incprint(x)
-  i+=TILE_HEIGHT;
   v = player->spc_read_dsp(dsp_reg::dir);
-  uint16_t *dir = (uint16_t*)&IAPURAM[v*0x100];
+  uint16_t dir_ram_addr = v*0x100;
+  uint16_t *dir = (uint16_t*)&IAPURAM[dir_ram_addr];
+  uint16_t dir_index=0;
   uint16_t *p;
   int row_complete=0;
+  
+  
+  i=TILE_HEIGHT*6 + 10;
+  sprintf(tmpbuf, "              DIRECTORY ($%04X)", dir_ram_addr);
+  incprint(x)
+  i+=TILE_HEIGHT;
+  
   int tmp=i;
 
   assert (((screen->h/CHAR_HEIGHT)-4) > 8);
@@ -187,11 +235,35 @@ void Dsp_Window::run()
       }
       else { i+=CHAR_HEIGHT; row++; }
     }
-    p = dir;
-    dir++;
-    sprintf(tmpbuf, "$%02X: $%04X,$%04X", fakerow, *p, *dir);
-    incprint(x)
-    dir++;
+
+    int voice_iter;
+    bool is_voice_dir_entry=false;
+    // check if this belongs to a voice right now
+    for (voice_iter=0; voice_iter < MAX_VOICES; voice_iter++)
+    {
+      if ( srcn[voice_iter] == (dir_index/2) )
+      {
+        //fprintf(stderr, "voice %d SRCN: %02X, dir_index*2 = %04X")
+        is_voice_dir_entry = true;
+        break;
+      }
+    }
+
+    //p = dir;
+    //dir++;
+    sprintf(tmpbuf, "$%02X: $%04X,$%04X", fakerow, dir[dir_index], dir[dir_index+1]);
+    if (is_voice_dir_entry)
+    {
+      // print specific voice color
+      sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); //Colors::voice[voice_iter]);
+      inc
+    }
+    else 
+    {
+      sdlfont_drawString(screen, x,i, tmpbuf, Colors::gray);
+      inc
+    }
+    dir_index+=2;
     fakerow++;
   }
 

@@ -1452,7 +1452,7 @@ void Main_Window::draw_voices_pitchs()
 
     if (outx || envx) 
     {
-      cur_color = &Colors::white;
+      cur_color = &Colors::voice[i];
     }
 
 
@@ -1548,7 +1548,7 @@ void Main_Window::draw_voices_volumes()
     if (voice_control.is_muted(i))
       color = &Colors::nearblack;
     else 
-      color = &Colors::white;
+      color = &Colors::voice[i];
 
     sdlfont_drawString(screen, x, y, tmpbuf, *color);
     if (is_first_run && i == 0)
