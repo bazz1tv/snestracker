@@ -196,6 +196,16 @@ void Main_Window::receive_event(SDL_Event &ev)
     case SDL_KEYDOWN:
     {
       int scancode = ev.key.keysym.sym;
+      int mod = ev.key.keysym.mod;
+
+      switch(scancode)
+      {
+        case SDLK_s:
+          //fprintf(stderr, "(%d,%d)\n", ev.motion.x, ev.motion.y);
+          voice_control.checkmouse((Uint16&)mouse::x, (Uint16&)mouse::y, SDL_BUTTON_RIGHT); 
+        break;
+        default:break;
+      }
 
       if (scancode == SDLK_m)
       {
@@ -280,7 +290,38 @@ void Main_Window::receive_event(SDL_Event &ev)
         switch (scancode)
         {
           case SDLK_d:
+          case SDLK_SLASH:
           BaseD::switch_mode(GrandMode::DSP_MAP);
+          break;
+
+          case SDLK_TAB:
+            if (mod & KMOD_SHIFT)
+            {
+              g_cur_entry-=25;
+              int tmp = abs(g_cur_entry);
+              if ((unsigned)g_cur_entry>=g_cfg.num_files)
+              { 
+                if ((unsigned)(g_cfg.num_files-tmp) < g_cfg.num_files)
+                  g_cur_entry=g_cfg.num_files-tmp;  
+                else 
+                  g_cur_entry = 0;
+                
+              }
+            }
+            else 
+            {
+              int tmp = g_cfg.num_files - g_cur_entry -1;
+              g_cur_entry+=25;
+              if (g_cur_entry>=g_cfg.num_files)
+              { 
+                int derp =  g_cur_entry - g_cfg.num_files;
+                if (derp < g_cfg.num_files)
+                  g_cur_entry = derp;
+                else g_cur_entry=g_cfg.num_files-1;
+              }
+            }
+            //goto reload;
+            this->reload();
           break;
         }
 

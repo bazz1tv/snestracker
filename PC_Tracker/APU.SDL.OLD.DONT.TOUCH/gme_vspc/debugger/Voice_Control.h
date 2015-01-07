@@ -17,7 +17,7 @@ struct Voice_Control : public Player_Context
   
   void checkmouse_solo(Uint16 &x,Uint16 &y);
   
-  void checkmouse(Uint16 &x, Uint16 &y, Uint8 &b);
+  void checkmouse(Uint16 &x, Uint16 &y, int);
 
   Uint8 is_muted(int i);
   void toggle_mute(uint8_t m);  // channel num

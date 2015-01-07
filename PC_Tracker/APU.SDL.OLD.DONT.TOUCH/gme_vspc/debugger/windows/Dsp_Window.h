@@ -13,5 +13,6 @@ public Experience
   void receive_event(SDL_Event &ev);
 
   //char derp;
-  unsigned char vals[30 + (10*8)]; // num of DSP regs
+  //unsigned char vals[30 + (10*8)]; // num of DSP regs
+  uint8_t dir_offset=0;
 };

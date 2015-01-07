@@ -85,7 +85,7 @@ void Voice_Control::toggle_mute_all()
 {
   player->mute_voices(muted=0);
 }*/
-void Voice_Control::checkmouse(Uint16 &x, Uint16 &y, Uint8 &b)
+void Voice_Control::checkmouse(Uint16 &x, Uint16 &y, int b)
 {
   muted_toggle_protect = 0;
   if (b == SDL_BUTTON_LEFT) checkmouse_mute(x,y);

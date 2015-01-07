@@ -41,7 +41,7 @@ void Dsp_Window::run()
     g_cur_entry++;
     if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; return; }
     //goto reload;
-    this->reload();
+    reload();
   }
 
   #define GENERAL_DSP_STR "General DSP"
@@ -287,7 +287,7 @@ void Dsp_Window::run()
   v = player->spc_read_dsp(dsp_reg::dir);
   uint16_t dir_ram_addr = v*0x100;
   uint16_t *dir = (uint16_t*)&IAPURAM[dir_ram_addr];
-  uint16_t dir_index=0;
+  uint16_t dir_index=0+(dir_offset*2);
   uint16_t *p;
   int row_complete=0;
   
@@ -304,7 +304,7 @@ void Dsp_Window::run()
 
   sprintf(tmpbuf, TEMPLATE_DIR_STR, i);
   int template_dir_strlen = strlen(tmpbuf);
-  fprintf(stderr, "template_dir_strlen = %d\n", template_dir_strlen);
+  //fprintf(stderr, "template_dir_strlen = %d\n", template_dir_strlen);
   // CENTER TEXT
   // GET ENTIRE LENGTH / 2 - strlen(str)/2
   // GET ENTIRE LENGTH
@@ -320,7 +320,8 @@ void Dsp_Window::run()
   int tmp=i;
 
   assert (((screen->h/CHAR_HEIGHT)-4) > 8);
-  for (int row=0,fakerow=0; fakerow < 8*4*2; row++)
+  uint8_t fakerow=0;
+  for (int row=0; fakerow < 8*4*2; row++)
   {
     if (row != 0 && !(fakerow % 8))
     {
@@ -337,22 +338,26 @@ void Dsp_Window::run()
     int voice_iter;
     bool is_voice_dir_entry=false;
     // check if this belongs to a voice right now
+    if (fakerow+dir_offset == 0x100)
+      dir_index = 0;
+
     for (voice_iter=0; voice_iter < MAX_VOICES; voice_iter++)
     {
       if ( srcn[voice_iter] == (dir_index/2) )
       {
-        put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i/*+(TILE_HEIGHT/2)-2*/, Colors::voice[voice_iter]);
+        put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i+(TILE_HEIGHT/2)-1, Colors::voice[voice_iter]);
         //fprintf(stderr, "voice %d SRCN: %02X, dir_index*2 = %04X")
         is_voice_dir_entry = true;
         //break;
       }
       else  /* ((x-TILE_WIDTH)-((MAX_VOICES-1)*5))+(voice_iter*5) */
-        put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i/*+(TILE_HEIGHT/2)-2*/, Colors::nearblack);
+        put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i+(TILE_HEIGHT/2)-1, Colors::nearblack);
     }
 
     //p = dir;
     //dir++;
-    sprintf(tmpbuf, TEMPLATE_DIR_ENTRY_STR, fakerow, dir[dir_index], dir[dir_index+1]);
+    
+    sprintf(tmpbuf, TEMPLATE_DIR_ENTRY_STR, (uint8_t)(fakerow+dir_offset), dir[dir_index], dir[dir_index+1]);
     if (is_voice_dir_entry)
     {
       // print specific voice color
@@ -443,10 +448,24 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     case SDL_KEYDOWN:
     {
       int scancode = ev.key.keysym.sym;
+      if (ev.key.keysym.mod & (KMOD_SHIFT))
+      {
+        switch (scancode)
+        {
+          case SDLK_LEFT:
+          dir_offset-=0x20;
+          break;
+        case SDLK_RIGHT:
+          dir_offset+= 0x20;
+          break;
+          default:break;
+        }
+        break;
+      } 
       switch (scancode)
       {
         case SDLK_ESCAPE:
-          switch_mode(GrandMode::MAIN);
+          quitting=true;
           break;
 
         case SDLK_SPACE: // toggle pause
@@ -471,6 +490,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         {
           static int val=0;
           val = !val;
+          if (val) val = 0xff;
           player->spc_write_dsp(dsp_reg::kon,val);
           break;
         }
@@ -478,11 +498,17 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         {
           static int val=0;
           val = !val;
+          if (val) val = 0xff;
           player->spc_write_dsp(dsp_reg::koff,val);
           break;
         }
         case SDLK_d:
+        case SDLK_SLASH:
           BaseD::switch_mode(GrandMode::MAIN);
+          break;
+
+        
+        
           break;
         default:
           break;
