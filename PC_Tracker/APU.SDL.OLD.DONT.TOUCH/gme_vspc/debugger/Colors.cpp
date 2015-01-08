@@ -65,6 +65,7 @@ Uint32 Colors::subtract(Uint32 *c, Uint8 subval)
   Uint8 r,g,b;
   SDL_GetRGB(*c, screen->format, &r, &b, &g);
       // CAP at ZERO
+  
       return SDL_MapRGB(screen->format,
         r-subval >= 0x10 ? (r-subval):0x10,
         g-subval >= 0x10 ? (g-subval):0x10,

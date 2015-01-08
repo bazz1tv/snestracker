@@ -2,7 +2,7 @@
 can play live samples from SPC as he/she pleases.. when done.. restore the SPC opcodes that were replaced with the
 infinite loop.
 
-Active Sample Ripping
+Active Sample Ripping improvements -- Don't use relative BRR-end blocks anymore, reference the DIR/SRCN
 
 Logical Coordinates System
 

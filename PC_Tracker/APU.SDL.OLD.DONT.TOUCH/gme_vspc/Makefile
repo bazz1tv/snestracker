@@ -11,7 +11,7 @@ debugger_CFLAGS=$(debug) -Idebugger/memory -Idebugger/windows -O3\
 
 debugger_LDFLAGS=$(debug) `sdl2-config --libs` -lm
 
-CFLAGS = -std=c++11 $(gme_CFLAGS) $(debugger_CFLAGS) -MMD -MP
+CFLAGS = -std=c++11 $(gme_CFLAGS) $(debugger_CFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
 ####
 SOURCES=$(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp)
 ###

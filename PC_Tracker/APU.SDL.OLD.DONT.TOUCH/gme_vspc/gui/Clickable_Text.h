@@ -5,8 +5,13 @@
 
 struct Clickable_Text 
 {
+  Clickable_Text(); // if we must post-init
   Clickable_Text(std::string str, int (*action)(void *data)=NULL, void *data=NULL);
   Clickable_Text(std::string str, int x, int y, int (*action)(void *data)=NULL, void *data=NULL);
+
+  void check_mouse_and_execute(int x, int y, void *newdata);
+
+  void set_rect(int x, int y, int w, int h);
   SDL_Rect rect;
   std::string str;
   void *data;

@@ -63,6 +63,21 @@ void Voice_Control::checkmouse_solo(Uint16 &x,Uint16 &y)
   if (changed)
     player->mute_voices(muted);
 }
+
+void Voice_Control::mute(uint8_t i)
+{
+  muted = i;
+}
+
+void Voice_Control::toggle_solo(uint8_t i)
+{
+  if (muted == Uint8(~(1 << (i-1) ) ) )
+  {
+    muted = 0;
+  }
+  else muted = ~(1<<(i-1));
+  player->mute_voices(muted);
+}
 void Voice_Control::toggle_mute(uint8_t m)
 {
   assert (m>0 && m < 9 );

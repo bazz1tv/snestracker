@@ -1,9 +1,33 @@
 #include "Dsp_Window.h"
 
-#define incprint(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
-#define incprint_voice(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::voice[voice]); i+=CHAR_HEIGHT;
-#define inc i+=CHAR_HEIGHT;
-#define MAX_VOICES 8
+#define print_then_inc_row(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
+#define print_then_inc_row_voice(x,col) sdlfont_drawString(screen, x,i, tmpbuf, col); i+=CHAR_HEIGHT;
+#define inc_row i+=CHAR_HEIGHT;
+
+int mute_solo_voice(void *data)
+{
+  uintptr_t voicenum_plus_click = (uintptr_t)data;
+  bool is_right_click = (voicenum_plus_click & 0x08);
+  uintptr_t voicenum = voicenum_plus_click & 0x07;
+  //fprintf(stderr, "Voice#: %d,", voicenum);
+  if (is_right_click)
+  {
+    BaseD::voice_control.toggle_solo(voicenum+1);
+    //fprintf(stderr, "solo\n");
+  }
+  else 
+  {
+    BaseD::voice_control.toggle_mute(voicenum+1);
+    //fprintf(stderr, "mute\n");
+  }
+
+
+
+
+  // voice control
+  return 0;
+}
+
 
 void print_binary(SDL_Surface *screen, int x, int y, uint8_t v, bool use_colors=true)
 {
@@ -47,18 +71,26 @@ void Dsp_Window::run()
   #define GENERAL_DSP_STR "General DSP"
   #define GEN_DSP_ENTRY_STR "Mvol_L: $%02X"
 
+  // log the srcn# for each voice
   uint8_t srcn[MAX_VOICES];
+  // non-obvious how the follow is used.. but i dynamically log certain coordinates
+  //to help create the layout o_* means original
   uint i=10, o_i = i, remember_i1, remember_i2, remember_i3, remember_i4;
-  int x = 10, o_x = x, remember_x = 10, remember_x2;
+  int x = 10, /*o_x = x,*/ remember_x = 10, remember_x2;
+  // start drawing from 10,10
 
+  /* Because we are dynamically generating the layout, we don't write the
+  title first because it needs to be centered, after dynamic generation,
+  we use the max length of the section and properly center the title header string */
 
   // pretend we wrote title here
   //sprintf(tmpbuf,GENERAL_DSP_STR);
-  //incprint(x);
-  inc
-  inc
-  inc
-  inc
+  //print_then_inc_row(x);
+  // inc is a preprocessor definition above to go down a row
+  inc_row
+  inc_row
+  inc_row
+  inc_row
   remember_i4=i;
   // Read all DSP registers
   uint8_t v;
@@ -66,31 +98,31 @@ void Dsp_Window::run()
   // main vol
   v = player->spc_read_dsp(dsp_reg::mvol_l);
   sprintf(tmpbuf,"Mvol_L: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::mvol_r);
   sprintf(tmpbuf,"Mvol_R: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   //
   i+=CHAR_HEIGHT; remember_i1 = i;
   // echo vol
   v = player->spc_read_dsp(dsp_reg::evol_l);
   sprintf(tmpbuf,"Evol_L: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::evol_r);
   sprintf(tmpbuf,"Evol_R: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   //
   i+=CHAR_HEIGHT; remember_i2 = i;
   // random
   v = player->spc_read_dsp(dsp_reg::esa);
   sprintf(tmpbuf,"ESA...: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::edl);
   sprintf(tmpbuf,"EDL...: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::efb);
   sprintf(tmpbuf,"EFB...: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   
   //
   remember_i3=i+TILE_HEIGHT;
@@ -132,29 +164,29 @@ void Dsp_Window::run()
       sdlfont_drawString(screen, tmpx,i, "0", Colors::white);
     tmpx+=TILE_WIDTH;
   }
-  inc
+  inc_row
   i += TILE_HEIGHT;
   v = player->spc_read_dsp(dsp_reg::kon);
   sprintf(tmpbuf,"KON...: %%");
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
-  inc
+  inc_row
   v = player->spc_read_dsp(dsp_reg::koff);
   sprintf(tmpbuf,"KOFF..: %%");
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
-  inc
+  inc_row
   //pmon,non
   v = player->spc_read_dsp(dsp_reg::non);
   sprintf(tmpbuf,"NON...: %%");
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
-  inc
+  inc_row
   v = player->spc_read_dsp(dsp_reg::pmon);
   sprintf(tmpbuf,"PMON..: %%");
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
-  inc
+  inc_row
   //
   i+=TILE_HEIGHT;
   // echo
@@ -162,13 +194,13 @@ void Dsp_Window::run()
   sprintf(tmpbuf,"EON...: %%");
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
-  inc
+  inc_row
 
   v = player->spc_read_dsp(dsp_reg::endx);
   sprintf(tmpbuf,"ENDX..: %%");
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
-  inc
+  inc_row
   
   //
   i = remember_i1-(CHAR_HEIGHT*3);
@@ -176,28 +208,28 @@ void Dsp_Window::run()
   //
   v = player->spc_read_dsp(dsp_reg::c0);
   sprintf(tmpbuf,"C0: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c1);
   sprintf(tmpbuf,"C1: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c2);
   sprintf(tmpbuf,"C2: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c3);
   sprintf(tmpbuf,"C3: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c4);
   sprintf(tmpbuf,"C4: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c5);
   sprintf(tmpbuf,"C5: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c6);
   sprintf(tmpbuf,"C6: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c7);
   sprintf(tmpbuf,"C7: $%02X",v);
-  incprint(x)
+  print_then_inc_row(x)
   //
   //remember_x2 = x;
 
@@ -216,8 +248,8 @@ void Dsp_Window::run()
   
   //x = remember_x + ( - (strlen("Voices")*TILE_WIDTH/2) ;
   //sprintf(tmpbuf, "Voices");
-  //incprint(x)
-  inc;
+  //print_then_inc_row(x)
+  inc_row
 
   x = remember_x;
   remember_i3 = remember_i4 + (15*CHAR_HEIGHT);//+= (CHAR_HEIGHT*5);
@@ -236,41 +268,64 @@ void Dsp_Window::run()
       i = remember_i3 + (14*CHAR_HEIGHT);
     }
     uint8_t n=0;
-    sprintf(tmpbuf,"    %d",voice);
-    incprint_voice(x)
-    sprintf(tmpbuf,"   ");
-    incprint(x)
+    sprintf(tmpbuf,"%d",voice);
+    // we're going to draw it, but first let's log those coordinates/width/height~
+    int voice_label_x = x+(4*TILE_WIDTH);
+    if (is_first_run)
+    {
+      voice_title[voice].str = tmpbuf; // can i have std::string = char * ??
+      voice_title[voice].set_rect(voice_label_x, i, strlen(tmpbuf)*TILE_WIDTH, TILE_HEIGHT);
+      //fprintf(stderr, "voice label %d: (%d,%d,%d,%d)\n", voice, voice_title[voice].rect.x, voice_title[voice].rect.y,
+        //voice_title[voice].rect.w,voice_title[voice].rect.h);
+      voice_title[voice].data = (void*)voice;
+      voice_title[voice].action = &mute_solo_voice;
+    }
+    Uint32 *color; 
+    //Uint32 darker_color = Colors::subtract(&Colors::voice[voice], 0xc0);
+    // this needs to be expanded to cover mute
+    if (voice_control.is_muted(voice))
+    {
+      color = &Colors::nearblack ;
+    }
+    else 
+      color = &Colors::voice[voice];
+    print_then_inc_row_voice(voice_label_x, *color) // poor man's center on voices
+    inc_row
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"vol_L: $%02X",v);
-    incprint(x)
+    print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"vol_R: $%02X",v);
-    incprint(x)
+    print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"p_lo.: $%02X",v);
-    incprint(x)
+    print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"p_hi.: $%02X",v);
-    incprint(x)
+    print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     srcn[voice] = v;
     sprintf(tmpbuf,"srcn.: $%02X",v);
-    incprint(x)
+    print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"adsr1: $%02X",v);
-    incprint(x)
+    print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"adsr2: $%02X",v);
-    incprint(x)
+    print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"gain.: $%02X",v);
-    incprint(x)
+    print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"envx.: $%02X",v);
-    incprint(x)
+    print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"outx.: $%02X",v);
-    incprint(x)
+    print_then_inc_row(x)
+
+
+    if (voice == 0)
+      is_first_run=false;
 
     x += (strlen(tmpbuf)+3)*CHAR_WIDTH;
   } x -= (strlen(tmpbuf)+3)*CHAR_WIDTH;
@@ -288,7 +343,6 @@ void Dsp_Window::run()
   uint16_t dir_ram_addr = v*0x100;
   uint16_t *dir = (uint16_t*)&IAPURAM[dir_ram_addr];
   uint16_t dir_index=0+(dir_offset*2);
-  uint16_t *p;
   int row_complete=0;
   
   
@@ -313,9 +367,9 @@ void Dsp_Window::run()
   int center_x  = ((entire_length/2) - ((template_dir_strlen*TILE_WIDTH)/2)) + PIXEL_START_X;
 
   sprintf(tmpbuf, TEMPLATE_DIR_STR, dir_ram_addr);
-  incprint(center_x)
-  inc
-  inc
+  print_then_inc_row(center_x)
+  inc_row
+  inc_row
   
   int tmp=i;
 
@@ -362,12 +416,12 @@ void Dsp_Window::run()
     {
       // print specific voice color
       sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); //Colors::voice[voice_iter]);
-      inc
+      inc_row
     }
     else 
     {
       sdlfont_drawString(screen, x,i, tmpbuf, Colors::nearblack);
-      inc
+      inc_row
     }
     dir_index+=2;
     fakerow++;
@@ -528,6 +582,15 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
+
+        for (int i=0; i < MAX_VOICES; i++)
+        {
+          uintptr_t newdata = (uintptr_t)voice_title[i].data;
+          if (ev.button.button == SDL_BUTTON_RIGHT)
+            newdata = (uintptr_t)voice_title[i].data | 0x08;
+          voice_title[i].check_mouse_and_execute(ev.button.x, ev.button.y, (void*)newdata);
+        }
+
         /* menu bar */
         if (
           ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))

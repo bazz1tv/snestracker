@@ -13,9 +13,9 @@ Uint8 scancode_to_hex(int &scancode)
 
   return 0xff; 
 }
-bool is_coord_in_rect(int x, int y, SDL_Rect *r)
+bool coord_is_in_rect(int x, int y, SDL_Rect *r)
 {
-  return (x >= (r->x) && x <= (r->x + r->w) &&
+  return (x >= (r->x) && x < (r->x + r->w) &&
       y >= (r->y) && y < (r->y+r->h) ); 
 }
 }
