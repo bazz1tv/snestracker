@@ -46,10 +46,6 @@ for (int i=0; i < 2; i++)\
   report::memsurface.data[idx+4+i]=0xff;\
   report::memsurface.data[idx+4+2048+i]=0xff;\
 }\
-/*report::memsurface.data[idx+2]=60;\
-report::memsurface.data[idx+2048+2]=60;\
-report::memsurface.data[idx+4+2]=60;\
-report::memsurface.data[idx+4+2048+2]=60;*/\
 } while(0)
 
 

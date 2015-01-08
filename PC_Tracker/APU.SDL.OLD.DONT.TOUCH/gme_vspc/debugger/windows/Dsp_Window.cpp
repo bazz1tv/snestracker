@@ -35,7 +35,15 @@ void print_binary(SDL_Surface *screen, int x, int y, uint8_t v, bool use_colors=
 
   for (int z=7; z >= 0; z--)
   {
-    Uint32 *col = use_colors ? &Colors::voice[z] : &Colors::white;
+    Uint32 *col;
+    if (use_colors)
+    {
+      if (BaseD::voice_control.is_muted(z))
+        col = &Colors::nearblack;
+      else 
+        col = &Colors::voice[z];
+    }
+    else col = &Colors::white;
     if (z == 3)
     {
       sdlfont_drawString(screen, tmpx,y, " ", Colors::voice[z]);
@@ -44,7 +52,7 @@ void print_binary(SDL_Surface *screen, int x, int y, uint8_t v, bool use_colors=
     if (v & (1 << z))
       sdlfont_drawString(screen, tmpx,y, "1", *col);
     else
-      sdlfont_drawString(screen, tmpx,y, "0", Colors::white);
+      sdlfont_drawString(screen, tmpx,y, "0", *col);
     tmpx+=TILE_WIDTH;
   }
 }
@@ -582,10 +590,9 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
-
         for (int i=0; i < MAX_VOICES; i++)
         {
-          uintptr_t newdata = (uintptr_t)voice_title[i].data;
+          uintptr_t newdata = (uintptr_t)voice_title[i].data; // originally the voice number itself
           if (ev.button.button == SDL_BUTTON_RIGHT)
             newdata = (uintptr_t)voice_title[i].data | 0x08;
           voice_title[i].check_mouse_and_execute(ev.button.x, ev.button.y, (void*)newdata);
