@@ -84,7 +84,7 @@ public Experience
   //void start_track( int track, const char* path );
   void draw_track_tag();
 
-  int mode=0;
+  int mode=MODE_NAV;
 
   //bool main_memory_context_menu_is_active=false;
   

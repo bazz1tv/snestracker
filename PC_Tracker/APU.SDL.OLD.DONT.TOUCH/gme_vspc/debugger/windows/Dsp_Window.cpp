@@ -1,4 +1,5 @@
 #include "Dsp_Window.h"
+#include "Utility.h"
 
 #define print_then_inc_row(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
 #define print_then_inc_row_voice(x,col) sdlfont_drawString(screen, x,i, tmpbuf, col); i+=CHAR_HEIGHT;
@@ -57,6 +58,26 @@ void print_binary(SDL_Surface *screen, int x, int y, uint8_t v, bool use_colors=
   }
 }
 
+// The clickable text are dynamically calculated from the string lengths
+  // it's kind of unconnected although the strings are right above for referencing...
+  // the first one mainvol_l I will comment as an example: 
+void Dsp_Window::init_gen_dsp_clickable(char *str, int &x, int &i)
+{
+  static int index=0;
+  assert (index < SIZEOF_GEN_DSP_ENUM);
+  int tmp = (strlen(tmpbuf)-2)*CHAR_WIDTH;
+  // here's the first comment example: 
+  // calculate how many characters until the variable part?
+  tmp = (strlen(tmpbuf)-2)*CHAR_WIDTH; // that clear? should be
+  // init the x,y,
+  clickable_gen_dsp[index].rect.x = x + tmp;
+  clickable_gen_dsp[index].rect.y = i;
+  //w,h
+  clickable_gen_dsp[index].rect.w = CHAR_WIDTH*2;
+  clickable_gen_dsp[index].rect.h = CHAR_HEIGHT;
+  index++;
+}
+
 void Dsp_Window::run()
 {
   /* Check if it is time to change tune.
@@ -83,7 +104,7 @@ void Dsp_Window::run()
   uint8_t srcn[MAX_VOICES];
   // non-obvious how the follow is used.. but i dynamically log certain coordinates
   //to help create the layout o_* means original
-  uint i=10, o_i = i, remember_i1, remember_i2, remember_i3, remember_i4;
+  int i=10, o_i = i, remember_i1, remember_i2, remember_i3, remember_i4;
   int x = 10, /*o_x = x,*/ remember_x = 10, remember_x2;
   // start drawing from 10,10
 
@@ -102,34 +123,49 @@ void Dsp_Window::run()
   remember_i4=i;
   // Read all DSP registers
   uint8_t v;
- 
+
   // main vol
   v = player->spc_read_dsp(dsp_reg::mvol_l);
   sprintf(tmpbuf,"Mvol_L: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
+  // be careful to seperate the bit editing mode from normal byte editing mode
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::mvol_r);
   sprintf(tmpbuf,"Mvol_R: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   //
   i+=CHAR_HEIGHT; remember_i1 = i;
   // echo vol
   v = player->spc_read_dsp(dsp_reg::evol_l);
   sprintf(tmpbuf,"Evol_L: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::evol_r);
   sprintf(tmpbuf,"Evol_R: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   //
   i+=CHAR_HEIGHT; remember_i2 = i;
   // random
   v = player->spc_read_dsp(dsp_reg::esa);
   sprintf(tmpbuf,"ESA...: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::edl);
   sprintf(tmpbuf,"EDL...: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::efb);
   sprintf(tmpbuf,"EFB...: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   
   //
@@ -216,27 +252,43 @@ void Dsp_Window::run()
   //
   v = player->spc_read_dsp(dsp_reg::c0);
   sprintf(tmpbuf,"C0: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c1);
   sprintf(tmpbuf,"C1: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c2);
   sprintf(tmpbuf,"C2: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c3);
   sprintf(tmpbuf,"C3: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c4);
   sprintf(tmpbuf,"C4: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c5);
   sprintf(tmpbuf,"C5: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c6);
   sprintf(tmpbuf,"C6: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   v = player->spc_read_dsp(dsp_reg::c7);
   sprintf(tmpbuf,"C7: $%02X",v);
+  if (is_first_run)
+    init_gen_dsp_clickable(tmpbuf,x,i);
   print_then_inc_row(x)
   //
   //remember_x2 = x;
@@ -297,6 +349,7 @@ void Dsp_Window::run()
     }
     else 
       color = &Colors::voice[voice];
+    
     print_then_inc_row_voice(voice_label_x, *color) // poor man's center on voices
     inc_row
     v = player->spc_read_dsp(0x10*voice+n); n++;
@@ -482,6 +535,11 @@ outx.: $FF    outx.: $FF    outx.: $FF    outx.: $FF
 
 */
 
+  if (mode == MODE_EDIT_ADDR)
+  {
+    cursor.draw(screen, Colors::green);
+  }
+
   // Display all DSP registers
   //sprintf(tmpbuf, "%s")
   SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
@@ -527,7 +585,12 @@ void Dsp_Window::receive_event(SDL_Event &ev)
       switch (scancode)
       {
         case SDLK_ESCAPE:
-          quitting=true;
+          if (mode == MODE_EDIT_ADDR)
+          {
+            cursor.stop_timer();
+            mode = MODE_NAV;
+          }
+          else quitting=true;
           break;
 
         case SDLK_SPACE: // toggle pause
@@ -582,7 +645,48 @@ void Dsp_Window::receive_event(SDL_Event &ev)
 
     case SDL_USEREVENT:
     {
-      
+      if (ev.user.code == UserEvents::mouse_react)
+      {
+        SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
+
+        if (mode == MODE_EDIT_ADDR && Utility::coord_is_in_rect(te->motion.x, te->motion.y, &cursor.rect))
+        {
+          mode = MODE_NAV;
+          cursor.stop_timer();
+          break;
+        }
+        
+        for (int i=0; i < SIZEOF_GEN_DSP_ENUM; i++)
+        {
+          //int x = ;
+          // coord_is_in_rect(int x, int y, SDL_Rect *r);
+          if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &clickable_gen_dsp[i].rect) )
+          {
+            fprintf(stderr, "OMG you clicked [%i]\n", i);
+
+            cursor.rect.y = clickable_gen_dsp[i].rect.y;
+            // try to derive LO/HI byte clicked
+            bool hibyte=true;
+
+            //int rect_x = ;
+            // assumption that all clicks will be over a "2char entry"
+            if (te->motion.x >= (clickable_gen_dsp[i].rect.x+CHAR_WIDTH))
+            {
+              hibyte=false;
+              fprintf(stderr, "clicked lobyte\n");
+              cursor.rect.x = clickable_gen_dsp[i].rect.x+CHAR_WIDTH;
+              //
+            }
+            else
+            {
+              cursor.rect.x = clickable_gen_dsp[i].rect.x;
+            }
+
+            mode = MODE_EDIT_ADDR;
+            cursor.start_timer();
+          }
+        }
+      }
     } break;
     case SDL_MOUSEWHEEL:
     {

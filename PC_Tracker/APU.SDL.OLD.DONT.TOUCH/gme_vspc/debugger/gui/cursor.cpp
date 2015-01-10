@@ -120,6 +120,14 @@
     }
   }
 
+  void Cursor::draw(SDL_Surface *screen, Uint32 color)
+  {
+    if (toggle)
+    {
+        sdlfont_drawString(screen, rect.x, rect.y, "\x5B", color);
+    }
+  }
+
   //Uint8 Cursor::
 
 

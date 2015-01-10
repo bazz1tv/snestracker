@@ -63,7 +63,7 @@ void BaseD::update_track_tag()
 
 void BaseD::start_track( int track, const char* path )
 {
-  paused = false;
+  //paused = false;
   //if (!player->is_paused())
   handle_error( player->start_track( track - 1 ) );
   // update window title with track info
@@ -156,6 +156,7 @@ void BaseD::reload()
       game, g_cur_entry+1, g_cfg.num_files, player->track_info().song,
       seconds / 60, seconds % 60 );
   SDL_SetWindowTitle(sdlWindow, title);
+
 }
 
 void BaseD::toggle_pause()
