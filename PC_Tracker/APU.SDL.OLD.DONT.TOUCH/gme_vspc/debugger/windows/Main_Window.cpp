@@ -556,10 +556,10 @@ void Main_Window::receive_event(SDL_Event &ev)
           
           if (port_tool.horizontal) port_tool.inc_cursor_pos();
         }
-        else if (scancode == SDLK_SPACE)
+        /*else if (scancode == SDLK_SPACE)
         {
           port_tool.inc_cursor_pos();
-        }
+        }*/
         else if (scancode == SDLK_TAB)
         {
           port_tool.inc_cursor_pos();
