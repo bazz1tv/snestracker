@@ -45,3 +45,8 @@ Custom FIR Filters (save to file)
 1: 58 BF DB F0 FE 07 0C 0C
 2: 0C 21 2B 2B 13 FE F3 F9
 3: 34 33 00 D9 E5 01 FC EB
+
+Optional:
+---------
+Change run() to a function-pointer style and have a first_run() version of
+the run function to better optimize speed, although size increase
