@@ -68,13 +68,9 @@ public Experience
     gain,
     envx,
     outx,
-    SIZE_OF_VOICE_ENUM
+    SIZEOF_VOICE_ENUM
   };
-  struct Voice_Clickable_Text
-  {
-    Clickable_Text e[SIZE_OF_VOICE_ENUM];
-  };
-  Voice_Clickable_Text voice_clickable_text[MAX_VOICES];
+  Clickable_Text clickable_voice[MAX_VOICES][SIZEOF_VOICE_ENUM];
 
   //
   unsigned char gen_dsp_vals[MAX_GEN_DSP_REGS]; // num of DSP regs
@@ -86,4 +82,5 @@ public Experience
 
 private:
   void init_gen_dsp_clickable(char *str, int&, int&);
+  void init_voice_clickable(char *str, int&, int&);
 };

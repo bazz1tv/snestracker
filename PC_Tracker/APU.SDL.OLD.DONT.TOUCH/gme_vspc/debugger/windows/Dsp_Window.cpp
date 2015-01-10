@@ -58,6 +58,28 @@ void print_binary(SDL_Surface *screen, int x, int y, uint8_t v, bool use_colors=
   }
 }
 
+// helper function for the run() first run init
+void Dsp_Window::init_voice_clickable(char *str, int &x, int &i)
+{
+  static int loindex=0, hiindex=MAX_VOICES-1;
+  assert (loindex < SIZEOF_VOICE_ENUM && hiindex < MAX_VOICES);
+  int tmp = (strlen(tmpbuf)-2)*CHAR_WIDTH;
+  // here's the first comment example: 
+  // calculate how many characters until the variable part?
+  // init the x,y,
+  clickable_voice[hiindex][loindex].rect.x = x + tmp;
+  clickable_voice[hiindex][loindex].rect.y = i;
+  //w,h
+  clickable_voice[hiindex][loindex].rect.w = CHAR_WIDTH*2;
+  clickable_voice[hiindex][loindex].rect.h = CHAR_HEIGHT;
+  loindex++;
+  if (loindex == SIZEOF_VOICE_ENUM)
+  {
+    hiindex--;
+    loindex=0;
+  }
+}
+
 // The clickable text are dynamically calculated from the string lengths
   // it's kind of unconnected although the strings are right above for referencing...
   // the first one mainvol_l I will comment as an example: 
@@ -68,7 +90,6 @@ void Dsp_Window::init_gen_dsp_clickable(char *str, int &x, int &i)
   int tmp = (strlen(tmpbuf)-2)*CHAR_WIDTH;
   // here's the first comment example: 
   // calculate how many characters until the variable part?
-  tmp = (strlen(tmpbuf)-2)*CHAR_WIDTH; // that clear? should be
   // init the x,y,
   clickable_gen_dsp[index].rect.x = x + tmp;
   clickable_gen_dsp[index].rect.y = i;
@@ -349,39 +370,60 @@ void Dsp_Window::run()
     }
     else 
       color = &Colors::voice[voice];
+
     
     print_then_inc_row_voice(voice_label_x, *color) // poor man's center on voices
     inc_row
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"vol_L: $%02X",v);
+    if (is_first_run)
+      init_voice_clickable(tmpbuf,x,i);
     print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"vol_R: $%02X",v);
+    if (is_first_run)
+      init_voice_clickable(tmpbuf,x,i);
     print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"p_lo.: $%02X",v);
+    if (is_first_run)
+      init_voice_clickable(tmpbuf,x,i);
     print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"p_hi.: $%02X",v);
+    if (is_first_run)
+      init_voice_clickable(tmpbuf,x,i);
     print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     srcn[voice] = v;
     sprintf(tmpbuf,"srcn.: $%02X",v);
+    if (is_first_run)
+      init_voice_clickable(tmpbuf,x,i);
     print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"adsr1: $%02X",v);
+    if (is_first_run)
+      init_voice_clickable(tmpbuf,x,i);
     print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"adsr2: $%02X",v);
+    if (is_first_run)
+      init_voice_clickable(tmpbuf,x,i);
     print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"gain.: $%02X",v);
+    if (is_first_run)
+      init_voice_clickable(tmpbuf,x,i);
     print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"envx.: $%02X",v);
+    if (is_first_run)
+      init_voice_clickable(tmpbuf,x,i);
     print_then_inc_row(x)
     v = player->spc_read_dsp(0x10*voice+n); n++;
     sprintf(tmpbuf,"outx.: $%02X",v);
+    if (is_first_run)
+      init_voice_clickable(tmpbuf,x,i);
     print_then_inc_row(x)
 
 
@@ -684,6 +726,39 @@ void Dsp_Window::receive_event(SDL_Event &ev)
 
             mode = MODE_EDIT_ADDR;
             cursor.start_timer();
+            break;
+          }
+        }
+        for (int voice=0; voice < MAX_VOICES; voice++)
+        {
+          for (int dsp_reg=0; dsp_reg < SIZEOF_VOICE_ENUM; dsp_reg++)
+          {
+            if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &clickable_voice[voice][dsp_reg].rect) )
+            {
+              fprintf(stderr, "OMG you clicked voice[%d][%d]\n",voice,dsp_reg);
+
+              cursor.rect.y = clickable_voice[voice][dsp_reg].rect.y;
+              // try to derive LO/HI byte clicked
+              bool hibyte=true;
+
+              //int rect_x = ;
+              // assumption that all clicks will be over a "2char entry"
+              if (te->motion.x >= (clickable_voice[voice][dsp_reg].rect.x+CHAR_WIDTH))
+              {
+                hibyte=false;
+                fprintf(stderr, "clicked lobyte\n");
+                cursor.rect.x = clickable_voice[voice][dsp_reg].rect.x+CHAR_WIDTH;
+                //
+              }
+              else
+              {
+                cursor.rect.x = clickable_voice[voice][dsp_reg].rect.x;
+              }
+
+              mode = MODE_EDIT_ADDR;
+              cursor.start_timer();
+              break;
+            }
           }
         }
       }
