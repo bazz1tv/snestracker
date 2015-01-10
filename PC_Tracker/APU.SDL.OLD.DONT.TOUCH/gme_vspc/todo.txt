@@ -1,3 +1,5 @@
+Dir-was-used color highlighting like in memory view
+
 "Sample/Instrument playback feature" -- backup SPC asm, Cause SPC to infinite loop, so that user
 can play live samples from SPC as he/she pleases.. when done.. restore the SPC opcodes that were replaced with the
 infinite loop.

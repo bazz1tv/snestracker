@@ -13,7 +13,10 @@
 #define MAX_VOICE_REGS 10*MAX_VOICES
 #define MAX_GEN_DSP_REGS 25
 
+// clickable function
 int mute_solo_voice(void *data);
+
+
 
 
 struct Dsp_Window : public BaseD, public Render_Context, public Player_Context,
@@ -54,6 +57,48 @@ public Experience
     eon,endx,
     SIZEOF_8BIT_GEN_DSP_ENUM
   };
+  struct Voice_Map
+  {
+    int index;
+    int addr;
+  };
+  int gen_dsp_map[SIZEOF_GEN_DSP_ENUM] = 
+  {
+    0x0c,
+    0x1c,
+    0x2c,
+    0x3c,
+    0x6d,
+    0x7d,
+    0x0d,
+    0x0f,
+    0x1f,
+    0x2f,
+    0x3f,
+    0x4f,
+    0x5f,
+    0x6f,
+    0x7f
+  };
+  // below is better detail of the above
+  /*Voice_Map voice_map[SIZEOF_GEN_DSP_ENUM] = 
+    { {mvol_l,  0x0c},
+      {mvol_r,  0x1c},
+      {evol_l,  0x2c},
+      {evol_r,  0x3c},
+      {esa,     0x6d},
+      {edl,     0x7d},
+      {efb,     0x0d},
+      {c0,      0x0f},
+      {c1,      0x1f},
+      {c2,      0x2f},
+      {c3,      0x3f},
+      {c4,      0x4f},
+      {c5,      0x5f},
+      {c6,      0x6f},
+      {c7,      0x7f} };*/
+
+
   Clickable_Text clickable_8bit_gen_dsp[SIZEOF_8BIT_GEN_DSP_ENUM];
   Clickable_Text clickable_gen_dsp[SIZEOF_GEN_DSP_ENUM]; // dir-to-be is included see below commented out dir enum entry
   //
@@ -71,6 +116,7 @@ public Experience
     SIZEOF_VOICE_ENUM
   };
   Clickable_Text clickable_voice[MAX_VOICES][SIZEOF_VOICE_ENUM];
+  uint8_t tmp_ram; // plan on changing this to tmp_byte after adding inclusions form main_window.cpp
 
   //
   unsigned char gen_dsp_vals[MAX_GEN_DSP_REGS]; // num of DSP regs
@@ -83,4 +129,6 @@ public Experience
 private:
   void init_gen_dsp_clickable(char *str, int&, int&);
   void init_voice_clickable(char *str, int&, int&);
+  void enter_edit_mode();
+  void exit_edit_mode();
 };

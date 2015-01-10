@@ -80,6 +80,19 @@ void Dsp_Window::init_voice_clickable(char *str, int &x, int &i)
   }
 }
 
+void Dsp_Window::enter_edit_mode()
+{
+  mode = MODE_EDIT_ADDR;
+  cursor.start_timer();
+}
+
+void Dsp_Window::exit_edit_mode()
+{
+  mode = MODE_NAV;
+  cursor.stop_timer();
+  tmp_ram = 0;
+}
+
 // The clickable text are dynamically calculated from the string lengths
   // it's kind of unconnected although the strings are right above for referencing...
   // the first one mainvol_l I will comment as an example: 
@@ -629,8 +642,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         case SDLK_ESCAPE:
           if (mode == MODE_EDIT_ADDR)
           {
-            cursor.stop_timer();
-            mode = MODE_NAV;
+            exit_edit_mode();
           }
           else quitting=true;
           break;
@@ -693,8 +705,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
 
         if (mode == MODE_EDIT_ADDR && Utility::coord_is_in_rect(te->motion.x, te->motion.y, &cursor.rect))
         {
-          mode = MODE_NAV;
-          cursor.stop_timer();
+          exit_edit_mode();
           break;
         }
         
@@ -705,6 +716,9 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &clickable_gen_dsp[i].rect) )
           {
             fprintf(stderr, "OMG you clicked [%i]\n", i);
+
+            tmp_ram = player->spc_read_dsp(gen_dsp_map[i]);
+            fprintf(stderr, "tmpram = 0x%02x\n", tmp_ram);
 
             cursor.rect.y = clickable_gen_dsp[i].rect.y;
             // try to derive LO/HI byte clicked
@@ -724,8 +738,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
               cursor.rect.x = clickable_gen_dsp[i].rect.x;
             }
 
-            mode = MODE_EDIT_ADDR;
-            cursor.start_timer();
+            enter_edit_mode();
             break;
           }
         }
@@ -736,6 +749,9 @@ void Dsp_Window::receive_event(SDL_Event &ev)
             if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &clickable_voice[voice][dsp_reg].rect) )
             {
               fprintf(stderr, "OMG you clicked voice[%d][%d]\n",voice,dsp_reg);
+
+              tmp_ram = player->spc_read_dsp(voice*0x10 + dsp_reg);
+              fprintf(stderr, "tmpram = 0x%02x\n", tmp_ram);
 
               cursor.rect.y = clickable_voice[voice][dsp_reg].rect.y;
               // try to derive LO/HI byte clicked
@@ -755,8 +771,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
                 cursor.rect.x = clickable_voice[voice][dsp_reg].rect.x;
               }
 
-              mode = MODE_EDIT_ADDR;
-              cursor.start_timer();
+              enter_edit_mode();
               break;
             }
           }
