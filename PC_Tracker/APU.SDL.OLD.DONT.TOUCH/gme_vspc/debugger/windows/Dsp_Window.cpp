@@ -134,6 +134,7 @@ void Dsp_Window::run()
   #define GENERAL_DSP_STR "General DSP"
   #define GEN_DSP_ENTRY_STR "Mvol_L: $%02X"
 
+  int dsp_or_voice_index=0;
   // log the srcn# for each voice
   uint8_t srcn[MAX_VOICES];
   // non-obvious how the follow is used.. but i dynamically log certain coordinates
@@ -159,13 +160,19 @@ void Dsp_Window::run()
   uint8_t v;
 
   // main vol
-  v = player->spc_read_dsp(dsp_reg::mvol_l);
-  sprintf(tmpbuf,"Mvol_L: $%02X",v);
+  v = player->spc_read_dsp(gen_dsp_map[dsp_or_voice_index]); 
+  if (mode == MODE_EDIT_ADDR && gen_dsp_map[dsp_or_voice_index] == current_edit_addr)
+    sprintf(tmpbuf,"Mvol_L: $%02X",tmp_ram);
+  else sprintf(tmpbuf,"Mvol_L: $%02X",v);
   if (is_first_run)
     init_gen_dsp_clickable(tmpbuf,x,i);
   // be careful to seperate the bit editing mode from normal byte editing mode
   print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::mvol_r);
+  dsp_or_voice_index++;
+
+  v = player->spc_read_dsp(gen_dsp_map[dsp_or_voice_index]);
+  if (mode == MODE_EDIT_ADDR && gen_dsp_map[dsp_or_voice_index] == current_edit_addr)
+    sprintf(tmpbuf,"Mvol_R: $%02X",tmp_ram);
   sprintf(tmpbuf,"Mvol_R: $%02X",v);
   if (is_first_run)
     init_gen_dsp_clickable(tmpbuf,x,i);
@@ -636,6 +643,59 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           default:break;
         }
         break;
+      }
+      if (mode == MODE_EDIT_ADDR)
+      {
+        if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
+          ((scancode >= 'a') && (scancode <= 'f')) )
+        {
+          uint i=0;
+          Uint16 addr = current_edit_addr;
+          
+          i = Utility::hexchar_to_int((char)scancode);  
+          fprintf(stderr, "i = %d", i);
+          if (highnibble)
+          {
+            i <<= 4;
+            i &= 0xf0;
+            tmp_ram &= 0x0f;
+          }
+          else
+          {
+            i &= 0x0f;
+            tmp_ram &= 0xf0;
+          }
+          tmp_ram |= i;
+
+          player->spc_write_dsp(addr, tmp_ram);
+          
+          //if (mouseover_hexdump_area.horizontal) mouseover_hexdump_area.inc_cursor_pos();
+          
+        }
+        switch (scancode)
+        {
+          case SDLK_LEFT:
+            if (highnibble) //= !highnibble;
+            {
+              cursor.rect.x += CHAR_WIDTH;
+            }
+            else cursor.rect.x -= CHAR_WIDTH;
+            highnibble = !highnibble;
+
+          break;
+          case SDLK_RIGHT:
+            if (highnibble) //= !highnibble;
+            {
+              cursor.rect.x += CHAR_WIDTH;
+            }
+            else cursor.rect.x -= CHAR_WIDTH;
+            highnibble = !highnibble;
+          break;
+          case SDLK_RETURN:
+          break;
+          default:break;
+        }
+        break;
       } 
       switch (scancode)
       {
@@ -681,9 +741,12 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           player->spc_write_dsp(dsp_reg::koff,val);
           break;
         }
-        case SDLK_d:
         case SDLK_SLASH:
           BaseD::switch_mode(GrandMode::MAIN);
+          break;
+        case SDLK_d:
+          if (mode == MODE_NAV)
+            BaseD::switch_mode(GrandMode::MAIN);
           break;
 
         
@@ -717,24 +780,27 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           {
             fprintf(stderr, "OMG you clicked [%i]\n", i);
 
-            tmp_ram = player->spc_read_dsp(gen_dsp_map[i]);
+            current_edit_addr = gen_dsp_map[i];
+            tmp_ram = player->spc_read_dsp(current_edit_addr);
+            submode = EDIT_GEN_DSP_ADDR; //vs EDIT_VOICE_ADDR
             fprintf(stderr, "tmpram = 0x%02x\n", tmp_ram);
 
             cursor.rect.y = clickable_gen_dsp[i].rect.y;
             // try to derive LO/HI byte clicked
-            bool hibyte=true;
+            
 
             //int rect_x = ;
             // assumption that all clicks will be over a "2char entry"
             if (te->motion.x >= (clickable_gen_dsp[i].rect.x+CHAR_WIDTH))
             {
-              hibyte=false;
-              fprintf(stderr, "clicked lobyte\n");
+              fprintf(stderr, "clicked lonibble\n");
               cursor.rect.x = clickable_gen_dsp[i].rect.x+CHAR_WIDTH;
+              highnibble = false;
               //
             }
             else
             {
+              highnibble=true;
               cursor.rect.x = clickable_gen_dsp[i].rect.x;
             }
 
@@ -750,24 +816,27 @@ void Dsp_Window::receive_event(SDL_Event &ev)
             {
               fprintf(stderr, "OMG you clicked voice[%d][%d]\n",voice,dsp_reg);
 
-              tmp_ram = player->spc_read_dsp(voice*0x10 + dsp_reg);
+              submode = EDIT_VOICE_ADDR;
+              current_edit_addr = voice*0x10 + dsp_reg;
+              tmp_ram = player->spc_read_dsp(current_edit_addr);
               fprintf(stderr, "tmpram = 0x%02x\n", tmp_ram);
 
               cursor.rect.y = clickable_voice[voice][dsp_reg].rect.y;
               // try to derive LO/HI byte clicked
-              bool hibyte=true;
+              
 
               //int rect_x = ;
               // assumption that all clicks will be over a "2char entry"
               if (te->motion.x >= (clickable_voice[voice][dsp_reg].rect.x+CHAR_WIDTH))
               {
-                hibyte=false;
+                highnibble=false;
                 fprintf(stderr, "clicked lobyte\n");
                 cursor.rect.x = clickable_voice[voice][dsp_reg].rect.x+CHAR_WIDTH;
                 //
               }
               else
               {
+                highnibble= true;
                 cursor.rect.x = clickable_voice[voice][dsp_reg].rect.x;
               }
 

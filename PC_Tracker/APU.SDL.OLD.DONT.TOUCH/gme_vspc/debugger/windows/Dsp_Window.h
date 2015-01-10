@@ -32,11 +32,20 @@ public Experience
     MODE_EDIT_ADDR,
     MODE_EDIT_APU_PORT 
   };
-
+  int mode=MODE_NAV;
+  enum submodes
+  {
+    NONE=0,
+    EDIT_GEN_DSP_ADDR=1,
+    EDIT_VOICE_ADDR
+  };
+  int submode=NONE;
+  int current_edit_addr=0;
+  bool highnibble=false;
   
   Cursor cursor;
   
-  int mode=MODE_NAV;
+  
   // this just covers the mute/solo of voices
   Clickable_Text voice_title[MAX_VOICES];
   //
@@ -98,6 +107,7 @@ public Experience
       {c6,      0x6f},
       {c7,      0x7f} };*/
 
+  // Voice map is not required
 
   Clickable_Text clickable_8bit_gen_dsp[SIZEOF_8BIT_GEN_DSP_ENUM];
   Clickable_Text clickable_gen_dsp[SIZEOF_GEN_DSP_ENUM]; // dir-to-be is included see below commented out dir enum entry
