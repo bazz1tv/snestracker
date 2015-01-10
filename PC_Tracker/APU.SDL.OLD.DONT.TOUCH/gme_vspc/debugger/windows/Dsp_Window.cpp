@@ -243,24 +243,99 @@ void Dsp_Window::run()
   }
   inc_row
   i += TILE_HEIGHT;
+  int byte_index = kon;
+
   v = player->spc_read_dsp(dsp_reg::kon);
   sprintf(tmpbuf,"KON...: %%");
+
+  
+  if (is_first_run)
+  {
+    // init_flg()
+    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
+    for (int b=7; b >=0; b--)
+    {
+      if (b == 3)
+      {
+        tmpx += CHAR_WIDTH;
+      }
+      byte[byte_index].bits[b].x = tmpx;
+      byte[byte_index].bits[b].y = i;
+      byte[byte_index].bits[b].w = CHAR_WIDTH;
+      byte[byte_index].bits[b].h = CHAR_HEIGHT;
+      tmpx+=CHAR_WIDTH;
+    }
+    byte_index++;
+  }
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
   inc_row
   v = player->spc_read_dsp(dsp_reg::koff);
   sprintf(tmpbuf,"KOFF..: %%");
+  if (is_first_run)
+  {
+    // init_flg()
+    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
+    for (int b=7; b >=0; b--)
+    {
+      if (b == 3)
+      {
+        tmpx += CHAR_WIDTH;
+      }
+      byte[byte_index].bits[b].x = tmpx;
+      byte[byte_index].bits[b].y = i;
+      byte[byte_index].bits[b].w = CHAR_WIDTH;
+      byte[byte_index].bits[b].h = CHAR_HEIGHT;
+      tmpx+=CHAR_WIDTH;
+    }
+    byte_index++;
+  }
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
   inc_row
   //pmon,non
   v = player->spc_read_dsp(dsp_reg::non);
   sprintf(tmpbuf,"NON...: %%");
+  if (is_first_run)
+  {
+    // init_flg()
+    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
+    for (int b=7; b >=0; b--)
+    {
+      if (b == 3)
+      {
+        tmpx += CHAR_WIDTH;
+      }
+      byte[byte_index].bits[b].x = tmpx;
+      byte[byte_index].bits[b].y = i;
+      byte[byte_index].bits[b].w = CHAR_WIDTH;
+      byte[byte_index].bits[b].h = CHAR_HEIGHT;
+      tmpx+=CHAR_WIDTH;
+    }
+    byte_index++;
+  }
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
   inc_row
   v = player->spc_read_dsp(dsp_reg::pmon);
   sprintf(tmpbuf,"PMON..: %%");
+  if (is_first_run)
+  {
+    // init_flg()
+    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
+    for (int b=7; b >=0; b--)
+    {
+      if (b == 3)
+      {
+        tmpx += CHAR_WIDTH;
+      }
+      byte[byte_index].bits[b].x = tmpx;
+      byte[byte_index].bits[b].y = i;
+      byte[byte_index].bits[b].w = CHAR_WIDTH;
+      byte[byte_index].bits[b].h = CHAR_HEIGHT;
+      tmpx+=CHAR_WIDTH;
+    }byte_index++;
+  }
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
   inc_row
@@ -269,12 +344,46 @@ void Dsp_Window::run()
   // echo
   v = player->spc_read_dsp(dsp_reg::eon);
   sprintf(tmpbuf,"EON...: %%");
+  if (is_first_run)
+  {
+    // init_flg()
+    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
+    for (int b=7; b >=0; b--)
+    {
+      if (b == 3)
+      {
+        tmpx += CHAR_WIDTH;
+      }
+      byte[byte_index].bits[b].x = tmpx;
+      byte[byte_index].bits[b].y = i;
+      byte[byte_index].bits[b].w = CHAR_WIDTH;
+      byte[byte_index].bits[b].h = CHAR_HEIGHT;
+      tmpx+=CHAR_WIDTH;
+    }byte_index++;
+  }
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
   inc_row
 
   v = player->spc_read_dsp(dsp_reg::endx);
   sprintf(tmpbuf,"ENDX..: %%");
+  if (is_first_run)
+  {
+    // init_flg()
+    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
+    for (int b=7; b >=0; b--)
+    {
+      if (b == 3)
+      {
+        tmpx += CHAR_WIDTH;
+      }
+      byte[byte_index].bits[b].x = tmpx;
+      byte[byte_index].bits[b].y = i;
+      byte[byte_index].bits[b].w = CHAR_WIDTH;
+      byte[byte_index].bits[b].h = CHAR_HEIGHT;
+      tmpx+=CHAR_WIDTH;
+    }byte_index++;
+  }
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   print_binary(screen, x,i,v);
   inc_row
@@ -700,11 +809,14 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           break;
         }
 
-        for (int i=0; i < 8; i++)
+        for (int b=0; b < SIZEOF_8BIT_GEN_DSP_ENUM; b++)
         {
-          if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &byte[flg].bits[i]))
+          for (int i=0; i < 8; i++)
           {
-            fprintf(stderr, "you clicked flg bit %d\n", i);
+            if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &byte[b].bits[i]))
+            {
+              fprintf(stderr, "you clicked [%d] bit %d\n",b, i);
+            }
           }
         }
         

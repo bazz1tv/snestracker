@@ -60,12 +60,10 @@ public Experience
     c0,c1,c2,c3,c4,c5,c6,c7,
     SIZEOF_GEN_DSP_ENUM
   };
-  enum {
-    flg,
-    kon,koff,non,pmon,
-    eon,endx,
-    SIZEOF_8BIT_GEN_DSP_ENUM
-  };
+  
+
+ 
+  
 
   struct Gen_Dsp_Map
   {
@@ -111,10 +109,27 @@ public Experience
       {c7,      0x7f} };*/
 
   // Voice map is not required
+
+
+  enum {
+    flg,
+    kon,koff,non,pmon,
+    eon,endx,
+    SIZEOF_8BIT_GEN_DSP_ENUM
+  };
+
   struct 
   {
     SDL_Rect bits[8];
   } byte[SIZEOF_8BIT_GEN_DSP_ENUM];
+    // for the addresses represented by 8bits
+  
+  int byte_map[SIZEOF_8BIT_GEN_DSP_ENUM] =
+  {
+    dsp_reg::flg,
+    dsp_reg::kon,dsp_reg::koff,dsp_reg::non,dsp_reg::pmon,
+    dsp_reg::eon,dsp_reg::endx,
+  };
 
   Clickable_Text clickable_8bit_gen_dsp[SIZEOF_8BIT_GEN_DSP_ENUM];
   Clickable_Text clickable_gen_dsp[SIZEOF_GEN_DSP_ENUM]; // dir-to-be is included see below commented out dir enum entry
