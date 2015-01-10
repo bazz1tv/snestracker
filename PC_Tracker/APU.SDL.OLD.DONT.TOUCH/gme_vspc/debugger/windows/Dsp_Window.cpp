@@ -243,150 +243,44 @@ void Dsp_Window::run()
   }
   inc_row
   i += TILE_HEIGHT;
-  int byte_index = kon;
+  
 
-  v = player->spc_read_dsp(dsp_reg::kon);
-  sprintf(tmpbuf,"KON...: %%");
+  for (int byte_index = kon; byte_index < SIZEOF_8BIT_GEN_DSP_ENUM; byte_index++)
+  {
+    if (byte_index == eon)
+    {
+      inc_row
+    }
+    v = player->spc_read_dsp(gen_8bit_dsp_map[byte_index].addr);
+    sprintf(tmpbuf,gen_8bit_dsp_map[byte_index].format_str);
+
+    if (is_first_run)
+    {
+      // init_flg()
+      tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
+      for (int b=7; b >=0; b--)
+      {
+        if (b == 3)
+        {
+          tmpx += CHAR_WIDTH;
+        }
+        byte[byte_index].bits[b].x = tmpx;
+        byte[byte_index].bits[b].y = i;
+        byte[byte_index].bits[b].w = CHAR_WIDTH;
+        byte[byte_index].bits[b].h = CHAR_HEIGHT;
+        tmpx+=CHAR_WIDTH;
+      }
+    }
+    sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
+    print_binary(screen, x,i,v);
+    inc_row
+  }
+  
 
   
-  if (is_first_run)
-  {
-    // init_flg()
-    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
-    for (int b=7; b >=0; b--)
-    {
-      if (b == 3)
-      {
-        tmpx += CHAR_WIDTH;
-      }
-      byte[byte_index].bits[b].x = tmpx;
-      byte[byte_index].bits[b].y = i;
-      byte[byte_index].bits[b].w = CHAR_WIDTH;
-      byte[byte_index].bits[b].h = CHAR_HEIGHT;
-      tmpx+=CHAR_WIDTH;
-    }
-    byte_index++;
-  }
-  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
-  print_binary(screen, x,i,v);
-  inc_row
-  v = player->spc_read_dsp(dsp_reg::koff);
-  sprintf(tmpbuf,"KOFF..: %%");
-  if (is_first_run)
-  {
-    // init_flg()
-    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
-    for (int b=7; b >=0; b--)
-    {
-      if (b == 3)
-      {
-        tmpx += CHAR_WIDTH;
-      }
-      byte[byte_index].bits[b].x = tmpx;
-      byte[byte_index].bits[b].y = i;
-      byte[byte_index].bits[b].w = CHAR_WIDTH;
-      byte[byte_index].bits[b].h = CHAR_HEIGHT;
-      tmpx+=CHAR_WIDTH;
-    }
-    byte_index++;
-  }
-  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
-  print_binary(screen, x,i,v);
-  inc_row
-  //pmon,non
-  v = player->spc_read_dsp(dsp_reg::non);
-  sprintf(tmpbuf,"NON...: %%");
-  if (is_first_run)
-  {
-    // init_flg()
-    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
-    for (int b=7; b >=0; b--)
-    {
-      if (b == 3)
-      {
-        tmpx += CHAR_WIDTH;
-      }
-      byte[byte_index].bits[b].x = tmpx;
-      byte[byte_index].bits[b].y = i;
-      byte[byte_index].bits[b].w = CHAR_WIDTH;
-      byte[byte_index].bits[b].h = CHAR_HEIGHT;
-      tmpx+=CHAR_WIDTH;
-    }
-    byte_index++;
-  }
-  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
-  print_binary(screen, x,i,v);
-  inc_row
-  v = player->spc_read_dsp(dsp_reg::pmon);
-  sprintf(tmpbuf,"PMON..: %%");
-  if (is_first_run)
-  {
-    // init_flg()
-    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
-    for (int b=7; b >=0; b--)
-    {
-      if (b == 3)
-      {
-        tmpx += CHAR_WIDTH;
-      }
-      byte[byte_index].bits[b].x = tmpx;
-      byte[byte_index].bits[b].y = i;
-      byte[byte_index].bits[b].w = CHAR_WIDTH;
-      byte[byte_index].bits[b].h = CHAR_HEIGHT;
-      tmpx+=CHAR_WIDTH;
-    }byte_index++;
-  }
-  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
-  print_binary(screen, x,i,v);
-  inc_row
-  //
-  i+=TILE_HEIGHT;
-  // echo
-  v = player->spc_read_dsp(dsp_reg::eon);
-  sprintf(tmpbuf,"EON...: %%");
-  if (is_first_run)
-  {
-    // init_flg()
-    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
-    for (int b=7; b >=0; b--)
-    {
-      if (b == 3)
-      {
-        tmpx += CHAR_WIDTH;
-      }
-      byte[byte_index].bits[b].x = tmpx;
-      byte[byte_index].bits[b].y = i;
-      byte[byte_index].bits[b].w = CHAR_WIDTH;
-      byte[byte_index].bits[b].h = CHAR_HEIGHT;
-      tmpx+=CHAR_WIDTH;
-    }byte_index++;
-  }
-  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
-  print_binary(screen, x,i,v);
-  inc_row
-
-  v = player->spc_read_dsp(dsp_reg::endx);
-  sprintf(tmpbuf,"ENDX..: %%");
-  if (is_first_run)
-  {
-    // init_flg()
-    tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
-    for (int b=7; b >=0; b--)
-    {
-      if (b == 3)
-      {
-        tmpx += CHAR_WIDTH;
-      }
-      byte[byte_index].bits[b].x = tmpx;
-      byte[byte_index].bits[b].y = i;
-      byte[byte_index].bits[b].w = CHAR_WIDTH;
-      byte[byte_index].bits[b].h = CHAR_HEIGHT;
-      tmpx+=CHAR_WIDTH;
-    }byte_index++;
-  }
-  sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
-  print_binary(screen, x,i,v);
-  inc_row
+  
+  
+  
   
   //
   i = remember_i1-(CHAR_HEIGHT*3);
@@ -694,56 +588,64 @@ void Dsp_Window::receive_event(SDL_Event &ev)
       }
       if (mode == MODE_EDIT_ADDR)
       {
-        if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
-          ((scancode >= 'a') && (scancode <= 'f')) )
-        {
-          uint i=0;
-          Uint16 addr = current_edit_addr;
-          
-          i = Utility::hexchar_to_int((char)scancode);  
-          fprintf(stderr, "i = %d", i);
-          if (highnibble)
-          {
-            i <<= 4;
-            i &= 0xf0;
-            tmp_ram &= 0x0f;
-          }
-          else
-          {
-            i &= 0x0f;
-            tmp_ram &= 0xf0;
-          }
-          tmp_ram |= i;
-
-          player->spc_write_dsp(addr, tmp_ram);
-          
-          //if (mouseover_hexdump_area.horizontal) mouseover_hexdump_area.inc_cursor_pos();
-          
-        }
+        // COMMON THINGS
         switch (scancode)
         {
-          case SDLK_LEFT:
-            if (highnibble) //= !highnibble;
+          
+        }
+        if (mode != EDIT_GEN_DSP_8BIT_ADDR)
+        {
+          if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
+            ((scancode >= 'a') && (scancode <= 'f')) )
+          {
+            uint i=0;
+            Uint16 addr = current_edit_addr;
+            
+            i = Utility::hexchar_to_int((char)scancode);  
+            fprintf(stderr, "i = %d", i);
+            if (highnibble)
             {
-              cursor.rect.x += CHAR_WIDTH;
+              i <<= 4;
+              i &= 0xf0;
+              tmp_ram &= 0x0f;
             }
-            else cursor.rect.x -= CHAR_WIDTH;
-            highnibble = !highnibble;
-
-          break;
-          case SDLK_RIGHT:
-            if (highnibble) //= !highnibble;
+            else
             {
-              cursor.rect.x += CHAR_WIDTH;
+              i &= 0x0f;
+              tmp_ram &= 0xf0;
             }
-            else cursor.rect.x -= CHAR_WIDTH;
-            highnibble = !highnibble;
-          break;
+            tmp_ram |= i;
 
-          case SDLK_RETURN:
-          case SDLK_ESCAPE:
-            exit_edit_mode();
-          default:break;
+            player->spc_write_dsp(addr, tmp_ram);
+            
+            //if (mouseover_hexdump_area.horizontal) mouseover_hexdump_area.inc_cursor_pos();
+            
+          }
+          switch (scancode)
+          {
+            case SDLK_LEFT:
+              if (highnibble) //= !highnibble;
+              {
+                cursor.rect.x += CHAR_WIDTH;
+              }
+              else cursor.rect.x -= CHAR_WIDTH;
+              highnibble = !highnibble;
+
+            break;
+            case SDLK_RIGHT:
+              if (highnibble) //= !highnibble;
+              {
+                cursor.rect.x += CHAR_WIDTH;
+              }
+              else cursor.rect.x -= CHAR_WIDTH;
+              highnibble = !highnibble;
+            break;
+
+            case SDLK_RETURN:
+            case SDLK_ESCAPE:
+              exit_edit_mode();
+            default:break;
+          }
         }
         break;
       } 
@@ -816,6 +718,11 @@ void Dsp_Window::receive_event(SDL_Event &ev)
             if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &byte[b].bits[i]))
             {
               fprintf(stderr, "you clicked [%d] bit %d\n",b, i);
+              
+              cursor.rect.x = byte[b].bits[i].x;
+              cursor.rect.y = byte[b].bits[i].y;
+              enter_edit_mode();
+              submode = EDIT_GEN_DSP_8BIT_ADDR;
             }
           }
         }

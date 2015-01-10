@@ -36,8 +36,9 @@ public Experience
   enum submodes
   {
     NONE=0,
-    EDIT_GEN_DSP_ADDR=1,
-    EDIT_VOICE_ADDR
+    EDIT_GEN_DSP_ADDR,
+    EDIT_GEN_DSP_8BIT_ADDR,
+    EDIT_VOICE_ADDR,
   };
   int submode=NONE;
   int current_edit_addr=0;
@@ -124,11 +125,15 @@ public Experience
   } byte[SIZEOF_8BIT_GEN_DSP_ENUM];
     // for the addresses represented by 8bits
   
-  int byte_map[SIZEOF_8BIT_GEN_DSP_ENUM] =
+  Gen_Dsp_Map gen_8bit_dsp_map [SIZEOF_8BIT_GEN_DSP_ENUM] =
   {
-    dsp_reg::flg,
-    dsp_reg::kon,dsp_reg::koff,dsp_reg::non,dsp_reg::pmon,
-    dsp_reg::eon,dsp_reg::endx,
+    {"FLG...: %%",dsp_reg::flg},
+    {"KON...: %%",dsp_reg::kon},
+    {"KOFF..: %%",dsp_reg::koff},
+    {"NON...: %%",dsp_reg::non},
+    {"PMON..: %%",dsp_reg::pmon},
+    {"EON...: %%",dsp_reg::eon},
+    {"ENDX..: %%",dsp_reg::endx}
   };
 
   Clickable_Text clickable_8bit_gen_dsp[SIZEOF_8BIT_GEN_DSP_ENUM];
