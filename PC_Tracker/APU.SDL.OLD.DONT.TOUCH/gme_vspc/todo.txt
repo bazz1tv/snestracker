@@ -1,3 +1,5 @@
+Reduce Clickable_Text class in DSPMap to just SDL_Rect.. since that's all I'm using them for.. except for voice_title
+
 Dir-was-used color highlighting like in memory view
 
 "Sample/Instrument playback feature" -- backup SPC asm, Cause SPC to infinite loop, so that user

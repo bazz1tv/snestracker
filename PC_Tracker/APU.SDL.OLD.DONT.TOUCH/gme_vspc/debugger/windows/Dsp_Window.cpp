@@ -191,9 +191,26 @@ void Dsp_Window::run()
   x += 15*CHAR_WIDTH;
   v = player->spc_read_dsp(dsp_reg::flg);
   sprintf(tmpbuf,"FLG...: %%");
+  int tmpx =  x + strlen(tmpbuf)*CHAR_WIDTH;
+
+  if (is_first_run)
+  {
+    // init_flg()
+    for (int b=7; b >=0; b--)
+    {
+      if (b == 4)
+        tmpx += CHAR_WIDTH;
+      byte[flg].bits[b].x = tmpx;
+      byte[flg].bits[b].y = i;
+      byte[flg].bits[b].w = CHAR_WIDTH;
+      byte[flg].bits[b].h = CHAR_HEIGHT;
+      tmpx+=CHAR_WIDTH;
+    }
+  }
+
   sdlfont_drawString(screen, x,i, tmpbuf, Colors::white);
   //print_binary(screen, x,i,v, false);
-  int tmpx = x+(9*TILE_WIDTH);
+  tmpx = x+(9*TILE_WIDTH);
   for (int z=7; z >= 0; z--)
   {
     switch (z)
@@ -320,7 +337,7 @@ void Dsp_Window::run()
       }
       i = remember_i3 + (14*CHAR_HEIGHT);
     }
-    uint8_t n=0;
+    
     sprintf(tmpbuf,"%d",voice);
     // we're going to draw it, but first let's log those coordinates/width/height~
     int voice_label_x = x+(4*TILE_WIDTH);
@@ -346,64 +363,21 @@ void Dsp_Window::run()
     
     print_then_inc_row_voice(voice_label_x, *color) // poor man's center on voices
     inc_row
-    v = player->spc_read_dsp(0x10*voice+n); n++;
-    sprintf(tmpbuf,"vol_L: $%02X",v);
-    if (is_first_run)
-      init_voice_clickable(tmpbuf,x,i);
-    print_then_inc_row(x)
-    v = player->spc_read_dsp(0x10*voice+n); n++;
-    sprintf(tmpbuf,"vol_R: $%02X",v);
-    if (is_first_run)
-      init_voice_clickable(tmpbuf,x,i);
-    print_then_inc_row(x)
-    v = player->spc_read_dsp(0x10*voice+n); n++;
-    sprintf(tmpbuf,"p_lo.: $%02X",v);
-    if (is_first_run)
-      init_voice_clickable(tmpbuf,x,i);
-    print_then_inc_row(x)
-    v = player->spc_read_dsp(0x10*voice+n); n++;
-    sprintf(tmpbuf,"p_hi.: $%02X",v);
-    if (is_first_run)
-      init_voice_clickable(tmpbuf,x,i);
-    print_then_inc_row(x)
-    v = player->spc_read_dsp(0x10*voice+n); n++;
-    srcn[voice] = v;
-    sprintf(tmpbuf,"srcn.: $%02X",v);
-    if (is_first_run)
-      init_voice_clickable(tmpbuf,x,i);
-    print_then_inc_row(x)
-    v = player->spc_read_dsp(0x10*voice+n); n++;
-    sprintf(tmpbuf,"adsr1: $%02X",v);
-    if (is_first_run)
-      init_voice_clickable(tmpbuf,x,i);
-    print_then_inc_row(x)
-    v = player->spc_read_dsp(0x10*voice+n); n++;
-    sprintf(tmpbuf,"adsr2: $%02X",v);
-    if (is_first_run)
-      init_voice_clickable(tmpbuf,x,i);
-    print_then_inc_row(x)
-    v = player->spc_read_dsp(0x10*voice+n); n++;
-    sprintf(tmpbuf,"gain.: $%02X",v);
-    if (is_first_run)
-      init_voice_clickable(tmpbuf,x,i);
-    print_then_inc_row(x)
-    v = player->spc_read_dsp(0x10*voice+n); n++;
-    sprintf(tmpbuf,"envx.: $%02X",v);
-    if (is_first_run)
-      init_voice_clickable(tmpbuf,x,i);
-    print_then_inc_row(x)
-    v = player->spc_read_dsp(0x10*voice+n); n++;
-    sprintf(tmpbuf,"outx.: $%02X",v);
-    if (is_first_run)
-      init_voice_clickable(tmpbuf,x,i);
-    print_then_inc_row(x)
 
-
-    if (voice == 0)
-      is_first_run=false;
+    for (uint8_t n=0; n < SIZEOF_VOICE_ENUM; n++)
+    {
+      v = player->spc_read_dsp(0x10*voice+n);
+      sprintf(tmpbuf,voice_map[n],v);
+      if (is_first_run)
+        init_voice_clickable(tmpbuf,x,i);
+      print_then_inc_row(x)
+    }
+      
 
     x += (strlen(tmpbuf)+3)*CHAR_WIDTH;
   } x -= (strlen(tmpbuf)+3)*CHAR_WIDTH;
+
+
 
   // have max_X at this point
   max_x = strlen_dsp_entry*TILE_WIDTH + x;
@@ -501,7 +475,7 @@ void Dsp_Window::run()
     dir_index+=2;
     fakerow++;
   }
-
+  is_first_run=false;
 }
 
 void Dsp_Window::draw()
@@ -656,8 +630,8 @@ void Dsp_Window::receive_event(SDL_Event &ev)
             else cursor.rect.x -= CHAR_WIDTH;
             highnibble = !highnibble;
           break;
+
           case SDLK_RETURN:
-          break;
           case SDLK_ESCAPE:
             exit_edit_mode();
           default:break;
@@ -724,6 +698,14 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         {
           exit_edit_mode();
           break;
+        }
+
+        for (int i=0; i < 8; i++)
+        {
+          if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &byte[flg].bits[i]))
+          {
+            fprintf(stderr, "you clicked flg bit %d\n", i);
+          }
         }
         
         for (int i=0; i < SIZEOF_GEN_DSP_ENUM; i++)

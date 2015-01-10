@@ -66,6 +66,7 @@ public Experience
     eon,endx,
     SIZEOF_8BIT_GEN_DSP_ENUM
   };
+
   struct Gen_Dsp_Map
   {
     const char* format_str;
@@ -89,6 +90,8 @@ public Experience
     {"C6: $%02X",0x6f},
     {"C7: $%02X",0x7f}
   };
+
+
   // below is better detail of the above
   /*Voice_Map voice_map[SIZEOF_GEN_DSP_ENUM] = 
     { {mvol_l,  0x0c},
@@ -108,6 +111,10 @@ public Experience
       {c7,      0x7f} };*/
 
   // Voice map is not required
+  struct 
+  {
+    SDL_Rect bits[8];
+  } byte[SIZEOF_8BIT_GEN_DSP_ENUM];
 
   Clickable_Text clickable_8bit_gen_dsp[SIZEOF_8BIT_GEN_DSP_ENUM];
   Clickable_Text clickable_gen_dsp[SIZEOF_GEN_DSP_ENUM]; // dir-to-be is included see below commented out dir enum entry
@@ -125,12 +132,25 @@ public Experience
     outx,
     SIZEOF_VOICE_ENUM
   };
+  const char *voice_map[SIZEOF_VOICE_ENUM] = 
+  { 
+    "vol_L: $%02X",
+    "vol_R: $%02X",
+    "p_lo.: $%02X",
+    "p_hi.: $%02X",
+    "srcn.: $%02X",
+    "adsr1: $%02X",
+    "adsr2: $%02X",
+    "gain.: $%02X",
+    "envx.: $%02X",
+    "outx.: $%02X"
+  };
   Clickable_Text clickable_voice[MAX_VOICES][SIZEOF_VOICE_ENUM];
   uint8_t tmp_ram; // plan on changing this to tmp_byte after adding inclusions form main_window.cpp
 
   //
-  unsigned char gen_dsp_vals[MAX_GEN_DSP_REGS]; // num of DSP regs
-  unsigned char voice_dsp_vals[10*(MAX_VOICES)]; 
+  //unsigned char gen_dsp_vals[MAX_GEN_DSP_REGS]; // num of DSP regs
+  //unsigned char voice_dsp_vals[10*(MAX_VOICES)]; 
   //
   uint8_t dir_offset=0; // allows scrolling directory
   //
