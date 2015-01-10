@@ -134,7 +134,8 @@ void Dsp_Window::run()
   #define GENERAL_DSP_STR "General DSP"
   #define GEN_DSP_ENTRY_STR "Mvol_L: $%02X"
 
-  int dsp_or_voice_index=0;
+  int gen_dsp_index=0;
+  uint8_t *valp;
   // log the srcn# for each voice
   uint8_t srcn[MAX_VOICES];
   // non-obvious how the follow is used.. but i dynamically log certain coordinates
@@ -159,59 +160,33 @@ void Dsp_Window::run()
   // Read all DSP registers
   uint8_t v;
 
-  // main vol
-  v = player->spc_read_dsp(gen_dsp_map[dsp_or_voice_index]); 
-  if (mode == MODE_EDIT_ADDR && gen_dsp_map[dsp_or_voice_index] == current_edit_addr)
-    sprintf(tmpbuf,"Mvol_L: $%02X",tmp_ram);
-  else sprintf(tmpbuf,"Mvol_L: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  // be careful to seperate the bit editing mode from normal byte editing mode
-  print_then_inc_row(x)
-  dsp_or_voice_index++;
+  for (; gen_dsp_index <= efb; gen_dsp_index++)
+  {
+    // main vol
+    v = player->spc_read_dsp(gen_dsp_map[gen_dsp_index].addr); 
+    if (mode == MODE_EDIT_ADDR && gen_dsp_map[gen_dsp_index].addr == current_edit_addr)
+    {
+      valp = &tmp_ram;
+      tmp_ram = v;
+    }
+    else valp = &v; 
+    sprintf(tmpbuf,gen_dsp_map[gen_dsp_index].format_str,*valp);
+    if (is_first_run)
+      init_gen_dsp_clickable(tmpbuf,x,i);
+    // be careful to seperate the bit editing mode from normal byte editing mode
+    print_then_inc_row(x)
 
-  v = player->spc_read_dsp(gen_dsp_map[dsp_or_voice_index]);
-  if (mode == MODE_EDIT_ADDR && gen_dsp_map[dsp_or_voice_index] == current_edit_addr)
-    sprintf(tmpbuf,"Mvol_R: $%02X",tmp_ram);
-  sprintf(tmpbuf,"Mvol_R: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  //
-  i+=CHAR_HEIGHT; remember_i1 = i;
-  // echo vol
-  v = player->spc_read_dsp(dsp_reg::evol_l);
-  sprintf(tmpbuf,"Evol_L: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::evol_r);
-  sprintf(tmpbuf,"Evol_R: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  //
-  i+=CHAR_HEIGHT; remember_i2 = i;
-  // random
-  v = player->spc_read_dsp(dsp_reg::esa);
-  sprintf(tmpbuf,"ESA...: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::edl);
-  sprintf(tmpbuf,"EDL...: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::efb);
-  sprintf(tmpbuf,"EFB...: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  
-  //
+    if (gen_dsp_index == 1)
+    {
+      i+=CHAR_HEIGHT; remember_i1 = i;
+    }
+    else if (gen_dsp_index == 3)
+    {
+      i+=CHAR_HEIGHT; remember_i2 = i;
+    }
+  }
   remember_i3=i+TILE_HEIGHT;
-  //i = remember_i2-(3*TILE_HEIGHT);
+
   i = remember_i4;
   x += 15*CHAR_WIDTH;
   v = player->spc_read_dsp(dsp_reg::flg);
@@ -291,46 +266,23 @@ void Dsp_Window::run()
   i = remember_i1-(CHAR_HEIGHT*3);
   x+= (15+8)*CHAR_WIDTH;
   //
-  v = player->spc_read_dsp(dsp_reg::c0);
-  sprintf(tmpbuf,"C0: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::c1);
-  sprintf(tmpbuf,"C1: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::c2);
-  sprintf(tmpbuf,"C2: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::c3);
-  sprintf(tmpbuf,"C3: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::c4);
-  sprintf(tmpbuf,"C4: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::c5);
-  sprintf(tmpbuf,"C5: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::c6);
-  sprintf(tmpbuf,"C6: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
-  v = player->spc_read_dsp(dsp_reg::c7);
-  sprintf(tmpbuf,"C7: $%02X",v);
-  if (is_first_run)
-    init_gen_dsp_clickable(tmpbuf,x,i);
-  print_then_inc_row(x)
+  for (; gen_dsp_index <= c7; gen_dsp_index++)
+  {
+    // main vol
+    v = player->spc_read_dsp(gen_dsp_map[gen_dsp_index].addr); 
+    if (mode == MODE_EDIT_ADDR && gen_dsp_map[gen_dsp_index].addr == current_edit_addr)
+    {
+      valp = &tmp_ram;
+      tmp_ram = v;
+    }
+    else valp = &v; 
+    sprintf(tmpbuf,gen_dsp_map[gen_dsp_index].format_str,*valp);
+    if (is_first_run)
+      init_gen_dsp_clickable(tmpbuf,x,i);
+    // be careful to seperate the bit editing mode from normal byte editing mode
+    print_then_inc_row(x)
+  }
+  
   //
   //remember_x2 = x;
 
@@ -630,6 +582,19 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     case SDL_KEYDOWN:
     {
       int scancode = ev.key.keysym.sym;
+      switch (scancode)
+      {
+        case SDLK_SPACE: // toggle pause
+          paused = !paused;
+          player->pause( paused );
+          break;
+        case SDLK_SLASH:
+          if (mode == MODE_EDIT_ADDR)
+            exit_edit_mode();
+          BaseD::switch_mode(GrandMode::MAIN);
+          break;
+        default:break;
+      }
       if (ev.key.keysym.mod & (KMOD_SHIFT))
       {
         switch (scancode)
@@ -693,6 +658,8 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           break;
           case SDLK_RETURN:
           break;
+          case SDLK_ESCAPE:
+            exit_edit_mode();
           default:break;
         }
         break;
@@ -700,18 +667,8 @@ void Dsp_Window::receive_event(SDL_Event &ev)
       switch (scancode)
       {
         case SDLK_ESCAPE:
-          if (mode == MODE_EDIT_ADDR)
-          {
-            exit_edit_mode();
-          }
-          else quitting=true;
+          quitting=true;
           break;
-
-        case SDLK_SPACE: // toggle pause
-          paused = !paused;
-          player->pause( paused );
-          break;
-
         case SDLK_r:
           restart_current_track();
           break;
@@ -741,9 +698,6 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           player->spc_write_dsp(dsp_reg::koff,val);
           break;
         }
-        case SDLK_SLASH:
-          BaseD::switch_mode(GrandMode::MAIN);
-          break;
         case SDLK_d:
           if (mode == MODE_NAV)
             BaseD::switch_mode(GrandMode::MAIN);
@@ -780,7 +734,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           {
             fprintf(stderr, "OMG you clicked [%i]\n", i);
 
-            current_edit_addr = gen_dsp_map[i];
+            current_edit_addr = gen_dsp_map[i].addr;
             tmp_ram = player->spc_read_dsp(current_edit_addr);
             submode = EDIT_GEN_DSP_ADDR; //vs EDIT_VOICE_ADDR
             fprintf(stderr, "tmpram = 0x%02x\n", tmp_ram);

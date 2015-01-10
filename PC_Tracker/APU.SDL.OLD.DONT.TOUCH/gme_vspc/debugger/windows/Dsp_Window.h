@@ -66,28 +66,28 @@ public Experience
     eon,endx,
     SIZEOF_8BIT_GEN_DSP_ENUM
   };
-  struct Voice_Map
+  struct Gen_Dsp_Map
   {
-    int index;
+    const char* format_str;
     int addr;
   };
-  int gen_dsp_map[SIZEOF_GEN_DSP_ENUM] = 
+  Gen_Dsp_Map gen_dsp_map[SIZEOF_GEN_DSP_ENUM] = 
   {
-    0x0c,
-    0x1c,
-    0x2c,
-    0x3c,
-    0x6d,
-    0x7d,
-    0x0d,
-    0x0f,
-    0x1f,
-    0x2f,
-    0x3f,
-    0x4f,
-    0x5f,
-    0x6f,
-    0x7f
+    {"Mvol_L: $%02X",0x0c},
+    {"Mvol_R: $%02X",0x1c},
+    {"Evol_L: $%02X",0x2c},
+    {"Evol_R: $%02X",0x3c},
+    {"ESA...: $%02X",0x6d},
+    {"EDL...: $%02X",0x7d},
+    {"EFB...: $%02X",0x0d},
+    {"C0: $%02X",0x0f},
+    {"C1: $%02X",0x1f},
+    {"C2: $%02X",0x2f},
+    {"C3: $%02X",0x3f},
+    {"C4: $%02X",0x4f},
+    {"C5: $%02X",0x5f},
+    {"C6: $%02X",0x6f},
+    {"C7: $%02X",0x7f}
   };
   // below is better detail of the above
   /*Voice_Map voice_map[SIZEOF_GEN_DSP_ENUM] = 
