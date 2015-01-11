@@ -7,7 +7,16 @@ namespace dsp_reg
 {
   extern int how_many;
 enum {
-
+    vol_l=0,
+  vol_r=1,
+  pitch_lo=2,
+  pitch_hi=3,
+  srcn=4,
+  adsr1=5,
+  adsr2=6,
+  gain=7,
+  envx=8,
+  outx=9,
   voice0_vol_l=0,
   voice0_vol_r=1,
   voice0_pitch_lo=2,

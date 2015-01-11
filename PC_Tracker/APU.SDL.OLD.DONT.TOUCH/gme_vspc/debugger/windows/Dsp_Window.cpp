@@ -371,6 +371,8 @@ void Dsp_Window::run()
     for (uint8_t n=0; n < SIZEOF_VOICE_ENUM; n++)
     {
       v = player->spc_read_dsp(0x10*voice+n);
+      if (n == dsp_reg::srcn)
+        srcn[voice] = v;
       sprintf(tmpbuf,voice_map[n],v);
       if (is_first_run)
         init_voice_clickable(tmpbuf,x,i);
@@ -593,7 +595,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           break;
           default:break;
         } 
-        //break;
+        break;
       }
       if (mode == MODE_EDIT_ADDR)
       {
