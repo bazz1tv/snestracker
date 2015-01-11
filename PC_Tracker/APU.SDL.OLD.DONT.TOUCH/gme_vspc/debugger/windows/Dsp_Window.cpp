@@ -702,6 +702,35 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         }
         else
         {
+          // shit we want regardless of the CMD/CTRL key: 
+          switch (scancode)
+          {
+            case SDLK_LEFT:
+              fprintf(stderr, "left");
+              if (selected_bit == 7) //= !highnibble;
+              {
+                selected_bit = 0;
+              }
+              else
+              {
+                selected_bit++;
+              }
+              cursor.rect.x = byte[selected_index].bits[selected_bit].x;
+            break;
+            case SDLK_RIGHT:
+              fprintf(stderr, "right");
+              if (selected_bit == 0) //= !highnibble;
+              {
+                selected_bit = 7;
+              }
+              else
+              {
+                selected_bit--;
+              }
+              cursor.rect.x = byte[selected_index].bits[selected_bit].x;
+            break;
+            default:break;
+          }
           if (ev.key.keysym.mod & (CMD_CTRL_KEY))
           {
             fprintf(stderr, "WOOT");
@@ -749,31 +778,6 @@ void Dsp_Window::receive_event(SDL_Event &ev)
               cursor.rect.y = byte[selected_index].bits[selected_bit].y;
               tmp_ram = player->spc_read_dsp(gen_8bit_dsp_map[selected_index].addr);
               current_edit_addr = gen_8bit_dsp_map[selected_index].addr;
-            break;
-            
-            case SDLK_LEFT:
-              fprintf(stderr, "left");
-              if (selected_bit == 7) //= !highnibble;
-              {
-                selected_bit = 0;
-              }
-              else
-              {
-                selected_bit++;
-              }
-              cursor.rect.x = byte[selected_index].bits[selected_bit].x;
-            break;
-            case SDLK_RIGHT:
-              fprintf(stderr, "right");
-              if (selected_bit == 0) //= !highnibble;
-              {
-                selected_bit = 7;
-              }
-              else
-              {
-                selected_bit--;
-              }
-              cursor.rect.x = byte[selected_index].bits[selected_bit].x;
             break;
 
             case SDLK_RETURN:
