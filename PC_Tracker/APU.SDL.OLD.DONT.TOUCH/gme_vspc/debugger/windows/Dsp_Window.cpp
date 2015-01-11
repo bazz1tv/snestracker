@@ -418,6 +418,13 @@ void Dsp_Window::run()
   int entire_length = (x+next_column_x+(template_dir_entry_strlen*TILE_WIDTH)) - PIXEL_START_X;
   //fprintf(stderr, "Entire length = %d", entire_length);
   int center_x  = ((entire_length/2) - ((template_dir_strlen*TILE_WIDTH)/2)) + PIXEL_START_X;
+  if (is_first_run)
+  {
+    dir_rect.x = center_x + (template_dir_strlen-5)*CHAR_WIDTH;
+    dir_rect.y = i;
+    dir_rect.w = 4*TILE_WIDTH;
+    dir_rect.h = TILE_HEIGHT;
+  }
 
   sprintf(tmpbuf, TEMPLATE_DIR_STR, dir_ram_addr);
   print_then_inc_row(center_x)
@@ -837,6 +844,25 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         {
           exit_edit_mode();
           break;
+        }
+
+        if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &dir_rect))
+        {
+          current_edit_addr = dsp_reg::dir;
+          tmp_ram = player->spc_read_dsp(current_edit_addr);
+          cursor.rect.x = dir_rect.x;
+          cursor.rect.y = dir_rect.y;
+          if (te->motion.x >= (dir_rect.x+CHAR_WIDTH))
+          {
+            fprintf(stderr, "clicked lonibble\n");
+            cursor.rect.x += CHAR_WIDTH;
+            highnibble = false;
+            //
+          }
+          else highnibble = true;
+
+          enter_edit_mode();
+          submode = EDIT_DIR;
         }
 
         for (int b=0; b < SIZEOF_8BIT_GEN_DSP_ENUM; b++)

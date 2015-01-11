@@ -39,6 +39,7 @@ public Experience
     EDIT_GEN_DSP_ADDR,
     EDIT_GEN_DSP_8BIT_ADDR,
     EDIT_VOICE_ADDR,
+    EDIT_DIR
   };
   int submode=NONE;
   int current_edit_addr=0;
@@ -62,7 +63,7 @@ public Experience
     SIZEOF_GEN_DSP_ENUM
   };
   
-
+  SDL_Rect dir_rect;
  
   
 
