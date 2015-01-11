@@ -1,7 +1,19 @@
+ALL
+---
+lots of things SHOULDN"T be done/updated if paused
+
+Change run() to a function-pointer style and have a first_run() version of
+the run function to better optimize speed, although size increase
+
+
+DSP MAP
+----------------
+Refactor DSP MAP
+Put the Porttool and FilenameInfo into DSP MAP Display
 Reduce Clickable_Text class in DSPMap to just SDL_Rect.. since that's all I'm using them for.. except for voice_title
-
 Dir-was-used color highlighting like in memory view
-
+--
+--
 "Sample/Instrument playback feature" -- backup SPC asm, Cause SPC to infinite loop, so that user
 can play live samples from SPC as he/she pleases.. when done.. restore the SPC opcodes that were replaced with the
 infinite loop.
@@ -18,37 +30,39 @@ DSP Map
 Strip Functional operation from Display operation in classes/structs.
 Maybe i can subclass. struct Debugger_Voice_Control : public Voice_Control
 
+Main Window
+--------------
 Gain slider and clipping notifier
 
 Debugger Feature: Right click address that is being read/written and find out from where is the program accessing this memory.
 
+Scrolling text at bottom-right when text is too long to read
 If I click on "Time" I extend play-time by 1 min
 
+--
 Figuring out how to implement higher level audio algorithms..
 like "pan from left to right over this course of this pattern for example"
 
 
-Migrate to SDL2
-  Strip double click event stuffz
 
 
-Scrolling text at bottom-right when text is too long to read
-
-lots of things SHOULDN"T be done/updated if paused
 
 
-Tracker features------
+Tracker features
+-----------------
 multiple effect columns
-----------------
+
 Custom FIR Filters (save to file)
--- add these FIR filters "Nintendo official"
---
+add these FIR filters "Nintendo official"
 0: 7F 00 00 00 00 00 00 00
 1: 58 BF DB F0 FE 07 0C 0C
 2: 0C 21 2B 2B 13 FE F3 F9
 3: 34 33 00 D9 E5 01 FC EB
+ones that I found: 
+Super Metroid - Tension: 
+4: 65 72 20 53 31 2e 32 30
+Star Fox - Briefing (fast opening):
+5: 80 ff 9a ff 67 ff 0f ff
 
 Optional:
 ---------
-Change run() to a function-pointer style and have a first_run() version of
-the run function to better optimize speed, although size increase
