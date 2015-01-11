@@ -1,5 +1,6 @@
 #include "Dsp_Window.h"
 #include "Utility.h"
+#include "platform.h"
 
 #define print_then_inc_row(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
 #define print_then_inc_row_voice(x,col) sdlfont_drawString(screen, x,i, tmpbuf, col); i+=CHAR_HEIGHT;
@@ -559,6 +560,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     case SDL_KEYDOWN:
     {
       int scancode = ev.key.keysym.sym;
+      bool is_shift_pressed=false;
       switch (scancode)
       {
         case SDLK_SPACE: // toggle pause
@@ -571,8 +573,9 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           break;
         default:break;
       }
-      if (ev.key.keysym.mod & (KMOD_SHIFT))
+      if (ev.key.keysym.mod & (KMOD_SHIFT) && mode != MODE_EDIT_ADDR)
       {
+        //is_shift_pressed=true;
         switch (scancode)
         {
           case SDLK_LEFT:
@@ -582,8 +585,8 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           dir_offset+= 0x20;
           break;
           default:break;
-        }
-        break;
+        } 
+        //break;
       }
       if (mode == MODE_EDIT_ADDR)
       {
@@ -639,6 +642,50 @@ void Dsp_Window::receive_event(SDL_Event &ev)
               else cursor.rect.x -= CHAR_WIDTH;
               highnibble = !highnibble;
             break;
+            case SDLK_UP:
+              if (submode == EDIT_GEN_DSP_ADDR)
+              {
+                if (selected_index == 0)
+                  selected_index = (SIZEOF_GEN_DSP_ENUM-1);
+                else selected_index--;
+                current_edit_addr = gen_dsp_map[selected_index].addr;
+                tmp_ram = player->spc_read_dsp(current_edit_addr);
+                cursor.rect.x = clickable_gen_dsp[selected_index].rect.x + (highnibble ? 0:CHAR_WIDTH);
+                cursor.rect.y = clickable_gen_dsp[selected_index].rect.y;
+              }
+              else if (submode == EDIT_VOICE_ADDR)
+              {
+                if (selected_sub_index == 0)
+                  selected_sub_index = (SIZEOF_VOICE_ENUM-1);
+                else selected_sub_index--;
+                cursor.rect.x = clickable_voice[selected_index][selected_sub_index].rect.x + (highnibble ? 0:CHAR_WIDTH);
+                cursor.rect.y = clickable_voice[selected_index][selected_sub_index].rect.y;
+                current_edit_addr = (selected_index * 0x10) + selected_sub_index;
+                tmp_ram = player->spc_read_dsp(current_edit_addr);
+              }
+            break;
+            case SDLK_DOWN:
+              if (submode == EDIT_GEN_DSP_ADDR)
+              {
+                if (selected_index == (SIZEOF_GEN_DSP_ENUM-1))
+                  selected_index = 0;
+                else selected_index++;
+                current_edit_addr = gen_dsp_map[selected_index].addr;
+                tmp_ram = player->spc_read_dsp(current_edit_addr);
+                cursor.rect.x = clickable_gen_dsp[selected_index].rect.x + (highnibble ? 0:CHAR_WIDTH);
+                cursor.rect.y = clickable_gen_dsp[selected_index].rect.y;
+              }
+              else if (submode == EDIT_VOICE_ADDR)
+              {
+                if (selected_sub_index == (SIZEOF_VOICE_ENUM-1))
+                  selected_sub_index = 0;
+                else selected_sub_index++;
+                cursor.rect.x = clickable_voice[selected_index][selected_sub_index].rect.x + (highnibble ? 0:CHAR_WIDTH);
+                cursor.rect.y = clickable_voice[selected_index][selected_sub_index].rect.y;
+                current_edit_addr = (selected_index * 0x10) + selected_sub_index;
+                tmp_ram = player->spc_read_dsp(current_edit_addr);
+              }
+            break;
 
             case SDLK_RETURN:
             case SDLK_ESCAPE:
@@ -648,19 +695,55 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         }
         else
         {
-
+          if (ev.key.keysym.mod & (CMD_CTRL_KEY))
+          {
+            fprintf(stderr, "WOOT");
+            switch (scancode)
+            {
+              case SDLK_DOWN:
+              case SDLK_UP:
+                //fprintf(stderr, "tmpram before = 0x%02x, sb = %d\n", tmp_ram, selected_bit);
+                tmp_ram ^= (1 << selected_bit);
+                //fprintf(stderr, "tmpram after = 0x%02x, sb = %d", tmp_ram, selected_bit);
+                player->spc_write_dsp(gen_8bit_dsp_map[selected_index].addr,tmp_ram);
+              break;
+              
+              default:break;
+            }
+            break;
+          }
           switch (scancode)
           {
             case '0':
               //uint i=0;
               tmp_ram &= ~(1 << selected_bit);
               // we'll just write it immediately for now, can change to have user press enter later
-              player->spc_write_dsp(current_edit_addr, tmp_ram);
+              player->spc_write_dsp(gen_8bit_dsp_map[selected_index].addr, tmp_ram);
             break;
             case '1':
               tmp_ram |= 1 << selected_bit;
-              player->spc_write_dsp(current_edit_addr,tmp_ram);
+              player->spc_write_dsp(gen_8bit_dsp_map[selected_index].addr,tmp_ram);
             break;
+
+            case SDLK_UP:
+              if (selected_index == 0)
+                selected_index = (SIZEOF_8BIT_GEN_DSP_ENUM-1);
+              else selected_index--;
+              cursor.rect.y = byte[selected_index].bits[selected_bit].y;
+              cursor.rect.x = byte[selected_index].bits[selected_bit].x;
+              tmp_ram = player->spc_read_dsp(gen_8bit_dsp_map[selected_index].addr);
+              current_edit_addr = gen_8bit_dsp_map[selected_index].addr;
+            break;
+            case SDLK_DOWN:
+              if (selected_index == (SIZEOF_8BIT_GEN_DSP_ENUM-1))
+                selected_index = 0;
+              else selected_index++;
+              cursor.rect.x = byte[selected_index].bits[selected_bit].x;
+              cursor.rect.y = byte[selected_index].bits[selected_bit].y;
+              tmp_ram = player->spc_read_dsp(gen_8bit_dsp_map[selected_index].addr);
+              current_edit_addr = gen_8bit_dsp_map[selected_index].addr;
+            break;
+            
             case SDLK_LEFT:
               fprintf(stderr, "left");
               if (selected_bit == 7) //= !highnibble;
@@ -768,10 +851,12 @@ void Dsp_Window::receive_event(SDL_Event &ev)
               cursor.rect.y = byte[b].bits[i].y;
               enter_edit_mode();
               submode = EDIT_GEN_DSP_8BIT_ADDR;
+              //gen_8bit_dsp_map[b].addr;
               current_edit_addr = gen_8bit_dsp_map[b].addr;
-              tmp_ram = player->spc_read_dsp(current_edit_addr);
+              tmp_ram = player->spc_read_dsp(gen_8bit_dsp_map[b].addr);
               selected_index = b;
               selected_bit = i;
+              break;
             }
           }
         }
@@ -784,6 +869,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           {
             fprintf(stderr, "OMG you clicked [%i]\n", i);
 
+            selected_index = i;
             current_edit_addr = gen_dsp_map[i].addr;
             tmp_ram = player->spc_read_dsp(current_edit_addr);
             submode = EDIT_GEN_DSP_ADDR; //vs EDIT_VOICE_ADDR
@@ -819,7 +905,8 @@ void Dsp_Window::receive_event(SDL_Event &ev)
             if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &clickable_voice[voice][dsp_reg].rect) )
             {
               fprintf(stderr, "OMG you clicked voice[%d][%d]\n",voice,dsp_reg);
-
+              selected_index = voice;
+              selected_sub_index = dsp_reg;
               submode = EDIT_VOICE_ADDR;
               current_edit_addr = voice*0x10 + dsp_reg;
               tmp_ram = player->spc_read_dsp(current_edit_addr);

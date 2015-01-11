@@ -136,10 +136,11 @@ public Experience
     {"ENDX..: %%",dsp_reg::endx}
   };
 
-  Clickable_Text clickable_8bit_gen_dsp[SIZEOF_8BIT_GEN_DSP_ENUM];
+  //Clickable_Text clickable_8bit_gen_dsp[SIZEOF_8BIT_GEN_DSP_ENUM];
   Clickable_Text clickable_gen_dsp[SIZEOF_GEN_DSP_ENUM]; // dir-to-be is included see below commented out dir enum entry
   char selected_bit=0;
-  char selected_index=0;
+  char selected_index=0, selected_sub_index=0; // last one is for voice 2d array subscript
+
   //
   enum {
     vol_l=0,
