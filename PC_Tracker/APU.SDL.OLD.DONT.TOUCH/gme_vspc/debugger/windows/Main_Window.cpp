@@ -266,6 +266,7 @@ void Main_Window::receive_event(SDL_Event &ev)
       }
       else if (scancode == SDLK_SPACE)
       {
+        //fprintf(stderr, "pause ")
         player->toggle_pause();
       }
       else if (scancode == SDLK_r)

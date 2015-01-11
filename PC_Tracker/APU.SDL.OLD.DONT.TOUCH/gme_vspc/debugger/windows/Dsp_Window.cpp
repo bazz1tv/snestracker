@@ -562,8 +562,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
       switch (scancode)
       {
         case SDLK_SPACE: // toggle pause
-          paused = !paused;
-          player->pause( paused );
+          player->toggle_pause();
           break;
         case SDLK_SLASH:
           if (mode == MODE_EDIT_ADDR)
@@ -591,9 +590,9 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         // COMMON THINGS
         switch (scancode)
         {
-          
+          // prolly aint gonna put anything here hehhe
         }
-        if (mode != EDIT_GEN_DSP_8BIT_ADDR)
+        if (submode != EDIT_GEN_DSP_8BIT_ADDR)
         {
           if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
             ((scancode >= 'a') && (scancode <= 'f')) )
@@ -639,6 +638,52 @@ void Dsp_Window::receive_event(SDL_Event &ev)
               }
               else cursor.rect.x -= CHAR_WIDTH;
               highnibble = !highnibble;
+            break;
+
+            case SDLK_RETURN:
+            case SDLK_ESCAPE:
+              exit_edit_mode();
+            default:break;
+          }
+        }
+        else
+        {
+
+          switch (scancode)
+          {
+            case '0':
+              //uint i=0;
+              tmp_ram &= ~(1 << selected_bit);
+              // we'll just write it immediately for now, can change to have user press enter later
+              player->spc_write_dsp(current_edit_addr, tmp_ram);
+            break;
+            case '1':
+              tmp_ram |= 1 << selected_bit;
+              player->spc_write_dsp(current_edit_addr,tmp_ram);
+            break;
+            case SDLK_LEFT:
+              fprintf(stderr, "left");
+              if (selected_bit == 7) //= !highnibble;
+              {
+                selected_bit = 0;
+              }
+              else
+              {
+                selected_bit++;
+              }
+              cursor.rect.x = byte[selected_index].bits[selected_bit].x;
+            break;
+            case SDLK_RIGHT:
+              fprintf(stderr, "right");
+              if (selected_bit == 0) //= !highnibble;
+              {
+                selected_bit = 7;
+              }
+              else
+              {
+                selected_bit--;
+              }
+              cursor.rect.x = byte[selected_index].bits[selected_bit].x;
             break;
 
             case SDLK_RETURN:
@@ -723,6 +768,10 @@ void Dsp_Window::receive_event(SDL_Event &ev)
               cursor.rect.y = byte[b].bits[i].y;
               enter_edit_mode();
               submode = EDIT_GEN_DSP_8BIT_ADDR;
+              current_edit_addr = gen_8bit_dsp_map[b].addr;
+              tmp_ram = player->spc_read_dsp(current_edit_addr);
+              selected_index = b;
+              selected_bit = i;
             }
           }
         }

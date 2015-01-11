@@ -3,7 +3,7 @@
     
 Init:
     ;and a, #$ff
-    bra Init
+    ;bra Init
     ; clear loop
     mov $4, #0
     mov $5, #2   ; $200
