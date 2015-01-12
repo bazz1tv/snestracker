@@ -10,12 +10,15 @@
 
 struct Main_Window;
 struct Dsp_Window;
+struct Instrument_Window;
+
 struct BaseD : public Render_Context, public Player_Context
 {
   enum GrandMode
   {
     MAIN=0,
-    DSP_MAP
+    DSP_MAP,
+    INSTRUMENT,
   };
   void pack_mask(unsigned char packed_mask[32]);
   void applyBlockMask(char *filename);
@@ -30,6 +33,8 @@ struct BaseD : public Render_Context, public Player_Context
   void next_track();
   void restart_current_track();
   void update_track_tag();
+
+  void menu_bar_events(SDL_Event &ev);
 
   static int g_cur_entry;// = 0;
   static bool paused;
@@ -68,6 +73,7 @@ struct BaseD : public Render_Context, public Player_Context
   static Experience *exp;
   static Main_Window *main_window;
   static Dsp_Window *dsp_window;
+  static Instrument_Window *instr_window;
 
   static int g_paused;// = 0;
   static bool quitting;

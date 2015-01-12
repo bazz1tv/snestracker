@@ -25,10 +25,61 @@ char BaseD::now_playing[1024];
 
 Experience * BaseD::exp=NULL;
 Main_Window * BaseD::main_window=NULL;
+Instrument_Window * BaseD::instr_window=NULL;
 Dsp_Window * BaseD::dsp_window=NULL;
 
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
+
+void BaseD::menu_bar_events(SDL_Event &ev)
+{
+  /*switch (ev.type)
+  {
+    case SDL_MOUSEBUTTONDOWN:*/
+    if (
+      ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
+    {
+      int x = ev.button.x / CHAR_WIDTH;
+      if (x>=1 && x<=4) { printf ("penis5\n"); quitting=true; } // exit
+      if (x>=CHAR_WIDTH && x<=12) { 
+        toggle_pause();
+      } // pause
+
+      if (x>=16 && x<=22) {  // restart
+        restart_track();
+      }
+
+      if (x>=26 && x<=29) {  // prev
+        SDL_PauseAudio(1);
+        prev_track();
+      }
+
+      if (x>=33 && x<=36) { // next
+        next_track();
+      }
+
+      if (x>=41 && x<=50) { // write mask
+        //write_mask(packed_mask);
+      }
+
+      if (x>=53 && x<=54) { // Main
+        //write_mask(packed_mask);
+        //mode = MODE_DSP_MAP;
+        switch_mode(GrandMode::MAIN);
+      }
+      if (x>=58 && x<=59) { // DSP MAP
+        //write_mask(packed_mask);
+        //mode = MODE_DSP_MAP;
+        switch_mode(GrandMode::DSP_MAP);
+      }
+      if (x>=63 && x<=63) { // Instr
+        //write_mask(packed_mask);
+        //mode = MODE_DSP_MAP;
+        switch_mode(GrandMode::INSTRUMENT);
+      }
+    }
+  //}
+}
 
 void BaseD::update_track_tag()
 {
@@ -190,7 +241,7 @@ void BaseD::next_track()
 
 void BaseD::draw_menu_bar()
 {
-  sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - DSP MAP");
+  sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - MM - DM - I");
   sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
 }
 
@@ -204,9 +255,12 @@ void BaseD::restart_current_track()
 
 void BaseD::switch_mode(int mode)
 {
+  if (grand_mode == mode)
+    return;
   grand_mode = mode;
   clear_screen();
   draw_menu_bar();
+
   if (mode == GrandMode::MAIN)
   {
     if (main_window)
@@ -225,6 +279,16 @@ void BaseD::switch_mode(int mode)
     else 
     {
       fprintf(stderr, "NO DSPWINDOW!?!\n");
+      exit(2);
+    }
+  }
+  else if (mode == GrandMode::INSTRUMENT)
+  {
+    if (instr_window)
+      exp = (Experience*)instr_window;
+    else
+    {
+      fprintf(stderr, "NO INSTRUMENT_WINDOW!?!\n");
       exit(2);
     }
   }

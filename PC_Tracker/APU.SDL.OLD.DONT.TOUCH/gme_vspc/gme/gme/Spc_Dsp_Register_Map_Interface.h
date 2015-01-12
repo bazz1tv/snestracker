@@ -9,8 +9,8 @@ namespace dsp_reg
 enum {
     vol_l=0,
   vol_r=1,
-  pitch_lo=2,
-  pitch_hi=3,
+  plo=2,
+  phi=3,
   srcn=4,
   adsr1=5,
   adsr2=6,

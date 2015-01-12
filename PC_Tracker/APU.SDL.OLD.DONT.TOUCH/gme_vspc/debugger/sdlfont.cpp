@@ -61,12 +61,14 @@ static void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 	}
 }
 
-static void _sdlfont_drawChar(SDL_Surface *dst, int X, int Y, const char ch, Uint32 color)
+static void _sdlfont_drawChar(SDL_Surface *dst, int X, int Y, const char ch, Uint32 color, bool flipV=false)
 {
 	int x, y;
 	unsigned char *c;
 	
 	c = font_getChar(ch);
+	if (flipV) c += 7;
+
 	for (y=0; y<7; y++)
 	{
 		for (x=0; x<8; x++)
@@ -75,7 +77,9 @@ static void _sdlfont_drawChar(SDL_Surface *dst, int X, int Y, const char ch, Uin
 				putpixel(dst, x+X, y+Y, color);	
 			}
 		}
-		c++;
+		if (flipV)
+			c--;
+		else c++;
 	}
 }
 
@@ -102,7 +106,7 @@ static void _sdlfont_drawChar2c(SDL_Surface *dst, int X, int Y, const char ch, U
 	}
 }
 
-void sdlfont_drawString(SDL_Surface *dst, int x, int y, const char *string, Uint32 color, bool prefill)
+void sdlfont_drawString(SDL_Surface *dst, int x, int y, const char *string, Uint32 color, bool prefill, bool flipV)
 {
 	int n, len;
 	SDL_Rect under;
@@ -122,7 +126,7 @@ void sdlfont_drawString(SDL_Surface *dst, int x, int y, const char *string, Uint
 	{
 		if ((n*8)+x+8 >= dst->w) {
 		} else {
-			_sdlfont_drawChar(dst, x + (n*8), y, *string, color);
+			_sdlfont_drawChar(dst, x + (n*8), y, *string, color, flipV);
 		}
 		string++;
 	}

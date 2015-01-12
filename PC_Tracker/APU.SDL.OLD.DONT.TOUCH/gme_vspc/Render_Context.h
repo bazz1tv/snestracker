@@ -5,6 +5,7 @@ struct Render_Context
 public:
   //Render_Context()
 
+  void sdl_draw();
   void clear_screen();
 
   static SDL_Window *sdlWindow;//      =NULL;

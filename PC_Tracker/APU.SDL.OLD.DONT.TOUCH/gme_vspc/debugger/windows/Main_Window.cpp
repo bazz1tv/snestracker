@@ -234,6 +234,7 @@ void Main_Window::receive_event(SDL_Event &ev)
         static int val=0;
         val = !val;
         player->spc_write_dsp(dsp_reg::koff,val);
+        BaseD::switch_mode(GrandMode::INSTRUMENT);
       }
       if (ev.key.keysym.sym == SDLK_u)
       {
@@ -945,38 +946,7 @@ void Main_Window::receive_event(SDL_Event &ev)
         } 
 
         /* menu bar */
-        else if (
-          ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
-        {
-          int x = ev.button.x / 8;
-          if (x>=1 && x<=4) { printf ("penis5\n"); quitting=true; } // exit
-          if (x>=8 && x<=12) { 
-            toggle_pause();
-          } // pause
-
-          if (x>=16 && x<=22) {  // restart
-            restart_track();
-          }
-
-          if (x>=26 && x<=29) {  // prev
-            SDL_PauseAudio(1);
-            prev_track();
-          }
-
-          if (x>=33 && x<=36) { // next
-            next_track();
-          }
-
-          if (x>=41 && x<=50) { // write mask
-            write_mask(packed_mask);
-          }
-
-          if (x>=53 && x<=59) { // DSP MAP
-            //write_mask(packed_mask);
-            //mode = MODE_DSP_MAP;
-            switch_mode(GrandMode::DSP_MAP);
-          }
-        }
+        BaseD::menu_bar_events(ev);
       }
       break;
       default:

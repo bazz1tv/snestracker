@@ -1,5 +1,6 @@
 #include "gui/Clickable_Text.h"
 #include "utility.h"
+#include "sdlfont.h"
 
 Clickable_Text::Clickable_Text() : 
 str(""),
@@ -26,6 +27,11 @@ data(data)
   rect.h = CHAR_HEIGHT;
   rect.x = x;
   rect.y = y;
+}
+
+void Clickable_Text::draw(Uint32 &color, bool prefill/*=true*/, bool Vflip/*=false*/)
+{
+  sdlfont_drawString(screen, rect.x, rect.y, str.c_str(), color, prefill, Vflip);
 }
 
 void Clickable_Text::check_mouse_and_execute(int x, int y, void *newdata/*=NULL*/)

@@ -15,8 +15,9 @@
 #include "Main_Window.h"
 #include "Dsp_Window.h"
 #include "Experience.h"
+#include "Instrument_Window.h"
 
-struct Debugger : BaseD
+struct Debugger : public BaseD
 {
 public:
   Debugger(int &argc, char **argv); // , Music_Player *player, SDL_Window *, SDL_Renderer *, SDL_Texture *, SDL_Surface*);
@@ -25,5 +26,6 @@ public:
 
   Main_Window main_window;
   Dsp_Window dsp_window;
+  Instrument_Window instr_window;
 };
 

@@ -90,6 +90,7 @@ void Dsp_Window::enter_edit_mode()
 void Dsp_Window::exit_edit_mode()
 {
   mode = MODE_NAV;
+  submode = NONE;
   cursor.stop_timer();
   tmp_ram = 0;
 }
@@ -984,39 +985,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           voice_title[i].check_mouse_and_execute(ev.button.x, ev.button.y, (void*)newdata);
         }
 
-        /* menu bar */
-        if (
-          ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
-        {
-          int x = ev.button.x / CHAR_WIDTH;
-          if (x>=1 && x<=4) { printf ("penis5\n"); quitting=true; } // exit
-          if (x>=CHAR_WIDTH && x<=12) { 
-            toggle_pause();
-          } // pause
-
-          if (x>=16 && x<=22) {  // restart
-            restart_track();
-          }
-
-          if (x>=26 && x<=29) {  // prev
-            SDL_PauseAudio(1);
-            prev_track();
-          }
-
-          if (x>=33 && x<=36) { // next
-            next_track();
-          }
-
-          if (x>=41 && x<=50) { // write mask
-            //write_mask(packed_mask);
-          }
-
-          if (x>=53 && x<=59) { // DSP MAP
-            //write_mask(packed_mask);
-            //mode = MODE_DSP_MAP;
-            switch_mode(GrandMode::MAIN);
-          }
-        }
+        BaseD::menu_bar_events(ev);
       }
       break;
       default:

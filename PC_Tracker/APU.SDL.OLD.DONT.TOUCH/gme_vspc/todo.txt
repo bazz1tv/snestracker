@@ -1,3 +1,8 @@
+Instrument Thingy
+-----------------
+Add new char "Triangle"
+give sdlFont routine ability to Vertical Flip a font tile.
+
 ALL
 ---
 lots of things SHOULDN"T be done/updated if paused

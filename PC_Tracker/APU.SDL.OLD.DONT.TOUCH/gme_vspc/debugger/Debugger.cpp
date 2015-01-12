@@ -16,6 +16,7 @@ main_window(argc,argv)
 {
   BaseD::main_window = &main_window;
   BaseD::dsp_window = &dsp_window;
+  BaseD::instr_window = &instr_window;
   exp = &main_window;
 }
 
@@ -26,11 +27,13 @@ void Debugger::run()
   main_window.reload();
   main_window.one_time_draw();
 
+  // exp is changed from BaseD
   while (!quitting)
   {
     exp->run();
-    handle_events();
     exp->draw();
+    handle_events();
+    //sdlfont_drawString(screen, 10,10, "back", Colors::red);
 
     SDL_Delay( 1000 / 100 );
   }
