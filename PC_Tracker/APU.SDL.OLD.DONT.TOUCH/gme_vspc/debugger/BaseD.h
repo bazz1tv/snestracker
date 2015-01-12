@@ -20,6 +20,9 @@ struct BaseD : public Render_Context, public Player_Context
     DSP_MAP,
     INSTRUMENT,
   };
+
+
+
   void pack_mask(unsigned char packed_mask[32]);
   void applyBlockMask(char *filename);
   void write_mask(unsigned char packed_mask[32]);
@@ -30,7 +33,9 @@ struct BaseD : public Render_Context, public Player_Context
   void toggle_pause();
   void restart_track(); // goes to beginning of playlist too
   void prev_track();
+  void prev_track25();
   void next_track();
+  void next_track25();
   void restart_current_track();
   void update_track_tag();
 

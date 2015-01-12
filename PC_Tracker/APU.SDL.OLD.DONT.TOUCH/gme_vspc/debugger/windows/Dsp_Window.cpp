@@ -573,9 +573,21 @@ void Dsp_Window::receive_event(SDL_Event &ev)
       bool is_shift_pressed=false;
       switch (scancode)
       {
+        case SDLK_TAB:
+          if (ev.key.keysym.mod & KMOD_SHIFT)
+          {
+            prev_track25();
+          }
+          else 
+          {
+            next_track25();
+          }
+          //goto reload;
+          this->reload();
+        break;
         case SDLK_SPACE: // toggle pause
           player->toggle_pause();
-          break;
+        break;
         case SDLK_SLASH:
           if (mode == MODE_EDIT_ADDR)
             exit_edit_mode();

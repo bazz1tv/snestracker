@@ -65,11 +65,11 @@ void Instrument_Window::run()
 
 void Instrument_Window::draw()
 {
-  if (!start_stop.is_started)
+  /*if (!start_stop.is_started)
   {
     start_stop.startc.draw(Colors::red);
   }
-  else start_stop.stopc.draw(Colors::red);
+  else start_stop.stopc.draw(Colors::red);*/
   voice.label.draw(Colors::gray);
   voice.right_arrow.draw(Colors::white, true, false, true);
     sprintf(tmpbuf, "%d", voice.n);
@@ -121,8 +121,13 @@ void Instrument_Window::receive_event(SDL_Event &ev)
       switch (scancode)
       {
         case SDLK_SPACE: // toggle pause
-          player->toggle_pause();
-          break;
+          if (start_stop.is_started)
+          {
+            restore_spc();
+            start_stop.is_started = false;
+          }
+          else player->toggle_pause();
+        break;
         default:break;
       }
       if (ev.key.keysym.mod & (CMD_CTRL_KEY))
@@ -130,6 +135,15 @@ void Instrument_Window::receive_event(SDL_Event &ev)
         //is_shift_pressed=true;
         switch (scancode)
         {
+          case SDLK_LEFT:
+            start_stop.is_started = false;
+            prev_track();
+
+          break;
+          case SDLK_RIGHT:
+            start_stop.is_started = false;
+            next_track();
+            break;
           case SDLK_UP:
             inc_voice();
           break;
@@ -145,16 +159,25 @@ void Instrument_Window::receive_event(SDL_Event &ev)
       {
         case SDLK_ESCAPE:
           quitting=true;
-          break;
+        break;
+        case SDLK_TAB:
+          if (ev.key.keysym.mod & KMOD_SHIFT)
+          {
+            prev_track25();
+          }
+          else 
+          {
+            next_track25();
+          }
+          //goto reload;
+          this->reload();
+        break;
 
         case SDLK_LEFT:
-          start_stop.is_started = false;
-          prev_track();
-
+          dec_voice();
           break;
         case SDLK_RIGHT:
-          start_stop.is_started = false;
-          next_track();
+          inc_voice();
           break;
 
         case SDLK_z:

@@ -231,6 +231,33 @@ void BaseD::prev_track()
   reload();
 }
 
+void BaseD::next_track25()
+{
+  int tmp = g_cfg.num_files - g_cur_entry -1;
+              g_cur_entry+=25;
+              if (g_cur_entry>=g_cfg.num_files)
+              { 
+                int derp =  g_cur_entry - g_cfg.num_files;
+                if (derp < g_cfg.num_files)
+                  g_cur_entry = derp;
+                else g_cur_entry=g_cfg.num_files-1;
+              }
+}
+
+void BaseD::prev_track25()
+{
+  g_cur_entry-=25;
+              int tmp = abs(g_cur_entry);
+              if ((unsigned)g_cur_entry>=g_cfg.num_files)
+              { 
+                if ((unsigned)(g_cfg.num_files-tmp) < g_cfg.num_files)
+                  g_cur_entry=g_cfg.num_files-tmp;  
+                else 
+                  g_cur_entry = 0;
+                
+              }
+}
+
 void BaseD::next_track()
 {
   SDL_PauseAudio(true);

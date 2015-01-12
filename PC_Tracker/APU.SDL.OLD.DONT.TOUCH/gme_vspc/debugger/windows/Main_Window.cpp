@@ -299,28 +299,11 @@ void Main_Window::receive_event(SDL_Event &ev)
           case SDLK_TAB:
             if (mod & KMOD_SHIFT)
             {
-              g_cur_entry-=25;
-              int tmp = abs(g_cur_entry);
-              if ((unsigned)g_cur_entry>=g_cfg.num_files)
-              { 
-                if ((unsigned)(g_cfg.num_files-tmp) < g_cfg.num_files)
-                  g_cur_entry=g_cfg.num_files-tmp;  
-                else 
-                  g_cur_entry = 0;
-                
-              }
+              prev_track25();
             }
             else 
             {
-              int tmp = g_cfg.num_files - g_cur_entry -1;
-              g_cur_entry+=25;
-              if (g_cur_entry>=g_cfg.num_files)
-              { 
-                int derp =  g_cur_entry - g_cfg.num_files;
-                if (derp < g_cfg.num_files)
-                  g_cur_entry = derp;
-                else g_cur_entry=g_cfg.num_files-1;
-              }
+              next_track25();
             }
             //goto reload;
             this->reload();
