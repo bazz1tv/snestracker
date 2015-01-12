@@ -35,16 +35,25 @@ public Experience
   } start_stop;
   
 
-  struct Adjustable
+  struct AdjustableUD
   {
-    Adjustable(const char *label) : up_arrow("\x5c"), down_arrow("\x5c"), label(label) {}
+    AdjustableUD(const char *label) : up_arrow("\x5c"), down_arrow("\x5c"), label(label) {}
     Clickable_Text up_arrow,down_arrow;
     Clickable_Text label;
     uint8_t n=4;
     int n_x,n_y;
   };
+  struct AdjustableLR
+  {
+    AdjustableLR(const char *label) : right_arrow("\x5d"), left_arrow("\x5d"), label(label) {}
+    Clickable_Text right_arrow,left_arrow;
+    Clickable_Text label;
+    uint8_t n=0;
+    int n_x,n_y;
+  };
 
-  Adjustable octave, voice;
+  AdjustableUD octave;
+  AdjustableLR voice;
   uint16_t pc_backup;
   uint16_t *pc_ptr;
   int scancode=0;

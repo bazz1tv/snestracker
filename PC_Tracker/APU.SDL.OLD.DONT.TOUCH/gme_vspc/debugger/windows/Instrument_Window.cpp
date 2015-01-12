@@ -29,16 +29,18 @@ void Instrument_Window::run()
     voice.label.rect.x = x;
     voice.label.rect.y = y;
 
-    x+=2*TILE_WIDTH;//center
+    x+=1*TILE_WIDTH;//center
     y+=TILE_HEIGHT;
-    voice.up_arrow.rect.x = x;
-    voice.up_arrow.rect.y = y;
     y+=TILE_HEIGHT;
+    voice.right_arrow.rect.x = x;
+    voice.right_arrow.rect.y = y;
+    x += TILE_WIDTH;
     voice.n_x = x;
     voice.n_y = y;
-    y+=TILE_HEIGHT;
-    voice.down_arrow.rect.x = x;
-    voice.down_arrow.rect.y = y;
+    //y+=TILE_HEIGHT;
+    x += TILE_WIDTH;
+    voice.left_arrow.rect.x = x;
+    voice.left_arrow.rect.y = y;
     
     y=o_y;
     x=o_x;
@@ -69,10 +71,10 @@ void Instrument_Window::draw()
   }
   else start_stop.stopc.draw(Colors::red);
   voice.label.draw(Colors::gray);
-  voice.up_arrow.draw(Colors::white);
+  voice.right_arrow.draw(Colors::white, true, false, true);
     sprintf(tmpbuf, "%d", voice.n);
     sdlfont_drawString(screen, voice.n_x, voice.n_y, tmpbuf, Colors::voice[voice.n]);
-  voice.down_arrow.draw(Colors::white, true, true); // Vflip
+  voice.left_arrow.draw(Colors::white); // Vflip
 
   octave.label.draw(Colors::gray);
   octave.up_arrow.draw(Colors::white);
@@ -305,11 +307,11 @@ void Instrument_Window::receive_event(SDL_Event &ev)
       }
 
 
-      if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &voice.up_arrow.rect))
+      if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &voice.right_arrow.rect))
       {
         inc_voice();
       }
-      else if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &voice.down_arrow.rect))
+      else if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &voice.left_arrow.rect))
       {
         dec_voice();
       }
@@ -361,6 +363,10 @@ void Instrument_Window::dec_octave()
 
 void Instrument_Window::play_pitch(int p)
 {
+  if (!start_stop.is_started)
+  {
+    pause_spc();
+  }
   player->spc_write_dsp(dsp_reg::koff, 0);
   uint8_t hi,lo;
   uint16_t index = 12*octave.n + 0x18 + 1 + p;
@@ -388,6 +394,11 @@ void Instrument_Window::pause_spc()
   *pc_ptr = ENDLESS_LOOP_OPCODE;
 
   player->pause(0);
+
+  player->spc_write_dsp(dsp_reg::koff, 0xff);
+  SDL_Delay(100);
+  player->spc_write_dsp(dsp_reg::koff, 0x00);
+  start_stop.is_started=true;
 }
 
 void Instrument_Window::restore_spc()

@@ -29,9 +29,10 @@ data(data)
   rect.y = y;
 }
 
-void Clickable_Text::draw(Uint32 &color, bool prefill/*=true*/, bool Vflip/*=false*/)
+void Clickable_Text::draw(Uint32 &color, bool prefill/*=true*/, 
+  bool Vflip/*=false*/, bool Hflip/*=false*/)
 {
-  sdlfont_drawString(screen, rect.x, rect.y, str.c_str(), color, prefill, Vflip);
+  sdlfont_drawString(screen, rect.x, rect.y, str.c_str(), color, prefill, Vflip, Hflip);
 }
 
 void Clickable_Text::check_mouse_and_execute(int x, int y, void *newdata/*=NULL*/)

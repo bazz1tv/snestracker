@@ -10,7 +10,7 @@ struct Clickable_Text : public Render_Context
   Clickable_Text(std::string str, int (*action)(void *data)=NULL, void *data=NULL);
   Clickable_Text(std::string str, int x, int y, int (*action)(void *data)=NULL, void *data=NULL);
 
-  void draw(Uint32 &color, bool prefill=true, bool Vflip=false);
+  void draw(Uint32 &color, bool prefill=true, bool Vflip=false, bool Hflip=false);
   void check_mouse_and_execute(int x, int y, void *newdata);
 
   void set_rect(int x, int y, int w, int h);
