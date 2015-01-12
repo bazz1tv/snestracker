@@ -31,6 +31,26 @@ Dsp_Window * BaseD::dsp_window=NULL;
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
 
+void BaseD::check_time()
+{
+  /* Check if it is time to change tune.
+   */   
+  if (player->emu()->tell()/1000 >= song_time) 
+  {
+    if (g_cfg.autowritemask) {
+      write_mask(packed_mask);
+      if (g_cfg.apply_block) {
+        printf("Applying mask on file %s using $%02X as filler\n", g_cfg.playlist[g_cur_entry], g_cfg.filler);
+        applyBlockMask(g_cfg.playlist[g_cur_entry]);
+      }
+    }
+    g_cur_entry++;
+    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; return; }
+    //goto reload;
+    reload();
+  }
+}
+
 void BaseD::menu_bar_events(SDL_Event &ev)
 {
   /*switch (ev.type)
@@ -46,7 +66,7 @@ void BaseD::menu_bar_events(SDL_Event &ev)
       } // pause
 
       if (x>=16 && x<=22) {  // restart
-        restart_track();
+        restart_current_track();
       }
 
       if (x>=26 && x<=29) {  // prev

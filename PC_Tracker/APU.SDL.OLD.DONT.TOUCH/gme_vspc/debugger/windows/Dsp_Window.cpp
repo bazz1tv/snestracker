@@ -116,22 +116,7 @@ void Dsp_Window::init_gen_dsp_clickable(char *str, int &x, int &i)
 
 void Dsp_Window::run()
 {
-  /* Check if it is time to change tune.
-   */   
-  if (player->emu()->tell()/1000 >= song_time) 
-  {
-    if (g_cfg.autowritemask) {
-      write_mask(packed_mask);
-      if (g_cfg.apply_block) {
-        printf("Applying mask on file %s using $%02X as filler\n", g_cfg.playlist[g_cur_entry], g_cfg.filler);
-        applyBlockMask(g_cfg.playlist[g_cur_entry]);
-      }
-    }
-    g_cur_entry++;
-    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; return; }
-    //goto reload;
-    reload();
-  }
+  BaseD::check_time();
 
   #define GENERAL_DSP_STR "General DSP"
   #define GEN_DSP_ENTRY_STR "Mvol_L: $%02X"

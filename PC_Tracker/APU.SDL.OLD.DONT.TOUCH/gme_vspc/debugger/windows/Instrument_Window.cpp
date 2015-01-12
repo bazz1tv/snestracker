@@ -19,6 +19,24 @@ void Instrument_Window::run()
 {
   report::last_pc = (int)player->spc_emu()->pc(); 
 
+  /* Check if it is time to change tune.
+   */   
+  if (player->emu()->tell()/1000 >= song_time) 
+  {
+    if (g_cfg.autowritemask) {
+      write_mask(packed_mask);
+      if (g_cfg.apply_block) {
+        printf("Applying mask on file %s using $%02X as filler\n", g_cfg.playlist[g_cur_entry], g_cfg.filler);
+        applyBlockMask(g_cfg.playlist[g_cur_entry]);
+      }
+    }
+    g_cur_entry++;
+    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; return; }
+    
+    start_stop.is_started = false;
+    reload();
+  }
+
   if (is_first_run)
   {
     int x = start_stop.startc.rect.x, o_x=x, y = start_stop.startc.rect.y+(4*TILE_HEIGHT), o_y = y;
@@ -163,10 +181,12 @@ void Instrument_Window::receive_event(SDL_Event &ev)
         case SDLK_TAB:
           if (ev.key.keysym.mod & KMOD_SHIFT)
           {
+            start_stop.is_started=false;
             prev_track25();
           }
           else 
           {
+            start_stop.is_started=false;
             next_track25();
           }
           //goto reload;

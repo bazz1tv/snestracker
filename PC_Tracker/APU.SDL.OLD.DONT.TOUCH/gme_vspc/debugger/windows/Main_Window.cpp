@@ -955,22 +955,7 @@ void Main_Window::run()
     fflush(stdout);
   }
   
-  /* Check if it is time to change tune.
-   */   
-  if (player->emu()->tell()/1000 >= song_time) 
-  {
-    if (g_cfg.autowritemask) {
-      write_mask(packed_mask);
-      if (g_cfg.apply_block) {
-        printf("Applying mask on file %s using $%02X as filler\n", g_cfg.playlist[g_cur_entry], g_cfg.filler);
-        applyBlockMask(g_cfg.playlist[g_cur_entry]);
-      }
-    }
-    g_cur_entry++;
-    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; return; }
-    //goto reload;
-    this->reload();
-  }
+  BaseD::check_time();
 }
 
 void Main_Window::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*=0*/, uint8_t ry/*=0*/)
