@@ -8,6 +8,7 @@
 #include "gui/Clickable_Text.h"
 #include "gui/cursor.h"
 
+#define MAX_SRCN_ENTRIES 256
 #define MAX_VOICES 8
 // These should get moved to DSP_Register_Map_Interface class later...
 #define MAX_VOICE_REGS 10*MAX_VOICES
@@ -22,6 +23,7 @@ int mute_solo_voice(void *data);
 struct Dsp_Window : public BaseD, public Render_Context, public Player_Context,
 public Experience
 {
+  Dsp_Window();
   void run();
   void draw();
   void receive_event(SDL_Event &ev);
@@ -177,6 +179,8 @@ public Experience
   //unsigned char voice_dsp_vals[10*(MAX_VOICES)]; 
   //
   uint8_t dir_offset=0; // allows scrolling directory
+  uint8_t used_srcn[MAX_SRCN_ENTRIES/8]; // = 0x20
+  uint8_t used_srcn_voice[MAX_SRCN_ENTRIES];
   //
   bool is_first_run=true;
 
@@ -185,4 +189,5 @@ private:
   void init_voice_clickable(char *str, int&, int&);
   void enter_edit_mode();
   void exit_edit_mode();
+  void clear_used_srcn();
 };

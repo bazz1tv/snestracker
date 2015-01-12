@@ -20,7 +20,7 @@ public Experience
 
   void play_pitch(int p);
   void pause_spc();
-  void restore_spc();
+  void restore_spc(bool resume=true);
 
   void inc_voice();
   void dec_voice();

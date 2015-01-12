@@ -50,15 +50,15 @@ void Instrument_Window::run()
     x+=1*TILE_WIDTH;//center
     y+=TILE_HEIGHT;
     y+=TILE_HEIGHT;
-    voice.right_arrow.rect.x = x;
-    voice.right_arrow.rect.y = y;
+    voice.left_arrow.rect.x = x;
+    voice.left_arrow.rect.y = y;
     x += TILE_WIDTH;
     voice.n_x = x;
     voice.n_y = y;
     //y+=TILE_HEIGHT;
     x += TILE_WIDTH;
-    voice.left_arrow.rect.x = x;
-    voice.left_arrow.rect.y = y;
+    voice.right_arrow.rect.x = x;
+    voice.right_arrow.rect.y = y;
     
     y=o_y;
     x=o_x;
@@ -89,10 +89,10 @@ void Instrument_Window::draw()
   }
   else start_stop.stopc.draw(Colors::red);*/
   voice.label.draw(Colors::gray);
-  voice.right_arrow.draw(Colors::white, true, false, true);
+  voice.left_arrow.draw(Colors::white, true, false, true);
     sprintf(tmpbuf, "%d", voice.n);
     sdlfont_drawString(screen, voice.n_x, voice.n_y, tmpbuf, Colors::voice[voice.n]);
-  voice.left_arrow.draw(Colors::white); // Vflip
+  voice.right_arrow.draw(Colors::white); // Vflip
 
   octave.label.draw(Colors::gray);
   octave.up_arrow.draw(Colors::white);
@@ -368,7 +368,50 @@ void Instrument_Window::receive_event(SDL_Event &ev)
         dec_octave();
       }
 
-      BaseD::menu_bar_events(ev);
+      if (
+      ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
+      {
+        int x = ev.button.x / CHAR_WIDTH;
+        if (x>=1 && x<=4) { printf ("penis5\n"); quitting=true; } // exit
+        if (x>=CHAR_WIDTH && x<=12) { 
+          toggle_pause();
+        } // pause
+
+        if (x>=16 && x<=22) {  // restart
+          restart_current_track();
+        }
+
+        if (x>=26 && x<=29) {  // prev
+          SDL_PauseAudio(1);
+          prev_track();
+        }
+
+        if (x>=33 && x<=36) { // next
+          next_track();
+        }
+
+        if (x>=41 && x<=50) { // write mask
+          //write_mask(packed_mask);
+        }
+
+        if (x>=53 && x<=54) { // Main
+          //write_mask(packed_mask);
+          //mode = MODE_DSP_MAP;
+          restore_spc(false);
+          switch_mode(GrandMode::MAIN);
+        }
+        if (x>=58 && x<=59) { // DSP MAP
+          //write_mask(packed_mask);
+          //mode = MODE_DSP_MAP;
+          restore_spc(false);
+          switch_mode(GrandMode::DSP_MAP);
+        }
+        if (x>=63 && x<=67) { // Instr
+          //write_mask(packed_mask);
+          //mode = MODE_DSP_MAP;
+          //switch_mode(GrandMode::INSTRUMENT);
+        }
+      }
     }
     break;
     
@@ -444,11 +487,14 @@ void Instrument_Window::pause_spc()
   start_stop.is_started=true;
 }
 
-void Instrument_Window::restore_spc()
+void Instrument_Window::restore_spc(bool resume/*=true*/)
 {
   // restore_pc()
   //uint16_t *pc_ptr = (uint16_t*)&IAPURAM[report::last_pc];
+  if (!pc_ptr) return;
   player->pause(1);
   *pc_ptr = pc_backup;
-  player->pause(0);
+  if (resume) player->pause(0);
+  pc_ptr = NULL;
+  start_stop.is_started=false;
 }

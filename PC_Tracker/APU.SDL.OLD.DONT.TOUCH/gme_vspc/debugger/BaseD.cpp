@@ -92,7 +92,7 @@ void BaseD::menu_bar_events(SDL_Event &ev)
         //mode = MODE_DSP_MAP;
         switch_mode(GrandMode::DSP_MAP);
       }
-      if (x>=63 && x<=63) { // Instr
+      if (x>=63 && x<=67) { // Instr
         //write_mask(packed_mask);
         //mode = MODE_DSP_MAP;
         switch_mode(GrandMode::INSTRUMENT);
@@ -288,7 +288,7 @@ void BaseD::next_track()
 
 void BaseD::draw_menu_bar()
 {
-  sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - MM - DM - I");
+  sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - MM - DM - INSTR");
   sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
 }
 

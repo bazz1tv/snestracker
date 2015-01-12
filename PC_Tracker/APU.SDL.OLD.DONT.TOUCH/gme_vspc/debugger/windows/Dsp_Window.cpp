@@ -6,6 +6,11 @@
 #define print_then_inc_row_voice(x,col) sdlfont_drawString(screen, x,i, tmpbuf, col); i+=CHAR_HEIGHT;
 #define inc_row i+=CHAR_HEIGHT;
 
+Dsp_Window::Dsp_Window()
+{
+  clear_used_srcn();
+}
+
 int mute_solo_voice(void *data)
 {
   uintptr_t voicenum_plus_click = (uintptr_t)data;
@@ -58,6 +63,20 @@ void print_binary(SDL_Surface *screen, int x, int y, uint8_t v, bool use_colors=
     tmpx+=TILE_WIDTH;
   }
 }
+
+void Dsp_Window::clear_used_srcn()
+{
+  for (int i=0; i < MAX_SRCN_ENTRIES/8; i++)
+  {
+    used_srcn[i]=0;
+    
+  }
+  for (int i=0; i < MAX_SRCN_ENTRIES; i++)
+  {
+    used_srcn_voice[i]=0;
+  }
+}
+
 
 // helper function for the run() first run init
 void Dsp_Window::init_voice_clickable(char *str, int &x, int &i)
@@ -358,7 +377,11 @@ void Dsp_Window::run()
     {
       v = player->spc_read_dsp(0x10*voice+n);
       if (n == dsp_reg::srcn)
+      {
         srcn[voice] = v;
+        uint8_t byte = v/8, bit = v % 8;
+        used_srcn[byte] |= (1 << bit);
+      }
       sprintf(tmpbuf,voice_map[n],v);
       if (is_first_run)
         init_voice_clickable(tmpbuf,x,i);
@@ -447,10 +470,16 @@ void Dsp_Window::run()
     {
       if ( srcn[voice_iter] == (dir_index/2) )
       {
+        used_srcn_voice[dir_index/2] |= 1 << voice_iter;
         put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i+(TILE_HEIGHT/2)-1, Colors::voice[voice_iter]);
         //fprintf(stderr, "voice %d SRCN: %02X, dir_index*2 = %04X")
         is_voice_dir_entry = true;
         //break;
+      }
+      else if (used_srcn_voice[dir_index/2] & (1 << voice_iter))
+      {
+        put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i+(TILE_HEIGHT/2)-1, 
+          Colors::gray);
       }
       else  /* ((x-TILE_WIDTH)-((MAX_VOICES-1)*5))+(voice_iter*5) */
         put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i+(TILE_HEIGHT/2)-1, Colors::nearblack);
@@ -468,7 +497,12 @@ void Dsp_Window::run()
     }
     else 
     {
-      sdlfont_drawString(screen, x,i, tmpbuf, Colors::nearblack);
+      uint8_t dirnum = dir_index/2;
+      uint8_t byte = dirnum / 8, bit = dirnum % 8;
+      if (used_srcn[byte] & (1<<bit))
+        sdlfont_drawString(screen, x,i, tmpbuf, Colors::gray);
+      else
+        sdlfont_drawString(screen, x,i, tmpbuf, Colors::nearblack);
       inc_row
     }
     dir_index+=2;
@@ -561,10 +595,12 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         case SDLK_TAB:
           if (ev.key.keysym.mod & KMOD_SHIFT)
           {
+            clear_used_srcn();
             prev_track25();
           }
           else 
           {
+            clear_used_srcn();
             next_track25();
           }
           //goto reload;
@@ -798,9 +834,11 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           break;
 
         case SDLK_LEFT:
+          clear_used_srcn();
           prev_track();
           break;
         case SDLK_RIGHT:
+          clear_used_srcn();
           next_track();
           break;
         case SDLK_e:
