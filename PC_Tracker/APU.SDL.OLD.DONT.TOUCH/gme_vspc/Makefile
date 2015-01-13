@@ -3,23 +3,23 @@
 CC=g++
 CPP=g++
 debug=-g
-gme_CFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `sdl2-config --cflags`
-LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl2-config --libs` -lm
+gme_CPPFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `sdl2-config --cflags`
+LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl2-config --libs` -lm -framework AppKit
 
-debugger_CFLAGS=$(debug) -Idebugger/memory -Idebugger/windows -O3\
+debugger_CPPFLAGS=$(debug) -INativeFileDialog/include -Idebugger/memory -Idebugger/windows -O3\
 -funroll-loops -Wall -Idebugger `sdl2-config --cflags` -Wall
 
-debugger_LDFLAGS=$(debug) `sdl2-config --libs` -lm
-
-CFLAGS = -std=c++11 $(gme_CFLAGS) $(debugger_CFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
+CPPFLAGS = -std=c++11 $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
+OBJCFLAGS = $(gme_CFLAGS) $(debugger_CFLAGS) -MMD -MP
 ####
 SOURCES=$(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp)
+MSOURCES=$(wildcard */*.m)
 ###
-OBJECTS=$(SOURCES:.cpp=.o)
+OBJECTS=$(SOURCES:.cpp=.o) $(MSOURCES:.m=.m.o)
 #OBJECTS += $(debugger_OBJECTS)
 EXECUTABLE=std
 
-all: $(gme_SOURCES) $(EXECUTABLE)
+all: $(SOURCES) $(EXECUTABLE)
 	
 $(EXECUTABLE): $(OBJECTS) 
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
@@ -30,7 +30,10 @@ $(EXECUTABLE): $(OBJECTS)
 
 
 %.o: %.cpp
-	$(CPP) $(CFLAGS) -c $< -o $@
+	$(CPP) $(CPPFLAGS) -c $< -o $@
+
+%.m.o: %.m
+	$(CPP) $(OBJCFLAGS) -c $< -o $@
 
 # Order matters.. do the ones with headers first
 #%.o: %.c %.h

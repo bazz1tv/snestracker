@@ -76,10 +76,10 @@ public:
 
     enum {
       SOLOSAMPLE=0,
+      PLAYSAMPLE,
       RIPBRR,
       RIPBRRP,
       RIPI,
-      PLAYSAMPLE,
       SIZEOF_MENU
     };
 
@@ -87,10 +87,10 @@ public:
     Context_Menu_Item menu_items[SIZEOF_MENU+1] = 
     {
       {"Solo Sample",true, &solo_sample,NULL},
+      {"Play Sample",true, &play_sample, NULL},
       {"RIP BRR",true, &demo, NULL},
       {"Rip BRR+",true},
       {"Rip Instrument",true},
-      {"Play Sample",true, &play_sample, NULL},
       {"",false, NULL,NULL}
     };
 
