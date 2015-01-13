@@ -502,6 +502,6 @@ void Instrument_Window::restore_spc(bool resume/*=true*/)
   if (resume) player->pause(0);
   pc_ptr = NULL;
   start_stop.is_started=false;
-  BaseD::song_time = song_time_backup;
+  //BaseD::song_time = song_time_backup;
   //track_info_backup = track_info_backup2;
 }

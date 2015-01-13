@@ -1,5 +1,3 @@
-
-
 CC=g++
 CPP=g++
 debug=-g
@@ -15,7 +13,7 @@ OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
 SOURCES=$(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp)
 MSOURCES=$(wildcard */*.m)
 ###
-OBJECTS=$(SOURCES:.cpp=.o) $(MSOURCES:.m=.m.o)
+OBJECTS=$(SOURCES:.cpp=.cpp.o) $(MSOURCES:.m=.m.o)
 #OBJECTS += $(debugger_OBJECTS)
 EXECUTABLE=std
 
@@ -29,7 +27,7 @@ $(EXECUTABLE): $(OBJECTS)
 # Use the dependency files created by the -MMD option to gcc.
 
 
-%.o: %.cpp
+%.cpp.o: %.cpp
 	$(CPP) $(CPPFLAGS) -c $< -o $@
 
 %.m.o: %.m

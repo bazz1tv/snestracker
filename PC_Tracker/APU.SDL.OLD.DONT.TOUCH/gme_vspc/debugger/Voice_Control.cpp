@@ -114,10 +114,10 @@ void Voice_Control::toggle_mute_all()
   //player->mute_voices(muted^=0xff);
   player->mute_voices(muted);
 }
-/*void unmute_all()
+void Voice_Control::unmute_all()
 {
   player->mute_voices(muted=0);
-}*/
+}
 void Voice_Control::checkmouse(Uint16 &x, Uint16 &y, int b)
 {
   muted_toggle_protect = 0;

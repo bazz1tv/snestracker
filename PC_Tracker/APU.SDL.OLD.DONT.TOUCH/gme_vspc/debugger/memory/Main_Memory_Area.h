@@ -8,7 +8,8 @@
 #include "gme/Spc_Dsp_Register_Map_Interface.h"
 #include "Instrument_Window.h"
 
-int demo(void *data);
+// expects pre-calculated main_memory_area.brr
+int write_plain_brr_to_file(void *data);  // data is main_memory_area ptr
 int play_sample(void *data);
 int solo_sample(void *data);
 
@@ -88,7 +89,7 @@ public:
     {
       {"Solo Sample",true, &solo_sample,NULL},
       {"Play Sample",true, &play_sample, NULL},
-      {"RIP BRR",true, &demo, NULL},
+      {"RIP BRR",true, &write_plain_brr_to_file, NULL},
       {"Rip BRR+",true},
       {"Rip Instrument",true},
       {"",false, NULL,NULL}
