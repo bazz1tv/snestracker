@@ -5,6 +5,7 @@
 #include "gui/cursor.h"
 #include "memory/Mouse_Hexdump_Area.h"
 #include "gui/Context_Menu.h"
+#include "gme/Spc_Dsp_Register_Map_Interface.h"
 
 int demo(void *data);
 int play_sample(void *data);
@@ -31,12 +32,19 @@ public:
   Mouse_Hexdump_Area *mouse_hexdump_area;
   char locked=0;
   Uint8 address_remainder=0;
+  uint16_t mouse_addr=0; 
+
+  uint16_t srcn[MAX_VOICES];
+
 
   void log_the_fucking_address_for_the_fucking_context_window();
 
   struct Context
   {
-    Context() : menu(menu_items) {}
+    Context(Main_Memory_Area* base) : menu(menu_items)
+    {
+      menu_items[0].clickable_text.data = base;
+    }
     // for tcontext menu
     uint16_t addr_when_user_right_clicked=0;
     uint8_t voice_to_play=0;
@@ -44,7 +52,7 @@ public:
     Context_Menu menu;
     Context_Menu_Item menu_items[5] = 
     {
-      {"RIP BRR",true, &demo, &addr_when_user_right_clicked},
+      {"RIP BRR",true, &demo, NULL},
       {"Rip BRR+",true},
       {"Rip Instrument",true},
       {"Play Sample",true, &play_sample},

@@ -3,6 +3,12 @@
 //#include "Spc_Emu.h"
 #include "Snes_Spc.h"
 
+#define MAX_SRCN_ENTRIES 256
+#define MAX_VOICES 8
+// These should get moved to DSP_Register_Map_Interface class later...
+#define MAX_VOICE_REGS 10*MAX_VOICES
+#define MAX_GEN_DSP_REGS 25
+
 namespace dsp_reg
 {
   extern int how_many;

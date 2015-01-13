@@ -184,9 +184,9 @@ void Main_Window::receive_event(SDL_Event &ev)
             y /= 2;
             //set_addr(y*256+x);
             
-            mouse_addr = y*256+x;
+            main_memory_area.mouse_addr = y*256+x;
             if (!locked()) {
-              mouseover_hexdump_area.set_addr(mouse_addr); //_from_cursor(x,y);
+              mouseover_hexdump_area.set_addr(main_memory_area.mouse_addr); //_from_cursor(x,y);
             }
           }
         }
@@ -939,10 +939,15 @@ void Main_Window::receive_event(SDL_Event &ev)
 
 void Main_Window::run()
 {
-
-//reload:
-  //reload();
-  
+  for (uint8_t voice=0; voice < MAX_VOICES; voice++)
+  {
+    uint16_t dir = player->spc_read_dsp(dsp_reg::dir) * 0x100;
+    //fprintf(stderr, "dir = %04X\n", dir);
+    uint16_t *p = (uint16_t*)&IAPURAM[dir+(player->spc_read_dsp(0x10*voice+4)*4)];
+    //fprintf(stderr, "RAM addr = %04X\n", dir+(player->spc_read_dsp(0x10*voice+4)*4));
+    main_memory_area.srcn[voice] = *p;
+    //fprintf(stderr,"srcn[%d] = %04X\n", voice, main_memory_area.srcn[voice]);
+  } 
 
   pack_mask(packed_mask);
   
@@ -987,7 +992,7 @@ Main_Window::Main_Window(int &argc, char **argv) :
 main_memory_area(&mouseover_hexdump_area),
 port_tool(&mouseover_hexdump_area.cursor)
 {
-  //main_memory_context.menu.push("")
+  //
 
 
   int res;
@@ -1159,7 +1164,7 @@ void Main_Window::draw_mouse_address()
   // write the address under mouse cursor
   if (mouseover_hexdump_area.address >=0)
   {
-    sprintf(tmpbuf, "Addr mouse: $%04X", mouse_addr);
+    sprintf(tmpbuf, "Addr mouse: $%04X", main_memory_area.mouse_addr);
     sdlfont_drawString(screen, MEMORY_VIEW_X+8*(23), MEMORY_VIEW_Y-10, tmpbuf, Colors::white);
   }
 }

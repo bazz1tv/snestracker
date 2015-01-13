@@ -20,6 +20,7 @@
 
 
 
+
 struct Main_Window : public BaseD, public Render_Context, 
 public Player_Context,
 public Experience
@@ -99,7 +100,7 @@ public Experience
   int tmp=0, i=0;
   SDL_Rect tmprect;
   
-  uint16_t mouse_addr=0; 
+  
 
   
   //int last_pc;

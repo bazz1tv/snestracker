@@ -1,7 +1,10 @@
 Instrument Thingy
 -----------------
-Add new char "Triangle"
-give sdlFont routine ability to Vertical Flip a font tile.
+Graphical ADSR Envelope settings
+-- Radio Buttons
+-- Graphical ADSR waveform
+Right-Click Context Menu
+-- Download BRR, BRR+, BRRI
 
 ALL
 ---
