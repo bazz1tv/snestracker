@@ -26,5 +26,6 @@ struct Voice_Control : public Player_Context
   void unmute_all();
   void mute(uint8_t i);
   void solo(uint8_t i);
+  void solo_bits(uint8_t i);
   void toggle_solo(uint8_t i);
 };

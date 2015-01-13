@@ -8,10 +8,30 @@
 int demo(void *data)
 {
   Main_Memory_Area *mma = (Main_Memory_Area*)data;
-  uint16_t *address = &mma->context.addr_when_user_right_clicked;
-  fprintf(stderr, "address = %04X", mma->context.addr_when_user_right_clicked);
+
+  return 0;
+}
+
+int play_sample(void *data)
+{
+  // steal sample routine from above
+  // and a, #$ff -- A "DONOTHING" opcode
+  // 28 ff 2f fc 8f 00 04
+  // 2f fe // 8f 00 04
+  // Enter instrument editor
+  //
+  // pause SPC
+  //player->pause(1);
+  // place into SPC the above opcodes at PC
+  return 0;
+}
+
+int Main_Memory_Area::check_brr()
+{
+  uint16_t *address = &context.addr_when_user_right_clicked;
+  fprintf(stderr, "address = %04X", context.addr_when_user_right_clicked);
   assert (address != 0);
-  uint8_t lowest_srcn_index=0;
+  uint8_t lowest_srcn_index=0x0;
   
 
   // get closest SRCN address before clicked address
@@ -26,7 +46,6 @@ int demo(void *data)
         lowest_closest_srcn_address=report::SRCN_used[i];
         //fprintf(stderr, "lowest = %04X, %04X\n", lowest_closest_srcn_address, report::SRCN_used[i]);
         lowest_offset = offset;
-        lowest_srcn_index = i;
       }
     }
   }
@@ -37,7 +56,16 @@ int demo(void *data)
     return -1;
   }
 
-  BaseD::voice_control.solo(lowest_srcn_index);
+  for (int x=0; x < MAX_VOICES; x++)
+  {
+    if (srcn[x] == lowest_closest_srcn_address)
+    {
+      lowest_srcn_index |= 1<<x;
+      //break;
+    }
+  }
+
+  BaseD::voice_control.solo_bits(lowest_srcn_index);
 
   // get closest LOOP Address before clicked address
   uint16_t lowest_closest_brrloopstart_address_from_click=0xffff;
@@ -121,24 +149,7 @@ int demo(void *data)
   fprintf(stderr, "lowest_closest_brrloopstart_address_from_click = %04X\n", lowest_closest_brrloopstart_address_from_click);
   fprintf(stderr, "lowest_closest_brrend_address_from_click = %04X\n", lowest_closest_brrend_address_from_click);
   
-  return 0;
 }
-
-int play_sample(void *data)
-{
-  // steal sample routine from above
-  // and a, #$ff -- A "DONOTHING" opcode
-  // 28 ff 2f fc 8f 00 04
-  // 2f fe // 8f 00 04
-  // Enter instrument editor
-  //
-  // pause SPC
-  //player->pause(1);
-  // place into SPC the above opcodes at PC
-  return 0;
-}
-
-
 
 void Main_Memory_Area::log_the_fucking_address_for_the_fucking_context_window()
 {

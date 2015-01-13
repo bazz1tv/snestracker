@@ -841,6 +841,7 @@ void Main_Window::receive_event(SDL_Event &ev)
             main_memory_area.log_the_fucking_address_for_the_fucking_context_window();
             main_memory_area.context.menu.is_active = true;
             main_memory_area.context.menu.preload(ev.button.x, ev.button.y);
+            main_memory_area.check_brr();
           }
         } 
 

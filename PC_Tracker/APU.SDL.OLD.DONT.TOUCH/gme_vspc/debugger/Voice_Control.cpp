@@ -75,6 +75,12 @@ void Voice_Control::solo(uint8_t i)
   player->mute_voices(muted);
 }
 
+void Voice_Control::solo_bits(uint8_t i)
+{
+  muted = ~(i);
+  player->mute_voices(muted);
+}
+
 void Voice_Control::toggle_solo(uint8_t i)
 {
   if (muted == Uint8(~(1 << (i-1) ) ) )

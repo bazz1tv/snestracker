@@ -38,6 +38,7 @@ public:
 
 
   void log_the_fucking_address_for_the_fucking_context_window();
+  int check_brr();
 
   struct Context
   {
