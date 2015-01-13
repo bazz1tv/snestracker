@@ -77,7 +77,13 @@ void Voice_Control::solo(uint8_t i)
 
 void Voice_Control::solo_bits(uint8_t i)
 {
-  muted = ~(i);
+  //fprintf(stderr, "muted = %02X, ~i = %02X", muted, ~i);
+  if (muted == (uint8_t)(~i))
+  {
+    //fprintf(stderr, "deede");
+    muted = 0;
+  }
+  else muted = ~(i);
   player->mute_voices(muted);
 }
 

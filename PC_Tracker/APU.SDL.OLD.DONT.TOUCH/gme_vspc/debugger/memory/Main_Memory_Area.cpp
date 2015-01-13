@@ -16,27 +16,50 @@ int demo(void *data)
 
 int play_sample(void *data)
 {
-  // steal sample routine from above
-  // and a, #$ff -- A "DONOTHING" opcode
-  // 28 ff 2f fc 8f 00 04
-  // 2f fe // 8f 00 04
-  // Enter instrument editor
-  //
-  // pause SPC
-  //player->pause(1);
-  // place into SPC the above opcodes at PC
+  Main_Memory_Area *mma = (Main_Memory_Area*)data;
+  mma->brr.play_sample(BaseD::instr_window);
   return 0;
 }
 
-int Main_Memory_Area::check_brr()
+int solo_sample(void *data)
+{
+  Main_Memory_Area *mma = (Main_Memory_Area*)data;
+  mma->brr.solo_sample();
+  return 0;
+}
+
+void BRR::solo_sample()
+{
+  BaseD::voice_control.solo_bits(srcn_solo);
+}
+
+void BRR::play_sample(Instrument_Window *instr_window)
+{
+  //Instrument_Window *instr_window = 
+  instr_window->switch_mode(BaseD::GrandMode::INSTRUMENT);
+  instr_window->voice.n = one_solo;
+  instr_window->pause_spc();
+}
+
+BRR::BRR()
+{
+  for (int i=0; i < MAX_VOICES; i++)
+  {
+    srcn[i]=0xffff;
+  }
+}
+
+int BRR::check_brr(uint16_t *address)
 {
   bool does_sample_loop = false;
-  uint16_t *address = &context.addr_when_user_right_clicked;
-  fprintf(stderr, "address = %04X\n", context.addr_when_user_right_clicked);
+  bool no_lower_loop_found=false;
+  //uint16_t *address = &context.addr_when_user_right_clicked;
+  //fprintf(stderr, "address = %04X\n", context.addr_when_user_right_clicked);
   assert (address != 0);
-  uint8_t lowest_srcn_index=0x0;
-  uint8_t lowest_loop_index=0x0;
-  uint8_t srcn_solo=0x0;
+  lowest_srcn_index=0x0;
+  lowest_loop_index=0x0;
+  srcn_solo=0x0;
+  one_solo=0x0;
   
 
   // get closest SRCN address before clicked address
@@ -76,30 +99,28 @@ int Main_Memory_Area::check_brr()
   if (lowest_closest_srcn_address == 0xffff)
   {
     fprintf(stderr, "no appropriate SRCN was found :(\n");
-    return -1;
+    return NOT_A_SAMPLE;
   }
 
 
 
   // solo the voices that are using this sample RIGHT NOW
   // if no voice is using this sample, just keep them all going..
-  for (int x=0; x < MAX_VOICES; x++)
-  {
-    if (srcn[x] == lowest_closest_srcn_address)
+  uint8_t first_bit = 0;
+    for (int x=0; x < MAX_VOICES; x++)
     {
-      srcn_solo |= 1<<x;
-      //break;
+      if (srcn[x] == lowest_closest_srcn_address)
+      {
+        srcn_solo |= 1<<x;
+        one_solo = x;
+      }
     }
-  }
 
-  BaseD::voice_control.solo_bits(srcn_solo);
 
   // get closest LOOP Address before clicked address
-  
-  
-
   if (lowest_closest_brrloopstart_address_from_click == 0xffff)
   {
+    no_lower_loop_found = true;
     fprintf(stderr, "no appropriate LOOP point was found :(\n");
     //return -1;
   }
@@ -107,13 +128,13 @@ int Main_Memory_Area::check_brr()
   // Find closest BRR end block after closest SRCN
   uint16_t lowest_closest_brrend_address_from_srcn = 0xffff;
 
-  if (report::src[lowest_srcn_index].brr_end != 0xffff)
+  /*if (report::src[lowest_srcn_index].brr_end != 0xffff)
   {
     fprintf(stderr, "derp");
     lowest_closest_brrend_address_from_srcn = report::src[lowest_srcn_index].brr_end;
   }
   else
-  {
+  {*/
     uint16_t p = lowest_closest_srcn_address;
     while(1)
     {
@@ -128,7 +149,7 @@ int Main_Memory_Area::check_brr()
     }
     lowest_closest_brrend_address_from_srcn = p;
     // = p;
-  }
+  //}
 
   if (lowest_closest_brrend_address_from_srcn == 0xffff)
   {
@@ -139,11 +160,11 @@ int Main_Memory_Area::check_brr()
   // get loop end
   uint16_t lowest_closest_brrend_address_from_loop = 0xffff;
 
-  if (report::src[lowest_loop_index].brr_loop_end != 0xffff)
-    lowest_closest_brrend_address_from_loop= report::src[lowest_loop_index].brr_loop_end;
+  /*if (report::src[lowest_loop_index].brr_loop_end != 0xffff)
+    ;lowest_closest_brrend_address_from_loop= report::src[lowest_loop_index].brr_loop_end;
   else
-  {
-    uint16_t p = report::src[lowest_loop_index].brr_loop_start;
+  {*/
+    p = report::src[lowest_loop_index].brr_loop_start;
     while(1)
     {
       if (BaseD::IAPURAM[p] & 1)
@@ -155,7 +176,7 @@ int Main_Memory_Area::check_brr()
     }
     lowest_closest_brrend_address_from_loop = p;
     report::src[lowest_loop_index].brr_loop_end = p;
-  }
+  //}
 
   if (lowest_closest_brrend_address_from_loop == 0xffff)
   {
@@ -163,9 +184,14 @@ int Main_Memory_Area::check_brr()
     //return -1;
   }  
 
-  if (lowest_closest_brrloopstart_address_from_click > lowest_closest_brrend_address_from_srcn)
+  if (!no_lower_loop_found && lowest_closest_brrloopstart_address_from_click > lowest_closest_brrend_address_from_srcn)
   {
     fprintf(stderr,"You clicked on an external Loop sample\n");
+    brr_start = report::src[lowest_loop_index].brr_start;
+    brr_end = report::src[lowest_loop_index].brr_end;
+    brr_loop_start = report::src[lowest_loop_index].brr_loop_start;
+    brr_loop_end = report::src[lowest_loop_index].brr_loop_end;
+    return CLICKED_ON_LOOP_ONLY;
   }
   else 
   {
@@ -177,15 +203,15 @@ int Main_Memory_Area::check_brr()
     {
       brr_loop_start = report::src[lowest_srcn_index].brr_loop_start;
       brr_loop_end = report::src[lowest_srcn_index].brr_loop_end;
+      return LOOP_SAMPLE;
     }
     else
     {
       brr_loop_start=0xffff;
       brr_loop_end = 0xffff;
+      return PLAIN_SAMPLE;
     }
   }
-
- 
 
   fprintf(stderr, "lowest_closest_srcn_address = %04X\n", lowest_closest_srcn_address);
   fprintf(stderr, "lowest_closest_brrend_address_from_srcn = %04X\n", lowest_closest_brrend_address_from_srcn);
@@ -204,10 +230,7 @@ Main_Memory_Area::Main_Memory_Area(Mouse_Hexdump_Area *mouse_hexdump_area, uint1
 mouse_hexdump_area(mouse_hexdump_area), dir(dir),
 context(this)
 {
-  for (int i=0; i < MAX_VOICES; i++)
-  {
-    srcn[i]=0xffff;
-  }
+  
 }
 
 

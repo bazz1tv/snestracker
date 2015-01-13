@@ -6,9 +6,32 @@
 #include "memory/Mouse_Hexdump_Area.h"
 #include "gui/Context_Menu.h"
 #include "gme/Spc_Dsp_Register_Map_Interface.h"
+#include "Instrument_Window.h"
 
 int demo(void *data);
 int play_sample(void *data);
+int solo_sample(void *data);
+
+struct BRR
+{
+  BRR();
+  enum BRR_TYPE {
+    CLICKED_ON_LOOP_ONLY=0,
+    LOOP_SAMPLE,
+    PLAIN_SAMPLE,
+    NOT_A_SAMPLE
+  };
+  uint8_t one_solo=0x0;
+  uint8_t srcn_solo=0x0;
+  uint16_t srcn[MAX_VOICES];  // current voices' SRCN addresses
+  uint16_t brr_start,brr_end; // for downloading BRR samples
+  uint16_t brr_loop_start,brr_loop_end;
+  uint8_t lowest_srcn_index=0x0;  // indexes into report::src[]
+  uint8_t lowest_loop_index=0x0;
+  int check_brr(uint16_t *address);
+  void play_sample(Instrument_Window *instr_window);
+  void solo_sample();
+};
 
 struct Main_Memory_Area : Memory
 {
@@ -33,35 +56,43 @@ public:
   char locked=0;
   Uint8 address_remainder=0;
   uint16_t mouse_addr=0; 
-  uint16_t *dir;
-
-  uint16_t srcn[MAX_VOICES];
-
-  uint16_t brr_start,brr_end; // for downloading BRR samples
-  uint16_t brr_loop_start,brr_loop_end;
-
+  uint16_t *dir; // unused, should be deleted
 
   void log_the_fucking_address_for_the_fucking_context_window();
-  int check_brr();
+  
+  BRR brr;
 
   struct Context
   {
     Context(Main_Memory_Area* base) : menu(menu_items)
     {
-      menu_items[0].clickable_text.data = base;
+      menu_items[SOLOSAMPLE].clickable_text.data = base;
+      menu_items[RIPBRR].clickable_text.data = base;
+      menu_items[PLAYSAMPLE].clickable_text.data = base;
     }
     // for tcontext menu
     uint16_t addr_when_user_right_clicked=0;
     uint8_t voice_to_play=0;
 
+    enum {
+      SOLOSAMPLE=0,
+      RIPBRR,
+      RIPBRRP,
+      RIPI,
+      PLAYSAMPLE,
+      SIZEOF_MENU
+    };
+
     Context_Menu menu;
-    Context_Menu_Item menu_items[5] = 
+    Context_Menu_Item menu_items[SIZEOF_MENU+1] = 
     {
+      {"Solo Sample",true, &solo_sample,NULL},
       {"RIP BRR",true, &demo, NULL},
       {"Rip BRR+",true},
       {"Rip Instrument",true},
-      {"Play Sample",true, &play_sample},
-      {"",false}
+      {"Play Sample",true, &play_sample, NULL},
+      {"",false, NULL,NULL}
     };
+
   } context;
 };

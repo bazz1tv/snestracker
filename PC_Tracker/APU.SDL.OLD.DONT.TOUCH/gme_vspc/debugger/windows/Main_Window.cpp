@@ -840,8 +840,44 @@ void Main_Window::receive_event(SDL_Event &ev)
             // activate_context.menu()
             main_memory_area.log_the_fucking_address_for_the_fucking_context_window();
             main_memory_area.context.menu.is_active = true;
+            
+            //int r = ;
+            switch (main_memory_area.brr.check_brr(&main_memory_area.context.addr_when_user_right_clicked))
+            {
+              case BRR::NOT_A_SAMPLE:
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::SOLOSAMPLE].is_visible = false;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = false;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = false;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = false;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPI].is_visible = false;
+                main_memory_area.context.menu.is_active = false;
+              break;
+
+              case BRR::PLAIN_SAMPLE:
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::SOLOSAMPLE].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = false;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPI].is_visible = true;
+              break;
+              case BRR::LOOP_SAMPLE:
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::SOLOSAMPLE].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPI].is_visible = true;
+              break;
+              case BRR::CLICKED_ON_LOOP_ONLY:
+                // notify user
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::SOLOSAMPLE].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = false;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPI].is_visible = true;
+              break;
+            }
+
             main_memory_area.context.menu.preload(ev.button.x, ev.button.y);
-            main_memory_area.check_brr();
           }
         } 
 
@@ -946,7 +982,7 @@ void Main_Window::run()
     //fprintf(stderr, "dir = %04X\n", dir);
     uint16_t *p = (uint16_t*)&IAPURAM[dir+(player->spc_read_dsp(0x10*voice+4)*4)];
     //fprintf(stderr, "RAM addr = %04X\n", dir+(player->spc_read_dsp(0x10*voice+4)*4));
-    main_memory_area.srcn[voice] = *p;
+    main_memory_area.brr.srcn[voice] = *p;
     //fprintf(stderr,"srcn[%d] = %04X\n", voice, main_memory_area.srcn[voice]);
   } 
 

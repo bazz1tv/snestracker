@@ -37,6 +37,7 @@ void BaseD::check_time()
    */   
   if (player->emu()->tell()/1000 >= song_time) 
   {
+    fprintf(stderr, "POOP");
     if (g_cfg.autowritemask) {
       write_mask(packed_mask);
       if (g_cfg.apply_block) {

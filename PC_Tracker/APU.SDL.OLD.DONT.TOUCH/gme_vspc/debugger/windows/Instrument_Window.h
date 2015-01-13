@@ -56,7 +56,9 @@ public Experience
   AdjustableLR voice;
   uint16_t pc_backup;
   uint16_t *pc_ptr;
-  int scancode=0;
+  int scancode=0; // there's a reason for saving the scancode.. not sure if it's purposed anymore
+  int song_time_backup;
+  //track_info_t track_info_backup, track_info_backup2; // cause of pass by reference
 
   enum modes 
   { 

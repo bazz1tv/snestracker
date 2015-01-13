@@ -473,6 +473,11 @@ void Instrument_Window::pause_spc()
   pc_ptr = (uint16_t*)&IAPURAM[report::last_pc];
   pc_backup = *pc_ptr;
 
+  song_time_backup = BaseD::song_time;
+  BaseD::song_time = 10000;
+  //player->ignore_silence();
+  player->emu()->set_fade(1000*10000, 8000);
+
 
   // write with never-ending loop
   
@@ -497,4 +502,6 @@ void Instrument_Window::restore_spc(bool resume/*=true*/)
   if (resume) player->pause(0);
   pc_ptr = NULL;
   start_stop.is_started=false;
+  BaseD::song_time = song_time_backup;
+  //track_info_backup = track_info_backup2;
 }
