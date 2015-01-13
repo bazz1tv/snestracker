@@ -3,6 +3,8 @@
 
 #include "SDL.h"
 #include "Screen.h"
+#include "gme/Spc_Dsp_Register_Map_Interface.h"
+
 /* 
 I cannot encapsulate this because the DSP needs to be able to access it
 */
@@ -74,9 +76,16 @@ namespace report
   extern Mem_Surface memsurface;
   extern unsigned char used2[0x101];
   extern unsigned char used[0x10006];
-  extern uint16_t BRR_Headers[BRR_HEADER_MAX]; // this gets init'd in APP constructor
-  extern uint16_t SRCN_used[SRCN_MAX];  // SRC addresses used
-  extern uint16_t LOOP_used[SRCN_MAX];  // loop addressed used
+
+  struct Src
+  {
+    uint16_t dir_addr; //unused for now
+    uint16_t brr_start=0xffff;
+    uint16_t brr_end=0xffff;
+    uint16_t brr_loop_start=0xffff;
+    uint16_t brr_loop_end=0xffff;
+  };
+  extern Src src[MAX_SRCN_ENTRIES];
 
   int backup_color(int addr);
 

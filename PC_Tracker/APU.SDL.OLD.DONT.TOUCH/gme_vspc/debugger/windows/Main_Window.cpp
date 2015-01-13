@@ -942,7 +942,7 @@ void Main_Window::run()
 {
   for (uint8_t voice=0; voice < MAX_VOICES; voice++)
   {
-    uint16_t dir = player->spc_read_dsp(dsp_reg::dir) * 0x100;
+    dir = player->spc_read_dsp(dsp_reg::dir) * 0x100;
     //fprintf(stderr, "dir = %04X\n", dir);
     uint16_t *p = (uint16_t*)&IAPURAM[dir+(player->spc_read_dsp(0x10*voice+4)*4)];
     //fprintf(stderr, "RAM addr = %04X\n", dir+(player->spc_read_dsp(0x10*voice+4)*4));
@@ -990,7 +990,7 @@ void Main_Window::unlock()
 
 
 Main_Window::Main_Window(int &argc, char **argv) : 
-main_memory_area(&mouseover_hexdump_area),
+main_memory_area(&mouseover_hexdump_area, &dir),
 port_tool(&mouseover_hexdump_area.cursor)
 {
   //

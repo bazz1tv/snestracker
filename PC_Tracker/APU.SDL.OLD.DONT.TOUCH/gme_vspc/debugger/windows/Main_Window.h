@@ -71,7 +71,7 @@ public Experience
   // external deps
 
   // How to package this as an entity?
-  
+  uint16_t dir;
   Main_Memory_Area main_memory_area;
   Mouse_Hexdump_Area mouseover_hexdump_area;
   Port_Tool port_tool;

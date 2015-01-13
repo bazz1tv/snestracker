@@ -315,8 +315,9 @@ inline void Spc_Dsp::decode_brr( voice_t* v )
 	{
 		uint16_t very_end = v->brr_addr+8;
 		report_echomem(very_end); //fprintf(stderr,"0x%04x\n", v->brr_addr);
+		//report::src[m.t_srcn].brr_end = very_end;
 		
-		for (int i=0; i < report::BRR_HEADER_MAX; i++)
+		/*for (int i=0; i < report::BRR_HEADER_MAX; i++)
 		{
 			if (report::BRR_Headers[i] == 0xffff)
 			{
@@ -325,7 +326,7 @@ inline void Spc_Dsp::decode_brr( voice_t* v )
 			}
 			else if (report::BRR_Headers[i] == very_end)
 				break;
-		}
+		}*/
 	}
 	
 	// Write to next four samples in circular buffer
@@ -429,37 +430,12 @@ inline VOICE_CLOCK( V1 )
 	uint16_t *loop_addr = (uint16_t*) &m.ram[m.t_dir_addr+2];
 
 	uint8_t flag=0;
-	for (int i=0; i < report::SRCN_MAX; i++)
-	{
+	
 		//1 
-		if (report::SRCN_used[i] == 0xffff)
-		{
-			report::SRCN_used[i] = *p;
-			flag |= 1;
-			if (flag == 3)
-				break;
-		}
-		else if (report::SRCN_used[i] == *p)
-		{
-			flag |= 1;
-			if (flag == 3)
-				break;
-		}
-		//2
-		if (report::LOOP_used[i] == 0xffff)
-		{
-			report::LOOP_used[i] = *loop_addr;
-			flag |= 2;
-			if (flag == 3)
-				break;
-		}
-		else if (report::LOOP_used[i] == *loop_addr)
-		{
-			flag |= 2;
-			if (flag == 3)
-				break;
-		}
-	}
+		
+		report::src[m.t_srcn].brr_start = *p;
+		report::src[m.t_srcn].brr_loop_start = *loop_addr;
+	
 	
 	m.t_srcn = VREG(v->regs,srcn);
 }

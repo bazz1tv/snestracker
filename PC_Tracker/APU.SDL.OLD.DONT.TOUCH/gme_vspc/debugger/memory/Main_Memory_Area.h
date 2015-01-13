@@ -14,7 +14,7 @@ struct Main_Memory_Area : Memory
 {
 public:
   //friend class Mouse_Hexdump_Area;
-  Main_Memory_Area(Mouse_Hexdump_Area *mouse_hexdump_area);
+  Main_Memory_Area(Mouse_Hexdump_Area *mouse_hexdump_area, uint16_t *dir);
 
   void set_addr(int i);
   void set_addr_from_cursor(int x, int y);
@@ -33,8 +33,12 @@ public:
   char locked=0;
   Uint8 address_remainder=0;
   uint16_t mouse_addr=0; 
+  uint16_t *dir;
 
   uint16_t srcn[MAX_VOICES];
+
+  uint16_t brr_start,brr_end; // for downloading BRR samples
+  uint16_t brr_loop_start,brr_loop_end;
 
 
   void log_the_fucking_address_for_the_fucking_context_window();

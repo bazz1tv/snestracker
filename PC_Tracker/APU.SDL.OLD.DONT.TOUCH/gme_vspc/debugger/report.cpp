@@ -1,5 +1,6 @@
 #include "report.h"
 
+
 SDL_Rect Mem_Surface::memrect = {MEMORY_VIEW_X, MEMORY_VIEW_Y,0,0};
 
 Mem_Surface::Mem_Surface()
@@ -46,12 +47,13 @@ void Mem_Surface::clear()
 {
   memset(data, 0, 512*512*4);
   memset(cdata, 0, 512*512*4);
-  for (int i=0; i < report::BRR_HEADER_MAX; i++)
-    report::BRR_Headers[i] = 0xffff;  // init to ROM address, brr would never be there
-  for (int i=0; i < report::SRCN_MAX; i++)
-    report::SRCN_used[i] = 0xffff;  // init to ROM address, brr would never be there
-  for (int i=0; i < report::SRCN_MAX; i++)
-    report::LOOP_used[i] = 0xffff;  // init to ROM address, brr would never be there
+  for (int i=0; i < MAX_SRCN_ENTRIES; i++)
+  {
+    report::src[i].brr_start = 0xffff;  // init to ROM address, brr would never be there
+    report::src[i].brr_loop_start = 0xffff;
+    report::src[i].brr_end = 0xffff;
+    report::src[i].brr_loop_end = 0xffff;
+  }
   /*memset(used, 0, sizeof(used));
   memset(used2, 0, sizeof(used2));*/
 }
@@ -108,9 +110,7 @@ namespace report
   Mem_Surface memsurface;
   int last_pc = -1;
   int bcolor=0; // backup color
-  uint16_t BRR_Headers[BRR_HEADER_MAX]; // this gets init in APP constructor
-  uint16_t SRCN_used[SRCN_MAX];
-  uint16_t LOOP_used[SRCN_MAX];
+  Src src[MAX_SRCN_ENTRIES];
 
   // backup colors is no longer an issue
   int backup_color(int addr)
