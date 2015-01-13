@@ -3,20 +3,33 @@
 #include "report.h"
 #include "gme/Spc_Dsp_Register_Map_Interface.h"
 #include <nfd.h>
+#include "SDL_mouse.h"
 
 //extern uint8_t* IAPURAM;
 //extern Music_Player *player;
 
 int demo(void *data)
 {
+  
+  //SDL_SetWindowGrab(BaseD::sdlWindow, SDL_TRUE);
   Main_Memory_Area *mma = (Main_Memory_Area*)data;
 
   nfdchar_t *outPath = NULL;
-    nfdresult_t result = NFD_OpenDialog( NULL, NULL, &outPath );
+    nfdresult_t result = NFD_SaveDialog( NULL, NULL, &outPath );
 
     if ( result == NFD_OKAY ) {
         puts("Success!");
         puts(outPath);
+        //SDL_RWops* SDL_RWFromFile(const char* file,
+          //                const char* mode)
+        SDL_RWops *file = SDL_RWFromFile(outPath, "wb");
+        if (file == NULL)
+        {
+          printf( "Warning: Unable to open file! SDL Error: %s\n", SDL_GetError() );
+          return -1;
+        }
+        SDL_RWwrite(file, &BaseD::IAPURAM[mma->brr.brr_start], mma->brr.brr_end - mma->brr.brr_start + 1, 1);
+        SDL_RWclose(file);
         free(outPath);
     }
     else if ( result == NFD_CANCEL ) {
@@ -25,7 +38,8 @@ int demo(void *data)
     else {
         printf("Error: %s\n", NFD_GetError() );
     }
-
+  // need the following to keep focus on window after saving the file
+  SDL_RaiseWindow(BaseD::sdlWindow);
 
   return 0;
 }

@@ -3,14 +3,14 @@
 CC=g++
 CPP=g++
 debug=-g
-gme_CPPFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `sdl2-config --cflags`
-LDFLAGS=$(debug) -I. -L/opt/local/lib `sdl2-config --libs` -lm -framework AppKit
+gme_CPPFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `/usr/local/bin/sdl2-config --cflags`
+LDFLAGS=$(debug) -I. `/usr/local/bin/sdl2-config --libs` -lm -framework AppKit
 
 debugger_CPPFLAGS=$(debug) -INativeFileDialog/include -Idebugger/memory -Idebugger/windows -O3\
--funroll-loops -Wall -Idebugger `sdl2-config --cflags` -Wall
+-funroll-loops -Wall -Idebugger `/usr/local/bin/sdl2-config --cflags` -Wall
 
 CPPFLAGS = -std=c++11 $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
-OBJCFLAGS = $(gme_CFLAGS) $(debugger_CFLAGS) -MMD -MP
+OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
 ####
 SOURCES=$(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp)
 MSOURCES=$(wildcard */*.m)
