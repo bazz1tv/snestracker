@@ -10,6 +10,12 @@
 int App_Settings::MAXLINE=600;
 #define DEBUGLOG printf
 
+App_Settings::App_Settings()
+{
+  if (!File_System::is_loaded)
+    File_System::init();
+  load();
+}
 App_Settings::~App_Settings()
 {
   save();

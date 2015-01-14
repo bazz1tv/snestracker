@@ -17,6 +17,7 @@
 class App_Settings
 {
 public:
+  App_Settings();
   ~App_Settings();
   static int MAXLINE;
   //void apply( void );

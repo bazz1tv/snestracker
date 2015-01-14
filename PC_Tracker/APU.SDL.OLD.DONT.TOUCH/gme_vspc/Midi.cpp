@@ -1,10 +1,17 @@
 #include "Midi.h"
 
+void mycallback( double deltatime, std::vector< unsigned char > *message, void * /*userData*/ )
+{
+  unsigned int nBytes = message->size();
+  for ( unsigned int i=0; i<nBytes; i++ )
+    std::cout << "Byte " << i << " = " << (int)message->at(i) << ", ";
+  if ( nBytes > 0 )
+    std::cout << "stamp = " << deltatime << std::endl;
+}
+
 Midi::~Midi()
 {
-  in->closePort();
-  if (in)
-    delete in;
+  in.closePort();
 }
 Midi::Midi()
 {
@@ -18,12 +25,12 @@ Midi::Midi()
   try {
 
     // Rtin constructor ... exception possible
-    in = new RtMidiIn();
+    //in = new RtMidiIn();
 
-    std::cout << "\nCurrent input API: " << apiMap[ in->getCurrentApi() ] << std::endl;
+    std::cout << "\nCurrent input API: " << apiMap[ in.getCurrentApi() ] << std::endl;
 
     // Check inputs.
-    unsigned int nPorts = in->getPortCount();
+    unsigned int nPorts = in.getPortCount();
     fprintf(stderr,"\nThere are %d MIDI input sources available.\n", nPorts);
 
     if (nPorts==0)
@@ -35,38 +42,28 @@ Midi::Midi()
 
     is_available=true;
     for ( unsigned i=0; i<nPorts; i++ ) {
-      std::string portName = in->getPortName(i);
+      std::string portName = in.getPortName(i);
       available_devices.push_back(portName);
       std::cout << "  Input Port #" << i+1 << ": " << portName << '\n';
     }
 
-    //
+    // Set our callback function.  This should be done immediately after
+    // opening the port to avoid having incoming messages written to the
+    // queue instead of sent to the callback function.
+    in.setCallback( &mycallback );
 
-    // at construction we will need to open a config file and determine
-    // the default port to open if it is available
+    // Don't ignore sysex, timing, or active sensing messages.
+    in.ignoreTypes( false, false, false );
 
-    /*for (int i=0; i < available_devices.size(); i++)
+
+    if (app_settings.vars.midi_port < nPorts)
     {
-      //static int i=1;
-      std::cout << "  Input Port #" << i << ": " << available_devices[i] << '\n';
-    
-    }*/
-
-    // RtMidiOut constructor ... exception possible
-    /*midiout = new RtMidiOut();
-
-    std::cout << "\nCurrent output API: " << apiMap[ midiout->getCurrentApi() ] << std::endl;
-
-    // Check outputs.
-    nPorts = midiout->getPortCount();
-    std::cout << "\nThere are " << nPorts << " MIDI output ports available.\n";
-
-    for ( unsigned i=0; i<nPorts; i++ ) {
-      std::string portName = midiout->getPortName(i);
-      std::cout << "  Output Port #" << i+1 << ": " << portName << std::endl;
+      // load default
+      in.openPort(app_settings.vars.midi_port);
     }
-    std::cout << std::endl;
-*/
+    else in.openPort(0);
+
+
   } catch ( RtMidiError &error ) {
     error.printMessage();
   }

@@ -3,13 +3,11 @@
 App::App(int &argc, char **argv, int samplerate/*=44100*/) : 
 debugger(argc,argv)
 {
-  //report::init();
-  //SDL_SetColorKey(screen, SDL_TRUE, 0);
   Player_Context::player = &player;
-  Midi_Context::midi = &midi;
   handle_error(player.init(samplerate) );
   File_System::init();
-  app_settings.load();
+  //App_Settings_Context::app_settings = &app_settings;
+  Midi_Context::midi = &midi;
 }
 
 void App::run()

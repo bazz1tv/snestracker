@@ -5,9 +5,11 @@ namespace File_System
   char *data_path;
   char *pref_path;
   bool is_writing_enabled=false;
+  bool is_loaded=false;
 
   int init()
   {
+    is_loaded=true;
     char tmpbuf[100];
     char *base_path = SDL_GetBasePath();
     if (base_path)
