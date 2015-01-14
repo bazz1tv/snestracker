@@ -1,8 +1,10 @@
 #include "SDL.h"
 #include "gme/player/Music_Player.h"
 #include "Debugger.h"
+#include "Midi_Context.h"
+#include "File_System.h"
 
-class App : public Render_Context, public Player_Context
+class App : public Render_Context, public Player_Context, public Midi_Context
 {
 public:
   App(int &argc, char **argv, int samplerate=44100);
@@ -16,6 +18,7 @@ private:
   // Tracker tracker;
   Debugger debugger;
   Music_Player player;
+  Midi midi;
   
 
 private:

@@ -1,13 +1,23 @@
+#unwritten rule .. app.h RULES ALL. if it changes, the whole fucking thing needs to be recompiled...
+
+
 CC=g++
 CPP=g++
 debug=-g
 gme_CPPFLAGS=$(debug) -c -I. -Igme -Igme/gme -Idemo `/usr/local/bin/sdl2-config --cflags`
-LDFLAGS=$(debug) -I. `/usr/local/bin/sdl2-config --libs` -lm -framework AppKit
+
 
 debugger_CPPFLAGS=$(debug) -INativeFileDialog/include -Idebugger/memory -Idebugger/windows -O3\
 -funroll-loops -Wall -Idebugger `/usr/local/bin/sdl2-config --cflags` -Wall
 
-CPPFLAGS = -std=c++11 $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
+# for MIDI
+DEFS     			=   -D__MACOSX_CORE__ -DRTMIDI_DEBUG
+LIBRARY  			= -framework CoreMIDI -framework CoreFoundation -framework CoreAudio
+MIDI_CPPFLAGS = -Irtmidi
+#
+LDFLAGS=$(debug) -I. `/usr/local/bin/sdl2-config --libs` -lm -framework AppKit $(LIBRARY)
+
+CPPFLAGS = -std=c++11 $(MIDI_CPPFLAGS) $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
 OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
 ####
 SOURCES=$(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp)
@@ -28,7 +38,7 @@ $(EXECUTABLE): $(OBJECTS)
 
 
 %.cpp.o: %.cpp
-	$(CPP) $(CPPFLAGS) -c $< -o $@
+	$(CPP) $(DEFS) $(CPPFLAGS) -c $< -o $@
 
 %.m.o: %.m
 	$(CPP) $(OBJCFLAGS) -c $< -o $@
@@ -50,4 +60,4 @@ clean:
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
--include $(SOURCES:.cpp=.d) 
+-include $(SOURCES:.cpp=.cpp.d) $(MSOURCES:.m=.m.d)

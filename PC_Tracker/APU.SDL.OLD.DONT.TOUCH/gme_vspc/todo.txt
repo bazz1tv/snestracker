@@ -1,3 +1,15 @@
+MIDI-IN
+-------
+Config menu
+Specify Default Device
+
+SPC Export
+----------
+All SPC's should be exported with an ability to communicate with SNES
+to reset back to Upload routine for ability for all tracks made with SNES Tracker
+to be put into a playlist.
+
+
 Instrument Thingy
 -----------------
 Graphical ADSR Envelope settings
