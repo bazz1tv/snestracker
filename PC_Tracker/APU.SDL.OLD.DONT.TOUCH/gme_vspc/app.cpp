@@ -9,6 +9,7 @@ debugger(argc,argv)
   Midi_Context::midi = &midi;
   handle_error(player.init(samplerate) );
   File_System::init();
+  app_settings.load();
 }
 
 void App::run()

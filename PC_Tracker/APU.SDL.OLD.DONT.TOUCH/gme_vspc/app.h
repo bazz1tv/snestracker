@@ -3,6 +3,7 @@
 #include "Debugger.h"
 #include "Midi_Context.h"
 #include "File_System.h"
+#include "App_Settings.h"
 
 class App : public Render_Context, public Player_Context, public Midi_Context
 {
@@ -19,7 +20,7 @@ private:
   Debugger debugger;
   Music_Player player;
   Midi midi;
-  
+  App_Settings app_settings;
 
 private:
   int init_sdl();

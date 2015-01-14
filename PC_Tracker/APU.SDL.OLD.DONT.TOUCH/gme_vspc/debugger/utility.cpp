@@ -1,4 +1,6 @@
 #include "utility.h"
+#include <fstream>
+#include <sstream>
 
 namespace Utility
 {
@@ -59,6 +61,27 @@ nfdresult_t get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file)
         printf("Error: %s\n", NFD_GetError() );
         return NFD_ERROR;
     }
+}
+
+
+SDL_bool file_is_valid( std::string filename )
+{
+  std::ifstream ifs;
+  ifs.open( filename.c_str(), std :: ios :: out );
+  
+  if( ifs )
+  {
+    ifs.close();
+    return SDL_TRUE;
+  }
+  
+  return SDL_FALSE;
+}
+
+void clearsstream(std::stringstream &s)
+{
+  s.clear();//clear any bits set
+  s.str(std::string());
 }
 
 }

@@ -8,7 +8,6 @@ Midi::~Midi()
 }
 Midi::Midi()
 {
-  fprintf(stderr, "HOLAHOLA");
   apiMap[RtMidi::MACOSX_CORE] = "OS-X CoreMidi";
   apiMap[RtMidi::WINDOWS_MM] = "Windows MultiMedia";
   apiMap[RtMidi::UNIX_JACK] = "Jack Client";
@@ -40,6 +39,8 @@ Midi::Midi()
       available_devices.push_back(portName);
       std::cout << "  Input Port #" << i+1 << ": " << portName << '\n';
     }
+
+    //
 
     // at construction we will need to open a config file and determine
     // the default port to open if it is available

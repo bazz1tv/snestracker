@@ -1,6 +1,7 @@
 #include "app.h"
 #include "Screen.h"
 #include "Colors.h"
+#include "Organization.h"
 
 #include "Render_Context.h"
 
@@ -60,7 +61,10 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
     return -1;
   }
 
-  SDL_SetWindowTitle(*sdlWindow, PROG_NAME_VERSION_STRING);
+  // needs to be more permanent eh!
+  char tmpbuf[100];
+  sprintf(tmpbuf, PROG_NAME_VERSION_STRING, APP_VERSION);
+  SDL_SetWindowTitle(*sdlWindow, tmpbuf);
   
   Colors::precompute(*screen);
 
