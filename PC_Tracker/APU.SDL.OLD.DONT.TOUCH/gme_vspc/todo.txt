@@ -2,6 +2,8 @@ MIDI-IN
 -------
 Config menu
 Specify Default Device
+"Soft" pitch-bend range specifier
+"Select Instrument"
 
 SPC Export
 ----------

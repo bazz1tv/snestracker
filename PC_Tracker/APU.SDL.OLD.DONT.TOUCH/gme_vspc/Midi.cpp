@@ -1,10 +1,10 @@
 #include "Midi.h"
 
-void mycallback( double deltatime, std::vector< unsigned char > *message, void * /*userData*/ )
+void mycallback( double deltatime, std::vector< unsigned char > *message, void *userData )
 {
   unsigned int nBytes = message->size();
   for ( unsigned int i=0; i<nBytes; i++ )
-    std::cout << "Byte " << i << " = " << (int)message->at(i) << ", ";
+    fprintf(stderr, "Byte %d = 0x%02X, ", i, (int)message->at(i) );
   if ( nBytes > 0 )
     std::cout << "stamp = " << deltatime << std::endl;
 }
@@ -50,7 +50,7 @@ Midi::Midi()
     // Set our callback function.  This should be done immediately after
     // opening the port to avoid having incoming messages written to the
     // queue instead of sent to the callback function.
-    in.setCallback( &mycallback );
+    in.setCallback( &mycallback, NULL );
 
     // Don't ignore sysex, timing, or active sensing messages.
     in.ignoreTypes( false, false, false );
