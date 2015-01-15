@@ -27,6 +27,7 @@ struct Midi : public App_Settings_Context
   RtMidiIn  in;
   bool is_available=true;
   //RtMidiOut *midiout = 0;
+  Uint8 last_note_on=0;
 
   // jdkmidi stuffz
   jdkmidi::MIDIParser parser;

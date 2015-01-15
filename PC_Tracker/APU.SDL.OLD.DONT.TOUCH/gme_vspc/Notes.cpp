@@ -1,10 +1,11 @@
 #include "Notes.h"
 #include <stdlib.h>
 #define MIDDLE_C_IN_MIDI 0x3C
+#define OCTAVE 12
 namespace Notes
 {
 const uint8_t base=0x49;
-const uint8_t midi_offset = abs(base-MIDDLE_C_IN_MIDI);  // 0x3C is middle C in MIDI
+const int midi_offset = base-MIDDLE_C_IN_MIDI-1;  // 0x3C is middle C in MIDI
 const uint16_t pitch_table_size=(12*8)+2;
 const uint16_t pitch_table[] = {
     0x0000, 0x0040, 0x0044, 0x0048, 0x004c, 0x0051, 0x0055, 0x005b,

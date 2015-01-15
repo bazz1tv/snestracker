@@ -5,7 +5,7 @@
 namespace Notes
 {
 extern const uint8_t base;
-extern const uint8_t midi_offset;
+extern const int midi_offset;
 extern const uint16_t pitch_table[];
 extern const uint16_t pitch_table_size;
 }

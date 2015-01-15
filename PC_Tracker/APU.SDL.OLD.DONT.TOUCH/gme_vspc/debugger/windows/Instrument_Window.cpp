@@ -124,7 +124,7 @@ void Instrument_Window::receive_event(SDL_Event &ev)
     case SDL_KEYUP:
       //scancode = 0;
       
-      if (scancode == ev.key.keysym.sym) player->spc_write_dsp(dsp_reg::koff, 1 << voice.n);
+      if (scancode == ev.key.keysym.sym) keyoff_current_voice();
       //SDL_Delay(1000);
       
       //fprintf(stderr, "DERP");
@@ -328,6 +328,16 @@ void Instrument_Window::receive_event(SDL_Event &ev)
         
         
       }
+      else if (ev.user.code == UserEvents::play_pitch)
+      {
+        uintptr_t tmp = (uintptr_t)ev.user.data1;
+        unsigned char pitch = (unsigned char)tmp;
+        play_pitch(pitch - Notes::midi_offset, true);
+      }
+      else if (ev.user.code == UserEvents::keyoff)
+      {
+        keyoff_current_voice();
+      }
     } break;
     case SDL_MOUSEWHEEL:
     {
@@ -420,6 +430,11 @@ void Instrument_Window::receive_event(SDL_Event &ev)
   }
 }
 
+void Instrument_Window::set_voice(unsigned char v)
+{
+  voice.n = v % 8;
+}
+
 void Instrument_Window::inc_voice()
 {
   if (voice.n == 7)
@@ -460,7 +475,7 @@ void Instrument_Window::play_pitch(int p, bool abs/*=false*/)
     return;
   hi = Notes::pitch_table[index] >> 8;
   lo = Notes::pitch_table[index] & 0xff;
-  fprintf(stderr, "p = 0x%02X%02X\n", hi, lo);
+  //fprintf(stderr, "p = 0x%02X%02X\n", hi, lo);
   player->spc_write_dsp(dsp_reg::plo + (voice.n*0x10), lo);
   player->spc_write_dsp(dsp_reg::phi + (voice.n*0x10), hi);
   player->spc_write_dsp(dsp_reg::kon, 1 << voice.n);
@@ -504,4 +519,9 @@ void Instrument_Window::restore_spc(bool resume/*=true*/)
   start_stop.is_started=false;
   //BaseD::song_time = song_time_backup;
   //track_info_backup = track_info_backup2;
+}
+
+void Instrument_Window::keyoff_current_voice()
+{
+  player->spc_write_dsp(dsp_reg::koff, 1 << voice.n);
 }

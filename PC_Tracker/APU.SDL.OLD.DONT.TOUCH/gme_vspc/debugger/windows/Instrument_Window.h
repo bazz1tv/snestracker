@@ -22,10 +22,13 @@ public Experience
   void pause_spc();
   void restore_spc(bool resume=true);
 
+  void set_voice(unsigned char v);
   void inc_voice();
   void dec_voice();
   void inc_octave();
   void dec_octave();
+
+  void keyoff_current_voice();
 
   struct Start_Stop
   {
