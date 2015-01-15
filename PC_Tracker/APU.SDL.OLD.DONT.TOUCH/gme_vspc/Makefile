@@ -12,10 +12,11 @@ debugger_CPPFLAGS=$(debug) -INativeFileDialog/include -Idebugger/memory -Idebugg
 
 # for MIDI
 DEFS     			=   -D__MACOSX_CORE__ -DRTMIDI_DEBUG
-LIBRARY  			= -framework CoreMIDI -framework CoreFoundation -framework CoreAudio
-MIDI_CPPFLAGS = -Irtmidi
+MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAudio -l jdkmidi
+MIDI_CPPFLAGS = -Irtmidi -Ilibjdkmidi/c++/include
+MIDI_LDFLAGS	= -Llibjdkmidi/c++/b/build/lib
 #
-LDFLAGS=$(debug) -I. `/usr/local/bin/sdl2-config --libs` -lm -framework AppKit $(LIBRARY)
+LDFLAGS=$(debug) -I. $(MIDI_LDFLAGS) `/usr/local/bin/sdl2-config --libs` -lm -framework AppKit $(MIDI_LIBRARY)
 
 CPPFLAGS = -std=c++11 $(MIDI_CPPFLAGS) $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
 OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP

@@ -1,0 +1,243 @@
+#! /bin/bash
+
+##############################################################################################
+#
+# The magic.makefile configure script, Copyright 2004-2006 by Jeff Koftinoff <jeffk@jdkoftinoff.com>
+# version 3.
+#
+# Simplifies the building of a c/c++ library, it's tests, tools, examples, and documentation.
+#
+# See https://clicker.jdkoftinoff.com/projects/trac/jdks/wiki/MagicMakefileV3
+# for more information, including license information (GPL)
+#
+
+
+# set relative_dir to the directory part of arg 0. Usually this is ../.. or somesuch.
+
+relative_dir="$(dirname "$0")"
+
+# load project specific bash definitions
+
+source "${relative_dir}/project.sh"
+
+# if we are called with --help or the script is called from the same directory that it is in,
+# then we must just print our usage information and exit
+
+if [ "$1" = "--help" -o "${relative_dir}" = "." ]; then
+    echo "configure script based on J.D. Koftinoff Software's MagicMake system."
+    echo "See https://clicker.jdkoftinoff.com/projects/trac/jdks/wiki/MagicMakefileV3 for more information"
+    echo ""
+    echo "example usage:"
+    echo "Step 1: make a directory to put build results in:"
+    echo "  mkdir b"
+    echo ""
+    echo "Step 2: cd into this directory:"
+    echo "  cd b"
+    echo ""
+    echo "Step 3: run this configure script:"
+    echo ""
+    echo "  ../configure"
+    echo ""
+    echo "Some example typical command line arguments for configure:"
+    echo ""
+    echo "Build native binaries on a generic posix machine:"
+    echo "  ../configure --target-platform-posix=1"
+    echo ""
+    echo "Build native binaries on a linux machine:"
+    echo "  ../configure --target-platform-linux=1"
+    echo ""
+    echo "Build native binaries on a mac os x machine:"
+    echo "  ../configure --target-platform-macosx=1"
+    echo ""
+    echo "Build universal binaries on a mac os x machine:"
+    echo "  ../configure --target-platform-macosx-universal=1"
+    echo ""
+    echo "Build on a mac os x machine and cross compile for windows via mingw32 cross compiler"
+    echo "  ../configure --native-platform-macosx-universal=1 --cross-compiling=1 --compiler-prefix=i386-mingw32- --target-platform-mingw32=1"
+    echo ""
+    echo "Build on a linux machine and cross compile for windows via mingw32 cross compiler"
+    echo "  ../configure --native-platform-linux=1 --cross-compiling=1 --compiler-prefix=i386-mingw32-  --target-platform-mingw32=1"
+    echo ""
+    echo "Further options for installation path of 'make install' and 'make install-dev' destinations:"
+    echo "  ../configure --prefix=/opt/local"
+    echo "without the --prefix option, the system defaults to $PWD/install - not /usr/local like gnu autoconf would"
+    echo ""
+    echo "After running the configure stage, a Makefile will be created for you to run with gnu make"
+    exit 1
+fi
+
+
+# before we parse the command line arguments, do some rudimentary native machine investigation.
+
+
+# parse all long options and set them as variables, allowing command line to override everything
+# options are in the form of:
+#   --abcd-efghi-jklmn=some_value
+#
+# and they get transformed via awk into environment vars in the form:
+#   magic_ABCD_EFGHI_JKLMN="some_value"
+#
+# A bunch of variables have default values but can be overriden by the command line
+# at the end of this script, all variables with the "magic_" prefix are outputted to the 
+# Makefile and the vars.sh  in the appropriate format. The script file './reconfigure' is created 
+# with the current command line parameters
+#
+# This looks tricky but is really not so bad: The for loop prints each parameter, one per line 
+# into a single instance of awk so it is quick.
+#
+# The awk script extracts the variable name as $1, and the part after the '=' as $2. 
+# It changes - to _, -- to nothing, converts the string to uppercase, prefixes the
+# variable name with magic_, and prints $2 inside quotes.
+#
+# The result of the awk script is then a multi-line bash script which sets a bunch of environment
+# variables.  This text is then 'eval'd so ultimately the command line arguments show up as vars,
+# with out needing ugly getopt bash extensions for parsing command lines.
+
+params=$((
+  for i in "$@"
+  do 
+    echo $i
+  done
+) | awk -F= '{ gsub("-","_",$1); sub("__","",$1); print "magic_" toupper($1) "=" "\"" $2 "\""; }'; )
+
+eval $params
+
+# setup all defaults:
+
+# The PROJECT_TOP_DIR variable, if not set already, is then set to the full relative path needed to get to the configure script from the PWD.
+magic_PROJECT_TOP_DIR="${magic_PROJECT_TOP_DIR:-${PWD}/${relative_dir}}"
+
+# Then we get the real path name of this directory by cd'ing into it and running 'pwd' in it.
+magic_PROJECT_TOP_DIR=$(cd "${magic_PROJECT_TOP_DIR}" && pwd)
+
+# if --prefix is not specific, it defaults to $PWD/install 
+magic_PREFIX="${magic_PREFIX:-${PWD}/install}"
+magic_INSTALL_DIR="${magic_PREFIX}"
+magic_CONFIGURE_DIR="${relative_dir}"
+
+# additional tool specifications
+magic_DOXYGEN="${magic_DOXYGEN:-doxygen}"
+magic_CP=${magic_CP:-cp}
+magic_LN=${magic_LN:-ln}
+magic_RM=${magic_RM:-rm}
+magic_MKDIRS="${magic_MKDIRS:-mkdir}"
+magic_MKDIR="${magic_MKDIR:-mkdir}"
+magic_VALGRIND="${magic_VALGRIND}"
+magic_VALGRIND_OPTIONS="${magic_VALGRIND_OPTIONS}"
+magic_MAKEFLAGS="${magic_MAKEFLAGS}"
+magic_INSTALL="${magic_INSTALL:-install}"
+magic_RSYNC="${magic_RSYNC:-rsync}"
+
+# Target platform definitions
+
+magic_TARGET_PLATFORM_GENERIC="${magic_TARGET_PLATFORM_GENERIC}"
+magic_TARGET_PLATFORM_MINGW32="${magic_TARGET_PLATFORM_MINGW32}"
+magic_TARGET_PLATFORM_CYGWIN="${magic_TARGET_PLATFORM_CYGWIN}"
+magic_TARGET_PLATFORM_LINUX="${magic_TARGET_PLATFORM_LINUX}"
+magic_TARGET_PLATFORM_MACOSX_PPC="${magic_TARGET_PLATFORM_MACOSX_PPC}"
+magic_TARGET_PLATFORM_MACOSX_I386="${magic_TARGET_PLATFORM_MACOSX_I386}"
+magic_TARGET_PLATFORM_MACOSX_UNIVERSAL="${magic_TARGET_PLATFORM_MACOSX_UNIVERSAL}"
+magic_TARGET_USE_AR="${magic_TARGET_USE_AR:-1}"
+magic_TARGET_USE_MACOSX_LIBTOOL="${magic_TARGET_USE_MACOSX_LIBTOOL:-0}"
+
+magic_TARGET_MACOSX_SDK="${magic_TARGET_MACOSX_SDK:-/Developer/SDKs/MacOSX10.4u.sdk}"
+
+# Target compile options
+
+magic_DEBUG="${magic_DEBUG}"
+magic_PROFILE="${magic_PROFILE}"
+magic_OPTIMIZE="${magic_OPTIMIZE}"
+magic_WARNINGS="${magic_WARNINGS}"
+magic_AUTODEPEND="${magic_AUTODEPEND}"
+magic_DEFINES="${magic_DEFINES}"
+magic_INCLUDES="${magic_INCLUDES}"
+
+# Target compiler specifications
+magic_CC="${magic_CC:-${magic_COMPILER_PREFIX}gcc}"
+magic_CXX="${magic_CXX:-${magic_COMPILER_PREFIX}g++}"
+magic_NM="${magic_NM:-${magic_COMPILER_PREFIX}nm}"
+magic_AR="${magic_AR:-${magic_COMPILER_PREFIX}ar}"
+magic_ARFLAGS="${magic_ARFLAGS:-rv}"
+magic_RANLIB="${magic_RANLIB:-${magic_COMPILER_PREFIX}ranlib}"
+magic_LD="${magic_LD:-${magic_COMPILER_PREFIX}ld}"
+magic_AS="${magic_AS:-${magic_COMPILER_PREFIX}as}"
+magic_STRIP="${magic_STRIP:-${magic_COMPILER_PREFIX}strip}"
+magic_STRINGS="${magic_STRINGS:-${magic_COMPILER_PREFIX}strings}"
+magic_WINDRES="${magic_WINDRES:-${magic_COMPILER_PREFIX}windres}"
+magic_OBJDUMP="${magic_OBJDUMP:-${magic_COMPILER_PREFIX}objdump}"
+magic_DLLTOOL="${magic_DLLTOOL:-${magic_COMPILER_PREFIX}dlltool}"
+magic_DLLWRAP="${magic_DLLWRAP:-${magic_COMPILER_PREFIX}dllwrap}"
+magic_LDFLAGS="${magic_LDFLAGS}"
+magic_CXXFLAGS="${magic_CXXFLAGS}"
+magic_CFLAGS="${magic_CFLAGS}"
+magic_MFLAGS="${magic_MFLAGS}"
+magic_MMFLAGS="${magic_MMFLAGS}"
+magic_LDLIBS="${magic_LDLIBS}"
+
+# Native platform specifications
+
+magic_NATIVE_PLATFORM_GENERIC="${magic_NATIVE_PLATFORM_GENERIC}"
+magic_NATIVE_PLATFORM_MINGW32="${magic_NATIVE_PLATFORM_MINGW32}"
+magic_NATIVE_PLATFORM_CYGWIN="${magic_NATIVE_PLATFORM_CYGWIN}"
+magic_NATIVE_PLATFORM_LINUX="${magic_NATIVE_PLATFORM_LINUX}"
+magic_NATIVE_PLATFORM_MACOSX_PPC="${magic_NATIVE_PLATFORM_MACOSX_PPC}"
+magic_NATIVE_PLATFORM_MACOSX_I386="${magic_NATIVE_PLATFORM_MACOSX_I386}"
+magic_NATIVE_PLATFORM_MACOSX_UNIVERSAL="${magic_NATIVE_PLATFORM_MACOSX_UNIVERSAL}"
+magic_NATIVE_USE_AR="${magic_NATIVE_USE_AR:-1}"
+magic_NATIVE_USE_MACOSX_LIBTOOL="${magic_NATIVE_USE_MACOSX_LIBTOOL:-0}"
+magic_NATIVE_MACOSX_SDK="${magic_NATIVE_MACOSX_SDK:-/Developer/SDKs/MacOSX10.4u.sdk}"
+
+# Native compiler specifications
+
+magic_CROSS_COMPILING="${magic_CROSS_COMPILING:-0}"
+magic_NATIVE_COMPILER_PREFIX="${magic_NATIVE_COMPILER_PREFIX:-}"
+magic_NATIVE_CC="${magic_NATIVE_CC:-${magic_NATIVE_COMPILER_PREFIX}gcc}"
+magic_NATIVE_CXX="${magic_NATIVE_CXX:-${magic_NATIVE_COMPILER_PREFIX}g++}"
+magic_NATIVE_NM="${magic_NATIVE_NM:-${magic_NATIVE_COMPILER_PREFIX}nm}"
+magic_NATIVE_AR="${magic_NATIVE_AR:-${magic_NATIVE_COMPILER_PREFIX}ar}"
+magic_NATIVE_ARFLAGS="${magic_NATIVE_ARFLAGS:-rv}"
+magic_NATIVE_RANLIB="${magic_NATIVE_RANLIB:-${magic_NATIVE_COMPILER_PREFIX}ranlib}"
+magic_NATIVE_LD="${magic_NATIVE_LD:-${magic_NATIVE_COMPILER_PREFIX}g++}"
+magic_NATIVE_AS="${magic_NATIVE_AS:-${magic_NATIVE_COMPILER_PREFIX}as}"
+magic_NATIVE_STRIP="${magic_NATIVE_STRIP:-${magic_NATIVE_COMPILER_PREFIX}strip}"
+magic_NATIVE_STRINGS="${magic_NATIVE_STRINGS:-${magic_NATIVE_COMPILER_PREFIX}strings}"
+magic_NATIVE_WINDRES="${magic_NATIVE_WINDRES:-${magic_NATIVE_COMPILER_PREFIX}windres}"
+magic_NATIVE_OBJDUMP="${magic_NATIVE_OBJDUMP:-${magic_NATIVE_COMPILER_PREFIX}objdump}"
+magic_NATIVE_DLLTOOL="${magic_NATIVE_DLLTOOL:-${magic_NATIVE_COMPILER_PREFIX}dlltool}"
+magic_NATIVE_DLLWRAP="${magic_NATIVE_DLLWRAP:-${magic_NATIVE_COMPILER_PREFIX}dllwrap}"
+magic_NATIVE_LDFLAGS="${magic_NATIVE_LDFLAGS}"
+MAGIC_NATIVE_CXXFLAGS="${magic_NATIVE_CXXFLAGS}"
+magic_NATIVE_MFLAGS="${magic_NATIVE_MFLAGS}"
+MAGIC_NATIVE_MMFLAGS="${magic_NATIVE_MMFLAGS}"
+magic_NATIVE_CFLAGS="${magic_NATIVE_CFLAGS}"
+MAGIC_NATIVE_LDLIBS="${magic_NATIVE_LDLIBS}"
+magic_NATIVE_DEBUG="${magic_NATIVE_DEBUG}"
+MAGIC_NATIVE_PROFILE="${magic_NATIVE_PROFILE}"
+
+
+# extract all environment vars with the "magic_" prefix and save them in vars.sh and Makefile in the appropriate form:
+set | grep '^magic_' | sed "s/'//g" | awk -F= '{ sub("magic_","",$1); print $1 "=\"" $2 "\"" }' >vars.sh
+echo ". \"${magic_PROJECT_TOP_DIR}/project.sh\"" >>vars.sh
+set | grep '^magic_' | sed "s/'//g" | awk -F= '{ sub("magic_","",$1); print $1 "=" $2 }' >Makefile
+
+echo 'include $(CONFIGURE_DIR)/project.mak' >>Makefile
+echo 'include $(CONFIGURE_DIR)/magic.mak' >>Makefile
+
+if [ -f ./reconfigure ]; then
+ mv ./reconfigure ./reconfigure-old
+fi
+echo -n "$0 "  >>./reconfigure
+for i in "$@";
+do
+  echo -n " \"$i\" " >> ./reconfigure
+done
+echo \"\$@\" >>./reconfigure
+chmod +x ./reconfigure
+
+echo "./Makefile  ./vars.sh  and ./reconfigure created."
+echo "Now you may do:"
+echo "  make compile_info"
+echo "  make help"
+echo "  make"
+echo "  make install"
+echo "  make install-dev"

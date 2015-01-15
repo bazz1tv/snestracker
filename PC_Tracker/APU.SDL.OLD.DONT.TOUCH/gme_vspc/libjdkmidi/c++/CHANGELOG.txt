@@ -1,0 +1,23 @@
+1986: MIDI parsing and message handling added, in C
+1989: Simple MIDI File Parsing added
+1989: Ported to run on Macintosh with Think C
+1989: Converted to old style C++ with GCC for Atari ST
+1990: Ported to work on Borland C++ 3.1 for DOS MIDI Sequencers
+1992 - 1996: Added MIDI Show Control classes
+1997-1998: Added more robust MIDI Track classes, WIN32 support
+2004: Dusted off, moved into namespace jdkmidi and cleaned up a little
+2004 May 1: Released under the GNU GENERAL PUBLIC LICENSE
+2004 May 26: Some clean ups, warning fixes, mac os x project file added, 
+     visual c++ project file added, jdkmidi_rewrite_midifile added1986: MIDI parsing and message handling added, in C
+1989: Simple MIDI File Parsing added
+1989: Ported to run on Macintosh with Think C
+1989: Converted to old style C++ with GCC for Atari ST
+1990: Ported to work on Borland C++ 3.1 for DOS MIDI Sequencers
+1992 - 1996: Added MIDI Show Control classes
+1997-1998: Added more robust MIDI Track classes, WIN32 support
+2004: Dusted off, moved into namespace jdkmidi and cleaned up a little
+2004 May 1: Released under the GNU GENERAL PUBLIC LICENSE
+2004 May 26: Some clean ups, warning fixes, mac os x project file added, 
+     visual c++ project file added, jdkmidi_rewrite_midifile added
+2005 June 4: Imported into public accessible SVN repository
+

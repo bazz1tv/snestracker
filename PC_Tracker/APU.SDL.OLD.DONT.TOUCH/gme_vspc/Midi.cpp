@@ -1,19 +1,89 @@
 #include "Midi.h"
+#include "BaseD.h"
+#include "Instrument_Window.h"
 
 void mycallback( double deltatime, std::vector< unsigned char > *message, void *userData )
 {
-  unsigned int nBytes = message->size();
+  Midi *midi = (Midi*) userData;
+  midi->internal_callback(deltatime, &message);
+}
+
+void Midi::internal_callback(double &deltatime, std::vector< unsigned char > **message)
+{
+  unsigned int nBytes = (*message)->size();
   for ( unsigned int i=0; i<nBytes; i++ )
-    fprintf(stderr, "Byte %d = 0x%02X, ", i, (int)message->at(i) );
-  if ( nBytes > 0 )
-    std::cout << "stamp = " << deltatime << std::endl;
+  {
+    if( parser.Parse( (uchar)(*message)->at(i), &msg ) )
+    {     
+      if( msg.IsSysEx() )
+      {
+        PrintSysEx( stdout, parser.GetSystemExclusive() );
+      }     
+      else
+      {
+        PrintMsg( stdout, &msg );
+      }         
+    }     
+    //fprintf(stderr, "Byte %d = 0x%02X, ", i, (int)message->at(i) );
+  }
+  /*if ( nBytes > 0 )
+  {
+
+    //std::cout << "stamp = " << deltatime << std::endl;
+  }*/
+}
+
+void Midi::PrintSysEx( FILE *f, jdkmidi::MIDISystemExclusive *ex )
+{
+  int l = ex->GetLength();
+  
+  fprintf( f, "Sysex Len=%d", l );
+  
+  for( int i=0; i<l; ++i )
+  {
+    if( ((i)%20) == 0 )
+    {
+      fprintf( f, "\n" );
+    }   
+    fprintf( f, "%02x ", (int)ex->GetData( i ) );   
+  }
+  fprintf( f, "\n" );
+  fflush(f);
+}
+
+
+void Midi::PrintMsg( FILE *f, jdkmidi::MIDIMessage *m )
+{
+  int l = m->GetLength();
+  
+  fprintf( f, "Msg : " );
+  
+  if( l==1 )
+  {
+    fprintf( f, " %02x \t\t=", m->GetStatus() );
+  }
+  else if( l==2 )
+  {
+    fprintf( f, " %02x %02x \t\t=", m->GetStatus(), m->GetByte1() );  
+  }
+  else if( l==3 )
+  {
+    fprintf( f, " %02x %02x %02x \t=", m->GetStatus(), m->GetByte1(), m->GetByte2() );
+  }
+  
+  char buf[129];
+  
+  m->MsgToText( buf );
+  
+  fprintf( f, "%s\n", buf );
+  fflush(f);
 }
 
 Midi::~Midi()
 {
   in.closePort();
 }
-Midi::Midi()
+Midi::Midi() : parser(32*1024)
 {
   apiMap[RtMidi::MACOSX_CORE] = "OS-X CoreMidi";
   apiMap[RtMidi::WINDOWS_MM] = "Windows MultiMedia";
@@ -50,7 +120,7 @@ Midi::Midi()
     // Set our callback function.  This should be done immediately after
     // opening the port to avoid having incoming messages written to the
     // queue instead of sent to the callback function.
-    in.setCallback( &mycallback, NULL );
+    in.setCallback( &mycallback, this);
 
     // Don't ignore sysex, timing, or active sensing messages.
     in.ignoreTypes( false, false, false );

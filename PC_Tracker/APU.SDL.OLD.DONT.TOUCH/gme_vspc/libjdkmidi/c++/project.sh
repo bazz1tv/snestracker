@@ -1,0 +1,7 @@
+
+PROJECT=jdkmidi
+PROJECT_NAME=libjdkmidi
+PROJECT_VERSION=2.1
+PROJECT_EMAIL='<jeffk@jdkoftinoff.com>'
+PROJECT_LICENSE='GPL'
+

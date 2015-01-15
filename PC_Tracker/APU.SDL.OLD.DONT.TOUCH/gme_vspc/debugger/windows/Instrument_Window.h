@@ -18,7 +18,7 @@ public Experience
   void draw();
   void receive_event(SDL_Event &ev);
 
-  void play_pitch(int p);
+  void play_pitch(int p, bool abs=false);
   void pause_spc();
   void restore_spc(bool resume=true);
 

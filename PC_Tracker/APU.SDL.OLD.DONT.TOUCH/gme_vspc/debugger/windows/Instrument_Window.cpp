@@ -447,7 +447,7 @@ void Instrument_Window::dec_octave()
         else octave.n--;
 }
 
-void Instrument_Window::play_pitch(int p)
+void Instrument_Window::play_pitch(int p, bool abs/*=false*/)
 {
   if (!start_stop.is_started)
   {
@@ -455,7 +455,7 @@ void Instrument_Window::play_pitch(int p)
   }
   player->spc_write_dsp(dsp_reg::koff, 0);
   uint8_t hi,lo;
-  uint16_t index = 12*octave.n + 0x18 + 1 + p;
+  uint16_t index = (abs ? 0:12*octave.n) + 0x18 + 1 + p;
   if (index > Notes::pitch_table_size-1)
     return;
   hi = Notes::pitch_table[index] >> 8;
