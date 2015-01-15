@@ -4,6 +4,7 @@ Config menu
 Specify Default Device
 "Soft" pitch-bend range specifier
 "Select Instrument"
+There is a delay/latency/desync issue
 
 SPC Export
 ----------

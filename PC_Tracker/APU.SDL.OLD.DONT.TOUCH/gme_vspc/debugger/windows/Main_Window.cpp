@@ -849,7 +849,7 @@ void Main_Window::receive_event(SDL_Event &ev)
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = false;
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = false;
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = false;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPI].is_visible = false;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRI].is_visible = false;
                 main_memory_area.context.menu.is_active = false;
               break;
 
@@ -858,14 +858,14 @@ void Main_Window::receive_event(SDL_Event &ev)
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = true;
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = true;
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = false;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPI].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRI].is_visible = true;
               break;
               case BRR::LOOP_SAMPLE:
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::SOLOSAMPLE].is_visible = true;
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = true;
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = true;
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPI].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRI].is_visible = true;
               break;
               case BRR::CLICKED_ON_LOOP_ONLY:
                 // notify user
@@ -873,7 +873,7 @@ void Main_Window::receive_event(SDL_Event &ev)
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = true;
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = true;
                 main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = false;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPI].is_visible = true;
+                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRI].is_visible = true;
               break;
             }
 

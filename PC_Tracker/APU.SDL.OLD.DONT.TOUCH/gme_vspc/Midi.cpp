@@ -18,11 +18,11 @@ void Midi::internal_callback(double &deltatime, std::vector< unsigned char > **m
     {     
       if( msg.IsSysEx() )
       {
-        PrintSysEx( stdout, parser.GetSystemExclusive() );
+        PrintSysEx( stderr, parser.GetSystemExclusive() );
       }     
       else
       {
-        PrintMsg( stdout, &msg );
+        PrintMsg( stderr, &msg );
       }         
     }     
     //fprintf(stderr, "Byte %d = 0x%02X, ", i, (int)message->at(i) );

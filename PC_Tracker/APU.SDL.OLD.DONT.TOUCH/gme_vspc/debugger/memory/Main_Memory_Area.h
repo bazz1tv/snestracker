@@ -7,32 +7,14 @@
 #include "gui/Context_Menu.h"
 #include "gme/Spc_Dsp_Register_Map_Interface.h"
 #include "Instrument_Window.h"
-
+#include "BRR.h"
 // expects pre-calculated main_memory_area.brr
+int write_brrp_to_file(void *data);
 int write_plain_brr_to_file(void *data);  // data is main_memory_area ptr
 int play_sample(void *data);
 int solo_sample(void *data);
 
-struct BRR
-{
-  BRR();
-  enum BRR_TYPE {
-    CLICKED_ON_LOOP_ONLY=0,
-    LOOP_SAMPLE,
-    PLAIN_SAMPLE,
-    NOT_A_SAMPLE
-  };
-  uint8_t one_solo=0x0;
-  uint8_t srcn_solo=0x0;
-  uint16_t srcn[MAX_VOICES];  // current voices' SRCN addresses
-  uint16_t brr_start,brr_end; // for downloading BRR samples
-  uint16_t brr_loop_start,brr_loop_end;
-  uint8_t lowest_srcn_index=0x0;  // indexes into report::src[]
-  uint8_t lowest_loop_index=0x0;
-  int check_brr(uint16_t *address);
-  void play_sample(Instrument_Window *instr_window);
-  void solo_sample();
-};
+
 
 struct Main_Memory_Area : Memory
 {
@@ -69,6 +51,8 @@ public:
     {
       menu_items[SOLOSAMPLE].clickable_text.data = base;
       menu_items[RIPBRR].clickable_text.data = base;
+      menu_items[RIPBRRP].clickable_text.data = base;
+      menu_items[RIPBRRI].clickable_text.data = base;
       menu_items[PLAYSAMPLE].clickable_text.data = base;
     }
     // for tcontext menu
@@ -80,7 +64,7 @@ public:
       PLAYSAMPLE,
       RIPBRR,
       RIPBRRP,
-      RIPI,
+      RIPBRRI,
       SIZEOF_MENU
     };
 
@@ -90,8 +74,8 @@ public:
       {"Solo Sample",true, &solo_sample,NULL},
       {"Play Sample",true, &play_sample, NULL},
       {"RIP BRR",true, &write_plain_brr_to_file, NULL},
-      {"Rip BRR+",true},
-      {"Rip Instrument",true},
+      {"Rip BRR+",true, &write_brrp_to_file, NULL},
+      {"Rip BRRI",true},
       {"",false, NULL,NULL}
     };
 
