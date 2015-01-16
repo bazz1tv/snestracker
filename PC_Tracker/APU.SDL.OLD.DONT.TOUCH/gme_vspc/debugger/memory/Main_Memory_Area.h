@@ -9,6 +9,7 @@
 #include "Instrument_Window.h"
 #include "BRR.h"
 // expects pre-calculated main_memory_area.brr
+int write_brri_to_file(void *data);
 int write_brrp_to_file(void *data);
 int write_plain_brr_to_file(void *data);  // data is main_memory_area ptr
 int play_sample(void *data);
@@ -75,7 +76,7 @@ public:
       {"Play Sample",true, &play_sample, NULL},
       {"RIP BRR",true, &write_plain_brr_to_file, NULL},
       {"Rip BRR+",true, &write_brrp_to_file, NULL},
-      {"Rip BRRI",true},
+      {"Rip BRRI",true, &write_brri_to_file, NULL},
       {"",false, NULL,NULL}
     };
 

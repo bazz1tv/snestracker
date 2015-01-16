@@ -1,8 +1,13 @@
 #include "BRR.h"
 
-const char BRR::BRRP_MAGIC_STR[] = "ST-BRRP ";  // the S has the low 2 bits set, an unlikely situation for any BRR sample
+const char BRR::BRRP_MAGIC_STR[] = "ST-BRRP";  // the S has the low 2 bits set, 
+                                                //an unlikely situation for any BRR Sample
+                                                // 8-byte aligned
 const char BRR::BRR_FILE_EXTENSION[] = "brr";
 const char BRR::BRRP_FILE_EXTENSION[] = "brrp";
+
+const char BRR::BRRI_MAGIC_STR[] = "ST-BRRI";  // 8 byte aligned
+const char BRR::BRRI_FILE_EXTENSION[] = "brri";
 
 
 int BRR::write_plain_brr_to_file(BRR *brr)
@@ -19,11 +24,30 @@ int BRR::write_plain_brr_to_file(BRR *brr)
   }
 }
 
+int BRR::write_loop_info_to_file(BRR *brr, SDL_RWops *file)
+{
+  Uint16 offset;
+  SDL_RWwrite(file, &brr->is_looped_sample, 1, 1);
+  SDL_RWwrite(file, &brr->is_loop_external, 1, 1);
+  if (brr->is_looped_sample && ! brr->is_loop_external)
+  {
+    offset = brr->brr_loop_start - brr->brr_start;
+    SDL_WriteLE16(file, offset);
+  }
+  else 
+  {
+    offset = 0x0000;
+    SDL_WriteLE16(file, offset);
+  }
+  
+}
+
 int BRR::write_brrp_to_file(BRR *brr)
 {
   SDL_RWops *file;
   nfdchar_t *outPath = NULL;
-  Uint8 is_loop_external;
+  
+  //Uint16 zero_word = 0x0000;
 
   if (Utility::get_file_write_handle(&outPath, &file, BRRP_FILE_EXTENSION) == NFD_OKAY)
   {
@@ -35,10 +59,7 @@ int BRR::write_brrp_to_file(BRR *brr)
     //MAGIC "penis breath"
     SDL_RWwrite(file, BRRP_MAGIC_STR, strlen(BRRP_MAGIC_STR), 1);
     // 
-    if (brr->brr_loop_start > brr->brr_end)
-      is_loop_external = 0xff;
-    else is_loop_external = 0x00;
-    SDL_RWwrite(file, &is_loop_external, 1, 1);
+    write_loop_info_to_file(brr, file);
     //BRR Sample
     SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
     /* 1 Byte boolean "is_loop_external" : 0x00 or 0xff - no or yes
@@ -46,18 +67,44 @@ int BRR::write_brrp_to_file(BRR *brr)
       if yes: Next BRR Sample is provided */
     //
 
-    if (is_loop_external)
-    {
-      // write the external loop sample
+    if (brr->is_looped_sample && brr->is_loop_external) // write the external loop sample
       SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_loop_start], brr->brr_loop_end - brr->brr_loop_start + 1, 1);
-    }
-    
-    else
-    {
-      // write the loop offset in previous sample
-      Uint16 offset = brr->brr_loop_start - brr->brr_start;
-      SDL_WriteLE16(file, offset);
-    }
+
+
+    SDL_RWclose(file);
+    free(outPath);
+  }
+}
+
+int BRR::write_brri_to_file(BRR *brr)
+{
+  SDL_RWops *file;
+  nfdchar_t *outPath = NULL;
+  Uint8 is_loop_external;
+
+  if (Utility::get_file_write_handle(&outPath, &file, BRRI_FILE_EXTENSION) == NFD_OKAY)
+  {
+    if (outPath !=NULL)
+      fprintf(stderr, "%s\n", outPath);
+
+    //MAGIC "penis breath"
+    SDL_RWwrite(file, BRRI_MAGIC_STR, strlen(BRRI_MAGIC_STR), 1);
+    // 
+    write_loop_info_to_file(brr, file);
+    // ADSR 1
+    Uint8 tmpb = BaseD::player->spc_read_dsp(brr->corresponding_voice*0x10 + dsp_reg::adsr1);
+    SDL_RWwrite(file, &tmpb, 1, 1); 
+    // ADSR 2
+    tmpb = BaseD::player->spc_read_dsp(brr->corresponding_voice*0x10 + dsp_reg::adsr2);
+    SDL_RWwrite(file, &tmpb, 1, 1); 
+    // GAIN
+    tmpb = BaseD::player->spc_read_dsp(brr->corresponding_voice*0x10 + dsp_reg::gain);
+    SDL_RWwrite(file, &tmpb, 1, 1); 
+    //BRR Sample
+    SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
+    //
+    if (brr->is_looped_sample && brr->is_loop_external) // write the external loop sample
+      SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_loop_start], brr->brr_loop_end - brr->brr_loop_start + 1, 1);
 
     SDL_RWclose(file);
     free(outPath);
@@ -89,7 +136,8 @@ BRR::BRR()
 
 int BRR::check_brr(uint16_t *address)
 {
-  bool does_sample_loop = false;
+  is_looped_sample = false;
+  is_loop_external = false;
   bool no_lower_loop_found=false;
   //uint16_t *address = &context.addr_when_user_right_clicked;
   //fprintf(stderr, "address = %04X\n", context.addr_when_user_right_clicked);
@@ -152,6 +200,7 @@ int BRR::check_brr(uint16_t *address)
       {
         srcn_solo |= 1<<x;
         one_solo = x;
+        corresponding_voice = x;
         fprintf(stderr, "one_solos = %d", one_solo);
       }
     }
@@ -181,7 +230,7 @@ int BRR::check_brr(uint16_t *address)
       if (BaseD::IAPURAM[p] & 1)
       {
         if (BaseD::IAPURAM[p] & 2)
-          does_sample_loop=true;
+          is_looped_sample=true;
         p+=8;
         break;
       }
@@ -239,10 +288,15 @@ int BRR::check_brr(uint16_t *address)
     fprintf(stderr, "BRR @ 0x%04X-0x%04X\n", lowest_closest_srcn_address, lowest_closest_brrend_address_from_srcn);
     brr_start = lowest_closest_srcn_address;
     brr_end = lowest_closest_brrend_address_from_srcn; //inclusive
-    if (does_sample_loop == true)
+    if (is_looped_sample == true)
     {
       brr_loop_start = report::src[lowest_srcn_index].brr_loop_start;
       brr_loop_end = report::src[lowest_srcn_index].brr_loop_end;
+
+      if (brr_loop_start > brr_end)
+        is_loop_external = true;
+      else is_loop_external = false;
+
       return LOOP_SAMPLE;
     }
     else

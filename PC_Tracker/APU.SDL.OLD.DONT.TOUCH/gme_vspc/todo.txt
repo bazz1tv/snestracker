@@ -1,3 +1,9 @@
+BRR Sample Watcher
+------------------
+After we "solo sample," track which channel(s) are using the sample and continuously
+only solo those channels, if no channels are using it, then mute everything.
+
+
 MIDI-IN
 -------
 Config menu
@@ -23,6 +29,8 @@ Right-Click Context Menu
 
 ALL
 ---
+Import SPC
+
 lots of things SHOULDN"T be done/updated if paused
 
 Change run() to a function-pointer style and have a first_run() version of
@@ -90,3 +98,10 @@ Star Fox - Briefing (fast opening):
 
 Optional:
 ---------
+
+
+
+
+DISTANT SHIT
+------------
+SPC IMPORT -- Time signature detection
