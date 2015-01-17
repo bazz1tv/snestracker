@@ -77,6 +77,23 @@ void Instrument_Window::run()
     octave.down_arrow.rect.x = x;
     octave.down_arrow.rect.y = y;
 
+    y +=(CHAR_HEIGHT*3);
+    sprintf(tmpbuf, "ADSR");
+    sdlfont_drawString(screen, voice.n_x, y, tmpbuf, Colors::gray);
+    adsr.x = voice.n_x;
+    adsr.y = y;
+    y+= 2*CHAR_HEIGHT;
+    
+    sprintf(tmpbuf, "Attack");
+    sdlfont_drawString(screen, voice.n_x, y, tmpbuf, Colors::gray); 
+    attack.x = voice.n_x;
+    attack.y = y;
+    y+= CHAR_HEIGHT;
+
+    attack_context.menu.preload(voice.n_x, y);
+    //attack_context.menu.is_active = true;
+
+
     is_first_run = false;
   }
 }
@@ -99,13 +116,77 @@ void Instrument_Window::draw()
     sprintf(tmpbuf, "%d", octave.n);
     sdlfont_drawString(screen, octave.n_x, octave.n_y, tmpbuf, Colors::magenta);
   octave.down_arrow.draw(Colors::white, true, true); // flipV
+
+
+  //SDL_FillRect(screen, &attack_context.menu.created_at, Colors::black);
+  attack_context.menu.draw(screen);
+
   
   sdl_draw();
 }
 
 void Instrument_Window::receive_event(SDL_Event &ev)
 {
+  if (attack_context.menu.is_active)
+  {
+    switch (ev.type)
+    {
+      case SDL_QUIT:
+      if (!g_cfg.nosound) {
+        SDL_PauseAudio(1);
+      }
+      printf ("penis4\n");
+      quitting = true;
+      break;
+
+      case SDL_MOUSEMOTION:
+      {
+        mouse::x = ev.motion.x; mouse::y = ev.motion.y;
+      } break;
+
+      case SDL_KEYDOWN:
+      {
+        int scancode = ev.key.keysym.sym;
+        switch (scancode)
+        {
+          case SDLK_RETURN:
+          // act same as left mouse button click use a goto lol
+          attack_context.menu.do_thing();
+          break;
+
+          case SDLK_ESCAPE:
+          attack_context.menu.deactivate();
+          break;
+        }
+      } break;
+
+      case SDL_MOUSEBUTTONDOWN:
+      {
+        switch (ev.button.button)
+        {
+          case SDL_BUTTON_LEFT:
+          {
+            attack_context.menu.do_thing();
+          }
+          break;
+
+          case SDL_BUTTON_RIGHT:
+          break;
+
+          default:break;
+        }
+      }
+      break;
+      default:break;
+    }
+    return;
+  }
+
+
   dblclick::check_event(&ev);
+
+
+
   switch (ev.type)
   {
     
@@ -345,6 +426,11 @@ void Instrument_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
     {
+      if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &attack_context.menu.single_item_rect))
+      {
+        fprintf(stderr, "hi big boy :)\n");
+        attack_context.menu.activate();
+      }
       if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &start_stop.startc.rect))
       {
         if (!start_stop.is_started)

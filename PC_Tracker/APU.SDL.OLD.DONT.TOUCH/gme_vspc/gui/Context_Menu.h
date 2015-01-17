@@ -12,7 +12,7 @@ struct Context_Menu_Item
 struct Context_Menu
 {
   SDL_Rect created_at;  // the mouse coordinate when context menu was created
-  Context_Menu(Context_Menu_Item *array);
+  Context_Menu(Context_Menu_Item *array,  bool isActive=false);
   void preload(int &x, int &y, bool use_cache=false);
   void push(Clickable_Text &ref);
   void push(char *str);
@@ -20,7 +20,7 @@ struct Context_Menu
   void do_thing(void *data=NULL);
   //std::vector<Clickable_Text> items;
   Context_Menu_Item *items=NULL;
-  SDL_Rect rect;
+  
   bool is_active=false;
   int greatest_length=0, visible_items=0;
   Context_Menu_Item *highlighted_item=NULL;

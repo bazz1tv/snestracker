@@ -7,6 +7,12 @@
 #include "Experience.h"
 #include "gui/Clickable_Text.h"
 #include "gui/cursor.h"
+#include "utility.h"
+#include "ADSR.h"
+#include "gui/Expanding_List.h"
+
+
+
 
 
 struct Instrument_Window : public BaseD,
@@ -63,6 +69,49 @@ public Experience
   int song_time_backup;
   //track_info_t track_info_backup, track_info_backup2; // cause of pass by reference
 
+  struct
+  {
+    int x,y;
+
+  } adsr, attack;
+
+  struct Context
+  {
+    // Take parent class here
+    Context() : menu(menu_items)
+    {
+      
+    }
+    // for tcontext menu
+
+    enum {
+      
+    };
+
+    Expanding_List menu;
+    Context_Menu_Item menu_items[ADSR::ATTACK_SIZE+1] = 
+    {
+      {ADSR::attack_map[0].str, true,  NULL,  NULL},
+      {ADSR::attack_map[1].str, true,  NULL,  NULL},
+      {ADSR::attack_map[2].str, true,  NULL,  NULL},
+      {ADSR::attack_map[3].str, true,  NULL,  NULL},
+      {ADSR::attack_map[4].str, true,  NULL,  NULL},
+      {ADSR::attack_map[5].str, true,  NULL,  NULL},
+      {ADSR::attack_map[6].str, true,  NULL,  NULL},
+      {ADSR::attack_map[7].str, true,  NULL,  NULL},
+      {ADSR::attack_map[8].str, true,  NULL,  NULL},
+      {ADSR::attack_map[9].str, true,  NULL,  NULL},
+      {ADSR::attack_map[10].str, true,  NULL,  NULL},
+      {ADSR::attack_map[11].str, true,  NULL,  NULL},
+      {ADSR::attack_map[12].str, true,  NULL,  NULL},
+      {ADSR::attack_map[13].str, true,  NULL,  NULL},
+      {ADSR::attack_map[14].str, true,  NULL,  NULL},
+      {ADSR::attack_map[15].str, true,  NULL,  NULL},
+      {"",            false, NULL,  NULL}
+    };
+
+  } attack_context;
+
   enum modes 
   { 
     MODE_NAV=0,
@@ -76,3 +125,4 @@ public Experience
   
   bool is_first_run=true;
 };
+

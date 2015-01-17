@@ -4,7 +4,8 @@
 
 #include "globals.h"
 
-Context_Menu_Item::Context_Menu_Item(const char *str, bool is_visible, int (*action)(void *)/*=NULL*/, void* data/*=NULL*/) : 
+Context_Menu_Item::Context_Menu_Item(const char *str, bool is_visible, 
+  int (*action)(void *)/*=NULL*/, void* data/*=NULL*/) : 
 clickable_text(str, action, data), is_visible(is_visible)
 {
 
@@ -17,7 +18,7 @@ void Context_Menu::do_thing(void *data/*=NULL*/)
   {
     if (p->clickable_text.action)
     {
-      p->clickable_text.do_thing();
+      p->clickable_text.do_thing(data);
     }
   }
   is_active = false;
@@ -62,7 +63,8 @@ void Context_Menu::draw(SDL_Surface *screen)
   }
 }
 
-Context_Menu::Context_Menu(Context_Menu_Item *array)
+Context_Menu::Context_Menu(Context_Menu_Item *array, bool isActive/*=false*/) :
+is_active(isActive)
 {
   items = array;
 }
