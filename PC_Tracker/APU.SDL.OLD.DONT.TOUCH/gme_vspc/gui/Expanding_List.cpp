@@ -11,7 +11,10 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
 {
   Context_Menu::do_thing(data);
   if (highlighted_item)
+  {
+    fprintf(stderr, "DERP?!");
     currently_selected_item = highlighted_item;
+  }
 }
 
 Expanding_List::Expanding_List(Context_Menu_Item *array, bool isActive/*=false*/) :
@@ -30,20 +33,6 @@ void Expanding_List::preload(int &x, int &y, bool use_cache/*=false*/)
   single_item_rect.h = TILE_HEIGHT;
   created_at.y += TILE_HEIGHT;
   
-}
-
-bool Expanding_List::is_activated()
-{
-  return is_active;
-}
-void Expanding_List::activate()
-{
-  is_active = true;
-}
-
-void Expanding_List::deactivate()
-{
-  is_active=false;
 }
 
 void Expanding_List::draw(SDL_Surface *screen)
@@ -79,6 +68,7 @@ void Expanding_List::draw(SDL_Surface *screen)
             SDL_Rect r = {created_at.x, created_at.y + (drawn)*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
             SDL_FillRect(screen, &r, Colors::magenta);
             highlighted_item = &items[i];
+            currently_selected_item_index = i;
           }
         }
         // draw this nigga

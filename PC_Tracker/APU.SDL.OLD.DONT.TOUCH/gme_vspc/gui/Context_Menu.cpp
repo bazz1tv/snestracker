@@ -3,11 +3,85 @@
 #include "sdlfont.h"
 
 #include "globals.h"
+#include "BaseD.h"
+
+bool Context_Menu::is_activated()
+{
+  return is_active;
+}
+void Context_Menu::activate()
+{
+  is_active = true;
+}
+
+void Context_Menu::deactivate()
+{
+  is_active=false;
+}
 
 Context_Menu_Item::Context_Menu_Item(const char *str, bool is_visible, 
   int (*action)(void *)/*=NULL*/, void* data/*=NULL*/) : 
 clickable_text(str, action, data), is_visible(is_visible)
 {
+
+}
+
+bool Context_Menu::receive_event(SDL_Event &ev)
+{
+  if (!is_active)
+    return false;
+
+  switch (ev.type)
+  {
+    case SDL_QUIT:
+    if (!BaseD::g_cfg.nosound) {
+      SDL_PauseAudio(1);
+    }
+    printf ("penis4\n");
+    BaseD::quitting = true;
+    break;
+
+    case SDL_MOUSEMOTION:
+    {
+      mouse::x = ev.motion.x; mouse::y = ev.motion.y;
+    } break;
+
+    case SDL_KEYDOWN:
+    {
+      int scancode = ev.key.keysym.sym;
+      switch (scancode)
+      {
+        case SDLK_RETURN:
+        // act same as left mouse button click use a goto lol
+          do_thing();
+        break;
+
+        case SDLK_ESCAPE:
+          deactivate();
+        break;
+      }
+    } break;
+
+    case SDL_MOUSEBUTTONDOWN:
+    {
+      switch (ev.button.button)
+      {
+        case SDL_BUTTON_LEFT:
+        {
+          do_thing();
+        }
+        break;
+
+        case SDL_BUTTON_RIGHT:
+        break;
+
+        default:break;
+      }
+    }
+    break;
+    default:break;
+  }
+  return true;
 
 }
 

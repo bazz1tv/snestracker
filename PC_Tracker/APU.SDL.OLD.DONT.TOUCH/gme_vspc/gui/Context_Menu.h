@@ -11,6 +11,12 @@ struct Context_Menu_Item
 
 struct Context_Menu
 {
+  bool is_activated();
+  void activate();
+  void deactivate();
+
+  bool receive_event(SDL_Event &ev);
+
   SDL_Rect created_at;  // the mouse coordinate when context menu was created
   Context_Menu(Context_Menu_Item *array,  bool isActive=false);
   void preload(int &x, int &y, bool use_cache=false);

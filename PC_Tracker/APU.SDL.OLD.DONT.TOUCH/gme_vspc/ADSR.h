@@ -15,10 +15,13 @@ struct ADSR
   const char * get_sustain_release_str(Uint8 adsr2);  
   int get_sustain_release_index(Uint8 adsr2);
 
-  static const int ATTACK_SIZE = 16;
+  static const int ATTACK_MAP_SIZE = 16;
+  static const int DECAY_MAP_SIZE = 8;
+  static const int SUSTAIN_LEVEL_MAP_SIZE = 8;
+  static const int SUSTAIN_RELEASE_MAP_SIZE = 0x20;
 
-  static const IntToCharStar attack_map[ATTACK_SIZE];
-  static const IntToCharStar decay_map[8];
-  static const IntToCharStar sustain_level_map[8];
-  static const IntToCharStar sustain_release_map[0x20];
+  static const IntToCharStar attack_map[ATTACK_MAP_SIZE];
+  static const IntToCharStar decay_map[DECAY_MAP_SIZE];
+  static const IntToCharStar sustain_level_map[SUSTAIN_LEVEL_MAP_SIZE];
+  static const IntToCharStar sustain_release_map[SUSTAIN_RELEASE_MAP_SIZE];
 };

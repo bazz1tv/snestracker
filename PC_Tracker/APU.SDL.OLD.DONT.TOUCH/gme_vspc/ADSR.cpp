@@ -1,6 +1,6 @@
 #include "ADSR.h"
 
-const IntToCharStar ADSR::attack_map[16] = 
+const IntToCharStar ADSR::attack_map[ATTACK_MAP_SIZE] = 
 {
   {0,  "4.1 s"},
   {1,  "2.6 s"},
@@ -19,7 +19,7 @@ const IntToCharStar ADSR::attack_map[16] =
   {14, "6 ms"},
   {15, "0 ms"}
 };
-const IntToCharStar ADSR::decay_map[8] = 
+const IntToCharStar ADSR::decay_map[DECAY_MAP_SIZE] = 
 {
   {0, "1.2 s"},
   {1, "740 ms"},
@@ -30,7 +30,7 @@ const IntToCharStar ADSR::decay_map[8] =
   {6, "74 ms"},
   {7, "37 ms"}
 };
-const IntToCharStar ADSR::sustain_level_map[8] = 
+const IntToCharStar ADSR::sustain_level_map[SUSTAIN_LEVEL_MAP_SIZE] = 
 {
   {0, "1/8"},
   {1, "2/8"},
@@ -41,7 +41,7 @@ const IntToCharStar ADSR::sustain_level_map[8] =
   {6, "7/8"},
   {7, "1"}
 };
-const IntToCharStar ADSR::sustain_release_map[0x20] = 
+const IntToCharStar ADSR::sustain_release_map[SUSTAIN_RELEASE_MAP_SIZE] = 
 {
   {0,  "Infinite"},
   {1,  "38 s"},

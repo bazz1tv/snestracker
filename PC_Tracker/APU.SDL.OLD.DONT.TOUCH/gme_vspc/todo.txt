@@ -1,3 +1,8 @@
+Context Menu / Expanding Menu
+-----------------------------
+Draw the menu on a different SDL Surface, and then blit -- this is to avoid
+crap happening when we draw on stuff below us .. hehehe
+
 BRR Sample Watcher
 ------------------
 After we "solo sample," track which channel(s) are using the sample and continuously
@@ -11,6 +16,14 @@ Specify Default Device
 "Soft" pitch-bend range specifier
 "Select Instrument"
 There is a delay/latency/desync issue
+
+
+EXPORT
+=======
+WAV Export
+-----------
+export .wavs of each individual channel all in one go
+  . To do this, analyze Blargg's WAV export example from gme
 
 SPC Export
 ----------

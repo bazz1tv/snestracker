@@ -84,14 +84,22 @@ void Instrument_Window::run()
     adsr.y = y;
     y+= 2*CHAR_HEIGHT;
     
+    int save_y = y;
     sprintf(tmpbuf, "Attack");
     sdlfont_drawString(screen, voice.n_x, y, tmpbuf, Colors::gray); 
     attack.x = voice.n_x;
     attack.y = y;
     y+= CHAR_HEIGHT;
-
     attack_context.menu.preload(voice.n_x, y);
-    //attack_context.menu.is_active = true;
+    
+    //
+    decay.x = x + (CHAR_WIDTH*(2+strlen("Attack")));
+    decay.y = save_y;
+    sprintf(tmpbuf, "Decay");
+    sdlfont_drawString(screen, decay.x, decay.y, tmpbuf, Colors::gray);
+    y = decay.y + CHAR_HEIGHT;
+    decay_context.menu.preload(decay.x, y);
+
 
 
     is_first_run = false;
@@ -120,6 +128,7 @@ void Instrument_Window::draw()
 
   //SDL_FillRect(screen, &attack_context.menu.created_at, Colors::black);
   attack_context.menu.draw(screen);
+  decay_context.menu.draw(screen);
 
   
   sdl_draw();
@@ -127,60 +136,12 @@ void Instrument_Window::draw()
 
 void Instrument_Window::receive_event(SDL_Event &ev)
 {
-  if (attack_context.menu.is_active)
-  {
-    switch (ev.type)
-    {
-      case SDL_QUIT:
-      if (!g_cfg.nosound) {
-        SDL_PauseAudio(1);
-      }
-      printf ("penis4\n");
-      quitting = true;
-      break;
-
-      case SDL_MOUSEMOTION:
-      {
-        mouse::x = ev.motion.x; mouse::y = ev.motion.y;
-      } break;
-
-      case SDL_KEYDOWN:
-      {
-        int scancode = ev.key.keysym.sym;
-        switch (scancode)
-        {
-          case SDLK_RETURN:
-          // act same as left mouse button click use a goto lol
-          attack_context.menu.do_thing();
-          break;
-
-          case SDLK_ESCAPE:
-          attack_context.menu.deactivate();
-          break;
-        }
-      } break;
-
-      case SDL_MOUSEBUTTONDOWN:
-      {
-        switch (ev.button.button)
-        {
-          case SDL_BUTTON_LEFT:
-          {
-            attack_context.menu.do_thing();
-          }
-          break;
-
-          case SDL_BUTTON_RIGHT:
-          break;
-
-          default:break;
-        }
-      }
-      break;
-      default:break;
-    }
+  if (attack_context.menu.receive_event(ev))
     return;
-  }
+  if (decay_context.menu.receive_event(ev))
+    return;
+
+
 
 
   dblclick::check_event(&ev);
@@ -195,7 +156,7 @@ void Instrument_Window::receive_event(SDL_Event &ev)
         SDL_PauseAudio(1);
       }
       printf ("penis4\n");
-      quitting = true;
+      BaseD::quitting = true;
       break;
     case SDL_MOUSEMOTION:
       {
@@ -431,7 +392,12 @@ void Instrument_Window::receive_event(SDL_Event &ev)
         fprintf(stderr, "hi big boy :)\n");
         attack_context.menu.activate();
       }
-      if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &start_stop.startc.rect))
+      else if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &decay_context.menu.single_item_rect))
+      {
+        fprintf(stderr, "hi big boyz :)\n");
+        decay_context.menu.activate();
+      }
+      else if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &start_stop.startc.rect))
       {
         if (!start_stop.is_started)
         {

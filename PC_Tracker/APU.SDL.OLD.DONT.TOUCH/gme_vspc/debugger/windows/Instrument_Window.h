@@ -73,12 +73,12 @@ public Experience
   {
     int x,y;
 
-  } adsr, attack;
+  } adsr, attack, decay;
 
-  struct Context
+  struct Attack_Context
   {
     // Take parent class here
-    Context() : menu(menu_items)
+    Attack_Context() : menu(menu_items)
     {
       
     }
@@ -89,7 +89,7 @@ public Experience
     };
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[ADSR::ATTACK_SIZE+1] = 
+    Context_Menu_Item menu_items[ADSR::ATTACK_MAP_SIZE+1] = 
     {
       {ADSR::attack_map[0].str, true,  NULL,  NULL},
       {ADSR::attack_map[1].str, true,  NULL,  NULL},
@@ -111,6 +111,35 @@ public Experience
     };
 
   } attack_context;
+
+  struct Decay_Context
+  {
+    // Take parent class here
+    Decay_Context() : menu(menu_items)
+    {
+      
+    }
+    // for tcontext menu
+
+    enum {
+      
+    };
+
+    Expanding_List menu;
+    Context_Menu_Item menu_items[ADSR::DECAY_MAP_SIZE+1] = 
+    {
+      {ADSR::decay_map[0].str, true,  NULL,  NULL},
+      {ADSR::decay_map[1].str, true,  NULL,  NULL},
+      {ADSR::decay_map[2].str, true,  NULL,  NULL},
+      {ADSR::decay_map[3].str, true,  NULL,  NULL},
+      {ADSR::decay_map[4].str, true,  NULL,  NULL},
+      {ADSR::decay_map[5].str, true,  NULL,  NULL},
+      {ADSR::decay_map[6].str, true,  NULL,  NULL},
+      {ADSR::decay_map[7].str, true,  NULL,  NULL},
+      {"",            false, NULL,  NULL}
+    };
+
+  } decay_context;
 
   enum modes 
   { 
