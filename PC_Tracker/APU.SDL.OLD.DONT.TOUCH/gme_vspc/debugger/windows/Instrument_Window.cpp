@@ -8,6 +8,8 @@
 
 #define ENDLESS_LOOP_OPCODE 0xfe2f
 
+
+
 Instrument_Window::Instrument_Window() : 
 octave("octave"),
 voice("voice")
@@ -37,9 +39,25 @@ void Instrument_Window::run()
     reload();
   }
 
+  //int current_voice = voice.n;
+  //voice.update_adsr_vals();
+  adsr1 = player->spc_read_dsp(0x10*voice.n + dsp_reg::adsr1);
+  adsr2 = player->spc_read_dsp(0x10*voice.n + dsp_reg::adsr2);
+
+  adsr_context_menus.update(adsr1, adsr2);
+  
+
   if (is_first_run)
   {
-    int x = start_stop.startc.rect.x, o_x=x, y = start_stop.startc.rect.y+(4*TILE_HEIGHT), o_y = y;
+    one_time_draw();
+
+    is_first_run = false;
+  }
+}
+
+void Instrument_Window::one_time_draw()
+{
+  int x = start_stop.startc.rect.x, o_x=x, y = start_stop.startc.rect.y+(4*TILE_HEIGHT), o_y = y;
 
 
 
@@ -90,20 +108,27 @@ void Instrument_Window::run()
     attack.x = voice.n_x;
     attack.y = y;
     y+= CHAR_HEIGHT;
-    attack_context.menu.preload(voice.n_x, y);
+    adsr_context_menus.attack_context.menu.preload(voice.n_x, y);
     
     //
-    decay.x = attack.x + (CHAR_WIDTH*(2+strlen("Attack")));
+    decay.x = attack.x + (CHAR_WIDTH*(4+strlen("Attack")));
     decay.y = save_y;
     sprintf(tmpbuf, "Decay");
     sdlfont_drawString(screen, decay.x, decay.y, tmpbuf, Colors::gray);
     y = decay.y + CHAR_HEIGHT;
-    decay_context.menu.preload(decay.x, y);
+    adsr_context_menus.decay_context.menu.preload(decay.x, y);
 
+    sustain_level.x = decay.x + (CHAR_WIDTH*(4+strlen("Decay")));
+    sustain_level.y = save_y;
+    sprintf(tmpbuf, "Sustain Level");
+    sdlfont_drawString(screen, sustain_level.x, sustain_level.y, tmpbuf, Colors::gray);
+    adsr_context_menus.sustain_level_context.menu.preload(sustain_level.x, y);
 
-
-    is_first_run = false;
-  }
+    sustain_release.x = sustain_level.x + (CHAR_WIDTH*(2+strlen("Sustain Level")));
+    sustain_release.y = save_y;
+    sprintf(tmpbuf, "Sustain Release");
+    sdlfont_drawString(screen, sustain_release.x, sustain_release.y, tmpbuf, Colors::gray);
+    adsr_context_menus.sustain_release_context.menu.preload(sustain_release.x, y);
 }
 
 void Instrument_Window::draw()
@@ -127,8 +152,8 @@ void Instrument_Window::draw()
 
 
   //SDL_FillRect(screen, &attack_context.menu.created_at, Colors::black);
-  attack_context.menu.draw(screen);
-  decay_context.menu.draw(screen);
+  
+  adsr_context_menus.draw(screen);
 
   
   sdl_draw();
@@ -136,10 +161,55 @@ void Instrument_Window::draw()
 
 void Instrument_Window::receive_event(SDL_Event &ev)
 {
-  if (attack_context.menu.receive_event(ev))
+  int r;
+  if ((r=adsr_context_menus.receive_event(ev)))
+  {
+    switch (r)
+    {
+      case ADSR::Context_Menus::ATTACK_CHANGED:
+      {
+        Uint8 i = adsr_context_menus.attack_context.menu.currently_selected_item_index;
+        Uint8 vreg = voice.n * 0x10 + dsp_reg::adsr1;
+        Uint8 adsr1 = player->spc_read_dsp(vreg);
+        adsr1 = adsr1 & (~ADSR::ATTACK_MASK);
+        adsr1 |= ADSR::reverse_attack_index(i);
+        player->spc_write_dsp(vreg, adsr1);
+      }
+      break;
+      case ADSR::Context_Menus::DECAY_CHANGED:
+      {
+        Uint8 i = adsr_context_menus.decay_context.menu.currently_selected_item_index;
+        Uint8 vreg = voice.n * 0x10 + dsp_reg::adsr1;
+        Uint8 adsr1 = player->spc_read_dsp(vreg);
+        adsr1 = adsr1 & (~ADSR::DECAY_MASK);
+        adsr1 |= ADSR::reverse_decay_index(i);
+        player->spc_write_dsp(vreg, adsr1);
+      }
+      break;
+      case ADSR::Context_Menus::SUSTAIN_LEVEL_CHANGED:
+      {
+        Uint8 i = adsr_context_menus.sustain_level_context.menu.currently_selected_item_index;
+        Uint8 vreg = voice.n * 0x10 + dsp_reg::adsr2;
+        Uint8 adsr2 = player->spc_read_dsp(vreg);
+        adsr2 = adsr2 & (~ADSR::SUSTAIN_LEVEL_MASK);
+        adsr2 |= ADSR::reverse_sustain_level_index(i);
+        player->spc_write_dsp(vreg, adsr2);
+      }
+      break;
+      case ADSR::Context_Menus::SUSTAIN_RELEASE_CHANGED:
+      {
+        Uint8 i = adsr_context_menus.sustain_release_context.menu.currently_selected_item_index;
+        Uint8 vreg = voice.n * 0x10 + dsp_reg::adsr2;
+        Uint8 adsr2 = player->spc_read_dsp(vreg);
+        adsr2 = adsr2 & (~ADSR::SUSTAIN_RELEASE_MASK);
+        adsr2 |= ADSR::reverse_sustain_release_index(i);
+        player->spc_write_dsp(vreg, adsr2);
+      }
+      break;
+      default:break;
+    }
     return;
-  if (decay_context.menu.receive_event(ev))
-    return;
+  }
 
 
 
@@ -387,17 +457,12 @@ void Instrument_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
     {
-      if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &attack_context.menu.single_item_rect))
+      if (adsr_context_menus.check_left_click_activate(ev.button.x, ev.button.y))
       {
-        fprintf(stderr, "hi big boy :)\n");
-        attack_context.menu.activate();
+        return;
       }
-      else if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &decay_context.menu.single_item_rect))
-      {
-        fprintf(stderr, "hi big boyz :)\n");
-        decay_context.menu.activate();
-      }
-      else if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &start_stop.startc.rect))
+      
+      if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &start_stop.startc.rect))
       {
         if (!start_stop.is_started)
         {

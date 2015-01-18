@@ -22,6 +22,7 @@ public Experience
   Instrument_Window();
   void run();
   void draw();
+  void one_time_draw();
   void receive_event(SDL_Event &ev);
 
   void play_pitch(int p, bool abs=false);
@@ -60,6 +61,8 @@ public Experience
     uint8_t n=0;
     int n_x,n_y;
   };
+  // should go into a voice class but...
+  Uint8 adsr1, adsr2;
 
   AdjustableUD octave;
   AdjustableLR voice;
@@ -73,73 +76,9 @@ public Experience
   {
     int x,y;
 
-  } adsr, attack, decay;
+  } adsr, attack, decay, sustain_level, sustain_release;  
 
-  struct Attack_Context
-  {
-    // Take parent class here
-    Attack_Context() : menu(menu_items)
-    {
-      
-    }
-    // for tcontext menu
-
-    enum {
-      
-    };
-
-    Expanding_List menu;
-    Context_Menu_Item menu_items[ADSR::ATTACK_MAP_SIZE+1] = 
-    {
-      {ADSR::attack_map[0].str, true,  NULL,  NULL},
-      {ADSR::attack_map[1].str, true,  NULL,  NULL},
-      {ADSR::attack_map[2].str, true,  NULL,  NULL},
-      {ADSR::attack_map[3].str, true,  NULL,  NULL},
-      {ADSR::attack_map[4].str, true,  NULL,  NULL},
-      {ADSR::attack_map[5].str, true,  NULL,  NULL},
-      {ADSR::attack_map[6].str, true,  NULL,  NULL},
-      {ADSR::attack_map[7].str, true,  NULL,  NULL},
-      {ADSR::attack_map[8].str, true,  NULL,  NULL},
-      {ADSR::attack_map[9].str, true,  NULL,  NULL},
-      {ADSR::attack_map[10].str, true,  NULL,  NULL},
-      {ADSR::attack_map[11].str, true,  NULL,  NULL},
-      {ADSR::attack_map[12].str, true,  NULL,  NULL},
-      {ADSR::attack_map[13].str, true,  NULL,  NULL},
-      {ADSR::attack_map[14].str, true,  NULL,  NULL},
-      {ADSR::attack_map[15].str, true,  NULL,  NULL},
-      {"",            false, NULL,  NULL}
-    };
-
-  } attack_context;
-
-  struct Decay_Context
-  {
-    // Take parent class here
-    Decay_Context() : menu(menu_items)
-    {
-      
-    }
-    // for tcontext menu
-
-    enum {
-      
-    };
-
-    Expanding_List menu;
-    Context_Menu_Item menu_items[ADSR::DECAY_MAP_SIZE+1] = 
-    {
-      {ADSR::decay_map[0].str, true,  NULL,  NULL},
-      {ADSR::decay_map[1].str, true,  NULL,  NULL},
-      {ADSR::decay_map[2].str, true,  NULL,  NULL},
-      {ADSR::decay_map[3].str, true,  NULL,  NULL},
-      {ADSR::decay_map[4].str, true,  NULL,  NULL},
-      {ADSR::decay_map[5].str, true,  NULL,  NULL},
-      {ADSR::decay_map[6].str, true,  NULL,  NULL},
-      {ADSR::decay_map[7].str, true,  NULL,  NULL},
-      {"",            false, NULL,  NULL}
-    };
-
-  } decay_context;
+  ADSR::Context_Menus adsr_context_menus;
 
   enum modes 
   { 

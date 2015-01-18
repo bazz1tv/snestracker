@@ -16,6 +16,7 @@ struct Context_Menu
   void deactivate();
 
   bool receive_event(SDL_Event &ev);
+  
 
   SDL_Rect created_at;  // the mouse coordinate when context menu was created
   Context_Menu(Context_Menu_Item *array,  bool isActive=false);

@@ -339,6 +339,7 @@ void BaseD::switch_mode(int mode)
       fprintf(stderr, "NO INSTRUMENT_WINDOW!?!\n");
       exit(2);
     }
+    instr_window->one_time_draw();
   }
 }
 

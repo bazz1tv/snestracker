@@ -1,12 +1,27 @@
 #include "gui/Expanding_List.h"
 #include "globals.h"
 #include "BaseD.h"
+#include "utility.h"
 //Expanding_List_Item::Expanding_List_Item(const char *str, 
 //  int (*action)(void *)/*=NULL*/, void* data/*=NULL*/) : 
 /*clickable_text(str, action, data)
 {
 
 }*/
+
+void Expanding_List::update_current_item(int index)
+{
+  currently_selected_item = &items[index];
+  currently_selected_item_index = index;
+}
+
+bool Expanding_List::check_left_click_activate(const int &x, const int &y)
+{
+  if (Utility::coord_is_in_rect(x, y, &single_item_rect))
+  {
+    activate();
+  }
+}
 
 void Expanding_List::do_thing(void *data/*=NULL*/)
 {
@@ -19,10 +34,10 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
   }
 }
 
-bool Expanding_List::receive_event(SDL_Event &ev)
+int Expanding_List::receive_event(SDL_Event &ev)
 {
   if (!is_active)
-    return false;
+    return EVENT_INACTIVE;
 
   switch (ev.type)
   {
@@ -47,6 +62,7 @@ bool Expanding_List::receive_event(SDL_Event &ev)
         case SDLK_RETURN:
         // act same as left mouse button click use a goto lol
           do_thing();
+          return EVENT_MENU;
         break;
 
         case SDLK_ESCAPE:
@@ -62,6 +78,7 @@ bool Expanding_List::receive_event(SDL_Event &ev)
         case SDL_BUTTON_LEFT:
         {
           do_thing();
+          return EVENT_MENU;
         }
         break;
 
@@ -74,7 +91,7 @@ bool Expanding_List::receive_event(SDL_Event &ev)
     break;
     default:break;
   }
-  return true;
+  return EVENT_ACTIVE;
 }
 
 Expanding_List::Expanding_List(Context_Menu_Item *array, bool isActive/*=false*/) :

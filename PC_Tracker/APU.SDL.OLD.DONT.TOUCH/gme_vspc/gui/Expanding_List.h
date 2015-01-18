@@ -11,12 +11,20 @@
 
 struct Expanding_List : public Context_Menu
 {
+  enum Event
+  {
+    EVENT_INACTIVE=0,
+    EVENT_ACTIVE,
+    EVENT_MENU,
+  };
   void do_thing(void *data=NULL);
   void preload(int &x, int &y, bool use_cache=false);
+  void update_current_item(int index);
 
   Expanding_List(Context_Menu_Item *array,  bool isActive=false);
+  bool check_left_click_activate(const int &x, const int &y);
   void draw(SDL_Surface *screen);
-  bool receive_event(SDL_Event &ev);
+  int receive_event(SDL_Event &ev);
   Context_Menu_Item *currently_selected_item=NULL;
   int currently_selected_item_index=0, highlighted_item_index=0;
   SDL_Rect single_item_rect;
