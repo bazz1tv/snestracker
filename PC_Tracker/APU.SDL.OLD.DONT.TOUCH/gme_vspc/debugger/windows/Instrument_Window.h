@@ -18,7 +18,8 @@
 struct Instrument_Window : public BaseD,
 public Experience
 {
-
+  Uint32 mytime;
+  bool started=false;
   Instrument_Window();
   void run();
   void draw();

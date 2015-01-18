@@ -45,6 +45,23 @@ void Instrument_Window::run()
   adsr2 = player->spc_read_dsp(0x10*voice.n + dsp_reg::adsr2);
 
   adsr_context_menus.update(adsr1, adsr2);
+
+  Uint8 envx = player->spc_read_dsp(0x10*voice.n + dsp_reg::envx);
+  if (envx)
+  {
+    if (!started)
+    {
+      //mytime = SDL_GetTicks();
+      started = true;
+      
+    }
+  }
+  else if (started)
+  {
+    fprintf(stderr, "envx: %d\n", SDL_GetTicks() - mytime);
+    started = false;
+  }
+  
   
 
   if (is_first_run)
@@ -235,7 +252,6 @@ void Instrument_Window::receive_event(SDL_Event &ev)
       break;
     case SDL_KEYUP:
       //scancode = 0;
-      
       if (scancode == ev.key.keysym.sym) keyoff_current_voice();
       //SDL_Delay(1000);
       
@@ -313,7 +329,9 @@ void Instrument_Window::receive_event(SDL_Event &ev)
           break;
 
         case SDLK_z:
+          //
           play_pitch(0);
+          mytime= SDL_GetTicks();
         break;
         case SDLK_s:
           play_pitch(1);
