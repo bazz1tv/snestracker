@@ -93,7 +93,7 @@ void Instrument_Window::run()
     attack_context.menu.preload(voice.n_x, y);
     
     //
-    decay.x = x + (CHAR_WIDTH*(2+strlen("Attack")));
+    decay.x = attack.x + (CHAR_WIDTH*(2+strlen("Attack")));
     decay.y = save_y;
     sprintf(tmpbuf, "Decay");
     sdlfont_drawString(screen, decay.x, decay.y, tmpbuf, Colors::gray);

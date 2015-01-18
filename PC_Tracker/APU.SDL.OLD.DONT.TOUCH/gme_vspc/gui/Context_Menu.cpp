@@ -87,6 +87,7 @@ bool Context_Menu::receive_event(SDL_Event &ev)
 
 void Context_Menu::do_thing(void *data/*=NULL*/)
 {
+  fprintf(stderr, "MEEP");
   Context_Menu_Item *p = highlighted_item;
   if (p != NULL)
   {

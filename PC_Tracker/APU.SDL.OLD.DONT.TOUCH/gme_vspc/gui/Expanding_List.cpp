@@ -1,5 +1,6 @@
 #include "gui/Expanding_List.h"
 #include "globals.h"
+#include "BaseD.h"
 //Expanding_List_Item::Expanding_List_Item(const char *str, 
 //  int (*action)(void *)/*=NULL*/, void* data/*=NULL*/) : 
 /*clickable_text(str, action, data)
@@ -14,7 +15,66 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
   {
     fprintf(stderr, "DERP?!");
     currently_selected_item = highlighted_item;
+    currently_selected_item_index = highlighted_item_index;
   }
+}
+
+bool Expanding_List::receive_event(SDL_Event &ev)
+{
+  if (!is_active)
+    return false;
+
+  switch (ev.type)
+  {
+    case SDL_QUIT:
+    if (!BaseD::g_cfg.nosound) {
+      SDL_PauseAudio(1);
+    }
+    printf ("penis4\n");
+    BaseD::quitting = true;
+    break;
+
+    case SDL_MOUSEMOTION:
+    {
+      mouse::x = ev.motion.x; mouse::y = ev.motion.y;
+    } break;
+
+    case SDL_KEYDOWN:
+    {
+      int scancode = ev.key.keysym.sym;
+      switch (scancode)
+      {
+        case SDLK_RETURN:
+        // act same as left mouse button click use a goto lol
+          do_thing();
+        break;
+
+        case SDLK_ESCAPE:
+          deactivate();
+        break;
+      }
+    } break;
+
+    case SDL_MOUSEBUTTONDOWN:
+    {
+      switch (ev.button.button)
+      {
+        case SDL_BUTTON_LEFT:
+        {
+          do_thing();
+        }
+        break;
+
+        case SDL_BUTTON_RIGHT:
+        break;
+
+        default:break;
+      }
+    }
+    break;
+    default:break;
+  }
+  return true;
 }
 
 Expanding_List::Expanding_List(Context_Menu_Item *array, bool isActive/*=false*/) :
@@ -68,7 +128,7 @@ void Expanding_List::draw(SDL_Surface *screen)
             SDL_Rect r = {created_at.x, created_at.y + (drawn)*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
             SDL_FillRect(screen, &r, Colors::magenta);
             highlighted_item = &items[i];
-            currently_selected_item_index = i;
+            highlighted_item_index = i;
           }
         }
         // draw this nigga
