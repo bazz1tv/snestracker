@@ -252,7 +252,10 @@ void Instrument_Window::receive_event(SDL_Event &ev)
       break;
     case SDL_KEYUP:
       //scancode = 0;
-      if (scancode == ev.key.keysym.sym) keyoff_current_voice();
+      // should really have a list of SDLK for keyboard playing
+      if (ev.key.keysym.sym != SDLK_LEFT && ev.key.keysym.sym != SDLK_RIGHT)
+        if (scancode == ev.key.keysym.sym) 
+          keyoff_current_voice();
       //SDL_Delay(1000);
       
       //fprintf(stderr, "DERP");

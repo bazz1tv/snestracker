@@ -1,0 +1,83 @@
+[attack: 0] 4.0 s
+	[decay: 0][sustain_level: 0] 883.6 ms
+	[decay: 1][sustain_level: 0] 557.3 ms
+	[decay: 2][sustain_level: 0] 339.8 ms
+	[decay: 3][sustain_level: 0] 231.1 ms
+	[decay: 4][sustain_level: 0] 149.5 ms
+	[decay: 5][sustain_level: 0] 95.2 ms
+	[decay: 6][sustain_level: 0] 68.0 ms
+	[decay: 7][sustain_level: 0] 40.8 ms
+
+	[decay: 0][sustain_level: 1] 625.6 ms
+	[decay: 1][sustain_level: 1] 394.6 ms
+	[decay: 2][sustain_level: 1] 240.6 ms
+	[decay: 3][sustain_level: 1] 163.6 ms
+	[decay: 4][sustain_level: 1] 105.9 ms
+	[decay: 5][sustain_level: 1] 67.4 ms
+	[decay: 6][sustain_level: 1] 48.1 ms
+	[decay: 7][sustain_level: 1] 28.9 ms
+
+	[decay: 0][sustain_level: 2] 450.9 ms
+	[decay: 1][sustain_level: 2] 284.4 ms
+	[decay: 2][sustain_level: 2] 173.4 ms
+	[decay: 3][sustain_level: 2] 117.9 ms
+	[decay: 4][sustain_level: 2] 76.3 ms
+	[decay: 5][sustain_level: 2] 48.6 ms
+	[decay: 6][sustain_level: 2] 34.7 ms
+	[decay: 7][sustain_level: 2] 20.8 ms
+	
+	[decay: 0][sustain_level: 3] 323.0 ms
+	[decay: 1][sustain_level: 3] 203.7 ms
+	[decay: 2][sustain_level: 3] 124.2 ms
+	[decay: 3][sustain_level: 3] 84.5 ms
+	[decay: 4][sustain_level: 3] 54.7 ms
+	[decay: 5][sustain_level: 3] 34.8 ms
+	[decay: 6][sustain_level: 3] 24.8 ms
+	[decay: 7][sustain_level: 3] 14.9 ms
+	[decay: 0][sustain_level: 4] 219.4 ms
+	[decay: 1][sustain_level: 4] 138.4 ms
+	[decay: 2][sustain_level: 4] 84.4 ms
+	[decay: 3][sustain_level: 4] 57.4 ms
+	[decay: 4][sustain_level: 4] 37.1 ms
+	[decay: 5][sustain_level: 4] 23.6 ms
+	[decay: 6][sustain_level: 4] 16.9 ms
+	[decay: 7][sustain_level: 4] 10.1 ms
+	[decay: 0][sustain_level: 5] 132.0 ms
+	[decay: 1][sustain_level: 5] 83.3 ms
+	[decay: 2][sustain_level: 5] 50.8 ms
+	[decay: 3][sustain_level: 5] 34.5 ms
+	[decay: 4][sustain_level: 5] 22.3 ms
+	[decay: 5][sustain_level: 5] 14.2 ms
+	[decay: 6][sustain_level: 5] 10.2 ms
+	[decay: 7][sustain_level: 5] 6.1 ms
+	[decay: 0][sustain_level: 6] 56.9 ms
+	[decay: 1][sustain_level: 6] 35.9 ms
+	[decay: 2][sustain_level: 6] 21.9 ms
+	[decay: 3][sustain_level: 6] 14.9 ms
+	[decay: 4][sustain_level: 6] 9.6 ms
+	[decay: 5][sustain_level: 6] 6.1 ms
+	[decay: 6][sustain_level: 6] 4.4 ms
+	[decay: 7][sustain_level: 6] 2.6 ms
+	[decay: 0][sustain_level: 7] 0.0 ms
+	[decay: 1][sustain_level: 7] 0.0 ms
+	[decay: 2][sustain_level: 7] 0.0 ms
+	[decay: 3][sustain_level: 7] 0.0 ms
+	[decay: 4][sustain_level: 7] 0.0 ms
+	[decay: 5][sustain_level: 7] 0.0 ms
+	[decay: 6][sustain_level: 7] 0.0 ms
+	[decay: 7][sustain_level: 7] 0.0 ms
+[attack: 1] 2.5 s
+[attack: 2] 1.5 s
+[attack: 3] 1.0 s
+[attack: 4] 632.0 ms
+[attack: 5] 380.0 ms
+[attack: 6] 254.0 ms
+[attack: 7] 159.5 ms
+[attack: 8] 96.5 ms
+[attack: 9] 65.0 ms
+[attack: 10] 41.3 ms
+[attack: 11] 25.6 ms
+[attack: 12] 17.7 ms
+[attack: 13] 11.8 ms
+[attack: 14] 7.9 ms
+[attack: 15] 0.1 ms

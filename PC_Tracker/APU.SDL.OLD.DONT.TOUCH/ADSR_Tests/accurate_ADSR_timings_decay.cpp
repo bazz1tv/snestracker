@@ -117,8 +117,8 @@ int main()
             decay_freq_iter++;
           }
           
-            //printf("\t{%d, \"", decay_param);
-            //print_result((double)(decay_freq_iter*freq));
+            printf("\t{%d, \"", decay_param, sustain_level_param);
+            print_result((double)(decay_freq_iter*freq));
           
           uint16_t save_sustain_level=level;
 
@@ -126,13 +126,8 @@ int main()
           // sustain
           if (attack_param == 0 && decay_param == 0)
           {
-            for (uint16_t sustain_rate_param=0; sustain_rate_param < 0x20; sustain_rate_param++)
+            for (uint16_t sustain_rate_param=1; sustain_rate_param < 0x20; sustain_rate_param++)
             {
-              if (sustain_rate_param == 0)
-              {
-                printf("\t{0, \"Infinite\"},\n");
-                continue;
-              }
               sustain_rate_freq_iter=0;
               int level = save_sustain_level;
               //uint16_t sustain_rate_real_rate = 
@@ -147,8 +142,8 @@ int main()
                 sustain_rate_freq_iter++;
               }
               
-              printf("\t{%d, \"", sustain_rate_param );
-              print_result((double)(sustain_rate_freq_iter*freq));
+              //printf("\t\t[sustain_release: %d] ", sustain_rate_param );
+              //print_result((double)(sustain_rate_freq_iter*freq));
             }
           
           }

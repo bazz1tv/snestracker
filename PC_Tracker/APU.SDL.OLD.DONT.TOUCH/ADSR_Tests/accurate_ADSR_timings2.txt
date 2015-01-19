@@ -1,0 +1,328 @@
+[attack: 0] 4.0 s
+	[decay: 0][sustain_level: 0] 883.6 ms
+		[sustain_release: 1] 16.4 s
+		[sustain_release: 2] 12.3 s
+		[sustain_release: 3] 10.2 s
+		[sustain_release: 4] 8.2 s
+		[sustain_release: 5] 6.2 s
+		[sustain_release: 6] 5.1 s
+		[sustain_release: 7] 4.1 s
+		[sustain_release: 8] 3.1 s
+		[sustain_release: 9] 2.6 s
+		[sustain_release: 10] 2.1 s
+		[sustain_release: 11] 1.5 s
+		[sustain_release: 12] 1.3 s
+		[sustain_release: 13] 1.0 s
+		[sustain_release: 14] 776.0 ms
+		[sustain_release: 15] 648.0 ms
+		[sustain_release: 16] 520.0 ms
+		[sustain_release: 17] 392.0 ms
+		[sustain_release: 18] 328.0 ms
+		[sustain_release: 19] 264.0 ms
+		[sustain_release: 20] 200.0 ms
+		[sustain_release: 21] 168.0 ms
+		[sustain_release: 22] 136.0 ms
+		[sustain_release: 23] 104.0 ms
+		[sustain_release: 24] 88.0 ms
+		[sustain_release: 25] 72.0 ms
+		[sustain_release: 26] 56.0 ms
+		[sustain_release: 27] 48.0 ms
+		[sustain_release: 28] 40.0 ms
+		[sustain_release: 29] 32.0 ms
+		[sustain_release: 30] 24.0 ms
+		[sustain_release: 31] 16.0 ms
+	[decay: 0][sustain_level: 1] 625.6 ms
+		[sustain_release: 1] 24.5 s
+		[sustain_release: 2] 18.4 s
+		[sustain_release: 3] 15.3 s
+		[sustain_release: 4] 12.3 s
+		[sustain_release: 5] 9.2 s
+		[sustain_release: 6] 7.7 s
+		[sustain_release: 7] 6.1 s
+		[sustain_release: 8] 4.6 s
+		[sustain_release: 9] 3.8 s
+		[sustain_release: 10] 3.1 s
+		[sustain_release: 11] 2.3 s
+		[sustain_release: 12] 1.9 s
+		[sustain_release: 13] 1.5 s
+		[sustain_release: 14] 1.2 s
+		[sustain_release: 15] 969.5 ms
+		[sustain_release: 16] 778.0 ms
+		[sustain_release: 17] 586.5 ms
+		[sustain_release: 18] 490.7 ms
+		[sustain_release: 19] 395.0 ms
+		[sustain_release: 20] 299.2 ms
+		[sustain_release: 21] 251.3 ms
+		[sustain_release: 22] 203.5 ms
+		[sustain_release: 23] 155.6 ms
+		[sustain_release: 24] 131.7 ms
+		[sustain_release: 25] 107.7 ms
+		[sustain_release: 26] 83.8 ms
+		[sustain_release: 27] 71.8 ms
+		[sustain_release: 28] 59.8 ms
+		[sustain_release: 29] 47.9 ms
+		[sustain_release: 30] 35.9 ms
+		[sustain_release: 31] 23.9 ms
+	[decay: 0][sustain_level: 2] 450.9 ms
+		[sustain_release: 1] 30.0 s
+		[sustain_release: 2] 22.5 s
+		[sustain_release: 3] 18.8 s
+		[sustain_release: 4] 15.0 s
+		[sustain_release: 5] 11.3 s
+		[sustain_release: 6] 9.4 s
+		[sustain_release: 7] 7.5 s
+		[sustain_release: 8] 5.6 s
+		[sustain_release: 9] 4.7 s
+		[sustain_release: 10] 3.8 s
+		[sustain_release: 11] 2.8 s
+		[sustain_release: 12] 2.4 s
+		[sustain_release: 13] 1.9 s
+		[sustain_release: 14] 1.4 s
+		[sustain_release: 15] 1.2 s
+		[sustain_release: 16] 952.7 ms
+		[sustain_release: 17] 718.2 ms
+		[sustain_release: 18] 600.9 ms
+		[sustain_release: 19] 483.7 ms
+		[sustain_release: 20] 366.4 ms
+		[sustain_release: 21] 307.8 ms
+		[sustain_release: 22] 249.2 ms
+		[sustain_release: 23] 190.5 ms
+		[sustain_release: 24] 161.2 ms
+		[sustain_release: 25] 131.9 ms
+		[sustain_release: 26] 102.6 ms
+		[sustain_release: 27] 87.9 ms
+		[sustain_release: 28] 73.3 ms
+		[sustain_release: 29] 58.6 ms
+		[sustain_release: 30] 44.0 ms
+		[sustain_release: 31] 29.3 ms
+	[decay: 0][sustain_level: 3] 323.0 ms
+		[sustain_release: 1] 34.1 s
+		[sustain_release: 2] 25.6 s
+		[sustain_release: 3] 21.3 s
+		[sustain_release: 4] 17.0 s
+		[sustain_release: 5] 12.8 s
+		[sustain_release: 6] 10.7 s
+		[sustain_release: 7] 8.5 s
+		[sustain_release: 8] 6.4 s
+		[sustain_release: 9] 5.3 s
+		[sustain_release: 10] 4.3 s
+		[sustain_release: 11] 3.2 s
+		[sustain_release: 12] 2.7 s
+		[sustain_release: 13] 2.1 s
+		[sustain_release: 14] 1.6 s
+		[sustain_release: 15] 1.3 s
+		[sustain_release: 16] 1.1 s
+		[sustain_release: 17] 814.6 ms
+		[sustain_release: 18] 681.6 ms
+		[sustain_release: 19] 548.6 ms
+		[sustain_release: 20] 415.6 ms
+		[sustain_release: 21] 349.1 ms
+		[sustain_release: 22] 282.6 ms
+		[sustain_release: 23] 216.1 ms
+		[sustain_release: 24] 182.9 ms
+		[sustain_release: 25] 149.6 ms
+		[sustain_release: 26] 116.4 ms
+		[sustain_release: 27] 99.8 ms
+		[sustain_release: 28] 83.1 ms
+		[sustain_release: 29] 66.5 ms
+		[sustain_release: 30] 49.9 ms
+		[sustain_release: 31] 33.2 ms
+	[decay: 0][sustain_level: 4] 219.4 ms
+		[sustain_release: 1] 37.3 s
+		[sustain_release: 2] 28.0 s
+		[sustain_release: 3] 23.3 s
+		[sustain_release: 4] 18.7 s
+		[sustain_release: 5] 14.0 s
+		[sustain_release: 6] 11.7 s
+		[sustain_release: 7] 9.3 s
+		[sustain_release: 8] 7.0 s
+		[sustain_release: 9] 5.8 s
+		[sustain_release: 10] 4.7 s
+		[sustain_release: 11] 3.5 s
+		[sustain_release: 12] 2.9 s
+		[sustain_release: 13] 2.4 s
+		[sustain_release: 14] 1.8 s
+		[sustain_release: 15] 1.5 s
+		[sustain_release: 16] 1.2 s
+		[sustain_release: 17] 892.7 ms
+		[sustain_release: 18] 747.0 ms
+		[sustain_release: 19] 601.2 ms
+		[sustain_release: 20] 455.5 ms
+		[sustain_release: 21] 382.6 ms
+		[sustain_release: 22] 309.7 ms
+		[sustain_release: 23] 236.8 ms
+		[sustain_release: 24] 200.4 ms
+		[sustain_release: 25] 164.0 ms
+		[sustain_release: 26] 127.5 ms
+		[sustain_release: 27] 109.3 ms
+		[sustain_release: 28] 91.1 ms
+		[sustain_release: 29] 72.9 ms
+		[sustain_release: 30] 54.7 ms
+		[sustain_release: 31] 36.4 ms
+	[decay: 0][sustain_level: 5] 132.0 ms
+		[sustain_release: 1] 40.1 s
+		[sustain_release: 2] 30.1 s
+		[sustain_release: 3] 25.1 s
+		[sustain_release: 4] 20.1 s
+		[sustain_release: 5] 15.0 s
+		[sustain_release: 6] 12.5 s
+		[sustain_release: 7] 10.0 s
+		[sustain_release: 8] 7.5 s
+		[sustain_release: 9] 6.3 s
+		[sustain_release: 10] 5.0 s
+		[sustain_release: 11] 3.8 s
+		[sustain_release: 12] 3.1 s
+		[sustain_release: 13] 2.5 s
+		[sustain_release: 14] 1.9 s
+		[sustain_release: 15] 1.6 s
+		[sustain_release: 16] 1.3 s
+		[sustain_release: 17] 958.6 ms
+		[sustain_release: 18] 802.1 ms
+		[sustain_release: 19] 645.6 ms
+		[sustain_release: 20] 489.1 ms
+		[sustain_release: 21] 410.8 ms
+		[sustain_release: 22] 332.6 ms
+		[sustain_release: 23] 254.3 ms
+		[sustain_release: 24] 215.2 ms
+		[sustain_release: 25] 176.1 ms
+		[sustain_release: 26] 136.9 ms
+		[sustain_release: 27] 117.4 ms
+		[sustain_release: 28] 97.8 ms
+		[sustain_release: 29] 78.2 ms
+		[sustain_release: 30] 58.7 ms
+		[sustain_release: 31] 39.1 ms
+	[decay: 0][sustain_level: 6] 56.9 ms
+		[sustain_release: 1] 42.5 s
+		[sustain_release: 2] 31.8 s
+		[sustain_release: 3] 26.5 s
+		[sustain_release: 4] 21.2 s
+		[sustain_release: 5] 15.9 s
+		[sustain_release: 6] 13.3 s
+		[sustain_release: 7] 10.6 s
+		[sustain_release: 8] 8.0 s
+		[sustain_release: 9] 6.7 s
+		[sustain_release: 10] 5.3 s
+		[sustain_release: 11] 4.0 s
+		[sustain_release: 12] 3.3 s
+		[sustain_release: 13] 2.7 s
+		[sustain_release: 14] 2.0 s
+		[sustain_release: 15] 1.7 s
+		[sustain_release: 16] 1.3 s
+		[sustain_release: 17] 1.0 s
+		[sustain_release: 18] 849.5 ms
+		[sustain_release: 19] 683.7 ms
+		[sustain_release: 20] 518.0 ms
+		[sustain_release: 21] 435.1 ms
+		[sustain_release: 22] 352.2 ms
+		[sustain_release: 23] 269.3 ms
+		[sustain_release: 24] 227.9 ms
+		[sustain_release: 25] 186.5 ms
+		[sustain_release: 26] 145.0 ms
+		[sustain_release: 27] 124.3 ms
+		[sustain_release: 28] 103.6 ms
+		[sustain_release: 29] 82.9 ms
+		[sustain_release: 30] 62.2 ms
+		[sustain_release: 31] 41.4 ms
+	[decay: 0][sustain_level: 7] 0.0 ms
+		[sustain_release: 1] 44.2 s
+		[sustain_release: 2] 33.2 s
+		[sustain_release: 3] 27.7 s
+		[sustain_release: 4] 22.1 s
+		[sustain_release: 5] 16.6 s
+		[sustain_release: 6] 13.8 s
+		[sustain_release: 7] 11.1 s
+		[sustain_release: 8] 8.3 s
+		[sustain_release: 9] 6.9 s
+		[sustain_release: 10] 5.5 s
+		[sustain_release: 11] 4.2 s
+		[sustain_release: 12] 3.5 s
+		[sustain_release: 13] 2.8 s
+		[sustain_release: 14] 2.1 s
+		[sustain_release: 15] 1.7 s
+		[sustain_release: 16] 1.4 s
+		[sustain_release: 17] 1.1 s
+		[sustain_release: 18] 885.3 ms
+		[sustain_release: 19] 712.6 ms
+		[sustain_release: 20] 539.8 ms
+		[sustain_release: 21] 453.5 ms
+		[sustain_release: 22] 367.1 ms
+		[sustain_release: 23] 280.7 ms
+		[sustain_release: 24] 237.5 ms
+		[sustain_release: 25] 194.3 ms
+		[sustain_release: 26] 151.2 ms
+		[sustain_release: 27] 129.6 ms
+		[sustain_release: 28] 108.0 ms
+		[sustain_release: 29] 86.4 ms
+		[sustain_release: 30] 64.8 ms
+		[sustain_release: 31] 43.2 ms
+	[decay: 1][sustain_level: 0] 557.3 ms
+	[decay: 1][sustain_level: 1] 394.6 ms
+	[decay: 1][sustain_level: 2] 284.4 ms
+	[decay: 1][sustain_level: 3] 203.7 ms
+	[decay: 1][sustain_level: 4] 138.4 ms
+	[decay: 1][sustain_level: 5] 83.3 ms
+	[decay: 1][sustain_level: 6] 35.9 ms
+	[decay: 1][sustain_level: 7] 0.0 ms
+	[decay: 2][sustain_level: 0] 339.8 ms
+	[decay: 2][sustain_level: 1] 240.6 ms
+	[decay: 2][sustain_level: 2] 173.4 ms
+	[decay: 2][sustain_level: 3] 124.2 ms
+	[decay: 2][sustain_level: 4] 84.4 ms
+	[decay: 2][sustain_level: 5] 50.8 ms
+	[decay: 2][sustain_level: 6] 21.9 ms
+	[decay: 2][sustain_level: 7] 0.0 ms
+	[decay: 3][sustain_level: 0] 231.1 ms
+	[decay: 3][sustain_level: 1] 163.6 ms
+	[decay: 3][sustain_level: 2] 117.9 ms
+	[decay: 3][sustain_level: 3] 84.5 ms
+	[decay: 3][sustain_level: 4] 57.4 ms
+	[decay: 3][sustain_level: 5] 34.5 ms
+	[decay: 3][sustain_level: 6] 14.9 ms
+	[decay: 3][sustain_level: 7] 0.0 ms
+	[decay: 4][sustain_level: 0] 149.5 ms
+	[decay: 4][sustain_level: 1] 105.9 ms
+	[decay: 4][sustain_level: 2] 76.3 ms
+	[decay: 4][sustain_level: 3] 54.7 ms
+	[decay: 4][sustain_level: 4] 37.1 ms
+	[decay: 4][sustain_level: 5] 22.3 ms
+	[decay: 4][sustain_level: 6] 9.6 ms
+	[decay: 4][sustain_level: 7] 0.0 ms
+	[decay: 5][sustain_level: 0] 95.2 ms
+	[decay: 5][sustain_level: 1] 67.4 ms
+	[decay: 5][sustain_level: 2] 48.6 ms
+	[decay: 5][sustain_level: 3] 34.8 ms
+	[decay: 5][sustain_level: 4] 23.6 ms
+	[decay: 5][sustain_level: 5] 14.2 ms
+	[decay: 5][sustain_level: 6] 6.1 ms
+	[decay: 5][sustain_level: 7] 0.0 ms
+	[decay: 6][sustain_level: 0] 68.0 ms
+	[decay: 6][sustain_level: 1] 48.1 ms
+	[decay: 6][sustain_level: 2] 34.7 ms
+	[decay: 6][sustain_level: 3] 24.8 ms
+	[decay: 6][sustain_level: 4] 16.9 ms
+	[decay: 6][sustain_level: 5] 10.2 ms
+	[decay: 6][sustain_level: 6] 4.4 ms
+	[decay: 6][sustain_level: 7] 0.0 ms
+	[decay: 7][sustain_level: 0] 40.8 ms
+	[decay: 7][sustain_level: 1] 28.9 ms
+	[decay: 7][sustain_level: 2] 20.8 ms
+	[decay: 7][sustain_level: 3] 14.9 ms
+	[decay: 7][sustain_level: 4] 10.1 ms
+	[decay: 7][sustain_level: 5] 6.1 ms
+	[decay: 7][sustain_level: 6] 2.6 ms
+	[decay: 7][sustain_level: 7] 0.0 ms
+[attack: 1] 2.5 s
+[attack: 2] 1.5 s
+[attack: 3] 1.0 s
+[attack: 4] 632.0 ms
+[attack: 5] 380.0 ms
+[attack: 6] 254.0 ms
+[attack: 7] 159.5 ms
+[attack: 8] 96.5 ms
+[attack: 9] 65.0 ms
+[attack: 10] 41.3 ms
+[attack: 11] 25.6 ms
+[attack: 12] 17.7 ms
+[attack: 13] 11.8 ms
+[attack: 14] 7.9 ms
+[attack: 15] 0.1 ms
