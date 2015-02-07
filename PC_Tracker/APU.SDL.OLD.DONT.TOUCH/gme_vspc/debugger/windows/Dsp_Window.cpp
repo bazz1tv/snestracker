@@ -1,6 +1,7 @@
 #include "Dsp_Window.h"
 #include "Utility.h"
 #include "platform.h"
+#include "Menu_Bar.h"
 
 #define print_then_inc_row(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
 #define print_then_inc_row_voice(x,col) sdlfont_drawString(screen, x,i, tmpbuf, col); i+=CHAR_HEIGHT;
@@ -146,7 +147,7 @@ void Dsp_Window::run()
   uint8_t srcn[MAX_VOICES];
   // non-obvious how the follow is used.. but i dynamically log certain coordinates
   //to help create the layout o_* means original
-  int i=10, o_i = i, remember_i1, remember_i2, remember_i3, remember_i4;
+  int i= BaseD::menu_bar->context_menus.y + TILE_HEIGHT*2 + 10, o_i = i, remember_i1, remember_i2, remember_i3, remember_i4;
   int x = 10, /*o_x = x,*/ remember_x = 10, remember_x2;
   // start drawing from 10,10
 
@@ -572,6 +573,17 @@ outx.: $FF    outx.: $FF    outx.: $FF    outx.: $FF
 
 void Dsp_Window::receive_event(SDL_Event &ev)
 {
+  /* menu bar */
+  int r;
+  if ((r=BaseD::menu_bar_events(ev)))
+  {
+    switch (r)
+    {
+      default:break;
+    }
+    return;
+  }
+
   dblclick::check_event(&ev);
   switch (ev.type)
   {
@@ -1013,17 +1025,6 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
-        /* menu bar */
-        int r;
-        if ((r=BaseD::menu_bar_events(ev)))
-        {
-          switch (r)
-          {
-            default:break;
-          }
-          return;
-        }
-
         for (int i=0; i < MAX_VOICES; i++)
         {
           uintptr_t newdata = (uintptr_t)voice_title[i].data; // originally the voice number itself

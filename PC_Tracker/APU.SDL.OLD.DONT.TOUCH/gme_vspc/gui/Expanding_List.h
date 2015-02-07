@@ -22,7 +22,7 @@ struct Expanding_List : public Context_Menu
   void update_current_item(int index);
 
   Expanding_List(Context_Menu_Item *array,  bool isStatic=false, bool isActive=false);
-  bool check_left_click_activate(const int &x, const int &y);
+  bool check_left_click_activate(const int &x, const int &y, const Uint8 &button=0);
   void draw(SDL_Surface *screen);
   int receive_event(SDL_Event &ev);
   Context_Menu_Item *currently_selected_item=NULL;

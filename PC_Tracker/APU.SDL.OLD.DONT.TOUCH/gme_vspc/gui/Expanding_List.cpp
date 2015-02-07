@@ -15,13 +15,16 @@ void Expanding_List::update_current_item(int index)
   currently_selected_item_index = index;
 }
 
-bool Expanding_List::check_left_click_activate(const int &x, const int &y)
+bool Expanding_List::check_left_click_activate(const int &x, const int &y, const Uint8 &button)
 {
   SDL_Rect *r;
   r = &single_item_rect;  
 
   if (Utility::coord_is_in_rect(x, y, r))
   {
+    if (button == SDL_BUTTON_LEFT)
+      return toggle_activate();
+    
     activate();
     return true;
   }

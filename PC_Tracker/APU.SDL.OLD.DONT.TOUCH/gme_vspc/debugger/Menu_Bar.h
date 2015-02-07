@@ -84,6 +84,7 @@ struct Menu_Bar
 
   struct Context_Menus
   {
+    int x = 10, y = 10;
     Context_Menus() {}
     enum
     {
@@ -94,7 +95,7 @@ struct Menu_Bar
       EVENT_WINDOW
     };
 
-    bool check_left_click_activate(int &x, int &y);
+    bool check_left_click_activate(int &x, int &y, const Uint8 &button=0);
     int receive_event(SDL_Event &ev);
     void draw(SDL_Surface *screen);
     void preload(int x, int y);

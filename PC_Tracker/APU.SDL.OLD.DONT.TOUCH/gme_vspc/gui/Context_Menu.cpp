@@ -12,6 +12,13 @@ bool Context_Menu::is_activated()
 {
   return is_active;
 }
+
+bool Context_Menu::toggle_activate()
+{
+  is_active = !is_active;
+  if (!is_active) SDL_FillRect(BaseD::screen, &created_at, Colors::black);
+  return is_active;
+}
 void Context_Menu::activate()
 {
   is_active = true;

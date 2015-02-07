@@ -12,6 +12,7 @@ struct Context_Menu_Item
 struct Context_Menu
 {
   bool is_activated();
+  bool toggle_activate();
   void activate();
   void deactivate();
 
