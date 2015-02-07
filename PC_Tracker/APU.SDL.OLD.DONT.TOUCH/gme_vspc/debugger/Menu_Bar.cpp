@@ -2,7 +2,18 @@
 
 int Menu_Bar::Track_Context::toggle_pause (void *data)
 {
+  Clickable_Text *ct = (Clickable_Text*) data;
   BaseD::toggle_pause();
+  if (BaseD::player->is_paused())
+  {
+    ct->str = "play";
+    //ct->str.clear();
+    //ct->str.append( "resume" );
+  }
+  else 
+  {
+    ct->str = "pause";
+  }
 }         
 int Menu_Bar::Track_Context::restart_current_track (void *data)
 {
@@ -45,7 +56,7 @@ void Menu_Bar::draw(SDL_Surface *screen)
 
 void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 {
-  x = x; y = y;
+  this->x = x; this->y = y;
   file_context.menu.preload(x, y);
   x +=  ( file_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
 

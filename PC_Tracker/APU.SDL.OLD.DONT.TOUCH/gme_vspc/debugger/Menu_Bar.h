@@ -40,7 +40,7 @@ struct Menu_Bar
     // Take parent class here
     Track_Context() : menu(menu_items, true)
     {
-      
+      //menu_items[1].clickable_text.data = &menu_items[1].clickable_text.str;
     }
 
     static int toggle_pause (void *data);         
@@ -53,7 +53,7 @@ struct Menu_Bar
     Context_Menu_Item menu_items[6] = 
     {
       {"track",       true,  test,                          NULL},
-      {"pause",       true,  toggle_pause,           NULL},
+      {"pause",       true,  toggle_pause,           &menu_items[1].clickable_text},
       {"restart",     true,  restart_current_track,  NULL},
       {"prev",        true,  prev_track,             NULL},
       {"next",        true,  next_track,             NULL},
