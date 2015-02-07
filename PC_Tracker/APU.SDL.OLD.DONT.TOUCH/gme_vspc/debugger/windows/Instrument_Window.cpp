@@ -171,7 +171,7 @@ void Instrument_Window::draw()
   //SDL_FillRect(screen, &attack_context.menu.created_at, Colors::black);
   
   adsr_context_menus.draw(screen);
-
+  draw_menu_bar();
   
   sdl_draw();
 }
@@ -179,6 +179,16 @@ void Instrument_Window::draw()
 void Instrument_Window::receive_event(SDL_Event &ev)
 {
   int r;
+
+  if ((r=BaseD::menu_bar_events(ev)))
+  {
+    switch (r)
+    {
+      default:break;
+    }
+    return;
+  }
+
   if ((r=adsr_context_menus.receive_event(ev)))
   {
     switch (r)

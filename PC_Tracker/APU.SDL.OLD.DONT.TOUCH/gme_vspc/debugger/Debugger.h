@@ -16,6 +16,7 @@
 #include "Dsp_Window.h"
 #include "Experience.h"
 #include "Instrument_Window.h"
+#include "menu_bar.h"
 
 struct Debugger : public BaseD
 {
@@ -24,6 +25,7 @@ public:
   void run();
   void handle_events();
 
+  Menu_Bar menu_bar;
   Main_Window main_window;
   Dsp_Window dsp_window;
   Instrument_Window instr_window;

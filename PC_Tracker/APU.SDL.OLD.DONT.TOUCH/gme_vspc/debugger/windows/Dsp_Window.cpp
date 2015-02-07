@@ -555,6 +555,7 @@ envx.: $FF    envx.: $FF    envx.: $FF    envx.: $FF
 outx.: $FF    outx.: $FF    outx.: $FF    outx.: $FF        
 
 */
+  BaseD::draw_menu_bar();
 
   if (mode == MODE_EDIT_ADDR)
   {
@@ -1012,6 +1013,17 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
+        /* menu bar */
+        int r;
+        if ((r=BaseD::menu_bar_events(ev)))
+        {
+          switch (r)
+          {
+            default:break;
+          }
+          return;
+        }
+
         for (int i=0; i < MAX_VOICES; i++)
         {
           uintptr_t newdata = (uintptr_t)voice_title[i].data; // originally the voice number itself
@@ -1020,7 +1032,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           voice_title[i].check_mouse_and_execute(ev.button.x, ev.button.y, (void*)newdata);
         }
 
-        BaseD::menu_bar_events(ev);
+        //BaseD::menu_bar_events(ev);
       }
       break;
       default:

@@ -3,11 +3,13 @@
 SDL_Surface *BaseD::screen;
 uint8_t *BaseD::IAPURAM;*/
 #include "Main_Window.h"
+#include "Menu_Bar.h"
 
 int BaseD::grand_mode=GrandMode::MAIN;
 //int BaseD::submode=0;
 BaseD::Cfg BaseD::g_cfg;// = { 0,0,0,0,0,0,DEFAULT_SONGTIME,0,0,0,0,0,NULL };
 
+bool BaseD::is_first_run=true;
 int BaseD::g_paused = 0;
 uint8_t * BaseD::IAPURAM=NULL;
 bool BaseD::quitting=false;
@@ -27,6 +29,7 @@ Experience * BaseD::exp=NULL;
 Main_Window * BaseD::main_window=NULL;
 Instrument_Window * BaseD::instr_window=NULL;
 Dsp_Window * BaseD::dsp_window=NULL;
+Menu_Bar * BaseD::menu_bar=NULL;
 
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
@@ -52,12 +55,12 @@ void BaseD::check_time()
   }
 }
 
-void BaseD::menu_bar_events(SDL_Event &ev)
+int BaseD::menu_bar_events(SDL_Event &ev)
 {
   /*switch (ev.type)
   {
     case SDL_MOUSEBUTTONDOWN:*/
-    if (
+    /*if (
       ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
     {
       int x = ev.button.x / CHAR_WIDTH;
@@ -98,8 +101,9 @@ void BaseD::menu_bar_events(SDL_Event &ev)
         //mode = MODE_DSP_MAP;
         switch_mode(GrandMode::INSTRUMENT);
       }
-    }
+    }*/
   //}
+  return menu_bar->context_menus.receive_event(ev);
 }
 
 void BaseD::update_track_tag()
@@ -289,8 +293,9 @@ void BaseD::next_track()
 
 void BaseD::draw_menu_bar()
 {
-  sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - MM - DM - INSTR");
-  sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
+  //
+  //fprintf(stderr, "TTTT");
+  menu_bar->draw(screen);
 }
 
 void BaseD::restart_current_track()

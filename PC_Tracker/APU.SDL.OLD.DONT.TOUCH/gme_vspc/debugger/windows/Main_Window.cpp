@@ -16,7 +16,10 @@ void Main_Window::draw()
   if (!g_cfg.novideo)
   {
     time_cur = SDL_GetTicks();
-    do_scroller(time_cur - time_last);
+
+
+    //do_scroller(time_cur - time_last);
+    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
     
     fade_arrays();      
     
@@ -77,6 +80,7 @@ void Main_Window::draw()
       //draw_context.menu();
       main_memory_area.context.menu.draw(screen);
     }
+    draw_menu_bar();
     
     //SDL_UpdateRect(screen, 0, 0, 0, 0);
     SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
@@ -92,6 +96,16 @@ void Main_Window::draw()
 
 void Main_Window::receive_event(SDL_Event &ev)
 {
+  /* menu bar */
+  int r;
+  if ((r=BaseD::menu_bar_events(ev)))
+  {
+    switch (r)
+    {
+      default:break;
+    }
+    return;
+  }
   dblclick::check_event(&ev);
 
   if (main_memory_area.context.menu.is_active)
@@ -964,9 +978,6 @@ void Main_Window::receive_event(SDL_Event &ev)
           }
           
         } 
-
-        /* menu bar */
-        BaseD::menu_bar_events(ev);
       }
       break;
       default:
@@ -1228,11 +1239,9 @@ void Main_Window::one_time_draw()
     tmprect.h = 512+2;
     SDL_FillRect(screen, &tmprect, Colors::white); 
     
-    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
+    //sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
 
     draw_track_tag();
-    
-    draw_menu_bar();
 
     //sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");  
     //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, Colors::white);

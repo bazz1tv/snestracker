@@ -11,6 +11,7 @@
 struct Main_Window;
 struct Dsp_Window;
 struct Instrument_Window;
+struct Menu_Bar;
 
 struct BaseD : public Render_Context, public Player_Context
 {
@@ -21,26 +22,28 @@ struct BaseD : public Render_Context, public Player_Context
     INSTRUMENT,
   };
 
+  
 
 
-  void pack_mask(unsigned char packed_mask[32]);
-  void applyBlockMask(char *filename);
-  void write_mask(unsigned char packed_mask[32]);
-  void reload();
-  void start_track( int track, const char* path );
-  void switch_mode(int mode);
-  void draw_menu_bar();
-  void check_time();
-  void toggle_pause();
-  void restart_track(); // goes to beginning of playlist too
-  void prev_track();
-  void prev_track25();
-  void next_track();
-  void next_track25();
-  void restart_current_track();
-  void update_track_tag();
 
-  void menu_bar_events(SDL_Event &ev);
+  static void pack_mask(unsigned char packed_mask[32]);
+  static void applyBlockMask(char *filename);
+  static void write_mask(unsigned char packed_mask[32]);
+  static void reload();
+  static void start_track( int track, const char* path );
+  static void switch_mode(int mode);
+  static void draw_menu_bar();
+  static void check_time();
+  static void toggle_pause();
+  static void restart_track(); // goes to beginning of playlist too
+  static void prev_track();
+  static void prev_track25();
+  static void next_track();
+  static void next_track25();
+  static void restart_current_track();
+  static void update_track_tag();
+
+  static int menu_bar_events(SDL_Event &ev);
 
   static int g_cur_entry;// = 0;
   static bool paused;
@@ -49,6 +52,7 @@ struct BaseD : public Render_Context, public Player_Context
   static int song_time;
   static track_info_t tag;
   static char *g_real_filename;//=NULL;
+  static bool is_first_run;
 
 
   //static bool new_track_started;
@@ -80,6 +84,7 @@ struct BaseD : public Render_Context, public Player_Context
   static Main_Window *main_window;
   static Dsp_Window *dsp_window;
   static Instrument_Window *instr_window;
+  static Menu_Bar *menu_bar;
 
   static int g_paused;// = 0;
   static bool quitting;

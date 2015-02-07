@@ -19,6 +19,7 @@ void Context_Menu::activate()
 
 void Context_Menu::deactivate()
 {
+  SDL_FillRect(BaseD::screen, &created_at, Colors::black);
   is_active=false;
 }
 
@@ -141,8 +142,8 @@ void Context_Menu::draw(SDL_Surface *screen)
   }
 }
 
-Context_Menu::Context_Menu(Context_Menu_Item *array, bool isActive/*=false*/) :
-is_active(isActive)
+Context_Menu::Context_Menu(Context_Menu_Item *array, bool isActive/*=false*/, bool isStatic/*=false*/) :
+is_active(isActive), is_static(isStatic)
 {
   items = array;
 }
@@ -165,6 +166,7 @@ void Context_Menu::preload(int &x, int &y, bool use_cache)
       i++;
     }
   }
+  //if (is_static) visible_items--;
   created_at.w = greatest_length+2;
   created_at.h = visible_items*TILE_HEIGHT + 2;
 

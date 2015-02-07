@@ -17,6 +17,7 @@ main_window(argc,argv)
   BaseD::main_window = &main_window;
   BaseD::dsp_window = &dsp_window;
   BaseD::instr_window = &instr_window;
+  BaseD::menu_bar = &menu_bar;
   exp = &main_window;
 }
 
