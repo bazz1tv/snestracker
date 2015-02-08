@@ -1,6 +1,9 @@
 SNES-Tracker
 ============
-"Super Nintendo Entertainment System" Tracker. "Super Famicom" Tracker.
+"Super Nintendo Entertainment System" Tracker. 
+
+"Super Famicom" Tracker.
+
 Main Website: http://snestracker.club
 
 This code has no real license at the moment, so please contact me if
