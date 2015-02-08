@@ -12,7 +12,7 @@ int write_brri_to_file(void *data)
   
   BRR::write_brri_to_file(&mma->brr);
   // need the following to keep focus on window after saving the file
-  SDL_RaiseWindow(BaseD::sdlWindow);
+//  SDL_RaiseWindow(BaseD::sdlWindow);
 
   return 0;
 }
@@ -23,7 +23,7 @@ int write_brrp_to_file(void *data)
   
   BRR::write_brrp_to_file(&mma->brr);
   // need the following to keep focus on window after saving the file
-  SDL_RaiseWindow(BaseD::sdlWindow);
+ // SDL_RaiseWindow(BaseD::sdlWindow);
 
   return 0;
 }
@@ -34,7 +34,7 @@ int write_plain_brr_to_file(void *data)
   Main_Memory_Area *mma = (Main_Memory_Area*)data;
   BRR::write_plain_brr_to_file(&mma->brr);
   // need the following to keep focus on window after saving the file
-  SDL_RaiseWindow(BaseD::sdlWindow);
+  //  SDL_RaiseWindow(BaseD::sdlWindow);
 
   return 0;
 }

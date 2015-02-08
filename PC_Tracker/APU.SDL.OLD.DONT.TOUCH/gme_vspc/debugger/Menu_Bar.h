@@ -22,13 +22,14 @@ struct Menu_Bar
       
     }
 
+    static int open_spc(void *data);
     static int quit(void *data) { BaseD::quitting = true; }
 
     Expanding_List menu;
     Context_Menu_Item menu_items[6] = 
     {
       {"file",        true,  NULL,  NULL},
-      {"open SPC",    true,  NULL,  NULL},
+      {"open SPC",    true,  open_spc,  NULL},
       {"close SPC",   true,  NULL,  NULL},
       {"write mask",  true,  NULL,  NULL},
       {"quit",        true,  quit,  NULL},

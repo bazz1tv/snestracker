@@ -1,4 +1,18 @@
 #include "Menu_Bar.h"
+#include "utility.h"
+
+int Menu_Bar::File_Context::open_spc(void *data)
+{
+  //SDL_RWops *file;
+  nfdchar_t *outPath=NULL;
+  if (Utility::get_file_read_path(&outPath, "spc") == NFD_OKAY)
+  {
+    if (outPath !=NULL)
+      fprintf(stderr, "open SPC: %s\n", (char*)outPath);
+    BaseD::reload((char*)outPath);
+    free(outPath);
+  }
+}
 
 int Menu_Bar::Track_Context::toggle_pause (void *data)
 {

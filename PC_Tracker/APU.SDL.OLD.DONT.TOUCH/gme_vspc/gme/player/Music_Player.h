@@ -23,6 +23,7 @@ void restart_track();
 class Music_Player {
 public:
 	bool filter_is_active=false;
+	bool has_no_song = true;
 	// Initialize player and set sample rate
 	blargg_err_t init( long sample_rate = 44100 );
 	

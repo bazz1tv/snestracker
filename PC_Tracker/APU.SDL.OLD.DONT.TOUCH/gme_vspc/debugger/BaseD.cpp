@@ -169,18 +169,29 @@ void BaseD::start_track( int track, const char* path )
   SDL_SetWindowTitle(sdlWindow, title);
 }
 
-void BaseD::reload()
+void BaseD::reload(char *path/*=NULL*/)
 {
-  if (g_cfg.playlist[g_cur_entry] == NULL)
-    exit (2);
+  bool using_playlist=false;
+  if (!path)
+  {
+    using_playlist=true;
+    path = g_cfg.playlist[g_cur_entry];
+  }
 
-  #ifdef WIN32
-  g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '\\');
+  if (path == NULL)
+  {
+    //using_playlist = false;
+    player->has_no_song = true;
+    return; 
+  }
+
+#ifdef WIN32
+  g_real_filename = strrchr(path, '\\');
 #else
-  g_real_filename = strrchr(g_cfg.playlist[g_cur_entry], '/');
+  g_real_filename = strrchr(path, '/');
 #endif
   if (!g_real_filename) {
-    g_real_filename = g_cfg.playlist[g_cur_entry];
+    g_real_filename = path;
   }
   else {
     // skip path sep
@@ -188,13 +199,13 @@ void BaseD::reload()
   } 
   //main_window->reload();
   // Load file
-  path = g_cfg.playlist[g_cur_entry];
-  handle_error( player->load_file( g_cfg.playlist[g_cur_entry] ) );
+  path = path;
+  handle_error( player->load_file( path ) );
   
   IAPURAM = player->spc_emu()->ram();
-  //Memory::IAPURAM = IAPURAM;
-  
+  //Memory::IAPURAM = IAPURAM;  
   // report::memsurface.init
+  
   report::memsurface.clear();
 
   memset(report::used, 0, sizeof(report::used));
@@ -228,9 +239,18 @@ void BaseD::reload()
     main_window->draw_track_tag();
 
   char title [512];
-  sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
-      game, g_cur_entry+1, g_cfg.num_files, player->track_info().song,
-      seconds / 60, seconds % 60 );
+  if (using_playlist)
+  {
+    sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
+        game, g_cur_entry+1, g_cfg.num_files, player->track_info().song,
+        seconds / 60, seconds % 60 );
+  }
+  else
+  {
+    sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
+        game, 1, 1, player->track_info().song,
+        seconds / 60, seconds % 60 );
+  }
   SDL_SetWindowTitle(sdlWindow, title);
 
 }

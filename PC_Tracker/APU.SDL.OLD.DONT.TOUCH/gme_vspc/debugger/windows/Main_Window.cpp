@@ -30,7 +30,18 @@ void Main_Window::draw()
 
     // The following are correlated from i and tmp. DO NOT MESS WITH THAT
     // base height
-    i = 32 + SCREEN_Y_OFFSET;      
+    i = 32 + SCREEN_Y_OFFSET;  
+    if (player->has_no_song) 
+    {
+      draw_menu_bar();
+      //SDL_UpdateRect(screen, 0, 0, 0, 0);
+      SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
+      SDL_RenderClear(sdlRenderer);
+      SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+      SDL_RenderPresent(sdlRenderer);
+      return; 
+    }  
+
     draw_mouse_address();
     draw_program_counter();
     draw_voices_pitchs(); // tmp is fucked with inside this function. DONT MESS
@@ -106,6 +117,9 @@ void Main_Window::receive_event(SDL_Event &ev)
     }
     return;
   }
+
+  if (player->has_no_song) return;
+  
   dblclick::check_event(&ev);
 
   if (main_memory_area.context.menu.is_active)
@@ -987,6 +1001,9 @@ void Main_Window::receive_event(SDL_Event &ev)
 
 void Main_Window::run()
 {
+  if ( player->has_no_song )
+    return;
+
   for (uint8_t voice=0; voice < MAX_VOICES; voice++)
   {
     dir = player->spc_read_dsp(dsp_reg::dir) * 0x100;
@@ -1347,7 +1364,8 @@ void Main_Window::do_scroller(int elaps_milli)
 void Main_Window::draw_program_counter()
 {
   // write the program counter
-  report::last_pc = (int)player->spc_emu()->pc(); 
+  if (player->has_no_song) report::last_pc = 0;
+  else report::last_pc = (int)player->spc_emu()->pc(); 
   sprintf(tmpbuf, PC_STR, report::last_pc);
   sdlfont_drawString(screen, PC_X, PC_Y, tmpbuf, Colors::white);
 }

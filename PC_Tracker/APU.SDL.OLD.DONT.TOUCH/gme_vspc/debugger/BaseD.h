@@ -29,7 +29,7 @@ struct BaseD : public Render_Context, public Player_Context
   static void pack_mask(unsigned char packed_mask[32]);
   static void applyBlockMask(char *filename);
   static void write_mask(unsigned char packed_mask[32]);
-  static void reload();
+  static void reload(char *path=NULL);
   static void start_track( int track, const char* path );
   static void switch_mode(int mode);
   static void draw_menu_bar();

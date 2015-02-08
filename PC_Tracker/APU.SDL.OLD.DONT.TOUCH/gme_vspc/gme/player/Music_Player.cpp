@@ -168,6 +168,8 @@ blargg_err_t Music_Player::load_file( const char* path )
 		p = m3u_path + strlen( m3u_path );
 	strcpy( p, ".m3u" );
 	if ( emu_->load_m3u( m3u_path ) ) { } // ignore error*/
+
+	has_no_song = false;
 	
 	return 0;
 }
