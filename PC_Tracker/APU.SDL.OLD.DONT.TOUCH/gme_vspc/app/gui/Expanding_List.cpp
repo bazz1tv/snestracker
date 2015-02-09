@@ -15,17 +15,35 @@ void Expanding_List::update_current_item(int index)
   currently_selected_item_index = index;
 }
 
-bool Expanding_List::check_left_click_activate(const int &x, const int &y, const Uint8 &button)
+bool Expanding_List::check_left_click_activate(const int &x, const int &y, const Uint8 &button, const SDL_Event *ev)
 {
   SDL_Rect *r;
   r = &single_item_rect;  
+  static Uint8 button_held=0;
 
-
+  
+  fprintf(stderr, "check_left_click_activate\n");
   if (Utility::coord_is_in_rect(x, y, r))
   {
-    if (button == SDL_BUTTON_LEFT)
+    if (button == SDL_BUTTON_LEFT  && !button_held)
+    {      
+      if (ev) 
+      {
+        button_held = 1;
+        fprintf(stderr, "button held");
+      }
       return toggle_activate();
+    }
     
+    if (ev)
+      if ( ev->type == SDL_MOUSEBUTTONUP) 
+      {
+        fprintf(stderr, "reset button\n");
+        button_held = 0;
+        //return is_active;
+      }
+      
+    fprintf(stderr, "activate\n");
     activate();
     return true;
   }
@@ -43,6 +61,9 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
     currently_selected_item_index = highlighted_item_index;
   }
   SDL_FillRect(BaseD::screen, &created_at, Colors::black);
+  currently_selected_item = &items[0];
+  highlighted_item = &items[0];
+  highlighted_item_index=0;
   //SDL_FillRect(BaseD::screen, &single_item_rect, Colors::black);
 }
 
@@ -85,11 +106,14 @@ int Expanding_List::receive_event(SDL_Event &ev)
     } break;
 
     case SDL_MOUSEBUTTONDOWN:
+    case SDL_MOUSEBUTTONUP:
     {
       switch (ev.button.button)
       {
         case SDL_BUTTON_LEFT:
         {
+          fprintf(stderr, "highlighted_item_index = %d\n", highlighted_item_index);
+          if (highlighted_item_index == 0 && ev.type == SDL_MOUSEBUTTONUP) break;
           do_thing();
           return EVENT_MENU;
         }
@@ -136,8 +160,8 @@ void Expanding_List::draw(SDL_Surface *screen)
   //greatest_length=0;
 
   // draw background panel
-  if (is_active) SDL_FillRect(screen, &created_at, Colors::black);  
-  SDL_FillRect(screen, &single_item_rect, Colors::black);
+  if (is_active) SDL_FillRect(screen, &created_at, SDL_MapRGB(screen->format, 0x18, 0x18, 0x18));  
+  SDL_FillRect(screen, &single_item_rect, SDL_MapRGB(screen->format, 0x18, 0x18, 0x18));
 
   // find highlighted strip
     // this should go in its own function called from SDL_MOUSEMOTION event
@@ -174,7 +198,7 @@ void Expanding_List::draw(SDL_Surface *screen)
         // draw this nigga
         //if (currently_selected_item != &items[i])
         //{
-          sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + ((drawn)*TILE_HEIGHT), items[i].clickable_text.str.c_str(), Colors::white, false);
+          sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + ((drawn)*TILE_HEIGHT) /*+ (i > 0 ? TILE_HEIGHT:0)*/, items[i].clickable_text.str.c_str(), Colors::white, false);
           drawn++;
         //}
       }

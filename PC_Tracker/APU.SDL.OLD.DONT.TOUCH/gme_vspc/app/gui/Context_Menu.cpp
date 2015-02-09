@@ -174,8 +174,8 @@ void Context_Menu::preload(int &x, int &y, bool use_cache)
     }
   }
   //if (is_static) visible_items--;
-  created_at.w = greatest_length+2;
-  created_at.h = visible_items*TILE_HEIGHT + 2;
+  created_at.w = greatest_length+TILE_WIDTH*3;
+  created_at.h = visible_items*TILE_HEIGHT + TILE_HEIGHT*3;
 
 
 

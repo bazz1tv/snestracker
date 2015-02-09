@@ -86,9 +86,10 @@ void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
   x +=  ( window_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
 }
 
-bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Uint8 &button)
+bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Uint8 &button, const SDL_Event *ev)
 {
-  if (file_context.menu.check_left_click_activate(x, y, button))
+  fprintf(stderr, "button = %d", button);
+  if (file_context.menu.check_left_click_activate(x, y, button, ev))
   {
     track_context.menu.deactivate();
     window_context.menu.deactivate();
@@ -98,13 +99,13 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
   if (BaseD::player->has_no_song)
     return false;
 
-  if (track_context.menu.check_left_click_activate(x, y, button))
+  if (track_context.menu.check_left_click_activate(x, y, button, ev))
   {
     file_context.menu.deactivate();
     window_context.menu.deactivate();
     return true;
   }
-  if (window_context.menu.check_left_click_activate(x, y, button))
+  if (window_context.menu.check_left_click_activate(x, y, button, ev))
   {
     file_context.menu.deactivate();
     track_context.menu.deactivate();
@@ -117,10 +118,10 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
 int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
 {
   int r;
-  if (ev.type != SDL_MOUSEBUTTONUP && (ev.type == SDL_MOUSEBUTTONDOWN || 
+  if ( (ev.type == SDL_MOUSEBUTTONDOWN || 
     (file_context.menu.is_active || track_context.menu.is_active || window_context.menu.is_active) ) )
   {
-    if (check_left_click_activate(ev.button.x, ev.button.y, ev.button.button))
+    if (check_left_click_activate(ev.button.x, ev.button.y, ev.button.button, &ev))
     {
       return EVENT_ACTIVE;
     }

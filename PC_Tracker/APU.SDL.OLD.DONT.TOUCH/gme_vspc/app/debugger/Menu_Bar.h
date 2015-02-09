@@ -98,7 +98,7 @@ struct Menu_Bar
       EVENT_WINDOW
     };
 
-    bool check_left_click_activate(int &x, int &y, const Uint8 &button=0);
+    bool check_left_click_activate(int &x, int &y, const Uint8 &button=0, const SDL_Event *ev=NULL);
     int receive_event(SDL_Event &ev);
     void draw(SDL_Surface *screen);
     void preload(int x, int y);
