@@ -20,6 +20,7 @@ bool Expanding_List::check_left_click_activate(const int &x, const int &y, const
   SDL_Rect *r;
   r = &single_item_rect;  
 
+
   if (Utility::coord_is_in_rect(x, y, r))
   {
     if (button == SDL_BUTTON_LEFT)
@@ -120,6 +121,8 @@ void Expanding_List::preload(int &x, int &y, bool use_cache/*=false*/)
   single_item_rect.y = created_at.y;
   if (is_static)
     single_item_rect.w = items[0].clickable_text.rect.w;
+  else single_item_rect.w = created_at.w;
+  
   single_item_rect.h = TILE_HEIGHT;
   if (!is_static) created_at.y += TILE_HEIGHT;
   

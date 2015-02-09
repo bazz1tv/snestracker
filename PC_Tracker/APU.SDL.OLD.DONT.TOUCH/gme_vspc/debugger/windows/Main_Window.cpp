@@ -105,6 +105,20 @@ void Main_Window::draw()
   is_first_run = false;
 }
 
+void Main_Window::check_quit(SDL_Event &ev)
+{
+  switch (ev.type)
+    {
+      case SDL_QUIT:
+      if (!g_cfg.nosound) {
+        SDL_PauseAudio(1);
+      }
+      printf ("penis4\n");
+      quitting = true;
+      break;
+    }
+}
+
 void Main_Window::receive_event(SDL_Event &ev)
 {
   /* menu bar */
@@ -117,6 +131,7 @@ void Main_Window::receive_event(SDL_Event &ev)
     }
     return;
   }
+  check_quit(ev);
 
   if (player->has_no_song) return;
   

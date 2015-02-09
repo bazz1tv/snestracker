@@ -4,6 +4,16 @@
 
 bool ADSR::Context_Menus::check_left_click_activate(int &x, int &y)
 {
+  static bool first=true;
+
+  if (first)
+  {
+    fprintf(stderr, "x=%d,y=%d,w=%d,h=%d\n", attack_context.menu.single_item_rect.x,
+      attack_context.menu.single_item_rect.y,
+      attack_context.menu.single_item_rect.w,
+      attack_context.menu.single_item_rect.h);
+  }
+
   if (attack_context.menu.check_left_click_activate(x, y))
     return true;
   if (decay_context.menu.check_left_click_activate(x, y))

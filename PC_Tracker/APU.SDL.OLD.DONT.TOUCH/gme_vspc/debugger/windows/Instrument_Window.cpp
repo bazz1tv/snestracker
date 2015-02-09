@@ -493,7 +493,7 @@ void Instrument_Window::receive_event(SDL_Event &ev)
         return;
       }
       
-      if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &start_stop.startc.rect))
+      /*if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &start_stop.startc.rect))
       {
         if (!start_stop.is_started)
         {
@@ -505,7 +505,7 @@ void Instrument_Window::receive_event(SDL_Event &ev)
           restore_spc();
           start_stop.is_started = false;
         }
-      }
+      }*/
 
 
       if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &voice.right_arrow.rect))

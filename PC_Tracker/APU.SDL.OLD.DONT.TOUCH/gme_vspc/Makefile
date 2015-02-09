@@ -32,6 +32,9 @@ all: $(SOURCES) $(EXECUTABLE)
 	
 $(EXECUTABLE): $(OBJECTS) 
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	rm -rf $@.app
+	mkdir $@.app $@.app/Contents $@.app/Contents/MacOS
+	cp std $@.app/Contents/MacOS
 
 #gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h debugger/report.h 
 #	$(CPP) $(CFLAGS) -c $< -o $@

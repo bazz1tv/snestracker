@@ -31,5 +31,5 @@ namespace mouse {
 // 5 minutes default
 #define DEFAULT_SONGTIME  (60*5) 
 
-#define PROG_NAME_VERSION_STRING "vspcplay v%s by bazz & Raph Assenat!"
+#define PROG_NAME_VERSION_STRING "SNES Tracker Debugger v%s"
 #define CREDITS "APU emulation code from Blargg's GME and Snes_Spc 0.9.0"

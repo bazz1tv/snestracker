@@ -7,6 +7,7 @@
 //#include "Dsp_Window.h"
 #include "Experience.h"
 #include "Voice_Control.h"
+#include "My_Nfd.h"
 
 struct Main_Window;
 struct Dsp_Window;
@@ -29,7 +30,7 @@ struct BaseD : public Render_Context, public Player_Context
   static void pack_mask(unsigned char packed_mask[32]);
   static void applyBlockMask(char *filename);
   static void write_mask(unsigned char packed_mask[32]);
-  static void reload(char *path=NULL);
+  static void reload(char **paths=NULL, int numpaths=0);
   static void start_track( int track, const char* path );
   static void switch_mode(int mode);
   static void draw_menu_bar();
@@ -45,6 +46,7 @@ struct BaseD : public Render_Context, public Player_Context
 
   static int menu_bar_events(SDL_Event &ev);
 
+  static My_Nfd nfd;
   static int g_cur_entry;// = 0;
   static bool paused;
   static const char* path;

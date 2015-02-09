@@ -34,6 +34,8 @@ public Experience
   };
   Main_Window(int &argc, char **argv);
   void run();
+  void check_quit(SDL_Event &ev);
+
   void receive_event(SDL_Event &ev);
   void draw();
 

@@ -5,6 +5,7 @@ uint8_t *BaseD::IAPURAM;*/
 #include "Main_Window.h"
 #include "Menu_Bar.h"
 
+My_Nfd BaseD::nfd;
 int BaseD::grand_mode=GrandMode::MAIN;
 //int BaseD::submode=0;
 BaseD::Cfg BaseD::g_cfg;// = { 0,0,0,0,0,0,DEFAULT_SONGTIME,0,0,0,0,0,NULL };
@@ -169,12 +170,20 @@ void BaseD::start_track( int track, const char* path )
   SDL_SetWindowTitle(sdlWindow, title);
 }
 
-void BaseD::reload(char *path/*=NULL*/)
+void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
 {
+  char *path=NULL;
   bool using_playlist=false;
-  if (!path)
+  if (!paths)
   {
     using_playlist=true;
+    path = g_cfg.playlist[g_cur_entry];
+  }
+  else
+  {
+    g_cur_entry = 0;
+    g_cfg.playlist = paths;
+    g_cfg.num_files = numpaths;
     path = g_cfg.playlist[g_cur_entry];
   }
 
@@ -199,7 +208,7 @@ void BaseD::reload(char *path/*=NULL*/)
   } 
   //main_window->reload();
   // Load file
-  path = path;
+  BaseD::path = path;
   handle_error( player->load_file( path ) );
   
   IAPURAM = player->spc_emu()->ram();
@@ -239,18 +248,18 @@ void BaseD::reload(char *path/*=NULL*/)
     main_window->draw_track_tag();
 
   char title [512];
-  if (using_playlist)
-  {
+  //if (using_playlist)
+  //{
     sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
         game, g_cur_entry+1, g_cfg.num_files, player->track_info().song,
         seconds / 60, seconds % 60 );
-  }
+  /*}
   else
   {
     sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
         game, 1, 1, player->track_info().song,
         seconds / 60, seconds % 60 );
-  }
+  }*/
   SDL_SetWindowTitle(sdlWindow, title);
 
 }
@@ -333,6 +342,12 @@ void BaseD::switch_mode(int mode)
   grand_mode = mode;
   clear_screen();
   draw_menu_bar();
+
+  // If we switched from instrument window, need to re-enable regular spc playback
+  if (exp == (Experience*)instr_window)
+  {
+    instr_window->restore_spc();
+  }
 
   if (mode == GrandMode::MAIN)
   {
