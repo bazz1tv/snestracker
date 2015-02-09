@@ -20,6 +20,27 @@ void Main_Window::draw()
 
     //do_scroller(time_cur - time_last);
     sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
+
+    tmprect.x = MEMORY_VIEW_X-1;
+    tmprect.y = MEMORY_VIEW_Y-1;
+    tmprect.w = 1;
+    tmprect.h = 512+2;
+    SDL_FillRect(screen, &tmprect, Colors::white);
+    tmprect.x = MEMORY_VIEW_X-1;
+    tmprect.y = MEMORY_VIEW_Y-1;
+    tmprect.w = 512+2;
+    tmprect.h = 1;
+    SDL_FillRect(screen, &tmprect, Colors::white);
+    tmprect.x = MEMORY_VIEW_X-1 + 513;
+    tmprect.y = MEMORY_VIEW_Y-1;
+    tmprect.w = 1;
+    tmprect.h = 512+2;
+    SDL_FillRect(screen, &tmprect, Colors::white);
+    tmprect.x = MEMORY_VIEW_X-1;
+    tmprect.y = MEMORY_VIEW_Y-1 + 513;
+    tmprect.w = 512+2;
+    tmprect.h = 1;
+    SDL_FillRect(screen, &tmprect, Colors::white);
     
     fade_arrays();      
     
@@ -311,7 +332,7 @@ void Main_Window::receive_event(SDL_Event &ev)
       else if (scancode == SDLK_SPACE)
       {
         //fprintf(stderr, "pause ")
-        player->toggle_pause();
+        BaseD::toggle_pause();
       }
       else if (scancode == SDLK_r)
       {
@@ -1265,11 +1286,11 @@ void Main_Window::one_time_draw()
     SDL_FillRect(screen, NULL, 0);
     
     
-    tmprect.x = MEMORY_VIEW_X-1;
+    /*tmprect.x = MEMORY_VIEW_X-1;
     tmprect.y = MEMORY_VIEW_Y-1;
     tmprect.w = 512+2;
     tmprect.h = 512+2;
-    SDL_FillRect(screen, &tmprect, Colors::white); 
+    SDL_FillRect(screen, &tmprect, Colors::white); */
     
     //sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
 

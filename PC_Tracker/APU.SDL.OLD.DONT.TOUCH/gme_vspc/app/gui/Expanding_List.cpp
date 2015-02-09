@@ -160,8 +160,8 @@ void Expanding_List::draw(SDL_Surface *screen)
   //greatest_length=0;
 
   // draw background panel
-  if (is_active) SDL_FillRect(screen, &created_at, SDL_MapRGB(screen->format, 0x18, 0x18, 0x18));  
-  SDL_FillRect(screen, &single_item_rect, SDL_MapRGB(screen->format, 0x18, 0x18, 0x18));
+  if (is_active) SDL_FillRect(screen, &created_at, Colors::black);  
+  SDL_FillRect(screen, &single_item_rect, Colors::black);
 
   // find highlighted strip
     // this should go in its own function called from SDL_MOUSEMOTION event

@@ -171,6 +171,8 @@ assert(name);
 }
 bool BaseD::check_time()
 {
+  if (player->is_paused())
+    return false;
   /* Check if it is time to change tune.
    */   
   if (player->emu()->tell()/1000 >= song_time) 
@@ -184,7 +186,7 @@ bool BaseD::check_time()
       }
     }
     g_cur_entry++;
-    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); g_cur_entry--; /*reload();*/ player->pause(true); return true; }
+    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); /*reload();*/ player->pause(true); return true; }
     //goto reload;
     reload();
     return true;
@@ -404,7 +406,13 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
 
 void BaseD::toggle_pause()
 {
-  player->toggle_pause();
+  // this means (if the player has finished playing its last song...)
+  // the player stops, but if the user tries to resume with space_bar or play command
+  // this will restart from beginning of playlist
+  if (g_cur_entry>=g_cfg.num_files)
+    restart_track();
+  
+  else player->toggle_pause();
 }
 
 void BaseD::restart_track()
