@@ -6,3 +6,7 @@
 #else
 #define CMD_CTRL_KEY KMOD_CTRL
 #endif
+
+#ifndef PATH_MAX
+  #define PATH_MAX 2048
+#endif

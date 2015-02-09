@@ -4,6 +4,7 @@ SDL_Surface *BaseD::screen;
 uint8_t *BaseD::IAPURAM;*/
 #include "Main_Window.h"
 #include "Menu_Bar.h"
+#include "File_System_Context.h"
 
 My_Nfd BaseD::nfd;
 int BaseD::grand_mode=GrandMode::MAIN;
@@ -35,6 +36,139 @@ Menu_Bar * BaseD::menu_bar=NULL;
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
 
+void BaseD::check_paths_and_reload(char **paths, int numpaths)
+{
+  bool rsn_found=false;
+  // Check here if path is RSN
+  for (size_t i=0; i < numpaths; i++)
+  {
+    char *path = paths[i];
+    char *ext;
+    char *name;
+    ext = strrchr(path, '.');
+#ifdef WIN32
+name = strrchr(path, '\\'); // Windows might need backslash check
+#else
+name = strrchr(path, '/'); // Windows might need backslash check
+#endif
+assert(name);
+
+    if (!strcmp(ext, ".rsn") || !strcmp(ext, ".rar"))
+    {
+      rsn_found = true;
+      fprintf(stderr, "rsn found\n");
+      char *mkdir_cmd = (char*) SDL_malloc(sizeof(char) * 
+        (strlen("mkdir -p ")+
+          strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name)+1)) );
+
+      char *dir_quoted = (char*) SDL_malloc(sizeof(char) * 
+        (strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name)+2)) );
+
+      strcpy(mkdir_cmd, "mkdir ");
+      char *dirp = mkdir_cmd + 6;
+      char *p = mkdir_cmd + 6;
+      strcpy(p, File_System_Context::file_system->tmp_path_quoted);
+      p += strlen(File_System_Context::file_system->tmp_path_quoted) - 1;
+      for (char *folderp = name+1; folderp != ext; folderp++)
+      {
+        *(p++) = *folderp;
+      }
+      *(p++) = '/';
+      *(p++) = '"';
+      *p = 0;
+      strcpy (dir_quoted, dirp);
+      //strcat(dir_quoted, "/");
+      fprintf(stderr, "mkdircmd = '%s'\n", mkdir_cmd);
+      fprintf(stderr, "dir = %s\n", dir_quoted);
+      system(mkdir_cmd);
+
+      // data_path_quoted + "unrar e " + path + " " + dir_quoted
+      char *unrar_cmd = (char*) SDL_malloc(sizeof(char) * 
+        (
+          strlen(File_System_Context::file_system->data_path_quoted) +
+          strlen("unrar e -y") + 2 + strlen(path) + 1 + strlen(dir_quoted) + 1
+        ));
+      strcpy(unrar_cmd, File_System_Context::file_system->data_path_quoted);
+      unrar_cmd[strlen(unrar_cmd)-1] = 0;
+      strcat(unrar_cmd, "unrar\" e -y \"");
+      strcat(unrar_cmd, path);
+      strcat(unrar_cmd, "\" ");
+      strcat(unrar_cmd, dir_quoted);
+      fprintf(stderr, "unrar_cmd = %s\n", unrar_cmd);
+      system(unrar_cmd);
+
+      FILE *fp;
+      int status;
+      char spc_path[PATH_MAX];
+
+      char *ls_cmd = (char*) SDL_malloc ( sizeof(char) * (strlen("ls ")+strlen(dir_quoted)+strlen("*.spc")+1));
+      strcpy(ls_cmd, "ls ");
+      strcat(ls_cmd, dir_quoted);
+      //ls_cmd[strlen(ls_cmd)-1] = 0;
+      strcat(ls_cmd, "*.spc");
+      fprintf(stderr, "ls_cmd = %s\n", ls_cmd);
+      fp = popen(ls_cmd, "r");
+      if (fp == NULL)
+          /* Handle error */;
+
+
+      while (fgets(spc_path, PATH_MAX, fp) != NULL)
+      {
+        spc_path[strlen(spc_path)-1] = 0;
+        char **tmp;
+        if ( (tmp=(char**)SDL_realloc(BaseD::nfd.rsn_spc_paths, sizeof(char*) * (BaseD::nfd.num_rsn_spc_paths+1))) == NULL)
+        {
+          perror ("realloc");
+          break;
+        }
+        BaseD::nfd.rsn_spc_paths = tmp;
+        BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths] = (char*) SDL_calloc(strlen(spc_path)+3, sizeof(char));
+        //strcpy(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], "\"");
+        strcpy(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], spc_path);
+        //strcat(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], "\"");
+        //fprintf(stderr, "path = %s\n", BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths]);
+        BaseD::nfd.num_rsn_spc_paths++;
+      }
+
+
+      status = pclose(fp);
+      if (status == -1) {
+          /* Error reported by pclose() */
+          //...
+      } else {
+          /* Use macros described under wait() to inspect `status' in order
+             to determine success/failure of command executed by popen() */
+          //...
+      }
+      SDL_free(ls_cmd);
+      SDL_free(unrar_cmd);
+      SDL_free(mkdir_cmd);
+      SDL_free(dir_quoted);
+    }
+    else
+    {
+      char **tmp;
+      if ( (tmp=(char**)SDL_realloc(BaseD::nfd.rsn_spc_paths, sizeof(char*) * (BaseD::nfd.num_rsn_spc_paths+1))) == NULL)
+      {
+        perror ("realloc");
+        break;
+      }
+      BaseD::nfd.rsn_spc_paths = tmp;
+      BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths] = (char*) SDL_calloc(strlen(path)+3, sizeof(char));
+      //strcpy(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], "\"");
+      strcpy(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], path);
+      //strcat(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], "\"");
+      //fprintf(stderr, "path = %s\n", BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths]);
+      BaseD::nfd.num_rsn_spc_paths++;
+    }
+  }
+
+  if (rsn_found)
+    BaseD::reload(BaseD::nfd.rsn_spc_paths,BaseD::nfd.num_rsn_spc_paths);
+  else
+    BaseD::reload((char**)BaseD::nfd.paths, BaseD::nfd.numpaths);
+  //free(outPath);
+}
 bool BaseD::check_time()
 {
   /* Check if it is time to change tune.
@@ -50,7 +184,7 @@ bool BaseD::check_time()
       }
     }
     g_cur_entry++;
-    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); g_cur_entry--; reload(); player->pause(true); return true; }
+    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); g_cur_entry--; /*reload();*/ player->pause(true); return true; }
     //goto reload;
     reload();
     return true;

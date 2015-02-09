@@ -1,5 +1,8 @@
 #include "Menu_Bar.h"
 #include "utility.h"
+#include "File_System_Context.h"
+#include "platform.h"
+//#include <stdlib.h>
 
 void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
 {
@@ -19,15 +22,9 @@ void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
 
 int Menu_Bar::File_Context::open_spc(void *data)
 {
-  //SDL_RWops *file;
-  //nfdchar_t *outPath=NULL;
-  if (BaseD::nfd.get_multifile_read_path("spc") == NFD_OKAY)
+  if (BaseD::nfd.get_multifile_read_path("spc,rsn,rar") == NFD_OKAY)
   {
-    //if (outPath !=NULL)
-      //fprintf(stderr, "open SPC: %s\n", (char*)outPath);
-
-    BaseD::reload((char**)BaseD::nfd.paths, BaseD::nfd.numpaths);
-    //free(outPath);
+    BaseD::check_paths_and_reload(BaseD::nfd.paths, BaseD::nfd.numpaths);
   }
 }
 

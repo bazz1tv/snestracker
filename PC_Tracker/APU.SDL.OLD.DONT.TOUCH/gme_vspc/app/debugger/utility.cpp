@@ -5,6 +5,27 @@
 
 namespace Utility
 {
+
+const char* rstrstr(const char* haystack, const char* needle)
+{
+  int needle_length = strlen(needle);
+  const char* haystack_end = haystack + strlen(haystack) - needle_length;
+  const char* p;
+  size_t i;
+
+  for(p = haystack_end; p >= haystack; --p)
+  {
+    for(i = 0; i < needle_length; ++i) {
+      if(p[i] != needle[i])
+        goto next;
+    }
+    return p;
+
+    next:;
+  }
+  return NULL;
+}
+
 Uint8 scancode_to_hex(int &scancode)
 {
     if ((scancode >= '0') && (scancode <= '9'))

@@ -10,6 +10,7 @@ app_settings(&file_system)
   //App_Settings_Context::app_settings = &app_settings;
   Midi_Context::midi = &midi;
   App_Settings_Context::app_settings = &app_settings;
+  File_System_Context::file_system = &file_system;
 }
 
 void App::run()

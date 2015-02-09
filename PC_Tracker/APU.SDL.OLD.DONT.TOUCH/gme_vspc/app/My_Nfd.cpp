@@ -7,31 +7,55 @@ My_Nfd::My_Nfd()
 
 void My_Nfd::free_pathset()
 {
-  free (paths);
-  NFD_PathSet_Free(&pathSet);
-  pathSet_Allocated = false;
-  numpaths=0;
+  if ( pathSet_Allocated )
+  {
+    free (paths);
+    NFD_PathSet_Free(&pathSet);
+    pathSet_Allocated = false;
+    numpaths=0;
+  }
+
+  if (rsn_spc_paths)
+  {
+    for (int i = 0; i < num_rsn_spc_paths; i++ )
+    {
+      SDL_free(rsn_spc_paths[i]);
+    }
+
+    SDL_free(rsn_spc_paths);
+    rsn_spc_paths = NULL;
+    num_rsn_spc_paths=0;
+  }
 }
 My_Nfd::~My_Nfd()
 {
-  if ( pathSet_Allocated )
+  
+  free_pathset();
+  
+
+  if (rsn_spc_paths)
   {
-    free_pathset();
+    for (int i = 0; i < num_rsn_spc_paths; i++ )
+    {
+      SDL_free(rsn_spc_paths[i]);
+    }
+
+    SDL_free(rsn_spc_paths);
+    rsn_spc_paths = NULL;
   }
 
   if (outPath)
   {
     free(outPath);
+    outPath = NULL;
   }
 }
 
 
 nfdresult_t My_Nfd::get_multifile_read_path(const char *filter_list/*=NULL*/)
 {
-  if (pathSet_Allocated)
-  {
-    free_pathset();
-  }
+  free_pathset();
+
   char tmpbuf[200];
   //*outPath=NULL;
   nfdresult_t result = NFD_OpenDialogMultiple( filter_list, NULL, &pathSet );
@@ -43,7 +67,7 @@ nfdresult_t My_Nfd::get_multifile_read_path(const char *filter_list/*=NULL*/)
     //SDL_RWops* SDL_RWFromFile(const char* file,
       //                const char* mode)
     SDL_RaiseWindow(BaseD::sdlWindow);
-    paths = (nfdchar_t **) malloc(sizeof(nfdchar_t **) * (NFD_PathSet_GetCount(&pathSet)+1));
+    paths = (nfdchar_t **) malloc(sizeof(nfdchar_t *) * (NFD_PathSet_GetCount(&pathSet)+1));
     size_t i;
     for ( i = 0; i < NFD_PathSet_GetCount(&pathSet); ++i )
     {

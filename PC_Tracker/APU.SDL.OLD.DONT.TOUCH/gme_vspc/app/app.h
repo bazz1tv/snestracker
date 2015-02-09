@@ -3,6 +3,7 @@
 #include "Debugger.h"
 #include "Midi_Context.h"
 #include "File_System.h"
+#include "File_System_Context.h"
 #include "App_Settings_Context.h"
 
 class App : public Render_Context, public Player_Context, public Midi_Context, public App_Settings_Context

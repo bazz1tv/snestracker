@@ -1,6 +1,7 @@
 #pragma once
 
 #include <nfd.h>
+#include "platform.h"
 
 struct My_Nfd
 {
@@ -16,5 +17,11 @@ struct My_Nfd
   nfdpathset_t pathSet;
   bool pathSet_Allocated=false;
   nfdchar_t **paths=NULL;
+
+  // this should probably not be here :P it should be encapsulated in a 
+  // STD instance, but oh well
+  char **rsn_spc_paths=NULL;
+  size_t num_rsn_spc_paths=0;
+
   int numpaths=0;
 };
