@@ -1,0 +1,28 @@
+Breath of Fire
+Dumped by: Ragnarok, YK
+ID666 tags by: Ragnarok, YK
+Downloaded from: http://snesmusic.org/
+
+Update 4:
+-Re-arranged and titled songs in line with the Breath of Fire Special Box
+-Added composer breakdown, based on Yasuaki "Bun Bun" Fujita's notes about the album
+
+Update 3:
+-Found the other unused song. (Thanks to Revenant on the forums!)
+-Unused ambient track and one jingle added.
+
+Update 2:
+-Missing track added. Thanks to, uh, the GSF ripper, Saptapper, for
+ ripping it from the GBA version, which in turn led me to find it in
+ the SNES version. Perhaps the other "hidden" track from the GBA 
+ version is here somewhere, too...?
+-Added *real* composer names, not just silly Capcom nicknames.
+
+Update:
+Complete overhaul:
+-Improved tracknames and order. (If they were based on an OST,
+ I'm sorry, but it was all wrong and defied all in-game logic.)
+-Duplicate ending track removed.
+-Track times slightly tweaked.
+-Composer info added, courtesy of the GBA re-release.
+
