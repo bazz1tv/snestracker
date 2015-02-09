@@ -35,7 +35,7 @@ Menu_Bar * BaseD::menu_bar=NULL;
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
 
-void BaseD::check_time()
+bool BaseD::check_time()
 {
   /* Check if it is time to change tune.
    */   
@@ -50,10 +50,13 @@ void BaseD::check_time()
       }
     }
     g_cur_entry++;
-    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; return; }
+    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); g_cur_entry--; reload(); player->pause(true); return true; }
     //goto reload;
     reload();
+    return true;
   }
+
+  return false;
 }
 
 int BaseD::menu_bar_events(SDL_Event &ev)
@@ -170,6 +173,7 @@ void BaseD::start_track( int track, const char* path )
   SDL_SetWindowTitle(sdlWindow, title);
 }
 
+// YEAHH!!!
 void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
 {
   char *path=NULL;
@@ -346,7 +350,7 @@ void BaseD::switch_mode(int mode)
   // If we switched from instrument window, need to re-enable regular spc playback
   if (exp == (Experience*)instr_window)
   {
-    instr_window->restore_spc();
+    instr_window->restore_spc(false); // restore SPC but don't necessarily resume playing
   }
 
   if (mode == GrandMode::MAIN)

@@ -34,7 +34,7 @@ struct BaseD : public Render_Context, public Player_Context
   static void start_track( int track, const char* path );
   static void switch_mode(int mode);
   static void draw_menu_bar();
-  static void check_time();
+  static bool check_time();
   static void toggle_pause();
   static void restart_track(); // goes to beginning of playlist too
   static void prev_track();

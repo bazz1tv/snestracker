@@ -23,20 +23,9 @@ void Instrument_Window::run()
 
   /* Check if it is time to change tune.
    */   
-  if (player->emu()->tell()/1000 >= song_time) 
+  if (BaseD::check_time())
   {
-    if (g_cfg.autowritemask) {
-      write_mask(packed_mask);
-      if (g_cfg.apply_block) {
-        printf("Applying mask on file %s using $%02X as filler\n", g_cfg.playlist[g_cur_entry], g_cfg.filler);
-        applyBlockMask(g_cfg.playlist[g_cur_entry]);
-      }
-    }
-    g_cur_entry++;
-    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); quitting=true; return; }
-    
     start_stop.is_started = false;
-    reload();
   }
 
   //int current_voice = voice.n;
@@ -47,20 +36,20 @@ void Instrument_Window::run()
   adsr_context_menus.update(adsr1, adsr2);
 
   Uint8 envx = player->spc_read_dsp(0x10*voice.n + dsp_reg::envx);
-  if (envx)
+  /*if (envx)
   {
     if (!started)
     {
-      //mytime = SDL_GetTicks();
-      started = true;
       
+      started = true;
+      mytime = SDL_GetTicks();
     }
   }
   else if (started)
   {
     fprintf(stderr, "envx: %d\n", SDL_GetTicks() - mytime);
     started = false;
-  }
+  }*/
   
   
 

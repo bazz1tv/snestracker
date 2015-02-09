@@ -1,6 +1,22 @@
 #include "Menu_Bar.h"
 #include "utility.h"
 
+void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
+{
+  Clickable_Text *ct = (Clickable_Text*) &menu_items[1].clickable_text;
+  if (BaseD::player->is_paused())
+  {
+    ct->str = "play";
+    //ct->str.clear();
+    //ct->str.append( "resume" );
+  }
+  else 
+  {
+    ct->str = "pause";
+  }
+  menu.draw(screen);
+}
+
 int Menu_Bar::File_Context::open_spc(void *data)
 {
   //SDL_RWops *file;
@@ -17,18 +33,9 @@ int Menu_Bar::File_Context::open_spc(void *data)
 
 int Menu_Bar::Track_Context::toggle_pause (void *data)
 {
-  Clickable_Text *ct = (Clickable_Text*) data;
+  
   BaseD::toggle_pause();
-  if (BaseD::player->is_paused())
-  {
-    ct->str = "play";
-    //ct->str.clear();
-    //ct->str.append( "resume" );
-  }
-  else 
-  {
-    ct->str = "pause";
-  }
+  
 }         
 int Menu_Bar::Track_Context::restart_current_track (void *data)
 {
@@ -90,6 +97,10 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
     window_context.menu.deactivate();
     return true;
   }
+
+  if (BaseD::player->has_no_song)
+    return false;
+
   if (track_context.menu.check_left_click_activate(x, y, button))
   {
     file_context.menu.deactivate();
@@ -124,17 +135,20 @@ int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
       return EVENT_FILE;
     return EVENT_ACTIVE;
   }
-  if ((r=track_context.menu.receive_event(ev)))
+  if (!BaseD::player->has_no_song)
   {
-    if (r == Expanding_List::EVENT_MENU)
-      return EVENT_TRACK;
-    return EVENT_ACTIVE;
-  }
-  if ((r=window_context.menu.receive_event(ev)))
-  {
-    if (r == Expanding_List::EVENT_MENU)
-      return EVENT_WINDOW;
-    return EVENT_ACTIVE;
+    if ((r=track_context.menu.receive_event(ev)))
+    {
+      if (r == Expanding_List::EVENT_MENU)
+        return EVENT_TRACK;
+      return EVENT_ACTIVE;
+    }
+    if ((r=window_context.menu.receive_event(ev)))
+    {
+      if (r == Expanding_List::EVENT_MENU)
+        return EVENT_WINDOW;
+      return EVENT_ACTIVE;
+    }
   }
 
   return EVENT_INACTIVE;
@@ -151,6 +165,9 @@ void Menu_Bar::Context_Menus::update(Uint8 adsr1, Uint8 adsr2)
 void Menu_Bar::Context_Menus::draw(SDL_Surface *screen)
 {
   file_context.menu.draw(screen);
-  track_context.menu.draw(screen);
-  window_context.menu.draw(screen);
+  if (!BaseD::player->has_no_song)
+  {
+    track_context.draw(screen);
+    window_context.menu.draw(screen);
+  }
 }

@@ -44,6 +44,8 @@ struct Menu_Bar
       //menu_items[1].clickable_text.data = &menu_items[1].clickable_text.str;
     }
 
+    void draw(SDL_Surface *screen);
+
     static int toggle_pause (void *data);         
     static int restart_current_track (void *data);
     static int prev_track (void *data);          
