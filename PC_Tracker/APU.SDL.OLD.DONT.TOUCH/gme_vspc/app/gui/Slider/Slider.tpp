@@ -1,6 +1,6 @@
 //#include "Slider<T>.h"
 
-#define DEBUGLOG(...) fprintf (stderr, __VA_ARGS__)
+
 // This function draws the panel (background) and actual slider adjuster
 template <class T>
 void Slider<T>::draw()
@@ -223,7 +223,7 @@ bool Slider<T>::receive_event(SDL_Event &ev)
 	switch (ev.type)
 	{
 		case SDL_MOUSEMOTION:
-			if (is_sliding)
+			if (is_active())
 			{
 				Slide(mouse::x);
 			}
@@ -246,6 +246,11 @@ bool Slider<T>::receive_event(SDL_Event &ev)
 	return false;
 }
 
+template <class T>
+bool Slider<T>::is_active()
+{
+	return is_sliding;
+}
 template <class T>
 void Slider<T>::Deactivate()
 {

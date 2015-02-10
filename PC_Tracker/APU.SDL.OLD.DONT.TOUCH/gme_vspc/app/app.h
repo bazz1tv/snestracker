@@ -5,6 +5,7 @@
 #include "File_System.h"
 #include "File_System_Context.h"
 #include "App_Settings_Context.h"
+#include "Audio.h"
 
 class App : public Render_Context, public Player_Context, public Midi_Context, public App_Settings_Context
 {
@@ -23,6 +24,7 @@ private:
   App_Settings app_settings;
   File_System file_system;
   Midi midi;
+  Audio audio;
 
 private:
   int init_sdl();

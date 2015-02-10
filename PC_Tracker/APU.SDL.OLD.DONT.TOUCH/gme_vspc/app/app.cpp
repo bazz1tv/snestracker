@@ -16,12 +16,7 @@ app_settings(&file_system)
 
 void App::run()
 {
-  //the value ranges from 0 to SDL_GetNumAudioDevices() - 1
-  int num_audio_devices = SDL_GetNumAudioDevices(0);
-  DEBUGLOG("num audio devices: %d\n", num_audio_devices);
-  for (int i = 0; i < num_audio_devices; ++i) {
-    printf("Audio device %d: %s\n", i, SDL_GetAudioDeviceName(i, 0));
-}
+
   // For now..
   debugger.run();
 }

@@ -173,7 +173,8 @@ void Main_Window::receive_event(SDL_Event &ev)
 
   if (player->has_no_song) return;
 
-  if (gain.slider->receive_event(ev)) return;
+  if (gain.slider)
+    if (gain.slider->receive_event(ev)) return;
   
   dblclick::check_event(&ev);
 
@@ -1309,6 +1310,7 @@ void Main_Window::draw_mouse_address()
   if (is_first_run)
   {
     // here we will allocate slider at these coordinates
+    DEBUGLOG("new slider");
     gain.slider = new Slider<double>(x, y, 40, 6, 4,6, 0.0, 5.0, 1.0, Main_Window::Gain::change);
   }
   

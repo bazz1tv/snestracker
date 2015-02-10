@@ -25,6 +25,7 @@
 #include <SDL.h>
 #include "Range.h"
 #include "utility.h"
+#include "DEBUGLOG.h"
 
 
 template <class T>
@@ -32,11 +33,12 @@ struct Slider : public Render_Context
 {
 public:
 	Slider(int x, int y, 
-		int panel_width, int panel_height, 
-		int adjuster_width, int adjuster_height, 
-		T range_min, T range_max,
-		T default_value=0,
-		int (*action)(void *data)=NULL);
+	int panel_width, int panel_height, 
+	int adjuster_width, int adjuster_height, 
+	T range_min, T range_max,
+	T default_value=0,
+	int (*action)(void *data)=NULL);
+	~Slider() { DEBUGLOG("~Slider"); }
 
 	bool receive_event(SDL_Event &ev);
 
@@ -52,6 +54,7 @@ public:
 	void setTargetValue(T v);
 	int getPixelValueFromTargetValue(T);
 	void SetAdjusterXOffset(int);
+	bool is_active();
 
 	// when you activate the slider, you log it's adjuster's x_coordinate
 	// as well as the Mouses' X Coordinate
@@ -66,16 +69,18 @@ public:
 
 	
 	
-	Range<T> target_valueRange;
+	
 
 	float target_numValuesInRange;
 	float slider_pixelRange;
 
 	float ratio;
-
-	SDL_Rect adjuster_rect, panel_rect;
-	int adjuster_x, adjuster_y;
 	bool is_sliding=false;
+	SDL_Rect adjuster_rect, panel_rect;
+	
+	int adjuster_x, adjuster_y;
+	Range<T> target_valueRange;
+	
 };
 
 #include "Slider.tpp"
