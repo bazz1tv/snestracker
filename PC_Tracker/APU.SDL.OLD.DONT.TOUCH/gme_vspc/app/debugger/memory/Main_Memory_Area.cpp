@@ -3,7 +3,7 @@
 #include "report.h"
 #include "gme/Spc_Dsp_Register_Map_Interface.h"
 #include <nfd.h>
-
+#include "DEBUGLOG.h"
 #include "utility.h"
 
 int write_brri_to_file(void *data)
@@ -123,6 +123,7 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
   }
   else
   {
+    DEBUGLOG("unlocked form lcok");
     if (x && y)
     {
       if (  x >= MEMORY_VIEW_X && 
@@ -148,5 +149,6 @@ void Main_Memory_Area::toggle_lock(int x/*=0*/, int y/*=0*/)
 
 void Main_Memory_Area::unlock()
 {
+  DEBUGLOG("unlock");
   lock(0);
 }

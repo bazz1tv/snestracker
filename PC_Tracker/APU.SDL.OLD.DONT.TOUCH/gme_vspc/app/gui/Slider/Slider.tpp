@@ -5,12 +5,26 @@
 template <class T>
 void Slider<T>::draw()
 {
+	static SDL_Rect txt_rect = adjuster_rect;
 	// Get Graphics going
 	// void FillRect(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
 	// void FillRectAlpha(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
-	
-	FillRectAlpha(sdlRenderer, &panel_rect,50,50,50,255); // 50,50,50));
-	FillRectAlpha(sdlRenderer, &adjuster_rect, 0, 255, 0, 255); // SDL_MapRGB(Screen->format,0,255,0));
+	SDL_FillRect(screen, &txt_rect, 0);
+	SDL_Rect value_rect = {panel_rect.x, panel_rect.y, adjuster_rect.x - panel_rect.x, panel_rect.h };
+	FillRectAlpha(sdlRenderer, &panel_rect,&colors.panel); // 50,50,50));
+	FillRectAlpha(sdlRenderer, &value_rect,&colors.value);
+	FillRectAlpha(sdlRenderer, &adjuster_rect, &colors.adjuster); // SDL_MapRGB(Screen->format,0,255,0));
+
+	if (is_sliding)
+	{
+		char tmpbuf[20];
+		snprintf(tmpbuf, 20, "%1.03f", target_value );
+		txt_rect.x = adjuster_rect.x - ((strlen(tmpbuf)*CHAR_WIDTH)/2);
+		txt_rect.y = adjuster_rect.y-CHAR_HEIGHT;
+		txt_rect.h = CHAR_HEIGHT;
+		txt_rect.w = strlen(tmpbuf) * CHAR_WIDTH;
+		sdlfont_drawString(screen, txt_rect.x, txt_rect.y, tmpbuf, Colors::white);
+	}
 }
 
 // This is obvious
@@ -78,7 +92,7 @@ void Slider<T>::Slide(int mouse_x)
 	else
 		adjuster_rect.x = new_adjuster_x;
 
-	T target_value = getTargetValue(adjuster_rect.x - panel_rect.x);
+	target_value = getTargetValue(adjuster_rect.x - panel_rect.x);
 	DEBUGLOG("Adjuster\n\t");
 	DEBUGLOG("[Mouse_X: %d] - [Mouse_X_logged: %d] = %d\n\t", mouse_x, mouse_x_logged, mouse_x-mouse_x_logged);
 	DEBUGLOG("adjuster_x_logged: %d | new_adjuster_x: %d\n\t", adjuster_x_logged,adjuster_rect.x);
@@ -132,6 +146,7 @@ void Slider<T>::setTargetValue(T v)
 {
 	// V / ratio = Y; Y += panel_rect.x;
 	adjuster_rect.x = (v / ratio) + panel_rect.x;
+	target_value = v;
 }
 
 template <class T>
@@ -140,9 +155,13 @@ Slider<T>::Slider(int x, int y,
 	int adjuster_width, int adjuster_height, 
 	T range_min, T range_max,
 	T default_value/*=0*/,
-	int (*action)(void *data)/*=NULL*/) :
+	int (*action)(void *data)/*=NULL*/,
+	SDL_Color panel_color,
+	SDL_Color value_color,
+	SDL_Color adjuster_color) :
 target_valueRange(range_min, range_max),
-action(action)
+action(action),
+colors({panel_color, value_color, adjuster_color})
 //panel_x(x),panel_y(y),
 //width(width), height(height)
 {
@@ -159,9 +178,18 @@ action(action)
 
 	// move to initializer list later
 	adjuster_rect.x = x+(panel_width/2) - adjuster_width/2;	// Set the adjuster in the middle of the panel
-	adjuster_rect.y = y;			// guess
+	adjuster_rect.y = y - ((adjuster_height - panel_height)/2);			// guess
 	adjuster_rect.w = adjuster_width;
 	adjuster_rect.h = adjuster_height;
+
+	adjuster_collision_rect.x = adjuster_rect.x;
+	adjuster_collision_rect.y = adjuster_rect.y;
+	adjuster_collision_rect.w = adjuster_rect.w;
+	adjuster_collision_rect.h = adjuster_rect.h;
+	adjuster_collision_rect.x -= 2;
+	adjuster_collision_rect.w += 4;
+	adjuster_collision_rect.y -= 2;
+	adjuster_collision_rect.h += 6;
 
 	target_numValuesInRange = float(target_valueRange.max - target_valueRange.min);
 	slider_pixelRange = float(panel_width);
@@ -229,7 +257,8 @@ bool Slider<T>::receive_event(SDL_Event &ev)
 			}
 		break;
 		case SDL_MOUSEBUTTONDOWN:
-			if (Utility::coord_is_in_rect(mouse::x, mouse::y, &adjuster_rect))
+			adjuster_collision_rect.x = adjuster_rect.x - 2;
+			if (Utility::coord_is_in_rect(mouse::x, mouse::y, &adjuster_collision_rect))
 			{
 				if (!is_sliding)
 					Activate(mouse::x);

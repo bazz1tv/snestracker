@@ -14,6 +14,7 @@
 
 #include <SDL.h>
 
+void FillRectAlpha(SDL_Renderer *renderer, const SDL_Rect *rect, const SDL_Color *color);
 void FillRectAlpha(SDL_Renderer *renderer, int x, int y, int w, int h, Uint8 r,Uint8 g,Uint8 b,Uint8 a);
 void FillRectAlpha(SDL_Renderer *renderer, int x, int y, int w, int h, Uint32 rgba);
 void FillRect(SDL_Renderer *renderer, int x, int y, int w, int h, Uint8 r,Uint8 g,Uint8 b);

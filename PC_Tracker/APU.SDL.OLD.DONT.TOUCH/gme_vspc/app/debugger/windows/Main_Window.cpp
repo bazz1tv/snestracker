@@ -137,24 +137,29 @@ void Main_Window::draw()
 void Main_Window::check_quit(SDL_Event &ev)
 {
   switch (ev.type)
-    {
-      case SDL_QUIT:
-      if (!g_cfg.nosound) {
-        SDL_PauseAudio(1);
-      }
-      printf ("penis4\n");
-      quitting = true;
-      break;
+  {
+    case SDL_QUIT:
+    if (!g_cfg.nosound) {
+      SDL_PauseAudio(1);
+    }
+    printf ("penis4\n");
+    quitting = true;
+    break;
 
-      case SDL_KEYDOWN:
-      if (ev.key.keysym.sym == SDLK_ESCAPE)
+    case SDL_KEYDOWN:
+    if (ev.key.keysym.sym == SDLK_ESCAPE)
+    {
+      if (!locked())
       {
+        fprintf(stderr, "penis88\n");
         if (!g_cfg.nosound) {
           SDL_PauseAudio(1);
         }
-          quitting = true;
+        quitting = true;
       }
+      
     }
+  }
 }
 
 void Main_Window::receive_event(SDL_Event &ev)
@@ -429,16 +434,17 @@ void Main_Window::receive_event(SDL_Event &ev)
         {
           if (locked())
           {
+            DEBUGLOG("eegbeb");
             unlock(); 
           }
-          else
+          /*else
           {
             fprintf(stderr, "penis2\n");
             if (!g_cfg.nosound) {
               SDL_PauseAudio(1);
             }
             quitting = true;
-          }
+          }*/
         }
       }
       else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
@@ -1301,17 +1307,17 @@ void Main_Window::draw_mouse_address()
   // leeching coordinates ;P 
   int length = strlen(tmpbuf); length+=3;
   x += (length*CHAR_WIDTH);
-  sprintf(tmpbuf, "Gain: ");
+  sprintf(tmpbuf, "Gain:");
   sdlfont_drawString(screen, x, y, tmpbuf, Colors::white);
 
-  length = strlen(tmpbuf); length+=1;
-  x += length*CHAR_WIDTH;
+  length = strlen(tmpbuf); length+=0;
+  x += length*CHAR_WIDTH + 4;
   // draw Slider here..
   if (is_first_run)
   {
     // here we will allocate slider at these coordinates
     DEBUGLOG("new slider");
-    gain.slider = new Slider<double>(x, y, 40, 6, 4,6, 0.0, 5.0, 1.0, Main_Window::Gain::change);
+    gain.slider = new Slider<double>(x, y+1, 40, 4, 6,6, 0.0, 5.0, 1.0, Main_Window::Gain::change);
   }
   
 }

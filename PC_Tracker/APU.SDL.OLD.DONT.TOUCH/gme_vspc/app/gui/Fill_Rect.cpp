@@ -1,7 +1,10 @@
 
 #include "gui/Fill_Rect.h"
 
-
+void FillRectAlpha(SDL_Renderer *renderer, const SDL_Rect *r, const SDL_Color *c)
+{
+  FillRectAlpha(renderer, r->x, r->y, r->w, r->h, c->r, c->g, c->b, c->a);
+}
 
 void FillRectAlpha(SDL_Renderer *renderer, int x, int y, int w, int h, Uint8 r,Uint8 g,Uint8 b,Uint8 a)
 {

@@ -37,9 +37,13 @@ public:
 	int adjuster_width, int adjuster_height, 
 	T range_min, T range_max,
 	T default_value=0,
-	int (*action)(void *data)=NULL);
+	int (*action)(void *data)=NULL,
+	SDL_Color panel_color={50,50,50,255},
+	SDL_Color value_color={225,225,225},
+	SDL_Color adjuster_color={200,50,10,255});
 	~Slider() { DEBUGLOG("~Slider"); }
 
+	T target_value;
 	bool receive_event(SDL_Event &ev);
 
 	int (*action)(void* data);
@@ -59,7 +63,12 @@ public:
 	// when you activate the slider, you log it's adjuster's x_coordinate
 	// as well as the Mouses' X Coordinate
 	int adjuster_x_logged, mouse_x_logged;
-
+	
+	struct
+	{
+		SDL_Color panel, value, adjuster;
+	} colors;
+	//SDL_Color panel_color, value_color, adjuster_color;
 	
 	void SetAdjusterPos(int x);
 
@@ -76,7 +85,7 @@ public:
 
 	float ratio;
 	bool is_sliding=false;
-	SDL_Rect adjuster_rect, panel_rect;
+	SDL_Rect adjuster_rect, adjuster_collision_rect, panel_rect;
 	
 	int adjuster_x, adjuster_y;
 	Range<T> target_valueRange;
