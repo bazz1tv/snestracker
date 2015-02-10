@@ -527,25 +527,7 @@ void Main_Window::receive_event(SDL_Event &ev)
           //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] |= i;
           mouseover_hexdump_area.tmp_ram |= i;
 
-          if ( IS_SPECIAL_ADDRESSES(addr) )
-          {
-            if (!mouseover_hexdump_area.highnibble)
-            {
-              if (addr >= 0xf4 && addr <= 0xf7)
-              {
-                port_tool.write(addr-0xf4, mouseover_hexdump_area.tmp_ram);
-                //player->spc_write_port()
-              }
-              else 
-              {
-                player->spc_write(addr, mouseover_hexdump_area.tmp_ram);
-                fprintf(stderr, "WRite");
-              }
-              mouseover_hexdump_area.draw_tmp_ram = 0;
-            }
-            else mouseover_hexdump_area.draw_tmp_ram = 1;
-          }
-          else player->spc_write(addr, mouseover_hexdump_area.tmp_ram);
+          maybe_write_to_mem();
           
           if (mouseover_hexdump_area.horizontal) mouseover_hexdump_area.inc_cursor_pos();
           
@@ -608,8 +590,8 @@ void Main_Window::receive_event(SDL_Event &ev)
         }
         else if (scancode == SDLK_RETURN)
         {
-
-          exit_edit_mode();
+          maybe_write_to_mem(true);
+          //exit_edit_mode();
         }
       }   
       else if (mode == MODE_EDIT_APU_PORT)
@@ -2005,6 +1987,30 @@ void Main_Window::draw_track_tag()
   sdlfont_drawString(screen, INFO_X, INFO_Y+32, tmpbuf, Colors::white);
   sprintf(tmpbuf, "Comment.: %s", tag.comment);
   sdlfont_drawString(screen, INFO_X, INFO_Y+40, tmpbuf, Colors::white);
+}
+
+void Main_Window::maybe_write_to_mem(bool force/*=false*/)
+{
+  Uint16 addr= mouseover_hexdump_area.addr_being_edited;
+  if ( IS_SPECIAL_ADDRESSES(addr) )
+  {
+    if (!mouseover_hexdump_area.highnibble || force)
+    {
+      if (addr >= 0xf4 && addr <= 0xf7)
+      {
+        port_tool.write(addr-0xf4, mouseover_hexdump_area.tmp_ram);
+        //player->spc_write_port()
+      }
+      else 
+      {
+        player->spc_write(addr, mouseover_hexdump_area.tmp_ram);
+        fprintf(stderr, "WRite");
+      }
+      mouseover_hexdump_area.draw_tmp_ram = 0;
+    }
+    else mouseover_hexdump_area.draw_tmp_ram = 1;
+  }
+  else player->spc_write(addr, mouseover_hexdump_area.tmp_ram);
 }
 
 

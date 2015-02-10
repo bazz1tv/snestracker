@@ -26,6 +26,7 @@ struct Main_Window : public BaseD, public Render_Context,
 public Player_Context,
 public Experience
 {
+  void maybe_write_to_mem(bool force=false); // maybe write value to memory
   struct Gain
   {
     ~Gain() { if (slider) delete slider; }
