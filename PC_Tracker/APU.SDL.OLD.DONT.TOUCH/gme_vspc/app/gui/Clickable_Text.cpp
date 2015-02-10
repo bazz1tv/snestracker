@@ -24,6 +24,11 @@ str(str),
 action(action),
 data(data)
 {
+  setup(x,y);
+}
+
+void Clickable_Text::setup(int x, int y)
+{
   rect.w = str.length()*CHAR_WIDTH; // could add padding
   rect.h = CHAR_HEIGHT;
   rect.x = x;
@@ -36,10 +41,14 @@ void Clickable_Text::draw(Uint32 &color, bool prefill/*=true*/,
   sdlfont_drawString(screen, rect.x, rect.y, str.c_str(), color, prefill, Vflip, Hflip);
 }
 
-void Clickable_Text::check_mouse_and_execute(int x, int y, void *newdata/*=NULL*/)
+bool Clickable_Text::check_mouse_and_execute(int x, int y, void *newdata/*=NULL*/)
 {
   if (Utility::coord_is_in_rect(x,y, &rect))
+  {
     do_thing(newdata);
+    return true;
+  }
+  return false;
 }
 
 void Clickable_Text::set_rect(int x, int y, int w, int h)

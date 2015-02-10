@@ -36,6 +36,15 @@ Menu_Bar * BaseD::menu_bar=NULL;
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
 
+int BaseD::Clickable::inc_tempo(void *nada)
+{
+  player->inc_tempo();
+}
+int BaseD::Clickable::dec_tempo(void *nada)
+{
+  player->dec_tempo();
+}
+
 void BaseD::check_paths_and_reload(char **paths, int numpaths)
 {
   bool rsn_found=false;

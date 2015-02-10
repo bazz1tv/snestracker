@@ -11,8 +11,9 @@ struct Clickable_Text : public Render_Context
   Clickable_Text(std::string str, int x, int y, int (*action)(void *data)=NULL, void *data=NULL);
 
   void draw(Uint32 &color, bool prefill=true, bool Vflip=false, bool Hflip=false);
-  void check_mouse_and_execute(int x, int y, void *newdata);
+  bool check_mouse_and_execute(int x, int y, void *newdata=NULL);
 
+  void setup(int x, int y);
   void set_rect(int x, int y, int w, int h);
   SDL_Rect rect;
   std::string str;

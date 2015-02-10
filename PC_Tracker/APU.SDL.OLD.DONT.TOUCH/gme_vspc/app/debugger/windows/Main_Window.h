@@ -32,6 +32,18 @@ public Experience
     Slider<double> *slider=NULL;
     static int change(void *dblnewgain);
   } gain;
+
+  struct Tempo
+  {
+    Tempo() : minus("-"), plus("+") {}
+    bool check_mouse_and_execute(int &x, int &y)
+    {
+      if (minus.check_mouse_and_execute(x,y)) return true;
+      if (plus.check_mouse_and_execute(x,y)) return true;
+      return false;
+    }
+    Clickable_Text minus, plus;
+  } tempo;
   enum modes 
   { 
     MODE_NAV=0,

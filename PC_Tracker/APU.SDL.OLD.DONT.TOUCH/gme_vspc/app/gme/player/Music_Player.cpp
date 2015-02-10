@@ -185,6 +185,7 @@ blargg_err_t Music_Player::start_track( int track )
 	// after a previous track was paused.. you would sometimes hear some of that old song
 	// data play before the new track.. temporary fix is to reallocate the sound device..
 	// permanent fix would be to add "fadeout after pause" or "fade in after play"
+	tempo = 1.0;
 	if (paused)
 	{
 		sound_cleanup();

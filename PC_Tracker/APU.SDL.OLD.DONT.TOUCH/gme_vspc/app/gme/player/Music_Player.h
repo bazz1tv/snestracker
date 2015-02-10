@@ -24,6 +24,10 @@ class Music_Player {
 public:
 	bool filter_is_active=false;
 	bool has_no_song = true;
+	double tempo=1.0;
+
+	void inc_tempo() {tempo+=0.1; emu_->set_tempo(tempo); }
+	void dec_tempo() {tempo-=0.1; emu_->set_tempo(tempo); }
 	// Initialize player and set sample rate
 	blargg_err_t init( long sample_rate = 44100 );
 	

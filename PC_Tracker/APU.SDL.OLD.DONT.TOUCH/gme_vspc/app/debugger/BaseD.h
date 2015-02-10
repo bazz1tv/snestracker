@@ -23,10 +23,15 @@ struct BaseD : public Render_Context, public Player_Context
     INSTRUMENT,
   };
 
+  struct Clickable
+  {
+    static int inc_tempo(void *nada);
+    static int dec_tempo(void *nada);
+  };
   
 
   //static char **rsn_spc_paths;
-  
+
   static void check_paths_and_reload(char **paths=g_cfg.playlist, int numpaths=g_cfg.num_files);
   static void pack_mask(unsigned char packed_mask[32]);
   static void applyBlockMask(char *filename);

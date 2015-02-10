@@ -915,6 +915,7 @@ void Main_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
+        if (tempo.check_mouse_and_execute(ev.motion.x, ev.motion.y)) return;
         voice_control.checkmouse((Uint16&)ev.motion.x, (Uint16&)ev.motion.y, ev.button.button); 
 
         bool is_in_memory_window= (ev.motion.x >= MEMORY_VIEW_X && 
@@ -1313,11 +1314,23 @@ void Main_Window::draw_mouse_address()
   length = strlen(tmpbuf); length+=0;
   x += length*CHAR_WIDTH + 4;
   // draw Slider here..
+  int slider_width = 40;
   if (is_first_run)
   {
     // here we will allocate slider at these coordinates
     DEBUGLOG("new slider");
-    gain.slider = new Slider<double>(x, y+1, 40, 4, 6,6, 0.0, 5.0, 1.0, Main_Window::Gain::change);
+    gain.slider = new Slider<double>(x, y+1, slider_width, 4, 6,6, 0.0, 5.0, 1.0, Main_Window::Gain::change);
+  }
+
+  if (is_first_run)
+  {
+    x+=slider_width + CHAR_WIDTH*2;
+    sprintf(tmpbuf, "-T+");
+    tempo.minus.setup(x,y);
+    tempo.plus.setup(x+CHAR_WIDTH*2, y);
+    tempo.minus.action = BaseD::Clickable::dec_tempo;
+    tempo.plus.action = BaseD::Clickable::inc_tempo;
+    sdlfont_drawString(screen, x, y, tmpbuf, Colors::white);
   }
   
 }
