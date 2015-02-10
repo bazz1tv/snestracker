@@ -1,6 +1,7 @@
 #include "gui/Clickable_Text.h"
 #include "utility.h"
 #include "sdlfont.h"
+#include <assert.h>
 
 Clickable_Text::Clickable_Text() : 
 str(""),
@@ -51,6 +52,7 @@ void Clickable_Text::set_rect(int x, int y, int w, int h)
 
 void Clickable_Text::do_thing(void *newdata/*=NULL*/)
 {
+  assert(action);
   if (!newdata)
     action(data);
   else action(newdata);

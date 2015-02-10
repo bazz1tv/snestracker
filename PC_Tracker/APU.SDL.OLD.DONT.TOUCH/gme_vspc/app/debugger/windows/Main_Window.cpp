@@ -11,6 +11,12 @@
 #define PC_X MEMORY_VIEW_X+8*12
 #define PC_Y MEMORY_VIEW_Y-10
 
+int Main_Window::Gain::change(void *dblnewgain)
+{
+  BaseD::player->gain = *(double*)dblnewgain;
+  return 0;
+}
+
 void Main_Window::draw()
 {
   if (!g_cfg.novideo)
@@ -118,6 +124,8 @@ void Main_Window::draw()
     SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
     SDL_RenderClear(sdlRenderer);
     SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+    // stuff that renders direct to renderer must happen after the screen copy
+    gain.slider->draw();
     SDL_RenderPresent(sdlRenderer);
     time_last = time_cur;
     if (g_cfg.nice) {  SDL_Delay(100); }
@@ -137,6 +145,15 @@ void Main_Window::check_quit(SDL_Event &ev)
       printf ("penis4\n");
       quitting = true;
       break;
+
+      case SDL_KEYDOWN:
+      if (ev.key.keysym.sym == SDLK_ESCAPE)
+      {
+        if (!g_cfg.nosound) {
+          SDL_PauseAudio(1);
+        }
+          quitting = true;
+      }
     }
 }
 
@@ -155,6 +172,8 @@ void Main_Window::receive_event(SDL_Event &ev)
   check_quit(ev);
 
   if (player->has_no_song) return;
+
+  if (gain.slider->receive_event(ev)) return;
   
   dblclick::check_event(&ev);
 
@@ -1260,14 +1279,39 @@ void Main_Window::draw_block_usage_bar()
   }
 }
 
+/*Main_Window::~Main_Window()
+{
+  if (gain_slider)
+    delete gain_slider;
+}*/
+
 void Main_Window::draw_mouse_address()
 {
   // write the address under mouse cursor
+  char addr_mouse_str[] = "Addr mouse: $%04X";
+  int x = MEMORY_VIEW_X+8*(23);
+  int y = MEMORY_VIEW_Y-10;
   if (mouseover_hexdump_area.address >=0)
   {
-    sprintf(tmpbuf, "Addr mouse: $%04X", main_memory_area.mouse_addr);
-    sdlfont_drawString(screen, MEMORY_VIEW_X+8*(23), MEMORY_VIEW_Y-10, tmpbuf, Colors::white);
+    sprintf(tmpbuf, addr_mouse_str, main_memory_area.mouse_addr);
+    sdlfont_drawString(screen, x, y, tmpbuf, Colors::white);
   }
+
+  // leeching coordinates ;P 
+  int length = strlen(tmpbuf); length+=3;
+  x += (length*CHAR_WIDTH);
+  sprintf(tmpbuf, "Gain: ");
+  sdlfont_drawString(screen, x, y, tmpbuf, Colors::white);
+
+  length = strlen(tmpbuf); length+=1;
+  x += length*CHAR_WIDTH;
+  // draw Slider here..
+  if (is_first_run)
+  {
+    // here we will allocate slider at these coordinates
+    gain.slider = new Slider<double>(x, y, 40, 6, 4,6, 0.0, 5.0, 1.0, Main_Window::Gain::change);
+  }
+  
 }
 
 void Main_Window::reload()

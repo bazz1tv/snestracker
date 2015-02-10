@@ -16,6 +16,7 @@
 #include "Player_Context.h"
 #include "Experience.h"
 #include "gui/Context_Menu.h"
+#include "gui/Slider/Slider.h"
 
 
 
@@ -25,6 +26,12 @@ struct Main_Window : public BaseD, public Render_Context,
 public Player_Context,
 public Experience
 {
+  struct Gain
+  {
+    ~Gain() { if (slider) delete slider; }
+    Slider<double> *slider=NULL;
+    static int change(void *dblnewgain);
+  } gain;
   enum modes 
   { 
     MODE_NAV=0,
@@ -33,6 +40,7 @@ public Experience
     //MODE_QUIT  
   };
   Main_Window(int &argc, char **argv);
+  //~Main_Window();
   void run();
   void check_quit(SDL_Event &ev);
 
