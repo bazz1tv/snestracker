@@ -16,6 +16,14 @@ int Main_Window::Gain::change(void *dblnewgain)
   BaseD::player->gain = *(double*)dblnewgain;
   return 0;
 }
+int Main_Window::Tempo::change(void *dblnewtempo)
+{
+  double v = *(double*)dblnewtempo;
+  //if (v >= 0.950 && v < 1.0) v = 1.0;
+  DEBUGLOG("tempo = %f", dblnewtempo);
+  BaseD::player->set_tempo(v);
+  return 0;
+}
 
 void Main_Window::draw()
 {
@@ -126,6 +134,7 @@ void Main_Window::draw()
     SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
     // stuff that renders direct to renderer must happen after the screen copy
     gain.slider->draw();
+    tempo.slider->draw();
     SDL_RenderPresent(sdlRenderer);
     time_last = time_cur;
     if (g_cfg.nice) {  SDL_Delay(100); }
@@ -178,8 +187,14 @@ void Main_Window::receive_event(SDL_Event &ev)
 
   if (player->has_no_song) return;
 
-  if (gain.slider)
-    if (gain.slider->receive_event(ev)) return;
+  if (gain.slider && tempo.slider)
+  {
+    bool a=gain.slider->receive_event(ev);
+    bool b = tempo.slider->receive_event(ev);
+    if (a || b) return;
+  }
+  /*if (tempo.slider)
+    if (tempo.slider->receive_event(ev)) return;*/
   
   dblclick::check_event(&ev);
 
@@ -915,7 +930,7 @@ void Main_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
-        if (tempo.check_mouse_and_execute(ev.motion.x, ev.motion.y)) return;
+        //if (tempo.check_mouse_and_execute(ev.motion.x, ev.motion.y)) return;
         voice_control.checkmouse((Uint16&)ev.motion.x, (Uint16&)ev.motion.y, ev.button.button); 
 
         bool is_in_memory_window= (ev.motion.x >= MEMORY_VIEW_X && 
@@ -1319,18 +1334,21 @@ void Main_Window::draw_mouse_address()
   {
     // here we will allocate slider at these coordinates
     DEBUGLOG("new slider");
-    gain.slider = new Slider<double>(x, y+1, slider_width, 4, 6,6, 0.0, 5.0, 1.0, Main_Window::Gain::change);
+    gain.slider = new Slider<double>(x, y+1, slider_width, 4, 6,6, 0.0, 5.0, 1.0, 2, Main_Window::Gain::change);
   }
 
   if (is_first_run)
   {
+    DEBUGLOG("new slider tempo\n");
     x+=slider_width + CHAR_WIDTH*2;
-    sprintf(tmpbuf, "-T+");
-    tempo.minus.setup(x,y);
+    sprintf(tmpbuf, "Tempo:");
+    /*tempo.minus.setup(x,y);
     tempo.plus.setup(x+CHAR_WIDTH*2, y);
     tempo.minus.action = BaseD::Clickable::dec_tempo;
-    tempo.plus.action = BaseD::Clickable::inc_tempo;
+    tempo.plus.action = BaseD::Clickable::inc_tempo;*/
     sdlfont_drawString(screen, x, y, tmpbuf, Colors::white);
+    x += strlen(tmpbuf)*CHAR_WIDTH + 4;
+    tempo.slider = new Slider<double>(x, y+1, slider_width, 4, 6,6, 0.02, 4.0, 1.0, 1, Main_Window::Tempo::change);
   }
   
 }

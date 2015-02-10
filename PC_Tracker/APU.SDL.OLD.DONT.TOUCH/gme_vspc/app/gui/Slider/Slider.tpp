@@ -1,24 +1,26 @@
 //#include "Slider<T>.h"
-
+template <class T>
+const char *Slider<T>::format_str[] = {"%.00f", "%.01f", "%.02f" };
 
 // This function draws the panel (background) and actual slider adjuster
 template <class T>
 void Slider<T>::draw()
 {
-	static SDL_Rect txt_rect = adjuster_rect;
+	
 	// Get Graphics going
 	// void FillRect(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
 	// void FillRectAlpha(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
-	SDL_FillRect(screen, &txt_rect, 0);
+	
 	SDL_Rect value_rect = {panel_rect.x, panel_rect.y, adjuster_rect.x - panel_rect.x, panel_rect.h };
 	FillRectAlpha(sdlRenderer, &panel_rect,&colors.panel); // 50,50,50));
 	FillRectAlpha(sdlRenderer, &value_rect,&colors.value);
 	FillRectAlpha(sdlRenderer, &adjuster_rect, &colors.adjuster); // SDL_MapRGB(Screen->format,0,255,0));
-
+	SDL_FillRect(screen, &txt_rect, 0);
 	if (is_sliding)
 	{
+		
 		char tmpbuf[20];
-		snprintf(tmpbuf, 20, "%1.03f", target_value );
+		snprintf(tmpbuf, 20, format_str[precision], target_value );
 		txt_rect.x = adjuster_rect.x - ((strlen(tmpbuf)*CHAR_WIDTH)/2);
 		txt_rect.y = adjuster_rect.y-CHAR_HEIGHT;
 		txt_rect.h = CHAR_HEIGHT;
@@ -107,7 +109,8 @@ void Slider<T>::Slide(int mouse_x)
 template <class T>
 T Slider<T>::getTargetValue(int adjuster_pixel_offset)
 {
-	return (T)(float)(adjuster_pixel_offset)*ratio;
+	T tmp=(T)(float)(adjuster_pixel_offset)*ratio;
+	return round(impose_boundary(tmp));
 }
 
 template <class T>
@@ -138,7 +141,18 @@ int Slider<T>::getPixelValueFromTargetValue(T target_val)
 template <class T>
 T Slider<T>::getTargetValue()
 {
-	return (T)(float)((adjuster_rect.x - panel_rect.x)*ratio);
+	T tmp = (T)(float)((adjuster_rect.x - panel_rect.x)*ratio);
+	
+
+	return round(impose_boundary(tmp));
+}
+
+template <class T>
+T Slider<T>::impose_boundary(T &tmp)
+{
+	if (tmp > target_valueRange.max) tmp = target_valueRange.max;
+	else if (tmp < target_valueRange.min) tmp = target_valueRange.min;
+	return tmp;
 }
 
 template <class T>
@@ -155,13 +169,15 @@ Slider<T>::Slider(int x, int y,
 	int adjuster_width, int adjuster_height, 
 	T range_min, T range_max,
 	T default_value/*=0*/,
+	Uint8 precision/*=1*/,
 	int (*action)(void *data)/*=NULL*/,
 	SDL_Color panel_color,
 	SDL_Color value_color,
 	SDL_Color adjuster_color) :
 target_valueRange(range_min, range_max),
 action(action),
-colors({panel_color, value_color, adjuster_color})
+colors({panel_color, value_color, adjuster_color}),
+precision(precision)
 //panel_x(x),panel_y(y),
 //width(width), height(height)
 {
@@ -181,6 +197,8 @@ colors({panel_color, value_color, adjuster_color})
 	adjuster_rect.y = y - ((adjuster_height - panel_height)/2);			// guess
 	adjuster_rect.w = adjuster_width;
 	adjuster_rect.h = adjuster_height;
+
+	txt_rect = adjuster_rect;
 
 	adjuster_collision_rect.x = adjuster_rect.x;
 	adjuster_collision_rect.y = adjuster_rect.y;
@@ -218,6 +236,7 @@ void Slider<T>::Activate(int mouse_x)
 	adjuster_x_logged = adjuster_rect.x;
 	mouse_x_logged = (int)floor(mouse_x);
 	is_sliding=true;
+	DEBUGLOG("activate called");
 }
 
 // Adjuster pixel offset is multiplied by the result of this ratio calculation
@@ -248,11 +267,13 @@ void Slider<T>::DoRatio()
 template <class T>
 bool Slider<T>::receive_event(SDL_Event &ev)
 {
+	//DEBUGLOG("is_sliding = %d", is_sliding);
 	switch (ev.type)
 	{
 		case SDL_MOUSEMOTION:
-			if (is_active())
+			if (is_sliding)
 			{
+				DEBUGLOG("sliding");
 				Slide(mouse::x);
 			}
 		break;
@@ -261,12 +282,19 @@ bool Slider<T>::receive_event(SDL_Event &ev)
 			if (Utility::coord_is_in_rect(mouse::x, mouse::y, &adjuster_collision_rect))
 			{
 				if (!is_sliding)
+				{
+					DEBUGLOG("slider: activating\n");
 					Activate(mouse::x);
+				}
 				return true;
 			}
 		break;
 		case SDL_MOUSEBUTTONUP:
-			Deactivate();
+			DEBUGLOG("mousebutton up slider\n");
+			is_sliding=false;
+			SDL_FillRect(screen, &txt_rect, 0);
+			//Deactivate();
+			//DEBUGLOG("is_sliding = %d", is_sliding);
 			return true;
 		break;
 
@@ -274,6 +302,26 @@ bool Slider<T>::receive_event(SDL_Event &ev)
 	}
 	return false;
 }
+
+template <class T>
+T Slider<T>::round(T n)//round up a float type and show one decimal place
+{
+  /*T t;
+  t=n-floor(n);
+  if (t>=0.5)    
+  {
+    n*=10;//where n is the multi-decimal float
+    ceil(n);
+    n/=10;
+   }
+  else 
+  {
+    n*=10;//where n is the multi-decimal float
+    floor(n);
+    n/=10;
+  }*/
+  return n;
+}  
 
 template <class T>
 bool Slider<T>::is_active()

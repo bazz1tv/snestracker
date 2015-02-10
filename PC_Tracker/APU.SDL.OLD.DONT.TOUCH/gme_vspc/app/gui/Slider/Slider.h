@@ -27,16 +27,20 @@
 #include "utility.h"
 #include "DEBUGLOG.h"
 
+#include <cmath>
+
 
 template <class T>
 struct Slider : public Render_Context
 {
 public:
+	static const char *format_str[];
 	Slider(int x, int y, 
 	int panel_width, int panel_height, 
 	int adjuster_width, int adjuster_height, 
 	T range_min, T range_max,
 	T default_value=0,
+	Uint8 precision=1,
 	int (*action)(void *data)=NULL,
 	SDL_Color panel_color={50,50,50,255},
 	SDL_Color value_color={225,225,225},
@@ -59,6 +63,7 @@ public:
 	int getPixelValueFromTargetValue(T);
 	void SetAdjusterXOffset(int);
 	bool is_active();
+	T round(T n);//round up a float type and show one decimal place
 
 	// when you activate the slider, you log it's adjuster's x_coordinate
 	// as well as the Mouses' X Coordinate
@@ -71,6 +76,7 @@ public:
 	//SDL_Color panel_color, value_color, adjuster_color;
 	
 	void SetAdjusterPos(int x);
+	T impose_boundary(T &tmp);
 
 	/*int width, height;
 	int panel_x,panel_y;*/
@@ -86,7 +92,8 @@ public:
 	float ratio;
 	bool is_sliding=false;
 	SDL_Rect adjuster_rect, adjuster_collision_rect, panel_rect;
-	
+	SDL_Rect txt_rect;
+	Uint8 precision;
 	int adjuster_x, adjuster_y;
 	Range<T> target_valueRange;
 	

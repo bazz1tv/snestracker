@@ -35,6 +35,13 @@ public Experience
 
   struct Tempo
   {
+    ~Tempo() { if (slider) delete slider; }
+    Slider<double> *slider=NULL;
+    static int change(void *dblnewtempo);
+  } tempo;
+
+  /*struct Tempo
+  {
     Tempo() : minus("-"), plus("+") {}
     bool check_mouse_and_execute(int &x, int &y)
     {
@@ -43,7 +50,8 @@ public Experience
       return false;
     }
     Clickable_Text minus, plus;
-  } tempo;
+  } tempo;*/
+
   enum modes 
   { 
     MODE_NAV=0,

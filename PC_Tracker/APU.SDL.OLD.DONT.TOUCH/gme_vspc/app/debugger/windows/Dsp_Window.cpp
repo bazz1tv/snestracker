@@ -411,7 +411,7 @@ void Dsp_Window::run()
   int row_complete=0;
   
   
-  i=TILE_HEIGHT*7 + 10;
+  i=TILE_HEIGHT*10 + 10;
 
   #define TEMPLATE_DIR_ENTRY_STR "$%02X: $%04X,$%04X"
   #define TEMPLATE_DIR_STR "DIRECTORY ($%04X)"
