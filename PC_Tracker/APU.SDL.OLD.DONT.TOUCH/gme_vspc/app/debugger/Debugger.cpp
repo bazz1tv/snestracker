@@ -46,6 +46,32 @@ void Debugger::handle_events()
   SDL_Event ev;
   while (SDL_PollEvent(&ev))
   {
+    if (ev.type == SDL_WINDOWEVENT)
+    {
+      if (ev.window.event == SDL_WINDOWEVENT_RESIZED)
+      {
+        static int oldw=SCREEN_WIDTH,oldh=SCREEN_HEIGHT;
+        int w = ev.window.data1;
+        int h = ev.window.data2;
+        int wd, hd;
+        //if (w > SCREEN_WIDTH)
+        //{
+        wd = w - oldw;
+        //}
+        //else
+        //{
+         // wd = SCREEN_WIDTH - height;
+        //}
+
+        hd = h - oldh;
+
+        if (abs(wd) < abs(hd)) wd = hd;
+        else if (abs(wd) > abs(hd)) hd = wd;
+        SDL_SetWindowSize(sdlWindow, oldw+wd, oldh+hd);
+        oldw += wd;
+        oldh += hd;
+      }
+    }
     exp->receive_event(ev);
   }
 }

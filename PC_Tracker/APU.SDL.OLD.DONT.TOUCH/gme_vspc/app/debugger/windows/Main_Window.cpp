@@ -1334,21 +1334,23 @@ void Main_Window::draw_mouse_address()
   {
     // here we will allocate slider at these coordinates
     DEBUGLOG("new slider");
-    gain.slider = new Slider<double>(x, y+1, slider_width, 4, 6,6, 0.0, 5.0, 1.0, 2, Main_Window::Gain::change);
+    gain.slider = new Slider<double>(player->gain,x, y+1, slider_width, 4, 6,6, 0.0, 5.0, 1.0, 2, Main_Window::Gain::change);
   }
 
+  x+=slider_width + CHAR_WIDTH*2;
+  sprintf(tmpbuf, "Tempo:");
+  sdlfont_drawString(screen, x, y, tmpbuf, Colors::white);
   if (is_first_run)
   {
     DEBUGLOG("new slider tempo\n");
-    x+=slider_width + CHAR_WIDTH*2;
-    sprintf(tmpbuf, "Tempo:");
+    
     /*tempo.minus.setup(x,y);
     tempo.plus.setup(x+CHAR_WIDTH*2, y);
     tempo.minus.action = BaseD::Clickable::dec_tempo;
     tempo.plus.action = BaseD::Clickable::inc_tempo;*/
-    sdlfont_drawString(screen, x, y, tmpbuf, Colors::white);
+    
     x += strlen(tmpbuf)*CHAR_WIDTH + 4;
-    tempo.slider = new Slider<double>(x, y+1, slider_width, 4, 6,6, 0.02, 4.0, 1.0, 1, Main_Window::Tempo::change);
+    tempo.slider = new Slider<double>(player->tempo,x, y+1, slider_width, 4, 6,6, 0.02, 4.0, 1.0, 1, Main_Window::Tempo::change);
   }
   
 }

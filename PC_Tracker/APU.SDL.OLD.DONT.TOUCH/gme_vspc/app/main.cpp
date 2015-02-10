@@ -13,6 +13,8 @@ int main(int argc, char **argv)
   init_sdl(&Render_Context::sdlWindow, &Render_Context::sdlRenderer, 
     &Render_Context::sdlTexture, &Render_Context::screen, SCREEN_WIDTH, SCREEN_HEIGHT);
 
+  //SDL_SetWindowSize(Render_Context::sdlWindow, 1024+100, 768+100);
+
   //fprintf(stderr, "screen = %d\n", Render_Context::screen);
   App app(argc, argv);
   app.run();

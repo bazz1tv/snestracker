@@ -73,15 +73,18 @@ struct Menu_Bar
     static int memory(void *data);
     static int DSP(void *data);
     static int Instrument(void *data);
+    static int restore_window_size(void *nada);
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[5] = 
+    Context_Menu_Item menu_items[7] = 
     {
-      {"Window",      true,  NULL,  NULL},
-      {"Memory",      true,  memory,  NULL},
-      {"DSP",         true,  DSP,  NULL},
-      {"Instrument",  true,  Instrument,  NULL},
-      {"",            false, NULL,  NULL}
+      {"Window",        true,  NULL,  NULL},
+      {"Original Size", true,  restore_window_size, NULL},
+      {"-------------", true, NULL, NULL},
+      {"Memory",        true,  memory,  NULL},
+      {"DSP",           true,  DSP,  NULL},
+      {"Instrument",    true,  Instrument,  NULL},
+      {"",              false, NULL,  NULL}
     };
   };
 

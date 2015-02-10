@@ -1,10 +1,10 @@
 #include "Screen.h"
 
 int SCREEN_X_OFFSET=0;
-int SCREEN_Y_OFFSET=0;
+int SCREEN_Y_OFFSET=50;
 
 const int SCREEN_WIDTH=800;
-const int SCREEN_HEIGHT=600;
+const int SCREEN_HEIGHT=700;
 //djust for 800x600 -> 1024x768
 
 

@@ -6,7 +6,7 @@ const char *Slider<T>::format_str[] = {"%.00f", "%.01f", "%.02f" };
 template <class T>
 void Slider<T>::draw()
 {
-	
+	SetAdjusterXOffset(getPixelValueFromTargetValue(target_value));
 	// Get Graphics going
 	// void FillRect(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
 	// void FillRectAlpha(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
@@ -164,7 +164,7 @@ void Slider<T>::setTargetValue(T v)
 }
 
 template <class T>
-Slider<T>::Slider(int x, int y, 
+Slider<T>::Slider(T &var, int x, int y, 
 	int panel_width, int panel_height, 
 	int adjuster_width, int adjuster_height, 
 	T range_min, T range_max,
@@ -174,6 +174,7 @@ Slider<T>::Slider(int x, int y,
 	SDL_Color panel_color,
 	SDL_Color value_color,
 	SDL_Color adjuster_color) :
+target_value(var),
 target_valueRange(range_min, range_max),
 action(action),
 colors({panel_color, value_color, adjuster_color}),

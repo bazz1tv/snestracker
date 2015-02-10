@@ -185,7 +185,7 @@ void Expanding_List::draw(SDL_Surface *screen)
         if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
         {
           //fprintf(stderr,"DERP1");
-          if (i !=0 && mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
+          if ( (items[i].clickable_text.str.c_str()[0] != '-') && ((is_static && i !=0) || !is_static) && mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
           {
             //fprintf(stderr,"DERP2");
             // draw the highlighter

@@ -35,7 +35,7 @@ struct Slider : public Render_Context
 {
 public:
 	static const char *format_str[];
-	Slider(int x, int y, 
+	Slider(T &var, int x, int y, 
 	int panel_width, int panel_height, 
 	int adjuster_width, int adjuster_height, 
 	T range_min, T range_max,
@@ -47,7 +47,7 @@ public:
 	SDL_Color adjuster_color={200,50,10,255});
 	~Slider() { DEBUGLOG("~Slider"); }
 
-	T target_value;
+	T &target_value;
 	bool receive_event(SDL_Event &ev);
 
 	int (*action)(void* data);

@@ -2,12 +2,13 @@
 #include "utility.h"
 #include "File_System_Context.h"
 #include "platform.h"
+#include "Instrument_Window.h"
 //#include <stdlib.h>
 
 void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
 {
   Clickable_Text *ct = (Clickable_Text*) &menu_items[1].clickable_text;
-  if (BaseD::player->is_paused())
+  if (BaseD::player->is_paused() || (BaseD::exp == BaseD::instr_window && BaseD::instr_window->start_stop.is_started) )
   {
     ct->str = "play";
     //ct->str.clear();
@@ -47,6 +48,10 @@ int Menu_Bar::Track_Context::next_track (void *data)
   BaseD::next_track();
 }
 
+int Menu_Bar::Window_Context::restore_window_size(void *nada)
+{
+  SDL_SetWindowSize(BaseD::sdlWindow, SCREEN_WIDTH, SCREEN_HEIGHT);
+}
 int Menu_Bar::Window_Context::memory(void *data)
 {
   BaseD::switch_mode(BaseD::GrandMode::MAIN);

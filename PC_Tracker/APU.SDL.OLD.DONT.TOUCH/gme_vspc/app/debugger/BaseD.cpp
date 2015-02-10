@@ -421,7 +421,11 @@ void BaseD::toggle_pause()
   if (g_cur_entry>=g_cfg.num_files)
     restart_track();
   
-  else player->toggle_pause();
+  else 
+  {
+    if_exp_is_instr_window_then_restore_spc();
+    player->toggle_pause();
+  }
 }
 
 void BaseD::restart_track()
@@ -490,6 +494,14 @@ void BaseD::restart_current_track()
   // in the program .. this would have to change otherwise
 }
 
+void BaseD::if_exp_is_instr_window_then_restore_spc()
+{
+  if (exp == (Experience*)instr_window)
+  {
+    instr_window->restore_spc(false); // restore SPC but don't necessarily resume playing
+  }
+}
+
 void BaseD::switch_mode(int mode)
 {
   if (grand_mode == mode)
@@ -499,10 +511,7 @@ void BaseD::switch_mode(int mode)
   draw_menu_bar();
 
   // If we switched from instrument window, need to re-enable regular spc playback
-  if (exp == (Experience*)instr_window)
-  {
-    instr_window->restore_spc(false); // restore SPC but don't necessarily resume playing
-  }
+  if_exp_is_instr_window_then_restore_spc();
 
   if (mode == GrandMode::MAIN)
   {
