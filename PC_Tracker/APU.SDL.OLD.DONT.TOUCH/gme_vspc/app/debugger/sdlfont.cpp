@@ -1,7 +1,9 @@
+#include "sdlfont.h"
 #include <string.h>
 #include "SDL.h"
 #include "font.h"
 #include "utility.h"
+
 
 // unused // static void put4pixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
 static void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
@@ -122,8 +124,8 @@ static void _sdlfont_drawChar2c(SDL_Surface *dst, int X, int Y, const char ch, U
 	}
 }
 
-void sdlfont_drawString(SDL_Surface *dst, int x, int y, const char *string, Uint32 color, 
-bool prefill, bool flipV/*=false*/, bool flipH/*=false*/)
+void sdlfont_drawString2(SDL_Surface *dst, int x, int y, const char *string, Colors::Interface::Type bg_color_type,Colors::Interface::Type fg_color_type/*=Colors::Interface::Type::text_fg*/, 
+bool prefill/*=true*/, bool flipV/*=false*/, bool flipH/*=false*/)
 {
 	int n, len;
 	SDL_Rect under;
@@ -133,7 +135,7 @@ bool prefill, bool flipV/*=false*/, bool flipH/*=false*/)
 	under.x = x; under.y = y;
 	under.h = 8; under.w = 8*len;
 	if (prefill)
-		SDL_FillRect(dst, &under, 0);
+		SDL_FillRect(dst, &under, Colors::Interface::color[bg_color_type]);
 
 	if (SDL_MUSTLOCK(dst)) {
 		SDL_LockSurface(dst);
@@ -143,7 +145,38 @@ bool prefill, bool flipV/*=false*/, bool flipH/*=false*/)
 	{
 		if ((n*8)+x+8 >= dst->w) {
 		} else {
-			_sdlfont_drawChar(dst, x + (n*8), y, *string, color, flipV, flipH);
+			_sdlfont_drawChar(dst, x + (n*8), y, *string, Colors::Interface::color[fg_color_type], flipV, flipH);
+		}
+		string++;
+	}
+	
+	if (SDL_MUSTLOCK(dst)) {
+		SDL_UnlockSurface(dst);
+	}
+}
+
+void sdlfont_drawString(SDL_Surface *dst, int x, int y, const char *string, Uint32 fg_color/*=Colors::Interface::text_fg*/, 
+Uint32 bg_color/*=Colors::Interface::color[Colors::Interface::text_bg]*/, bool prefill/*=true*/, bool flipV/*=false*/, bool flipH/*=false*/)
+{
+	int n, len;
+	SDL_Rect under;
+ 
+	len = strlen(string);
+
+	under.x = x; under.y = y;
+	under.h = 8; under.w = 8*len;
+	if (prefill)
+		SDL_FillRect(dst, &under, bg_color);
+
+	if (SDL_MUSTLOCK(dst)) {
+		SDL_LockSurface(dst);
+	}
+
+	for (n=0; n<len; n++)
+	{
+		if ((n*8)+x+8 >= dst->w) {
+		} else {
+			_sdlfont_drawChar(dst, x + (n*8), y, *string, fg_color, flipV, flipH);
 		}
 		string++;
 	}

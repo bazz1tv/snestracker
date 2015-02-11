@@ -7,6 +7,22 @@ struct Colors : public Render_Context
   //Colors(SDL_Surface *cscreen);
   //static SDL_Surface *screen;
 
+  struct Interface
+  {
+    enum Type
+    { 
+      bg=0,
+      text_bg,
+      text_fg,
+      voice_volume_left,
+      voice_volume_right,
+      voice_gain,
+      lock,
+      SIZEOF
+    };
+    static Uint32 color[Type::SIZEOF];
+  };// interface;
+
   static Uint32 white, black, cyan, magenta, yellow, red;
   static Uint32 green, blue, nearblack;
   static Uint32 dark_magenta, dark_cyan, dark_yellow;

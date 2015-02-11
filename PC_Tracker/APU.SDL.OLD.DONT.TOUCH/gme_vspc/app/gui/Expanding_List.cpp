@@ -60,7 +60,7 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
     currently_selected_item = highlighted_item;
     currently_selected_item_index = highlighted_item_index;
   }
-  SDL_FillRect(BaseD::screen, &created_at, Colors::black);
+  SDL_FillRect(BaseD::screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
   currently_selected_item = &items[0];
   highlighted_item = &items[0];
   highlighted_item_index=0;
@@ -160,8 +160,8 @@ void Expanding_List::draw(SDL_Surface *screen)
   //greatest_length=0;
 
   // draw background panel
-  if (is_active) SDL_FillRect(screen, &created_at, Colors::black);  
-  SDL_FillRect(screen, &single_item_rect, Colors::black);
+  if (is_active) SDL_FillRect(screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);  
+  SDL_FillRect(screen, &single_item_rect, Colors::Interface::color[Colors::Interface::Type::bg]);
 
   // find highlighted strip
     // this should go in its own function called from SDL_MOUSEMOTION event
@@ -198,7 +198,9 @@ void Expanding_List::draw(SDL_Surface *screen)
         // draw this nigga
         //if (currently_selected_item != &items[i])
         //{
-          sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + ((drawn)*TILE_HEIGHT) /*+ (i > 0 ? TILE_HEIGHT:0)*/, items[i].clickable_text.str.c_str(), Colors::white, false);
+          sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + ((drawn)*TILE_HEIGHT) /*+ (i > 0 ? TILE_HEIGHT:0)*/, 
+            items[i].clickable_text.str.c_str(), Colors::Interface::color[Colors::Interface::Type::text_fg], 
+            Colors::Interface::color[Colors::Interface::Type::text_bg], false);
           drawn++;
         //}
       }
@@ -209,10 +211,14 @@ void Expanding_List::draw(SDL_Surface *screen)
   {
     if (is_static)
     {
-      sdlfont_drawString(screen, single_item_rect.x+1, single_item_rect.y + 1 + (0*TILE_HEIGHT), items[0].clickable_text.str.c_str(), Colors::white, false);
+      sdlfont_drawString(screen, single_item_rect.x+1, single_item_rect.y + 1 + (0*TILE_HEIGHT), 
+        items[0].clickable_text.str.c_str(), Colors::Interface::color[Colors::Interface::Type::text_fg], 
+        Colors::Interface::color[Colors::Interface::Type::text_bg],false);
     }
     else
-      sdlfont_drawString(screen, single_item_rect.x+1, single_item_rect.y + 1 + (0*TILE_HEIGHT), currently_selected_item->clickable_text.str.c_str(), Colors::white, false);
+      sdlfont_drawString(screen, single_item_rect.x+1, single_item_rect.y + 1 + (0*TILE_HEIGHT), 
+        currently_selected_item->clickable_text.str.c_str(), Colors::Interface::color[Colors::Interface::Type::text_fg],
+        Colors::Interface::color[Colors::Interface::Type::text_bg], false);
   }
   
 }

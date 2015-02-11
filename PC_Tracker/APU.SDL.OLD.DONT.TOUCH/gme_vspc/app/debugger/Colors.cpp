@@ -8,12 +8,15 @@ Uint32 Colors::gray;
 Uint32 Colors::colorscale[12];
 Uint32 Colors::voice[8];
 
+Uint32 Colors::Interface::color[Colors::Interface::Type::SIZEOF];
+//Uint32 Colors::Interface::text_bg, Colors::Interface::text_fg;
 
 void Colors::precompute(SDL_Surface *cscreen)
 {
   screen = cscreen;
   // precompute some colors
   black = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
+
   nearblack = SDL_MapRGB(screen->format, 0x50, 0x50, 0x50);
   white = SDL_MapRGB(screen->format, 0xff, 0xff, 0xff);
   yellow = SDL_MapRGB(screen->format, 0xff, 0xff, 0x00);
@@ -57,6 +60,18 @@ void Colors::precompute(SDL_Surface *cscreen)
   voice[6] = red;
   // gray
   voice[7] = SDL_MapRGB(screen->format, 0,250,154);
+
+
+  Interface::color[Interface::Type::lock] = red;
+
+  Interface::color[Interface::Type::voice_volume_left] = yellow;
+  Interface::color[Interface::Type::voice_volume_right] = cyan;
+  Interface::color[Interface::Type::voice_gain] = magenta;
+
+  Interface::color[Interface::Type::text_bg] = black;
+  Interface::color[Interface::Type::text_fg] = white;
+  Interface::color[Interface::Type::bg] = black;
+
 
 }
 
