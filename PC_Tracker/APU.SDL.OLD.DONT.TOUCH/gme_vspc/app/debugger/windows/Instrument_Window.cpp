@@ -5,6 +5,7 @@
 #include "gme/Spc_Dsp_Register_Map_Interface.h"
 #include "Notes.h"
 #include "platform.h"
+#include "Menu_Bar.h"
 
 #define ENDLESS_LOOP_OPCODE 0xfe2f
 
@@ -63,10 +64,9 @@ void Instrument_Window::run()
 
 void Instrument_Window::one_time_draw()
 {
-  int x = start_stop.startc.rect.x, o_x=x, y = start_stop.startc.rect.y+(4*TILE_HEIGHT), o_y = y;
-
-
-
+  int x = BaseD::menu_bar->tabs.rect.x, o_x=x;
+  int y = BaseD::menu_bar->tabs.rect.y + BaseD::menu_bar->tabs.rect.h + (4*TILE_HEIGHT);
+  int o_y = y;
 
     voice.label.rect.x = x;
     voice.label.rect.y = y;

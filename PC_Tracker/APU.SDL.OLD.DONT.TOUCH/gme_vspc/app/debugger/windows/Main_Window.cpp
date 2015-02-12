@@ -2,7 +2,7 @@
 #include <getopt.h>
 #include "utility.h"
 #include "Screen.h"
-
+#include "Menu_Bar.h"
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -10,6 +10,8 @@
 #define PC_STR "PC: $%04x  "
 #define PC_X MEMORY_VIEW_X+8*12
 #define PC_Y MEMORY_VIEW_Y-10
+
+
 
 int Main_Window::Gain::change(void *dblnewgain)
 {
@@ -27,10 +29,12 @@ int Main_Window::Tempo::change(void *dblnewtempo)
 
 void Main_Window::draw()
 {
+
   if (!g_cfg.novideo)
   {
     time_cur = SDL_GetTicks();
 
+    
 
     //do_scroller(time_cur - time_last);
     sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
@@ -128,12 +132,14 @@ void Main_Window::draw()
     }
     draw_menu_bar();
     
+    
     //SDL_UpdateRect(screen, 0, 0, 0, 0);
     SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
     //SDL_SetRenderDrawColor(sdlRenderer, 255, 0, 0, 255);
     SDL_RenderClear(sdlRenderer);
     SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
     // stuff that renders direct to renderer must happen after the screen copy
+
     gain.slider->draw();
     tempo.slider->draw();
     SDL_RenderPresent(sdlRenderer);
@@ -913,6 +919,7 @@ void Main_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
+
         //if (tempo.check_mouse_and_execute(ev.motion.x, ev.motion.y)) return;
         voice_control.checkmouse((Uint16&)ev.motion.x, (Uint16&)ev.motion.y, ev.button.button); 
 
@@ -1118,9 +1125,6 @@ Main_Window::Main_Window(int &argc, char **argv) :
 main_memory_area(&mouseover_hexdump_area, &dir),
 port_tool(&mouseover_hexdump_area.cursor)
 {
-  //
-
-
   int res;
   static struct option long_options[] = {
     {"nosound", 0, 0, 0},

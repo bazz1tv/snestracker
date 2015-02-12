@@ -17,7 +17,7 @@
 #include "Experience.h"
 #include "gui/Context_Menu.h"
 #include "gui/Slider/Slider.h"
-
+#include "gui/Tab.h"
 
 
 
@@ -26,6 +26,8 @@ struct Main_Window : public BaseD, public Render_Context,
 public Player_Context,
 public Experience
 {
+  
+
   void maybe_write_to_mem(bool force=false); // maybe write value to memory
   struct Gain
   {

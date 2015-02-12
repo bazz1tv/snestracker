@@ -36,6 +36,19 @@ Menu_Bar * BaseD::menu_bar=NULL;
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
 
+int BaseD::switch_to_memory(void *data)
+{
+  BaseD::switch_mode(BaseD::GrandMode::MAIN);
+}
+int BaseD::switch_to_dsp(void *data)
+{
+  BaseD::switch_mode(BaseD::GrandMode::DSP_MAP);
+}
+int BaseD::switch_to_instrument(void *data)
+{
+  BaseD::switch_mode(BaseD::GrandMode::INSTRUMENT);
+}
+
 int BaseD::Clickable::inc_tempo(void *nada)
 {
   player->inc_tempo();
@@ -252,7 +265,7 @@ int BaseD::menu_bar_events(SDL_Event &ev)
       }
     }*/
   //}
-  return menu_bar->context_menus.receive_event(ev);
+  return menu_bar->receive_event(ev);
 }
 
 void BaseD::update_track_tag()

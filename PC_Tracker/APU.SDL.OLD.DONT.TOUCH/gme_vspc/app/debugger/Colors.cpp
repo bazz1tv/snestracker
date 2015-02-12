@@ -72,7 +72,9 @@ void Colors::precompute(SDL_Surface *cscreen)
   Interface::color[Interface::Type::text_fg] = white;
   Interface::color[Interface::Type::bg] = black;
 
-
+  Interface::color[Interface::Type::inactive_tab_bg] = gray;
+  Interface::color[Interface::Type::active_tab_bg] = SDL_MapRGB(screen->format, 0x20, 0x20, 0x20);
+  Interface::color[Interface::Type::inactive_tab_fg] = Interface::color[Interface::Type::active_tab_fg] = white;
 }
 
 Uint32 Colors::subtract(Uint32 *c, Uint8 subval)

@@ -18,6 +18,10 @@ struct Colors : public Render_Context
       voice_volume_right,
       voice_gain,
       lock,
+      inactive_tab_bg,
+      inactive_tab_fg,
+      active_tab_bg,
+      active_tab_fg,
       SIZEOF
     };
     static Uint32 color[Type::SIZEOF];

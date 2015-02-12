@@ -147,7 +147,7 @@ void Dsp_Window::run()
   uint8_t srcn[MAX_VOICES];
   // non-obvious how the follow is used.. but i dynamically log certain coordinates
   //to help create the layout o_* means original
-  int i= BaseD::menu_bar->context_menus.y + TILE_HEIGHT*2 + 10, o_i = i, remember_i1, remember_i2, remember_i3, remember_i4;
+  int i = BaseD::menu_bar->tabs.rect.y + BaseD::menu_bar->tabs.rect.h + TILE_HEIGHT*5, o_i = i, remember_i1, remember_i2, remember_i3, remember_i4;
   int x = 10, /*o_x = x,*/ remember_x = 10, remember_x2;
   // start drawing from 10,10
 
@@ -411,7 +411,7 @@ void Dsp_Window::run()
   int row_complete=0;
   
   
-  i=TILE_HEIGHT*10 + 10;
+  i=TILE_HEIGHT*7 + o_i;
 
   #define TEMPLATE_DIR_ENTRY_STR "$%02X: $%04X,$%04X"
   #define TEMPLATE_DIR_STR "DIRECTORY ($%04X)"

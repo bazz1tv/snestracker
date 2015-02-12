@@ -28,7 +28,11 @@ struct BaseD : public Render_Context, public Player_Context
     static int inc_tempo(void *nada);
     static int dec_tempo(void *nada);
   };
-  
+
+  static int switch_to_memory(void *data);
+  static int switch_to_dsp(void *data);
+  static int switch_to_instrument(void *data);
+    
 
   //static char **rsn_spc_paths;
   static void if_exp_is_instr_window_then_restore_spc();

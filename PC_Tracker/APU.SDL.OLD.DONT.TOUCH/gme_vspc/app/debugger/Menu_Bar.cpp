@@ -5,6 +5,24 @@
 #include "Instrument_Window.h"
 //#include <stdlib.h>
 
+void Menu_Bar::draw(SDL_Surface *screen)
+{
+  if (is_first_run)
+  {
+    context_menus.preload(10, 10);
+    tabs.preload(context_menus.x, context_menus.y, context_menus.h);
+    is_first_run = false;
+    fprintf(stderr, "menubar DERP");
+  }
+  //sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - MM - DM - INSTR");
+  //sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
+  tabs.draw();
+  context_menus.draw(screen);
+  
+}
+
+
+
 void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
 {
   Clickable_Text *ct = (Clickable_Text*) &menu_items[1].clickable_text;
@@ -52,31 +70,8 @@ int Menu_Bar::Window_Context::restore_window_size(void *nada)
 {
   SDL_SetWindowSize(BaseD::sdlWindow, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
-int Menu_Bar::Window_Context::memory(void *data)
-{
-  BaseD::switch_mode(BaseD::GrandMode::MAIN);
-}
-int Menu_Bar::Window_Context::DSP(void *data)
-{
-  BaseD::switch_mode(BaseD::GrandMode::DSP_MAP);
-}
-int Menu_Bar::Window_Context::Instrument(void *data)
-{
-  BaseD::switch_mode(BaseD::GrandMode::INSTRUMENT);
-}
 
-void Menu_Bar::draw(SDL_Surface *screen)
-{
-  if (is_first_run)
-  {
-    context_menus.preload(10, 10);
-    is_first_run = false;
-    fprintf(stderr, "menubar DERP");
-  }
-  //sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - MM - DM - INSTR");
-  //sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
-  context_menus.draw(screen);
-}
+
 
 void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 {
@@ -89,6 +84,8 @@ void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 
   window_context.menu.preload(x,y);
   x +=  ( window_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
+
+  
 }
 
 bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Uint8 &button, const SDL_Event *ev)
@@ -118,6 +115,22 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
   }
 
   return false;
+}
+
+int Menu_Bar::receive_event(SDL_Event &ev)
+{ 
+  int r;
+  
+  if (ev.type == SDL_MOUSEBUTTONDOWN)
+  {
+    bool r = tabs.check_mouse_and_execute(ev.button.x, ev.button.y);
+    if (r) return r;
+  }
+
+  r = context_menus.receive_event(ev);
+  if (r) return r;
+
+  return EVENT_INACTIVE;
 }
 
 int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
@@ -173,4 +186,19 @@ void Menu_Bar::Context_Menus::draw(SDL_Surface *screen)
     track_context.draw(screen);
     window_context.menu.draw(screen);
   }
+}
+
+void Menu_Bar::Tabs::preload(int x, int y, int h)
+{
+  // init Tabs
+  mem.rect.x = x;
+  mem.rect.y = y + h + CHAR_HEIGHT*2;
+  //
+  dsp.rect.x = mem.rect.x + mem.horiz_pixel_length() + CHAR_WIDTH;
+  dsp.rect.y = mem.rect.y;
+  //
+  instr.rect.x = dsp.rect.x + dsp.horiz_pixel_length() + CHAR_WIDTH;
+  instr.rect.y = mem.rect.y;
+
+  rect = {mem.rect.x, mem.rect.y, instr.rect.x + instr.rect.w, CHAR_HEIGHT};
 }

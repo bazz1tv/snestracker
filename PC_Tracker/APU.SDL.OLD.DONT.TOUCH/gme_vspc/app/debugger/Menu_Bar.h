@@ -3,11 +3,13 @@
 #include "gui/Clickable_Text.h"
 #include "BaseD.h"
 #include "gui/Expanding_List.h"
+#include "Main_Window.h"
 struct Menu_Bar
 {
   //Menu_Bar();
   bool is_first_run=true;
   void draw(SDL_Surface *screen);
+  int receive_event(SDL_Event &ev);
   
   //bool is_first_run=false;
   // QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - MM - DM - INSTR"
@@ -70,9 +72,7 @@ struct Menu_Bar
       
     }
 
-    static int memory(void *data);
-    static int DSP(void *data);
-    static int Instrument(void *data);
+    
     static int restore_window_size(void *nada);
 
     Expanding_List menu;
@@ -81,18 +81,13 @@ struct Menu_Bar
       {"Window",        true,  NULL,  NULL},
       {"Original Size", true,  restore_window_size, NULL},
       {"-------------", true, NULL, NULL},
-      {"Memory",        true,  memory,  NULL},
-      {"DSP",           true,  DSP,  NULL},
-      {"Instrument",    true,  Instrument,  NULL},
+      {"Memory",        true,  BaseD::switch_to_memory,  NULL},
+      {"DSP",           true,  BaseD::switch_to_dsp,  NULL},
+      {"Instrument",    true,  BaseD::switch_to_instrument,  NULL},
       {"",              false, NULL,  NULL}
     };
   };
-
-  struct Context_Menus
-  {
-    int x = 10, y = 10;
-    Context_Menus() {}
-    enum
+  enum
     {
       EVENT_INACTIVE=0,
       EVENT_ACTIVE=1,
@@ -100,6 +95,13 @@ struct Menu_Bar
       EVENT_TRACK,
       EVENT_WINDOW
     };
+
+  struct Context_Menus
+  {
+    int x = 10, y = 10;
+    int h = CHAR_HEIGHT;
+    Context_Menus() {}
+    
 
     bool check_left_click_activate(int &x, int &y, const Uint8 &button=0, const SDL_Event *ev=NULL);
     int receive_event(SDL_Event &ev);
@@ -111,4 +113,46 @@ struct Menu_Bar
     Track_Context         track_context;
     Window_Context        window_context;
   } context_menus;
+
+  struct Tabs
+  {
+    SDL_Rect rect;
+    void preload(int x, int y, int h);
+    Tabs() : mem(3,3, "Mem", BaseD::switch_to_memory, NULL, true),
+      dsp(3,3, "DSP", BaseD::switch_to_dsp, NULL),
+      instr(3,3, "INSTR", BaseD::switch_to_instrument, NULL)
+    {
+
+    }
+    bool check_mouse_and_execute(int x, int y)
+    {
+      if (mem.check_mouse_and_execute(x,y)) 
+      {
+        mem.active = true;
+        dsp.active = false;
+        instr.active = false;
+        return true;
+      }
+      if (dsp.check_mouse_and_execute(x,y)) 
+      {
+        mem.active = false;
+        dsp.active = true;
+        instr.active = false;
+        return true;
+      }
+      if (instr.check_mouse_and_execute(x,y))
+      {
+        mem.active = false;
+        dsp.active = false;
+        instr.active = true;
+        return true;
+      }
+      return false;
+    }
+    Tab mem, dsp, instr;
+    void draw () { mem.draw(); dsp.draw(); instr.draw(); }
+    static int memory(void *data);
+    static int DSP(void *data);
+    static int Instrument(void *data);
+  } tabs;
 };
