@@ -4,7 +4,6 @@
 #include "types.h"
 
 // GUI stuffz
-#include "utility.h"
 #include "gui/Expanding_List.h"
 
 
@@ -84,14 +83,14 @@ struct ADSR
     Expanding_List menu;
     Context_Menu_Item menu_items[ADSR::SUSTAIN_LEVEL_MAP_SIZE+1] = 
     {
-      {ADSR::sustain_level_map[0].str, true,  NULL,  NULL},
-      {ADSR::sustain_level_map[1].str, true,  NULL,  NULL},
-      {ADSR::sustain_level_map[2].str, true,  NULL,  NULL},
-      {ADSR::sustain_level_map[3].str, true,  NULL,  NULL},
-      {ADSR::sustain_level_map[4].str, true,  NULL,  NULL},
-      {ADSR::sustain_level_map[5].str, true,  NULL,  NULL},
-      {ADSR::sustain_level_map[6].str, true,  NULL,  NULL},
       {ADSR::sustain_level_map[7].str, true,  NULL,  NULL},
+      {ADSR::sustain_level_map[6].str, true,  NULL,  NULL},
+      {ADSR::sustain_level_map[5].str, true,  NULL,  NULL},
+      {ADSR::sustain_level_map[4].str, true,  NULL,  NULL},
+      {ADSR::sustain_level_map[3].str, true,  NULL,  NULL},
+      {ADSR::sustain_level_map[2].str, true,  NULL,  NULL},
+      {ADSR::sustain_level_map[1].str, true,  NULL,  NULL},
+      {ADSR::sustain_level_map[0].str, true,  NULL,  NULL},
       {"",            false, NULL,  NULL}
     };
 
@@ -112,7 +111,7 @@ struct ADSR
     void update()
     {
       // defined in external "collector class"
-      Uint8 sustain_level_index = sustain_level_context->menu.currently_selected_item_index;
+      Uint8 sustain_level_index = 7-sustain_level_context->menu.currently_selected_item_index;
       // index into big array
       if (sustain_level_index == currently_used_sustain_level_index)
         return;
@@ -156,7 +155,7 @@ struct ADSR
     void update()
     {
       // defined in external "collector class"
-      Uint8 sustain_level_index = sustain_level_context->menu.currently_selected_item_index;
+      Uint8 sustain_level_index = 7-sustain_level_context->menu.currently_selected_item_index;
       // index into big array
       if (sustain_level_index == currently_used_sustain_level_index)
         return;

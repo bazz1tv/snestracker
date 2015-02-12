@@ -5,7 +5,7 @@
 #define Spc_Dsp_H
 
 #include "blargg_common.h"
-
+#include "sample_type.h"
 
 
 extern "C" { typedef void (*dsp_copy_func_t)( unsigned char** io, void* state, size_t ); }
@@ -40,7 +40,7 @@ public:
 
 	// Sets destination for output samples. If out is NULL or out_size is 0,
 	// doesn't generate any.
-	typedef short sample_t;
+	//typedef int sample_t;
 	void set_output( sample_t* out, int out_size );
 
 	// Number of samples written to output since it was last set, always

@@ -298,11 +298,11 @@ void Music_Emu::emu_play( long count, sample_t* out )
 }
 
 // number of consecutive silent samples at end
-static long count_silence( Music_Emu::sample_t* begin, long size )
+static long count_silence( sample_t* begin, long size )
 {
-	Music_Emu::sample_t first = *begin;
+	sample_t first = *begin;
 	*begin = silence_threshold; // sentinel
-	Music_Emu::sample_t* p = begin + size;
+	sample_t* p = begin + size;
 	while ( (unsigned) (*--p + silence_threshold / 2) <= (unsigned) silence_threshold ) { }
 	*begin = first;
 	return size - (p - begin);

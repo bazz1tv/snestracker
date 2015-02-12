@@ -5,6 +5,7 @@
 #define MUSIC_EMU_H
 
 #include "Gme_File.h"
+#include "sample_type.h"
 class Multi_Buffer;
 
 struct Music_Emu : public Gme_File {
@@ -19,7 +20,7 @@ public:
 	
 	// Generate 'count' samples info 'buf'. Output is in stereo. Any emulation
 	// errors set warning string, and major errors also end track.
-	typedef short sample_t;
+	//typedef int sample_t;
 	blargg_err_t play( long count, sample_t* buf );
 	
 // Informational

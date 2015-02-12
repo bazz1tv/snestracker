@@ -6,6 +6,7 @@
 
 #include "Spc_Dsp.h"
 #include "blargg_endian.h"
+#include "sample_type.h"
 
 struct Snes_Spc {
 public:
@@ -36,7 +37,7 @@ public:
 	void init_rom( uint8_t const rom [rom_size] );
 
 	// Sets destination for output samples
-	typedef short sample_t;
+	//typedef int sample_t;
 	void set_output( sample_t* out, int out_size );
 
 	// Number of samples written to output since last set

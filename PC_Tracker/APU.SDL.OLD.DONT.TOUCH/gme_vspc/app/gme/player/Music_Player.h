@@ -9,6 +9,8 @@
 #include <vector>
 #include <iostream>
 #include "gme/Spc_Filter.h"
+#include "types.h"
+#include "Audio_Context.h"
 
 
 
@@ -20,11 +22,12 @@ void restart_track();
 
 //
 
-class Music_Player {
+class Music_Player : public Audio_Context {
 public:
 	bool filter_is_active=false;
 	bool has_no_song = true;
 	double tempo=1.0;
+	
 
 	void inc_tempo() {tempo+=0.1; emu_->set_tempo(tempo); }
 	void dec_tempo() {tempo-=0.1; emu_->set_tempo(tempo); }
@@ -106,7 +109,7 @@ public:
 	void mute_voices( int );
 	
 	// Set buffer to copy samples from each buffer into, or NULL to disable
-	typedef short sample_t;
+	//typedef int sample_t;
 	void set_scope_buffer( sample_t* buf, int size ) { scope_buf = buf; scope_buf_size = size; }
 
 	void inc_curtrack();
@@ -122,7 +125,9 @@ public:
 public:
 	Music_Player();
 	~Music_Player();
-	double gain;
+	double gain_db;
+	bool gain_has_changed=false;
+	double new_gain_db = 0.0;// *(
 	/*void set_path(char *str)
 	{
 		strcpy(path,str);

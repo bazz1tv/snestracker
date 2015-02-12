@@ -204,7 +204,7 @@ void Instrument_Window::receive_event(SDL_Event &ev)
       break;
       case ADSR::Context_Menus::SUSTAIN_LEVEL_CHANGED:
       {
-        Uint8 i = adsr_context_menus.sustain_level_context.menu.currently_selected_item_index;
+        Uint8 i = 7-adsr_context_menus.sustain_level_context.menu.currently_selected_item_index;
         Uint8 vreg = voice.n * 0x10 + dsp_reg::adsr2;
         Uint8 adsr2 = player->spc_read_dsp(vreg);
         adsr2 = adsr2 & (~ADSR::SUSTAIN_LEVEL_MASK);
@@ -239,7 +239,7 @@ void Instrument_Window::receive_event(SDL_Event &ev)
     
     case SDL_QUIT:
       if (!g_cfg.nosound) {
-        SDL_PauseAudio(1);
+        SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
       }
       printf ("penis4\n");
       BaseD::quitting = true;
@@ -529,7 +529,7 @@ void Instrument_Window::receive_event(SDL_Event &ev)
         }
 
         if (x>=26 && x<=29) {  // prev
-          SDL_PauseAudio(1);
+          SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
           prev_track();
         }
 

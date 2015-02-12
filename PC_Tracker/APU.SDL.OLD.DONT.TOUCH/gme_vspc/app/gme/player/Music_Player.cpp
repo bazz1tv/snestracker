@@ -27,6 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 #include "blargg_source.h"
 
 #include "debugger/globals.h"
+#include "DEBUGLOG.h"
 
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
 const int fill_rate = 45;
@@ -77,7 +78,7 @@ void Music_Player::dec_curtrack() { curtrack--; }
 
 Music_Player::Music_Player()
 {
-	gain = 1.0;
+	gain_db = 0.0;
 	emu_          = 0;
 	scope_buf     = 0;
 	paused        = false;
@@ -186,6 +187,10 @@ blargg_err_t Music_Player::start_track( int track )
 	// data play before the new track.. temporary fix is to reallocate the sound device..
 	// permanent fix would be to add "fadeout after pause" or "fade in after play"
 	tempo = 1.0;
+	emu_->set_tempo(tempo);
+	gain_db = 0.0;
+	gain_has_changed=false;
+	new_gain_db = 0.0;
 	if (paused)
 	{
 		sound_cleanup();
@@ -317,16 +322,17 @@ void Music_Player::mute_voices( int mask )
 }
 
 #define round(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
-#define CLAMP16( io )\
+// performs hard clamp signed 16 -32768 or 32767
+/*#define CLAMP16( io )\
 {\
 	if ( (int16_t) io != io )\
 	{\
-		io = (io >> 31) ^ 0x7FFF;\
-		fprintf(stderr,"clamp!");\
-	}\
-}
+		/*fprintf(stderr,"\t%d : ", io);*/\
+	//	io = (io >> 31) ^ 0x7FFF;\
+		/*fprintf(stderr,"\t%d\n", io);*/\
+	//}\
+//}*/
 
-typedef short sample_t;
 inline sample_t TPMixSamples(sample_t a, sample_t b) {
     return  
             // If both samples are negative, mixed signal must have an amplitude between the lesser of A and B, and the minimum permissible negative amplitude
@@ -342,18 +348,65 @@ inline sample_t TPMixSamples(sample_t a, sample_t b) {
                 a + b);
 }
 //extern double gain;
-
+static double calculate_linear_gain_from_db(double gain_db)
+{
+	if (gain_db == -48) return 0.0;
+	else return pow ( 10.0, (0.05 * gain_db) );
+}
 void Music_Player::apply_gain(sample_t* out, int count )
 {
+	double gain; 
+	static bool has_begun=false;
+	static double direction;
+
+	gain = calculate_linear_gain_from_db(gain_db);
 	for (int i=0; i < count; i += 1)
 	{
 		double newsamp = out[i];
+		
+		if (gain_has_changed)
+		{
+			
+				direction = ((new_gain_db - gain_db > 0) ? +1.0 : -1.0);
+				//has_begun=true;
+			//}
+
+			if ((newsamp <= 0.0 && out[i+1] > 0) || (newsamp >= 0.0 && out[i+1] < 0))
+			{
+				gain_db += direction;
+				if ((direction > 0 && gain_db >= new_gain_db) || (direction < 0 && gain_db <= new_gain_db))
+				{
+					gain_db = new_gain_db;
+					gain_has_changed=false;
+					//has_begun=false;
+				}
+				if (gain_db == -48) gain = 0;
+					else gain = pow ( 10.0, (0.05 * gain_db) );
+				//gain_db = new_gain_db;
+				
+			}
+		}
 		newsamp *= gain;
 		
-		int d = round(newsamp);
-		CLAMP16(d);
-		
-		out[i] = (sample_t)d;
+		int io = round(newsamp);
+		/*if (d > 32767)
+		{
+			d = 32767;
+			//DEBUGLOG("+clip+!");
+		}
+		else if (d < -32768)
+		{
+			d = -32768;
+			//DEBUGLOG("clip-!");
+		}*/
+		//CLAMP16(d);
+		if ( (int16_t) io != io )
+		{
+		/*fprintf(stderr,"\t%d : ", io);*/
+			io = (io >> 31) ^ 0x7FFF;
+		/*fprintf(stderr,"\t%d\n", io);*/
+		}
+		out[i] = (sample_t)io;
 	}
 }
 void Music_Player::fill_buffer( void* data, sample_t* out, int count )
@@ -392,18 +445,37 @@ static const char* sound_init( long sample_rate, int buf_size,
 	sound_callback = cb;
 	sound_callback_data = data;
 	
-	static SDL_AudioSpec as; // making static clears all fields to 0
+	static SDL_AudioSpec as, have; // making static clears all fields to 0
 	as.freq     = sample_rate;
 	as.format   = AUDIO_S16SYS;
 	as.channels = 2;
 	as.callback = sdl_callback;
 	as.samples  = buf_size;
-	if ( SDL_OpenAudio( &as, 0 ) < 0 )
+	//DEBUGLOG("herpa %s\n",Audio_Context::audio->devices.device_strings[1]);
+	Audio_Context::audio->devices.id = SDL_OpenAudioDevice(Audio_Context::audio->devices.device_strings[0], Audio::Devices::playback, &as, &have, 0 );
+	if (Audio_Context::audio->devices.id  == 0 )
 	{
 		const char* err = SDL_GetError();
 		if ( !err )
 			err = "Couldn't open SDL audio";
 		return err;
+	}
+	else 
+	{
+    if (have.format != as.format)  // we let this one thing change.
+      printf("We didn't get Float32 audio format.\n");
+    if (have.freq != as.freq)  // we let this one thing change.
+      printf("We didn't get Float32 audio format.\n");
+    if (have.format != as.format)  // we let this one thing change.
+      printf("We didn't get Float32 audio format.\n");
+    if (have.channels != as.channels)  // we let this one thing change.
+      printf("We didn't get Float32 audio format.\n");
+    if (have.samples != as.samples)  // we let this one thing change.
+      printf("We didn't get Float32 audio format.\n");
+
+    SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 0);  // start audio playing.
+    //SDL_Delay(5000);  // let the audio callback play some sound for 5 seconds.
+    //SDL_CloseAudioDevice(Audio_Context::audio->devices.id);
 	}
 	
 	return 0;
@@ -412,22 +484,23 @@ static const char* sound_init( long sample_rate, int buf_size,
 static void sound_start()
 {
 	//SDL_UnlockAudio();
-	SDL_PauseAudio( false );
+	SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 0);
 }
 
 static void sound_stop()
 {
-	SDL_PauseAudio( true );
+	SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
 	
 	// be sure audio thread is not active
-	SDL_LockAudio();
-	SDL_UnlockAudio();
+	//SDL_LockAudio();
+	SDL_LockAudioDevice(Audio_Context::audio->devices.id);
+	SDL_UnlockAudioDevice(Audio_Context::audio->devices.id);
 }
 
 static void sound_cleanup()
 {
 	sound_stop();
-	SDL_CloseAudio();
+	SDL_CloseAudioDevice(Audio_Context::audio->devices.id);
 }
 
 

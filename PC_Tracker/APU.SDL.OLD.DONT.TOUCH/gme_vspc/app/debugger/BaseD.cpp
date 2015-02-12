@@ -443,7 +443,7 @@ void BaseD::toggle_pause()
 
 void BaseD::restart_track()
 {
-  SDL_PauseAudio(1);
+  SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry=0;
   player->pause(0);
   reload();
@@ -451,7 +451,7 @@ void BaseD::restart_track()
 
 void BaseD::prev_track()
 {
-  SDL_PauseAudio(true);
+  SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry--;
   if (g_cur_entry<0) { g_cur_entry = g_cfg.num_files-1; }
   reload();
@@ -486,7 +486,7 @@ void BaseD::prev_track25()
 
 void BaseD::next_track()
 {
-  SDL_PauseAudio(true);
+  SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry++;
   if (g_cur_entry>=g_cfg.num_files) { g_cur_entry = 0; }
   reload();

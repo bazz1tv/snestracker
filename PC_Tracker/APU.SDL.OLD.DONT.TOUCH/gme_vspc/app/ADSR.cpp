@@ -59,7 +59,7 @@ int ADSR::Context_Menus::receive_event(SDL_Event &ev)
 void ADSR::Context_Menus::update(Uint8 adsr1, Uint8 adsr2)
 {
   attack_context.menu.update_current_item(ADSR::get_attack_index(adsr1));
-  sustain_level_context.menu.update_current_item(ADSR::get_sustain_level_index(adsr2));
+  sustain_level_context.menu.update_current_item(7-ADSR::get_sustain_level_index(adsr2));
   decay_context.menu.update_current_item(ADSR::get_decay_index(adsr1));
     decay_context.update();
   sustain_release_context.menu.update_current_item(ADSR::get_sustain_release_index(adsr2));

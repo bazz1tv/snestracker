@@ -6,6 +6,7 @@
 
 #include "blargg_common.h"
 #include <string.h>
+#include "sample_type.h"
 
 class Fir_Resampler_ {
 public:
@@ -21,7 +22,7 @@ public:
 	
 // Input
 	
-	typedef short sample_t;
+	//typedef int sample_t;
 	
 	// Resize and clear input buffer
 	blargg_err_t buffer_size( int );
@@ -84,7 +85,7 @@ public:
 	Fir_Resampler() : Fir_Resampler_( width, impulses [0] ) { }
 	
 	// Read at most 'count' samples. Returns number of samples actually read.
-	typedef short sample_t;
+	//typedef int sample_t;
 	int read( sample_t* out, blargg_long count );
 };
 

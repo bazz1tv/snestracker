@@ -34,6 +34,11 @@ template <class T>
 struct Slider : public Render_Context
 {
 public:
+	bool is_db_slider=false;
+	void set_suffix(const char* str) { suffix = str; }
+	char *suffix=NULL;
+	char *str_buf=NULL;
+	int str_buf_size;
 	static const char *format_str[];
 	Slider(T &var, int x, int y, 
 	int panel_width, int panel_height, 
@@ -42,11 +47,18 @@ public:
 	T default_value=0,
 	Uint8 precision=1,
 	int (*action)(void *data)=NULL,
+	const char *suffix="",
+	bool is_db_slider=false,
 	SDL_Color panel_color={50,50,50,255},
 	SDL_Color value_color={225,225,225},
 	SDL_Color adjuster_color={200,50,10,255});
-	~Slider() { DEBUGLOG("~Slider"); }
+	~Slider();
 
+	void set_adjuster_color(Uint32 color)
+	{
+		colors.adjuster = {static_cast<Uint8>(color&0xff), static_cast<Uint8>(color&0xff00>>8), 
+			static_cast<Uint8>(color&0xff0000>>16), static_cast<Uint8>(color&0xff000000 >> 24)};
+	}
 	T &target_value;
 	bool receive_event(SDL_Event &ev);
 
@@ -86,10 +98,10 @@ public:
 	
 	
 
-	float target_numValuesInRange;
-	float slider_pixelRange;
+	T target_numValuesInRange;
+	T slider_pixelRange;
 
-	float ratio;
+	T ratio;
 	bool is_sliding=false;
 	SDL_Rect adjuster_rect, adjuster_collision_rect, panel_rect;
 	SDL_Rect txt_rect;

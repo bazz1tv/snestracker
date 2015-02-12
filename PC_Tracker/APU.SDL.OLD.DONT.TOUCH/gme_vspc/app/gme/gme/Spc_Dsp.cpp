@@ -429,7 +429,7 @@ inline VOICE_CLOCK( V1 )
 	uint16_t *p = (uint16_t*)&m.ram[m.t_dir_addr];
 	uint16_t *loop_addr = (uint16_t*) &m.ram[m.t_dir_addr+2];
 
-	uint8_t flag=0;
+	//uint8_t flag=0;
 	
 		//1 
 		

@@ -5,12 +5,12 @@
 #define SPC_FILTER_H
 
 #include "blargg_common.h"
-
+#include "sample_type.h"
 struct Spc_Filter {
 public:
 	
 	// Filters count samples of stereo sound in place. Count must be a multiple of 2.
-	typedef short sample_t;
+	//typedef int sample_t;
 	void run( sample_t* io, int count );
 	
 // Optional features

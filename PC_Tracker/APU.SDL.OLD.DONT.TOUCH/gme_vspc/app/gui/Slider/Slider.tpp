@@ -1,11 +1,12 @@
 //#include "Slider<T>.h"
 template <class T>
-const char *Slider<T>::format_str[] = {"%.00f", "%.01f", "%.02f" };
+const char *Slider<T>::format_str[] = {"%.00f", "%.01f", "%.02f", "%.03f" };
 
 // This function draws the panel (background) and actual slider adjuster
 template <class T>
 void Slider<T>::draw()
 {
+	const char *final_format_str=format_str[precision];
 	SetAdjusterXOffset(getPixelValueFromTargetValue(target_value));
 	// Get Graphics going
 	// void FillRect(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
@@ -18,14 +19,38 @@ void Slider<T>::draw()
 	SDL_FillRect(screen, &txt_rect, 0);
 	if (is_sliding)
 	{
-		
-		char tmpbuf[20];
-		snprintf(tmpbuf, 20, format_str[precision], target_value );
-		txt_rect.x = adjuster_rect.x - ((strlen(tmpbuf)*CHAR_WIDTH)/2);
+		if (is_db_slider)
+		{
+			if (target_value == target_valueRange.min)
+				strcpy(str_buf, "-INF dB");
+			else if (target_value >= 10 || target_value <= -10)
+			{
+				final_format_str = format_str[precision-1];
+				int r = snprintf(str_buf, str_buf_size, final_format_str, target_value );
+				str_buf[r] = ' ';
+				strcpy (&str_buf[r+1], suffix);
+			}
+			else 
+			{
+				final_format_str = format_str[precision];
+				int r = snprintf(str_buf, str_buf_size, final_format_str, target_value );
+				str_buf[r] = ' ';
+				strcpy (&str_buf[r+1], suffix);
+			}
+		}
+		else
+		{
+			DEBUGLOG("strbuf = %s, str_buf_size = %d, final_format_str = %s\n", str_buf, str_buf_size, final_format_str);
+			int r = snprintf(str_buf, str_buf_size, final_format_str, target_value );
+			str_buf[r] = ' ';
+			strcpy (&str_buf[r+1], suffix);
+			
+		}
+		txt_rect.x = adjuster_rect.x - ((strlen(str_buf)*CHAR_WIDTH)/2);
 		txt_rect.y = adjuster_rect.y-CHAR_HEIGHT;
 		txt_rect.h = CHAR_HEIGHT;
-		txt_rect.w = strlen(tmpbuf) * CHAR_WIDTH;
-		sdlfont_drawString(screen, txt_rect.x, txt_rect.y, tmpbuf, Colors::white);
+		txt_rect.w = strlen(str_buf) * CHAR_WIDTH;
+		sdlfont_drawString(screen, txt_rect.x, txt_rect.y, str_buf, Colors::white);
 	}
 }
 
@@ -95,11 +120,11 @@ void Slider<T>::Slide(int mouse_x)
 		adjuster_rect.x = new_adjuster_x;
 
 	target_value = getTargetValue(adjuster_rect.x - panel_rect.x);
-	DEBUGLOG("Adjuster\n\t");
+	/*DEBUGLOG("Adjuster\n\t");
 	DEBUGLOG("[Mouse_X: %d] - [Mouse_X_logged: %d] = %d\n\t", mouse_x, mouse_x_logged, mouse_x-mouse_x_logged);
 	DEBUGLOG("adjuster_x_logged: %d | new_adjuster_x: %d\n\t", adjuster_x_logged,adjuster_rect.x);
 	DEBUGLOG("Pixel offset: %d. Target value: %f\n", adjuster_rect.x - panel_rect.x, target_value);
-
+*/ 
 	if (action)
 		action(&target_value);
 }
@@ -109,14 +134,20 @@ void Slider<T>::Slide(int mouse_x)
 template <class T>
 T Slider<T>::getTargetValue(int adjuster_pixel_offset)
 {
-	T tmp=(T)(float)(adjuster_pixel_offset)*ratio;
+	T tmp=(T)(adjuster_pixel_offset)*ratio;
+	//DEBUGLOG("tmp = %f\n", tmp);
+	if (target_valueRange.min < 0 && target_valueRange.max >= 0) tmp += target_valueRange.min;
+	//DEBUGLOG("\ttmp = %f\n", tmp);
 	return round(impose_boundary(tmp));
 }
 
 template <class T>
 int Slider<T>::getPixelValueFromTargetValue(T target_val)
 {
-	return (int)floor((float)target_val*(1/ratio));
+	T tmp = target_val;
+	if (target_valueRange.min < 0 && target_valueRange.max >= 0) tmp -= target_valueRange.min;
+	tmp *= (1/ratio);
+	return (int)floor(tmp);
 }
 
 // Applies Ratio to the adjuster offset
@@ -141,7 +172,7 @@ int Slider<T>::getPixelValueFromTargetValue(T target_val)
 template <class T>
 T Slider<T>::getTargetValue()
 {
-	T tmp = (T)(float)((adjuster_rect.x - panel_rect.x)*ratio);
+	T tmp = (T)((adjuster_rect.x - panel_rect.x)*ratio);
 	
 
 	return round(impose_boundary(tmp));
@@ -171,6 +202,8 @@ Slider<T>::Slider(T &var, int x, int y,
 	T default_value/*=0*/,
 	Uint8 precision/*=1*/,
 	int (*action)(void *data)/*=NULL*/,
+	const char *suffix/*=""*/,
+	bool is_db_slider/*=false*/,
 	SDL_Color panel_color,
 	SDL_Color value_color,
 	SDL_Color adjuster_color) :
@@ -178,10 +211,16 @@ target_value(var),
 target_valueRange(range_min, range_max),
 action(action),
 colors({panel_color, value_color, adjuster_color}),
-precision(precision)
+precision(precision),
+is_db_slider(is_db_slider)
 //panel_x(x),panel_y(y),
 //width(width), height(height)
 {
+	if (suffix)
+	{
+		this->suffix = (char*) SDL_malloc(sizeof(char) * (strlen(suffix)+1));
+		strcpy(this->suffix, suffix);
+	}
 	/*this->panel_x = x;
 	this->panel_y = y;
 
@@ -210,8 +249,8 @@ precision(precision)
 	adjuster_collision_rect.y -= 2;
 	adjuster_collision_rect.h += 6;
 
-	target_numValuesInRange = float(target_valueRange.max - target_valueRange.min);
-	slider_pixelRange = float(panel_width);
+	target_numValuesInRange = (target_valueRange.max - target_valueRange.min);
+	slider_pixelRange = (panel_width - adjuster_rect.w);
 
 	//adjuster_rect = SetRect(adjuster_rect.x,adjuster_rect.y, 11, 16);
 
@@ -220,6 +259,22 @@ precision(precision)
 
 	// 
 	setTargetValue(default_value);
+	str_buf_size = snprintf(NULL, 0, format_str[precision], default_value);
+	str_buf_size += 1; // space
+	str_buf_size += strlen(suffix);
+	str_buf_size += 1 + 50;
+	str_buf = (char*) SDL_malloc (sizeof(char) * str_buf_size);
+}
+
+template <class T>
+Slider<T>::~Slider()
+{
+	if (suffix)
+		SDL_free(suffix);
+	if (str_buf)
+		SDL_free(str_buf);
+
+	DEBUGLOG("~Slider");
 }
 
 // x_offset added to the panel_x
@@ -235,7 +290,7 @@ template <class T>
 void Slider<T>::Activate(int mouse_x)
 {
 	adjuster_x_logged = adjuster_rect.x;
-	mouse_x_logged = (int)floor(mouse_x);
+	mouse_x_logged = mouse_x;
 	is_sliding=true;
 	DEBUGLOG("activate called");
 }
@@ -274,7 +329,7 @@ bool Slider<T>::receive_event(SDL_Event &ev)
 		case SDL_MOUSEMOTION:
 			if (is_sliding)
 			{
-				DEBUGLOG("sliding");
+				//DEBUGLOG("sliding");
 				Slide(mouse::x);
 			}
 		break;

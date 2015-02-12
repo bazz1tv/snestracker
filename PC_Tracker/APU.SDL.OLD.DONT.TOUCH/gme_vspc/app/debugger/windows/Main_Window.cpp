@@ -12,10 +12,19 @@
 #define PC_Y MEMORY_VIEW_Y-10
 
 
+/*
+dBvalue = 20.0 * log10 ( linear );
+// dB = 20 * log (linear)
+// NOT 10 * log (linear)!!!
 
+// conversely...
+linear = pow ( 10.0, (0.05 * dBvalue) );
+// linear = 10^(dB/20)
+*/
 int Main_Window::Gain::change(void *dblnewgain)
 {
-  BaseD::player->gain = *(double*)dblnewgain;
+  BaseD::player->gain_has_changed = true;// = gain_db;
+  //BaseD::player->new_gain_db = *(double*)dblnewgain;// = pow ( 10.0, (0.05 * *(double*)dblnewgain) );
   return 0;
 }
 int Main_Window::Tempo::change(void *dblnewtempo)
@@ -156,7 +165,7 @@ void Main_Window::check_quit(SDL_Event &ev)
   {
     case SDL_QUIT:
     if (!g_cfg.nosound) {
-      SDL_PauseAudio(1);
+      SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
     }
     printf ("penis4\n");
     quitting = true;
@@ -169,7 +178,7 @@ void Main_Window::check_quit(SDL_Event &ev)
       {
         fprintf(stderr, "penis88\n");
         if (!g_cfg.nosound) {
-          SDL_PauseAudio(1);
+          SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
         }
         quitting = true;
       }
@@ -211,7 +220,7 @@ void Main_Window::receive_event(SDL_Event &ev)
     {
       case SDL_QUIT:
       if (!g_cfg.nosound) {
-        SDL_PauseAudio(1);
+        SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
       }
       printf ("penis4\n");
       quitting = true;
@@ -265,7 +274,7 @@ void Main_Window::receive_event(SDL_Event &ev)
   {
     case SDL_QUIT:
       if (!g_cfg.nosound) {
-        SDL_PauseAudio(1);
+        SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
       }
       printf ("penis4\n");
       quitting = true;
@@ -360,16 +369,17 @@ void Main_Window::receive_event(SDL_Event &ev)
         player->spc_write_dsp(dsp_reg::evol_r, 127);
         player->spc_write_dsp(dsp_reg::c0, 0x7f);
         player->spc_write_dsp(dsp_reg::kon,0x1);*/
-        player->gain -= 0.1;
-        fprintf(stderr, "gain = %f", player->gain, INT16_MIN, INT16_MAX);
+        //player->gain -= 0.1;
+        //fprintf(stderr, "gain = %f", player->gain, INT16_MIN, INT16_MAX);
         //player->spc_write(0xf2, 0x4c);
         //player->spc_write(0xf3, 0);
         //player->spc_write(0xf3, 1);
       }
       else if (ev.key.keysym.sym == SDLK_i)
       {
-        player->gain += 0.1;
-        fprintf(stderr, "gain = %f", player->gain);
+        BaseD::switch_to_instrument(NULL);
+        //player->gain += 0.1;
+        //fprintf(stderr, "gain = %f", player->gain);
       }
       else if (scancode == SDLK_o)
       {
@@ -1316,12 +1326,14 @@ void Main_Window::draw_mouse_address()
   length = strlen(tmpbuf); length+=0;
   x += length*CHAR_WIDTH + 4;
   // draw Slider here..
-  int slider_width = 40;
+  int slider_width = 60;
   if (is_first_run)
   {
     // here we will allocate slider at these coordinates
     DEBUGLOG("new slider");
-    gain.slider = new Slider<double>(player->gain,x, y+1, slider_width, 4, 6,6, 0.0, 5.0, 1.0, 2, Main_Window::Gain::change);
+    gain.slider = new Slider<double>(player->new_gain_db,x, y+1, slider_width, 4, 6,6, 
+      -48.0, 12.0, 0.0, 3, Main_Window::Gain::change, "db", true);
+    //gain.slider->set_adjuster_color ( Colors::nearblack);
   }
 
   x+=slider_width + CHAR_WIDTH*2;
@@ -1338,6 +1350,7 @@ void Main_Window::draw_mouse_address()
     
     x += strlen(tmpbuf)*CHAR_WIDTH + 4;
     tempo.slider = new Slider<double>(player->tempo,x, y+1, slider_width, 4, 6,6, 0.02, 4.0, 1.0, 1, Main_Window::Tempo::change);
+    //tempo.slider->set_adjuster_color ( Colors::nearblack);
   }
   
 }

@@ -19,12 +19,12 @@ License along with this module; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
-
+#include "sample_type.h"
 #undef PI
 #define PI 3.1415926535897932384626433832795029
 
 static void gen_sinc( double rolloff, int width, double offset, double spacing, double scale,
-		int count, short* out )
+		int count, sample_t* out )
 {
 	double const maxh = 256;
 	double const step = PI / maxh * spacing;

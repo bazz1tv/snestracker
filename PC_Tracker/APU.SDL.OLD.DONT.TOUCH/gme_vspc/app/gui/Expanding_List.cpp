@@ -76,7 +76,7 @@ int Expanding_List::receive_event(SDL_Event &ev)
   {
     case SDL_QUIT:
     if (!BaseD::g_cfg.nosound) {
-      SDL_PauseAudio(1);
+      SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
     }
     printf ("penis4\n");
     BaseD::quitting = true;
