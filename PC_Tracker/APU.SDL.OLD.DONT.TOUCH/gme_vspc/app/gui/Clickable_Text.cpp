@@ -35,6 +35,7 @@ void Clickable_Text::setup(int x, int y)
 void Clickable_Text::draw(Uint32 &color, bool prefill/*=true*/, 
   bool Vflip/*=false*/, bool Hflip/*=false*/)
 {
-  sdlfont_drawString(screen, rect.x, rect.y, str.c_str(), color, prefill, Vflip, Hflip);
+  sdlfont_drawString(screen, rect.x, rect.y, str.c_str(), color, 
+    Colors::Interface::color[Colors::Interface::Type::text_bg], prefill, Vflip, Hflip);
 }
 

@@ -1,10 +1,11 @@
 -- v1.32 (by bazz)
-  migrated to SDL2
-
   custom GUI -- expanding lists, menu bar, right click contexts
 
   DSP window
   Instrument Window
+
+  migrated to SDL2
+  
 
   Added Blargg & I's personal SMOOTH_VOLUME DSP fix, to cut out annoying
   crackling that is notice-able with headphones on. This will become an
@@ -12,7 +13,7 @@
 
   masking is broken. Or something.   Maybe not
 
-  Better hexdump editing
+  hexdump editing
   Voice activity monitoring
 
   mute/solo voices!
@@ -22,7 +23,10 @@
   Added Memory Region Highlighter
   Added "Inverse Phase Volume" Display (:)
   Add Echo/Main volume bars.
+
+  Fused SNES_SPC 0.9.0 with GME
   Incorporated Blargg's gme APU/player functionality.
+
   Added new "echo region" color highlight
   Fixed buggy Gain
   Added keyboard writable Porttool. Little clunky
