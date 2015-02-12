@@ -348,28 +348,20 @@ inline sample_t TPMixSamples(sample_t a, sample_t b) {
                 a + b);
 }
 //extern double gain;
-static double calculate_linear_gain_from_db(double gain_db)
-{
-	if (gain_db == -48) return 0.0;
-	else return pow ( 10.0, (0.05 * gain_db) );
-}
+
 void Music_Player::apply_gain(sample_t* out, int count )
 {
 	double gain; 
-	static bool has_begun=false;
-	static double direction;
+	double direction;
 
-	gain = calculate_linear_gain_from_db(gain_db);
+	gain = Audio::calculate_linear_gain_from_db(gain_db, min_gain_db);
 	for (int i=0; i < count; i += 1)
 	{
 		double newsamp = out[i];
 		
 		if (gain_has_changed)
 		{
-			
-				direction = ((new_gain_db - gain_db > 0) ? +1.0 : -1.0);
-				//has_begun=true;
-			//}
+			direction = ((new_gain_db - gain_db > 0) ? +1.0 : -1.0);
 
 			if ((newsamp <= 0.0 && out[i+1] > 0) || (newsamp >= 0.0 && out[i+1] < 0))
 			{
@@ -378,15 +370,22 @@ void Music_Player::apply_gain(sample_t* out, int count )
 				{
 					gain_db = new_gain_db;
 					gain_has_changed=false;
-					//has_begun=false;
 				}
-				if (gain_db == -48) gain = 0;
-					else gain = pow ( 10.0, (0.05 * gain_db) );
-				//gain_db = new_gain_db;
+				gain = Audio::calculate_linear_gain_from_db(gain_db, min_gain_db);
 				
 			}
 		}
+		//DEBUGLOG("gain = %f\n", gain);
 		newsamp *= gain;
+
+		if (i % 2 == 0) // Left channel
+		{
+
+		}
+		else // right channel
+		{
+			
+		}
 		
 		int io = round(newsamp);
 		/*if (d > 32767)

@@ -125,7 +125,8 @@ public:
 public:
 	Music_Player();
 	~Music_Player();
-	double gain_db;
+	double gain_db=0.0; 
+	double min_gain_db=-48.0, max_gain_db = 20.0;
 	bool gain_has_changed=false;
 	double new_gain_db = 0.0;// *(
 	/*void set_path(char *str)

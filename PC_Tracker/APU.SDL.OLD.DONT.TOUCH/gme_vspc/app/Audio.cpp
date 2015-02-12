@@ -2,6 +2,31 @@
 #include "DEBUGLOG.h"
 int Audio::Devices::how_many=0;
 
+
+double Audio::calculate_linear_gain_from_db(double gain_db, double min_gain/*=-96.0*/)
+{
+  if (gain_db <= min_gain) return 0.0;  // -INF dB
+  else return pow ( 10.0, (0.05 * gain_db) );
+}
+/*
+dBvalue = 20.0 * log10 ( linear );
+// dB = 20 * log (linear)
+// NOT 10 * log (linear)!!!
+
+// conversely...
+linear = pow ( 10.0, (0.05 * dBvalue) );
+// linear = 10^(dB/20)
+*/
+double Audio::calculate_fullscale_db_from_postgain_sample(int *sample, double min_gain/*=96.0*/)
+{
+  if (*sample == 0) return min_gain;
+
+  if (*sample > 0)
+    return (double)20.0 * (double)log10(*sample / 32767);
+  if (*sample < 0)
+    return (double)20.0 * (double)log10(abs(*sample) / 32768);
+}
+
 Audio::Devices::~Devices()
 {
   DEBUGLOG("~Devices;");

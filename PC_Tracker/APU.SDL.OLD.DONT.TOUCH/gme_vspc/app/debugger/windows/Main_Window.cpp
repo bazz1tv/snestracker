@@ -12,15 +12,7 @@
 #define PC_Y MEMORY_VIEW_Y-10
 
 
-/*
-dBvalue = 20.0 * log10 ( linear );
-// dB = 20 * log (linear)
-// NOT 10 * log (linear)!!!
 
-// conversely...
-linear = pow ( 10.0, (0.05 * dBvalue) );
-// linear = 10^(dB/20)
-*/
 int Main_Window::Gain::change(void *dblnewgain)
 {
   BaseD::player->gain_has_changed = true;// = gain_db;
@@ -1332,7 +1324,7 @@ void Main_Window::draw_mouse_address()
     // here we will allocate slider at these coordinates
     DEBUGLOG("new slider");
     gain.slider = new Slider<double>(player->new_gain_db,x, y+1, slider_width, 4, 6,6, 
-      -48.0, 12.0, 0.0, 3, Main_Window::Gain::change, "db", true);
+      player->min_gain_db, player->max_gain_db, 0.0, 3, Main_Window::Gain::change, "db", true);
     //gain.slider->set_adjuster_color ( Colors::nearblack);
   }
 
