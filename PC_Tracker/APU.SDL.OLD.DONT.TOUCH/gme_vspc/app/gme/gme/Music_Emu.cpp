@@ -116,7 +116,7 @@ void Music_Emu::set_tempo( double t )
 {
 	require( sample_rate() ); // sample rate must be set first
 	double const min = 0.02;
-	double const max = 4.00;
+	double const max = 20.00;
 	if ( t < min ) t = min;
 	if ( t > max ) t = max;
 	tempo_ = t;

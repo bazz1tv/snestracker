@@ -25,9 +25,12 @@ struct BaseD : public Render_Context, public Player_Context
 
   struct Clickable
   {
+    static int toggle_echo(void *nada);
+    
     static int inc_tempo(void *nada);
     static int dec_tempo(void *nada);
   };
+
 
   static int switch_to_memory(void *data);
   static int switch_to_dsp(void *data);

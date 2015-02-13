@@ -49,6 +49,11 @@ int BaseD::switch_to_instrument(void *data)
   BaseD::switch_mode(BaseD::GrandMode::INSTRUMENT);
 }
 
+int BaseD::Clickable::toggle_echo(void *nada)
+{
+  player->spc_emu()->toggle_echo();
+}
+
 int BaseD::Clickable::inc_tempo(void *nada)
 {
   player->inc_tempo();

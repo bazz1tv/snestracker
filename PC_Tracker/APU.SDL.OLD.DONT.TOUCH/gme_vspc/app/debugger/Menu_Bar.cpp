@@ -16,6 +16,7 @@ void Menu_Bar::draw(SDL_Surface *screen)
   }
   //sprintf(tmpbuf, " QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - MM - DM - INSTR");
   //sdlfont_drawString(screen, 0, screen->h-9, tmpbuf, Colors::yellow);
+  
   tabs.draw();
   context_menus.draw(screen);
   
@@ -123,8 +124,11 @@ int Menu_Bar::receive_event(SDL_Event &ev)
   
   if (ev.type == SDL_MOUSEBUTTONDOWN)
   {
-    bool r = tabs.check_mouse_and_execute(ev.button.x, ev.button.y);
-    if (r) return r;
+    if (!BaseD::player->has_no_song)
+    {
+      bool r = tabs.check_mouse_and_execute(ev.button.x, ev.button.y);
+      if (r) return r;
+    }
   }
 
   r = context_menus.receive_event(ev);

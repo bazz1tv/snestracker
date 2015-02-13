@@ -35,7 +35,7 @@ int main( int argc, char** argv )
 	/* Record 20 seconds to wave file */
 	wave_open( spc_sample_rate, "out.wav" );
 	wave_enable_stereo();
-	while ( wave_sample_count() < 20 * spc_sample_rate * 2 )
+	while ( wave_sample_count() < 60 * spc_sample_rate * 2 )
 	{
 		/* Play into buffer */
 		#define BUF_SIZE 2048

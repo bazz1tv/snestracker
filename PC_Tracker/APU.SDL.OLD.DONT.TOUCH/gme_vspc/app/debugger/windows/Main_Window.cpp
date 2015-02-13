@@ -993,16 +993,17 @@ void Main_Window::receive_event(SDL_Event &ev)
               ev.motion.y < (Screen::echoE.y + Screen::echoE.h) )
         {
           // toggle_echo()
+          //DEBUGLOG("HIE SXY");
           player->spc_emu()->toggle_echo();
         }
 
         else if (mode == MODE_NAV)
         {
           
-          if (  ev.motion.x >= INFO_X+(10*8) && 
-              ev.motion.x < INFO_X+(13*8) &&
-              ev.motion.y >= INFO_Y+56 &&
-              ev.motion.y < INFO_Y+56+9 )
+          if ( ev.motion.x >= echo_on_x && 
+              ev.motion.x < echo_on_x+(3*CHAR_WIDTH) &&
+              ev.motion.y >= echo_on_y &&
+              ev.motion.y < echo_on_y+CHAR_HEIGHT )
           {
             if (ev.button.button == SDL_BUTTON_LEFT)
               player->spc_emu()->toggle_echo();
@@ -1126,6 +1127,7 @@ void Main_Window::unlock()
 Main_Window::Main_Window(int &argc, char **argv) : 
 main_memory_area(&mouseover_hexdump_area, &dir),
 port_tool(&mouseover_hexdump_area.cursor)
+//echo_on("on", BaseD::toggle_echo, NULL)
 {
   int res;
   static struct option long_options[] = {
@@ -1318,9 +1320,10 @@ void Main_Window::draw_mouse_address()
   length = strlen(tmpbuf); length+=0;
   x += length*CHAR_WIDTH + 4;
   // draw Slider here..
-  int slider_width = 60;
+  
   if (is_first_run)
   {
+    int slider_width = 100;
     // here we will allocate slider at these coordinates
     DEBUGLOG("new slider");
     gain.slider = new Slider<double>(player->new_gain_db,x, y+1, slider_width, 4, 6,6, 
@@ -1328,11 +1331,12 @@ void Main_Window::draw_mouse_address()
     //gain.slider->set_adjuster_color ( Colors::nearblack);
   }
 
-  x+=slider_width + CHAR_WIDTH*2;
+  x+=gain.slider->panel_rect.w + CHAR_WIDTH*2;
   sprintf(tmpbuf, "Tempo:");
   sdlfont_drawString(screen, x, y, tmpbuf);
   if (is_first_run)
   {
+    int slider_width = 60;
     DEBUGLOG("new slider tempo\n");
     
     /*tempo.minus.setup(x,y);
@@ -1372,7 +1376,8 @@ void Main_Window::one_time_draw()
     
     //sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
 
-    draw_track_tag();
+    if (player->emu())
+      draw_track_tag();
 
     //sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");  
     //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, Colors::white);
@@ -1382,11 +1387,7 @@ void Main_Window::one_time_draw()
 
     
 
-    sprintf(tmpbuf, "Ignore tag time: %s", g_cfg.ignoretagtime ? "Yes" : "No");
-    sdlfont_drawString2(screen, INFO_X, INFO_Y+80, tmpbuf);
-
-    sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg.defaultsongtime/60, g_cfg.defaultsongtime%60);
-    sdlfont_drawString2(screen, INFO_X, INFO_Y+88, tmpbuf);
+    
 
     
     sdlfont_drawString2(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -");
@@ -1927,17 +1928,41 @@ void Main_Window::draw_porttool()
   sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf);
 }
 
-void Main_Window::draw_time_and_echo_status()
+void Main_Window::draw_time_and_echo_status(int *x/*=0*/, int *y/*=0*/)
 {
+  static bool is_first_run=true;
+  static int xx=0, yy=0;
+  if (x == NULL && y == NULL)
+  {
+    if (xx == 0 && yy == 0) 
+      return;
+  }
+  else
+  {
+    xx = *x; yy = *y;
+  }
+
+  int yyy = yy;
   sprintf(tmpbuf, "Time....: %0d:%02d / %0d:%02d", 
       int(player->emu()->tell()/1000)/60,
       int((player->emu()->tell()/1000))%60,
       song_time/60, song_time%60);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+48, tmpbuf);
+  sdlfont_drawString(screen, xx, yyy, tmpbuf); yyy+=CHAR_HEIGHT;
 
 
   sprintf(tmpbuf, "Echo....: %s", player->spc_emu()->is_echoing() ? "On " : "Off"); 
-  sdlfont_drawString(screen, INFO_X, INFO_Y+56, tmpbuf);
+  sdlfont_drawString(screen, xx, yyy, tmpbuf); 
+  if (is_first_run)
+  {
+    echo_on_x = xx + (strlen(tmpbuf)-3)*CHAR_WIDTH;
+    echo_on_y = yyy;
+    DEBUGLOG("echo_x = %d, echo_y = %d\n", echo_on_x , echo_on_y);
+    is_first_run=false;
+  }
+
+  yyy+=CHAR_HEIGHT;
+
+  if (y) *y = yyy;
 }
 
 
@@ -1987,17 +2012,34 @@ void Main_Window::draw_track_tag()
 
   //fprintf(stderr, "comment = %s\n", tag.comment);
   //fprintf(stderr, "path = %s\nsong = %s\ngame = %s\ndumper = %s\ncomment = %s")
+  int y = INFO_Y + 8;
+  int x = INFO_X;
+  DEBUGLOG("y == %d, ", y);
+  draw_time_and_echo_status(&x, &y);
+  DEBUGLOG("y == %d\n", y);
   
-  sprintf(tmpbuf, "Filename: %s", path);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+8, tmpbuf);
-  sprintf(tmpbuf, "Title...: %s", tag.song);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+16, tmpbuf);
+  y += CHAR_HEIGHT;
+  
+  //sprintf(tmpbuf, "Filename: %s", path);
+  //sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT*2;
+
   sprintf(tmpbuf, "Game....: %s", tag.game);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+24, tmpbuf);
+  sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT;
+  sprintf(tmpbuf, "Title...: %s", tag.song);
+  sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT;
+  sprintf(tmpbuf, "Composer: %s", tag.author);
+  sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT*2;
+
   sprintf(tmpbuf, "Dumper..: %s", tag.dumper);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+32, tmpbuf);
+  sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Comment.: %s", tag.comment);
-  sdlfont_drawString(screen, INFO_X, INFO_Y+40, tmpbuf);
+  sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT*2;
+
+  sprintf(tmpbuf, "Ignore tag time: %s", g_cfg.ignoretagtime ? "Yes" : "No");
+  sdlfont_drawString2(screen, INFO_X, y, tmpbuf);
+
+  sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg.defaultsongtime/60, g_cfg.defaultsongtime%60);
+  sdlfont_drawString2(screen, INFO_X, y, tmpbuf);
 }
 
 void Main_Window::maybe_write_to_mem(bool force/*=false*/)

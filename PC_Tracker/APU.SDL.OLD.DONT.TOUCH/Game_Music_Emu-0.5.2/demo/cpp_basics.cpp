@@ -1,6 +1,6 @@
 // C++ example that opens a game music file and records 10 seconds to "out.wav"
 
-static char filename [] = "test.nsf"; /* opens this file (can be any music type) */
+static char filename [] = "test.spc"; /* opens this file (can be any music type) */
 
 #include "gme/Music_Emu.h"
 

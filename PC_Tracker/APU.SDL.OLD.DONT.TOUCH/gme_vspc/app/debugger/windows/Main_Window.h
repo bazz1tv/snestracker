@@ -26,7 +26,8 @@ struct Main_Window : public BaseD, public Render_Context,
 public Player_Context,
 public Experience
 {
-  
+  int echo_on_x=0, echo_on_y=0;
+  //Clickable_Text echo_on;
 
   void maybe_write_to_mem(bool force=false); // maybe write value to memory
   struct Gain
@@ -80,7 +81,7 @@ public Experience
   void draw_echo_volume();
   void draw_mouseover_hexdump();
   void draw_porttool();
-  void draw_time_and_echo_status();
+  void draw_time_and_echo_status(int *x=NULL, int *y=NULL);
   void draw_mouse_address();
 
   void draw_block_usage_bar();

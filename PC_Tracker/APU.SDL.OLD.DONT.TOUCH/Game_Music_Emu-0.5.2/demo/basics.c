@@ -1,6 +1,6 @@
 /* C example that opens a game music file and records 10 seconds to "out.wav" */
 
-static char filename [] = "test.nsf"; /* opens this file (can be any music type) */
+static char filename [] = "test.spc"; /* opens this file (can be any music type) */
 
 #include "gme/gme.h"
 
@@ -27,7 +27,7 @@ int main()
 	wave_enable_stereo();
 	
 	/* Record 10 seconds of track */
-	while ( gme_tell( emu ) < 10 * 1000L )
+	while ( gme_tell( emu ) < 60 * 1000L )
 	{
 		/* Sample buffer */
 		#define buf_size 1024 /* can be any multiple of 2 */

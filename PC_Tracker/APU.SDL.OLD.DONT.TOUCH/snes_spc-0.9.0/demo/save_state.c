@@ -46,14 +46,16 @@ void make_save_state( const char* path )
 	spc_clear_echo( snes_spc );
 	
 	/* Skip several seconds */
-	error( spc_play( snes_spc, 5 * spc_sample_rate * 2, 0 ) );
+	error( spc_skip( snes_spc, 60 * spc_sample_rate * 2) );
 	
 	/* Save state to file */
 	{
-		static unsigned char state [spc_state_size]; /* buffer large enough for data */
+		static unsigned char state [spc_file_size]; /* buffer large enough for data */
 		unsigned char* out = state;
-		spc_copy_state( snes_spc, &out, state_save );
-		write_file( "state.bin", state, out - state );
+		spc_init_header(out);
+		//out = state;
+		spc_save_spc( snes_spc, out );
+		write_file( "state.spc", state, spc_file_size );
 	}
 	
 	record_wav( "first.wav", 5 );

@@ -32,6 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
 const int fill_rate = 45;
 
+double Music_Player::min_gain_db=-48.0, Music_Player::max_gain_db = 20.0;
+
 // Simple sound driver using SDL
 typedef void (*sound_callback_t)( void* data, short* out, int count );
 static const char* sound_init( long sample_rate, int buf_size, sound_callback_t, void* data );
@@ -361,7 +363,7 @@ void Music_Player::apply_gain(sample_t* out, int count )
 		
 		if (gain_has_changed)
 		{
-			direction = ((new_gain_db - gain_db > 0) ? +1.0 : -1.0);
+			direction = ((new_gain_db - gain_db > 0) ? +0.02 : -0.02);
 
 			if ((newsamp <= 0.0 && out[i+1] > 0) || (newsamp >= 0.0 && out[i+1] < 0))
 			{
