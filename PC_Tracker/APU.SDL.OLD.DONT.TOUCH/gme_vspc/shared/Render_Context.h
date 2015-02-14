@@ -9,6 +9,7 @@ public:
   static void clear_screen();
 
   static SDL_Window *sdlWindow;//      =NULL;
+  //static SDL_Window *tracker_sdlWindow;
   static SDL_Renderer *sdlRenderer;//  =NULL;
   static SDL_Texture *sdlTexture;//    =NULL;
   static SDL_Surface *screen;//        = NULL;

@@ -6,6 +6,7 @@
 #include "File_System_Context.h"
 #include "App_Settings_Context.h"
 #include "Audio.h"
+//#include "Tracker/Tracker.h"
 
 class App : public Render_Context, public Player_Context, public Midi_Context, public App_Settings_Context
 {
@@ -18,7 +19,7 @@ public:
   
 private:
   //int parse_args(int argc, char **argv);
-  // Tracker tracker;
+  //Tracker tracker;
   Debugger debugger;
   Music_Player player;
   App_Settings app_settings;
