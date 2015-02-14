@@ -341,19 +341,26 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
 {
   char *path=NULL;
   bool using_playlist=false;
+  DEBUGLOG("g_cfg.playlist = %x\n", g_cfg.playlist);
+  DEBUGLOG("g_cur_entry = %d", g_cur_entry);
   if (!paths)
   {
+    DEBUGLOG("A");
     using_playlist=true;
-    path = g_cfg.playlist[g_cur_entry];
+    if (g_cfg.playlist[g_cur_entry])
+      path = g_cfg.playlist[g_cur_entry];
+    else path = NULL;
   }
   else
   {
+    DEBUGLOG("B");
     g_cur_entry = 0;
     g_cfg.playlist = paths;
     g_cfg.num_files = numpaths;
     path = g_cfg.playlist[g_cur_entry];
   }
 
+  DEBUGLOG("path = %d\n", path);
   if (path == NULL)
   {
     //using_playlist = false;
@@ -456,7 +463,8 @@ void BaseD::restart_track()
 
 void BaseD::prev_track()
 {
-  SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
+  player->fade_out();
+  //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry--;
   if (g_cur_entry<0) { g_cur_entry = g_cfg.num_files-1; }
   reload();
@@ -491,7 +499,8 @@ void BaseD::prev_track25()
 
 void BaseD::next_track()
 {
-  SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
+  player->fade_out();
+  //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry++;
   if (g_cur_entry>=g_cfg.num_files) { g_cur_entry = 0; }
   reload();

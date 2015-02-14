@@ -44,6 +44,7 @@ int Menu_Bar::File_Context::open_spc(void *data)
 {
   if (BaseD::nfd.get_multifile_read_path("spc,rsn,rar") == NFD_OKAY)
   {
+    DEBUGLOG("check_paths_and_reload\n");
     BaseD::check_paths_and_reload(BaseD::nfd.paths, BaseD::nfd.numpaths);
   }
 }

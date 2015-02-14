@@ -54,19 +54,20 @@ My_Nfd::~My_Nfd()
 
 nfdresult_t My_Nfd::get_multifile_read_path(const char *filter_list/*=NULL*/)
 {
-  free_pathset();
 
   char tmpbuf[200];
   //*outPath=NULL;
-  nfdresult_t result = NFD_OpenDialogMultiple( filter_list, NULL, &pathSet );
-
+  nfdpathset_t tpathSet;
+  nfdresult_t result = NFD_OpenDialogMultiple( filter_list, NULL, &tpathSet );
+  SDL_RaiseWindow(BaseD::sdlWindow);
   if ( result == NFD_OKAY )
   {
-    //puts("Success!");
+    puts("DERP!");
+    free_pathset();
     //puts(outPath);
     //SDL_RWops* SDL_RWFromFile(const char* file,
       //                const char* mode)
-    SDL_RaiseWindow(BaseD::sdlWindow);
+    this->pathSet = tpathSet;
     paths = (nfdchar_t **) malloc(sizeof(nfdchar_t *) * (NFD_PathSet_GetCount(&pathSet)+1));
     size_t i;
     for ( i = 0; i < NFD_PathSet_GetCount(&pathSet); ++i )

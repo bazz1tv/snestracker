@@ -37,7 +37,7 @@ void Debugger::run()
     handle_events();
     //sdlfont_drawString(screen, 10,10, "back", Colors::red);
 
-    SDL_Delay( 1000 / 100 );
+    //SDL_Delay( 1000 / 100 );
   }
 }
 

@@ -12,6 +12,7 @@
 #include "types.h"
 #include "Audio_Context.h"
 
+typedef double gain_t;
 
 
 // should be in the player
@@ -27,6 +28,8 @@ public:
 	bool filter_is_active=false;
 	bool has_no_song = true;
 	double tempo=1.0;
+	bool needs_to_fade_out=false;
+	bool needs_to_fade_in=true;
 	
 
 	void inc_tempo() {tempo+=0.1; emu_->set_tempo(tempo); }
@@ -38,7 +41,7 @@ public:
 	blargg_err_t load_file( const char* path );
 	
 	// (Re)start playing track. Tracks are numbered from 0 to track_count() - 1.
-	blargg_err_t start_track( int track );
+	blargg_err_t start_track( int track, bool test=false );
 	
 	// Stop playing current file
 	void stop();
@@ -118,6 +121,7 @@ public:
 	void play_next();
 	void restart_track();
 	int get_curtrack();
+	void fade_out();
 
 
 
@@ -125,10 +129,13 @@ public:
 public:
 	Music_Player();
 	~Music_Player();
-	double gain_db=0.0; 
+	double gain_db=0.0, gain=1.0; 
 	static double min_gain_db, max_gain_db;
 	bool gain_has_changed=false;
-	double new_gain_db = 0.0;// *(
+	double new_gain_db = 0.0;
+	double fade_gain=1.0;
+	gain_t target_gain = 1.0;
+	// *(
 	/*void set_path(char *str)
 	{
 		strcpy(path,str);

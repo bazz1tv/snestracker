@@ -58,7 +58,7 @@ nfdresult_t get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file, const c
   char tmpbuf[200];
   *outPath=NULL;
   nfdresult_t result = NFD_SaveDialog( filter_list, NULL, outPath );
-
+  SDL_RaiseWindow(BaseD::sdlWindow);
     if ( result == NFD_OKAY )
     {
       //puts("Success!");
@@ -66,7 +66,7 @@ nfdresult_t get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file, const c
       //SDL_RWops* SDL_RWFromFile(const char* file,
         //                const char* mode)
       *file = SDL_RWFromFile(*outPath, "wb");
-      SDL_RaiseWindow(BaseD::sdlWindow);
+      
       if (*file == NULL)
       {
         sprintf(tmpbuf, "Warning: Unable to open file!\n %s", SDL_GetError() );
@@ -99,14 +99,14 @@ nfdresult_t get_file_read_path(nfdchar_t **outPath, const char *filter_list/*=NU
   char tmpbuf[200];
   *outPath=NULL;
   nfdresult_t result = NFD_OpenDialog( filter_list, NULL, outPath );
-
+  SDL_RaiseWindow(BaseD::sdlWindow);
     if ( result == NFD_OKAY )
     {
       //puts("Success!");
       //puts(outPath);
       //SDL_RWops* SDL_RWFromFile(const char* file,
         //                const char* mode)
-      SDL_RaiseWindow(BaseD::sdlWindow);
+      //SDL_RaiseWindow(BaseD::sdlWindow);
       return result;
     }
     else if ( result == NFD_CANCEL ) 
@@ -131,7 +131,7 @@ nfdresult_t get_file_read_handle(nfdchar_t **outPath, SDL_RWops **file, const ch
   char tmpbuf[200];
   *outPath=NULL;
   nfdresult_t result = NFD_OpenDialog( filter_list, NULL, outPath );
-
+  SDL_RaiseWindow(BaseD::sdlWindow);
     if ( result == NFD_OKAY )
     {
       //puts("Success!");

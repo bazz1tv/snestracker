@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 #include "DEBUGLOG.h"
 
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
-const int fill_rate = 45;
+const int fill_rate = 45; //45;
 
 double Music_Player::min_gain_db=-48.0, Music_Player::max_gain_db = 20.0;
 
@@ -63,6 +63,7 @@ void Music_Player::play_prev()
 
 void Music_Player::play_next()
 {
+	//fade_out();
 	if (files.empty())
 		return;
 	if (filetrack == (files.size()-1))
@@ -173,6 +174,7 @@ blargg_err_t Music_Player::load_file( const char* path )
 	if ( emu_->load_m3u( m3u_path ) ) { } // ignore error*/
 
 	has_no_song = false;
+
 	
 	return 0;
 }
@@ -182,17 +184,32 @@ int Music_Player::track_count() const
 	return emu_ ? emu_->track_count() : false;
 }
 
-blargg_err_t Music_Player::start_track( int track )
+void Music_Player::fade_out()
 {
+	if (paused) return;
+	gain_t gain=this->gain; 
+	needs_to_fade_out=true;
+	while (needs_to_fade_out);
+	this->gain = gain;
+}
+
+blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
+{
+	//sound_stop();
 	// I do this to clean up the sound buffer when "scrollin" to the next track..
 	// after a previous track was paused.. you would sometimes hear some of that old song
 	// data play before the new track.. temporary fix is to reallocate the sound device..
 	// permanent fix would be to add "fadeout after pause" or "fade in after play"
 	tempo = 1.0;
 	emu_->set_tempo(tempo);
-	gain_db = 0.0;
+	//gain_db = 0.0;
 	gain_has_changed=false;
-	new_gain_db = 0.0;
+	//new_gain_db = 0.0;
+	needs_to_fade_out=false;
+	//needs_to_fade_in=true;
+	//target_gain = gain;
+	//gain = 0.0;
+	//fade_gain=1.0;
 	if (paused)
 	{
 		sound_cleanup();
@@ -244,6 +261,7 @@ blargg_err_t Music_Player::start_track( int track )
 				track_info_.length = (long) (2.5 * 60 * 1000);
 			emu_->set_fade( track_info_.length );
 			sound_start();
+
 		}
 		
 		//fprintf(stderr, "game = %s", track_info_.game);
@@ -353,20 +371,62 @@ inline sample_t TPMixSamples(sample_t a, sample_t b) {
 
 void Music_Player::apply_gain(sample_t* out, int count )
 {
-	double gain; 
-	double direction;
+	//double gain; 
+	double direction; 
+	static int fade_out_count=0, fade_in_count=0;
+	static bool is_fade_in_init=false;
+	static gain_t fade_in_gain_db;
+	static bool is_fade_out_init=false;
+	static gain_t fade_out_gain_db;
+	static bool fade_out_finished=false;
 
-	gain = Audio::calculate_linear_gain_from_db(gain_db, min_gain_db);
+	
 	for (int i=0; i < count; i += 1)
 	{
 		double newsamp = out[i];
 		
-		if (gain_has_changed)
+		if (needs_to_fade_out)
+		{
+			if (!is_fade_out_init)
+			{
+				is_fade_out_init=true;
+				fade_out_gain_db = gain_db;
+				fade_out_count=0;
+			}
+			
+			/*if ( (newsamp == 0 && out[i+1] == 0) || 
+				((newsamp <= 0 && out[i+1] > 0) || (newsamp >= 0 && out[i+1] < 0)))
+			{*/
+				fade_out_gain_db -= 0.005;
+				if (fade_out_gain_db <= Music_Player::min_gain_db)
+				{
+					for (i; i < count; i++)
+					{
+						out[i] = 0;
+					}
+					fade_out_gain_db = min_gain_db;
+					//DEBUGLOG("test23, target = %f, gain=%f",target_gain, gain);
+					fade_out_count=1;
+					fade_out_finished=true;
+					needs_to_fade_out=false;
+					is_fade_out_init=false;
+					return;
+				}		
+
+				gain = Audio::calculate_linear_gain_from_db(fade_out_gain_db, min_gain_db);
+			//}
+			/*else
+			{
+				DEBUGLOG("1) %f 2) %f\n", newsamp, (double)out[i+1]);
+			}*/
+		}
+		else if (gain_has_changed)
 		{
 			direction = ((new_gain_db - gain_db > 0) ? +0.02 : -0.02);
 
-			if ((newsamp <= 0.0 && out[i+1] > 0) || (newsamp >= 0.0 && out[i+1] < 0))
-			{
+			/*if ( ((newsamp <= 0 && out[i+1] > 0) || (newsamp >= 0 && out[i+1] < 0)) ||
+				(newsamp == 0 && out[i+1] == 0) )
+			{*/
 				gain_db += direction;
 				if ((direction > 0 && gain_db >= new_gain_db) || (direction < 0 && gain_db <= new_gain_db))
 				{
@@ -375,19 +435,11 @@ void Music_Player::apply_gain(sample_t* out, int count )
 				}
 				gain = Audio::calculate_linear_gain_from_db(gain_db, min_gain_db);
 				
-			}
+			//}
 		}
+
 		//DEBUGLOG("gain = %f\n", gain);
 		newsamp *= gain;
-
-		if (i % 2 == 0) // Left channel
-		{
-
-		}
-		else // right channel
-		{
-			
-		}
 		
 		int io = round(newsamp);
 		/*if (d > 32767)
@@ -412,6 +464,7 @@ void Music_Player::apply_gain(sample_t* out, int count )
 }
 void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 {
+	//memset(out, 0, count);
 	Music_Player* self = (Music_Player*) data;
 	if ( self->emu_ )
 	{
@@ -474,7 +527,7 @@ static const char* sound_init( long sample_rate, int buf_size,
     if (have.samples != as.samples)  // we let this one thing change.
       printf("We didn't get Float32 audio format.\n");
 
-    SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 0);  // start audio playing.
+    //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 0);  // start audio playing.
     //SDL_Delay(5000);  // let the audio callback play some sound for 5 seconds.
     //SDL_CloseAudioDevice(Audio_Context::audio->devices.id);
 	}

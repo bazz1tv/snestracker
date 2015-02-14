@@ -16,6 +16,7 @@
 int Main_Window::Gain::change(void *dblnewgain)
 {
   BaseD::player->gain_has_changed = true;// = gain_db;
+  player->gain = Audio::calculate_linear_gain_from_db(player->gain_db, Music_Player::min_gain_db);
   //BaseD::player->new_gain_db = *(double*)dblnewgain;// = pow ( 10.0, (0.05 * *(double*)dblnewgain) );
   return 0;
 }
