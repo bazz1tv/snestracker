@@ -2004,17 +2004,22 @@ void Main_Window::draw_track_tag()
   // CLEAR THE BACKGROUND FIRST
   //536,465
   //800,519
-  SDL_Rect r;
-  r.x = 536;
-  r.y = 465;
-  r.w = 800-536;
-  r.h = 519-465;
-  SDL_FillRect(screen, &r, Colors::Interface::color[Colors::Interface::Type::bg]);
+  static SDL_Rect r;
+  
+  if (!is_first_run)
+    SDL_FillRect(screen, &r, Colors::Interface::color[Colors::Interface::Type::bg]);
 
   //fprintf(stderr, "comment = %s\n", tag.comment);
   //fprintf(stderr, "path = %s\nsong = %s\ngame = %s\ndumper = %s\ncomment = %s")
   int y = INFO_Y + 8;
   int x = INFO_X;
+  if (is_first_run)
+  {
+    r.x = x;
+    r.y = y;
+    r.w = 800-x;
+  }
+  
   DEBUGLOG("y == %d, ", y);
   draw_time_and_echo_status(&x, &y);
   DEBUGLOG("y == %d\n", y);
@@ -2041,6 +2046,12 @@ void Main_Window::draw_track_tag()
 
   sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg.defaultsongtime/60, g_cfg.defaultsongtime%60);
   sdlfont_drawString2(screen, INFO_X, y, tmpbuf);
+  
+  if (is_first_run)
+  {
+    y+=CHAR_HEIGHT;
+    r.h = y - r.y;
+  }
 }
 
 void Main_Window::maybe_write_to_mem(bool force/*=false*/)
