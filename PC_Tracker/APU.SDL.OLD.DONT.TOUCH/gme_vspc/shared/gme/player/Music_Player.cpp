@@ -79,16 +79,16 @@ int Music_Player::get_curtrack() { return curtrack; }
 void Music_Player::inc_curtrack() { curtrack++; }
 void Music_Player::dec_curtrack() { curtrack--; }
 
-Music_Player::Music_Player()
+Music_Player::Music_Player() :
+	gain_db(0.0),
+	emu_(0),
+	scope_buf(0),
+	paused(false),
+	curtrack(0),
+	filetrack(0),
+	track_started(false),
+	spc_filter(new Spc_Filter)
 {
-	gain_db = 0.0;
-	emu_          = 0;
-	scope_buf     = 0;
-	paused        = false;
-	curtrack 	    = 0;
-	filetrack	    = 0;
-	track_started = false;
-	spc_filter = new Spc_Filter;
 	spc_filter->set_gain(Spc_Filter::gain_unit * 1);
 	spc_filter->set_bass(Spc_Filter::bass_max);
 }

@@ -170,9 +170,9 @@ void Main_Window::check_quit(SDL_Event &ev)
       if (!locked())
       {
         fprintf(stderr, "penis88\n");
-        if (!g_cfg.nosound) {
+        /*if (!g_cfg.nosound) {
           SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-        }
+        }*/
         quitting = true;
       }
       

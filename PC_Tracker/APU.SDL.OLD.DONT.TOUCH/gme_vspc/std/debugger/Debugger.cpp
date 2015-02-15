@@ -39,7 +39,7 @@ void Debugger::run()
 
     //SDL_Delay( 1000 / 100 );
   }
-  if (!player->is_paused())
+  if (!player->is_paused() && player->track_started)
   {
     player->fade_out(false);
     player->pause(1, false, false);

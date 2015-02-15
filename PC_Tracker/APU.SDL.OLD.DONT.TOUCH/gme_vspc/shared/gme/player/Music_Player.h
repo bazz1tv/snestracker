@@ -136,6 +136,7 @@ public:
 	gain_t new_gain_db = 0.0;
 	gain_t fade_gain=1.0;
 	gain_t target_gain = 1.0;
+	bool track_started;
 	// *(
 	/*void set_path(char *str)
 	{
@@ -157,7 +158,7 @@ private:
 	int curtrack, filetrack;
 	std::vector<std::string> files;	// this is kind of unnecessary..
 	std::string path;
-	bool track_started;
+	
 
 	SDL_Thread *thread;
 	// thread function
