@@ -238,9 +238,9 @@ void Instrument_Window::receive_event(SDL_Event &ev)
   {
     
     case SDL_QUIT:
-      if (!g_cfg.nosound) {
+      /*if (!g_cfg.nosound) {
         SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-      }
+      }*/
       printf ("penis4\n");
       BaseD::quitting = true;
       break;
@@ -620,7 +620,7 @@ void Instrument_Window::play_pitch(int p, bool abs/*=false*/)
 
 void Instrument_Window::pause_spc()
 {
-  player->pause(1);
+  player->pause(1, true, false);
   // backup_pc()
   pc_ptr = (uint16_t*)&IAPURAM[report::last_pc];
   pc_backup = *pc_ptr;
@@ -649,7 +649,7 @@ void Instrument_Window::restore_spc(bool resume/*=true*/)
   // restore_pc()
   //uint16_t *pc_ptr = (uint16_t*)&IAPURAM[report::last_pc];
   if (!pc_ptr) return;
-  player->pause(1);
+  player->pause(1, false);
   *pc_ptr = pc_backup;
   if (resume) player->pause(0);
   pc_ptr = NULL;

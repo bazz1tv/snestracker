@@ -123,8 +123,8 @@ void Slider<T>::Slide(int mouse_x)
 	/*DEBUGLOG("Adjuster\n\t");
 	DEBUGLOG("[Mouse_X: %d] - [Mouse_X_logged: %d] = %d\n\t", mouse_x, mouse_x_logged, mouse_x-mouse_x_logged);
 	DEBUGLOG("adjuster_x_logged: %d | new_adjuster_x: %d\n\t", adjuster_x_logged,adjuster_rect.x);
-	DEBUGLOG("Pixel offset: %d. Target value: %f\n", adjuster_rect.x - panel_rect.x, target_value);
-*/ 
+	*/DEBUGLOG("Pixel offset: %d. Target value: %f\n", adjuster_rect.x - panel_rect.x, target_value);
+ 
 	if (action)
 		action(&target_value);
 }
@@ -362,6 +362,8 @@ bool Slider<T>::receive_event(SDL_Event &ev)
 template <class T>
 T Slider<T>::round(T n)//round up a float type and show one decimal place
 {
+
+	return floor(n*pow(10,precision)+0.5)/pow(10,precision);
   /*T t;
   t=n-floor(n);
   if (t>=0.5)    
@@ -376,7 +378,7 @@ T Slider<T>::round(T n)//round up a float type and show one decimal place
     floor(n);
     n/=10;
   }*/
-  return n;
+  //return n;
 }  
 
 template <class T>

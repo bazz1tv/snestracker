@@ -548,7 +548,7 @@ void BaseD::restart_current_track()
   report::memsurface.clear();
   player->fade_out();
   player->start_track(0); // based on only having 1 track
-  player->pause(0);
+  //player->pause(0);
   // in the program .. this would have to change otherwise
 }
 

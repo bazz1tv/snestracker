@@ -123,7 +123,7 @@ void Context_Menu::draw(SDL_Surface *screen)
   // any given item will be at created_at.x, created_at.y + 2 + (index*TILE_HEIGHT)
 
   // draw highlight'd strip
-
+  Uint32 bg_color = Colors::Interface::color[Colors::Interface::Type::text_bg];
   highlighted_item = NULL;
   while (items[i].clickable_text.str != "")
   {
@@ -138,11 +138,12 @@ void Context_Menu::draw(SDL_Surface *screen)
           // draw the highlighter
           SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
           SDL_FillRect(screen, &r, Colors::magenta);
+          bg_color = Colors::magenta;
           highlighted_item = &items[i];
         }
       }
       // draw this nigga
-      sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + (drawn*TILE_HEIGHT), items[i].clickable_text.str.c_str(), Colors::white, false);
+      sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + (drawn*TILE_HEIGHT), items[i].clickable_text.str.c_str(), Colors::white, bg_color, false);
       drawn++;
     }
     i++;
