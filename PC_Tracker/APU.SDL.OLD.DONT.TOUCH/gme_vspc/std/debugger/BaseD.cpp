@@ -231,7 +231,19 @@ bool BaseD::check_time()
       }
     }
     g_cur_entry++;
-    if (g_cur_entry>=g_cfg.num_files) { printf ("penis3\n"); /*reload();*/ player->pause(true); return true; }
+    if (g_cur_entry>=g_cfg.num_files)
+    {
+      printf ("penis3\n");
+      /*reload();*/
+
+      // this would pause the player [[IMPORTANTE: pause with no fadeout]]
+      //player->pause(true, false); 
+
+      // but instead let's restart the playlist
+      g_cur_entry=0;
+      reload();
+      return true;
+    }
     //goto reload;
     reload();
     return true;

@@ -149,6 +149,23 @@ void Main_Window::draw()
     if (g_cfg.nice) {  SDL_Delay(100); }
     //SDL_Delay( 1000 / 100 );
   } // if !g_cfg.novideo
+  else
+  {
+    draw_mouse_address();
+    draw_menu_bar();
+    
+    
+    //SDL_UpdateRect(screen, 0, 0, 0, 0);
+    SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
+    //SDL_SetRenderDrawColor(sdlRenderer, 255, 0, 0, 255);
+    SDL_RenderClear(sdlRenderer);
+    SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+    // stuff that renders direct to renderer must happen after the screen copy
+
+    gain.slider->draw();
+    tempo.slider->draw();
+    SDL_RenderPresent(sdlRenderer);
+  }
   is_first_run = false;
 }
 
