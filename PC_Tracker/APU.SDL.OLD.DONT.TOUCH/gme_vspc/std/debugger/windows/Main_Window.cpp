@@ -16,7 +16,7 @@
 int Main_Window::Gain::change(void *dblnewgain)
 {
   BaseD::player->gain_has_changed = true;// = gain_db;
-  player->gain = Audio::calculate_linear_gain_from_db(player->gain_db, Music_Player::min_gain_db);
+  //player->linear_gain = Audio::calculate_linear_gain_from_db(player->gain_db, Music_Player::min_gain_db);
   //BaseD::player->new_gain_db = *(double*)dblnewgain;// = pow ( 10.0, (0.05 * *(double*)dblnewgain) );
   return 0;
 }
@@ -157,9 +157,9 @@ void Main_Window::check_quit(SDL_Event &ev)
   switch (ev.type)
   {
     case SDL_QUIT:
-    if (!g_cfg.nosound) {
+    /*if (!g_cfg.nosound) {
       SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-    }
+    }*/
     printf ("penis4\n");
     quitting = true;
     break;
@@ -212,9 +212,9 @@ void Main_Window::receive_event(SDL_Event &ev)
     switch (ev.type)
     {
       case SDL_QUIT:
-      if (!g_cfg.nosound) {
+      /*if (!g_cfg.nosound) {
         SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-      }
+      }*/
       printf ("penis4\n");
       quitting = true;
       break;
@@ -266,9 +266,9 @@ void Main_Window::receive_event(SDL_Event &ev)
   switch (ev.type)
   {
     case SDL_QUIT:
-      if (!g_cfg.nosound) {
+      /*if (!g_cfg.nosound) {
         SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-      }
+      }*/
       printf ("penis4\n");
       quitting = true;
       break;

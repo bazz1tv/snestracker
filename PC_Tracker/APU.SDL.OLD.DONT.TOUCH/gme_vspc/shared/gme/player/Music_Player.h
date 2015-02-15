@@ -29,7 +29,7 @@ public:
 	bool has_no_song = true;
 	double tempo=1.0;
 	bool needs_to_fade_out=false;
-	bool needs_to_fade_in=true;
+	bool needs_to_fade_in=false;
 	
 
 	void inc_tempo() {tempo+=0.1; emu_->set_tempo(tempo); }
@@ -59,7 +59,7 @@ public:
 	track_info_t const& track_info() const { return track_info_; }
 	
 	// Pause/resume playing current track.
-	void pause( int );
+	void pause( int, bool with_fade=true, bool is_fade_threaded=true );
 	void toggle_pause();
 	bool is_paused();
 	
@@ -121,7 +121,7 @@ public:
 	void play_next();
 	void restart_track();
 	int get_curtrack();
-	void fade_out();
+	
 
 
 
@@ -129,17 +129,19 @@ public:
 public:
 	Music_Player();
 	~Music_Player();
-	double gain_db=0.0, gain=1.0; 
+	gain_t gain_db=0.0, linear_gain=1.0; 
 	static double min_gain_db, max_gain_db;
 	bool gain_has_changed=false;
-	double new_gain_db = 0.0;
-	double fade_gain=1.0;
+	bool is_using_zero_crossover=false;
+	gain_t new_gain_db = 0.0;
+	gain_t fade_gain=1.0;
 	gain_t target_gain = 1.0;
 	// *(
 	/*void set_path(char *str)
 	{
 		strcpy(path,str);
 	}*/
+	void fade_out(bool threaded=false); // public function
 private:
 	Spc_Filter* spc_filter;
 	Music_Emu* emu_;
@@ -156,6 +158,12 @@ private:
 	std::vector<std::string> files;	// this is kind of unnecessary..
 	std::string path;
 	bool track_started;
+
+	SDL_Thread *thread;
+	// thread function
+	static int fade_out(void *ptr);
+	// only to be called by thread
+	void thread_fade_out();
 	
 	
 	void suspend();

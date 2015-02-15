@@ -78,7 +78,13 @@ name = strrchr(path, '\\'); // Windows might need backslash check
 #else
 name = strrchr(path, '/'); // Windows might need backslash check
 #endif
-assert(name);
+  //assert(name);
+  if (!name)
+    name = path;
+  else
+  {
+    name += 1; // move past '/' character
+  }
 
     if (!strcmp(ext, ".rsn") || !strcmp(ext, ".rar"))
     {
@@ -86,20 +92,22 @@ assert(name);
       fprintf(stderr, "rsn found\n");
       char *mkdir_cmd = (char*) SDL_malloc(sizeof(char) * 
         (strlen("mkdir -p ")+
-          strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name)+1)) );
+          strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name+1)+1)) );
 
       char *dir_quoted = (char*) SDL_malloc(sizeof(char) * 
-        (strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name)+2)) );
+        (strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name+1)+2)) );
 
       strcpy(mkdir_cmd, "mkdir ");
       char *dirp = mkdir_cmd + 6;
       char *p = mkdir_cmd + 6;
       strcpy(p, File_System_Context::file_system->tmp_path_quoted);
       p += strlen(File_System_Context::file_system->tmp_path_quoted) - 1;
-      for (char *folderp = name+1; folderp != ext; folderp++)
+      // folderp is the game folder inside the tmp dir
+      for (char *folderp = name; folderp != ext; folderp++)
       {
         *(p++) = *folderp;
       }
+
       *(p++) = '/';
       *(p++) = '"';
       *p = 0;
@@ -445,7 +453,6 @@ void BaseD::toggle_pause()
   // this will restart from beginning of playlist
   if (g_cur_entry>=g_cfg.num_files)
     restart_track();
-  
   else 
   {
     if_exp_is_instr_window_then_restore_spc();
@@ -455,7 +462,8 @@ void BaseD::toggle_pause()
 
 void BaseD::restart_track()
 {
-  SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
+  player->fade_out();
+  //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry=0;
   player->pause(0);
   reload();
@@ -516,6 +524,7 @@ void BaseD::draw_menu_bar()
 void BaseD::restart_current_track()
 {
   report::memsurface.clear();
+  player->fade_out();
   player->start_track(0); // based on only having 1 track
   player->pause(0);
   // in the program .. this would have to change otherwise

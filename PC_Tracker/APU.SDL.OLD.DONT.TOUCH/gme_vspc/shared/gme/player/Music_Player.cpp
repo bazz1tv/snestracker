@@ -32,7 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
 const int fill_rate = 45; //45;
 
-double Music_Player::min_gain_db=-48.0, Music_Player::max_gain_db = 20.0;
+double Music_Player::min_gain_db=-96.0, Music_Player::max_gain_db = 20.0;
 
 // Simple sound driver using SDL
 typedef void (*sound_callback_t)( void* data, short* out, int count );
@@ -183,14 +183,31 @@ int Music_Player::track_count() const
 {
 	return emu_ ? emu_->track_count() : false;
 }
+// Very simple thread - counts 0 to 9 delaying 50ms between increments
+int Music_Player::fade_out(void *ptr)
+{
+	Music_Player *p = (Music_Player*)ptr;
+	bool paused = p->paused;
+	p->paused = false;
+	p->thread_fade_out();
+	p->paused=paused;
+	if (paused) sound_stop();
+	return 0;
+}
 
-void Music_Player::fade_out()
+void Music_Player::fade_out(bool threaded/*=false*/)
+{
+	if (threaded)
+		thread = SDL_CreateThread(&Music_Player::fade_out, "FadeOutThread", this);
+	else thread_fade_out();
+}
+void Music_Player::thread_fade_out()
 {
 	if (paused) return;
-	gain_t gain=this->gain; 
+	gain_t linear_gain=this->linear_gain; 
 	needs_to_fade_out=true;
 	while (needs_to_fade_out);
-	this->gain = gain;
+	this->linear_gain = linear_gain;
 }
 
 blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
@@ -207,8 +224,8 @@ blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
 	//new_gain_db = 0.0;
 	needs_to_fade_out=false;
 	//needs_to_fade_in=true;
-	//target_gain = gain;
-	//gain = 0.0;
+	//target_linear_gain = gain;
+	//linear_gain = 0.0;
 	//fade_gain=1.0;
 	if (paused)
 	{
@@ -278,7 +295,6 @@ blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
 void Music_Player::toggle_pause()
 {
 	pause(!paused);
-	
 }
 
 bool Music_Player::is_paused()
@@ -286,17 +302,23 @@ bool Music_Player::is_paused()
 	return paused;
 }
 
-void Music_Player::pause( int b )
+
+void Music_Player::pause( int b, bool with_fade/*=true*/, bool fade_threaded/*=true*/ )
 {
+
 	paused = b;
 	if ( b )
-		sound_stop();
+	{
+		if (with_fade) fade_out(fade_threaded);
+		else sound_stop();
+	}
 	else
 	{
 		if (!track_started)
 		{
 			start_track(curtrack);
 		}
+		needs_to_fade_in=true;
 		sound_start();
 	}
 }
@@ -373,7 +395,7 @@ void Music_Player::apply_gain(sample_t* out, int count )
 {
 	//double gain; 
 	double direction; 
-	static int fade_out_count=0, fade_in_count=0;
+	//static int fade_out_count=0, fade_in_count=0;
 	static bool is_fade_in_init=false;
 	static gain_t fade_in_gain_db;
 	static bool is_fade_out_init=false;
@@ -385,36 +407,77 @@ void Music_Player::apply_gain(sample_t* out, int count )
 	{
 		double newsamp = out[i];
 		
-		if (needs_to_fade_out)
+		if (needs_to_fade_in)
+		{
+			if (!is_fade_in_init)
+			{
+				is_fade_in_init=true;
+				fade_in_gain_db = Music_Player::min_gain_db;
+				//fade_in_count=0;
+			}
+
+			linear_gain = Audio::calculate_linear_gain_from_db(fade_in_gain_db, min_gain_db);
+			
+			/*if ( (newsamp == 0 && in[i+1] == 0) || 
+				((newsamp <= 0 && in[i+1] > 0) || (newsamp >= 0 && in[i+1] < 0)))
+			{*/
+				fade_in_gain_db += 0.01;
+				if (fade_in_gain_db >= gain_db)
+				{
+					/*for (i; i < count; i++)
+					{
+						in[i] = 0;
+					}*/
+					fade_in_gain_db = gain_db;
+					//DEBUGLOG("test23, target = %f, gain=%f",target_gain, gain);
+					//fade_in_count=1;
+					//fade_in_finished=true;
+					needs_to_fade_in=false;
+					is_fade_in_init=false;
+					//return;
+				}		
+
+				
+			//}
+			/*else
+			{
+				DEBUGLOG("1) %f 2) %f\n", newsamp, (double)out[i+1]);
+			}*/
+		}
+		else if (needs_to_fade_out)
 		{
 			if (!is_fade_out_init)
 			{
 				is_fade_out_init=true;
 				fade_out_gain_db = gain_db;
-				fade_out_count=0;
+				//fade_out_count=0;
 			}
 			
-			/*if ( (newsamp == 0 && out[i+1] == 0) || 
-				((newsamp <= 0 && out[i+1] > 0) || (newsamp >= 0 && out[i+1] < 0)))
-			{*/
-				fade_out_gain_db -= 0.005;
+			if (!is_using_zero_crossover || (is_using_zero_crossover && ((newsamp == 0 && out[i+1] == 0) || 
+				((newsamp <= 0 && out[i+1] > 0) || (newsamp >= 0 && out[i+1] < 0)) ) ) )
+			{
+				linear_gain = Audio::calculate_linear_gain_from_db(fade_out_gain_db, min_gain_db);
+
+				fade_out_gain_db -= 0.01;
 				if (fade_out_gain_db <= Music_Player::min_gain_db)
 				{
-					for (i; i < count; i++)
+					for (; i < count; i++)
 					{
 						out[i] = 0;
 					}
 					fade_out_gain_db = min_gain_db;
 					//DEBUGLOG("test23, target = %f, gain=%f",target_gain, gain);
-					fade_out_count=1;
+					//fade_out_count=1;
 					fade_out_finished=true;
+					//SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);  // start audio playing.
+
 					needs_to_fade_out=false;
 					is_fade_out_init=false;
 					return;
 				}		
 
-				gain = Audio::calculate_linear_gain_from_db(fade_out_gain_db, min_gain_db);
-			//}
+				
+			}
 			/*else
 			{
 				DEBUGLOG("1) %f 2) %f\n", newsamp, (double)out[i+1]);
@@ -424,22 +487,22 @@ void Music_Player::apply_gain(sample_t* out, int count )
 		{
 			direction = ((new_gain_db - gain_db > 0) ? +0.02 : -0.02);
 
-			/*if ( ((newsamp <= 0 && out[i+1] > 0) || (newsamp >= 0 && out[i+1] < 0)) ||
-				(newsamp == 0 && out[i+1] == 0) )
-			{*/
+			if (!is_using_zero_crossover || (is_using_zero_crossover && ((newsamp == 0 && out[i+1] == 0) || 
+				((newsamp <= 0 && out[i+1] > 0) || (newsamp >= 0 && out[i+1] < 0)) ) ) )
+			{
 				gain_db += direction;
 				if ((direction > 0 && gain_db >= new_gain_db) || (direction < 0 && gain_db <= new_gain_db))
 				{
 					gain_db = new_gain_db;
 					gain_has_changed=false;
 				}
-				gain = Audio::calculate_linear_gain_from_db(gain_db, min_gain_db);
+				linear_gain = Audio::calculate_linear_gain_from_db(gain_db, min_gain_db);
 				
-			//}
+			}
 		}
 
-		//DEBUGLOG("gain = %f\n", gain);
-		newsamp *= gain;
+		//DEBUGLOG("linear_gain = %f\n", gain);
+		newsamp *= linear_gain;
 		
 		int io = round(newsamp);
 		/*if (d > 32767)

@@ -39,6 +39,11 @@ void Debugger::run()
 
     //SDL_Delay( 1000 / 100 );
   }
+  if (!player->is_paused())
+  {
+    player->fade_out(false);
+    player->pause(1, false, false);
+  }
 }
 
 void Debugger::handle_events()
