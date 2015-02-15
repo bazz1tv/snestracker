@@ -47,16 +47,20 @@ MSOURCES=$(wildcard $(SHARED_DIR)*/*.m)
 OBJECTS=$(SOURCES:.cpp=.cpp.o) $(MSOURCES:.m=.m.o)
 EXECUTABLE=std
 
-all: $(SOURCES) $(EXECUTABLE)
 
+all: $(SOURCES) $(EXECUTABLE).app $(EXECUTABLE)
+
+$(EXECUTABLE).app: $(EXECUTABLE) unrar
+	rm -rf $@
+	mkdir $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
+	cp std $@/Contents/MacOS
+	cp Info.plist $@/Contents
+	cp unrar $@/Contents/Resources
 	
 $(EXECUTABLE): $(OBJECTS) unrar
 	#echo $(SOURCES)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
-	rm -rf $@.app
-	mkdir $@.app $@.app/Contents $@.app/Contents/Resources $@.app/Contents/MacOS
-	cp std $@.app/Contents/MacOS
-	cp unrar $@.app/Contents/Resources
+	
 
 unrar: ../unrar/unrar
 	pushd ../unrar; make; popd

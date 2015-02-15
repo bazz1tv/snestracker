@@ -81,6 +81,12 @@ void Debugger::handle_events()
     {
       char *dropped_filedir = ev.drop.file;
       // Shows directory of dropped file
+      /*SDL_ShowSimpleMessageBox(
+          SDL_MESSAGEBOX_INFORMATION,
+          "File dropped on window",
+          dropped_filedir,
+          sdlWindow
+      );*/
       BaseD::nfd.free_pathset();
       check_paths_and_reload(&dropped_filedir, 1, true);
       SDL_free(dropped_filedir);    // Free dropped_filedir memory
