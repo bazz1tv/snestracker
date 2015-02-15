@@ -77,6 +77,15 @@ void Debugger::handle_events()
         oldh += hd;
       }
     }
+    else if (ev.type == SDL_DROPFILE)
+    {
+      char *dropped_filedir = ev.drop.file;
+      // Shows directory of dropped file
+      BaseD::nfd.free_pathset();
+      check_paths_and_reload(&dropped_filedir, 1, true);
+      SDL_free(dropped_filedir);    // Free dropped_filedir memory
+      SDL_RaiseWindow(sdlWindow);
+    }
     exp->receive_event(ev);
   }
 }

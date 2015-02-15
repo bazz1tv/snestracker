@@ -39,7 +39,8 @@ struct BaseD : public Render_Context, public Player_Context
 
   //static char **rsn_spc_paths;
   static void if_exp_is_instr_window_then_restore_spc();
-  static void check_paths_and_reload(char **paths=g_cfg.playlist, int numpaths=g_cfg.num_files);
+  static void check_paths_and_reload(char **paths=g_cfg.playlist, 
+    int numpaths=g_cfg.num_files, bool is_drop_event=false);
   static void pack_mask(unsigned char packed_mask[32]);
   static void applyBlockMask(char *filename);
   static void write_mask(unsigned char packed_mask[32]);

@@ -63,7 +63,8 @@ int BaseD::Clickable::dec_tempo(void *nada)
   player->dec_tempo();
 }
 
-void BaseD::check_paths_and_reload(char **paths, int numpaths)
+void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/, 
+  int numpaths/*=g_cfg.num_files*/, bool is_drop_event/*=false*/)
 {
   bool rsn_found=false;
   // Check here if path is RSN
@@ -198,11 +199,20 @@ name = strrchr(path, '/'); // Windows might need backslash check
     }
   }
 
-  if (rsn_found)
-    BaseD::reload(BaseD::nfd.rsn_spc_paths,BaseD::nfd.num_rsn_spc_paths);
+  if (!is_drop_event)
+  {
+    //if (rsn_found)
+      BaseD::reload(BaseD::nfd.rsn_spc_paths,BaseD::nfd.num_rsn_spc_paths);
+    //else
+     // BaseD::reload((char**)BaseD::nfd.paths, BaseD::nfd.numpaths);
+  }
   else
-    BaseD::reload((char**)BaseD::nfd.paths, BaseD::nfd.numpaths);
-  //free(outPath);
+  {
+    //if (rsn_found)
+      BaseD::reload(BaseD::nfd.rsn_spc_paths,BaseD::nfd.num_rsn_spc_paths);
+    //else
+      //BaseD::reload((char**)BaseD::nfd.paths, BaseD::nfd.numpaths);
+  }
 }
 bool BaseD::check_time()
 {
