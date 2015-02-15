@@ -8,7 +8,7 @@ struct Voice_Control : public Player_Context
   Voice_Control();
 
   //Music_Player *player;
-  Uint8 was_keyed_on=0;
+//  Uint8 was_keyed_on=0;
   Uint8 muted_toggle_protect=0; // for toggle protection during MouseMoition event
   Uint8 muted=0;
 

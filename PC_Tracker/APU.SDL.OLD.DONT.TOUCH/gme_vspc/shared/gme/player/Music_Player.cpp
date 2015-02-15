@@ -318,7 +318,7 @@ void Music_Player::pause( int b, bool with_fade/*=true*/, bool fade_threaded/*=t
 		{
 			start_track(curtrack);
 		}
-		needs_to_fade_in=true;
+		else needs_to_fade_in=true;
 		sound_start();
 	}
 }

@@ -425,10 +425,10 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
   memset(report::used2, 0, sizeof(report::used2));
   //if (!mouseover_hexdump_area.address)mouseover_hexdump_area.address =0;
   report::last_pc = -1;
-  
-  start_track( 1, path );
-  voice_control.was_keyed_on = 0;
   player->mute_voices(voice_control.muted);
+  start_track( 1, path );
+//  voice_control.was_keyed_on = 0;
+  
   player->ignore_silence();
 
   // update Window Title
