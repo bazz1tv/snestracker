@@ -19,11 +19,24 @@ int mute_solo_voice(void *data);
 struct Dsp_Window : public BaseD, public Render_Context, public Player_Context,
 public Experience
 {
+  bool is_srcn_used(Uint8 dirnum);
+  void do_loop_point_color(int index, Uint8* brr_sample, Uint32 active_color, Uint32 inactive_color);
   Dsp_Window();
   void run();
   void draw();
   void receive_event(SDL_Event &ev);
+  static const int NUM_DIR_ENTRIES_DISPLAYED = 8*4*2;
 
+  static uint16_t dir_ram_addr;
+  static uint16_t *dir;
+  static uint16_t dir_index;
+  struct Loop_Clickable
+  {
+    Loop_Clickable() : clickable_text("L", toggle_loop, &index) {}
+    static int toggle_loop(void *index);
+    Clickable_Text clickable_text;
+    Uint8 index;
+  } loop_clickable[NUM_DIR_ENTRIES_DISPLAYED];
   enum modes 
   { 
     MODE_NAV=0,

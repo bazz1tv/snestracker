@@ -3,13 +3,49 @@
 #include "platform.h"
 #include "Menu_Bar.h"
 
+uint16_t Dsp_Window::dir_ram_addr;
+uint16_t *Dsp_Window::dir;
+uint16_t Dsp_Window::dir_index;
+
 #define print_then_inc_row(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
 #define print_then_inc_row_voice(x,col) sdlfont_drawString(screen, x,i, tmpbuf, col); i+=CHAR_HEIGHT;
 #define inc_row i+=CHAR_HEIGHT;
 
+static Uint8* get_brr_end_block(Uint8 *brr_sample)
+{
+  while (!(*brr_sample & 1))
+    brr_sample+=9;
+  return brr_sample;
+}
+int Dsp_Window::Loop_Clickable::toggle_loop(void *index)
+{
+  //Dsp_Window *dsp_window = BaseD::dsp_window;
+  Uint8 *iindex = (Uint8*)index;
+  Uint8 *brr_sample = &IAPURAM[dir[dir_index + (*iindex * 2)]];
+  brr_sample = get_brr_end_block(brr_sample);
+  //while ()
+  DEBUGLOG("brr_addr = %04X\n", dir[dir_index + (*iindex * 2)]);
+  // find the end brr block
+  
+  if (*brr_sample & 2)
+  {
+    *brr_sample &= ~2;
+    
+  }
+  else
+  {
+    *brr_sample |= 2;
+    //dsp_window->loop_clickable[*iindex].clickable_text.color = Colors::white;
+  }
+}
+
 Dsp_Window::Dsp_Window()
 {
   clear_used_srcn();
+  /*for (int i=0; i < NUM_DIR_ENTRIES_DISPLAYED; i++)
+  {
+    loop_clickable[i].index = i;
+  }*/
 }
 
 int mute_solo_voice(void *data)
@@ -405,15 +441,17 @@ void Dsp_Window::run()
   // DIR
   x = remember_x2+(TILE_WIDTH*6);
   v = player->spc_read_dsp(dsp_reg::dir);
-  uint16_t dir_ram_addr = v*0x100;
-  uint16_t *dir = (uint16_t*)&IAPURAM[dir_ram_addr];
-  uint16_t dir_index=0+(dir_offset*2);
+  dir_ram_addr = v*0x100;
+  dir = (uint16_t*)&IAPURAM[dir_ram_addr];
+  dir_index=0+(dir_offset*2);
   int row_complete=0;
   
   
   i=TILE_HEIGHT*7 + o_i;
 
   #define TEMPLATE_DIR_ENTRY_STR "$%02X: $%04X,$%04X"
+  #define TEMPLATE_DIR_ENTRY_1 "$%02X: $%04X,"
+  #define TEMPLATE_DIR_ENTRY_2 "$%04X"
   #define TEMPLATE_DIR_STR "DIRECTORY ($%04X)"
 
   int PIXEL_START_X = (x-TILE_WIDTH)-((MAX_VOICES-1)*5);
@@ -447,7 +485,7 @@ void Dsp_Window::run()
 
   assert (((screen->h/CHAR_HEIGHT)-4) > 8);
   uint8_t fakerow=0;
-  for (int row=0; fakerow < 8*4*2; row++)
+  for (int row=0; fakerow < NUM_DIR_ENTRIES_DISPLAYED; row++)
   {
     if (row != 0 && !(fakerow % 8))
     {
@@ -467,17 +505,19 @@ void Dsp_Window::run()
     if (fakerow+dir_offset == 0x100)
       dir_index = 0;
 
+    int cur_dir_index = dir_index + (fakerow*2);
+
     for (voice_iter=0; voice_iter < MAX_VOICES; voice_iter++)
     {
-      if ( srcn[voice_iter] == (dir_index/2) )
+      if ( srcn[voice_iter] == (cur_dir_index/2) )
       {
-        used_srcn_voice[dir_index/2] |= 1 << voice_iter;
+        used_srcn_voice[cur_dir_index/2] |= 1 << voice_iter;
         put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i+(TILE_HEIGHT/2)-1, Colors::voice[voice_iter]);
-        //fprintf(stderr, "voice %d SRCN: %02X, dir_index*2 = %04X")
+        //fprintf(stderr, "voice %d SRCN: %02X, cur_dir_index*2 = %04X")
         is_voice_dir_entry = true;
         //break;
       }
-      else if (used_srcn_voice[dir_index/2] & (1 << voice_iter))
+      else if (used_srcn_voice[cur_dir_index/2] & (1 << voice_iter))
       {
         put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i+(TILE_HEIGHT/2)-1, 
           Colors::gray);
@@ -485,31 +525,71 @@ void Dsp_Window::run()
       else  /* ((x-TILE_WIDTH)-((MAX_VOICES-1)*5))+(voice_iter*5) */
         put4pixel(screen, (x-TILE_WIDTH)-(voice_iter*5), i+(TILE_HEIGHT/2)-1, Colors::nearblack);
     }
-
-    //p = dir;
-    //dir++;
     
-    sprintf(tmpbuf, TEMPLATE_DIR_ENTRY_STR, (uint8_t)(fakerow+dir_offset), dir[dir_index], dir[dir_index+1]);
+    sprintf(tmpbuf, TEMPLATE_DIR_ENTRY_STR, (uint8_t)(fakerow+dir_offset), dir[cur_dir_index], dir[cur_dir_index+1]);
+    if (is_first_run)
+    {
+      int xx = x + strlen(tmpbuf)*CHAR_WIDTH;
+      loop_clickable[fakerow].index = fakerow;
+      loop_clickable[fakerow].clickable_text.rect.x = xx;
+      loop_clickable[fakerow].clickable_text.rect.y = i;
+      //sprintf(tmpbuf, "L");
+      //sdlfont_drawString(screen, xx,i, tmpbuf, Colors::white);
+    }
     if (is_voice_dir_entry)
     {
       // print specific voice color
       sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); //Colors::voice[voice_iter]);
+      do_loop_point_color(fakerow, &IAPURAM[dir[cur_dir_index]], Colors::white, Colors::nearblack);
       inc_row
+
     }
     else 
     {
-      uint8_t dirnum = dir_index/2;
-      uint8_t byte = dirnum / 8, bit = dirnum % 8;
-      if (used_srcn[byte] & (1<<bit))
+      if (is_srcn_used(fakerow))
+      {
         sdlfont_drawString(screen, x,i, tmpbuf, Colors::gray);
+        do_loop_point_color(fakerow, &IAPURAM[dir[cur_dir_index]], Colors::gray, Colors::nearblack); 
+      }
       else
+      {
         sdlfont_drawString(screen, x,i, tmpbuf, Colors::nearblack);
+        loop_clickable[fakerow].clickable_text.color = Colors::nearblack;
+        //do_loop_point_color(fakerow, &IAPURAM[dir[cur_dir_index]], Colors::nearblack, Colors::nearblack); 
+      }
+
       inc_row
     }
-    dir_index+=2;
+    
+    loop_clickable[fakerow].clickable_text.draw();
+
+    //dir_index_offset+=2;
     fakerow++;
   }
   is_first_run=false;
+}
+
+void Dsp_Window::do_loop_point_color(int index, Uint8* brr_sample, Uint32 active_color, Uint32 inactive_color)
+{
+  //Uint8 *brr_sample = &IAPURAM[dir[cur_dir_index]];
+  brr_sample = get_brr_end_block(brr_sample);
+  if (*brr_sample & 2)
+  {
+    loop_clickable[index].clickable_text.color = active_color;      
+  }
+  else
+  {
+    loop_clickable[index].clickable_text.color = inactive_color;      
+  }
+}
+
+bool Dsp_Window::is_srcn_used(Uint8 dirnum)
+{
+  //uint8_t dirnum = fakerow;
+  uint8_t byte = dirnum / 8, bit = dirnum % 8;
+  if (used_srcn[byte] & (1<<bit))
+    return true;
+  return false;
 }
 
 void Dsp_Window::draw()
@@ -1025,6 +1105,11 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
+        for (int i=0; i < NUM_DIR_ENTRIES_DISPLAYED; i++)
+        {
+          if (loop_clickable[i].clickable_text.check_mouse_and_execute(ev.button.x, ev.button.y))
+            return;
+        }
         for (int i=0; i < MAX_VOICES; i++)
         {
           uintptr_t newdata = (uintptr_t)voice_title[i].data; // originally the voice number itself

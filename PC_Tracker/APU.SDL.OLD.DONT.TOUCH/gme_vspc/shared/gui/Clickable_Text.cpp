@@ -39,3 +39,9 @@ void Clickable_Text::draw(Uint32 &color, bool prefill/*=true*/,
     Colors::Interface::color[Colors::Interface::Type::text_bg], prefill, Vflip, Hflip);
 }
 
+void Clickable_Text::draw(bool prefill/*=true*/, 
+  bool Vflip/*=false*/, bool Hflip/*=false*/)
+{
+  draw(color, prefill, Vflip, Hflip);
+}
+
