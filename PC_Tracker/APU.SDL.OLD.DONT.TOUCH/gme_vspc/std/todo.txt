@@ -108,6 +108,8 @@ Super Metroid - Tension:
 4: 65 72 20 53 31 2e 32 30
 Star Fox - Briefing (fast opening):
 5: 80 ff 9a ff 67 ff 0f ff
+Super Mario World:  (unused)
+6: FF 08 17 24 24 17 08 FF
 
 Optional:
 ---------

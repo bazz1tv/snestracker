@@ -184,7 +184,7 @@ void Main_Window::check_quit(SDL_Event &ev)
     case SDL_KEYDOWN:
     if (ev.key.keysym.sym == SDLK_ESCAPE)
     {
-      if (!locked())
+      if (!locked() && mode != MODE_EDIT_APU_PORT)
       {
         fprintf(stderr, "penis88\n");
         /*if (!g_cfg.nosound) {
@@ -1962,8 +1962,8 @@ void Main_Window::draw_time_and_echo_status(int *x/*=0*/, int *y/*=0*/)
 
   int yyy = yy;
   sprintf(tmpbuf, "Time....: %0d:%02d / %0d:%02d", 
-      int(player->emu()->tell()/1000)/60,
-      int((player->emu()->tell()/1000))%60,
+      (int(player->emu()->tell()/1000)/60),
+      (int((player->emu()->tell()/1000))%60),
       song_time/60, song_time%60);
   sdlfont_drawString(screen, xx, yyy, tmpbuf); yyy+=CHAR_HEIGHT;
 
