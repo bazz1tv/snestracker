@@ -403,12 +403,12 @@ void Dsp_Window::run()
     if (timer_is_active)
     {
       color = Colors::white;
-      timers.clickable_text[timer].color = Colors::white;
+      timers.label[timer].color = Colors::white;
     }
     else 
     {
       color = Colors::nearblack;
-      timers.clickable_text[timer].color = Colors::nearblack;
+      timers.label[timer].color = Colors::nearblack;
     }
 
     //print_then_inc_row_voice(label_x, color) // poor man's center on voices
@@ -417,15 +417,24 @@ void Dsp_Window::run()
     if (is_first_run)
     {
       int center_x = get_center_x(remember_x, max_x, "Timer X Ticks: $00");
-      timers.clickable_text[timer].rect.x = center_x;
-      timers.clickable_text[timer].rect.y = i;
+      timers.label[timer].rect.x = center_x;
+      timers.label[timer].rect.y = i;
     }
-    timers.clickable_text[timer].draw();
+    timers.label[timer].draw();
     // print timer ticks
-    Uint16 ticks = player->spc_read(0xfa+timer);
+    Uint8 ticks = player->spc_read(0xfa+timer);
+    DEBUGLOG("ticks = %02X\n", ticks);
     //if (ticks == 0) ticks = 256;
-    sprintf(tmpbuf, "Ticks: $%02X", timer, ticks);
-    print_then_inc_row_voice(timers.clickable_text[timer].rect.x + timers.clickable_text[timer].rect.w + CHAR_WIDTH, color)
+    sprintf(tmpbuf, "Ticks: $%02X", ticks);
+    int tick_x = timers.label[timer].rect.x + timers.label[timer].rect.w + CHAR_WIDTH;
+    
+    if (is_first_run)
+    {
+      timers.value[timer].rect.x = tick_x + ((strlen(tmpbuf)-2)*CHAR_WIDTH);
+      timers.value[timer].rect.y = i;
+    }
+    print_then_inc_row_voice(tick_x, color)
+    //timers.value[timer].draw();
     // print timer count
     //Uint8 count = player->spc_read(0xfd+timer); //player->spc_read(0xfa+timer);
     //if (ticks == 0) ticks = 256;
@@ -825,7 +834,9 @@ void Dsp_Window::receive_event(SDL_Event &ev)
             }
             tmp_ram |= i;
 
-            player->spc_write_dsp(addr, tmp_ram);
+            if (submode == EDIT_TIMER)
+              player->spc_write(addr, tmp_ram);
+            else player->spc_write_dsp(addr, tmp_ram);
             
             //if (mouseover_hexdump_area.horizontal) mouseover_hexdump_area.inc_cursor_pos();
             
@@ -1130,6 +1141,45 @@ void Dsp_Window::receive_event(SDL_Event &ev)
             break;
           }
         }
+
+        for (int i=0; i < NUM_TIMERS; i++)
+        {
+          //int x = ;
+          // coord_is_in_rect(int x, int y, SDL_Rect *r);
+          if (Utility::coord_is_in_rect(te->motion.x, te->motion.y, &timers.value[i].rect) )
+          {
+            fprintf(stderr, "OMG you clicked [%i]\n", i);
+
+            selected_index = i;
+            current_edit_addr = 0xfa + i; //gen_dsp_map[i].addr;
+            tmp_ram = player->spc_read(current_edit_addr);
+            submode = EDIT_TIMER; //EDIT_GEN_DSP_ADDR; //vs EDIT_VOICE_ADDR
+            fprintf(stderr, "tmpram = 0x%02x\n", tmp_ram);
+
+            cursor.rect.y = timers.value[i].rect.y;
+            // try to derive LO/HI byte clicked
+            
+
+            //int rect_x = ;
+            // assumption that all clicks will be over a "2char entry"
+            if (te->motion.x >= (timers.value[i].rect.x+CHAR_WIDTH))
+            {
+              fprintf(stderr, "clicked lonibble\n");
+              cursor.rect.x = timers.value[i].rect.x+CHAR_WIDTH;
+              highnibble = false;
+              //
+            }
+            else
+            {
+              highnibble=true;
+              cursor.rect.x = timers.value[i].rect.x;
+            }
+
+            enter_edit_mode();
+            break;
+          }
+        }
+
         for (int voice=0; voice < MAX_VOICES; voice++)
         {
           for (int dsp_reg=0; dsp_reg < SIZEOF_VOICE_ENUM; dsp_reg++)
@@ -1179,7 +1229,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
         for (int i=0; i < NUM_TIMERS; i++)
         {
           timers.num = i;
-          if (timers.clickable_text[i].check_mouse_and_execute(ev.button.x, ev.button.y))
+          if (timers.label[i].check_mouse_and_execute(ev.button.x, ev.button.y))
             return;
         }
         for (int i=0; i < NUM_DIR_ENTRIES_DISPLAYED; i++)

@@ -42,11 +42,17 @@ public Experience
       }
       BaseD::player->spc_write(0xf1, t);
     }
-    Clickable_Text clickable_text[3] = 
+    Clickable_Text label[3] = 
     {
       {"Timer 0", toggle_timer, &num},
       {"Timer 1", toggle_timer, &num},
       {"Timer 2", toggle_timer, &num} 
+    };
+    Clickable_Text value[3] = 
+    {
+      {"00"},
+      {"00"},
+      {"00"}
     };
     Uint8 num;
   } timers;
@@ -75,7 +81,8 @@ public Experience
     EDIT_GEN_DSP_ADDR,
     EDIT_GEN_DSP_8BIT_ADDR,
     EDIT_VOICE_ADDR,
-    EDIT_DIR
+    EDIT_DIR,
+    EDIT_TIMER
   };
   int submode=NONE;
   int current_edit_addr=0;
