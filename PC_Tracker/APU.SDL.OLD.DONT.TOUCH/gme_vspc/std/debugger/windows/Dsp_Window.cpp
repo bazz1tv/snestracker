@@ -381,7 +381,7 @@ void Dsp_Window::run()
 
 
   //
-  #define NUM_TIMERS 3
+  
   int timer_header_i = i; //- CHAR_HEIGHT*2;
   
   int remember_timer_i = i;
@@ -403,17 +403,29 @@ void Dsp_Window::run()
     if (timer_is_active)
     {
       color = Colors::white;
+      timers.clickable_text[timer].color = Colors::white;
     }
-    else color = Colors::nearblack;
+    else 
+    {
+      color = Colors::nearblack;
+      timers.clickable_text[timer].color = Colors::nearblack;
+    }
 
     //print_then_inc_row_voice(label_x, color) // poor man's center on voices
     //inc_row
 
+    if (is_first_run)
+    {
+      int center_x = get_center_x(remember_x, max_x, "Timer X Ticks: $00");
+      timers.clickable_text[timer].rect.x = center_x;
+      timers.clickable_text[timer].rect.y = i;
+    }
+    timers.clickable_text[timer].draw();
     // print timer ticks
     Uint16 ticks = player->spc_read(0xfa+timer);
     //if (ticks == 0) ticks = 256;
-    sprintf(tmpbuf, "Timer %d Ticks: $%02X", timer, ticks);
-    print_then_inc_row_voice(get_center_x(remember_x, max_x, tmpbuf), color)
+    sprintf(tmpbuf, "Ticks: $%02X", timer, ticks);
+    print_then_inc_row_voice(timers.clickable_text[timer].rect.x + timers.clickable_text[timer].rect.w + CHAR_WIDTH, color)
     // print timer count
     //Uint8 count = player->spc_read(0xfd+timer); //player->spc_read(0xfa+timer);
     //if (ticks == 0) ticks = 256;
@@ -1164,6 +1176,12 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
+        for (int i=0; i < NUM_TIMERS; i++)
+        {
+          timers.num = i;
+          if (timers.clickable_text[i].check_mouse_and_execute(ev.button.x, ev.button.y))
+            return;
+        }
         for (int i=0; i < NUM_DIR_ENTRIES_DISPLAYED; i++)
         {
           if (loop_clickable[i].clickable_text.check_mouse_and_execute(ev.button.x, ev.button.y))

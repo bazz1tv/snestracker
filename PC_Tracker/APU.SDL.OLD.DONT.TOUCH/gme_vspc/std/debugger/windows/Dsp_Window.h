@@ -13,7 +13,7 @@
 // clickable function
 int mute_solo_voice(void *data);
 
-
+static const Uint8 NUM_TIMERS=3;
 
 
 struct Dsp_Window : public BaseD, public Render_Context, public Player_Context,
@@ -25,8 +25,33 @@ public Experience
   void run();
   void draw();
   void receive_event(SDL_Event &ev);
-  static const int NUM_DIR_ENTRIES_DISPLAYED = 8*4*2;
 
+  struct Timers
+  {
+    static int toggle_timer(void *n)
+    {
+      Uint8 *num = (Uint8*)n;
+      Uint8 t;
+      if (BaseD::IAPURAM[0xf1] & (1<<*num))
+      {
+        t = BaseD::IAPURAM[0xf1] &= ~(1<<*num);
+      }
+      else 
+      {
+        t = BaseD::IAPURAM[0xf1] |= (1<<*num);
+      }
+      BaseD::player->spc_write(0xf1, t);
+    }
+    Clickable_Text clickable_text[3] = 
+    {
+      {"Timer 0", toggle_timer, &num},
+      {"Timer 1", toggle_timer, &num},
+      {"Timer 2", toggle_timer, &num} 
+    };
+    Uint8 num;
+  } timers;
+
+  static const int NUM_DIR_ENTRIES_DISPLAYED = 8*4*2;
   static uint16_t dir_ram_addr;
   static uint16_t *dir;
   static uint16_t dir_index;
