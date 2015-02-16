@@ -11,6 +11,15 @@ uint16_t Dsp_Window::dir_index;
 #define print_then_inc_row_voice(x,col) sdlfont_drawString(screen, x,i, tmpbuf, col); i+=CHAR_HEIGHT;
 #define inc_row i+=CHAR_HEIGHT;
 
+static int get_center_x(int remember_x, int x, char *newstr)
+{
+  int max_x = x; //strlen(newstr)*TILE_WIDTH + x;
+  x = remember_x + (max_x/2 - (strlen(newstr)*TILE_WIDTH/2));
+  x -= TILE_WIDTH; // cause i didnt like the orig result
+  return x;
+}
+  
+
 static Uint8* get_brr_end_block(Uint8 *brr_sample)
 {
   while (!(*brr_sample & 1))
@@ -360,16 +369,69 @@ void Dsp_Window::run()
   sdlfont_drawString(screen, header_x,o_i, tmpbuf, Colors::white);
 
   //i += (CHAR_HEIGHT*4); use for GEN DSP
-  i = remember_i4;
+  //i = remember_i4;
   
   //x = remember_x + ( - (strlen("Voices")*TILE_WIDTH/2) ;
   //sprintf(tmpbuf, "Voices");
   //print_then_inc_row(x)
   inc_row
+  inc_row
+  inc_row
+  inc_row
+
+
+  //
+  #define NUM_TIMERS 3
+  int timer_header_i = i; //- CHAR_HEIGHT*2;
+  
+  int remember_timer_i = i;
+  x = remember_x;
+  for (int timer=0; timer < NUM_TIMERS; timer++)
+  {
+    bool timer_is_active=false;
+    //i = remember_timer_i;
+    sprintf(tmpbuf,"%d",timer);
+    int label_x = x+4*CHAR_WIDTH;
+
+    Uint32 color;
+
+    Uint8 spc_control = IAPURAM[0xf1]; //player->spc_read(0xf1);
+    //DEBUGLOG("spc_control = %02X\n", spc_control);
+    if (spc_control & (1<<timer))
+      timer_is_active=true;
+
+    if (timer_is_active)
+    {
+      color = Colors::white;
+    }
+    else color = Colors::nearblack;
+
+    //print_then_inc_row_voice(label_x, color) // poor man's center on voices
+    //inc_row
+
+    // print timer ticks
+    Uint16 ticks = player->spc_read(0xfa+timer);
+    //if (ticks == 0) ticks = 256;
+    sprintf(tmpbuf, "Timer %d Ticks: $%02X", timer, ticks);
+    print_then_inc_row_voice(get_center_x(remember_x, max_x, tmpbuf), color)
+    // print timer count
+    //Uint8 count = player->spc_read(0xfd+timer); //player->spc_read(0xfa+timer);
+    //if (ticks == 0) ticks = 256;
+    //sprintf(tmpbuf, "Count: %d", count);
+    //print_then_inc_row_voice(x, color)
+
+    //x += (strlen(tmpbuf)+5+3+2)*CHAR_WIDTH;
+  } //x -= (strlen(tmpbuf)+5+3+2)*CHAR_WIDTH;
+  //sdlfont_drawString(screen, center_x(remember_x, x, "Timers", GENERAL_DSP_STR),timer_header_i, "Timers", Colors::white);
+  inc_row
+  inc_row
+  inc_row
+  inc_row
+
 
   x = remember_x;
-  remember_i3 = remember_i4 + (15*CHAR_HEIGHT);//+= (CHAR_HEIGHT*5);
-  int voice_header_i = remember_i3 - (TILE_HEIGHT*2);
+  remember_i3 = i;//+= (CHAR_HEIGHT*5);
+  int voice_header_i = remember_i3 - CHAR_HEIGHT*2; // - (TILE_HEIGHT*2);
   for (int voice=MAX_VOICES-1; voice >= 0; voice--)
   {
     if (voice >= 4)
@@ -427,15 +489,12 @@ void Dsp_Window::run()
       
 
     x += (strlen(tmpbuf)+3)*CHAR_WIDTH;
-  } x -= (strlen(tmpbuf)+3)*CHAR_WIDTH;
+  } x -= (3)*CHAR_WIDTH;
 
 
 
   // have max_X at this point
-  max_x = strlen_dsp_entry*TILE_WIDTH + x;
-  x = remember_x + (max_x/2 - (strlen("Voices")*TILE_WIDTH/2));
-  x -= TILE_WIDTH; // cause i didnt like the orig result
-  sdlfont_drawString(screen, x,voice_header_i, "Voices", Colors::white);
+  sdlfont_drawString(screen, get_center_x(remember_x, x, "Voices"),voice_header_i, "Voices", Colors::white);
   
   
   // DIR
