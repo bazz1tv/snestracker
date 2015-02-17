@@ -1383,6 +1383,7 @@ void Main_Window::draw_mouse_address()
 
 void Main_Window::reload()
 {
+  //scroll_tags.reset();
   fprintf(stderr, "DERP");
   BaseD::reload();
   draw_track_tag();
@@ -2029,7 +2030,7 @@ void Main_Window::update_window_title()
 void Main_Window::scroll_track_tags()
 {
   static Uint32 recorded_sec_elapsed=0;
-  Uint32 cur_sec_elapsed = time_cur / 200;
+  Uint32 cur_sec_elapsed = time_cur / 195;
   bool can_scrollnow = (cur_sec_elapsed > recorded_sec_elapsed);
   recorded_sec_elapsed = cur_sec_elapsed;
 
@@ -2066,11 +2067,11 @@ void Main_Window::draw_track_tag()
   //sprintf(tmpbuf, "Filename: %s", path);
   //sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT*2;
   
-  Scroll_Tag::compute(tag.game, &scroll_tags.game);
-  Scroll_Tag::compute(tag.song, &scroll_tags.song);
-  Scroll_Tag::compute(tag.author, &scroll_tags.author);
-  Scroll_Tag::compute(tag.dumper, &scroll_tags.dumper);
-  Scroll_Tag::compute(tag.comment, &scroll_tags.comment);
+  Scroll_Tag::compute(tag.game, &scroll_tags.game, 1000);
+  Scroll_Tag::compute(tag.song, &scroll_tags.song, 1200);
+  Scroll_Tag::compute(tag.author, &scroll_tags.author, 1400);
+  Scroll_Tag::compute(tag.dumper, &scroll_tags.dumper, 1600);
+  Scroll_Tag::compute(tag.comment, &scroll_tags.comment, 1800);
 
   sprintf(tmpbuf, "Game....: %s", tag.game);
   sdlfont_drawString(screen, INFO_X, y, tmpbuf); 

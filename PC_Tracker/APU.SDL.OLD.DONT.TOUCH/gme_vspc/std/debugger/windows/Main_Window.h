@@ -29,13 +29,16 @@ public Experience
   void scroll_track_tags();
   struct Scroll_Tag
   {
-    static void compute(const char *str, Scroll_Tag *st)
+    
+    static void compute(const char *str, Scroll_Tag *st, Uint32 extra_wait=1000)
     {
       if (strlen(str) > Scroll_Tag::MAX_NO_SCROLL_LEN)
       {
         st->times_to_scroll = strlen(str) - Scroll_Tag::MAX_NO_SCROLL_LEN;
         st->cur_index=0;
         st->direction=+1;
+        st->extra_wait=extra_wait;
+        st->cur_ticks_compare = SDL_GetTicks();
         st->need_to_scroll=true;
         st->str = str;
       }
@@ -58,7 +61,7 @@ public Experience
         else extra_wait=0;
       }
 
-
+      
       cur_index += direction;
       if (cur_index >= times_to_scroll)
       {
@@ -73,10 +76,11 @@ public Experience
         direction = -direction;
       }
       sdlfont_drawString(screen, rect.x, rect.y, &str[cur_index]);
+      
     }
     static const int MAX_NO_SCROLL_LEN = 22;
-    Uint32 cur_ticks_compare;
-    Uint32 extra_wait=0;
+    Uint32 cur_ticks_compare=SDL_GetTicks();
+    Uint32 extra_wait=1000;
     bool need_to_scroll=false;
     int times_to_scroll=0;
     const char *str;
@@ -89,9 +93,9 @@ public Experience
   struct
   {
     Scroll_Tag game, song, author, dumper, comment;
+    
     void scroll_draw()
     {
-
       song.scroll_draw();
       author.scroll_draw();
       dumper.scroll_draw();
