@@ -147,12 +147,12 @@ public:
 private:
 	Spc_Filter* spc_filter;
 	Music_Emu* emu_;
+	bool paused;
 	Spc_Emu* spc_emu_;
 	sample_t* scope_buf;
-
 	long sample_rate;
 	int scope_buf_size;
-	bool paused;
+	
 	track_info_t track_info_;
 	// byte alignment seems to matter, I've had app crash based on it..
 	// so always add variables at the END of the class to not disturb

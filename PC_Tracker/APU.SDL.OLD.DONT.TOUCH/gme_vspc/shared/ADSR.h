@@ -98,8 +98,9 @@ struct ADSR
 
   struct Decay_Context
   {
-    Decay_Context(Sustain_Level_Context *sustain_level_context) : menu(menu_items), 
-      sustain_level_context(sustain_level_context)
+    Decay_Context(Sustain_Level_Context *sustain_level_context) :  
+      sustain_level_context(sustain_level_context),
+      menu(menu_items)
     {
 
     }
@@ -144,7 +145,7 @@ struct ADSR
   {
     // Take parent class here
     Sustain_Release_Context(Sustain_Level_Context *sustain_level_context) : 
-      menu(menu_items), sustain_level_context(sustain_level_context)
+      sustain_level_context(sustain_level_context), menu(menu_items)
     {
       
     }

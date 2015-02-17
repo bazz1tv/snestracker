@@ -22,6 +22,8 @@ int BRR::write_plain_brr_to_file(BRR *brr)
     SDL_RWclose(file);
     free(outPath);
   }
+
+  return 0;
 }
 
 int BRR::write_loop_info_to_file(BRR *brr, SDL_RWops *file)
@@ -39,7 +41,7 @@ int BRR::write_loop_info_to_file(BRR *brr, SDL_RWops *file)
     offset = 0x0000;
     SDL_WriteLE16(file, offset);
   }
-  
+  return 0;
 }
 
 int BRR::write_brrp_to_file(BRR *brr)
@@ -74,13 +76,13 @@ int BRR::write_brrp_to_file(BRR *brr)
     SDL_RWclose(file);
     free(outPath);
   }
+  return 0;
 }
 
 int BRR::write_brri_to_file(BRR *brr)
 {
   SDL_RWops *file;
   nfdchar_t *outPath = NULL;
-  Uint8 is_loop_external;
 
   if (Utility::get_file_write_handle(&outPath, &file, BRRI_FILE_EXTENSION) == NFD_OKAY)
   {
@@ -109,6 +111,7 @@ int BRR::write_brri_to_file(BRR *brr)
     SDL_RWclose(file);
     free(outPath);
   }
+  return 0;
 }
 
 void BRR::solo_sample()
@@ -152,7 +155,7 @@ int BRR::check_brr(uint16_t *address)
   // get closest SRCN address before clicked address
   uint16_t lowest_closest_srcn_address=0xffff, lowest_offset=0xffff;
   uint16_t lowest_closest_brrloopstart_address_from_click=0xffff;
-  uint16_t lowest_offset2=0xffff, lowest_offset3=0xffff;
+  uint16_t lowest_offset2=0xffff;
   for (int i=0; i < MAX_SRCN_ENTRIES; i++)
   {
     if (report::src[i].brr_start == 0xffff) continue;
@@ -193,17 +196,16 @@ int BRR::check_brr(uint16_t *address)
 
   // solo the voices that are using this sample RIGHT NOW
   // if no voice is using this sample, just keep them all going..
-  uint8_t first_bit = 0;
-    for (int x=0; x < MAX_VOICES; x++)
+  for (int x=0; x < MAX_VOICES; x++)
+  {
+    if (srcn[x] == lowest_closest_srcn_address)
     {
-      if (srcn[x] == lowest_closest_srcn_address)
-      {
-        srcn_solo |= 1<<x;
-        one_solo = x;
-        corresponding_voice = x;
-        fprintf(stderr, "one_solos = %d", one_solo);
-      }
+      srcn_solo |= 1<<x;
+      one_solo = x;
+      corresponding_voice = x;
+      fprintf(stderr, "one_solos = %d", one_solo);
     }
+  }
 
 
   // get closest LOOP Address before clicked address

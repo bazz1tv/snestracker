@@ -47,36 +47,32 @@ int Menu_Bar::File_Context::open_spc(void *data)
     DEBUGLOG("check_paths_and_reload\n");
     BaseD::check_paths_and_reload(BaseD::nfd.paths, BaseD::nfd.numpaths);
   }
+  return 0;
 }
 
 int Menu_Bar::Track_Context::toggle_pause (void *data)
 {
-  
   BaseD::toggle_pause();
-  
+  return 0;
 }         
 int Menu_Bar::Track_Context::restart_current_track (void *data)
 {
   BaseD::restart_current_track();
+  return 0;
 }
 int Menu_Bar::Track_Context::prev_track (void *data)
 {
   BaseD::prev_track();
+  return 0;
 }        
 int Menu_Bar::Track_Context::next_track (void *data)
 {
   BaseD::next_track();
+  return 0;
 }
 int Menu_Bar::Track_Context::create_profile(void *data)
 {
-  BaseD::tmp_profile = new BaseD::Profile(BaseD::g_cfg.playlist[BaseD::g_cur_entry]); /* buffer large enough for data */
-  
-  
-
-  
-
-
-
+  BaseD::tmp_profile = new BaseD::Profile(BaseD::g_cfg.playlist[BaseD::g_cur_entry]);
   return 0;
 }
 
@@ -84,6 +80,7 @@ int Menu_Bar::Track_Context::create_profile(void *data)
 int Menu_Bar::Window_Context::restore_window_size(void *nada)
 {
   SDL_SetWindowSize(BaseD::sdlWindow, SCREEN_WIDTH, SCREEN_HEIGHT);
+  return 0;
 }
 
 

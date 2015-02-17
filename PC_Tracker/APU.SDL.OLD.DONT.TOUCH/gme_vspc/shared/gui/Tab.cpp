@@ -38,11 +38,12 @@ Tab::Tab(bool active/*=false*/) : Clickable_Rect(NULL,NULL)
 
 Tab::Tab(int x, int y, int pad_size, std::string str, 
   int (*action)(void *data)/*=NULL*/, void *data/*=NULL*/, bool active/*=false*/) : 
-str(str), 
 Clickable_Rect(action,data),
+str(str),
+active(active),
 pad_w_size(pad_size),
-pad_h_size(pad_size),
-active(active)
+pad_h_size(pad_size)
+
 {
   rect.x = x;
   rect.y = y;
@@ -52,8 +53,8 @@ active(active)
 
 Tab::Tab(int x, int y, int pad_w_size, int pad_h_size, std::string str,
   int (*action)(void *data)/*=NULL*/, void *data/*=NULL*/, bool active/*=false*/) : 
-str(str),
 Clickable_Rect(action,data),
+str(str),
 active(active),
 pad_w_size(pad_w_size),
 pad_h_size(pad_h_size)
@@ -66,8 +67,8 @@ pad_h_size(pad_h_size)
 
 Tab::Tab(int pad_w_size, int pad_h_size, std::string str,
   int (*action)(void *data)/*=NULL*/, void *data/*=NULL*/, bool active/*=false*/) : 
-str(str),
 Clickable_Rect(action,data),
+str(str),
 active(active),
 pad_w_size(pad_w_size),
 pad_h_size(pad_h_size)

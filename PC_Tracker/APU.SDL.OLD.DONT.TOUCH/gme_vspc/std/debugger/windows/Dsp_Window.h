@@ -41,6 +41,7 @@ public Experience
         t = BaseD::IAPURAM[0xf1] |= (1<<*num);
       }
       BaseD::player->spc_write(0xf1, t);
+      return 0;
     }
     Clickable_Text label[3] = 
     {
@@ -182,8 +183,8 @@ public Experience
 
   //Clickable_Text clickable_8bit_gen_dsp[SIZEOF_8BIT_GEN_DSP_ENUM];
   Clickable_Text clickable_gen_dsp[SIZEOF_GEN_DSP_ENUM]; // dir-to-be is included see below commented out dir enum entry
-  char selected_bit=0;
-  char selected_index=0, selected_sub_index=0; // last one is for voice 2d array subscript
+  Uint8 selected_bit=0;
+  Uint32 selected_index=0, selected_sub_index=0; // last one is for voice 2d array subscript
 
   //
   enum {

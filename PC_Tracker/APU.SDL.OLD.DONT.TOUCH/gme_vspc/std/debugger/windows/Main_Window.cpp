@@ -24,7 +24,7 @@ int Main_Window::Tempo::change(void *dblnewtempo)
 {
   double v = *(double*)dblnewtempo;
   //if (v >= 0.950 && v < 1.0) v = 1.0;
-  DEBUGLOG("tempo = %f", dblnewtempo);
+  DEBUGLOG("tempo = %f", v);
   BaseD::player->set_tempo(v);
   return 0;
 }
@@ -1098,6 +1098,55 @@ void Main_Window::receive_event(SDL_Event &ev)
       default:
       break;
   }
+}
+
+void Main_Window::Scroll_Tag::compute(const char *str, Scroll_Tag *st, Uint32 extra_wait/*=1000*/)
+{
+  if (strlen(str) > Scroll_Tag::MAX_NO_SCROLL_LEN)
+  {
+    st->times_to_scroll = strlen(str) - Scroll_Tag::MAX_NO_SCROLL_LEN;
+    st->cur_index=0;
+    st->direction=+1;
+    st->extra_wait=extra_wait;
+    st->cur_ticks_compare = SDL_GetTicks();
+    st->need_to_scroll=true;
+    st->str = str;
+  }
+  else
+  {
+    st->need_to_scroll=false;
+  }
+}
+void Main_Window::Scroll_Tag::scroll_draw()
+{
+  if (!need_to_scroll)
+  { 
+    return;
+  }
+
+  if (extra_wait)
+  {
+    if (!( (SDL_GetTicks() - cur_ticks_compare) >= extra_wait) )
+      return;
+    else extra_wait=0;
+  }
+
+  
+  cur_index += direction;
+  if (cur_index >= times_to_scroll)
+  {
+    extra_wait = 1000;
+    cur_ticks_compare = SDL_GetTicks();
+    direction = -direction;
+  }
+  else if (cur_index <= 0)
+  {
+    extra_wait = 1000; //ms
+    cur_ticks_compare = SDL_GetTicks();
+    direction = -direction;
+  }
+  sdlfont_drawString(screen, rect.x, rect.y, &str[cur_index]);
+  
 }
 
 

@@ -3,8 +3,8 @@
 #include "DEBUGLOG.h"
 #include "Audio_Context.h"
 App::App(int &argc, char **argv, int samplerate/*=44100*/) : 
-debugger(argc,argv),
-app_settings(new App_Settings(&file_system))
+app_settings(new App_Settings(&file_system)),
+debugger(argc,argv)
 {
   App_Settings_Context::app_settings = app_settings;
   Player_Context::player = &player;

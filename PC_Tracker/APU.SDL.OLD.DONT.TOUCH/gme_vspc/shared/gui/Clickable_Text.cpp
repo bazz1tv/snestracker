@@ -4,22 +4,22 @@
 #include <assert.h>
 
 Clickable_Text::Clickable_Text() : 
-str(""),
-Clickable_Rect(action,data)
+Clickable_Rect(action,data),
+str("")
 {}
 
 Clickable_Text::Clickable_Text(std::string str, int (*action)(void *data)/*=NULL*/, 
 void *data/*=NULL*/) : 
-str(str),
-Clickable_Rect(action,data)
+Clickable_Rect(action,data),
+str(str)
 {
   rect.w = str.length()*CHAR_WIDTH; // could add padding
   rect.h = CHAR_HEIGHT;
 }
 Clickable_Text::Clickable_Text(std::string str, int x, int y, 
 int (*action)(void *data)/*=NULL*/, void *data/*=NULL*/) : 
-str(str),
-Clickable_Rect(action,data)
+Clickable_Rect(action,data),
+str(str)
 {
   setup(x,y);
 }

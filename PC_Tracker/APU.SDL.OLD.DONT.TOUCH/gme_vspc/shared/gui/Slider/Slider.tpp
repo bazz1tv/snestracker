@@ -207,12 +207,13 @@ Slider<T>::Slider(T &var, int x, int y,
 	SDL_Color panel_color,
 	SDL_Color value_color,
 	SDL_Color adjuster_color) :
+is_db_slider(is_db_slider),
 target_value(var),
-target_valueRange(range_min, range_max),
 action(action),
 colors({panel_color, value_color, adjuster_color}),
 precision(precision),
-is_db_slider(is_db_slider)
+target_valueRange(range_min, range_max)
+
 //panel_x(x),panel_y(y),
 //width(width), height(height)
 {

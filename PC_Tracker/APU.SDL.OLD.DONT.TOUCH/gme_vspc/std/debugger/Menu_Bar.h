@@ -25,7 +25,7 @@ struct Menu_Bar
     }
 
     static int open_spc(void *data);
-    static int quit(void *data) { BaseD::quitting = true; }
+    static int quit(void *data) { BaseD::quitting = true; return 0; }
 
     Expanding_List menu;
     Context_Menu_Item menu_items[4] = 
@@ -52,7 +52,7 @@ struct Menu_Bar
     static int restart_current_track (void *data);
     static int prev_track (void *data);          
     static int next_track (void *data); 
-    static int test(void *data) { fprintf(stderr, "test"); } 
+    //static int test(void *data) { fprintf(stderr, "test"); return 0; } 
     static int create_profile(void *data);
 
     Expanding_List menu;

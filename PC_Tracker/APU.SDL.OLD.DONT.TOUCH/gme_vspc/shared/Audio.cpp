@@ -24,7 +24,7 @@ double Audio::calculate_fullscale_db_from_postgain_sample(int *sample, double mi
 
   if (*sample > 0)
     return (double)20.0 * (double)log10(*sample / 32767);
-  if (*sample < 0)
+  //if (*sample < 0)
     return (double)20.0 * (double)log10(abs(*sample) / 32768);
 }
 

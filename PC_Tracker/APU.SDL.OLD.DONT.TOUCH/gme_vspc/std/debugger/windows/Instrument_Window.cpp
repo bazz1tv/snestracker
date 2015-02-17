@@ -36,7 +36,7 @@ void Instrument_Window::run()
 
   adsr_context_menus.update(adsr1, adsr2);
 
-  Uint8 envx = player->spc_read_dsp(0x10*voice.n + dsp_reg::envx);
+  //Uint8 envx = player->spc_read_dsp(0x10*voice.n + dsp_reg::envx);
   /*if (envx)
   {
     if (!started)
@@ -455,10 +455,7 @@ void Instrument_Window::receive_event(SDL_Event &ev)
     {
       if (ev.user.code == UserEvents::mouse_react)
       {
-        SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
-
-        
-        
+        //SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
       }
       else if (ev.user.code == UserEvents::play_pitch)
       {

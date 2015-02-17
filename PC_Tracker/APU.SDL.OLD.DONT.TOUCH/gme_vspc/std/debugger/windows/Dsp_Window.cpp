@@ -11,7 +11,7 @@ uint16_t Dsp_Window::dir_index;
 #define print_then_inc_row_voice(x,col) sdlfont_drawString(screen, x,i, tmpbuf, col); i+=CHAR_HEIGHT;
 #define inc_row i+=CHAR_HEIGHT;
 
-static int get_center_x(int remember_x, int x, char *newstr)
+static int get_center_x(int remember_x, int x, const char *newstr)
 {
   int max_x = x; //strlen(newstr)*TILE_WIDTH + x;
   x = remember_x + (max_x/2 - (strlen(newstr)*TILE_WIDTH/2));
@@ -46,6 +46,7 @@ int Dsp_Window::Loop_Clickable::toggle_loop(void *index)
     *brr_sample |= 2;
     //dsp_window->loop_clickable[*iindex].clickable_text.color = Colors::white;
   }
+  return 0;
 }
 
 Dsp_Window::Dsp_Window()
@@ -382,16 +383,16 @@ void Dsp_Window::run()
 
   //
   
-  int timer_header_i = i; //- CHAR_HEIGHT*2;
+  //int timer_header_i = i; //- CHAR_HEIGHT*2;
   
-  int remember_timer_i = i;
+  //int remember_timer_i = i;
   x = remember_x;
   for (int timer=0; timer < NUM_TIMERS; timer++)
   {
     bool timer_is_active=false;
     //i = remember_timer_i;
     sprintf(tmpbuf,"%d",timer);
-    int label_x = x+4*CHAR_WIDTH;
+    //int label_x = x+4*CHAR_WIDTH;
 
     Uint32 color;
 
@@ -762,7 +763,7 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     case SDL_KEYDOWN:
     {
       int scancode = ev.key.keysym.sym;
-      bool is_shift_pressed=false;
+      //bool is_shift_pressed=false;
       switch (scancode)
       {
         case SDLK_TAB:

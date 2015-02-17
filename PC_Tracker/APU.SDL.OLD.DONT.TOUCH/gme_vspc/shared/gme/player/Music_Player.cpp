@@ -81,13 +81,13 @@ void Music_Player::dec_curtrack() { curtrack--; }
 
 Music_Player::Music_Player() :
 	gain_db(0.0),
-	emu_(0),
-	scope_buf(0),
-	paused(false),
-	curtrack(0),
-	filetrack(0),
 	track_started(false),
-	spc_filter(new Spc_Filter)
+	spc_filter(new Spc_Filter),
+	emu_(0),
+	paused(false),
+	scope_buf(0),
+	curtrack(0),
+	filetrack(0)
 {
 	spc_filter->set_gain(Spc_Filter::gain_unit * 1);
 	spc_filter->set_bass(Spc_Filter::bass_max);
@@ -199,7 +199,15 @@ void Music_Player::fade_out(bool threaded/*=false*/)
 {
 	if (threaded)
 		thread = SDL_CreateThread(&Music_Player::fade_out, "FadeOutThread", this);
-	else thread_fade_out();
+	else 
+	{
+		bool p = paused;
+		paused = false;
+		thread_fade_out();
+		paused = p;
+		if (paused)
+			sound_stop();
+	}
 }
 void Music_Player::thread_fade_out()
 {
@@ -364,32 +372,6 @@ void Music_Player::mute_voices( int mask )
 }
 
 #define round(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
-// performs hard clamp signed 16 -32768 or 32767
-/*#define CLAMP16( io )\
-{\
-	if ( (int16_t) io != io )\
-	{\
-		/*fprintf(stderr,"\t%d : ", io);*/\
-	//	io = (io >> 31) ^ 0x7FFF;\
-		/*fprintf(stderr,"\t%d\n", io);*/\
-	//}\
-//}*/
-
-inline sample_t TPMixSamples(sample_t a, sample_t b) {
-    return  
-            // If both samples are negative, mixed signal must have an amplitude between the lesser of A and B, and the minimum permissible negative amplitude
-            a < 0 && b < 0 ?
-                ((int)a + (int)b) - (((int)a * (int)b)/INT16_MIN) :
- 
-            // If both samples are positive, mixed signal must have an amplitude between the greater of A and B, and the maximum permissible positive amplitude
-            ( a > 0 && b > 0 ?
-                ((int)a + (int)b) - (((int)a * (int)b)/INT16_MAX)
- 
-            // If samples are on opposite sides of the 0-crossing, mixed signal should reflect that samples cancel each other out somewhat
-            :
-                a + b);
-}
-//extern double gain;
 
 void Music_Player::apply_gain(sample_t* out, int count )
 {

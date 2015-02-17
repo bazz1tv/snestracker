@@ -51,6 +51,8 @@ int hexchar_to_int(char scancode)
     return (scancode - 'A') + 0x0a;
   else if ((scancode >= 'a') && (scancode <= 'f'))
     return (scancode - 'a') + 0x0a;
+
+  return -1;
 }
 
 nfdresult_t get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file, const char *filter_list/*=NULL*/)
@@ -96,7 +98,6 @@ nfdresult_t get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file, const c
 
 nfdresult_t get_file_read_path(nfdchar_t **outPath, const char *filter_list/*=NULL*/)
 {
-  char tmpbuf[200];
   *outPath=NULL;
   nfdresult_t result = NFD_OpenDialog( filter_list, NULL, outPath );
   SDL_RaiseWindow(BaseD::sdlWindow);

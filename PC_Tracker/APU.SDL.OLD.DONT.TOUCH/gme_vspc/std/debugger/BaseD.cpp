@@ -82,7 +82,6 @@ BaseD::Profile::Profile(const char* spc_filename)
 void BaseD::Profile::process()
 {
   BaseD::player->pause(0);
-
   elapsed_seconds = (int((BaseD::player->emu()->tell()/1000)));
   if (elapsed_seconds == seconds_covered+1)
   {
@@ -90,6 +89,7 @@ void BaseD::Profile::process()
     DEBUGLOG("seconds elapsed: %d\n", elapsed_seconds);
     seconds_covered = elapsed_seconds;
   }
+  //DEBUGLOG("f\n");
   if (seconds_covered == 7)
   {
     BaseD::Profile::is_profiling=false;
@@ -100,28 +100,34 @@ void BaseD::Profile::process()
 int BaseD::switch_to_memory(void *data)
 {
   BaseD::switch_mode(BaseD::GrandMode::MAIN);
+  return 0;
 }
 int BaseD::switch_to_dsp(void *data)
 {
   BaseD::switch_mode(BaseD::GrandMode::DSP_MAP);
+  return 0;
 }
 int BaseD::switch_to_instrument(void *data)
 {
   BaseD::switch_mode(BaseD::GrandMode::INSTRUMENT);
+  return 0;
 }
 
 int BaseD::Clickable::toggle_echo(void *nada)
 {
   player->spc_emu()->toggle_echo();
+  return 0;
 }
 
 int BaseD::Clickable::inc_tempo(void *nada)
 {
   player->inc_tempo();
+  return 0;
 }
 int BaseD::Clickable::dec_tempo(void *nada)
 {
   player->dec_tempo();
+  return 0;
 }
 
 void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/, 
@@ -432,7 +438,7 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
 {
   char *path=NULL;
   bool using_playlist=false;
-  DEBUGLOG("g_cfg.playlist = %x\n", g_cfg.playlist);
+  DEBUGLOG("g_cfg.playlist = %lx\n", (uintptr_t)g_cfg.playlist);
   DEBUGLOG("g_cur_entry = %d", g_cur_entry);
   if (!paths)
   {
@@ -451,7 +457,7 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
     path = g_cfg.playlist[g_cur_entry];
   }
 
-  DEBUGLOG("path = %d\n", path);
+  //DEBUGLOG("path = %d\n", path);
   if (path == NULL)
   {
     //using_playlist = false;
@@ -563,15 +569,14 @@ void BaseD::prev_track()
 
 void BaseD::next_track25()
 {
-  int tmp = g_cfg.num_files - g_cur_entry -1;
-              g_cur_entry+=25;
-              if (g_cur_entry>=g_cfg.num_files)
-              { 
-                int derp =  g_cur_entry - g_cfg.num_files;
-                if (derp < g_cfg.num_files)
-                  g_cur_entry = derp;
-                else g_cur_entry=g_cfg.num_files-1;
-              }
+  g_cur_entry+=25;
+  if (g_cur_entry>=g_cfg.num_files)
+  { 
+    int derp =  g_cur_entry - g_cfg.num_files;
+    if (derp < g_cfg.num_files)
+      g_cur_entry = derp;
+    else g_cur_entry=g_cfg.num_files-1;
+  }
 }
 
 void BaseD::prev_track25()

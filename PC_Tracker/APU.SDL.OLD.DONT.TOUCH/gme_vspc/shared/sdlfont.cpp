@@ -69,7 +69,6 @@ static void _sdlfont_drawChar(SDL_Surface *dst, int X, int Y, const char ch, Uin
 {
 	int x, y;
 	unsigned char *c;
-	unsigned char cc;
 	
 	c = font_getChar(ch);
 	

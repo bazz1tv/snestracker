@@ -14,10 +14,9 @@ struct Tab : public Clickable_Rect
   int horiz_pixel_length();
   bool check_mouse_and_execute(int x, int y, void *newdata=NULL);
   
-  int pad_w_size, pad_h_size;
-  //Clickable_Rect clickable;
   std::string str;
   bool active=false;
+  int pad_w_size, pad_h_size;  
 };
 
 /*
