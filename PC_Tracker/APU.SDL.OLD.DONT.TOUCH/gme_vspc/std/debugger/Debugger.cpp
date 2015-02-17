@@ -2,6 +2,7 @@
 #include <getopt.h>
 #include "utility.h"
 #include "Screen.h"
+#include "sdl_userevents.h"
 
 
 #define L_FLAG 0
@@ -91,6 +92,13 @@ void Debugger::handle_events()
       check_paths_and_reload(&dropped_filedir, 1, true);
       SDL_free(dropped_filedir);    // Free dropped_filedir memory
       SDL_RaiseWindow(sdlWindow);
+    }
+    else if (ev.type == SDL_USEREVENT)
+    {
+      if (ev.user.code == UserEvents::sound_stop)
+      {
+        sound_stop();
+      }
     }
     exp->receive_event(ev);
   }

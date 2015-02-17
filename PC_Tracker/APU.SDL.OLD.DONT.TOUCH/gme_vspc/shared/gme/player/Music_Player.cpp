@@ -28,6 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
 #include "debugger/globals.h"
 #include "DEBUGLOG.h"
+#include "sdl_userevents.h"
 
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
 const int fill_rate = 45; //45;
@@ -37,9 +38,9 @@ double Music_Player::min_gain_db=-96.0, Music_Player::max_gain_db = 20.0;
 // Simple sound driver using SDL
 typedef void (*sound_callback_t)( void* data, short* out, int count );
 static const char* sound_init( long sample_rate, int buf_size, sound_callback_t, void* data );
-static void sound_start();
-static void sound_stop();
-static void sound_cleanup();
+//static void sound_start();
+//static void sound_stop();
+//static void sound_cleanup();
 
 
 
@@ -187,35 +188,42 @@ int Music_Player::track_count() const
 int Music_Player::fade_out(void *ptr)
 {
 	Music_Player *p = (Music_Player*)ptr;
-	bool paused = p->paused;
-	p->paused = false;
 	p->thread_fade_out();
-	p->paused=paused;
-	if (paused) sound_stop();
+	//if (paused) sound_stop();
 	return 0;
 }
 
 void Music_Player::fade_out(bool threaded/*=false*/)
 {
+	if (SDL_GetAudioDeviceStatus(audio->devices.id) == SDL_AUDIO_PAUSED)
+		return;
+	//if (paused)
+		//return;
+
 	if (threaded)
 		thread = SDL_CreateThread(&Music_Player::fade_out, "FadeOutThread", this);
 	else 
 	{
-		bool p = paused;
-		paused = false;
 		thread_fade_out();
-		paused = p;
-		if (paused)
-			sound_stop();
 	}
 }
 void Music_Player::thread_fade_out()
 {
-	if (paused) return;
 	gain_t linear_gain=this->linear_gain; 
 	needs_to_fade_out=true;
 	while (needs_to_fade_out);
 	this->linear_gain = linear_gain;
+	
+	if (paused)
+	{
+		SDL_Event event2;
+	  event2.type = SDL_USEREVENT;
+	  event2.user.code = UserEvents::sound_stop;
+	  event2.user.data1 = 0;
+	  event2.user.data2 = 0;
+	  SDL_PushEvent(&event2);
+	}
+	//sound_stop();
 }
 
 blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
@@ -313,15 +321,15 @@ bool Music_Player::is_paused()
 
 void Music_Player::pause( int b, bool with_fade/*=true*/, bool fade_threaded/*=true*/ )
 {
-
-	paused = b;
 	if ( b )
 	{
+		paused = b;
 		if (with_fade) fade_out(fade_threaded);
 		else sound_stop();
 	}
 	else
 	{
+		paused = b;
 		if (!track_started)
 		{
 			start_track(curtrack);
@@ -597,13 +605,13 @@ static const char* sound_init( long sample_rate, int buf_size,
 	return 0;
 }
 
-static void sound_start()
+void sound_start()
 {
 	//SDL_UnlockAudio();
 	SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 0);
 }
 
-static void sound_stop()
+void sound_stop()
 {
 	SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
 	
@@ -613,7 +621,7 @@ static void sound_stop()
 	SDL_UnlockAudioDevice(Audio_Context::audio->devices.id);
 }
 
-static void sound_cleanup()
+void sound_cleanup()
 {
 	sound_stop();
 	SDL_CloseAudioDevice(Audio_Context::audio->devices.id);

@@ -7,6 +7,7 @@ namespace UserEvents
   {
     #include "sdl_dblclick_events.h"
     play_pitch,
-    keyoff
+    keyoff,
+    sound_stop
   };
 }

@@ -15,6 +15,12 @@
 
 typedef double gain_t;
 
+void sound_start();
+
+void sound_stop();
+
+void sound_cleanup();
+
 
 // should be in the player
 void prev_track();

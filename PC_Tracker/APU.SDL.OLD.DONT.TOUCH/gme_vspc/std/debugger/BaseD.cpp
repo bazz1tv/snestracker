@@ -541,7 +541,9 @@ void BaseD::toggle_pause()
   // the player stops, but if the user tries to resume with space_bar or play command
   // this will restart from beginning of playlist
   if (g_cur_entry>=g_cfg.num_files)
+  {
     restart_track();
+  }
   else 
   {
     if_exp_is_instr_window_then_restore_spc();
@@ -560,6 +562,7 @@ void BaseD::restart_track()
 
 void BaseD::prev_track()
 {
+  
   player->fade_out();
   //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry--;
@@ -595,6 +598,7 @@ void BaseD::prev_track25()
 
 void BaseD::next_track()
 {
+  
   player->fade_out();
   //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry++;

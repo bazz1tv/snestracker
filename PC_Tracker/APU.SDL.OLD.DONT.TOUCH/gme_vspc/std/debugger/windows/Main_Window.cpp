@@ -1156,6 +1156,8 @@ void Main_Window::run()
   if ( player->has_no_song )
     return;
 
+  DEBUGLOG("paused = %d", player->is_paused());
+
   if (BaseD::Profile::is_profiling)
   {
     tmp_profile->process();
