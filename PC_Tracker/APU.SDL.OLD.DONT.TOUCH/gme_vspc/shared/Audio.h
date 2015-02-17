@@ -15,5 +15,6 @@ struct Audio
     void query();
     char **device_strings=NULL;
     SDL_AudioDeviceID id;
+    static const char *selected_audio_out_dev;
   } devices;
 };

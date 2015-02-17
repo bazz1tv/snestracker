@@ -18,6 +18,7 @@ struct BaseD : public Render_Context, public Player_Context
 {
   struct Profile
   {
+    Profile(const char*spc_filename);
     ~Profile() { fprintf(stderr, "~Profile\n"); }
     void process();
     unsigned char orig_spc_state[Snes_Spc::spc_file_size];

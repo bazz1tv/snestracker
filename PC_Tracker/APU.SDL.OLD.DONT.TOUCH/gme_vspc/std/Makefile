@@ -56,6 +56,7 @@ $(EXECUTABLE).app: $(EXECUTABLE) unrar
 	cp std $@/Contents/MacOS
 	cp Info.plist $@/Contents
 	cp unrar $@/Contents/Resources
+	touch $@
 	
 $(EXECUTABLE): $(OBJECTS) unrar
 	#echo $(SOURCES)

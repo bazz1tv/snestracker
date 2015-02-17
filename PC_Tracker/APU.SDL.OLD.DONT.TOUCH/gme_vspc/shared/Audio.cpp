@@ -1,6 +1,7 @@
 #include "Audio.h"
 #include "DEBUGLOG.h"
 int Audio::Devices::how_many=0;
+const char * Audio::Devices::selected_audio_out_dev=NULL;
 
 
 double Audio::calculate_linear_gain_from_db(double gain_db, double min_gain/*=-96.0*/)

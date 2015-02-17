@@ -40,6 +40,45 @@ Menu_Bar * BaseD::menu_bar=NULL;
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
 
+BaseD::Profile::Profile(const char* spc_filename)
+{
+  is_profiling = true;
+
+  BaseD::player->pause(1, true, false);
+  BaseD::reload();
+  // get pointer to spc_file_t
+  // open the SPC File
+  //DEBUGLOG("spc file path = %s\n", BaseD::g_cfg.playlist[BaseD::g_cur_entry]);
+  //const char *spc_filename = BaseD::g_cfg.playlist[BaseD::g_cur_entry];
+  // need to open a file
+  SDL_RWops *orig_spc_file = SDL_RWFromFile(spc_filename, "rb");
+  if (orig_spc_file == NULL)
+  {
+    sprintf(BaseD::tmpbuf, "Warning: Unable to open file %s!\n %s", spc_filename, SDL_GetError() );
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                   "Could not open FILE!",
+                   BaseD::tmpbuf,
+                   NULL);
+    //return -1;
+    is_profiling=false;
+    delete this;
+  }
+
+  if (SDL_RWread(orig_spc_file, orig_spc_state, Snes_Spc::spc_file_size, 1) == 0)
+  {
+    sprintf(BaseD::tmpbuf, "Warning: Unable to read file %s!\n %s", spc_filename, SDL_GetError() );
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                   "Could not read file!",
+                   BaseD::tmpbuf,
+                   NULL);
+    SDL_RWclose(orig_spc_file);
+    //return -1;
+    is_profiling=false;
+    delete this;
+  }
+  else SDL_RWclose(orig_spc_file);
+}
+
 void BaseD::Profile::process()
 {
   BaseD::player->pause(0);

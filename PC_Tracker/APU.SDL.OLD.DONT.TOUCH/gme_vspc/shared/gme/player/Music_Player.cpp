@@ -569,7 +569,24 @@ static const char* sound_init( long sample_rate, int buf_size,
 	as.callback = sdl_callback;
 	as.samples  = buf_size;
 	//DEBUGLOG("herpa %s\n",Audio_Context::audio->devices.device_strings[1]);
-	Audio_Context::audio->devices.id = SDL_OpenAudioDevice(Audio_Context::audio->devices.device_strings[0], Audio::Devices::playback, &as, &have, 0 );
+	char *audio_out_dev = App_Settings_Context::app_settings->vars.audio_out_dev;
+	if (audio_out_dev)
+	{
+		bool match=false;
+		for (int i=0; i < Audio::Devices::how_many; i++)
+		{
+			if (!strcmp(audio_out_dev, Audio_Context::audio->devices.device_strings[i]))
+			{
+				match = true;
+			}
+		}
+		if (!match)
+			audio_out_dev = Audio_Context::audio->devices.device_strings[0];
+	}
+	else audio_out_dev = Audio_Context::audio->devices.device_strings[0];
+
+	Audio::Devices::selected_audio_out_dev = audio_out_dev;
+	Audio_Context::audio->devices.id = SDL_OpenAudioDevice(audio_out_dev, Audio::Devices::playback, &as, &have, 0 );
 	if (Audio_Context::audio->devices.id  == 0 )
 	{
 		const char* err = SDL_GetError();

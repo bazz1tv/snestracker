@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cstring>
 #include "utility.h"
+#include "Audio.h"
 
 int App_Settings::MAXLINE=600;
 #define DEBUGLOG printf
@@ -19,6 +20,11 @@ App_Settings::App_Settings(File_System *file_system) : file_system(file_system)
 App_Settings::~App_Settings()
 {
   save();
+  if (vars.audio_out_dev)
+  {
+    SDL_free(vars.audio_out_dev);
+  }
+  
 }
 
 void App_Settings::save()
@@ -36,6 +42,10 @@ void App_Settings::save()
 
   //sprintf( row, "Music %d\n", pSettings->Music );
   row << "midi_port " << (int)vars.midi_port << std::endl;
+  ofs.write( row.str().c_str(), row.str().length() );
+  Utility::clearsstream(row);
+
+  row << "audio_out_dev " << Audio::Devices::selected_audio_out_dev << std::endl;
   ofs.write( row.str().c_str(), row.str().length() );
   Utility::clearsstream(row);
   //sprintf( row, "Sounds %d\n", pSettings->Sounds );
@@ -174,6 +184,29 @@ int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int 
     }
     vars.midi_port = ibuffer;
     fprintf(stderr, "midi_port set to %d\n", vars.midi_port);
+  }
+  else if ( strcmp( parts[0], "audio_out_dev") == 0 )
+  {
+    if (count < 2) return 0;
+    if (strlen(parts[1]) > 1000)
+      return 0;
+    size_t total_strlen=0;
+    for (int i=1; i < count; i++)
+    {
+      total_strlen += strlen(parts[i]);
+      total_strlen += 1;
+    }
+    vars.audio_out_dev = (char *) SDL_malloc(sizeof(char) * (total_strlen));
+    strcpy(vars.audio_out_dev, parts[1]);
+    if (count > 2)
+    {
+      for (int i=2; i < count; i++)
+      {
+        strcat(vars.audio_out_dev, " ");
+        strcat(vars.audio_out_dev, parts[i]);
+      }
+    }
+    fprintf(stderr, "Audio Out Device set to %s\n", vars.audio_out_dev);
   }
   else
   {

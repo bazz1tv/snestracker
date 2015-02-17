@@ -20,12 +20,13 @@ public:
 private:
   //int parse_args(int argc, char **argv);
   //Tracker tracker;
+  App_Settings *app_settings;
   Debugger debugger;
   Music_Player player;
-  App_Settings app_settings;
+  
   File_System file_system;
-  Midi midi;
-  Audio audio;
+  Midi *midi;
+  Audio *audio;
 
 private:
   int init_sdl();

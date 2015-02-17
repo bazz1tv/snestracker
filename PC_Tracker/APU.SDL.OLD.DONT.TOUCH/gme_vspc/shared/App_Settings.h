@@ -32,6 +32,7 @@ public:
   struct 
   {
     Uint8 midi_port=0;
+    char *audio_out_dev=NULL;
   } vars;
 
   std::string filepath;

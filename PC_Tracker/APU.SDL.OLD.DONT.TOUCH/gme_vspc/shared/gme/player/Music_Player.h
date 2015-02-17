@@ -11,6 +11,7 @@
 #include "gme/Spc_Filter.h"
 #include "types.h"
 #include "Audio_Context.h"
+#include "App_Settings_Context.h"
 
 typedef double gain_t;
 
@@ -23,7 +24,7 @@ void restart_track();
 
 //
 
-class Music_Player : public Audio_Context {
+class Music_Player : public Audio_Context, public App_Settings_Context {
 public:
 	bool filter_is_active=false;
 	bool has_no_song = true;

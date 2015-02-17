@@ -4,17 +4,20 @@
 #include "Audio_Context.h"
 App::App(int &argc, char **argv, int samplerate/*=44100*/) : 
 debugger(argc,argv),
-app_settings(&file_system)
+app_settings(new App_Settings(&file_system))
 {
+  App_Settings_Context::app_settings = app_settings;
   Player_Context::player = &player;
-  Audio_Context::audio = &audio;
+  audio = new Audio;
+  Audio_Context::audio = audio;
   handle_error(player.init(samplerate) );
   file_system.init();
   //App_Settings_Context::app_settings = &app_settings;
-  Midi_Context::midi = &midi;
-  App_Settings_Context::app_settings = &app_settings;
-  File_System_Context::file_system = &file_system;
   
+  midi = new Midi;
+  Midi_Context::midi = midi;
+  
+  File_System_Context::file_system = &file_system;
 }
 
 void App::run()
@@ -34,5 +37,9 @@ App::~App()
     SDL_DestroyRenderer(sdlRenderer);
   if(sdlWindow)
     SDL_DestroyWindow(sdlWindow);
+
+  delete app_settings;
+  delete midi;
+  delete audio;
 }
 
