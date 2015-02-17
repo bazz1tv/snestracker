@@ -49,13 +49,35 @@ int Dsp_Window::Loop_Clickable::toggle_loop(void *index)
   return 0;
 }
 
-Dsp_Window::Dsp_Window()
+Dsp_Window::Dsp_Window() : 
+screw_clickable("Screw Around", toggle_screw, this, Colors::nearblack)
 {
   clear_used_srcn();
   /*for (int i=0; i < NUM_DIR_ENTRIES_DISPLAYED; i++)
   {
     loop_clickable[i].index = i;
   }*/
+}
+
+int Dsp_Window::toggle_screw(void *dsp_win)
+{
+  Dsp_Window *dsp_window = (Dsp_Window*)dsp_win;
+  //*is_screwing = !*is_screwing;
+  dsp_window->is_screwing = !dsp_window->is_screwing;
+  if (dsp_window->is_screwing)
+  {
+    BaseD::Hack_Spc::pause_spc();
+  }
+  else
+  {
+    BaseD::Hack_Spc::restore_spc();
+  }
+}
+
+void Dsp_Window::reset_screw()
+{
+  is_screwing = false;
+  BaseD::Hack_Spc::restore_spc();
 }
 
 int mute_solo_voice(void *data)
@@ -368,6 +390,15 @@ void Dsp_Window::run()
   int strlen_dsp_header = strlen(tmpbuf);
   int header_x = (whole_length/2 - (strlen_dsp_header*CHAR_WIDTH)/2) + remember_x;
   sdlfont_drawString(screen, header_x,o_i, tmpbuf, Colors::white);
+
+  if (is_first_run)
+  {
+    screw_clickable.setup(header_x+(strlen(GENERAL_DSP_STR)+4)*CHAR_WIDTH, o_i);
+  }
+  if (is_screwing)
+    screw_clickable.color = Colors::Interface::color[Colors::Interface::text_fg];
+  else screw_clickable.color = Colors::nearblack;
+  screw_clickable.draw();
 
   //i += (CHAR_HEIGHT*4); use for GEN DSP
   //i = remember_i4;
@@ -770,11 +801,13 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           if (ev.key.keysym.mod & KMOD_SHIFT)
           {
             clear_used_srcn();
+            reset_screw();
             prev_track25();
           }
           else 
           {
             clear_used_srcn();
+            reset_screw();
             next_track25();
           }
           //goto reload;
@@ -1030,14 +1063,17 @@ void Dsp_Window::receive_event(SDL_Event &ev)
           quitting=true;
           break;
         case SDLK_r:
+          reset_screw();
           restart_current_track();
           break;
 
         case SDLK_LEFT:
+          reset_screw();
           clear_used_srcn();
           prev_track();
           break;
         case SDLK_RIGHT:
+          reset_screw();
           clear_used_srcn();
           next_track();
           break;
@@ -1251,6 +1287,8 @@ void Dsp_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
+        if (screw_clickable.check_mouse_and_execute(ev.button.x, ev.button.y))
+          return;
         for (int i=0; i < NUM_TIMERS; i++)
         {
           timers.num = i;

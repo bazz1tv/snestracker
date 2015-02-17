@@ -40,6 +40,51 @@ Menu_Bar * BaseD::menu_bar=NULL;
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
 
+uint16_t BaseD::Hack_Spc::pc_backup;
+uint16_t *BaseD::Hack_Spc::pc_ptr=NULL;
+int BaseD::Hack_Spc::song_time_backup;
+bool BaseD::Hack_Spc::is_started=false;
+
+void BaseD::Hack_Spc::pause_spc()
+{
+  player->pause(1, true, false);
+  // backup_pc()
+  pc_ptr = (uint16_t*)&IAPURAM[(int)player->spc_emu()->pc()];
+  pc_backup = *pc_ptr;
+
+  song_time_backup = BaseD::song_time;
+  BaseD::song_time = 10000;
+  //player->ignore_silence();
+  player->emu()->set_fade(1000*10000, 8000);
+
+
+  // write with never-ending loop
+  
+  // overwrite_pc_with_endless_loop()
+  *pc_ptr = ENDLESS_LOOP_OPCODE;
+
+  player->pause(0);
+
+  player->spc_write_dsp(dsp_reg::koff, 0xff);
+  SDL_Delay(100);
+  player->spc_write_dsp(dsp_reg::koff, 0x00);
+  is_started=true;
+}
+
+void BaseD::Hack_Spc::restore_spc(bool resume/*=true*/)
+{
+  // restore_pc()
+  //uint16_t *pc_ptr = (uint16_t*)&IAPURAM[report::last_pc];
+  if (!pc_ptr || !is_started) return;
+  player->pause(1, true, false);
+  *pc_ptr = pc_backup;
+  if (resume) player->pause(0);
+  pc_ptr = NULL;
+  is_started=false;
+  //BaseD::song_time = song_time_backup;
+  //track_info_backup = track_info_backup2;
+}
+
 BaseD::Profile::Profile(const char* spc_filename)
 {
   is_profiling = true;
@@ -639,10 +684,11 @@ void BaseD::switch_mode(int mode)
   draw_menu_bar();
 
   // If we switched from instrument window, need to re-enable regular spc playback
-  if_exp_is_instr_window_then_restore_spc();
+  
 
   if (mode == GrandMode::MAIN)
   {
+    if_exp_is_instr_window_then_restore_spc();
     if (main_window)
       exp = (Experience*)main_window;
     else 

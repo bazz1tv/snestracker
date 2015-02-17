@@ -7,7 +7,7 @@
 #include "platform.h"
 #include "Menu_Bar.h"
 
-#define ENDLESS_LOOP_OPCODE 0xfe2f
+
 
 
 
@@ -16,6 +16,17 @@ octave("octave"),
 voice("voice")
 {
 
+}
+
+void Instrument_Window::pause_spc()
+{
+  start_stop.is_started = true;
+  BaseD::Hack_Spc::pause_spc();
+}
+void Instrument_Window::restore_spc(bool resume/*=true*/)
+{
+  start_stop.is_started = false;
+  BaseD::Hack_Spc::restore_spc(resume);
 }
 
 void Instrument_Window::run()
@@ -27,6 +38,7 @@ void Instrument_Window::run()
   if (BaseD::check_time())
   {
     start_stop.is_started = false;
+    BaseD::Hack_Spc::is_started = false;
   }
 
   //int current_voice = voice.n;
@@ -269,7 +281,7 @@ void Instrument_Window::receive_event(SDL_Event &ev)
       switch (scancode)
       {
         case SDLK_SPACE: // toggle pause
-          if (start_stop.is_started)
+          if (BaseD::Hack_Spc::is_started)
           {
             restore_spc();
             start_stop.is_started = false;
@@ -284,12 +296,12 @@ void Instrument_Window::receive_event(SDL_Event &ev)
         switch (scancode)
         {
           case SDLK_LEFT:
-            start_stop.is_started = false;
+            BaseD::Hack_Spc::is_started = false;
             prev_track();
 
           break;
           case SDLK_RIGHT:
-            start_stop.is_started = false;
+            BaseD::Hack_Spc::is_started = false;
             next_track();
             break;
           case SDLK_UP:
@@ -311,12 +323,12 @@ void Instrument_Window::receive_event(SDL_Event &ev)
         case SDLK_TAB:
           if (ev.key.keysym.mod & KMOD_SHIFT)
           {
-            start_stop.is_started=false;
+            BaseD::Hack_Spc::is_started=false;
             prev_track25();
           }
           else 
           {
-            start_stop.is_started=false;
+            BaseD::Hack_Spc::is_started=false;
             next_track25();
           }
           //goto reload;
@@ -598,7 +610,7 @@ void Instrument_Window::dec_octave()
 
 void Instrument_Window::play_pitch(int p, bool abs/*=false*/)
 {
-  if (!start_stop.is_started)
+  if (!BaseD::Hack_Spc::is_started)
   {
     pause_spc();
   }
@@ -615,45 +627,7 @@ void Instrument_Window::play_pitch(int p, bool abs/*=false*/)
   player->spc_write_dsp(dsp_reg::kon, 1 << voice.n);
 }
 
-void Instrument_Window::pause_spc()
-{
-  player->pause(1, true, false);
-  // backup_pc()
-  pc_ptr = (uint16_t*)&IAPURAM[report::last_pc];
-  pc_backup = *pc_ptr;
 
-  song_time_backup = BaseD::song_time;
-  BaseD::song_time = 10000;
-  //player->ignore_silence();
-  player->emu()->set_fade(1000*10000, 8000);
-
-
-  // write with never-ending loop
-  
-  // overwrite_pc_with_endless_loop()
-  *pc_ptr = ENDLESS_LOOP_OPCODE;
-
-  player->pause(0);
-
-  player->spc_write_dsp(dsp_reg::koff, 0xff);
-  SDL_Delay(100);
-  player->spc_write_dsp(dsp_reg::koff, 0x00);
-  start_stop.is_started=true;
-}
-
-void Instrument_Window::restore_spc(bool resume/*=true*/)
-{
-  // restore_pc()
-  //uint16_t *pc_ptr = (uint16_t*)&IAPURAM[report::last_pc];
-  if (!pc_ptr) return;
-  player->pause(1, false);
-  *pc_ptr = pc_backup;
-  if (resume) player->pause(0);
-  pc_ptr = NULL;
-  start_stop.is_started=false;
-  //BaseD::song_time = song_time_backup;
-  //track_info_backup = track_info_backup2;
-}
 
 void Instrument_Window::keyoff_current_voice()
 {

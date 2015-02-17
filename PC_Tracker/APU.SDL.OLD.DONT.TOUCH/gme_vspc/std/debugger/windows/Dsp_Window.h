@@ -19,12 +19,18 @@ static const Uint8 NUM_TIMERS=3;
 struct Dsp_Window : public BaseD, public Render_Context, public Player_Context,
 public Experience
 {
+
   bool is_srcn_used(Uint8 dirnum);
   void do_loop_point_color(int index, Uint8* brr_sample, Uint32 active_color, Uint32 inactive_color);
   Dsp_Window();
   void run();
   void draw();
   void receive_event(SDL_Event &ev);
+
+  void reset_screw();
+  Clickable_Text screw_clickable;
+  bool is_screwing=false;
+  static int toggle_screw(void *dsp_win);
 
   struct Timers
   {

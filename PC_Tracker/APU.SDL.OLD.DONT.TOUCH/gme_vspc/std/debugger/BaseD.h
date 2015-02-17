@@ -16,6 +16,16 @@ struct Menu_Bar;
 
 struct BaseD : public Render_Context, public Player_Context
 {
+  struct Hack_Spc
+  {
+    static const uint16_t ENDLESS_LOOP_OPCODE=0xfe2f;
+    static uint16_t pc_backup;
+    static uint16_t *pc_ptr;
+    static int song_time_backup;
+    static bool is_started;
+    static void pause_spc();
+    static void restore_spc(bool resume=true);
+  }; //hack_spc;
   struct Profile
   {
     Profile(const char*spc_filename);

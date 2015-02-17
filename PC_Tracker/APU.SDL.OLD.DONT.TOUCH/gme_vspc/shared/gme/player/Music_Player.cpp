@@ -188,7 +188,7 @@ int Music_Player::track_count() const
 int Music_Player::fade_out(void *ptr)
 {
 	Music_Player *p = (Music_Player*)ptr;
-	p->thread_fade_out();
+	p->low_level_fade_out(true);
 	//if (paused) sound_stop();
 	return 0;
 }
@@ -204,10 +204,10 @@ void Music_Player::fade_out(bool threaded/*=false*/)
 		thread = SDL_CreateThread(&Music_Player::fade_out, "FadeOutThread", this);
 	else 
 	{
-		thread_fade_out();
+		low_level_fade_out(false);
 	}
 }
-void Music_Player::thread_fade_out()
+void Music_Player::low_level_fade_out(bool threaded)
 {
 	gain_t linear_gain=this->linear_gain; 
 	needs_to_fade_out=true;
@@ -216,12 +216,20 @@ void Music_Player::thread_fade_out()
 	
 	if (paused)
 	{
-		SDL_Event event2;
-	  event2.type = SDL_USEREVENT;
-	  event2.user.code = UserEvents::sound_stop;
-	  event2.user.data1 = 0;
-	  event2.user.data2 = 0;
-	  SDL_PushEvent(&event2);
+		if (threaded)
+		{
+			SDL_Event event2;
+		  event2.type = SDL_USEREVENT;
+		  event2.user.code = UserEvents::sound_stop;
+		  event2.user.data1 = 0;
+		  event2.user.data2 = 0;
+		  SDL_PushEvent(&event2);
+		}
+		else
+		{
+			sound_stop();
+		}
+		
 	}
 	//sound_stop();
 }

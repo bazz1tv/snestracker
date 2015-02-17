@@ -171,7 +171,7 @@ private:
 	// thread function
 	static int fade_out(void *ptr);
 	// only to be called by thread
-	void thread_fade_out();
+	void low_level_fade_out(bool threaded);
 	
 	
 	void suspend();
