@@ -53,16 +53,19 @@ struct Menu_Bar
     static int prev_track (void *data);          
     static int next_track (void *data); 
     static int test(void *data) { fprintf(stderr, "test"); } 
+    static int create_profile(void *data);
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[6] = 
+    Context_Menu_Item menu_items[8] = 
     {
-      {"track",       true,  test,                          NULL},
-      {"pause",       true,  toggle_pause,           &menu_items[1].clickable_text},
-      {"restart",     true,  restart_current_track,  NULL},
-      {"prev",        true,  prev_track,             NULL},
-      {"next",        true,  next_track,             NULL},
-      {"",            false, NULL,                          NULL}
+      {"track",           true,   NULL,                   NULL},
+      {"pause",           true,   toggle_pause,           &menu_items[1].clickable_text},
+      {"restart",         true,   restart_current_track,  NULL},
+      {"prev",            true,   prev_track,             NULL},
+      {"next",            true,   next_track,             NULL},
+      {"-------",         true,   NULL,                   NULL},
+      {"Create Profile",  true,   create_profile,         NULL},
+      {"",                false,  NULL,                   NULL}
     };
   };
   struct Window_Context

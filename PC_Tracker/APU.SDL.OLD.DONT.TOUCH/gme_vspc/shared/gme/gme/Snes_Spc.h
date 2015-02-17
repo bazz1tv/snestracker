@@ -12,7 +12,7 @@ struct Snes_Spc {
 public:
 	typedef BOOST::uint8_t uint8_t;
 
-	// bazz addiotions
+	// bazz additions
 	uint8_t* ram();
 	Spc_Dsp* get_dsp();
 	long pc() { return m.cpu_regs.pc; }

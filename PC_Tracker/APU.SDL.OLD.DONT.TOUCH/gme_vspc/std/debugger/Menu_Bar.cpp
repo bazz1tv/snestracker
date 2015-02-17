@@ -67,6 +67,18 @@ int Menu_Bar::Track_Context::next_track (void *data)
 {
   BaseD::next_track();
 }
+int Menu_Bar::Track_Context::create_profile(void *data)
+{
+  unsigned char state [Snes_Spc::spc_file_size]; /* buffer large enough for data */
+
+  BaseD::player->pause(1, true, false);
+  BaseD::reload();
+  // get pointer to spc_file_t
+  // open the SPC File
+  DEBUGLOG("spc file path = %s", BaseD::g_cfg.playlist[BaseD::g_cur_entry]);
+  return 0;
+}
+
 
 int Menu_Bar::Window_Context::restore_window_size(void *nada)
 {

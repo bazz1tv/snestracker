@@ -423,7 +423,7 @@ void Dsp_Window::run()
     timers.label[timer].draw();
     // print timer ticks
     Uint8 ticks = player->spc_read(0xfa+timer);
-    DEBUGLOG("ticks = %02X\n", ticks);
+    //DEBUGLOG("ticks = %02X\n", ticks);
     //if (ticks == 0) ticks = 256;
     sprintf(tmpbuf, "Ticks: $%02X", ticks);
     int tick_x = timers.label[timer].rect.x + timers.label[timer].rect.w + CHAR_WIDTH;
