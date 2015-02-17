@@ -16,6 +16,18 @@ struct Menu_Bar;
 
 struct BaseD : public Render_Context, public Player_Context
 {
+  struct Profile
+  {
+    ~Profile() { fprintf(stderr, "~Profile\n"); }
+    void process();
+    unsigned char orig_spc_state[Snes_Spc::spc_file_size];
+    int seconds_covered=0;
+    int elapsed_seconds;
+
+    static bool is_profiling;
+  };
+  static Profile *tmp_profile;
+
   enum GrandMode
   {
     MAIN=0,

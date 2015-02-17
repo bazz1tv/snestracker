@@ -6,6 +6,10 @@ uint8_t *BaseD::IAPURAM;*/
 #include "Menu_Bar.h"
 #include "File_System_Context.h"
 
+//unsigned char *BaseD::Profile::orig_spc_state=NULL;
+bool BaseD::Profile::is_profiling=false;
+BaseD::Profile * BaseD::tmp_profile=NULL;
+
 My_Nfd BaseD::nfd;
 int BaseD::grand_mode=GrandMode::MAIN;
 //int BaseD::submode=0;
@@ -35,6 +39,24 @@ Menu_Bar * BaseD::menu_bar=NULL;
 
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
+
+void BaseD::Profile::process()
+{
+  BaseD::player->pause(0);
+
+  elapsed_seconds = (int((BaseD::player->emu()->tell()/1000)));
+  if (elapsed_seconds == seconds_covered+1)
+  {
+    BaseD::player->pause(1, true, false);
+    DEBUGLOG("seconds elapsed: %d\n", elapsed_seconds);
+    seconds_covered = elapsed_seconds;
+  }
+  if (seconds_covered == 7)
+  {
+    BaseD::Profile::is_profiling=false;
+    delete this;
+  }
+}
 
 int BaseD::switch_to_memory(void *data)
 {

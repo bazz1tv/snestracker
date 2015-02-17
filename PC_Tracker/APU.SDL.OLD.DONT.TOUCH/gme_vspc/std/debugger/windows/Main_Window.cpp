@@ -1100,10 +1100,17 @@ void Main_Window::receive_event(SDL_Event &ev)
   }
 }
 
+
+
 void Main_Window::run()
 {
   if ( player->has_no_song )
     return;
+
+  if (BaseD::Profile::is_profiling)
+  {
+    tmp_profile->process();
+  }
 
   for (uint8_t voice=0; voice < MAX_VOICES; voice++)
   {

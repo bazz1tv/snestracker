@@ -138,7 +138,7 @@ nfdresult_t get_file_read_handle(nfdchar_t **outPath, SDL_RWops **file, const ch
       //puts(outPath);
       //SDL_RWops* SDL_RWFromFile(const char* file,
         //                const char* mode)
-      *file = SDL_RWFromFile(*outPath, "wb");
+      *file = SDL_RWFromFile(*outPath, "rb");
       if (*file == NULL)
       {
         sprintf(tmpbuf, "Warning: Unable to open file!\n %s", SDL_GetError() );
