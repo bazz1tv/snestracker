@@ -369,6 +369,7 @@ void Main_Window::receive_event(SDL_Event &ev)
       }
       if (ev.key.keysym.sym == SDLK_u)
       {
+        player->emu()->seek(10000);
         //player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0xff);
         //player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x63);
         /*player->spc_write_dsp(dsp_reg::eon, 0x1);
@@ -1156,7 +1157,7 @@ void Main_Window::run()
   if ( player->has_no_song )
     return;
 
-  DEBUGLOG("paused = %d", player->is_paused());
+  //DEBUGLOG("paused = %d", player->is_paused());
 
   if (BaseD::Profile::is_profiling)
   {

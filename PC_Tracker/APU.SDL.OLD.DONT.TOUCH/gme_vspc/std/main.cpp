@@ -16,7 +16,7 @@ int main(int argc, char **argv)
   //SDL_SetWindowSize(Render_Context::sdlWindow, 1024+100, 768+100);
 
   //fprintf(stderr, "screen = %d\n", Render_Context::screen);
-  App app(argc, argv);
+  App app(argc, argv, 32000);
   app.run();
 }
 

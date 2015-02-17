@@ -124,6 +124,7 @@ void Snes_Spc::enable_rom( int enable )
 	};
 	
 	#define RUN_DSP( time, offset ) \
+		;\
 		int count = (time) - (offset) - m.dsp_time;\
 		if ( count >= 0 )\
 		{\

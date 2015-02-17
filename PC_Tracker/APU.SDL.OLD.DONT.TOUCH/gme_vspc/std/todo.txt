@@ -120,3 +120,5 @@ Optional:
 DISTANT SHIT
 ------------
 SPC IMPORT -- Time signature detection
+global instrument bank vs. song-only instrument bank
+Song bank
