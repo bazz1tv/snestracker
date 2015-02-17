@@ -51,8 +51,8 @@ EXECUTABLE=std
 all: $(SOURCES) $(EXECUTABLE).app $(EXECUTABLE)
 
 $(EXECUTABLE).app: $(EXECUTABLE) unrar
-	rm -rf $@
-	mkdir $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
+	#rm -rf $@
+	mkdir -p $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
 	cp std $@/Contents/MacOS
 	cp Info.plist $@/Contents
 	cp unrar $@/Contents/Resources

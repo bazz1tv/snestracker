@@ -697,9 +697,9 @@ void Main_Window::receive_event(SDL_Event &ev)
           else
           {
             Uint8 tmp = port_tool.tmp[port_tool.portnum] + 1;
-            tmp &= 0x0f;
-            port_tool.tmp[port_tool.portnum] &= 0xf0;
-            port_tool.tmp[port_tool.portnum] |= tmp;
+            //tmp &= 0x0f;
+            //port_tool.tmp[port_tool.portnum] &= 0xf0;
+            port_tool.tmp[port_tool.portnum] = tmp;
           }
         }
         else if (scancode == SDLK_DOWN)
@@ -800,7 +800,8 @@ void Main_Window::receive_event(SDL_Event &ev)
             te->button.y >= PORTTOOL_Y && te->button.y < (PORTTOOL_Y + 16))
         {
           int x, y;
-          x = te->button.x - (PORTTOOL_X + (8*5));
+          //x = te->button.x;
+          x = te->button.x - (PORTTOOL_X + (CHAR_WIDTH*5));
           x /= 8;
 
           // prevent double click on +/- during port edit mode to cause cursor to show up
@@ -815,14 +816,24 @@ void Main_Window::receive_event(SDL_Event &ev)
             case 13:
             case 17:
             case 18:
-              port_tool.x = ((PORTTOOL_X + (8*5)) + (x*8));
+              port_tool.last_x = port_tool.x;
+              port_tool.x = ((PORTTOOL_X + (CHAR_WIDTH*5)) + (x*CHAR_WIDTH));
           }
           
           y = te->button.y - PORTTOOL_Y;
           y /= 8;
 
+
+
           if (te->button.button == SDL_BUTTON_LEFT)
           {
+            
+            if (mode == MODE_EDIT_APU_PORT && port_tool.last_x == port_tool.x)
+            {
+              mouseover_hexdump_area.cursor.stop_timer();
+              exit_edit_mode();
+              break;
+            }
             switch (x)
             {
               // i think single click takes care of this

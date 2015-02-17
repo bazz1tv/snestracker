@@ -14,7 +14,7 @@ struct Port_Tool : public Render_Context, public Player_Context
 
   Uint8 highnibble, portnum, portaddress, tmp[4];
   Uint8 horizontal=0;
-  int x,y;
+  int x=0,y, last_x;
   Uint8 portdata[4] = {0,0,0,0};
 
   // deps

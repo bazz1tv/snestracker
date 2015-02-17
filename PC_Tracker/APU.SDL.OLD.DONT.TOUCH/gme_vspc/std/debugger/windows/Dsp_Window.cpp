@@ -861,7 +861,19 @@ void Dsp_Window::receive_event(SDL_Event &ev)
               highnibble = !highnibble;
             break;
             case SDLK_UP:
-              if (submode == EDIT_GEN_DSP_ADDR)
+              if (submode == EDIT_TIMER)
+              {
+                if (selected_index == 0)
+                  selected_index = 2;
+                else selected_index--;
+
+                timers.num = selected_index;
+                current_edit_addr = 0xfa + selected_index;
+                tmp_ram = player->spc_read(current_edit_addr);
+                cursor.rect.x = timers.value[selected_index].rect.x + (highnibble ? 0:CHAR_WIDTH);
+                cursor.rect.y = timers.value[selected_index].rect.y;
+              }
+              else if (submode == EDIT_GEN_DSP_ADDR)
               {
                 if (selected_index == 0)
                   selected_index = (SIZEOF_GEN_DSP_ENUM-1);
@@ -883,7 +895,19 @@ void Dsp_Window::receive_event(SDL_Event &ev)
               }
             break;
             case SDLK_DOWN:
-              if (submode == EDIT_GEN_DSP_ADDR)
+              if (submode == EDIT_TIMER)
+              {
+                if (selected_index == 2)
+                  selected_index = 0;
+                else selected_index++;
+
+                timers.num = selected_index;
+                current_edit_addr = 0xfa + selected_index;
+                tmp_ram = player->spc_read(current_edit_addr);
+                cursor.rect.x = timers.value[selected_index].rect.x + (highnibble ? 0:CHAR_WIDTH);
+                cursor.rect.y = timers.value[selected_index].rect.y;
+              }
+              else if (submode == EDIT_GEN_DSP_ADDR)
               {
                 if (selected_index == (SIZEOF_GEN_DSP_ENUM-1))
                   selected_index = 0;

@@ -227,11 +227,11 @@ blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
 	//target_linear_gain = gain;
 	//linear_gain = 0.0;
 	//fade_gain=1.0;
-	if (paused)
+	/*if (paused)
 	{
 		sound_cleanup();
 		init(sample_rate);
-	}
+	}*/
 	spc_filter->clear();
 
 	curtrack = track;
