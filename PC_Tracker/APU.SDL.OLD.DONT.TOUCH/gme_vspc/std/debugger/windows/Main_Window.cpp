@@ -93,6 +93,7 @@ void Main_Window::draw()
     draw_porttool();
     draw_time_and_echo_status();
 
+    scroll_track_tags();
     
 
 
@@ -2022,17 +2023,25 @@ void Main_Window::update_window_title()
       seconds / 60, seconds % 60 );
   SDL_SetWindowTitle(sdlWindow, title);
 }
+
+
+
+void Main_Window::scroll_track_tags()
+{
+  static Uint32 recorded_sec_elapsed=0;
+  Uint32 cur_sec_elapsed = time_cur / 200;
+  bool can_scrollnow = (cur_sec_elapsed > recorded_sec_elapsed);
+  recorded_sec_elapsed = cur_sec_elapsed;
+
+  if (!can_scrollnow)
+    return;
+
+  scroll_tags.scroll_draw();
+}
 void Main_Window::draw_track_tag()
 {
-  //BaseD::update_track_tag();
-  //fprintf(stderr, "EEEE");
-  
-  /* information */
-
-  // CLEAR THE BACKGROUND FIRST
-  //536,465
-  //800,519
   static SDL_Rect r;
+
   
   if (!is_first_run)
     SDL_FillRect(screen, &r, Colors::Interface::color[Colors::Interface::Type::bg]);
@@ -2056,18 +2065,54 @@ void Main_Window::draw_track_tag()
   
   //sprintf(tmpbuf, "Filename: %s", path);
   //sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT*2;
+  
+  Scroll_Tag::compute(tag.game, &scroll_tags.game);
+  Scroll_Tag::compute(tag.song, &scroll_tags.song);
+  Scroll_Tag::compute(tag.author, &scroll_tags.author);
+  Scroll_Tag::compute(tag.dumper, &scroll_tags.dumper);
+  Scroll_Tag::compute(tag.comment, &scroll_tags.comment);
 
   sprintf(tmpbuf, "Game....: %s", tag.game);
-  sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT;
+  sdlfont_drawString(screen, INFO_X, y, tmpbuf); 
+  if (is_first_run)
+  {
+    scroll_tags.game.rect.x = INFO_X + strlen("Game....: ")*CHAR_WIDTH;
+    scroll_tags.game.rect.y = y;
+  }
+  y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Title...: %s", tag.song);
-  sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT;
+  sdlfont_drawString(screen, INFO_X, y, tmpbuf); 
+  if (is_first_run)
+  {
+    scroll_tags.song.rect.x = INFO_X + strlen("Game....: ")*CHAR_WIDTH;
+    scroll_tags.song.rect.y = y;
+  }
+  y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Composer: %s", tag.author);
-  sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT*2;
+  sdlfont_drawString(screen, INFO_X, y, tmpbuf); 
+  if (is_first_run)
+  {
+    scroll_tags.author.rect.x = INFO_X + strlen("Game....: ")*CHAR_WIDTH;
+    scroll_tags.author.rect.y = y;
+  }
+  y+=CHAR_HEIGHT*2;
 
   sprintf(tmpbuf, "Dumper..: %s", tag.dumper);
-  sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT;
+  sdlfont_drawString(screen, INFO_X, y, tmpbuf); 
+  if (is_first_run)
+  {
+    scroll_tags.dumper.rect.x = INFO_X + strlen("Game....: ")*CHAR_WIDTH;
+    scroll_tags.dumper.rect.y = y;
+  }
+  y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Comment.: %s", tag.comment);
-  sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT*2;
+  sdlfont_drawString(screen, INFO_X, y, tmpbuf); 
+  if (is_first_run)
+  {
+    scroll_tags.comment.rect.x = INFO_X + strlen("Game....: ")*CHAR_WIDTH;
+    scroll_tags.comment.rect.y = y;
+  }
+  y+=CHAR_HEIGHT*2;
 
   sprintf(tmpbuf, "Ignore tag time: %s", g_cfg.ignoretagtime ? "Yes" : "No");
   sdlfont_drawString2(screen, INFO_X, y, tmpbuf);

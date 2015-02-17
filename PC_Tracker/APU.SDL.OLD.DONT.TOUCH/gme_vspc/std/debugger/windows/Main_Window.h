@@ -26,6 +26,80 @@ struct Main_Window : public BaseD, public Render_Context,
 public Player_Context,
 public Experience
 {
+  void scroll_track_tags();
+  struct Scroll_Tag
+  {
+    static void compute(const char *str, Scroll_Tag *st)
+    {
+      if (strlen(str) > Scroll_Tag::MAX_NO_SCROLL_LEN)
+      {
+        st->times_to_scroll = strlen(str) - Scroll_Tag::MAX_NO_SCROLL_LEN;
+        st->cur_index=0;
+        st->direction=+1;
+        st->need_to_scroll=true;
+        st->str = str;
+      }
+      else
+      {
+        st->need_to_scroll=false;
+      }
+    }
+    void scroll_draw()
+    {
+      if (!need_to_scroll)
+      { 
+        return;
+      }
+
+      if (extra_wait)
+      {
+        if (!( (SDL_GetTicks() - cur_ticks_compare) >= extra_wait) )
+          return;
+        else extra_wait=0;
+      }
+
+
+      cur_index += direction;
+      if (cur_index >= times_to_scroll)
+      {
+        extra_wait = 1000;
+        cur_ticks_compare = SDL_GetTicks();
+        direction = -direction;
+      }
+      else if (cur_index <= 0)
+      {
+        extra_wait = 1000; //ms
+        cur_ticks_compare = SDL_GetTicks();
+        direction = -direction;
+      }
+      sdlfont_drawString(screen, rect.x, rect.y, &str[cur_index]);
+    }
+    static const int MAX_NO_SCROLL_LEN = 22;
+    Uint32 cur_ticks_compare;
+    Uint32 extra_wait=0;
+    bool need_to_scroll=false;
+    int times_to_scroll=0;
+    const char *str;
+    int str_len=0;
+    int cur_index=0;
+    char direction  = +1;
+    SDL_Rect rect = {0,0,22*CHAR_WIDTH, CHAR_HEIGHT};
+  };
+
+  struct
+  {
+    Scroll_Tag game, song, author, dumper, comment;
+    void scroll_draw()
+    {
+
+      song.scroll_draw();
+      author.scroll_draw();
+      dumper.scroll_draw();
+      comment.scroll_draw(); 
+    }
+  } scroll_tags;
+
+
   int echo_on_x=0, echo_on_y=0;
   //Clickable_Text echo_on;
 
