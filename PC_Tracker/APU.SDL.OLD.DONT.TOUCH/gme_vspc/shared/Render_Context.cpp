@@ -1,6 +1,7 @@
 #include "Render_Context.h"
 //SDL_Surface  *  Render_Context::screen       =NULL;
 SDL_Window   *  Render_Context::sdlWindow         =NULL;
+Uint32          Render_Context::windowID;
 //SDL_Window   *  Render_Context::tracker_sdlWindow =NULL;
 SDL_Renderer *  Render_Context::sdlRenderer       =NULL;
 SDL_Texture  *  Render_Context::sdlTexture        =NULL;

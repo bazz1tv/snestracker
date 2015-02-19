@@ -4,10 +4,13 @@
 #include "platform.h"
 #include "Instrument_Window.h"
 //#include <stdlib.h>
+#include "gui/Window.h"
 
 int Menu_Bar::Edit_Context::open_options_window(void *data)
 {
   DEBUGLOG("open_options_window()\n");
+  Window win(200,200,"test");
+  SDL_Delay(3000);
   return 0;
 }
 

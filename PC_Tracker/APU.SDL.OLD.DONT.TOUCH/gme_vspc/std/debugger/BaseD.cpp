@@ -476,6 +476,7 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
   bool using_playlist=false;
   DEBUGLOG("g_cfg.playlist = %lx\n", (uintptr_t)g_cfg.playlist);
   DEBUGLOG("g_cur_entry = %d", g_cur_entry);
+  DEBUGLOG("g_cfg.playlist[g_cur_entry] = %s\n", g_cfg.playlist[g_cur_entry]);
   if (!paths)
   {
     DEBUGLOG("A");

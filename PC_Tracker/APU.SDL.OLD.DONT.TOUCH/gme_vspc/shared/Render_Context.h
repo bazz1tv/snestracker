@@ -12,7 +12,10 @@ public:
     SDL_Texture *sdlTexture=Render_Context::sdlTexture, 
     SDL_Renderer *sdlRenderer=Render_Context::sdlRenderer);
 
+
+
   static SDL_Window *sdlWindow;//      =NULL;
+  static Uint32 windowID;
   //static SDL_Window *tracker_sdlWindow;
   static SDL_Renderer *sdlRenderer;//  =NULL;
   static SDL_Texture *sdlTexture;//    =NULL;
