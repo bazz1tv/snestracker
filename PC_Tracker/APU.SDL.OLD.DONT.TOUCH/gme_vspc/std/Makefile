@@ -17,7 +17,7 @@ gme_CPPFLAGS=$(debug) -c -I. -I$(SHARED_DIR) -I$(SHARED_DIR)gme\
 -I$(SHARED_DIR)gme/gme -Idemo `/usr/local/bin/sdl2-config --cflags`
 
 debugger_CPPFLAGS=$(debug) -I$(SHARED_DIR) -I$(SHARED_DIR)NativeFileDialog/include\
--Idebugger/memory -Idebugger/windows\
+-Idebugger/memory -Idebugger/content_areas -Idebugger/windows\
 -funroll-loops -Wall -Idebugger `/usr/local/bin/sdl2-config --cflags` -Wall
 
 # for MIDI
@@ -37,7 +37,8 @@ OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
 #### SOURCES
 SOURCES=$(wildcard $(SHARED_DIR)*.cpp) $(wildcard $(SHARED_DIR)*/*.cpp)\
 $(wildcard $(SHARED_DIR)*/*/*.cpp)\
-$(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp)
+$(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp)\
+$(wildcard */*/*/*.cpp) $(wildcard */*/*/*/*.cpp)
 
 # Native File Directory
 MSOURCES=$(wildcard $(SHARED_DIR)*/*.m)
