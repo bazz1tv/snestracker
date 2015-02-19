@@ -38,6 +38,26 @@ struct Menu_Bar
       {"",            false, NULL,  NULL}
     };
   };
+  struct Edit_Context
+  {
+    // Take parent class here
+    Edit_Context() : menu(menu_items, true)
+    {
+      
+    }
+
+    static int open_options_window(void *data);
+
+    Expanding_List menu;
+    Context_Menu_Item menu_items[4] = 
+    {
+      {"Edit",        true,  NULL,  NULL},
+      {"------",      true,  NULL,  NULL},
+      {"Options",     true,  open_options_window,  NULL},
+      {"",            false, NULL,  NULL}
+    };
+  };
+
   struct Track_Context
   {
     // Take parent class here
@@ -104,6 +124,8 @@ struct Menu_Bar
     int x = 10, y = 10;
     int h = CHAR_HEIGHT;
     Context_Menus() {}
+
+    bool is_anything_active();
     
 
     bool check_left_click_activate(int &x, int &y, const Uint8 &button=0, const SDL_Event *ev=NULL);
@@ -113,6 +135,7 @@ struct Menu_Bar
     void update(Uint8 adsr, Uint8 adsr2);
 
     File_Context          file_context;
+    Edit_Context          edit_context;
     Track_Context         track_context;
     Window_Context        window_context;
   } context_menus;

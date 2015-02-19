@@ -5,6 +5,12 @@
 #include "Instrument_Window.h"
 //#include <stdlib.h>
 
+int Menu_Bar::Edit_Context::open_options_window(void *data)
+{
+  DEBUGLOG("open_options_window()\n");
+  return 0;
+}
+
 void Menu_Bar::draw(SDL_Surface *screen)
 {
   if (is_first_run)
@@ -42,11 +48,13 @@ void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
 
 int Menu_Bar::File_Context::open_spc(void *data)
 {
+  BaseD::player->pause(1,true,false);
   if (BaseD::nfd.get_multifile_read_path("spc,rsn,rar") == NFD_OKAY)
   {
     DEBUGLOG("check_paths_and_reload\n");
     BaseD::check_paths_and_reload(BaseD::nfd.paths, BaseD::nfd.numpaths);
   }
+  BaseD::player->pause(0);
   return 0;
 }
 
@@ -91,6 +99,9 @@ void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
   file_context.menu.preload(x, y);
   x +=  ( file_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
 
+  edit_context.menu.preload(x, y);
+  x +=  ( file_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
+
   track_context.menu.preload(x, y);
   x +=  ( track_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
 
@@ -105,6 +116,15 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
   fprintf(stderr, "button = %d", button);
   if (file_context.menu.check_left_click_activate(x, y, button, ev))
   {
+    edit_context.menu.deactivate();
+    track_context.menu.deactivate();
+    window_context.menu.deactivate();
+    return true;
+  }
+
+  if (edit_context.menu.check_left_click_activate(x, y, button, ev))
+  {
+    file_context.menu.deactivate();
     track_context.menu.deactivate();
     window_context.menu.deactivate();
     return true;
@@ -116,12 +136,14 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
   if (track_context.menu.check_left_click_activate(x, y, button, ev))
   {
     file_context.menu.deactivate();
+    edit_context.menu.deactivate();
     window_context.menu.deactivate();
     return true;
   }
   if (window_context.menu.check_left_click_activate(x, y, button, ev))
   {
     file_context.menu.deactivate();
+    edit_context.menu.deactivate();
     track_context.menu.deactivate();
     return true;
   }
@@ -148,11 +170,17 @@ int Menu_Bar::receive_event(SDL_Event &ev)
   return EVENT_INACTIVE;
 }
 
+bool Menu_Bar::Context_Menus::is_anything_active()
+{
+  return (file_context.menu.is_active || 
+    edit_context.menu.is_active || 
+    track_context.menu.is_active || 
+    window_context.menu.is_active);
+}
 int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
 {
   int r;
-  if ( (ev.type == SDL_MOUSEBUTTONDOWN || 
-    (file_context.menu.is_active || track_context.menu.is_active || window_context.menu.is_active) ) )
+  if ( ev.type == SDL_MOUSEBUTTONDOWN || is_anything_active() )
   {
     if (check_left_click_activate(ev.button.x, ev.button.y, ev.button.button, &ev))
     {
@@ -161,6 +189,12 @@ int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
   }
 
   if ((r=file_context.menu.receive_event(ev)))
+  {
+    if (r == Expanding_List::EVENT_MENU)
+      return EVENT_FILE;
+    return EVENT_ACTIVE;
+  }
+  if ((r=edit_context.menu.receive_event(ev)))
   {
     if (r == Expanding_List::EVENT_MENU)
       return EVENT_FILE;
@@ -196,6 +230,7 @@ void Menu_Bar::Context_Menus::update(Uint8 adsr1, Uint8 adsr2)
 void Menu_Bar::Context_Menus::draw(SDL_Surface *screen)
 {
   file_context.menu.draw(screen);
+  edit_context.menu.draw(screen);
   if (!BaseD::player->has_no_song)
   {
     track_context.draw(screen);

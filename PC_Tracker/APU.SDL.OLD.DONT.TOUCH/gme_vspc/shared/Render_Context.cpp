@@ -5,9 +5,13 @@ SDL_Window   *  Render_Context::sdlWindow         =NULL;
 SDL_Renderer *  Render_Context::sdlRenderer       =NULL;
 SDL_Texture  *  Render_Context::sdlTexture        =NULL;
 SDL_Surface  *  Render_Context::screen            =NULL;
-char Render_Context::tmpbuf[500];
 
-void Render_Context::clear_screen()
+#include "Screen.h"
+// used for SDL_ResizeWinwow events
+int Render_Context::w=SCREEN_WIDTH,Render_Context::h=SCREEN_HEIGHT;
+
+void Render_Context::clear_screen(SDL_Surface *screen/*=screen*/, SDL_Texture *sdlTexture/*=sdlTexture*/,
+  SDL_Renderer *sdlRenderer/*=sdlRenderer*/)
 {
   SDL_FillRect(screen, NULL, 0);
   SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
@@ -16,7 +20,8 @@ void Render_Context::clear_screen()
   SDL_RenderPresent(sdlRenderer);
 }
 
-void Render_Context::sdl_draw()
+void Render_Context::sdl_draw(SDL_Surface *screen/*=screen*/, SDL_Texture *sdlTexture/*=sdlTexture*/,
+  SDL_Renderer *sdlRenderer/*=sdlRenderer*/)
 {
   SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
   SDL_RenderClear(sdlRenderer);

@@ -56,26 +56,28 @@ void Debugger::handle_events()
     {
       if (ev.window.event == SDL_WINDOWEVENT_RESIZED)
       {
-        static int oldw=SCREEN_WIDTH,oldh=SCREEN_HEIGHT;
         int w = ev.window.data1;
         int h = ev.window.data2;
         int wd, hd;
         //if (w > SCREEN_WIDTH)
         //{
-        wd = w - oldw;
+        wd = w - Render_Context::w;
         //}
         //else
         //{
          // wd = SCREEN_WIDTH - height;
         //}
 
-        hd = h - oldh;
+        hd = h - Render_Context::h;
 
         if (abs(wd) < abs(hd)) wd = hd;
         else if (abs(wd) > abs(hd)) hd = wd;
-        SDL_SetWindowSize(sdlWindow, oldw+wd, oldh+hd);
-        oldw += wd;
-        oldh += hd;
+
+        Render_Context::w += wd;
+        Render_Context::h += hd;
+
+        SDL_SetWindowSize(sdlWindow, Render_Context::w, Render_Context::h);
+        
       }
     }
     else if (ev.type == SDL_DROPFILE)
@@ -99,6 +101,11 @@ void Debugger::handle_events()
       {
         sound_stop();
       }
+    }
+    else if (ev.type == SDL_MOUSEMOTION)
+    {
+      mouse::x = ev.motion.x;
+      mouse::y = ev.motion.y;
     }
     exp->receive_event(ev);
   }

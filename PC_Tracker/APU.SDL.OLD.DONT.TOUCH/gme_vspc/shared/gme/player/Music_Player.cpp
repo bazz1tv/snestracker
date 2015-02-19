@@ -123,6 +123,7 @@ Music_Player::~Music_Player()
 
 blargg_err_t Music_Player::load_file( const char* path )
 {
+	fade_out(false);
 	stop();
 
 	// check if file is m3u 
@@ -419,7 +420,7 @@ void Music_Player::apply_gain(sample_t* out, int count )
 			/*if ( (newsamp == 0 && in[i+1] == 0) || 
 				((newsamp <= 0 && in[i+1] > 0) || (newsamp >= 0 && in[i+1] < 0)))
 			{*/
-				fade_in_gain_db += 0.01;
+				fade_in_gain_db += (+0.01 * ((double)44100/(double)sample_rate));
 				if (fade_in_gain_db >= gain_db)
 				{
 					/*for (i; i < count; i++)
@@ -456,7 +457,7 @@ void Music_Player::apply_gain(sample_t* out, int count )
 			{
 				linear_gain = Audio::calculate_linear_gain_from_db(fade_out_gain_db, min_gain_db);
 
-				fade_out_gain_db -= 0.01;
+				fade_out_gain_db -= (+0.01 * ((double)44100/(double)sample_rate));
 				if (fade_out_gain_db <= Music_Player::min_gain_db)
 				{
 					for (; i < count; i++)
@@ -483,8 +484,8 @@ void Music_Player::apply_gain(sample_t* out, int count )
 		}
 		else if (gain_has_changed)
 		{
-			direction = ((new_gain_db - gain_db > 0) ? +0.02 : -0.02);
-
+			direction = ((new_gain_db - gain_db > 0) ? (+0.02 * ((double)44100/(double)sample_rate)) : (-0.02 * ((double)44100/(double)sample_rate)) );
+			//DEBUGLOG("direction = %f\n", direction);
 			if (!is_using_zero_crossover || (is_using_zero_crossover && ((newsamp == 0 && out[i+1] == 0) || 
 				((newsamp <= 0 && out[i+1] > 0) || (newsamp >= 0 && out[i+1] < 0)) ) ) )
 			{

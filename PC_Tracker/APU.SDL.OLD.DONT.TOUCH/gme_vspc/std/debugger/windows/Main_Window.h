@@ -76,6 +76,13 @@ public Experience
     static int change(void *dblnewtempo);
   } tempo;
 
+  /*struct Time_Seek
+  {
+    ~Time_Seek() { if (slider) delete slider; }
+    Slider<double> *slider=NULL;
+    static int change(void *intnewtime);
+  } time_seek;*/
+
   /*struct Tempo
   {
     Tempo() : minus("-"), plus("+") {}

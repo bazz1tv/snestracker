@@ -16,6 +16,7 @@ struct Menu_Bar;
 
 struct BaseD : public Render_Context, public Player_Context
 {
+  static char tmpbuf[500];
   struct Hack_Spc
   {
     static const uint16_t ENDLESS_LOOP_OPCODE=0xfe2f;

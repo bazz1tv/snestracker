@@ -72,6 +72,7 @@ int Dsp_Window::toggle_screw(void *dsp_win)
   {
     BaseD::Hack_Spc::restore_spc();
   }
+  return 0;
 }
 
 void Dsp_Window::reset_screw()

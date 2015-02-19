@@ -40,7 +40,7 @@ public:
 	char *str_buf=NULL;
 	int str_buf_size;
 	static const char *format_str[];
-	Slider(T &var, int x, int y, 
+	Slider(T *var, int x, int y, 
 	int panel_width, int panel_height, 
 	int adjuster_width, int adjuster_height, 
 	T range_min, T range_max,
@@ -59,7 +59,8 @@ public:
 		colors.adjuster = {static_cast<Uint8>(color&0xff), static_cast<Uint8>(color&0xff00>>8), 
 			static_cast<Uint8>(color&0xff0000>>16), static_cast<Uint8>(color&0xff000000 >> 24)};
 	}
-	T &target_value;
+	T *target_value;
+	bool owns_value;
 	bool receive_event(SDL_Event &ev);
 
 	int (*action)(void* data);
@@ -80,6 +81,7 @@ public:
 	// when you activate the slider, you log it's adjuster's x_coordinate
 	// as well as the Mouses' X Coordinate
 	int adjuster_x_logged, mouse_x_logged;
+
 	
 	struct
 	{

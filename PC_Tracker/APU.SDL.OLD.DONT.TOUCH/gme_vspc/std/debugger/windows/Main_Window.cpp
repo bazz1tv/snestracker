@@ -1349,6 +1349,7 @@ void Main_Window::exit_edit_mode()
 
 void Main_Window::draw_block_usage_bar()
 {
+  static bool is_first_run=false;
   // draw the 256 bytes block usage bar
   tmprect.x = MEMORY_VIEW_X-1;
   tmprect.w = 1; tmprect.h = 2;
@@ -1366,6 +1367,9 @@ void Main_Window::draw_block_usage_bar()
   sprintf(tmpbuf, "Blocks report::used: %3d/256 (%.1f%%)  ", tmp, (float)tmp*100.0/256.0);
   sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2, tmpbuf);
 
+
+  int x = MEMORY_VIEW_X;
+  int y = MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2 + 9;
   if (1)
   {
     sprintf(tmpbuf, "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
@@ -1378,7 +1382,19 @@ void Main_Window::draw_block_usage_bar()
         packed_mask[24], packed_mask[25], packed_mask[26], packed_mask[27],
         packed_mask[28], packed_mask[29], packed_mask[30], packed_mask[31]);
 
-    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2 + 9, tmpbuf);
+    sdlfont_drawString(screen, x, y, tmpbuf);
+  }
+  y+= CHAR_HEIGHT*2;
+
+  if (is_first_run)
+  {
+    int x = MEMORY_VIEW_X;
+    int y = MEMORY_VIEW_Y + 
+    DEBUGLOG("new time slider");
+    int slider_width = strlen(tmpbuf)*CHAR_WIDTH;
+    //time_seek.slider = new Slider<double>(NULL,x, y+1, slider_width, 4, 8,8, 
+    //0, song_time, 0.0, 3, Main_Window::Gain::change, "db", true);
+    is_first_run=true;
   }
 }
 
@@ -1415,7 +1431,7 @@ void Main_Window::draw_mouse_address()
     int slider_width = 100;
     // here we will allocate slider at these coordinates
     DEBUGLOG("new slider");
-    gain.slider = new Slider<double>(player->new_gain_db,x, y+1, slider_width, 4, 6,6, 
+    gain.slider = new Slider<double>(&player->new_gain_db,x, y+1, slider_width, 4, 6,6, 
       player->min_gain_db, player->max_gain_db, 0.0, 3, Main_Window::Gain::change, "db", true);
     //gain.slider->set_adjuster_color ( Colors::nearblack);
   }
@@ -1434,7 +1450,7 @@ void Main_Window::draw_mouse_address()
     tempo.plus.action = BaseD::Clickable::inc_tempo;*/
     
     x += strlen(tmpbuf)*CHAR_WIDTH + 4;
-    tempo.slider = new Slider<double>(player->tempo,x, y+1, slider_width, 4, 6,6, 0.02, 4.0, 1.0, 1, Main_Window::Tempo::change);
+    tempo.slider = new Slider<double>(&player->tempo,x, y+1, slider_width, 4, 6,6, 0.02, 4.0, 1.0, 1, Main_Window::Tempo::change);
     //tempo.slider->set_adjuster_color ( Colors::nearblack);
   }
   

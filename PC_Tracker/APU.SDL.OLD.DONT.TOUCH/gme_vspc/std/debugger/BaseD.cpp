@@ -6,7 +6,9 @@ uint8_t *BaseD::IAPURAM;*/
 #include "Menu_Bar.h"
 #include "File_System_Context.h"
 
-//unsigned char *BaseD::Profile::orig_spc_state=NULL;
+char BaseD::tmpbuf[500];
+
+
 bool BaseD::Profile::is_profiling=false;
 BaseD::Profile * BaseD::tmp_profile=NULL;
 
@@ -311,20 +313,9 @@ name = strrchr(path, '/'); // Windows might need backslash check
     }
   }
 
-  if (!is_drop_event)
-  {
-    //if (rsn_found)
-      BaseD::reload(BaseD::nfd.rsn_spc_paths,BaseD::nfd.num_rsn_spc_paths);
-    //else
-     // BaseD::reload((char**)BaseD::nfd.paths, BaseD::nfd.numpaths);
-  }
-  else
-  {
-    //if (rsn_found)
-      BaseD::reload(BaseD::nfd.rsn_spc_paths,BaseD::nfd.num_rsn_spc_paths);
-    //else
-      //BaseD::reload((char**)BaseD::nfd.paths, BaseD::nfd.numpaths);
-  }
+
+  BaseD::reload(BaseD::nfd.rsn_spc_paths,BaseD::nfd.num_rsn_spc_paths);
+
 }
 bool BaseD::check_time()
 {
@@ -598,17 +589,16 @@ void BaseD::toggle_pause()
 
 void BaseD::restart_track()
 {
-  player->fade_out();
+  //player->fade_out();
   //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry=0;
-  player->pause(0);
+  //player->pause(0);
   reload();
 }
 
 void BaseD::prev_track()
 {
-  
-  player->fade_out();
+  //player->fade_out();
   //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry--;
   if (g_cur_entry<0) { g_cur_entry = g_cfg.num_files-1; }
@@ -630,21 +620,21 @@ void BaseD::next_track25()
 void BaseD::prev_track25()
 {
   g_cur_entry-=25;
-              int tmp = abs(g_cur_entry);
-              if ((unsigned)g_cur_entry>=g_cfg.num_files)
-              { 
-                if ((unsigned)(g_cfg.num_files-tmp) < g_cfg.num_files)
-                  g_cur_entry=g_cfg.num_files-tmp;  
-                else 
-                  g_cur_entry = 0;
-                
-              }
+  int tmp = abs(g_cur_entry);
+  if ((unsigned)g_cur_entry>=g_cfg.num_files)
+  { 
+    if ((unsigned)(g_cfg.num_files-tmp) < g_cfg.num_files)
+      g_cur_entry=g_cfg.num_files-tmp;  
+    else 
+      g_cur_entry = 0;
+    
+  }
 }
 
 void BaseD::next_track()
 {
   
-  player->fade_out();
+  //player->fade_out();
   //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry++;
   if (g_cur_entry>=g_cfg.num_files) { g_cur_entry = 0; }

@@ -8,7 +8,7 @@
 #include "blargg_endian.h"
 #include "sample_type.h"
 
-//#define SPC_LESS_ACCURATE 1
+
 
 struct Snes_Spc {
 public:

@@ -7,7 +7,7 @@ template <class T>
 void Slider<T>::draw()
 {
 	const char *final_format_str=format_str[precision];
-	SetAdjusterXOffset(getPixelValueFromTargetValue(target_value));
+	SetAdjusterXOffset(getPixelValueFromTargetValue(*target_value));
 	// Get Graphics going
 	// void FillRect(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
 	// void FillRectAlpha(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
@@ -21,19 +21,19 @@ void Slider<T>::draw()
 	{
 		if (is_db_slider)
 		{
-			if (target_value == target_valueRange.min)
+			if (*target_value == target_valueRange.min)
 				strcpy(str_buf, "-INF dB");
-			else if (target_value >= 10 || target_value <= -10)
+			else if (*target_value >= 10 || *target_value <= -10)
 			{
 				final_format_str = format_str[precision-1];
-				int r = snprintf(str_buf, str_buf_size, final_format_str, target_value );
+				int r = snprintf(str_buf, str_buf_size, final_format_str, *target_value );
 				str_buf[r] = ' ';
 				strcpy (&str_buf[r+1], suffix);
 			}
 			else 
 			{
 				final_format_str = format_str[precision];
-				int r = snprintf(str_buf, str_buf_size, final_format_str, target_value );
+				int r = snprintf(str_buf, str_buf_size, final_format_str, *target_value );
 				str_buf[r] = ' ';
 				strcpy (&str_buf[r+1], suffix);
 			}
@@ -41,7 +41,7 @@ void Slider<T>::draw()
 		else
 		{
 			DEBUGLOG("strbuf = %s, str_buf_size = %d, final_format_str = %s\n", str_buf, str_buf_size, final_format_str);
-			int r = snprintf(str_buf, str_buf_size, final_format_str, target_value );
+			int r = snprintf(str_buf, str_buf_size, final_format_str, *target_value );
 			str_buf[r] = ' ';
 			strcpy (&str_buf[r+1], suffix);
 			
@@ -119,14 +119,14 @@ void Slider<T>::Slide(int mouse_x)
 	else
 		adjuster_rect.x = new_adjuster_x;
 
-	target_value = getTargetValue(adjuster_rect.x - panel_rect.x);
-	/*DEBUGLOG("Adjuster\n\t");
+	*target_value = getTargetValue(adjuster_rect.x - panel_rect.x);
+	DEBUGLOG("Adjuster\n\t");
 	DEBUGLOG("[Mouse_X: %d] - [Mouse_X_logged: %d] = %d\n\t", mouse_x, mouse_x_logged, mouse_x-mouse_x_logged);
 	DEBUGLOG("adjuster_x_logged: %d | new_adjuster_x: %d\n\t", adjuster_x_logged,adjuster_rect.x);
-	*/DEBUGLOG("Pixel offset: %d. Target value: %f\n", adjuster_rect.x - panel_rect.x, target_value);
+	DEBUGLOG("Pixel offset: %d. Target value: %f\n", adjuster_rect.x - panel_rect.x, *target_value);
  
 	if (action)
-		action(&target_value);
+		action(&*target_value);
 }
 
 // This is only here incase for some reason we need to calculation the ratio for a specific value
@@ -191,11 +191,11 @@ void Slider<T>::setTargetValue(T v)
 {
 	// V / ratio = Y; Y += panel_rect.x;
 	adjuster_rect.x = (v / ratio) + panel_rect.x;
-	target_value = v;
+	*target_value = v;
 }
 
 template <class T>
-Slider<T>::Slider(T &var, int x, int y, 
+Slider<T>::Slider(T *var, int x, int y, 
 	int panel_width, int panel_height, 
 	int adjuster_width, int adjuster_height, 
 	T range_min, T range_max,
@@ -217,6 +217,15 @@ target_valueRange(range_min, range_max)
 //panel_x(x),panel_y(y),
 //width(width), height(height)
 {
+	if (target_value == NULL)
+	{
+		target_value = new T;
+		owns_value=true;
+	}
+	else
+	{
+		owns_value = false;
+	}
 	if (suffix)
 	{
 		this->suffix = (char*) SDL_malloc(sizeof(char) * (strlen(suffix)+1));
@@ -270,6 +279,8 @@ target_valueRange(range_min, range_max)
 template <class T>
 Slider<T>::~Slider()
 {
+	if (owns_value && *target_value)
+		delete target_value;
 	if (suffix)
 		SDL_free(suffix);
 	if (str_buf)
