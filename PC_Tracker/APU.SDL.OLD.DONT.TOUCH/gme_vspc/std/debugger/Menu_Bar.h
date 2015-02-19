@@ -47,6 +47,7 @@ struct Menu_Bar
     }
 
     static int open_options_window(void *data);
+    static int open_options_window_in_thread(void *data);
 
     Expanding_List menu;
     Context_Menu_Item menu_items[4] = 

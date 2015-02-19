@@ -1,5 +1,6 @@
 #pragma once
 #include "SDL.h"
+
 struct Window
 {
   Window(int width, int height, const char *title);

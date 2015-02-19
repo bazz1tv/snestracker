@@ -25,6 +25,9 @@ public:
   void run();
   void handle_events();
 
+  //
+  //Options_Window *options_window;
+
   Menu_Bar menu_bar;
   Main_Window main_window;
   Dsp_Window dsp_window;
