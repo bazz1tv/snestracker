@@ -38,6 +38,7 @@ Main_Window * BaseD::main_window=NULL;
 Instrument_Window * BaseD::instr_window=NULL;
 Dsp_Window * BaseD::dsp_window=NULL;
 Menu_Bar * BaseD::menu_bar=NULL;
+Options_Window * BaseD::options_window=NULL;
 
 const char * BaseD::path=NULL;
 Voice_Control BaseD::voice_control;
@@ -474,9 +475,7 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
 {
   char *path=NULL;
   bool using_playlist=false;
-  DEBUGLOG("g_cfg.playlist = %lx\n", (uintptr_t)g_cfg.playlist);
-  DEBUGLOG("g_cur_entry = %d", g_cur_entry);
-  DEBUGLOG("g_cfg.playlist[g_cur_entry] = %s\n", g_cfg.playlist[g_cur_entry]);
+  
   if (!paths)
   {
     DEBUGLOG("A");
@@ -494,6 +493,8 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
     path = g_cfg.playlist[g_cur_entry];
   }
 
+
+
   //DEBUGLOG("path = %d\n", path);
   if (path == NULL)
   {
@@ -501,6 +502,10 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
     player->has_no_song = true;
     return; 
   }
+
+  DEBUGLOG("g_cfg.playlist = %lx\n", (uintptr_t)g_cfg.playlist);
+  DEBUGLOG("g_cur_entry = %d", g_cur_entry);
+  DEBUGLOG("g_cfg.playlist[g_cur_entry] = %s\n", g_cfg.playlist[g_cur_entry]);
 
 #ifdef WIN32
   g_real_filename = strrchr(path, '\\');

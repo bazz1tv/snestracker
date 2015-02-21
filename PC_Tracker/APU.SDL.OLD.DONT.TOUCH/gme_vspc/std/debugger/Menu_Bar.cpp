@@ -11,16 +11,18 @@
 int Menu_Bar::Edit_Context::open_options_window(void *data)
 {
   DEBUGLOG("open_options_window()\n");
+  BaseD::options_window->show();
   //SDL_Thread *thread;
-  SDL_CreateThread(&Menu_Bar::Edit_Context::open_options_window_in_thread, "Options_Window_Thread", NULL);
+  //SDL_CreateThread(&Menu_Bar::Edit_Context::open_options_window_in_thread, "Options_Window_Thread", NULL);
   return 0;
 }
 
 int Menu_Bar::Edit_Context::open_options_window_in_thread(void *data)
 {
   DEBUGLOG("open_options_window_in_thread()\n");
-  Options_Window win;
-  SDL_Delay(5000);
+  
+  
+  //SDL_Delay(5000);
   return 0;
 }
 

@@ -107,7 +107,7 @@ public Experience
   void run();
   void check_quit(SDL_Event &ev);
 
-  void receive_event(SDL_Event &ev);
+  int receive_event(SDL_Event &ev);
   void draw();
 
   void one_time_draw();

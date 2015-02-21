@@ -25,7 +25,7 @@ public Experience
   Dsp_Window();
   void run();
   void draw();
-  void receive_event(SDL_Event &ev);
+  int receive_event(SDL_Event &ev);
 
   void reset_screw();
   Clickable_Text screw_clickable;

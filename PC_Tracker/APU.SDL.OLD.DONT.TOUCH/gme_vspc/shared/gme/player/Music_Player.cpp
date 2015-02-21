@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 #include "sdl_userevents.h"
 
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
-const int fill_rate = 45; //45;
+const int fill_rate = 64; //45;
 
 double Music_Player::min_gain_db=-96.0, Music_Player::max_gain_db = 20.0;
 
@@ -41,6 +41,48 @@ static const char* sound_init( long sample_rate, int buf_size, sound_callback_t,
 //static void sound_start();
 //static void sound_stop();
 //static void sound_cleanup();
+
+void Music_Player::spc_write(int addr, int data)
+{
+	//sound_stop();
+	if (addr == 0xf3)
+		spc_write_dsp(spc_emu_->ram()[0xf2], data);
+	else spc_emu_->write(addr, data, 1);
+	//sound_start();
+}
+uint8_t Music_Player::spc_read(int addr)
+{
+	//sound_stop();
+	uint8_t v = spc_emu_->read(addr, 1);
+	//sound_start();
+	return v;
+}
+uint8_t Music_Player::spc_read_dsp(int dspaddr)
+{
+	//spc_emu_->write(0xf2, dspaddr, 1);
+	//return spc_emu_->read(0xf3);
+	//sound_stop();
+	uint8_t v = spc_emu_->read_dsp(dspaddr);
+	//sound_start();
+	return v;
+}
+void Music_Player::spc_write_dsp(int dspaddr, int val)
+{
+	//spc_emu_->write(0xf2, dspaddr, 1);
+	//return spc_emu_->read(0xf3);
+	//sound_stop();
+	spc_emu_->write_dsp(dspaddr, val);
+	//sound_start();
+}
+
+void Music_Player::inc_ram(int addr, int i/*=1*/)
+{
+  spc_write(addr, (spc_read(addr))+i);
+}
+void Music_Player::dec_ram(int addr, int i/*=1*/)
+{
+  spc_write(addr, (spc_read(addr))-i);
+}
 
 
 
@@ -98,12 +140,16 @@ blargg_err_t Music_Player::init( long rate )
 {
 	sample_rate = rate;
 	
-	int min_size = sample_rate * 2 / fill_rate;
-	int buf_size = 512;
-	while ( buf_size < min_size )
-		buf_size *= 2;
-	
-	return sound_init( sample_rate, buf_size, fill_buffer, this );
+	//int min_size = sample_rate * 2 / fill_rate;
+	int sample_frame_size = 512 * pow(2,1);
+	stereo_bufs_per_sec = (double)sample_rate / (double)sample_frame_size;
+	//if (fill_rate % )
+
+	DEBUGLOG("samples = %d\n", sample_frame_size);
+	DEBUGLOG("audio buffs per sec = %0.2f\n", stereo_bufs_per_sec);
+
+
+	return sound_init( sample_rate, sample_frame_size, fill_buffer, this );
 }
 
 void Music_Player::stop()
@@ -196,10 +242,15 @@ int Music_Player::fade_out(void *ptr)
 
 void Music_Player::fade_out(bool threaded/*=false*/)
 {
-	if (SDL_GetAudioDeviceStatus(audio->devices.id) == SDL_AUDIO_PAUSED)
+	DEBUGLOG("fadeout()\n");
+	SDL_AudioStatus audio_status = SDL_GetAudioDeviceStatus(audio->devices.id);
+	if (audio_status == SDL_AUDIO_PAUSED || audio_status == SDL_AUDIO_STOPPED)
 		return;
+	//else if (emu_->tell() >= (track_info_.length))
+		//return;
 	//if (paused)
 		//return;
+	DEBUGLOG("\tprocessing\n");
 
 	if (threaded)
 		thread = SDL_CreateThread(&Music_Player::fade_out, "FadeOutThread", this);
@@ -301,9 +352,16 @@ blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
 			}
 			if ( track_info_.length <= 0 )
 				track_info_.length = (long) (2.5 * 60 * 1000);
-			emu_->set_fade( track_info_.length );
+			emu_->set_fade( track_info_.length + 1000 );
+			/* I add 1000 above, because without, because I am calling fade_out from load_file,
+			which is sometimes called when a song's elapsed time >= it's track length, there was an issue
+			when the set_fade was set to the length, where the fade_out routine would take forever to finish
+			due to a prolonged period inside the audio callback somehow related to the set_fade parameter..
+			by increasing the parameter by 1 second, I avoid the prolonged callback AKA delay after certain
+			songs end.. (ie Star Fox Track 1 intro track)
+			
+			*/
 			sound_start();
-
 		}
 		
 		//fprintf(stderr, "game = %s", track_info_.game);
@@ -526,7 +584,10 @@ void Music_Player::apply_gain(sample_t* out, int count )
 }
 void Music_Player::fill_buffer( void* data, sample_t* out, int count )
 {
+	
+
 	//memset(out, 0, count);
+	//DEBUGLOG("out = %lx, count = %d\n", out, count);
 	Music_Player* self = (Music_Player*) data;
 	if ( self->emu_ )
 	{
@@ -552,7 +613,28 @@ static void* sound_callback_data;
 static void sdl_callback( void* data, Uint8* out, int count )
 {
 	if ( sound_callback )
+	{
+		static int mycount=0;
+		static int num = 0;
+		static int time_start =0;
+		static bool stop=false;
+
+		if (num == 0)
+		{
+			time_start = SDL_GetTicks();
+		}
+		
+		int time_end = SDL_GetTicks();
+
+		if ((time_end - time_start) >= 1000 && !stop)
+		{
+			DEBUGLOG("%d buffs a sec, %lu stereo samples processed, count = %d\n", num, (mycount/sizeof(sample_t))/2, count);
+			stop=true;
+		}
+		num++;
+		mycount+=count;
 		sound_callback( sound_callback_data, (short*) out, count / 2 );
+	}
 }
 
 static const char* sound_init( long sample_rate, int buf_size,
@@ -563,7 +645,7 @@ static const char* sound_init( long sample_rate, int buf_size,
 	
 	static SDL_AudioSpec as, have; // making static clears all fields to 0
 	as.freq     = sample_rate;
-	as.format   = AUDIO_S16SYS;
+	as.format   = AUDIO_S16LSB;
 	as.channels = 2;
 	as.callback = sdl_callback;
 	as.samples  = buf_size;
@@ -604,12 +686,14 @@ static const char* sound_init( long sample_rate, int buf_size,
     if (have.channels != as.channels)  // we let this one thing change.
       printf("We didn't get Float32 audio format.\n");
     if (have.samples != as.samples)  // we let this one thing change.
-      printf("We didn't get Float32 audio format.\n");
+      printf("We didn't get %d samples, got %d samples.\n", as.samples, have.samples);
 
     //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 0);  // start audio playing.
     //SDL_Delay(5000);  // let the audio callback play some sound for 5 seconds.
     //SDL_CloseAudioDevice(Audio_Context::audio->devices.id);
 	}
+
+	DEBUGLOG("aspec size = %d\n", have.size);
 	
 	return 0;
 }

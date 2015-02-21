@@ -177,7 +177,7 @@ void Instrument_Window::draw()
   sdl_draw();
 }
 
-void Instrument_Window::receive_event(SDL_Event &ev)
+int Instrument_Window::receive_event(SDL_Event &ev)
 {
   int r;
 

@@ -2,6 +2,7 @@
 
 #include "gui/Window.h"
 #include "gui/Tab.h"
+#include "Experience.h"
 
 /*
    _______    _________
@@ -38,6 +39,12 @@
 struct Options_Window : public Window
 {
   Options_Window();
+
+  bool is_first_run=true;
+  void run() {}
+  void draw();
+  int receive_event(SDL_Event &ev);
+
   struct Tabs
   {
     SDL_Rect rect;

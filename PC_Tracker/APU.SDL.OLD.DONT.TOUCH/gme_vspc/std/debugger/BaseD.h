@@ -13,6 +13,7 @@ struct Main_Window;
 struct Dsp_Window;
 struct Instrument_Window;
 struct Menu_Bar;
+struct Options_Window;
 
 struct BaseD : public Render_Context, public Player_Context
 {
@@ -125,6 +126,7 @@ struct BaseD : public Render_Context, public Player_Context
   static Dsp_Window *dsp_window;
   static Instrument_Window *instr_window;
   static Menu_Bar *menu_bar;
+  static Options_Window *options_window;
 
   static int g_paused;// = 0;
   static bool quitting;

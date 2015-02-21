@@ -4,8 +4,10 @@
 #include "BaseD.h"
 #include "gui/Expanding_List.h"
 #include "Main_Window.h"
+#include "Options_Window.h"
 struct Menu_Bar
 {
+  
   //Menu_Bar();
   bool is_first_run=true;
   void draw(SDL_Surface *screen);

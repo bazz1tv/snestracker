@@ -2,7 +2,7 @@
 
 Window::Window(int width, int height, const char *title)
 {
-  SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, &sdlWindow, &sdlRenderer);
+  SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN, &sdlWindow, &sdlRenderer);
   if (sdlWindow == NULL || sdlRenderer == NULL)
   {
     fprintf(stderr, "FCK\n");
@@ -12,6 +12,8 @@ Window::Window(int width, int height, const char *title)
                        NULL);
     return;
   }
+
+  windowID = SDL_GetWindowID(sdlWindow);
 
   //sdlWindow = *sdlWindow;
   //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");  // make the scaled rendering look smoother.
@@ -40,13 +42,20 @@ Window::Window(int width, int height, const char *title)
   // needs to be more permanent eh!
   //char tmpbuf[100];
   //sprintf(tmpbuf, PROG_NAME_VERSION_STRING, APP_VERSION);
-  SDL_SetWindowTitle(sdlWindow, title);
+  
   //clear_screen();
+  //SDL_RaiseWindow(sdlWindow);
+  //clear_screen();
+  //SDL_HideWindow(sdlWindow);
+  SDL_SetWindowTitle(sdlWindow, title);
+  //SDL_Delay(5000);
+  //SDL_ShowWindow(sdlWindow);
 }
 
 
 Window::~Window()
 {
+  SDL_Log("~Window");
   if (screen)
     SDL_FreeSurface(screen);
   if (sdlTexture)
@@ -66,10 +75,26 @@ void Window::clear_screen()
   SDL_RenderPresent(sdlRenderer);
 }
 
-void Window::draw()
+/*void Window::draw()
 {
   SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
   SDL_RenderClear(sdlRenderer);
   SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
   SDL_RenderPresent(sdlRenderer);
+}*/
+
+void Window::show()
+{
+  SDL_ShowWindow(sdlWindow);
 }
+
+void Window::raise()
+{
+  SDL_RaiseWindow(sdlWindow);
+}
+
+void Window::hide()
+{
+  SDL_HideWindow(sdlWindow);
+}
+

@@ -764,7 +764,7 @@ outx.: $FF    outx.: $FF    outx.: $FF    outx.: $FF
   SDL_RenderPresent(sdlRenderer);
 }
 
-void Dsp_Window::receive_event(SDL_Event &ev)
+int Dsp_Window::receive_event(SDL_Event &ev)
 {
   /* menu bar */
   int r;

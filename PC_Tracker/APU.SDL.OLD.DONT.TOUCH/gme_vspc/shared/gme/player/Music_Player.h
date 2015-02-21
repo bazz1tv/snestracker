@@ -78,37 +78,13 @@ public:
 	Music_Emu* emu() const { return emu_; }
 	Spc_Emu* spc_emu() const { return spc_emu_; }
 
-	void spc_write(int addr, int data)
-	{
-		if (addr == 0xf3)
-			spc_write_dsp(spc_emu_->ram()[0xf2], data);
-		else spc_emu_->write(addr, data, 1);
-	}
-	uint8_t spc_read(int addr)
-	{
-		return spc_emu_->read(addr, 1);
-	}
-	uint8_t spc_read_dsp(int dspaddr)
-	{
-		//spc_emu_->write(0xf2, dspaddr, 1);
-		//return spc_emu_->read(0xf3);
-		return spc_emu_->read_dsp(dspaddr);
-	}
-	void spc_write_dsp(int dspaddr, int val)
-	{
-		//spc_emu_->write(0xf2, dspaddr, 1);
-		//return spc_emu_->read(0xf3);
-		spc_emu_->write_dsp(dspaddr, val);
-	}
+	void spc_write(int addr, int data);
+	uint8_t spc_read(int addr);
+	uint8_t spc_read_dsp(int dspaddr);
+	void spc_write_dsp(int dspaddr, int val);
 
-	void inc_ram(int addr, int i=1)
-	{
-	  spc_write(addr, (spc_read(addr))+i);
-	}
-	void dec_ram(int addr, int i=1)
-	{
-	  spc_write(addr, (spc_read(addr))-i);
-	}
+	void inc_ram(int addr, int i=1);
+	void dec_ram(int addr, int i=1);
 	// Set stereo depth, where 0.0 = none and 1.0 = maximum
 	void set_stereo_depth( double );
 	
@@ -150,6 +126,7 @@ public:
 		strcpy(path,str);
 	}*/
 	void fade_out(bool threaded=false); // public function
+	double stereo_bufs_per_sec;
 private:
 	Spc_Filter* spc_filter;
 	Music_Emu* emu_;
