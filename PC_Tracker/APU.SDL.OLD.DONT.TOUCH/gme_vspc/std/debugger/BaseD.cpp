@@ -195,12 +195,12 @@ name = strrchr(path, '\\'); // Windows might need backslash check
 name = strrchr(path, '/'); // Windows might need backslash check
 #endif
   //assert(name);
-  if (!name)
-    name = path;
-  else
-  {
-    name += 1; // move past '/' character
-  }
+    if (!name)
+      name = path;
+    else
+    {
+      name += 1; // move past '/' character
+    }
 
     if (!strcmp(ext, ".rsn") || !strcmp(ext, ".rar"))
     {
@@ -260,25 +260,53 @@ name = strrchr(path, '/'); // Windows might need backslash check
       fprintf(stderr, "ls_cmd = %s\n", ls_cmd);
       fp = popen(ls_cmd, "r");
       if (fp == NULL)
-          /* Handle error */;
+          /* Handle error */
+      {
 
+      }
+
+      //int count=0;
+      int old_nfd_rsn_spc_path_pos=BaseD::nfd.num_rsn_spc_paths;
+      while (fgets(spc_path, PATH_MAX, fp) != NULL)
+      {
+        BaseD::nfd.num_rsn_spc_paths++;
+      }
+
+      //rewind(fp);
+      status = pclose(fp);
+      if (status == -1) {
+          /* Error reported by pclose() */
+          //...
+      } else {
+          /* Use macros described under wait() to inspect `status' in order
+             to determine success/failure of command executed by popen() */
+          //...
+      }
+      fp = popen(ls_cmd, "r");
+      if (fp == NULL)
+          /* Handle error */
+      {
+
+      }
+
+      BaseD::nfd.rsn_spc_paths=(char**)SDL_realloc(BaseD::nfd.rsn_spc_paths, 
+        sizeof(char*) * (BaseD::nfd.num_rsn_spc_paths+1));
+      if (BaseD::nfd.rsn_spc_paths == NULL)
+      {
+        perror ("realloc");
+        break;
+      }
 
       while (fgets(spc_path, PATH_MAX, fp) != NULL)
       {
+        // erase newline
         spc_path[strlen(spc_path)-1] = 0;
-        char **tmp;
-        if ( (tmp=(char**)SDL_realloc(BaseD::nfd.rsn_spc_paths, sizeof(char*) * (BaseD::nfd.num_rsn_spc_paths+1))) == NULL)
-        {
-          perror ("realloc");
-          break;
-        }
-        BaseD::nfd.rsn_spc_paths = tmp;
-        BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths] = (char*) SDL_calloc(strlen(spc_path)+3, sizeof(char));
-        //strcpy(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], "\"");
-        strcpy(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], spc_path);
-        //strcat(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], "\"");
-        //fprintf(stderr, "path = %s\n", BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths]);
-        BaseD::nfd.num_rsn_spc_paths++;
+        
+        // 3 because 0, '"', '"' IIRC
+        BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos] = (char*) SDL_calloc(strlen(spc_path)+3, sizeof(char));
+        strcpy(BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos], spc_path);
+        
+        old_nfd_rsn_spc_path_pos++; 
       }
 
 

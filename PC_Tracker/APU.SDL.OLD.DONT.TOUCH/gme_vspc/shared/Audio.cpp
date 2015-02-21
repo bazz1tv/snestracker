@@ -28,6 +28,11 @@ double Audio::calculate_fullscale_db_from_postgain_sample(int *sample, double mi
     return (double)20.0 * (double)log10(abs(*sample) / 32768);
 }
 
+Audio::Devices::Devices()
+{
+  query();
+}
+
 Audio::Devices::~Devices()
 {
   DEBUGLOG("~Devices;");
@@ -49,7 +54,7 @@ void Audio::Devices::query()
   device_strings = (char**) SDL_malloc(sizeof(char*) * Devices::how_many);
   for (int i = 0; i < Devices::how_many; ++i)
   {
-    const char *audio_device_name = SDL_GetAudioDeviceName(i, 0);
+    const char *audio_device_name = SDL_GetAudioDeviceName(i, Devices::Type::playback);
     printf("Audio device %d: %s\n", i, audio_device_name);
     device_strings[i] = (char*) SDL_malloc(sizeof(char) * (strlen(audio_device_name)+1));
     strcpy(device_strings[i], audio_device_name);

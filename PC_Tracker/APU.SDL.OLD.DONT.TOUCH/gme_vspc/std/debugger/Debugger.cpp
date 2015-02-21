@@ -65,7 +65,7 @@ void Debugger::run()
     }
     
     handle_events();
-    //SDL_Delay( 1000 / 100 );
+    SDL_Delay( 1000 / 100 );
     
   }
   if (!player->is_paused() && player->track_started)

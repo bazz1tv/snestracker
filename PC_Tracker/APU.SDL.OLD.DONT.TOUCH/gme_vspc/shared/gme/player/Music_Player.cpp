@@ -388,6 +388,9 @@ bool Music_Player::is_paused()
 
 void Music_Player::pause( int b, bool with_fade/*=true*/, bool fade_threaded/*=true*/ )
 {
+	if (has_no_song)
+		return;
+	
 	if ( b )
 	{
 		paused = b;
@@ -659,6 +662,7 @@ static const char* sound_init( long sample_rate, int buf_size,
 			if (!strcmp(audio_out_dev, Audio_Context::audio->devices.device_strings[i]))
 			{
 				match = true;
+				break;
 			}
 		}
 		if (!match)
@@ -666,6 +670,8 @@ static const char* sound_init( long sample_rate, int buf_size,
 	}
 	else audio_out_dev = Audio_Context::audio->devices.device_strings[0];
 
+
+	DEBUGLOG("Opening Audio out Device: %s\n", audio_out_dev);
 	Audio::Devices::selected_audio_out_dev = audio_out_dev;
 	Audio_Context::audio->devices.id = SDL_OpenAudioDevice(audio_out_dev, Audio::Devices::playback, &as, &have, 0 );
 	if (Audio_Context::audio->devices.id  == 0 )
@@ -678,15 +684,13 @@ static const char* sound_init( long sample_rate, int buf_size,
 	else 
 	{
     if (have.format != as.format)  // we let this one thing change.
-      printf("We didn't get Float32 audio format.\n");
+      DEBUGLOG("\tas.format = %d, have.format = %d\n", as.format, have.format);
     if (have.freq != as.freq)  // we let this one thing change.
-      printf("We didn't get Float32 audio format.\n");
-    if (have.format != as.format)  // we let this one thing change.
-      printf("We didn't get Float32 audio format.\n");
+      DEBUGLOG("\tas.freq = %d, have.freq = %d\n", as.freq, have.freq);
     if (have.channels != as.channels)  // we let this one thing change.
-      printf("We didn't get Float32 audio format.\n");
+      DEBUGLOG("\tas.channels = %d, have.channels = %d\n", as.channels, have.channels);
     if (have.samples != as.samples)  // we let this one thing change.
-      printf("We didn't get %d samples, got %d samples.\n", as.samples, have.samples);
+      DEBUGLOG("\tas.samples = %d, have.samples = %d\n", as.samples, have.samples);
 
     //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 0);  // start audio playing.
     //SDL_Delay(5000);  // let the audio callback play some sound for 5 seconds.

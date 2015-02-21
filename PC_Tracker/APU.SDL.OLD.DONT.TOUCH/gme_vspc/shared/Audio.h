@@ -8,7 +8,7 @@ struct Audio
   //the value ranges from 0 to SDL_GetNumAudioDevices() - 1
   struct Devices
   {
-    Devices() { query(); }
+    Devices();
     ~Devices();
     enum Type { playback=0, record=1 };
     static int how_many;
