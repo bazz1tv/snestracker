@@ -45,6 +45,11 @@ main_window(argc,argv)
   //}
 }
 
+Debugger::~Debugger()
+{
+  DEBUGLOG("~Debugger");
+}
+
 
 void Debugger::run()
 {
@@ -58,16 +63,27 @@ void Debugger::run()
   {
     exp->run();
     exp->draw();
-    if (event_experience)
+
+    if (sub_window_experience)
     {
-      event_experience->run();
-      event_experience->draw();
+      sub_window_experience->run();
+      sub_window_experience->draw();
     }
     
     handle_events();
     SDL_Delay( 1000 / 100 );
     
   }
+  
+  sub_window_experience = NULL;
+  for (int i=0; i < NUM_WINDOWS; i++)
+  {
+    //window_map[i]->hide();
+    // DO THIS because otherwise the hidden windows will blink
+    // quickly on exit
+    window_map[i]->~Window();
+  }
+
   if (!player->is_paused() && player->track_started)
   {
     player->fade_out(false);
@@ -81,7 +97,10 @@ void Debugger::handle_events()
   SDL_Event ev;
   while (SDL_PollEvent(&ev))
   {
-
+    if (ev.type == SDL_QUIT)
+    {
+      BaseD::quitting = true;
+    }
     if (ev.type == SDL_WINDOWEVENT)
     {
       switch(ev.window.event)
@@ -157,26 +176,26 @@ void Debugger::handle_events()
         {
           DEBUGLOG("Window %d Gained keyboard focus\n", ev.window.windowID);
           
-          event_experience = NULL;
+          sub_window_experience = NULL;
           for (int i=0; i < NUM_WINDOWS; i++)
           {
             if (ev.window.windowID == window_map[i]->windowID)
             {
               DEBUGLOG(":D\n");
-              event_experience = (Experience *)window_map[i];
+              sub_window_experience = (Experience *)window_map[i];
               window_map[i]->raise();
               break;
             }
           }
           /*if (ev.window.windowID == Render_Context::windowID)
-            event_experience = BaseD::exp;
+            sub_window_experience = BaseD::exp;
           else if (ev.window.windowID == BaseD::menu_bar->options_window.windowID)
           {
-            event_experience = (Experience *)&BaseD::menu_bar->options_window;
+            sub_window_experience = (Experience *)&BaseD::menu_bar->options_window;
             SDL_RaiseWindow(BaseD::menu_bar->options_window.sdlWindow);
           }
           else
-            event_experience = NULL;*/
+            sub_window_experience = NULL;*/
 
         }
         break;
@@ -185,6 +204,8 @@ void Debugger::handle_events()
           SDL_Log("Window %d closed", ev.window.windowID);
           if (ev.window.windowID == Render_Context::windowID)
           {
+            // quit app
+
             SDL_Event quit_ev;
             quit_ev.type = SDL_QUIT;
             SDL_PushEvent(&quit_ev);
@@ -199,7 +220,7 @@ void Debugger::handle_events()
                 /* maybe right here, instead of raising the main window, we should
                   have a history of displayed windows.. and the last one should be raised.
                 */
-                event_experience = NULL;
+                sub_window_experience = NULL;
                 SDL_RaiseWindow(Render_Context::sdlWindow);
                 break;
               }
@@ -240,8 +261,8 @@ void Debugger::handle_events()
       mouse::y = ev.motion.y;
     }
     
-    if (event_experience)
-      event_experience->receive_event(ev);
+    if (sub_window_experience)
+      sub_window_experience->receive_event(ev);
     else exp->receive_event(ev);
   }
 }

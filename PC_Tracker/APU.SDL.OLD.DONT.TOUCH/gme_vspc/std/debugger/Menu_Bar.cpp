@@ -12,6 +12,9 @@ int Menu_Bar::Edit_Context::open_options_window(void *data)
 {
   DEBUGLOG("open_options_window()\n");
   BaseD::options_window->show();
+  // there's a problem raising the window immediately after showing it... 
+  // So I raise it in the event loop when the window focus change event happens
+  
   //SDL_Thread *thread;
   //SDL_CreateThread(&Menu_Bar::Edit_Context::open_options_window_in_thread, "Options_Window_Thread", NULL);
   return 0;
@@ -31,7 +34,7 @@ void Menu_Bar::draw(SDL_Surface *screen)
   if (is_first_run)
   {
     context_menus.preload(10, 10);
-    tabs.preload(context_menus.x, context_menus.y, context_menus.h);
+    tabs.preload(context_menus.x, context_menus.y + context_menus.h + CHAR_HEIGHT*2);
     is_first_run = false;
     fprintf(stderr, "menubar DERP");
   }
@@ -253,11 +256,11 @@ void Menu_Bar::Context_Menus::draw(SDL_Surface *screen)
   }
 }
 
-void Menu_Bar::Tabs::preload(int x, int y, int h)
+void Menu_Bar::Tabs::preload(int x, int y)
 {
   // init Tabs
   mem.rect.x = x;
-  mem.rect.y = y + h + CHAR_HEIGHT*2;
+  mem.rect.y = y; // + h + CHAR_HEIGHT*2;
   //
   dsp.rect.x = mem.rect.x + mem.horiz_pixel_length() + CHAR_WIDTH;
   dsp.rect.y = mem.rect.y;

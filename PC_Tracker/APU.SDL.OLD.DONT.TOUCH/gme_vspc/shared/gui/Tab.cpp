@@ -11,7 +11,7 @@ int Tab::horiz_pixel_length()
 {
   return str.length()*CHAR_WIDTH + pad_w_size*2;
 }
-void Tab::draw()
+void Tab::draw(SDL_Surface *screen/*=Render_Context::screen*/)
 {
   Uint32 *bg_color, *fg_color;
 

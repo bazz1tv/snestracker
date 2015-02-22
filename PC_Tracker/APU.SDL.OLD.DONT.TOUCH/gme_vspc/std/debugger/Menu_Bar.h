@@ -146,7 +146,7 @@ struct Menu_Bar
   struct Tabs
   {
     SDL_Rect rect;
-    void preload(int x, int y, int h);
+    void preload(int x, int y);
     Tabs() : mem(3,3, "Mem", BaseD::switch_to_memory, NULL, true),
       dsp(3,3, "DSP", BaseD::switch_to_dsp, NULL),
       instr(3,3, "INSTR", BaseD::switch_to_instrument, NULL)

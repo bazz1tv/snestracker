@@ -112,6 +112,7 @@ public Experience
 
   void one_time_draw();
 
+  void draw_memory_outline();
   void draw_program_counter();
   void draw_voices_pitchs();
   void draw_voices_volumes();

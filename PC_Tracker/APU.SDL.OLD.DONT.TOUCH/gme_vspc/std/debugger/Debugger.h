@@ -25,6 +25,7 @@ struct Debugger : public BaseD
 {
 public:
   Debugger(int &argc, char **argv); // , Music_Player *player, SDL_Window *, SDL_Renderer *, SDL_Texture *, SDL_Surface*);
+  ~Debugger();
   void run();
   void handle_events();
 
@@ -32,7 +33,6 @@ public:
 
   //
   //Options_Window *options_window;
-  Experience *event_experience = NULL;
   Menu_Bar menu_bar;
   Main_Window main_window;
   Dsp_Window dsp_window;
@@ -41,6 +41,7 @@ public:
   SDL_DisplayMode monitor_display_mode;
   //
   //std::map<SDL_WindowID_Type, Window *> window_map;
+  Experience *sub_window_experience = NULL;
   Window *window_map[NUM_WINDOWS+1];
   Options_Window options_window;
 };

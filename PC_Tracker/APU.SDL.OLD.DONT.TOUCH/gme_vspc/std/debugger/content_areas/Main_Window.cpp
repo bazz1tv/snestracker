@@ -29,6 +29,16 @@ int Main_Window::Tempo::change(void *dblnewtempo)
   return 0;
 }
 
+void Main_Window::draw_memory_outline()
+{
+  tmprect.x = MEMORY_VIEW_X-1;
+  tmprect.y = MEMORY_VIEW_Y-1;
+  tmprect.w = 512+2;
+  tmprect.h = 512+2;
+  SDL_SetRenderDrawColor(sdlRenderer, 255, 255, 255, 255);
+  SDL_RenderDrawRect(sdlRenderer, &tmprect);
+}
+
 void Main_Window::draw()
 {
 
@@ -41,7 +51,7 @@ void Main_Window::draw()
     //do_scroller(time_cur - time_last);
     sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
 
-    tmprect.x = MEMORY_VIEW_X-1;
+    /*tmprect.x = MEMORY_VIEW_X-1;
     tmprect.y = MEMORY_VIEW_Y-1;
     tmprect.w = 1;
     tmprect.h = 512+2;
@@ -60,7 +70,8 @@ void Main_Window::draw()
     tmprect.y = MEMORY_VIEW_Y-1 + 513;
     tmprect.w = 512+2;
     tmprect.h = 1;
-    SDL_FillRect(screen, &tmprect, Colors::white);
+    SDL_FillRect(screen, &tmprect, Colors::white);*/
+
     
     fade_arrays();      
     
@@ -79,6 +90,7 @@ void Main_Window::draw()
       SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
       SDL_RenderClear(sdlRenderer);
       SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+      draw_memory_outline();
       SDL_RenderPresent(sdlRenderer);
       return; 
     }  
@@ -142,9 +154,14 @@ void Main_Window::draw()
     SDL_RenderClear(sdlRenderer);
     SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
     // stuff that renders direct to renderer must happen after the screen copy
+    draw_memory_outline();
 
     gain.slider->draw();
     tempo.slider->draw();
+
+    
+
+
     SDL_RenderPresent(sdlRenderer);
     time_last = time_cur;
     if (g_cfg.nice) {  SDL_Delay(100); }

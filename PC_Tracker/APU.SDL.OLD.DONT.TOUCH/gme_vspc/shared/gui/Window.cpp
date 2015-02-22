@@ -57,13 +57,27 @@ Window::~Window()
 {
   SDL_Log("~Window");
   if (screen)
+  {
     SDL_FreeSurface(screen);
+    screen = NULL;
+  }
   if (sdlTexture)
+  {
     SDL_DestroyTexture(sdlTexture);
+    sdlTexture = NULL;
+  }
+    
   if (sdlRenderer)
+  {
     SDL_DestroyRenderer(sdlRenderer);
+    sdlRenderer = NULL;
+  }
+    
   if(sdlWindow)
+  {
     SDL_DestroyWindow(sdlWindow);
+    sdlWindow = NULL;
+  }   
 }
 
 void Window::clear_screen()
@@ -75,13 +89,13 @@ void Window::clear_screen()
   SDL_RenderPresent(sdlRenderer);
 }
 
-/*void Window::draw()
+void Window::update_screen()
 {
   SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
   SDL_RenderClear(sdlRenderer);
   SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
   SDL_RenderPresent(sdlRenderer);
-}*/
+}
 
 void Window::show()
 {
