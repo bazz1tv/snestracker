@@ -16,6 +16,9 @@ struct Context_Menu
   void activate();
   void deactivate();
 
+  void hover_highlight(bool yesno);
+  void highlight_currently_selected_item(bool yesno);
+
   bool receive_event(SDL_Event &ev);
   
 
@@ -33,4 +36,10 @@ struct Context_Menu
   bool is_static=false;
   int greatest_length=0, visible_items=0;
   Context_Menu_Item *highlighted_item=NULL;
+
+  // V2
+  bool should_highlight_hover=true;
+  bool should_highlight_currently_selected_item=false;
+  Context_Menu_Item *currently_selected_item=NULL;
+  int currently_selected_item_index=0;
 };

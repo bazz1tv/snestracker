@@ -3,47 +3,53 @@
 
 Options_Window::Tabs::Tabs(Options_Window &ref) : 
 options_window(ref),
-audio(3,3, "Audio", switch_to_audio_tab, NULL, true)
+audio(3,3, "Audio", switch_to_audio_tab, &options_window, true)
 {
 
 }
 
 int Options_Window::Tabs::switch_to_audio_tab(void *data)
 {
+  Options_Window *options_window = (Options_Window *)data;
   SDL_Log("switch_to_audio_tab");
+  options_window->exp = &options_window->content_area.audio_options;
+  options_window->content_area.clear();
+  options_window->content_area.audio_options.one_time_draw();
   return 0;
 }
 
 Options_Window::Options_Window() : 
 Window(SCREEN_WIDTH, SCREEN_HEIGHT, "Options"),
-audio_options(screen),
-tabs(*this)
+tabs(*this),
+content_area(*this)
 {
   preload(10,10);
+  
+  exp->one_time_draw();
 }
 
 void Options_Window::preload(int x, int y)
 {
   tabs.preload(x,y);
-  y += CHAR_HEIGHT*2;
-  audio_options.preload(x,y);
+  y += CHAR_HEIGHT*5;
+  content_area.preload(x,y);
+}
+
+void Options_Window::run()
+{
+  if (exp) exp->run();
 }
 
 void Options_Window::draw()
 {
-  if (is_first_run)
-  {
-    
-    is_first_run=false;
-  }
-
   tabs.draw();
+  if (exp) exp->draw();
   update_screen();
 }
 
 int Options_Window::receive_event(SDL_Event &ev)
 {
-  SDL_Log("Options_Window::receive_event\n");
+  //SDL_Log("Options_Window::receive_event\n");
   switch (ev.type)
   {
     case SDL_MOUSEBUTTONDOWN:
@@ -70,6 +76,9 @@ int Options_Window::receive_event(SDL_Event &ev)
 
     default:break;
   }
+
+  if (exp)
+    exp->receive_event(ev);
   return 0;
 }
 
@@ -89,3 +98,22 @@ void Options_Window::Tabs::preload(int x, int y)
   rect = audio.rect;
 }
 
+Options_Window::Content_Area::Content_Area(Options_Window &ref) : 
+options_window(ref),
+audio_options(ref.screen, ref.sdlRenderer)
+{
+
+}
+
+void Options_Window::Content_Area::preload(int x, int y)
+{
+  rect.x = x; rect.y = y;
+  rect.w = options_window.rect.w - x;
+  rect.h = options_window.rect.h - y;
+  audio_options.preload(&rect);
+}
+
+void Options_Window::Content_Area::clear()
+{
+  SDL_FillRect(options_window.screen, &rect, Colors::Interface::color[Colors::Interface::bg]);
+}

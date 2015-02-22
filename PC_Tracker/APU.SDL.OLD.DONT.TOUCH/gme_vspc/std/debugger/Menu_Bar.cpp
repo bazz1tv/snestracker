@@ -12,6 +12,7 @@ int Menu_Bar::Edit_Context::open_options_window(void *data)
 {
   DEBUGLOG("open_options_window()\n");
   BaseD::options_window->show();
+  //BaseD::options_window->raise();
   // there's a problem raising the window immediately after showing it... 
   // So I raise it in the event loop when the window focus change event happens
   

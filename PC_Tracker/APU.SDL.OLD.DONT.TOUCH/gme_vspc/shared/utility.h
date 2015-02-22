@@ -15,4 +15,6 @@ namespace Utility
   nfdresult_t get_file_read_path(nfdchar_t **outPath, const char *filter_list=NULL);
   SDL_bool file_is_valid( std::string filename );
   void clearsstream(std::stringstream &s);
+  void draw_rect(SDL_Surface * dst, const SDL_Rect * rect, int depth, Uint32 color);
+
 }

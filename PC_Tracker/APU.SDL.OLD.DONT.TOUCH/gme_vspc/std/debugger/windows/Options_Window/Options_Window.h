@@ -41,14 +41,16 @@ struct Options_Window : public Window
 
   Options_Window();
 
-  Audio_Options audio_options;
-  Experience *exp=&audio_options;
+  
+  Experience *exp=&content_area.audio_options;
 
   bool is_first_run=true;
-  void run() {}
+  void run();
   void draw();
   int receive_event(SDL_Event &ev);
   void preload(int x,int y);
+
+  void clear_content_area();
 
   struct Tabs
   {
@@ -73,4 +75,15 @@ struct Options_Window : public Window
     void draw () { audio.draw(options_window.screen); }
     static int switch_to_audio_tab(void *data);
   } tabs;
+
+  struct Content_Area
+  {
+    Content_Area(Options_Window &ref);
+    void preload(int x, int y);
+    SDL_Rect rect;
+    void clear();
+    Options_Window &options_window;
+    Audio_Options audio_options;
+    
+  } content_area;
 };

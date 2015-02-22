@@ -96,6 +96,16 @@ bool Context_Menu::receive_event(SDL_Event &ev)
 
 }
 
+void Context_Menu::hover_highlight(bool yesno)
+{
+  should_highlight_hover = yesno;
+}
+
+void Context_Menu::highlight_currently_selected_item(bool yesno)
+{
+  should_highlight_currently_selected_item = yesno;
+}
+
 void Context_Menu::do_thing(void *data/*=NULL*/)
 {
   fprintf(stderr, "MEEP");
@@ -129,17 +139,29 @@ void Context_Menu::draw(SDL_Surface *screen)
   {
     if (items[i].is_visible)
     {
-      if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
+      if (should_highlight_hover)
       {
-        //fprintf(stderr,"DERP1");
-        if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
+        if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
         {
-          //fprintf(stderr,"DERP2");
-          // draw the highlighter
+          //fprintf(stderr,"DERP1");
+          if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
+          {
+            //fprintf(stderr,"DERP2");
+            // draw the highlighter
+            SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
+            SDL_FillRect(screen, &r, Colors::magenta);
+            bg_color = Colors::magenta;
+            highlighted_item = &items[i];
+          }
+        }
+      }
+      else //if (should_highlight_currently_selected_item)
+      {
+        if (&items[i] == currently_selected_item || i == currently_selected_item_index)
+        {
           SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
           SDL_FillRect(screen, &r, Colors::magenta);
           bg_color = Colors::magenta;
-          highlighted_item = &items[i];
         }
       }
       // draw this nigga

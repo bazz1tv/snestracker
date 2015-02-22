@@ -11,13 +11,15 @@ struct Window : public Experience
   SDL_Texture *sdlTexture = NULL;
   SDL_Surface *screen = NULL;
   Uint32 windowID=0;
+
+  SDL_Rect rect;
   
 
   bool is_focused=false;
 
   void clear_screen();
   void update_screen();
-     
+
   void show();
   void raise();
   void hide();

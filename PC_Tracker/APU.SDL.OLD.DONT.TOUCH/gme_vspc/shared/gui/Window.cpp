@@ -2,6 +2,9 @@
 
 Window::Window(int width, int height, const char *title)
 {
+  rect.w = width;
+  rect.h = height;
+
   SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN, &sdlWindow, &sdlRenderer);
   if (sdlWindow == NULL || sdlRenderer == NULL)
   {
@@ -99,11 +102,13 @@ void Window::update_screen()
 
 void Window::show()
 {
+  SDL_Log("Window::show()");
   SDL_ShowWindow(sdlWindow);
 }
 
 void Window::raise()
 {
+  SDL_Log("Window::raise()");
   SDL_RaiseWindow(sdlWindow);
 }
 

@@ -21,7 +21,7 @@ private:
   //int parse_args(int argc, char **argv);
   //Tracker tracker;
   App_Settings *app_settings;
-  Debugger debugger;
+  Debugger *debugger;
   Music_Player player;
   
   File_System file_system;
