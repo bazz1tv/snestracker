@@ -155,9 +155,9 @@ void Context_Menu::draw(SDL_Surface *screen)
           }
         }
       }
-      else //if (should_highlight_currently_selected_item)
+      else if (should_highlight_currently_selected_item)
       {
-        if (&items[i] == currently_selected_item || i == currently_selected_item_index)
+        if (&items[i] == currently_selected_item )
         {
           SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
           SDL_FillRect(screen, &r, Colors::magenta);

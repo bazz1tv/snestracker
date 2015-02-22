@@ -2,6 +2,7 @@
 #include "BaseD.h"
 #include "Instrument_Window.h"
 #include "Notes.h"
+#include "Midi_Context.h"
 
 void mycallback( double deltatime, std::vector< unsigned char > *message, void *userData )
 {
@@ -177,4 +178,6 @@ Midi::Midi() : parser(32*1024)
   } catch ( RtMidiError &error ) {
     error.printMessage();
   }
+
+  Midi_Context::midi = this;
 }

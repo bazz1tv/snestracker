@@ -5,15 +5,25 @@
 Audio_Options::Context::Context()
 {
   int selected_index=0;
+  int i;
   SDL_Log("Audio_Options::Context::Context");
-  menu_items = (Context_Menu_Item *) SDL_malloc(sizeof(Context_Menu_Item) * (audio->devices.how_many+1));
-  for (int i=0; i < audio->devices.how_many; i++)
+  menu_items = new Context_Menu_Item[audio->devices.how_many+1];
+  for (i=0; i < audio->devices.how_many; i++)
   {
     SDL_Log(audio->devices.device_strings[i]);
-    menu_items[i] = Context_Menu_Item(audio->devices.device_strings[i], true, NULL, NULL);
-    if (audio->devices.selected_audio_out_dev == audio->devices.device_strings[i])
+    //menu_items[i] = Context_Menu_Item(audio->devices.device_strings[i], true, NULL, NULL);
+    menu_items[i].clickable_text.str = audio->devices.device_strings[i];
+    menu_items[i].clickable_text.action = NULL;
+    menu_items[i].clickable_text.data = NULL;
+    menu_items[i].is_visible=true;
+    menu_items[i].clickable_text.init_width_height();
+    if (!strcmp(audio->devices.selected_audio_out_dev,audio->devices.device_strings[i]))
       selected_index=i;
   }
+  menu_items[i].clickable_text.str = "";
+  menu_items[i].clickable_text.action = NULL;
+  menu_items[i].clickable_text.data = NULL;
+  menu_items[i].is_visible=false;
   menu = new Context_Menu(menu_items);
   menu->is_active = true;
   menu->should_highlight_hover = false;
@@ -26,7 +36,8 @@ Audio_Options::Context::~Context()
 {
   SDL_Log("Audio_Options::Context::~Context()");
   delete menu;
-  SDL_free(menu_items);
+  //SDL_free(menu_items);
+  delete[] menu_items;
 }
 
 Audio_Options::Audio_Options(SDL_Surface *screen, SDL_Renderer *renderer) : 

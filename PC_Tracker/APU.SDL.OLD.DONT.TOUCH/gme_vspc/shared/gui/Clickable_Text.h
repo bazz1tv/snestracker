@@ -17,7 +17,7 @@ struct Clickable_Text : public Render_Context, Clickable_Rect
   void draw(Uint32 &color, bool prefill=true, bool Vflip=false, bool Hflip=false);
   void draw(bool prefill=true, bool Vflip=false, bool Hflip=false);
   
-
+  void init_width_height();
   void setup(int x, int y);
   
   std::string str;

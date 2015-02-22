@@ -2,6 +2,7 @@
 #include <SDL.h>
 struct Audio
 {
+  Audio();
   static double calculate_linear_gain_from_db(double gain_db, double min_gain=-96.0);
 
   static double calculate_fullscale_db_from_postgain_sample(int *sample, double min_gain);

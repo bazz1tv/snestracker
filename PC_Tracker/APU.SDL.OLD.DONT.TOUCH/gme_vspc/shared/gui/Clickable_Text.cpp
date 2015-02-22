@@ -15,8 +15,7 @@ Clickable_Rect(action,data),
 str(str),
 color(color)
 {
-  rect.w = str.length()*CHAR_WIDTH; // could add padding
-  rect.h = CHAR_HEIGHT;
+  init_width_height();
 }
 Clickable_Text::Clickable_Text(std::string str, int x, int y, 
 int (*action)(void *data)/*=NULL*/, void *data/*=NULL*/) : 
@@ -24,6 +23,12 @@ Clickable_Rect(action,data),
 str(str)
 {
   setup(x,y);
+}
+
+void Clickable_Text::init_width_height()
+{
+  rect.w = str.length()*CHAR_WIDTH; // could add padding
+  rect.h = CHAR_HEIGHT;
 }
 
 void Clickable_Text::setup(int x, int y)

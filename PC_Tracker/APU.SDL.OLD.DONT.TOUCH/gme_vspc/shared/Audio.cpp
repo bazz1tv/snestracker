@@ -1,5 +1,6 @@
 #include "Audio.h"
 #include "DEBUGLOG.h"
+#include "Audio_Context.h"
 int Audio::Devices::how_many=0;
 const char * Audio::Devices::selected_audio_out_dev=NULL;
 
@@ -28,9 +29,15 @@ double Audio::calculate_fullscale_db_from_postgain_sample(int *sample, double mi
     return (double)20.0 * (double)log10(abs(*sample) / 32768);
 }
 
+Audio::Audio()
+{
+  Audio_Context::audio = this;
+}
+
 Audio::Devices::Devices()
 {
   query();
+  
 }
 
 Audio::Devices::~Devices()

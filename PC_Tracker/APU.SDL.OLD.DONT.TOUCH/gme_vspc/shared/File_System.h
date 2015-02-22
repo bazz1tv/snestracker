@@ -4,6 +4,7 @@
 
 struct File_System
 {
+  File_System();
   int init();
   ~File_System();
   
