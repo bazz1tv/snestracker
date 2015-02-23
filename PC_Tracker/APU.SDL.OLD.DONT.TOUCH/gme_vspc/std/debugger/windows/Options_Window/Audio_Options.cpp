@@ -76,7 +76,7 @@ void Audio_Options::one_time_draw()
   sdlfont_drawString(screen, x, y, "Output Device");
   y+=CHAR_HEIGHT;
   context.menu->preload(x,y);
-  //Utility::draw_rect(screen, &r, 1, Colors::white);
+  Utility::draw_rect(screen, &context.menu->created_at, 1, Colors::white);
 }
 
 int Audio_Options::receive_event(SDL_Event &ev)
