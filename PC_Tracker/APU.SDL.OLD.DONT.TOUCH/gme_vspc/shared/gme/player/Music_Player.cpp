@@ -253,7 +253,10 @@ void Music_Player::fade_out(bool threaded/*=false*/)
 	DEBUGLOG("\tprocessing\n");
 
 	if (threaded)
+	{
 		thread = SDL_CreateThread(&Music_Player::fade_out, "FadeOutThread", this);
+		SDL_DetachThread(thread); /* will go away on its own upon completion. */
+	}
 	else 
 	{
 		low_level_fade_out(false);

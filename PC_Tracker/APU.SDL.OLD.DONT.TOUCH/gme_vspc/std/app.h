@@ -17,7 +17,6 @@ public:
   int init();
   int init_sdl(SDL_Window **, int,int);
   
-private:
   //int parse_args(int argc, char **argv);
   //Tracker tracker;
   App_Settings *app_settings;
