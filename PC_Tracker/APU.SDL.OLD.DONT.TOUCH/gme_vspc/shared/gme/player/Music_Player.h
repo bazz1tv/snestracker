@@ -42,7 +42,7 @@ public:
 	void inc_tempo() {tempo+=0.1; emu_->set_tempo(tempo); }
 	void dec_tempo() {tempo-=0.1; emu_->set_tempo(tempo); }
 	// Initialize player and set sample rate
-	blargg_err_t init( long sample_rate = 44100 );
+	blargg_err_t init( long sample_rate = 44100, const char *audio_out_dev=NULL );
 	
 	// Load game music file. NULL on success, otherwise error string.
 	blargg_err_t load_file( const char* path );
@@ -120,6 +120,7 @@ public:
 	gain_t fade_gain=1.0;
 	gain_t target_gain = 1.0;
 	bool track_started;
+	long sample_rate;
 	// *(
 	/*void set_path(char *str)
 	{
@@ -133,7 +134,7 @@ private:
 	bool paused;
 	Spc_Emu* spc_emu_;
 	sample_t* scope_buf;
-	long sample_rate;
+	
 	int scope_buf_size;
 	
 	track_info_t track_info_;

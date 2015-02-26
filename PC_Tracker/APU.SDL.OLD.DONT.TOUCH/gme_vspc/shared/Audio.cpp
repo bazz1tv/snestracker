@@ -2,6 +2,7 @@
 #include "DEBUGLOG.h"
 #include "Audio_Context.h"
 int Audio::Devices::how_many=0;
+
 const char * Audio::Devices::selected_audio_out_dev=NULL;
 
 

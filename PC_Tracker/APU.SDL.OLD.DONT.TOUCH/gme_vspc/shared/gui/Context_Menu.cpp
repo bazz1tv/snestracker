@@ -64,7 +64,7 @@ bool Context_Menu::receive_event(SDL_Event &ev)
       {
         case SDLK_RETURN:
         // act same as left mouse button click use a goto lol
-          do_thing();
+          return do_thing();
         break;
 
         case SDLK_ESCAPE:
@@ -79,7 +79,7 @@ bool Context_Menu::receive_event(SDL_Event &ev)
       {
         case SDL_BUTTON_LEFT:
         {
-          do_thing();
+          return do_thing();
         }
         break;
 
@@ -92,7 +92,7 @@ bool Context_Menu::receive_event(SDL_Event &ev)
     break;
     default:break;
   }
-  return true;
+  return false;
 
 }
 
@@ -106,18 +106,22 @@ void Context_Menu::highlight_currently_selected_item(bool yesno)
   should_highlight_currently_selected_item = yesno;
 }
 
-void Context_Menu::do_thing(void *data/*=NULL*/)
+bool Context_Menu::do_thing(void *data/*=NULL*/)
 {
   fprintf(stderr, "MEEP");
   Context_Menu_Item *p = highlighted_item;
   if (p != NULL)
   {
+    currently_selected_item = p;
     if (p->clickable_text.action)
     {
       p->clickable_text.do_thing(data);
+      is_active = false;
+      return 1;
     }
   }
   is_active = false;
+  return 0;
 }
 void Context_Menu::draw(SDL_Surface *screen)
 {
@@ -139,23 +143,24 @@ void Context_Menu::draw(SDL_Surface *screen)
   {
     if (items[i].is_visible)
     {
-      if (should_highlight_hover)
+      
+      if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
       {
-        if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
+        //fprintf(stderr,"DERP1");
+        if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
         {
-          //fprintf(stderr,"DERP1");
-          if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
+          //fprintf(stderr,"DERP2");
+          // draw the highlighter
+          if (should_highlight_hover)
           {
-            //fprintf(stderr,"DERP2");
-            // draw the highlighter
             SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
             SDL_FillRect(screen, &r, Colors::magenta);
             bg_color = Colors::magenta;
-            highlighted_item = &items[i];
           }
+          highlighted_item = &items[i];
         }
       }
-      else if (should_highlight_currently_selected_item)
+      if (should_highlight_currently_selected_item)
       {
         if (&items[i] == currently_selected_item )
         {

@@ -6,7 +6,12 @@
 //#include <stdlib.h>
 #include "Options_Window.h"
 
-
+void Menu_Bar::Tabs::draw()
+{
+  mem.draw();
+  dsp.draw();
+  instr.draw();
+}
 
 int Menu_Bar::Edit_Context::open_options_window(void *data)
 {

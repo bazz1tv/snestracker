@@ -37,7 +37,7 @@ double Music_Player::min_gain_db=-96.0, Music_Player::max_gain_db = 20.0;
 
 // Simple sound driver using SDL
 typedef void (*sound_callback_t)( void* data, short* out, int count );
-static const char* sound_init( long sample_rate, int buf_size, sound_callback_t, void* data );
+static const char* sound_init( long sample_rate, int buf_size, sound_callback_t, void* data, const char *audio_out_dev=NULL );
 //static void sound_start();
 //static void sound_stop();
 //static void sound_cleanup();
@@ -136,8 +136,16 @@ Music_Player::Music_Player() :
 	spc_filter->set_bass(Spc_Filter::bass_max);
 }
 
-blargg_err_t Music_Player::init( long rate )
+blargg_err_t Music_Player::init( long rate, const char *audio_out_dev/*=NULL*/ )
 {
+	bool change=false;
+	if (Audio_Context::audio->devices.id)
+	{
+		//if (emu_)
+			//stop();
+		sound_cleanup();
+		change = true;
+	}
 	sample_rate = rate;
 	
 	//int min_size = sample_rate * 2 / fill_rate;
@@ -149,7 +157,13 @@ blargg_err_t Music_Player::init( long rate )
 	DEBUGLOG("audio buffs per sec = %0.2f\n", stereo_bufs_per_sec);
 
 
-	return sound_init( sample_rate, sample_frame_size, fill_buffer, this );
+	blargg_err_t err= sound_init( sample_rate, sample_frame_size, fill_buffer, this, audio_out_dev );
+
+	if (change)
+	{
+		pause(paused);
+	}
+	return err;
 }
 
 void Music_Player::stop()
@@ -644,7 +658,7 @@ static void sdl_callback( void* data, Uint8* out, int count )
 }
 
 static const char* sound_init( long sample_rate, int buf_size,
-		sound_callback_t cb, void* data )
+		sound_callback_t cb, void* data, const char *audio_out_dev/*=NULL*/ )
 {
 	sound_callback = cb;
 	sound_callback_data = data;
@@ -656,7 +670,7 @@ static const char* sound_init( long sample_rate, int buf_size,
 	as.callback = sdl_callback;
 	as.samples  = buf_size;
 	//DEBUGLOG("herpa %s\n",Audio_Context::audio->devices.device_strings[1]);
-	char *audio_out_dev = App_Settings_Context::app_settings->vars.audio_out_dev;
+	//char *audio_out_dev = ;
 	if (audio_out_dev)
 	{
 		bool match=false;
@@ -725,6 +739,7 @@ void sound_cleanup()
 {
 	sound_stop();
 	SDL_CloseAudioDevice(Audio_Context::audio->devices.id);
+	Audio_Context::audio->devices.id=0;
 }
 
 

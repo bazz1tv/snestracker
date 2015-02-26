@@ -26,6 +26,7 @@ struct Audio_Options : public Experience, public Audio_Context
     SDL_Rect rect;
     Context_Menu *menu;
     Context_Menu_Item *menu_items;
+    static int change_audio_out_device(void *item);
 
   } context;
 };

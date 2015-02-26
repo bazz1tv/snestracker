@@ -29,7 +29,7 @@ struct Context_Menu
   void push(Clickable_Text &ref);
   void push(char *str);
   void draw(SDL_Surface *screen);
-  void do_thing(void *data=NULL);
+  bool do_thing(void *data=NULL);
   //std::vector<Clickable_Text> items;
   Context_Menu_Item *items=NULL;
   

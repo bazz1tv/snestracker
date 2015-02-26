@@ -179,7 +179,7 @@ struct Menu_Bar
       return false;
     }
     Tab mem, dsp, instr;
-    void draw () { mem.draw(); dsp.draw(); instr.draw(); }
+    void draw ();
     static int memory(void *data);
     static int DSP(void *data);
     static int Instrument(void *data);

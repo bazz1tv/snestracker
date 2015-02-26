@@ -17,7 +17,7 @@ audio(new Audio)
   
   Player_Context::player = &player;
 
-  handle_error(player.init(samplerate) );
+  handle_error(player.init(samplerate, app_settings->vars.audio_out_dev) );
   
   //App_Settings_Context::app_settings = &app_settings;
 
