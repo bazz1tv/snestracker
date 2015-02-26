@@ -183,5 +183,8 @@ struct Menu_Bar
     static int memory(void *data);
     static int DSP(void *data);
     static int Instrument(void *data);
+
+    int logged_grand_mode=BaseD::GrandMode::MAIN;
   } tabs;
+
 };

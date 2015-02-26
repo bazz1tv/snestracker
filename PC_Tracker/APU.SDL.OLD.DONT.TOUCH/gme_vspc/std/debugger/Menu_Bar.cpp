@@ -8,6 +8,32 @@
 
 void Menu_Bar::Tabs::draw()
 {
+  // tmpfix
+  if (BaseD::grand_mode != logged_grand_mode)
+  {
+    logged_grand_mode = BaseD::grand_mode;
+
+    if (BaseD::grand_mode == BaseD::GrandMode::MAIN)
+    {
+      mem.active = true;
+      dsp.active = false;
+      instr.active = false;
+    }
+    else if (BaseD::grand_mode == BaseD::GrandMode::DSP_MAP)
+    {
+      mem.active = false;
+      dsp.active = true;
+      instr.active = false;
+    }
+    else if (BaseD::grand_mode == BaseD::GrandMode::INSTRUMENT)
+    {
+      mem.active = false;
+      dsp.active = false;
+      instr.active = true;
+    }    
+  }
+    
+
   mem.draw();
   dsp.draw();
   instr.draw();
