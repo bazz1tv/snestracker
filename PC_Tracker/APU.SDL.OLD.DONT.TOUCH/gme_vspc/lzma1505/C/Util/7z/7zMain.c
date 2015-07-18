@@ -357,6 +357,8 @@ int MY_CDECL main(int numargs, char *args[])
   ISzAlloc allocTempImp;
   UInt16 *temp = NULL;
   size_t tempSize = 0;
+  UInt16 *dest_dir16 = NULL;
+  size_t dest_dir_len = strlen(args[3]); // +forward slash
   // UInt32 parents[NUM_PARENTS_MAX];
 
   printf("\n7z ANSI-C Decoder " MY_VERSION_COPYRIGHT_DATE "\n\n");
@@ -364,7 +366,7 @@ int MY_CDECL main(int numargs, char *args[])
   if (numargs == 1)
   {
     printf(
-      "Usage: 7zDec <command> <archive_name>\n\n"
+      "Usage: 7zDec <command> <archive_name> <dest_folder>\n\n"
       "<Commands>\n"
       "  e: Extract files from archive (without using directory names)\n"
       "  l: List contents of archive\n"
@@ -438,6 +440,10 @@ int MY_CDECL main(int numargs, char *args[])
       Byte *outBuffer = 0; /* it must be 0 before first call for each new archive. */
       size_t outBufferSize = 0;  /* it can have any value before first call (if outBuffer = 0) */
 
+      // turn dest_dir into utf16
+      
+      
+
       for (i = 0; i < db.NumFiles; i++)
       {
         size_t offset = 0;
@@ -450,19 +456,47 @@ int MY_CDECL main(int numargs, char *args[])
         len = SzArEx_GetFileNameUtf16(&db, i, NULL);
         // len = SzArEx_GetFullNameLen(&db, i);
 
+        
+
+
         if (len > tempSize)
         {
           SzFree(NULL, temp);
           tempSize = len;
-          temp = (UInt16 *)SzAlloc(NULL, tempSize * sizeof(temp[0]));
+
+          // allocate dest_dir
+          // apparently no need for NULL terminator
+          dest_dir16 = (UInt16 *)SzAlloc(NULL, (dest_dir_len+1+tempSize) * sizeof(dest_dir16[0]));
+          // convert args[3] to utf16
+          
+
+          temp = (UInt16 *)SzAlloc(NULL, (tempSize) * sizeof(temp[0]));
           if (!temp)
           {
             res = SZ_ERROR_MEM;
             break;
           }
+          int i;
+          for (i=0; i < dest_dir_len; i++)
+          {
+            dest_dir16[i] = args[3][i];
+          }
+          dest_dir16[i] = L'/';
+
         }
 
         SzArEx_GetFileNameUtf16(&db, i, temp);
+
+        // populate the filename after dest_dir
+        int mid = dest_dir_len + 1;
+        int base = mid;
+        for (mid; (mid-base) < tempSize; mid++)
+        {
+          //printf ("i = %d, i-base = %d\n", i, i-base);
+          dest_dir16[mid] = temp[mid-base];
+        }
+
+        //printf ("dest_dir_len+1+tempSize+1 = %d, mid = %d\n", dest_dir_len+1+tempSize, mid);
         /*
         if (SzArEx_GetFullNameUtf16_Back(&db, i, temp + len) != temp)
         {
@@ -493,6 +527,7 @@ int MY_CDECL main(int numargs, char *args[])
           
           printf("%s %s %10s  ", t, attr, s);
           res = PrintString(temp);
+          PrintString(dest_dir16);
           if (res != SZ_OK)
             break;
           if (isDir)
@@ -506,6 +541,8 @@ int MY_CDECL main(int numargs, char *args[])
             "Extracting ",
             stdout);
         res = PrintString(temp);
+        printf (" ");
+        PrintString(dest_dir16);
         if (res != SZ_OK)
           break;
         
@@ -527,7 +564,7 @@ int MY_CDECL main(int numargs, char *args[])
           size_t processedSize;
           size_t j;
           UInt16 *name = (UInt16 *)temp;
-          const UInt16 *destPath = (const UInt16 *)name;
+          const UInt16 *destPath = (const UInt16 *)dest_dir16;
  
           for (j = 0; name[j] != 0; j++)
             if (name[j] == '/')
@@ -584,6 +621,7 @@ int MY_CDECL main(int numargs, char *args[])
 
   SzArEx_Free(&db, &allocImp);
   SzFree(NULL, temp);
+  SzFree(NULL, dest_dir16);
 
   File_Close(&archiveStream.file);
   
