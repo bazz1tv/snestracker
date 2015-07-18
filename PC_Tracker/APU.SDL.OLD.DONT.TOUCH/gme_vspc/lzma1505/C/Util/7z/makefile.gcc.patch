@@ -1,0 +1,21 @@
+--- makefile.gcc.old	2015-07-16 18:18:19.000000000 -0400
++++ makefile.gcc	2015-07-16 18:18:27.000000000 -0400
+@@ -4,13 +4,17 @@ LIB =
+ RM = rm -f
+ CFLAGS = -c -O2 -Wall
+ 
+-OBJS = 7zMain.o 7zAlloc.o 7zArcIn.o 7zBuf.o 7zBuf2.o 7zCrc.o 7zCrcOpt.o 7zDec.o CpuArch.o LzmaDec.o Lzma2Dec.o Bra.o Bra86.o Bcj2.o Ppmd7.o Ppmd7Dec.o 7zFile.o 7zStream.o
++OBJS = BraIA64.o Delta.o 7zMain.o 7zAlloc.o 7zArcIn.o 7zBuf.o 7zBuf2.o 7zCrc.o 7zCrcOpt.o 7zDec.o CpuArch.o LzmaDec.o Lzma2Dec.o Bra.o Bra86.o Bcj2.o Ppmd7.o Ppmd7Dec.o 7zFile.o 7zStream.o
+ 
+ all: $(PROG)
+ 
+ $(PROG): $(OBJS)
+ 	$(CXX) -o $(PROG) $(LDFLAGS) $(OBJS) $(LIB)
+ 
++BraIA64.o: ../../BraIA64.c
++	$(CXX) $(CFLAGS) ../../BraIA64.c
++Delta.o: ../../Delta.c
++	$(CXX) $(CFLAGS) ../../Delta.c
+ 7zMain.o: 7zMain.c
+ 	$(CXX) $(CFLAGS) 7zMain.c
+ 

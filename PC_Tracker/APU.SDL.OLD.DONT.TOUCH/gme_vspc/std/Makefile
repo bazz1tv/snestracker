@@ -51,21 +51,25 @@ EXECUTABLE=std
 
 all: $(SOURCES) $(EXECUTABLE).app $(EXECUTABLE)
 
-$(EXECUTABLE).app: $(EXECUTABLE) unrar
+$(EXECUTABLE).app: $(EXECUTABLE) unrar 7zDec
 	#rm -rf $@
 	mkdir -p $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
 	cp std $@/Contents/MacOS
 	cp Info.plist $@/Contents
 	cp unrar $@/Contents/Resources
+	cp 7zDec $@/Contents/Resources
 	touch $@
 	
-$(EXECUTABLE): $(OBJECTS) unrar
+$(EXECUTABLE): $(OBJECTS) unrar 7zDec
 	#echo $(SOURCES)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
-	
+
+7zDec: ../lzma1505/C/Util/7z/7zDec
+	make -C ../lzma1505/C/Util/7z -f makefile.gcc
+	cp ../lzma1505/C/Util/7z/7zDec 7zDec
 
 unrar: ../unrar/unrar
-	pushd ../unrar; make; popd
+	make -C ../unrar
 	cp ../unrar/unrar unrar
 #gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h debugger/report.h 
 #	$(CPP) $(CFLAGS) -c $< -o $@
