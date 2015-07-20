@@ -100,7 +100,7 @@ void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
 int Menu_Bar::File_Context::open_spc(void *data)
 {
   BaseD::player->pause(1,true,false);
-  if (BaseD::nfd.get_multifile_read_path("spc,rsn,rar") == NFD_OKAY)
+  if (BaseD::nfd.get_multifile_read_path("spc;rsn;rar;7z") == NFD_OKAY)
   {
     DEBUGLOG("check_paths_and_reload\n");
     BaseD::check_paths_and_reload(BaseD::nfd.paths, BaseD::nfd.numpaths);

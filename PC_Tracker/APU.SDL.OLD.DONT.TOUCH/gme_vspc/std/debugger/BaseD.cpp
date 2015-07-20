@@ -181,6 +181,13 @@ int BaseD::Clickable::dec_tempo(void *nada)
 void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/, 
   int numpaths/*=g_cfg.num_files*/, bool is_drop_event/*=false*/)
 {
+  struct
+  {
+    std::string cmd[2] = {"unrar\" e -y \"", "7zDec\" e \""};
+    unsigned index=0;
+    const char * str() { return cmd[index].c_str(); }
+  } extract_cmd;
+  
   bool rsn_found=false;
   // Check here if path is RSN
   for (size_t i=0; i < numpaths; i++)
@@ -202,10 +209,10 @@ name = strrchr(path, '/'); // Windows might need backslash check
       name += 1; // move past '/' character
     }
 
-    if (!strcmp(ext, ".rsn") || !strcmp(ext, ".rar"))
+    if (!strcmp(ext, ".rsn") || !strcmp(ext, ".rar") || !strcmp(ext, ".7z"))
     {
-      rsn_found = true;
-      fprintf(stderr, "rsn found\n");
+      rsn_found = true; // not actually used
+      fprintf(stderr, "rsn || 7z found\n");
       char *mkdir_cmd = (char*) SDL_malloc(sizeof(char) * 
         (strlen("mkdir -p ")+
           strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name+1)+1)) );
@@ -233,20 +240,30 @@ name = strrchr(path, '/'); // Windows might need backslash check
       fprintf(stderr, "dir = %s\n", dir_quoted);
       system(mkdir_cmd);
 
+      if (!strcmp(ext, ".rsn") || !strcmp(ext, ".rar"))
+      {
+        extract_cmd.index = 0;
+      }
+      else if (!strcmp(ext, ".7z"))
+      {
+        extract_cmd.index = 1;
+      }
+
       // data_path_quoted + "unrar e " + path + " " + dir_quoted
-      char *unrar_cmd = (char*) SDL_malloc(sizeof(char) * 
+      char *full_extract_cmd = (char*) SDL_malloc(sizeof(char) * 
         (
           strlen(File_System_Context::file_system->data_path_quoted) +
-          strlen("unrar e -y") + 2 + strlen(path) + 1 + strlen(dir_quoted) + 1
+          strlen(extract_cmd.str()) + 3 + strlen(path) + 2 + strlen(dir_quoted) + 1
         ));
-      strcpy(unrar_cmd, File_System_Context::file_system->data_path_quoted);
-      unrar_cmd[strlen(unrar_cmd)-1] = 0;
-      strcat(unrar_cmd, "unrar\" e -y \"");
-      strcat(unrar_cmd, path);
-      strcat(unrar_cmd, "\" ");
-      strcat(unrar_cmd, dir_quoted);
-      fprintf(stderr, "unrar_cmd = %s\n", unrar_cmd);
-      system(unrar_cmd);
+      strcpy(full_extract_cmd, File_System_Context::file_system->data_path_quoted);
+      full_extract_cmd[strlen(full_extract_cmd)-1] = 0;
+      strcat(full_extract_cmd, extract_cmd.str());
+      strcat(full_extract_cmd, path);
+      strcat(full_extract_cmd, "\" ");
+      strcat(full_extract_cmd, dir_quoted);
+      fprintf(stderr, "full_extract_cmd = %s\n", full_extract_cmd);
+      system(full_extract_cmd);
+      SDL_free(full_extract_cmd);    
 
       FILE *fp;
       int status;
@@ -320,7 +337,6 @@ name = strrchr(path, '/'); // Windows might need backslash check
           //...
       }
       SDL_free(ls_cmd);
-      SDL_free(unrar_cmd);
       SDL_free(mkdir_cmd);
       SDL_free(dir_quoted);
     }

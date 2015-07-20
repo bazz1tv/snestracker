@@ -64,7 +64,7 @@ $(EXECUTABLE): $(OBJECTS) unrar 7zDec
 	#echo $(SOURCES)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
-7zDec: ../lzma1505/C/Util/7z/7zDec
+7zDec: ../lzma1505/C/Util/7z/7zDec ../lzma1505/C/Util/7z/7zMain.c
 	make -C ../lzma1505/C/Util/7z -f makefile.gcc
 	cp ../lzma1505/C/Util/7z/7zDec 7zDec
 
