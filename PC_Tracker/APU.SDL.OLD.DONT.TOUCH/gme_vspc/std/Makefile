@@ -61,16 +61,17 @@ $(EXECUTABLE).app: $(EXECUTABLE) unrar 7zDec
 	touch $@
 	
 $(EXECUTABLE): $(OBJECTS) unrar 7zDec
-	#echo $(SOURCES)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
 7zDec: ../lzma1505/C/Util/7z/7zDec ../lzma1505/C/Util/7z/7zMain.c
-	make -C ../lzma1505/C/Util/7z -f makefile.gcc
 	cp ../lzma1505/C/Util/7z/7zDec 7zDec
+../lzma1505/C/Util/7z/7zDec:
+	make -C ../lzma1505/C/Util/7z -f makefile.gcc
 
 unrar: ../unrar/unrar
-	make -C ../unrar
 	cp ../unrar/unrar unrar
+../unrar/unrar:
+	make -C ../unrar
 #gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h debugger/report.h 
 #	$(CPP) $(CFLAGS) -c $< -o $@
 # Use the dependency files created by the -MMD option to gcc.
