@@ -42,6 +42,16 @@ static const char* sound_init( long sample_rate, int buf_size, sound_callback_t,
 //static void sound_stop();
 //static void sound_cleanup();
 
+void Music_Player::set_gain_db(gain_t new_gain_db, bool immediate/*=false*/)
+{
+	this->new_gain_db = new_gain_db;
+
+	if (!immediate)
+		gain_has_changed = true;
+	else
+		gain_db = new_gain_db;
+}
+
 void Music_Player::spc_write(int addr, int data)
 {
 	//sound_stop();

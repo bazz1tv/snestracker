@@ -37,6 +37,8 @@ public:
 	double tempo=1.0;
 	bool needs_to_fade_out=false;
 	bool needs_to_fade_in=false;
+
+	void set_gain_db(gain_t new_gain_db, bool immediate=false);
 	
 
 	void inc_tempo() {tempo+=0.1; emu_->set_tempo(tempo); }
