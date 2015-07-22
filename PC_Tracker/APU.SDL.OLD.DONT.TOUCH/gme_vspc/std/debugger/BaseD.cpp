@@ -94,6 +94,8 @@ BaseD::Profile::Profile(const char* spc_filename)
 
   BaseD::player->pause(1, true, false);
   BaseD::reload();
+  // Set Volume to 0
+  player->gain_db = Music_Player::min_gain_db;
   // get pointer to spc_file_t
   // open the SPC File
   //DEBUGLOG("spc file path = %s\n", BaseD::g_cfg.playlist[BaseD::g_cur_entry]);
@@ -129,11 +131,11 @@ BaseD::Profile::Profile(const char* spc_filename)
 
 void BaseD::Profile::process()
 {
-  BaseD::player->pause(0);
+  BaseD::player->pause(0, false); // no fade
   elapsed_seconds = (int((BaseD::player->emu()->tell()/1000)));
   if (elapsed_seconds == seconds_covered+1)
   {
-    BaseD::player->pause(1, true, false);
+    BaseD::player->pause(1, false, false);
     DEBUGLOG("seconds elapsed: %d\n", elapsed_seconds);
     seconds_covered = elapsed_seconds;
   }
@@ -471,7 +473,7 @@ void BaseD::update_track_tag()
   song_time += g_cfg.extratime;
 
   now_playing[0] = 0;
-  if (tag.song)
+  if (strcmp(tag.song, ""))
   {
     if (strlen((const char *)tag.song)) {
       sprintf(now_playing, "Now playing: %s (%s), dumped by %s\n", tag.song, tag.game, tag.dumper);
