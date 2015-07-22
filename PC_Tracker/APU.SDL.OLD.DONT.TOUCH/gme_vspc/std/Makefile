@@ -26,7 +26,12 @@ MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAud
 MIDI_CPPFLAGS = -I$(SHARED_DIR)rtmidi -I$(SHARED_DIR)libjdkmidi/c++/include
 MIDI_LDFLAGS	= -L$(SHARED_DIR)libjdkmidi/c++/b/build/lib
 #
-LDFLAGS=$(debug) -I$(SHARED_DIR) -I. $(MIDI_LDFLAGS) `/usr/local/bin/sdl2-config --libs` -lm -framework AppKit $(MIDI_LIBRARY)
+
+# Boost
+BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
+#
+
+LDFLAGS=$(debug) -I$(SHARED_DIR) -I. $(MIDI_LDFLAGS) $(BOOST_LDFLAGS) `/usr/local/bin/sdl2-config --libs` -lm -framework AppKit $(MIDI_LIBRARY)
 
 # global CPP
 CPP_DEFS 	= $(MIDI_DEFS) 

@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL.h>
 #include "Organization.h"
+#include <boost/filesystem.hpp>
 
 struct File_System
 {
