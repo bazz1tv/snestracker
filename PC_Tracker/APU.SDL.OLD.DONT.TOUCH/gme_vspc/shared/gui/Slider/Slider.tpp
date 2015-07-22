@@ -279,7 +279,7 @@ target_valueRange(range_min, range_max)
 template <class T>
 Slider<T>::~Slider()
 {
-	if (owns_value && *target_value)
+	if (owns_value && target_value)
 		delete target_value;
 	if (suffix)
 		SDL_free(suffix);
