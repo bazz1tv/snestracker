@@ -759,7 +759,7 @@ int Main_Window::receive_event(SDL_Event &ev)
         if (te->motion.x >= PC_X && te->motion.x < (PC_X + (strlen(PC_STR)*TILE_WIDTH)) &&
          te->motion.y >= PC_Y && te->motion.y < (PC_Y+TILE_HEIGHT) )
         {
-          player->pause(1);
+          player->pause(1, false);
           mouseover_hexdump_area.submode = Mouse_Hexdump_Area::EASY_EDIT;
           main_memory_area.address = report::last_pc; mode = MODE_EDIT_MOUSE_HEXDUMP;
           lock();

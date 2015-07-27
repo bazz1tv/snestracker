@@ -1,5 +1,16 @@
 #include "File_System.h"
 #include "File_System_Context.h"
+
+//TEMP LOCATION
+void error( const char* str )
+{
+  if ( str )
+  {
+    fprintf( stderr, "Error: %s\n", str );
+    exit( EXIT_FAILURE );
+  }
+}
+
 File_System::File_System()
 {
   init();
@@ -126,6 +137,14 @@ int File_System::init()
   fprintf(stderr, "pref_path = %s\n", pref_path);
 
   return 0;
+}
+
+void File_System::write_file( const char* path, void const* in, long size )
+{
+  FILE* out = fopen( path, "wb" );
+  if ( !out ) error( "Couldn't create file" );
+  if ( (long) fwrite( in, 1, size, out ) < size ) error( "Couldn't write file" );
+  fclose( out );
 }
 
 

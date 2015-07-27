@@ -91,11 +91,14 @@ void BaseD::Hack_Spc::restore_spc(bool resume/*=true*/)
 BaseD::Profile::Profile(const char* spc_filename)
 {
   is_profiling = true;
-
+  old_gain_db = BaseD::player->gain_db;
   BaseD::player->pause(1, true, false);
   BaseD::reload();
+  BaseD::player->pause(0, false, false);
+  BaseD::player->pause(1, false, false);
+  //BaseD::player->restart_track();
   // Set Volume to 0
-  player->gain_db = Music_Player::min_gain_db;
+  player->set_gain_db(Music_Player::min_gain_db, true);
   // get pointer to spc_file_t
   // open the SPC File
   //DEBUGLOG("spc file path = %s\n", BaseD::g_cfg.playlist[BaseD::g_cur_entry]);
@@ -131,17 +134,22 @@ BaseD::Profile::Profile(const char* spc_filename)
 
 void BaseD::Profile::process()
 {
-  BaseD::player->pause(0, false); // no fade
-  elapsed_seconds = (int((BaseD::player->emu()->tell()/1000)));
+  //BaseD::player->pause(0, false); // no fade
+  /* Skip several seconds */
+  BaseD::player->spc_emu()->skip(120 * Snes_Spc::sample_rate * 2);
+
+  /*elapsed_seconds = (int((BaseD::player->emu()->tell()/1000)));
   if (elapsed_seconds == seconds_covered+1)
   {
-    BaseD::player->pause(1, false, false);
+    //BaseD::player->pause(1, false, false);
     DEBUGLOG("seconds elapsed: %d\n", elapsed_seconds);
     seconds_covered = elapsed_seconds;
-  }
+  }*/
+  seconds_covered++;
   //DEBUGLOG("f\n");
-  if (seconds_covered == 7)
+  if (seconds_covered == 1)
   {
+    BaseD::player->set_gain_db(old_gain_db);
     BaseD::Profile::is_profiling=false;
     delete this;
   }

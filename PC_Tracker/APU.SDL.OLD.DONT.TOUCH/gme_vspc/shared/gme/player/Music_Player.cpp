@@ -388,7 +388,8 @@ blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
 			songs end.. (ie Star Fox Track 1 intro track)
 			
 			*/
-			sound_start();
+			//if (test)
+				sound_start();
 		}
 		
 		//fprintf(stderr, "game = %s", track_info_.game);

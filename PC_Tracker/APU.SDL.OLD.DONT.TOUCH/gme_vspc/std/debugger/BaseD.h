@@ -36,6 +36,7 @@ struct BaseD : public Render_Context, public Player_Context
     unsigned char orig_spc_state[Snes_Spc::spc_file_size];
     int seconds_covered=0;
     int elapsed_seconds;
+    gain_t old_gain_db;
 
     static bool is_profiling;
   };

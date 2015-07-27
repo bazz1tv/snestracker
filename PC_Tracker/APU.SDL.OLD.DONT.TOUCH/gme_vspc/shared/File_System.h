@@ -3,10 +3,16 @@
 #include "Organization.h"
 #include <boost/filesystem.hpp>
 
+// TEMPORARY LOCATION
+/* If str is not NULL, prints it and exits program, otherwise returns */
+void error( const char* str );
+
 struct File_System
 {
   File_System();
   int init();
+  /* Writes data to file */
+  void write_file( const char* path, void const* in, long size );
   ~File_System();
   
   bool is_loaded=false;

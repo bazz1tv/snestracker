@@ -99,7 +99,8 @@ public Experience
   { 
     MODE_NAV=0,
     MODE_EDIT_MOUSE_HEXDUMP,
-    MODE_EDIT_APU_PORT
+    MODE_EDIT_APU_PORT,
+    MODE_EDIT_TIME
     //MODE_QUIT  
   };
   Main_Window(int &argc, char **argv);
