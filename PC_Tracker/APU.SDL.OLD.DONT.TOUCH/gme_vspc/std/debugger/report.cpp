@@ -1,5 +1,67 @@
 #include "report.h"
 
+void Sdl_Spc_Report::report(Spc_Report::Type type, unsigned addr, unsigned opcode)
+{
+    switch (type)
+    {
+      int idx;
+    case Spc_Report::Execute:
+      //std::cerr << "report_execution: $" << addr << ", $" << opcode << std::endl;
+      int i;
+      if ((addr)!=report::last_pc)
+      {
+        for (i=0; i<5; i++)
+        {
+          idx = (((addr)+i)&0xff00)<<4; idx += (((addr)+i)%256)<<3;
+          report::memsurface.data[idx]=0xff;
+          report::memsurface.data[idx+2048]=0xff;
+          report::memsurface.data[idx+4]=0xff;
+          report::memsurface.data[idx+4+2048]=0xff;
+          report::used2[((addr)&0xff00)>>8]=1;
+        }
+        report::used[(addr)]=1;
+        report::used[(addr)+1]=1;
+        report::used[(addr)+2]=1;
+        report::used[(addr)+3]=1;
+        report::used[(addr)+4]=1;
+        report::used[(addr)+5]=1;
+      }
+      break;
+    case Spc_Report::Read:
+        //std::cerr << "report_memread: $" << addr << std::endl;
+        idx = (((addr)&0xff00)<<4)+2;
+        idx += ((addr)%256)<<3;
+        report::memsurface.data[idx]=0xff;
+        report::memsurface.data[idx+2048]=0xff;
+        report::memsurface.data[idx+4]=0xff;
+        report::memsurface.data[idx+4+2048]=0xff;
+        report::used2[((addr)&0xff00)>>8]=1;
+        report::used[(addr)&0xffff]=1;
+        break;
+    case Spc_Report::Echo:
+        //std::cerr << "report_echomem: $" << addr << std::endl;
+        idx = (((addr)&0xff00)<<4);
+        idx+= ((addr)%256)<<3;
+        for (int i=0; i < 2; i++)
+        {
+          report::memsurface.data[idx+i]=0xff;
+          report::memsurface.data[idx+2048+i]=0xff;
+          report::memsurface.data[idx+4+i]=0xff;
+          report::memsurface.data[idx+4+2048+i]=0xff;
+        }
+        break;
+    case Spc_Report::Write:
+        //std::cerr << "report_memwrite: $" << addr << std::endl;
+        idx = (((addr)&0xff00)<<4)+1;
+        idx += ((addr) % 256)<<3;
+        report::memsurface.data[idx] = 0xff;
+        report::memsurface.data[idx+4] = 0xff;
+        report::memsurface.data[idx+2048] = 0xff;
+        report::memsurface.data[idx+2048+4] = 0xff;
+        break;
+   }
+}
+
 
 SDL_Rect Mem_Surface::memrect = {MEMORY_VIEW_X, MEMORY_VIEW_Y,0,0};
 
@@ -111,6 +173,7 @@ namespace report
   int last_pc = -1;
   int bcolor=0; // backup color
   Src src[MAX_SRCN_ENTRIES];
+  Sdl_Spc_Report sdlSpcReport;
 
   // backup colors is no longer an issue
   int backup_color(int addr)

@@ -13,10 +13,11 @@ OBJCC=g++
 debug = -g
 optimize = -O3
 
-gme_CPPFLAGS=$(debug) -c -I. -I$(SHARED_DIR) -I$(SHARED_DIR)gme\
--I$(SHARED_DIR)gme/gme -Idemo `/usr/local/bin/sdl2-config --cflags`
+gme_PREFIX := /usr/local/
+gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)include
+gme_LDFLAGS := -L$(gme_PREFIX)lib -lgme
 
-debugger_CPPFLAGS=$(debug) -I$(SHARED_DIR) -I$(SHARED_DIR)NativeFileDialog/include\
+debugger_CPPFLAGS=$(debug) -I. -I$(SHARED_DIR) -I$(SHARED_DIR)NativeFileDialog/include\
 -Idebugger/memory -Idebugger/content_areas -Idebugger/windows/Options_Window\
 -funroll-loops -Wall -Idebugger `/usr/local/bin/sdl2-config --cflags` -Wall
 
@@ -31,7 +32,8 @@ MIDI_LDFLAGS	= -L$(SHARED_DIR)libjdkmidi/c++/b/build/lib
 BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
 #
 
-LDFLAGS=$(debug) -I$(SHARED_DIR) -I. $(MIDI_LDFLAGS) $(BOOST_LDFLAGS) `/usr/local/bin/sdl2-config --libs` -lm -framework AppKit $(MIDI_LIBRARY)
+LDFLAGS=$(debug) -I$(SHARED_DIR) -I. $(MIDI_LDFLAGS) $(BOOST_LDFLAGS) \
+`/usr/local/bin/sdl2-config --libs` -lm -framework AppKit $(MIDI_LIBRARY) $(gme_LDFLAGS)
 
 # global CPP
 CPP_DEFS 	= $(MIDI_DEFS) 
