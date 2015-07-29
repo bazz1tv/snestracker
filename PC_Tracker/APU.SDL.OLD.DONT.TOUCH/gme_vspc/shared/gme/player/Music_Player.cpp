@@ -664,7 +664,7 @@ static void sdl_callback( void* data, Uint8* out, int count )
 		}
 		num++;
 		mycount+=count;
-		sound_callback( sound_callback_data, (short*) out, count / 2 );
+		sound_callback( sound_callback_data, (sample_t*) out, count / 2 );
 	}
 }
 
