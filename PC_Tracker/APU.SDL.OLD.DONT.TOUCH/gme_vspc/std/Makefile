@@ -37,7 +37,7 @@ LDFLAGS=$(debug) -I$(SHARED_DIR) -I. $(MIDI_LDFLAGS) $(BOOST_LDFLAGS) \
 
 # global CPP
 CPP_DEFS 	= $(MIDI_DEFS) 
-CPPFLAGS 	= -Wno-return-type -std=c++11 $(MIDI_CPPFLAGS) $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast
+CPPFLAGS 	= -Wno-return-type -std=c++11 $(MIDI_CPPFLAGS) $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP -Wno-int-to-void-pointer-cast -Wno-c++11-narrowing
 
 # currently, only because of Native File Dialog Implementation on OS X
 OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP

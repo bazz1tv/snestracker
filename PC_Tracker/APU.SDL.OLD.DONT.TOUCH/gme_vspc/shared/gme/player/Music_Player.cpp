@@ -33,6 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
 const int fill_rate = 64; //45;
 
+bool Music_Player::exporting = false;
 double Music_Player::min_gain_db=-96.0, Music_Player::max_gain_db = 20.0;
 
 // Simple sound driver using SDL
@@ -733,7 +734,8 @@ static const char* sound_init( long sample_rate, int buf_size,
 void sound_start()
 {
 	//SDL_UnlockAudio();
-	SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 0);
+	if (!Music_Player::exporting)
+		SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 0);
 }
 
 void sound_stop()

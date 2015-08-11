@@ -130,6 +130,9 @@ public:
 	}*/
 	void fade_out(bool threaded=false); // public function
 	double stereo_bufs_per_sec;
+
+	static void fill_buffer( void*, sample_t*, int );
+	static bool exporting;
 private:
 	Spc_Filter* spc_filter;
 	Music_Emu* emu_;
@@ -156,7 +159,6 @@ private:
 	
 	void suspend();
 	void resume();
-	static void fill_buffer( void*, sample_t*, int );
   void apply_gain(sample_t* out, int count );
 };
 

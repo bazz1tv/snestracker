@@ -6,6 +6,8 @@
 //#include <stdlib.h>
 #include "Options_Window.h"
 
+#include "gme/Wave_Writer.h"
+
 void Menu_Bar::Tabs::draw()
 {
   // tmpfix
@@ -107,6 +109,66 @@ int Menu_Bar::File_Context::open_spc(void *data)
   }
   BaseD::player->pause(0);
   return 0;
+}
+
+int Menu_Bar::File_Context::export_wav(void *data)
+{
+  //SDL_RWops *file;
+  nfdchar_t *outPath=NULL;
+
+  nfdresult_t result = NFD_SaveDialog( "wav", NULL, &outPath );
+  SDL_RaiseWindow(BaseD::sdlWindow);
+  if ( result == NFD_OKAY )
+  {
+    //puts("Success!");
+    //puts(outPath);
+    //SDL_RWops* SDL_RWFromFile(const char* file,
+      //                const char* mode)
+    if (outPath !=NULL)
+      fprintf(stderr, "%s\n", outPath);
+
+    /* Begin writing to wave file */
+    wave_open( BaseD::player->sample_rate, outPath );
+    wave_enable_stereo();
+
+    BaseD::player->exporting = true;
+    BaseD::reload();
+    BaseD::player->pause(0, false, false);
+
+    while ( (BaseD::player->emu()->tell()/1000) < BaseD::song_time )
+    {
+      /* Sample buffer */
+      #define buf_size 1024 /* can be any multiple of 2 */
+      sample_t buf [buf_size];
+      
+      /* Fill sample buffer */
+      Music_Player::fill_buffer(BaseD::player, buf, buf_size);
+      
+      /* Write samples to wave file */
+      wave_write( buf, buf_size );
+    }
+      //SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
+      //SDL_RWclose(file);
+    free(outPath);
+    wave_close();
+    BaseD::player->exporting = false;
+    return result;
+  }
+  else if ( result == NFD_CANCEL ) 
+  {
+    if (outPath)
+      free(outPath);
+    puts("User pressed cancel.");
+    return result;
+  }
+  else
+  {
+    if (outPath)
+    free(outPath);
+    printf("Error: %s\n", NFD_GetError() );
+    return NFD_ERROR;
+  }
+  
 }
 
 int Menu_Bar::Track_Context::toggle_pause (void *data)
