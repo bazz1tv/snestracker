@@ -1,0 +1,129 @@
+SPC File Format v0.30
+=====================
+
+Offset Size  Description
+------ ----- ------------------------------------------------------------------
+00000h    33 File header "SNES-SPC700 Sound File Data v0.30"
+00021h     2 26,26
+00023h     1 26 = header contains ID666 information
+             27 = header contains no ID666 tag
+00024h     1 Version minor (i.e. 30)
+
+SPC700 Registers:
+00025h     2 PC
+00027h     1 A
+00028h     1 X
+00029h     1 Y
+0002Ah     1 PSW
+0002Bh     1 SP (lower byte)
+0002Ch     3 reserved
+
+ID666 Tag (text format):
+0002Eh    32 Song title
+0004Eh    32 Game title
+0006Eh    16 Name of dumper
+0007Eh    32 Comments
+0009Eh    11 Date SPC was dumped (MM/DD/YYYY)
+000A9h     3 Number of seconds to play song before fading out
+000ACh     5 Length of fade in milliseconds
+000B1h    32 Artist of song
+000D1h     1 Default channel disables (0 = enable, 1 = disable)
+000D2h     1 Emulator used to dump SPC:
+             0 = unknown
+             1 = ZSNES
+             2 = Snes9x
+000D3h    45 reserved (set to all 0's)
+
+ID666 Tag (binary format):
+0002Eh    32 Song title
+0004Eh    32 Game title
+0006Eh    16 Name of dumper
+0007Eh    32 Comments
+0009Eh     4 Date SPC was dumped (YYYYMMDD)
+000A2h     7 unused
+000A9h     3 Number of seconds to play song before fading out
+000ACh     4 Length of fade in milliseconds
+000B0h    32 Artist of song
+000D0h     1 Default channel disables (0 = enable, 1 = disable)
+000D1h     1 Emulator used to dump SPC:
+             0 = unknown
+             1 = ZSNES
+             2 = Snes9x
+000D2h    46 reserved (set to all 0's)
+
+00100h 65536 64KB RAM
+10100h   128 DSP Registers (see below)
+10180h    64 unused
+101C0h    64 Extra RAM (Memory region used when the IPL ROM region is set
+             to read-only)
+10200h       Extended ID666 (see below)
+
+
+Extended ID666 Format
+=====================
+
+Extended information is stored at the end of the SPC file as a RIFF chunk
+with an ID of "xid6".  Items that can be stored in the ID666 tag without any
+loss of data should not be stored in the extended area.
+
+Offset Size Description
+------ ---- ------------------------------------------------------------------
+0      4    Chunk type "xid6"
+4      4    Chunk size, not including header
+
+
+Sub-chunk Header
+----------------
+
+Inside the chunk are sub-chunks.  Each sub-chunk consists of a 4-byte header,
+and possibly data.  All data is 32-bit aligned.  If the data stored doesn't
+reach a 32-bit boundary, it will be padded with 0's.
+
+Offset Size Description
+------ ---- ------------------------------------------------------------------
+0      1    ID   - song name, length, etc.
+1      1    Type - 0 means data is stored in the header
+                   non-zero means data is stored after header
+2      2    Data - if 'type' is zero, this contains the data
+                   if 'type' is non-zero, this contains the length of the
+                   data following the header
+
+
+Extended ID666 Items
+--------------------
+
+ID:   00-0F - Items from original ID666 tag
+      10-1F - Extended items
+      30-3F - Items related to playback
+
+Type: 00 Data    - Data is saved in the 'data' item of the sub-chunk header
+      01 String  - Data is stored as a null terminated string (max 256
+                   characters including null).  Strings are saved using 8-bit
+                   character encoding.  Support for unicode may be added in
+                   the future.
+      04 Integer - Data is stored as a 32-bit integer
+
+Size: The minimum and maximum sizes of an item
+
+ID  Type    Size  Description
+--- ------- ----- ------------------------------------------------------------
+01h String  4-256 Song name
+02h String  4-256 Game name
+03h String  4-256 Artist's name
+04h String  4-256 Dumper's name
+05h Integer 4     Date song was dumped (stored as yyyymmdd)
+06h Data    1     Emulator used
+07h String  4-256 Comments
+10h String  4-256 Official Soundtrack Title
+11h Data    1     OST disc
+12h Data    2     OST track (upper byte is the number 0-99, lower byte is an
+                  optional ASCII character)
+13h String  4-256 Publisher's name
+14h Data    2     Copyright year
+30h Integer 4     Introduction length (lengths are stored in 1/64000th seconds)
+31h Integer 4     Loop length
+32h Integer 4     End length
+33h Integer 4     Fade length
+34h Data    1     Muted voices (a bit is set for each voice that's muted)
+35h Data    1     Number of times to loop
+36h Data    1     Mixing (preamp) level
