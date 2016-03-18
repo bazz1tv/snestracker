@@ -21,10 +21,11 @@ OBJCC=g++
 debug = -g
 optimize = -O3
 
-debugger_CPPFLAGS=$(debug) -I. -I$(SHARED_DIR) -I$(PROJ_DIR)/NativeFileDialog/include\
+debugger_CPPFLAGS=$(debug) -I. -I$(SHARED_DIR) -I$(PROJ_DIR)/rtmidi -I$(PROJ_DIR)/NativeFileDialog/include\
 -Idebugger/memory -Idebugger/content_areas -Idebugger/windows/Options_Window\
 -funroll-loops -Wall -Idebugger -Wall
 
+prefix ?= /opt/local
 gme_default_PREFIX := /opt/local/
 
 # TODO - add rule for libjdkmidi
@@ -36,12 +37,13 @@ ifeq ($(uname_S), Darwin)
 	global_requirements += $(EXECUTABLE).app 
 	CPPFLAGS += -Wno-int-to-void-pointer-cast -Wno-c++11-narrowing
 	MIDI_DEFS     =   -D__MACOSX_CORE__ -DRTMIDI_DEBUG
-	MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAudio -l jdkmidi
-	MIDI_CPPFLAGS = -I$(SHARED_DIR)rtmidi -I$(SHARED_DIR)libjdkmidi/c++/include
-	MIDI_LDFLAGS  = -L$(SHARED_DIR)libjdkmidi/c++/out.$(uname_S)/build/lib
+	MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAudio -ljdkmidi
+	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include/jdkmidi
+	MIDI_LDFLAGS  = -L$(prefix)/lib
+	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
 	LDFLAGS += -framework AppKit
 	CPP_DEFS += -DHAVE_STDINT_H # gme
-	MSOURCES=$(wildcard $(PROJ_DIR)/NativeFileDialog/*.m)
+	MSOURCES = $(PROJ_DIR)/NativeFileDialog/nfd_cocoa.m
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
 
 	gme_PREFIX ?= $(gme_default_PREFIX)
@@ -53,8 +55,10 @@ ifeq ($(uname_S), Darwin)
 else ifeq ($(uname_S), Linux)
 	MIDI_DEFS     =   -D__LINUX_ALSA__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -L/opt/local/lib -ljdkmidi -lasound
-	MIDI_CPPFLAGS = -I$(SHARED_DIR)rtmidi -I$(SHARED_DIR)libjdkmidi/c++/include
-	MIDI_LDFLAGS	= -L$(SHARED_DIR)libjdkmidi/c++/out.$(uname_S)/build/lib
+	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include/jdkmidi
+	MIDI_LDFLAGS  = -L$(prefix)/lib
+	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
+	#
 	CPP_DEFS += -DHAVE_STDINT_H
 	CPPFLAGS += -fpermissive
 	# NFD
