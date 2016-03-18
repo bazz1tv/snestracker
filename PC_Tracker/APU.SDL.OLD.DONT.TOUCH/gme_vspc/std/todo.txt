@@ -1,3 +1,15 @@
+New Numbered TODO List
+----------------------
+007 Backquote momentary keyboard shortcut to temporarily speed up emulation (at least 4x)
+006 need gfx assets!!
+005 Occasional Use after free bug when shutting down the program :X not sure how-to trigger
+004 Export SPC current state
+003 should start documenting keyboard shortcuts for different tabs / global etc.
+002 Switch between tabs should be possible via a keyboard shortcut (did I forget it)
+001 "G" keypress at memory view should allow user to input a hex address to focus the
+hexdump over
+
+
 Context Menu / Expanding Menu
 -----------------------------
 Draw the menu on a different SDL Surface, and then blit -- this is to avoid
