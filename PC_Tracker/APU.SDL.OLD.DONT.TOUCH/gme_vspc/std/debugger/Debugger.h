@@ -16,7 +16,7 @@
 #include "Dsp_Window.h"
 #include "Experience.h"
 #include "Instrument_Window.h"
-#include "menu_bar.h"
+#include "Menu_Bar.h"
 #include "gui/Window.h"
 
 typedef Uint32 SDL_WindowID_Type;

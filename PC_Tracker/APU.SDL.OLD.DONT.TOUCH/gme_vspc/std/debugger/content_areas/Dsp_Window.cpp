@@ -1,5 +1,5 @@
 #include "Dsp_Window.h"
-#include "Utility.h"
+#include "utility.h"
 #include "platform.h"
 #include "Menu_Bar.h"
 

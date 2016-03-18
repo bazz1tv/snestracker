@@ -172,7 +172,7 @@ int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int 
 
   int ibuffer;
   if (count != 1)
-    atoi = std::istringstream(parts[1]);
+    atoi.str(parts[1]);
   if ( strcmp( parts[0], "midi_port") == 0 )
   {
     if (count == 1)

@@ -149,6 +149,7 @@ Music_Player::Music_Player() :
 
 blargg_err_t Music_Player::init( long rate, const char *audio_out_dev/*=NULL*/ )
 {
+	DEBUGLOG("Music_Player::init\n");
 	bool change=false;
 	if (Audio_Context::audio->devices.id)
 	{
@@ -201,7 +202,7 @@ blargg_err_t Music_Player::load_file( const char* path )
 	this->path = path;
 	char* ext;
 	char file1[500];
-	ext = strrchr(path,'.');
+	ext = strrchr((char *)path,'.');
 	if (ext == NULL)
 		return "no . in filename";
 	ext++;

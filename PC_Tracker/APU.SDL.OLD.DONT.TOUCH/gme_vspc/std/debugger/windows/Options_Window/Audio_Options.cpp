@@ -44,7 +44,7 @@ Audio_Options::Context::Context()
 
 Audio_Options::Context::~Context()
 {
-  SDL_Log("Audio_Options::Context::~Context()");
+  SDL_Log("Audio_Options::~Context()");
   delete menu;
   //SDL_free(menu_items);
   delete[] menu_items;

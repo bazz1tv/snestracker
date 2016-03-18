@@ -22,6 +22,8 @@ struct Cursor
 
   virtual void draw(SDL_Surface *screen, int x, int y, Uint32 color);
   virtual void draw(SDL_Surface *screen, Uint32 color);
+
+  ~Cursor() { stop_timer(); }
 }; 
 
 struct Mem_Cursor : public Cursor

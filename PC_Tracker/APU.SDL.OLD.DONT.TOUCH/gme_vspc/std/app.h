@@ -21,9 +21,9 @@ public:
   //Tracker tracker;
   App_Settings *app_settings;
   Debugger *debugger;
-  Music_Player player;
+  Music_Player *player;
   
-  File_System file_system;
+  File_System *file_system;
   Midi *midi;
   Audio *audio;
 
