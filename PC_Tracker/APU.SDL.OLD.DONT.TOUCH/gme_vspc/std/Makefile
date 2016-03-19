@@ -8,6 +8,10 @@ else
     uname_S := $(shell uname -s)
 endif
 
+ifdef CROSS_COMPILE
+	uname_S = Cross_Windows
+endif
+
 global_requirements = $(CPPSOURCES) $(CSOURCES) $(MSOURCES) $(EXECUTABLE)
 
 # This is where source that both tracker and STD will use. NOTE THE inclusion of the forward slash ;)
@@ -15,9 +19,9 @@ SHARED_DIR = ../shared/
 PROJ_DIR = ..
 #
 
-CC=g++
-CPP=g++
-OBJCC=g++
+CC=$(CROSS_COMPILE)g++
+CPP=$(CROSS_COMPILE)g++
+OBJCC=$(CROSS_COMPILE)g++
 debug = -g
 optimize = -O3
 
@@ -33,6 +37,8 @@ gme_default_PREFIX := /opt/local/
 ## cd out.$(uname_S)
 ## ../configure --native-platform-linux=1
 # for MIDI
+#../configure --native-platform-linux=1 --cross-compiling=1 --compiler-prefix=i686-pc-mingw32- --target-platform-mingw32=1 --prefix=/usr/i686-pc-mingw32/usr/
+# sudo -E make install-dev
 ifeq ($(uname_S), Darwin)
 	global_requirements += $(EXECUTABLE).app 
 	CPPFLAGS += -Wno-int-to-void-pointer-cast -Wno-c++11-narrowing
@@ -54,7 +60,7 @@ ifeq ($(uname_S), Darwin)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 else ifeq ($(uname_S), Linux)
 	MIDI_DEFS     =   -D__LINUX_ALSA__ -DRTMIDI_DEBUG
-	MIDI_LIBRARY  = -L/opt/local/lib -ljdkmidi -lasound
+	MIDI_LIBRARY  = -ljdkmidi -lasound
 	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include/jdkmidi
 	MIDI_LDFLAGS  = -L$(prefix)/lib
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
@@ -65,8 +71,8 @@ else ifeq ($(uname_S), Linux)
 	CSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_gtk.c
 	gtk_cflags = $(shell pkg-config --cflags gtk+-3.0)
 	gtk_ldflags = $(shell pkg-config --libs gtk+-3.0)
-	CPPFLAGS += $(gtk_cflags) $(sdl2_cflags)
-	LDFLAGS += $(gtk_ldflags) $(sdl2_ldflags) -Wl,-rpath=$(gme_PREFIX)/lib
+	CPPFLAGS += $(gtk_cflags)
+	LDFLAGS += $(gtk_ldflags) -Wl,-rpath=$(gme_PREFIX)/lib
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
 
 	gme_PREFIX ?= $(gme_default_PREFIX)
@@ -75,6 +81,26 @@ else ifeq ($(uname_S), Linux)
 
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
+else ifeq ($(uname_S), Cross_Windows)
+	MIDI_DEFS     =   -D__WINDOWS_MM__ -DRTMIDI_DEBUG
+	MIDI_LIBRARY  = -ljdkmidi -lwinmm
+	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include/jdkmidi
+	MIDI_LDFLAGS  = -L$(prefix)/lib
+	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
+	#
+	CPP_DEFS += -DHAVE_STDINT_H
+	CPPFLAGS += -fpermissive
+	# NFD
+	CPPSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_win.cpp
+	LDFLAGS += -lcomctl32
+	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
+
+	gme_PREFIX ?= $(gme_default_PREFIX)
+	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)include
+	gme_LDFLAGS := -L$(gme_PREFIX)lib -lgme_m
+
+	sdl2_cflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags)
+	sdl2_ldflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs)
 else ifeq ($(uname_S), Windows)
     
 else
@@ -90,7 +116,8 @@ $(sdl2_ldflags) -lm $(MIDI_LIBRARY) $(gme_LDFLAGS)
 
 # global CPP
 CPP_DEFS 	+= $(MIDI_DEFS) 
-CPPFLAGS 	+= -Wno-return-type -std=c++11 $(MIDI_CPPFLAGS) $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
+CPPFLAGS 	+= $(sdl2_cflags) -Wno-return-type -std=c++11 $(MIDI_CPPFLAGS) \
+$(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
 
 # currently, only because of Native File Dialog Implementation on OS X
 OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
@@ -144,8 +171,10 @@ unrar: ../unrar/unrar
 	
 clean:
 	rm -f $(EXECUTABLE); #gme/gme/*.o gme/demo/*.o gme/player/*.o debugger/*.o
-	find . -name "*.o" -o -name "*.d" | xargs rm -rf
-	find $(SHARED_DIR) -name "*.o" -o -name "*.d" | xargs rm -rf
+	#find . -name "*.o" -o -name "*.d" | xargs rm -rf
+	#find $(SHARED_DIR) -name "*.o" -o -name "*.d" | xargs rm -rf
+	find $(PROJ_DIR) -name "*.o" -o -name "*.d" | xargs rm -rf
+
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
