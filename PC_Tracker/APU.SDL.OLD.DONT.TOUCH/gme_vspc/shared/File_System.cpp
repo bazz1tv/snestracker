@@ -29,25 +29,14 @@ File_System::~File_System()
     SDL_free(data_path_quoted);
   if (tmp_path)
   {
-#ifdef _WIN32
-    #define RM_CMD "rmdir \""
-    #define RM_PARM " /s /q"
-    char *rm_cmd = (char*)SDL_malloc(sizeof(char) * (strlen(RM_CMD)+strlen(RM_PARM)+strlen(tmp_path)+2));
-    strcpy (rm_cmd, RM_CMD);
-    strcat (rm_cmd, tmp_path);
-    strcat (rm_cmd, "\"");
-    strcat (rm_cmd, RM_PARM);
-#else
-    #define RM_CMD "rm -rf \""
     char *rm_cmd = (char*)SDL_malloc(sizeof(char) * (strlen(RM_CMD)+strlen(tmp_path)+2));
     strcpy (rm_cmd, RM_CMD);
     strcat (rm_cmd, tmp_path);
     strcat (rm_cmd, "\"");
-#endif
     printf("rm_cmd = %s\n", rm_cmd);
     system(rm_cmd);
-    #undef RM_CMD
-    #undef RM_PARM
+    //#undef RM_CMD
+    //#undef RM_PARM
 
     SDL_free(rm_cmd);
     SDL_free(tmp_path);
@@ -109,11 +98,7 @@ int File_System::init()
     strcat (tmp_path_quoted, tmp_path);
     strcat (tmp_path_quoted, "\"");
     fprintf (stderr, "tmp_path_quoted = %s\n", tmp_path_quoted);
-#ifdef _WIN32
-  #define MKDIR_CMD "mkdir \""
-#else
-  #define MKDIR_CMD "mkdir -p \""
-#endif
+
     char *mkdir_cmd = (char*)SDL_malloc(sizeof(char) * (strlen(MKDIR_CMD)+strlen(tmp_path)+2) );
     strcpy (mkdir_cmd, MKDIR_CMD);
     strcat (mkdir_cmd, tmp_path);
@@ -121,7 +106,7 @@ int File_System::init()
     fprintf (stderr, "mkdir_cmd = %s\n", mkdir_cmd);
     system(mkdir_cmd);
     SDL_free(mkdir_cmd);
-    #undef MKDIR_CMD
+//    #undef MKDIR_CMD
     is_writing_enabled=true;
   } 
   else 

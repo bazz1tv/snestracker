@@ -30,7 +30,7 @@ debugger_CPPFLAGS=$(debug) -I. -I$(SHARED_DIR) -I$(PROJ_DIR)/rtmidi -I$(PROJ_DIR
 -funroll-loops -Wall -Idebugger -Wall
 
 prefix ?= /opt/local
-gme_default_PREFIX := /opt/local/
+gme_PREFIX ?= $(prefix)
 
 # TODO - add rule for libjdkmidi
 ## mkdir -p out.$(uname_S)
@@ -52,7 +52,7 @@ ifeq ($(uname_S), Darwin)
 	MSOURCES = $(PROJ_DIR)/NativeFileDialog/nfd_cocoa.m
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
 
-	gme_PREFIX ?= $(gme_default_PREFIX)
+	#gme_PREFIX ?= $(gme_default_PREFIX)
 	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)include
 	gme_LDFLAGS := -L$(gme_PREFIX)lib -lgme_m
 
@@ -75,7 +75,7 @@ else ifeq ($(uname_S), Linux)
 	LDFLAGS += $(gtk_ldflags) -Wl,-rpath=$(gme_PREFIX)/lib
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
 
-	gme_PREFIX ?= $(gme_default_PREFIX)
+	#gme_PREFIX ?= $(gme_default_PREFIX)
 	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)include
 	gme_LDFLAGS := -L$(gme_PREFIX)lib -lgme_m
 
@@ -92,10 +92,10 @@ else ifeq ($(uname_S), Cross_Windows)
 	CPPFLAGS += -fpermissive
 	# NFD
 	CPPSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_win.cpp
-	LDFLAGS += -lcomctl32
+	LDFLAGS += -mwindows #-lcomctl32 -lcomdlg32
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
 
-	gme_PREFIX ?= $(gme_default_PREFIX)
+	#gme_PREFIX ?= $(gme_default_PREFIX)
 	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)include
 	gme_LDFLAGS := -L$(gme_PREFIX)lib -lgme_m
 

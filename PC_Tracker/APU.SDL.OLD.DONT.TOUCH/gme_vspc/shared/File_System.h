@@ -3,6 +3,14 @@
 #include "Organization.h"
 #include <boost/filesystem.hpp>
 
+#ifdef _WIN32
+  #define RM_CMD "rmdir  /s /q \""
+  #define MKDIR_CMD "mkdir \""
+#else
+  #define RM_CMD "rm -rf \""
+  #define MKDIR_CMD "mkdir -p \""
+#endif
+
 // TEMPORARY LOCATION
 /* If str is not NULL, prints it and exits program, otherwise returns */
 void error( const char* str );
