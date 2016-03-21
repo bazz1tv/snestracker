@@ -358,7 +358,8 @@ int MY_CDECL main(int numargs, char *args[])
   UInt16 *temp = NULL;
   size_t tempSize = 0;
   UInt16 *dest_dir16 = NULL;
-  size_t dest_dir_len = strlen(args[3]); // +forward slash
+  size_t dest_dir_len;
+
   // UInt32 parents[NUM_PARENTS_MAX];
 
   printf("\n7z ANSI-C Decoder " MY_VERSION_COPYRIGHT_DATE "\n\n");
@@ -380,6 +381,8 @@ int MY_CDECL main(int numargs, char *args[])
     PrintError("incorrect command");
     return 1;
   }
+
+  dest_dir_len = strlen(args[3]); // +forward slash
 
   #if defined(_WIN32) && !defined(USE_WINDOWS_FILE) && !defined(UNDER_CE)
   g_FileCodePage = AreFileApisANSI() ? CP_ACP : CP_OEMCP;
