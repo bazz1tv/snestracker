@@ -44,7 +44,7 @@ ifeq ($(uname_S), Darwin)
 	CPPFLAGS += -Wno-int-to-void-pointer-cast -Wno-c++11-narrowing
 	MIDI_DEFS     =   -D__MACOSX_CORE__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAudio -ljdkmidi
-	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include/jdkmidi
+	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
 	MIDI_LDFLAGS  = -L$(prefix)/lib
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
 	LDFLAGS += -framework AppKit
@@ -58,10 +58,12 @@ ifeq ($(uname_S), Darwin)
 
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
+
+	EXECUTABLE=std
 else ifeq ($(uname_S), Linux)
 	MIDI_DEFS     =   -D__LINUX_ALSA__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -ljdkmidi -lasound
-	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include/jdkmidi
+	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
 	MIDI_LDFLAGS  = -L$(prefix)/lib
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
 	#
@@ -81,10 +83,12 @@ else ifeq ($(uname_S), Linux)
 
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
+
+	EXECUTABLE=std
 else ifeq ($(uname_S), Cross_Windows)
 	MIDI_DEFS     =   -D__WINDOWS_MM__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -ljdkmidi -lwinmm
-	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include/jdkmidi
+	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
 	MIDI_LDFLAGS  = -L$(prefix)/lib
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
 	#
@@ -92,8 +96,9 @@ else ifeq ($(uname_S), Cross_Windows)
 	CPPFLAGS += -fpermissive
 	# NFD
 	CPPSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_win.cpp
-	LDFLAGS += -mwindows #-lcomctl32 -lcomdlg32
+	LDFLAGS += -mwindows -lole32 #-static-libgcc #-lcomctl32 -lcomdlg32
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
+	# quick notes: /usr/lib/gcc/i686-pc-mingw32/4.9.3
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
 	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)include
@@ -101,6 +106,8 @@ else ifeq ($(uname_S), Cross_Windows)
 
 	sdl2_cflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags)
 	sdl2_ldflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs)
+
+	EXECUTABLE=std.exe
 else ifeq ($(uname_S), Windows)
     
 else
@@ -131,7 +138,7 @@ $(wildcard */*/*/*.cpp) $(wildcard */*/*/*/*.cpp)
 
 # 
 OBJECTS=$(CPPSOURCES:.cpp=.cpp.o) $(MSOURCES:.m=.m.o) $(CSOURCES:.c=.c.o)
-EXECUTABLE=std
+
 
 all: $(global_requirements)
 
@@ -148,9 +155,10 @@ $(EXECUTABLE): $(OBJECTS) unrar 7zDec
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 
 7zDec: ../lzma1505/C/Util/7z/7zDec ../lzma1505/C/Util/7z/7zMain.c
-	cp ../lzma1505/C/Util/7z/7zDec 7zDec
+	cp ../lzma1505/C/Util/7z/7zDec* .
+
 ../lzma1505/C/Util/7z/7zDec:
-	make -C ../lzma1505/C/Util/7z -f makefile.gcc
+	uname_S=$(uname_S) make -C ../lzma1505/C/Util/7z -f makefile.gcc
 
 unrar: ../unrar/unrar
 	cp ../unrar/unrar unrar
@@ -174,6 +182,7 @@ clean:
 	#find . -name "*.o" -o -name "*.d" | xargs rm -rf
 	#find $(SHARED_DIR) -name "*.o" -o -name "*.d" | xargs rm -rf
 	find $(PROJ_DIR) -name "*.o" -o -name "*.d" | xargs rm -rf
+	rm -f ../lzma1505/C/Util/7z/{7zDec,7zDec.exe}
 
 
 

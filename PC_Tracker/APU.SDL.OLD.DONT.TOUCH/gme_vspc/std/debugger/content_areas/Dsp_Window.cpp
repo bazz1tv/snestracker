@@ -851,7 +851,7 @@ int Dsp_Window::receive_event(SDL_Event &ev)
           if ( ((scancode >= '0') && (scancode <= '9')) || ((scancode >= 'A') && (scancode <= 'F')) || 
             ((scancode >= 'a') && (scancode <= 'f')) )
           {
-            uint i=0;
+            uint32_t i=0;
             Uint16 addr = current_edit_addr;
             
             i = Utility::hexchar_to_int((char)scancode);  

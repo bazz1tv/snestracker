@@ -1,8 +1,15 @@
-PROG = 7zDec
-CXX = g++
-LIB =
+ifneq (,$(filter $(uname_S),Darwin Linux))
+	PROG = 7zDec
+	LIB +=
+else ifeq ($(uname_S), Cross_Windows)
+	PROG = 7zDec.exe
+	LIB += #-static-libgcc#-mwindows
+	CFLAGS += -fpermissive -g -gstabs -ggdb
+endif
+
+CXX = $(CROSS_COMPILE)g++
 RM = rm -f
-CFLAGS = -c -O2 -Wall
+CFLAGS += -c -O0 -Wall
 
 OBJS = BraIA64.o Delta.o 7zMain.o 7zAlloc.o 7zArcIn.o 7zBuf.o 7zBuf2.o 7zCrc.o 7zCrcOpt.o 7zDec.o CpuArch.o LzmaDec.o Lzma2Dec.o Bra.o Bra86.o Bcj2.o Ppmd7.o Ppmd7Dec.o 7zFile.o 7zStream.o
 

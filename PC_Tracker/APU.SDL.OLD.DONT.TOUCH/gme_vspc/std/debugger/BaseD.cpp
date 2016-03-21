@@ -279,41 +279,21 @@ name = strrchr(path, '/'); // Windows might need backslash check
       int status;
       char spc_path[PATH_MAX];
 
-      char *ls_cmd = (char*) SDL_malloc ( sizeof(char) * (strlen("ls ")+strlen(dir_quoted)+strlen("*.spc")+1));
-      strcpy(ls_cmd, "ls ");
-      strcat(ls_cmd, dir_quoted);
-      //ls_cmd[strlen(ls_cmd)-1] = 0;
-      strcat(ls_cmd, "*.spc");
-      fprintf(stderr, "ls_cmd = %s\n", ls_cmd);
-      fp = popen(ls_cmd, "r");
-      if (fp == NULL)
-          /* Handle error */
-      {
-
-      }
-
       //int count=0;
       int old_nfd_rsn_spc_path_pos=BaseD::nfd.num_rsn_spc_paths;
-      while (fgets(spc_path, PATH_MAX, fp) != NULL)
+      // count how many paths!!
+      // ls *.spc
+      boost::filesystem::directory_iterator end_itr;
+      for(boost::filesystem::directory_iterator i(dir_quoted); i != end_itr; ++i)
       {
-        BaseD::nfd.num_rsn_spc_paths++;
-      }
+        if (!boost::filesystem::is_regular_file(i->status())) continue;
 
-      //rewind(fp);
-      status = pclose(fp);
-      if (status == -1) {
-          /* Error reported by pclose() */
-          //...
-      } else {
-          /* Use macros described under wait() to inspect `status' in order
-             to determine success/failure of command executed by popen() */
-          //...
-      }
-      fp = popen(ls_cmd, "r");
-      if (fp == NULL)
-          /* Handle error */
-      {
-
+        // if file ext is spc
+        boost::filesystem::path fe = i->path().extension();
+        //DEBUGLOG(fe.c_str());
+        std::cout << fe.string() << std::endl;
+        if (boost::filesystem::equivalent(fe, "spc"))
+          BaseD::nfd.num_rsn_spc_paths++;
       }
 
       BaseD::nfd.rsn_spc_paths=(char**)SDL_realloc(BaseD::nfd.rsn_spc_paths, 
@@ -324,29 +304,28 @@ name = strrchr(path, '/'); // Windows might need backslash check
         break;
       }
 
-      while (fgets(spc_path, PATH_MAX, fp) != NULL)
+      // Copy each file name to the 
+      for(boost::filesystem::directory_iterator i(dir_quoted); i != end_itr; ++i)
       {
+        if (!boost::filesystem::is_regular_file(i->status())) continue;
         // erase newline
-        spc_path[strlen(spc_path)-1] = 0;
-        
-        // 3 because 0, '"', '"' IIRC
-        BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos] = (char*) SDL_calloc(strlen(spc_path)+3, sizeof(char));
-        strcpy(BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos], spc_path);
-        
-        old_nfd_rsn_spc_path_pos++; 
+        //spc_path[strlen(spc_path)-1] = 0;
+
+        // if file ext is spc
+        boost::filesystem::path fe = i->path().extension();
+        //DEBUGLOG(fe.c_str());
+        if (boost::filesystem::equivalent(fe, "spc"))
+        {
+          boost::filesystem::path spc_pathW = i->path();
+          // 3 because 0, '"', '"' IIRC
+          std::string spc_path = spc_pathW.string();
+          BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos] = (char*) SDL_calloc(spc_path.length()+3, sizeof(char));
+          strcpy(BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos], spc_path.c_str());
+          old_nfd_rsn_spc_path_pos++; 
+        }
       }
 
-
-      status = pclose(fp);
-      if (status == -1) {
-          /* Error reported by pclose() */
-          //...
-      } else {
-          /* Use macros described under wait() to inspect `status' in order
-             to determine success/failure of command executed by popen() */
-          //...
-      }
-      SDL_free(ls_cmd);
+      //SDL_free(ls_cmd);
       SDL_free(mkdir_cmd);
       SDL_free(dir_quoted);
     }

@@ -1,17 +1,22 @@
 #pragma once
 #include "report.h"
 
+#define SCREEN_X_OFFSET 0
+#define SCREEN_Y_OFFSET 50
+//ld be inside of Main_Memory_View .. but keeping it here for now while I do other things
+#define MEMORY_VIEW_X  16 + SCREEN_X_OFFSET
+#define MEMORY_VIEW_Y  40 + SCREEN_Y_OFFSET
 
 extern const int SCREEN_WIDTH;// 800
 extern const int SCREEN_HEIGHT;// 600
 // to adjust for 800x600 -> 1024x768
 /*#define SCREEN_X_OFFSET 90
 #define SCREEN_Y_OFFSET 100*/
-extern int SCREEN_X_OFFSET, SCREEN_Y_OFFSET;
+//extern int SCREEN_X_OFFSET, SCREEN_Y_OFFSET;
 //
 // Should be inside of Main_Memory_View .. but keeping it here for now while I do other things
-extern const int MEMORY_VIEW_X;//= 16 + SCREEN_X_OFFSET
-extern const int MEMORY_VIEW_Y;//= 40 + SCREEN_Y_OFFSET
+//extern const int MEMORY_VIEW_X;//= 16 + SCREEN_X_OFFSET
+//extern const int MEMORY_VIEW_Y;//= 40 + SCREEN_Y_OFFSET
 //
 extern const int PORTTOOL_X;//= 540 + SCREEN_X_OFFSET
 extern const int PORTTOOL_Y;//= 380 + 40 + SCREEN_Y_OFFSET

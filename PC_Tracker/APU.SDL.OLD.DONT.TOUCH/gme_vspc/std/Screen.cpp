@@ -1,16 +1,13 @@
 #include "Screen.h"
 
-int SCREEN_X_OFFSET=0;
-int SCREEN_Y_OFFSET=50;
+
 
 const int SCREEN_WIDTH=800;
 const int SCREEN_HEIGHT=700;
 //djust for 800x600 -> 1024x768
 
 
-//ld be inside of Main_Memory_View .. but keeping it here for now while I do other things
-const int MEMORY_VIEW_X= 16 + SCREEN_X_OFFSET;
-const int MEMORY_VIEW_Y= 40 + SCREEN_Y_OFFSET;
+
 
 const int PORTTOOL_X= 540 + SCREEN_X_OFFSET;
 const int PORTTOOL_Y= 380 + 40 + SCREEN_Y_OFFSET;
@@ -36,5 +33,5 @@ namespace Screen
   SDL_Rect voice0pitch = {NO_INIT,NO_INIT, 2*8,8 };
   SDL_Rect locked = { MEMORY_VIEW_X+520+24*8, 0 ,static_cast<int>((strlen(LOCKED_STR)*8)+1), 9};
   SDL_Rect echoE = { MEMORY_VIEW_X+520, NO_INIT, 2*8, 10 };
-  #undef UN_INIT
+  #undef NO_INIT
 }

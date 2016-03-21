@@ -91,7 +91,7 @@ void Mem_Surface::draw(SDL_Surface *screen)
  // SDL_Rect memrect;
   //memrect.x = MEMORY_VIEW_X; memrect.y = MEMORY_VIEW_Y;
 
-  //fprintf(stderr, "%d %d %d %d", memrect.x, memrect.y, memrect.w, memrect.h);
+  //fprintf(stderr, "%d %d %d %d, ", memrect.x, memrect.y, memrect.w, memrect.h);
   
   SDL_BlitSurface(sdl_surface, NULL, screen, &memrect);  
   SDL_BlitSurface(sdl_csurface, NULL, screen, &memrect);

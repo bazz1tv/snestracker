@@ -161,7 +161,7 @@ blargg_err_t Music_Player::init( long rate, const char *audio_out_dev/*=NULL*/ )
 	sample_rate = rate;
 	
 	//int min_size = sample_rate * 2 / fill_rate;
-	int sample_frame_size = 512 * pow(2,1);
+	int sample_frame_size = 512 * pow(2,2);
 	stereo_bufs_per_sec = (double)sample_rate / (double)sample_frame_size;
 	//if (fill_rate % )
 
