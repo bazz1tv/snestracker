@@ -273,7 +273,7 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
           strlen(extract_cmd.str()) + 3 + strlen(path) + 2 + strlen(dir_quoted) + 1
         ));
       strcpy(full_extract_cmd, File_System_Context::file_system->data_path_quoted);
-      full_extract_cmd[strlen(full_extract_cmd)-1] = 0;
+      full_extract_cmd[strlen(full_extract_cmd)] = 0;
       strcat(full_extract_cmd, extract_cmd.str());
       strcat(full_extract_cmd, path);
       strcat(full_extract_cmd, "\" ");

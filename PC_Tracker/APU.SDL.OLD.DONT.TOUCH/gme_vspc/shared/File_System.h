@@ -9,7 +9,7 @@
   #define PATH_SEP '\\'
 #else
   #define RM_CMD "rm -rf \""
-  #define MKDIR_CMD "mkdir -p \""
+  #define MKDIR_CMD "mkdir -p "
   #define PATH_SEP '/'
 #endif
 
