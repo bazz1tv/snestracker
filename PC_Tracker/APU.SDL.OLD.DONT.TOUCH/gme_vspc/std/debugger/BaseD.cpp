@@ -196,6 +196,29 @@ int BaseD::Clickable::dec_tempo(void *nada)
 #define DEC7Z_TOOLNAME "7zDec"
 #endif
 
+namespace fs = ::boost::filesystem;
+// return the filenames of all files that have the specified extension
+// in the specified directory and all subdirectories
+void get_file_list_ext(const fs::path& root, const std::string& ext, std::vector<fs::path>& ret)
+{
+    if(!fs::exists(root) || !fs::is_directory(root)) return;
+
+    DEBUGLOG("!@#!@# ");
+    fs::recursive_directory_iterator it(root);
+    fs::recursive_directory_iterator endit;
+
+    while(it != endit)
+    {
+        if(fs::is_regular_file(*it) && it->path().extension() == ext)
+        {
+          ret.push_back(it->path().filename());
+          std::cout << it->path().filename();
+        }
+        ++it;
+    }
+
+}
+
 void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/, 
   int numpaths/*=g_cfg.num_files*/, bool is_drop_event/*=false*/)
 {
@@ -237,18 +260,18 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
 
       strcpy(mkdir_cmd, MKDIR_CMD);
       char *dirp = mkdir_cmd + strlen(MKDIR_CMD);
-      char *p = mkdir_cmd + strlen(MKDIR_CMD);
-      strcpy(p, File_System_Context::file_system->tmp_path_quoted);
-      p += strlen(File_System_Context::file_system->tmp_path_quoted) - 1;
+      char *sp = mkdir_cmd + strlen(MKDIR_CMD);
+      strcpy(sp, File_System_Context::file_system->tmp_path_quoted);
+      sp += strlen(File_System_Context::file_system->tmp_path_quoted) - 1;
       // folderp is the game folder inside the tmp dir
       for (char *folderp = name; folderp != ext; folderp++)
       {
-        *(p++) = *folderp;
+        *(sp++) = *folderp;
       }
 
-      *(p++) = PATH_SEP;
-      *(p++) = '"';
-      *p = 0;
+      *(sp++) = PATH_SEP;
+      *(sp++) = '"';
+      *sp = 0;
       strcpy (dir_quoted, dirp);
       //strcat(dir_quoted, "/");
       fprintf(stderr, "data_path_quoted = '%s'\n", File_System_Context::file_system->data_path_quoted);
@@ -306,52 +329,36 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       // ls *.spc
       char *dir_unquoted = &dir_quoted[1];
       dir_quoted[strlen(dir_quoted)-1] = 0;
-      boost::filesystem::directory_iterator end_itr;
-      for(boost::filesystem::directory_iterator i(dir_unquoted); i != end_itr; ++i)
-      {
-        if (!boost::filesystem::is_regular_file(i->status())) continue;
 
-        // if file ext is spc
-        boost::filesystem::path fe = i->path().extension();
-        //DEBUGLOG(fe.c_str());
-        std::cout << fe.string() << std::endl;
-          if (!strcmp(fe.string().c_str(), ".spc"))
-            BaseD::nfd.num_rsn_spc_paths++;
-      }
+      typedef std::vector<boost::filesystem::path> vec;
+      vec v;
+      boost::filesystem::path p(dir_unquoted);
+      get_file_list_ext(p, ".spc", v);
+      sort(v.begin(), v.end());             // sort, since directory iteration
+                                            // is not ordered on some file systems
 
-      BaseD::nfd.rsn_spc_paths=(char**)SDL_realloc(BaseD::nfd.rsn_spc_paths, 
+    
+      BaseD::nfd.num_rsn_spc_paths += v.size();
+
+      BaseD::nfd.rsn_spc_paths=(char**)SDL_realloc(
+        BaseD::nfd.rsn_spc_paths, 
         sizeof(char*) * (BaseD::nfd.num_rsn_spc_paths+1));
+
       if (BaseD::nfd.rsn_spc_paths == NULL)
       {
         perror ("realloc");
         break;
       }
-      //char *dir_unquoted = &dir_quoted[1];
-      //dir_quoted[strlen(dir_quoted)-1] = 0;
-      // Copy each file name to the 
-      for(boost::filesystem::directory_iterator i(dir_unquoted); i != end_itr; ++i)
-      {
-        if (!boost::filesystem::is_regular_file(i->status())) continue;
-        // erase newline
-        //spc_path[strlen(spc_path)-1] = 0;
-        std::cout << i->path() << std::endl;
-        // if file ext is spc
-        boost::filesystem::path fe = i->path().extension();
-        std::cout << fe.string() << std::endl;
-        //DEBUGLOG(fe.c_str());
-          if (!strcmp(fe.string().c_str(), ".spc"))
-          {
-            //boost::filesystem::path spc_pathW = i->path();
-            // 3 because 0, '"', '"' IIRC
-            std::cout << "woot" << std::endl;
-            std::string spc_path = i->path().string();
-            BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos] = (char*) SDL_calloc(spc_path.length()+3, sizeof(char));
-            strcpy(BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos], spc_path.c_str());
-            old_nfd_rsn_spc_path_pos++; 
-            
-          }
 
+      for (vec::const_iterator it(v.begin()), it_end(v.end()); it != it_end; ++it)
+      {
+        std::cout << "woot" << std::endl;
+        std::string spc_path = dir_unquoted + it->string();
+        BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos] = (char*) SDL_calloc(spc_path.length()+3, sizeof(char));
+        strcpy(BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos], spc_path.c_str());
+        old_nfd_rsn_spc_path_pos++; 
       }
+
 
       //SDL_free(ls_cmd);
       SDL_free(mkdir_cmd);
