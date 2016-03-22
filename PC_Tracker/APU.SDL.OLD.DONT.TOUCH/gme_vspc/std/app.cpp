@@ -47,6 +47,8 @@ App::~App()
   delete midi;
   delete audio;
 
+  delete file_system;
+
   if (screen)
     SDL_FreeSurface(screen);
   if (sdlTexture)
