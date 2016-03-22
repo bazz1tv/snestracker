@@ -201,7 +201,7 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
 {
   struct
   {
-    std::string cmd[2] = {UNRAR_TOOLNAME " e -y \"", DEC7Z_TOOLNAME " e \""};
+    std::string cmd[2] = { UNRAR_TOOLNAME "\" e -y \"", DEC7Z_TOOLNAME "\" e \""};
     unsigned index=0;
     const char * str() { return cmd[index].c_str(); }
   } extract_cmd;
@@ -230,10 +230,10 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       fprintf(stderr, "rsn || 7z found\n");
       char *mkdir_cmd = (char*) SDL_malloc(sizeof(char) * 
         (strlen(MKDIR_CMD)+
-          strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name+1)+1)) );
+          strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name+1)+1+5)) );
 
       char *dir_quoted = (char*) SDL_malloc(sizeof(char) * 
-        (strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name+1)+2)) );
+        (strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name+1)+2+5)) );
 
       strcpy(mkdir_cmd, MKDIR_CMD);
       char *dirp = mkdir_cmd + strlen(MKDIR_CMD);
@@ -255,6 +255,9 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       fprintf(stderr, "tmp_path_quoted = '%s'\n", File_System_Context::file_system->tmp_path_quoted);
       fprintf(stderr, "mkdircmd = '%s'\n", mkdir_cmd);
       fprintf(stderr, "dir = %s\n", dir_quoted);
+#ifdef _WIN32
+      fflush(NULL);
+#endif
       system(mkdir_cmd);
 
       if (!strcmp(ext, ".rsn") || !strcmp(ext, ".rar"))
@@ -270,15 +273,26 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       char *full_extract_cmd = (char*) SDL_malloc(sizeof(char) * 
         (
           strlen(File_System_Context::file_system->data_path_quoted) +
-          strlen(extract_cmd.str()) + 3 + strlen(path) + 2 + strlen(dir_quoted) + 1
+          strlen(extract_cmd.str()) + 3 + strlen(path) + 2 + strlen(dir_quoted) + 1 +10
         ));
+#ifdef _WIN32
+      full_extract_cmd[0] = '"';
+      strcpy(full_extract_cmd + 1, File_System_Context::file_system->data_path_quoted);
+#else
       strcpy(full_extract_cmd, File_System_Context::file_system->data_path_quoted);
-      full_extract_cmd[strlen(full_extract_cmd)] = 0;
+#endif
+      full_extract_cmd[strlen(full_extract_cmd)-1] = 0;
       strcat(full_extract_cmd, extract_cmd.str());
       strcat(full_extract_cmd, path);
       strcat(full_extract_cmd, "\" ");
       strcat(full_extract_cmd, dir_quoted);
-      fprintf(stderr, "full_extract_cmd = %s\n", full_extract_cmd);
+      // int i = strlen(full_extract_cmd);
+      // full_extract_cmd[i++] = '"';
+      // full_extract_cmd[i++] = 0;
+      fprintf(stderr, "full_extract_cmd = '%s'\n", full_extract_cmd);
+#ifdef _WIN32
+      fflush(NULL);
+#endif
       system(full_extract_cmd);
       SDL_free(full_extract_cmd);    
 

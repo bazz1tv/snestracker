@@ -88,19 +88,20 @@ int File_System::init()
   if (pref_pathp)
   {
     pref_path = pref_pathp;
-    tmp_path = (char*)SDL_malloc(sizeof(char) * (strlen(pref_path)+strlen("tmp/")+1) );
-    tmp_path_quoted = (char*)SDL_malloc(sizeof(char) * (strlen(pref_path)+strlen("\"tmp/\"")+1) );
+    tmp_path = (char*)SDL_malloc(sizeof(char) * (strlen(pref_path)+strlen("tmp/")+5) );
+    tmp_path_quoted = (char*)SDL_malloc(sizeof(char) * (strlen(pref_path)+strlen("\"tmp/\"")+1+5) );
     strcpy(tmp_path, pref_path);
     char *p = tmp_path + strlen(pref_path);
     strcpy(p, "tmp");
     p[3] = PATH_SEP;
+    p[4] = 0;
     fprintf(stderr, "tmppath = %s\n", tmp_path);
     strcpy (tmp_path_quoted, "\"");
     strcat (tmp_path_quoted, tmp_path);
     strcat (tmp_path_quoted, "\"");
     fprintf (stderr, "tmp_path_quoted = %s\n", tmp_path_quoted);
 
-    char *mkdir_cmd = (char*)SDL_malloc(sizeof(char) * (strlen(MKDIR_CMD)+strlen(tmp_path)+2) );
+    char *mkdir_cmd = (char*)SDL_malloc(sizeof(char) * (strlen(MKDIR_CMD)+strlen(tmp_path)+2+ 5) );
     strcpy (mkdir_cmd, MKDIR_CMD);
     strcat (mkdir_cmd, tmp_path);
     strcat (mkdir_cmd, "\"");

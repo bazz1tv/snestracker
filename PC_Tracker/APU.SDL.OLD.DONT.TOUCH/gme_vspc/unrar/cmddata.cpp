@@ -46,6 +46,7 @@ static const wchar *AllocCmdParam(const wchar *CmdLine,wchar **Par)
 #if !defined(SFX_MODULE) && !defined(_ANDROID)
 void CommandData::ParseCommandLine(bool Preprocess,int argc, char *argv[])
 {
+  //printf("argv[0] = %s\n", argv[0]);
   *Command=0;
   NoMoreSwitches=false;
 #ifdef CUSTOM_CMDLINE_PARSER
