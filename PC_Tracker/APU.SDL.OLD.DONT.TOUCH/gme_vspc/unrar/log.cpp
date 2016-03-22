@@ -27,7 +27,11 @@ void Log(const wchar *ArcName,const wchar *fmt,...)
   safebuf wchar Msg[2*NM+1024];
   va_list arglist;
   va_start(arglist,fmt);
+#ifdef _WIN32
+  _vsnwprintf(Msg,ASIZE(Msg),fmtw,arglist);
+#else
   vswprintf(Msg,ASIZE(Msg),fmtw,arglist);
+#endif
   va_end(arglist);
   eprintf(L"%ls",Msg);
   ErrHandler.SetSystemErrorCode(Code);

@@ -5,10 +5,12 @@
 
 #ifdef _WIN32
   #define RM_CMD "rmdir  /s /q \""
-  #define MKDIR_CMD "mkdir \""
+  #define MKDIR_CMD "mkdir "
+  #define PATH_SEP '\\'
 #else
   #define RM_CMD "rm -rf \""
   #define MKDIR_CMD "mkdir -p \""
+  #define PATH_SEP '/'
 #endif
 
 // TEMPORARY LOCATION

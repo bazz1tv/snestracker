@@ -1,13 +1,23 @@
 #
 # Makefile for UNIX - unrar
 
+ifneq (,$(filter $(uname_S),Darwin Linux))
+	PROG = unrar
+	LIB +=
+	LDFLAGS += -pthread
+else ifeq ($(uname_S), Cross_Windows)
+	PROG = unrar.exe
+	LIB += #-static-libgcc#-mwindows
+	CXXFLAGS += -Wall -fpermissive -g -gstabs -ggdb
+endif
+
 # Linux using GCC
-CXX=g++
-CXXFLAGS=-O2
+CXX=$(CROSS_COMPILE)g++
+CXXFLAGS += -O0
 LIBFLAGS=-fPIC
-DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DRAR_SMP
-STRIP=strip
-LDFLAGS=-pthread
+DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+STRIP=$(CROSS_COMPILE)strip
+LDFLAGS+=
 DESTDIR=/usr
 
 # Linux using LCC
@@ -109,7 +119,7 @@ OBJECTS=rar.o strlist.o strfn.o pathfn.o smallfn.o global.o file.o filefn.o filc
 .cpp.o:
 	$(COMPILE) -D$(WHAT) -c $<
 
-all:	unrar
+all:	$(PROG)
 
 install:	install-unrar
 
@@ -118,10 +128,10 @@ uninstall:	uninstall-unrar
 clean:
 	@rm -f *.o *.bak *~
 
-unrar:	clean $(OBJECTS) $(UNRAR_OBJ)
-	@rm -f unrar
-	$(LINK) -o unrar $(LDFLAGS) $(OBJECTS) $(UNRAR_OBJ) $(LIBS)	
-	$(STRIP) unrar
+$(PROG):	clean $(OBJECTS) $(UNRAR_OBJ)
+	@rm -f $(PROG)
+	$(LINK) -o $(PROG) $(LDFLAGS) $(OBJECTS) $(UNRAR_OBJ) $(LIBS)	
+	#$(STRIP) $(PROG)
 
 sfx:	WHAT=SFX_MODULE
 sfx:	clean $(OBJECTS)

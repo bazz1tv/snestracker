@@ -188,12 +188,20 @@ int BaseD::Clickable::dec_tempo(void *nada)
   return 0;
 }
 
+#ifdef _WIN32
+#define UNRAR_TOOLNAME "unrar.exe"
+#define DEC7Z_TOOLNAME "7zDec.exe"
+#else
+#define UNRAR_TOOLNAME "unrar"
+#define DEC7Z_TOOLNAME "7zDec"
+#endif
+
 void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/, 
   int numpaths/*=g_cfg.num_files*/, bool is_drop_event/*=false*/)
 {
   struct
   {
-    std::string cmd[2] = {"unrar\" e -y \"", "7zDec\" e \""};
+    std::string cmd[2] = {UNRAR_TOOLNAME " e -y \"", DEC7Z_TOOLNAME " e \""};
     unsigned index=0;
     const char * str() { return cmd[index].c_str(); }
   } extract_cmd;
@@ -206,11 +214,8 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
     char *ext;
     char *name;
     ext = strrchr(path, '.');
-#ifdef WIN32
-name = strrchr(path, '\\'); // Windows might need backslash check
-#else
-name = strrchr(path, '/'); // Windows might need backslash check
-#endif
+
+    name = strrchr(path, PATH_SEP); // Windows might need backslash check
   //assert(name);
     if (!name)
       name = path;
@@ -241,11 +246,13 @@ name = strrchr(path, '/'); // Windows might need backslash check
         *(p++) = *folderp;
       }
 
-      *(p++) = '/';
+      *(p++) = PATH_SEP;
       *(p++) = '"';
       *p = 0;
       strcpy (dir_quoted, dirp);
       //strcat(dir_quoted, "/");
+      fprintf(stderr, "data_path_quoted = '%s'\n", File_System_Context::file_system->data_path_quoted);
+      fprintf(stderr, "tmp_path_quoted = '%s'\n", File_System_Context::file_system->tmp_path_quoted);
       fprintf(stderr, "mkdircmd = '%s'\n", mkdir_cmd);
       fprintf(stderr, "dir = %s\n", dir_quoted);
       system(mkdir_cmd);
@@ -283,8 +290,10 @@ name = strrchr(path, '/'); // Windows might need backslash check
       int old_nfd_rsn_spc_path_pos=BaseD::nfd.num_rsn_spc_paths;
       // count how many paths!!
       // ls *.spc
+      char *dir_unquoted = &dir_quoted[1];
+      dir_quoted[strlen(dir_quoted)-1] = 0;
       boost::filesystem::directory_iterator end_itr;
-      for(boost::filesystem::directory_iterator i(dir_quoted); i != end_itr; ++i)
+      for(boost::filesystem::directory_iterator i(dir_unquoted); i != end_itr; ++i)
       {
         if (!boost::filesystem::is_regular_file(i->status())) continue;
 
@@ -292,8 +301,8 @@ name = strrchr(path, '/'); // Windows might need backslash check
         boost::filesystem::path fe = i->path().extension();
         //DEBUGLOG(fe.c_str());
         std::cout << fe.string() << std::endl;
-        if (boost::filesystem::equivalent(fe, "spc"))
-          BaseD::nfd.num_rsn_spc_paths++;
+          if (!strcmp(fe.string().c_str(), ".spc"))
+            BaseD::nfd.num_rsn_spc_paths++;
       }
 
       BaseD::nfd.rsn_spc_paths=(char**)SDL_realloc(BaseD::nfd.rsn_spc_paths, 
@@ -303,26 +312,31 @@ name = strrchr(path, '/'); // Windows might need backslash check
         perror ("realloc");
         break;
       }
-
+      //char *dir_unquoted = &dir_quoted[1];
+      //dir_quoted[strlen(dir_quoted)-1] = 0;
       // Copy each file name to the 
-      for(boost::filesystem::directory_iterator i(dir_quoted); i != end_itr; ++i)
+      for(boost::filesystem::directory_iterator i(dir_unquoted); i != end_itr; ++i)
       {
         if (!boost::filesystem::is_regular_file(i->status())) continue;
         // erase newline
         //spc_path[strlen(spc_path)-1] = 0;
-
+        std::cout << i->path() << std::endl;
         // if file ext is spc
         boost::filesystem::path fe = i->path().extension();
+        std::cout << fe.string() << std::endl;
         //DEBUGLOG(fe.c_str());
-        if (boost::filesystem::equivalent(fe, "spc"))
-        {
-          boost::filesystem::path spc_pathW = i->path();
-          // 3 because 0, '"', '"' IIRC
-          std::string spc_path = spc_pathW.string();
-          BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos] = (char*) SDL_calloc(spc_path.length()+3, sizeof(char));
-          strcpy(BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos], spc_path.c_str());
-          old_nfd_rsn_spc_path_pos++; 
-        }
+          if (!strcmp(fe.string().c_str(), ".spc"))
+          {
+            //boost::filesystem::path spc_pathW = i->path();
+            // 3 because 0, '"', '"' IIRC
+            std::cout << "woot" << std::endl;
+            std::string spc_path = i->path().string();
+            BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos] = (char*) SDL_calloc(spc_path.length()+3, sizeof(char));
+            strcpy(BaseD::nfd.rsn_spc_paths[old_nfd_rsn_spc_path_pos], spc_path.c_str());
+            old_nfd_rsn_spc_path_pos++; 
+            
+          }
+
       }
 
       //SDL_free(ls_cmd);
@@ -540,7 +554,7 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
   DEBUGLOG("g_cur_entry = %d", g_cur_entry);
   DEBUGLOG("g_cfg.playlist[g_cur_entry] = %s\n", g_cfg.playlist[g_cur_entry]);
 
-#ifdef WIN32
+#ifdef _WIN32
   g_real_filename = strrchr(path, '\\');
 #else
   g_real_filename = strrchr(path, '/');
@@ -801,7 +815,8 @@ void BaseD::write_mask(unsigned char packed_mask[32])
   unsigned char tmp;
   int i;
   strncpy(filename, g_cfg.playlist[g_cur_entry], 1024);
-#ifdef WIN32
+#ifdef _
+  WIN32
   sep = strrchr(filename, '\\');
 #else
   sep = strrchr(filename, '/');

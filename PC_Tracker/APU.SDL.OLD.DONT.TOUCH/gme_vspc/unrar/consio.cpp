@@ -64,7 +64,11 @@ static void cvt_wprintf(FILE *dest,const wchar *fmt,va_list arglist)
   if (dest==stdout && StdoutRedirected || dest==stderr && StderrRedirected)
   {
     // Avoid Unicode for redirect in Windows, it does not work with pipes.
+#ifdef _WIN32
+    _vsnwprintf(Msg,ASIZE(Msg),fmtw,arglist);
+#else
     vswprintf(Msg,ASIZE(Msg),fmtw,arglist);
+#endif
     safebuf char MsgA[MaxMsgSize];
     WideToChar(Msg,MsgA,ASIZE(MsgA));
     CharToOemA(MsgA,MsgA); // Console tools like 'more' expect OEM encoding.
@@ -78,7 +82,11 @@ static void cvt_wprintf(FILE *dest,const wchar *fmt,va_list arglist)
   }
   // MSVC2008 vfwprintf writes every character to console separately
   // and it is too slow. We use direct WriteConsole call instead.
+#ifdef _WIN32
+  _vsnwprintf(Msg,ASIZE(Msg),fmtw,arglist);
+#else
   vswprintf(Msg,ASIZE(Msg),fmtw,arglist);
+#endif
   HANDLE hOut=GetStdHandle(dest==stderr ? STD_ERROR_HANDLE:STD_OUTPUT_HANDLE);
   DWORD Written;
   WriteConsole(hOut,Msg,(DWORD)wcslen(Msg),&Written,NULL);

@@ -92,7 +92,8 @@ int File_System::init()
     tmp_path_quoted = (char*)SDL_malloc(sizeof(char) * (strlen(pref_path)+strlen("\"tmp/\"")+1) );
     strcpy(tmp_path, pref_path);
     char *p = tmp_path + strlen(pref_path);
-    strcpy(p, "tmp/");
+    strcpy(p, "tmp");
+    p[3] = PATH_SEP;
     fprintf(stderr, "tmppath = %s\n", tmp_path);
     strcpy (tmp_path_quoted, "\"");
     strcat (tmp_path_quoted, tmp_path);

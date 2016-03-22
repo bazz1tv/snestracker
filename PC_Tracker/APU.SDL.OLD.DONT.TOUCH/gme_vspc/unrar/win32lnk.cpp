@@ -1,6 +1,6 @@
 #define SYMLINK_FLAG_RELATIVE 1
 
-typedef struct _REPARSE_DATA_BUFFER {
+/*typedef struct _REPARSE_DATA_BUFFER {
   ULONG  ReparseTag;
   USHORT ReparseDataLength;
   USHORT Reserved;
@@ -25,7 +25,7 @@ typedef struct _REPARSE_DATA_BUFFER {
     } GenericReparseBuffer;
   };
 } REPARSE_DATA_BUFFER, *PREPARSE_DATA_BUFFER;
-
+*/
 
 
 

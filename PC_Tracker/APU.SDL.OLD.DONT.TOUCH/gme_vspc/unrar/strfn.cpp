@@ -53,8 +53,20 @@ int strnicomp(const char *s1,const char *s2,size_t n)
   // to real string length.
   // It is important to use strnlen (or memchr(...,0)) instead of strlen,
   // because data can be not zero terminated.
-  size_t l1=Min(strnlen(s1,n),n);
-  size_t l2=Min(strnlen(s2,n),n);
+
+  char *s1p = memchr(s1,0,n);
+  char *s2p = memchr(s2,0,n);
+
+  if (s1p)
+    s1p = s1p - s1;
+  else
+    s1p = (char*)n;
+  if (s2p)
+    s2p = s2p - s2;
+  else
+    s2p = (char*)n;
+  size_t l1=Min((size_t)s1p,n);
+  size_t l2=Min((size_t)s2p,n);
   return CompareStringA(LOCALE_USER_DEFAULT,NORM_IGNORECASE|SORT_STRINGSORT,s1,(int)l1,s2,(int)l2)-2;
 #else
   if (n==0)

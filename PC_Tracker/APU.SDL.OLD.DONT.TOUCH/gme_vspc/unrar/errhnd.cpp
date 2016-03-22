@@ -132,6 +132,8 @@ void ErrorHandler::GeneralErrMsg(const wchar *fmt,...)
   WideToChar(fmt,fmtA,ASIZE(fmtA));
   vsnprintf(MsgA,ASIZE(MsgA),fmtA,arglist);
   CharToWide(MsgA,Msg,ASIZE(Msg));
+#elif defined(_WIN32)
+  _vsnwprintf(Msg,ASIZE(Msg),fmt,arglist);
 #else
   vswprintf(Msg,ASIZE(Msg),fmt,arglist);
 #endif

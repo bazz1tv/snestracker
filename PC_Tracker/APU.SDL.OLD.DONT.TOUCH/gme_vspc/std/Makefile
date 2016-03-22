@@ -60,6 +60,8 @@ ifeq ($(uname_S), Darwin)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
 	EXECUTABLE=std
+	UNRAR = unrar
+	DEC7Z = 7zDec
 else ifeq ($(uname_S), Linux)
 	MIDI_DEFS     =   -D__LINUX_ALSA__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -ljdkmidi -lasound
@@ -85,6 +87,8 @@ else ifeq ($(uname_S), Linux)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
 	EXECUTABLE=std
+	UNRAR = unrar
+	DEC7Z = 7zDec
 else ifeq ($(uname_S), Cross_Windows)
 	MIDI_DEFS     =   -D__WINDOWS_MM__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -ljdkmidi -lwinmm
@@ -108,6 +112,8 @@ else ifeq ($(uname_S), Cross_Windows)
 	sdl2_ldflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs)
 
 	EXECUTABLE=std.exe
+	UNRAR = unrar.exe
+	DEC7Z = 7zDec.exe
 else ifeq ($(uname_S), Windows)
     
 else
@@ -151,19 +157,19 @@ $(EXECUTABLE).app: $(EXECUTABLE) unrar 7zDec
 	cp 7zDec $@/Contents/Resources
 	touch $@
 
-$(EXECUTABLE): $(OBJECTS) unrar 7zDec
+$(EXECUTABLE): $(OBJECTS) $(UNRAR) $(DEC7Z)
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 
-7zDec: ../lzma1505/C/Util/7z/7zDec ../lzma1505/C/Util/7z/7zMain.c
+$(DEC7Z): ../lzma1505/C/Util/7z/7zDec ../lzma1505/C/Util/7z/7zMain.c
 	cp ../lzma1505/C/Util/7z/7zDec* .
 
 ../lzma1505/C/Util/7z/7zDec:
 	uname_S=$(uname_S) make -C ../lzma1505/C/Util/7z -f makefile.gcc
 
-unrar: ../unrar/unrar
-	cp ../unrar/unrar unrar
-../unrar/unrar:
-	make -C ../unrar
+$(UNRAR): ../unrar/$(UNRAR)
+	cp ../unrar/$(UNRAR) $(UNRAR)
+../unrar/$(UNRAR):
+	uname_S=$(uname_S) make -C ../unrar
 #gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h debugger/report.h 
 #	$(CPP) $(CFLAGS) -c $< -o $@
 # Use the dependency files created by the -MMD option to gcc.
@@ -182,7 +188,8 @@ clean:
 	#find . -name "*.o" -o -name "*.d" | xargs rm -rf
 	#find $(SHARED_DIR) -name "*.o" -o -name "*.d" | xargs rm -rf
 	find $(PROJ_DIR) -name "*.o" -o -name "*.d" | xargs rm -rf
-	rm -f ../lzma1505/C/Util/7z/{7zDec,7zDec.exe}
+	rm -f {../lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
+	rm -f {../unrar/,}{unrar,unrar.exe}
 
 
 

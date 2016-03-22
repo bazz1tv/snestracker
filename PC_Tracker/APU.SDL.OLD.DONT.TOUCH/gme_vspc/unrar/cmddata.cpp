@@ -917,11 +917,12 @@ void CommandData::OutTitle()
     return;
   TitleShown=true;
   wchar Version[50];
+  memset(Version, 0, sizeof(Version));
   int Beta=RARVER_BETA;
-  if (Beta!=0)
+  /*if (Beta!=0)
     swprintf(Version,ASIZE(Version),L"%d.%02d %ls %d",RARVER_MAJOR,RARVER_MINOR,St(MBeta),RARVER_BETA);
   else
-    swprintf(Version,ASIZE(Version),L"%d.%02d",RARVER_MAJOR,RARVER_MINOR);
+    swprintf(Version,ASIZE(Version),L"%d.%02d",RARVER_MAJOR,RARVER_MINOR);*/
 #ifdef UNRAR
   mprintf(St(MUCopyright),Version,RARVER_YEAR);
 #else
@@ -1267,7 +1268,7 @@ bool CommandData::GetArcName(wchar *Name,int MaxSize)
 bool CommandData::IsSwitch(int Ch)
 {
 #if defined(_WIN_ALL) || defined(_EMX)
-  return(Ch=='-' || Ch=='/');
+  return(Ch=='-' /*|| Ch=='/'*/);
 #else
   return(Ch=='-');
 #endif
