@@ -238,7 +238,9 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
     char *name;
     ext = strrchr(path, '.');
 
-    name = strrchr(path, PATH_SEP); // Windows might need backslash check
+    name = strrchr(path, '\\'); // Windows
+    if (!name)
+      name = strrchr( path, '/' ); // UNIX
   //assert(name);
     if (!name)
       name = path;
