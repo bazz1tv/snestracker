@@ -1,5 +1,6 @@
 #pragma once
 #include "SDL.h"
+#include "gui/Window.h"
 struct Render_Context
 {
 public:
@@ -12,7 +13,7 @@ public:
     SDL_Texture *sdlTexture=Render_Context::sdlTexture, 
     SDL_Renderer *sdlRenderer=Render_Context::sdlRenderer);
 
-
+  static void load_from_window(Window *win);
 
   static SDL_Window *sdlWindow;//      =NULL;
   static Uint32 windowID;

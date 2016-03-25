@@ -24,8 +24,19 @@ tabs(*this),
 content_area(*this)
 {
   preload(10,10);
-  
+
+}
+
+void Options_Window::show()
+{
   exp->one_time_draw();
+  draw();
+  Window::show();
+
+  //content_area.audio_options.screen = screen;
+  //content_area.audio_options.renderer = sdlRenderer;
+  
+  //SDL_ShowWindow(sdlWindow);
 }
 
 void Options_Window::preload(int x, int y)
@@ -64,11 +75,7 @@ int Options_Window::receive_event(SDL_Event &ev)
       {
         case SDLK_ESCAPE:
         {
-          SDL_Event close_window_ev;
-          close_window_ev.type = SDL_WINDOWEVENT;
-          close_window_ev.window.event = SDL_WINDOWEVENT_CLOSE;
-          close_window_ev.window.windowID = windowID;
-          SDL_PushEvent(&close_window_ev);
+          hide();
         }
         break;
       }

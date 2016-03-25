@@ -1,9 +1,10 @@
 #pragma once
 #include "SDL.h"
 #include "Experience.h"
-
+#include <string>
 struct Window : public Experience
 {
+  void init();
   Window(int width, int height, const char *title);
   ~Window();
   SDL_Window *sdlWindow = NULL;
@@ -13,7 +14,7 @@ struct Window : public Experience
   Uint32 windowID=0;
 
   SDL_Rect rect;
-  
+  std::string title;
 
   bool is_focused=false;
 
@@ -23,4 +24,7 @@ struct Window : public Experience
   void show();
   void raise();
   void hide();
+  void destroy();
+
+  bool oktoshow = false;
 };

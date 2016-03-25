@@ -60,7 +60,7 @@ nfdresult_t get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file, const c
   char tmpbuf[200];
   *outPath=NULL;
   nfdresult_t result = NFD_SaveDialog( filter_list, NULL, outPath );
-  SDL_RaiseWindow(BaseD::sdlWindow);
+  //SDL_RaiseWindow(BaseD::sdlWindow);
     if ( result == NFD_OKAY )
     {
       //puts("Success!");
@@ -100,7 +100,7 @@ nfdresult_t get_file_read_path(nfdchar_t **outPath, const char *filter_list/*=NU
 {
   *outPath=NULL;
   nfdresult_t result = NFD_OpenDialog( filter_list, NULL, outPath );
-  SDL_RaiseWindow(BaseD::sdlWindow);
+  //SDL_RaiseWindow(BaseD::sdlWindow);
     if ( result == NFD_OKAY )
     {
       //puts("Success!");
@@ -132,7 +132,7 @@ nfdresult_t get_file_read_handle(nfdchar_t **outPath, SDL_RWops **file, const ch
   char tmpbuf[200];
   *outPath=NULL;
   nfdresult_t result = NFD_OpenDialog( filter_list, NULL, outPath );
-  SDL_RaiseWindow(BaseD::sdlWindow);
+  //SDL_RaiseWindow(BaseD::sdlWindow);
     if ( result == NFD_OKAY )
     {
       //puts("Success!");

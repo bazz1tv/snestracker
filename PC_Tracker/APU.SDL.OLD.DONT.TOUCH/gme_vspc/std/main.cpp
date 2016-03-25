@@ -38,7 +38,7 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
   }
   atexit(SDL_Quit);
 
-  SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE, sdlWindow, sdlRenderer);
+  SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN /*| SDL_WINDOW_BORDERLESS*/, sdlWindow, sdlRenderer);
   if (*sdlWindow == NULL || *sdlRenderer == NULL)
   {
     fprintf(stderr, "FCK\n");

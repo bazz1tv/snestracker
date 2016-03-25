@@ -1,0 +1,1 @@
+prefix=/usr/i686-pc-mingw32/usr CROSS_COMPILE=i686-pc-mingw32- make

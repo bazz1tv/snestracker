@@ -11,7 +11,10 @@ static int create_midi(void *vapp)
 }
 
 App::App(int &argc, char **argv, int samplerate/*=44100*/)
+//main_window(SCREEN_WIDTH, SCREEN_HEIGHT, APP_NAME_VERSION)
 {
+  //Colors::precompute(*main_window->screen);
+  //Render_Context::load_from_window(main_window);
   file_system = new File_System;
   app_settings=new App_Settings(file_system);
   audio=new Audio;

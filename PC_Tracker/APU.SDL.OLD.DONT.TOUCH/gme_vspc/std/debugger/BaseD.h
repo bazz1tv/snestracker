@@ -8,13 +8,14 @@
 #include "Experience.h"
 #include "Voice_Control.h"
 #include "My_Nfd.h"
+#include "gui/Cursors.h"
 
 struct Main_Window;
 struct Dsp_Window;
 struct Instrument_Window;
 struct Menu_Bar;
 struct Options_Window;
-
+struct Spc_Export_Window;
 struct BaseD : public Render_Context, public Player_Context
 {
   static char tmpbuf[500];
@@ -128,6 +129,9 @@ struct BaseD : public Render_Context, public Player_Context
   static Instrument_Window *instr_window;
   static Menu_Bar *menu_bar;
   static Options_Window *options_window;
+  static Spc_Export_Window *spc_export_window;
+
+  static Cursors *cursors;
 
   static int g_paused;// = 0;
   static bool quitting;

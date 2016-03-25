@@ -5,6 +5,7 @@
 #include "Instrument_Window.h"
 //#include <stdlib.h>
 #include "Options_Window.h"
+#include "gui/Spc_Export_Window.h"
 
 #include "gme/Wave_Writer.h"
 
@@ -44,8 +45,9 @@ void Menu_Bar::Tabs::draw()
 int Menu_Bar::Edit_Context::open_options_window(void *data)
 {
   DEBUGLOG("open_options_window()\n");
-  BaseD::options_window->raise();
+  //
   BaseD::options_window->show();
+  BaseD::options_window->raise();
   //BaseD::options_window->raise();
   // there's a problem raising the window immediately after showing it... 
   // So I raise it in the event loop when the window focus change event happens
@@ -108,6 +110,14 @@ int Menu_Bar::File_Context::open_spc(void *data)
     BaseD::check_paths_and_reload(BaseD::nfd.paths, BaseD::nfd.numpaths);
   }
   BaseD::player->pause(0);
+  return 0;
+}
+
+int Menu_Bar::File_Context::export_spc(void *data)
+{
+  //BaseD::spc_export_window->init();
+  BaseD::spc_export_window->show();
+  
   return 0;
 }
 

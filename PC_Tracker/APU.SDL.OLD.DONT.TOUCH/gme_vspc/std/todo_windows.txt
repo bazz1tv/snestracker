@@ -1,0 +1,26 @@
+--- Log opened Mon Mar 21 00:04:11 2016
+Lastlog:
+20:36 -!- bazz [~bazz@botb.club] has joined #snestracker
+20:36 -!- Topic for #snestracker: Welcome to the SNES Tracker IRC channel! Feel free to discuss SNES Tracker or SNES Audio topics! Thank you for help starting this community!! :D Tell your friends!! http://snestracker.club
+20:36 -!- Topic set by bazz [] [Wed Mar 16 22:19:22 2016]
+20:36 [Users #snestracker]
+20:36 [ bazz] [ Marysia] [ misdreavus] 
+20:36 -!- Irssi: #snestracker: Total of 3 nicks [0 ops, 0 halfops, 0 voices, 3 normal]
+20:36 -!- mode/#snestracker [+o bazz] by ChanServ
+20:36 -!- Channel #snestracker created Wed Mar 16 22:15:22 2016
+20:36 -!- Irssi: Join to #snestracker was synced in 20 secs
+23:21 <@bazz> wow, I have a moderately working cross compiled win32 STD from Linux, running in WINE!! (hehe)
+23:45 <@bazz> Just ran it on my father's WinXP laptop as well!! Granted, there's some (a lot) of kinks that need to be worked out ^_^ let me see...
+23:45 <@bazz> For some reason, the memory view gfx are being printed .. from the wrong location.. im not sure why
+23:46 <@bazz> audio buffer was a little choppy, I'm assuming due to slower system (pop's laptop) or emulation .. I need to add the ability to control the size of the audio buffer from the audio config window
+23:47 <@bazz> and my port of NFD window's implementation is incomplete (no file filtering.. didn't test multi-select)
+23:48 <@bazz> --- 7z / unrar needs to get properly checked / verified
+23:48 <@bazz> boost::filesystem processing of (*.spc) files in a target directory needs to be verified
+23:49 <@bazz> and UNICODE -- I never really prepared to properly support unicode filenames -- should at one point experiment what happens when one loads, how to handle it -- consider eventual support? 
+23:49 <@bazz> Linux -- I recall not being to open the audio window after closing it (config)
+23:59 <@bazz> Have to get win32 make to produce .exe
+23:59 <@bazz> automate copying of DLL files
+End of Lastlog
+--- Log closed Mon Mar 21 00:18:29 2016
+
+Why didn't libGME_M need any actual IMPORT/EXPORT defs?

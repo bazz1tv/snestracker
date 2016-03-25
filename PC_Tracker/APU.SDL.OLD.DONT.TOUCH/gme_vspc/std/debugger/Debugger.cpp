@@ -3,7 +3,7 @@
 #include "utility.h"
 #include "Screen.h"
 #include "sdl_userevents.h"
-
+#include "gui/Cursors.h"
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -20,11 +20,14 @@ main_window(argc,argv)
   BaseD::instr_window = &instr_window;
   BaseD::menu_bar = &menu_bar;
   BaseD::options_window = &options_window;
+  BaseD::spc_export_window = &spc_export_window;
+  BaseD::cursors = &cursors;
   exp = &main_window;
 
   //window_map.insert( std::pair<Uint32, Window*>())
   int i=0;
   window_map[i++] = &options_window;
+  window_map[i++] = &spc_export_window;
   window_map[i] = NULL;
 
   
@@ -58,6 +61,9 @@ void Debugger::run()
   main_window.check_paths_and_reload();
   main_window.one_time_draw();
 
+  exp->draw();
+  SDL_ShowWindow(sdlWindow);
+
   // exp is changed from BaseD
   while (!quitting)
   {
@@ -81,7 +87,7 @@ void Debugger::run()
     //window_map[i]->hide();
     // DO THIS because otherwise the hidden windows will blink
     // quickly on exit
-    window_map[i]->~Window();
+    //window_map[i]->~Window();
   }
 
   if (!player->is_paused() && player->track_started)
@@ -176,17 +182,7 @@ void Debugger::handle_events()
         {
           DEBUGLOG("Window %d Gained keyboard focus\n", ev.window.windowID);
           
-          sub_window_experience = NULL;
-          for (int i=0; i < NUM_WINDOWS; i++)
-          {
-            if (ev.window.windowID == window_map[i]->windowID)
-            {
-              DEBUGLOG(":D\n");
-              sub_window_experience = (Experience *)window_map[i];
-              window_map[i]->raise();
-              break;
-            }
-          }
+          
           /*if (ev.window.windowID == Render_Context::windowID)
             sub_window_experience = BaseD::exp;
           else if (ev.window.windowID == BaseD::menu_bar->options_window.windowID)
@@ -197,6 +193,35 @@ void Debugger::handle_events()
           else
             sub_window_experience = NULL;*/
 
+        }
+        break;
+        case SDL_WINDOWEVENT_SHOWN:
+        {
+          SDL_Log("Window %d shown", ev.window.windowID);
+          for (int i=0; i < NUM_WINDOWS; i++)
+          {
+            if (ev.window.windowID == window_map[i]->windowID)
+            {
+              if (!window_map[i]->oktoshow)
+              {
+                window_map[i]->hide();
+                /* maybe right here, instead of raising the main window, we should
+                  have a history of displayed windows.. and the last one should be raised.
+                */
+                sub_window_experience = NULL;
+                //SDL_RaiseWindow(Render_Context::sdlWindow);
+              }
+              else
+              {
+                sub_window_experience = NULL;
+                
+                DEBUGLOG("Window_map %d gained experience. :D\n", i);
+                sub_window_experience = (Experience *)window_map[i];
+                window_map[i]->raise();
+              }
+              break;
+            }
+          }
         }
         break;
         case SDL_WINDOWEVENT_CLOSE:
@@ -217,11 +242,11 @@ void Debugger::handle_events()
               if (ev.window.windowID == window_map[i]->windowID)
               {
                 window_map[i]->hide();
-                /* maybe right here, instead of raising the main window, we should
-                  have a history of displayed windows.. and the last one should be raised.
-                */
+                // maybe right here, instead of raising the main window, we should
+                //  have a history of displayed windows.. and the last one should be raised.
+                
                 sub_window_experience = NULL;
-                SDL_RaiseWindow(Render_Context::sdlWindow);
+                //SDL_RaiseWindow(Render_Context::sdlWindow);
                 break;
               }
             }

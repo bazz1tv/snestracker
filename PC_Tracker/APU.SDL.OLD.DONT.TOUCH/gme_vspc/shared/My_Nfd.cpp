@@ -56,7 +56,7 @@ nfdresult_t My_Nfd::get_multifile_read_path(const char *filter_list/*=NULL*/)
 {
   nfdpathset_t tpathSet;
   nfdresult_t result = NFD_OpenDialogMultiple( filter_list, NULL, &tpathSet );
-  SDL_RaiseWindow(BaseD::sdlWindow);
+  //SDL_RaiseWindow(BaseD::sdlWindow);
   if ( result == NFD_OKAY )
   {
     puts("DERP!");

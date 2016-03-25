@@ -73,8 +73,8 @@ else ifeq ($(uname_S), Linux)
 	CPPFLAGS += -fpermissive
 	# NFD
 	CSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_gtk.c
-	gtk_cflags = $(shell pkg-config --cflags gtk+-3.0)
-	gtk_ldflags = $(shell pkg-config --libs gtk+-3.0)
+	gtk_cflags = $(shell pkg-config --cflags gtk+-2.0)
+	gtk_ldflags = $(shell pkg-config --libs gtk+-2.0)
 	CPPFLAGS += $(gtk_cflags)
 	LDFLAGS += $(gtk_ldflags) -Wl,-rpath=$(gme_PREFIX)/lib
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt

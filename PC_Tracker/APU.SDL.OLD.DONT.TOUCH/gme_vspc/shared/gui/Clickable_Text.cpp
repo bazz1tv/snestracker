@@ -31,24 +31,29 @@ void Clickable_Text::init_width_height()
   rect.h = CHAR_HEIGHT;
 }
 
-void Clickable_Text::setup(int x, int y)
+void Clickable_Text::setup(int x, int y, bool center_x/*=false*/)
 {
   rect.w = str.length()*CHAR_WIDTH; // could add padding
   rect.h = CHAR_HEIGHT;
   rect.x = x;
   rect.y = y;
+
+  if (center_x)
+  {
+    rect.x = (x / 2) - ((str.length() / 2) * CHAR_WIDTH);
+  }
 }
 
 void Clickable_Text::draw(Uint32 &color, bool prefill/*=true*/, 
-  bool Vflip/*=false*/, bool Hflip/*=false*/)
+  bool Vflip/*=false*/, bool Hflip/*=false*/, SDL_Surface *screen/*=RenderContext::screen*/)
 {
   sdlfont_drawString(screen, rect.x, rect.y, str.c_str(), color, 
     Colors::Interface::color[Colors::Interface::Type::text_bg], prefill, Vflip, Hflip);
 }
 
 void Clickable_Text::draw(bool prefill/*=true*/, 
-  bool Vflip/*=false*/, bool Hflip/*=false*/)
+  bool Vflip/*=false*/, bool Hflip/*=false*/, SDL_Surface *screen/*=RenderContext::screen*/)
 {
-  draw(color, prefill, Vflip, Hflip);
+  draw(color, prefill, Vflip, Hflip, screen);
 }
 

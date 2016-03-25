@@ -4,8 +4,14 @@ Window::Window(int width, int height, const char *title)
 {
   rect.w = width;
   rect.h = height;
+  this->title = title;
+  init();
+}
 
-  SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN, &sdlWindow, &sdlRenderer);
+void Window::init()
+{
+  this->destroy();
+  SDL_CreateWindowAndRenderer(rect.w, rect.h, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN /*| SDL_WINDOW_BORDERLESS*/, &sdlWindow, &sdlRenderer);
   if (sdlWindow == NULL || sdlRenderer == NULL)
   {
     fprintf(stderr, "FCK\n");
@@ -20,9 +26,9 @@ Window::Window(int width, int height, const char *title)
 
   //sdlWindow = *sdlWindow;
   //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");  // make the scaled rendering look smoother.
-  SDL_RenderSetLogicalSize(sdlRenderer, width, height);
+  SDL_RenderSetLogicalSize(sdlRenderer, rect.w, rect.h);
 
-  screen = SDL_CreateRGBSurface(0, width, height, 32,
+  screen = SDL_CreateRGBSurface(0, rect.w, rect.h, 32,
                                       0x00FF0000,
                                       0x0000FF00,
                                       0x000000FF,
@@ -30,7 +36,7 @@ Window::Window(int width, int height, const char *title)
   sdlTexture = SDL_CreateTexture(sdlRenderer,
                                           SDL_PIXELFORMAT_RGB888,
                                           SDL_TEXTUREACCESS_STREAMING,
-                                          width, height);
+                                          rect.w, rect.h);
 
   if (screen == NULL || sdlTexture == NULL)
   {
@@ -50,15 +56,13 @@ Window::Window(int width, int height, const char *title)
   //SDL_RaiseWindow(sdlWindow);
   //clear_screen();
   //SDL_HideWindow(sdlWindow);
-  SDL_SetWindowTitle(sdlWindow, title);
+  SDL_SetWindowTitle(sdlWindow, title.c_str());
   //SDL_Delay(5000);
   //SDL_ShowWindow(sdlWindow);
 }
 
-
-Window::~Window()
+void Window::destroy()
 {
-  SDL_Log("~Window");
   if (screen)
   {
     SDL_FreeSurface(screen);
@@ -80,7 +84,13 @@ Window::~Window()
   {
     SDL_DestroyWindow(sdlWindow);
     sdlWindow = NULL;
-  }   
+  }  
+}
+
+Window::~Window()
+{
+  SDL_Log("~Window");
+  destroy();
 }
 
 void Window::clear_screen()
@@ -104,6 +114,8 @@ void Window::show()
 {
   SDL_Log("Window::show()");
   SDL_ShowWindow(sdlWindow);
+  oktoshow = true;
+  //init();
 }
 
 void Window::raise()
@@ -114,6 +126,10 @@ void Window::raise()
 
 void Window::hide()
 {
+  //this->destroy();
+  //SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
   SDL_HideWindow(sdlWindow);
+  oktoshow = false;
+  //SDL_SetWindowPosition(sdlWindow, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED);
 }
 

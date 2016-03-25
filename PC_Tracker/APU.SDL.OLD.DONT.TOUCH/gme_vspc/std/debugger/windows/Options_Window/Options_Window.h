@@ -45,6 +45,7 @@ struct Options_Window : public Window
   Experience *exp=&content_area.audio_options;
 
   bool is_first_run=true;
+  void show();
   void run();
   void draw();
   int receive_event(SDL_Event &ev);
