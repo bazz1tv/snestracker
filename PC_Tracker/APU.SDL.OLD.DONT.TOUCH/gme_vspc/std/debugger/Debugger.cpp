@@ -178,6 +178,11 @@ void Debugger::handle_events()
           case SDL_WINDOWEVENT_FOCUS_LOST:
           {
             DEBUGLOG("Window %d Lost keyboard focus\n", ev.window.windowID);
+            if (ev.window.windowID == Render_Context::windowID)
+            {
+              // OFF context menus
+              menu_bar.context_menus.deactivate_all();
+            }
           }
           break;
           case SDL_WINDOWEVENT_FOCUS_GAINED:

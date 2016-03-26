@@ -142,6 +142,12 @@ struct Menu_Bar
     void draw(SDL_Surface *screen);
     void preload(int x, int y);
     void update(Uint8 adsr, Uint8 adsr2);
+    void deactivate_all() {
+      file_context.menu.deactivate();
+      edit_context.menu.deactivate();
+      track_context.menu.deactivate();
+      window_context.menu.deactivate();
+    }
 
     File_Context          file_context;
     Edit_Context          edit_context;

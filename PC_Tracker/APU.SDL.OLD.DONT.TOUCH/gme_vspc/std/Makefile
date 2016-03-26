@@ -66,7 +66,7 @@ else ifeq ($(uname_S), Linux)
 	MIDI_DEFS     =   -D__LINUX_ALSA__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -ljdkmidi -lasound
 	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
-	MIDI_LDFLAGS  = -L$(prefix)/lib
+	MIDI_LDFLAGS  = -L$(prefix)/lib -lpthread
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
 	#
 	CPP_DEFS += -DHAVE_STDINT_H
