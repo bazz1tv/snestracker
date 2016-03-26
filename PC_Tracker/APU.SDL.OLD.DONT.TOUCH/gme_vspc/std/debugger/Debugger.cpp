@@ -182,17 +182,20 @@ void Debugger::handle_events()
         {
           DEBUGLOG("Window %d Gained keyboard focus\n", ev.window.windowID);
           
-          
-          /*if (ev.window.windowID == Render_Context::windowID)
-            sub_window_experience = BaseD::exp;
-          else if (ev.window.windowID == BaseD::menu_bar->options_window.windowID)
+          sub_window_experience = NULL;
+          for (int i=0; i < NUM_WINDOWS; i++)
           {
-            sub_window_experience = (Experience *)&BaseD::menu_bar->options_window;
-            SDL_RaiseWindow(BaseD::menu_bar->options_window.sdlWindow);
+            if (ev.window.windowID == window_map[i]->windowID)
+            {
+              if (window_map[i]->oktoshow)
+              {
+                DEBUGLOG("Window_map %d gained experience. :D\n", i);
+                sub_window_experience = (Experience *)window_map[i];
+                //window_map[i]->raise();
+              }
+              break;
+            }
           }
-          else
-            sub_window_experience = NULL;*/
-
         }
         break;
         case SDL_WINDOWEVENT_SHOWN:

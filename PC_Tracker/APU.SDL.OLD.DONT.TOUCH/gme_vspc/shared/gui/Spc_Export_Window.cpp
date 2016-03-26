@@ -20,10 +20,9 @@ int Spc_Export_Window::init()
 
 void Spc_Export_Window::show()
 {
-  
-
+  BaseD::player->pause(1, false, false);
   Window::show();
-
+  clear_screen();
   one_time_draw();
 
   SDL_StartTextInput();
