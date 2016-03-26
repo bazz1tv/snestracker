@@ -44,19 +44,6 @@ bool Context_Menu::receive_event(SDL_Event &ev)
 
   switch (ev.type)
   {
-    case SDL_QUIT:
-    if (!BaseD::g_cfg.nosound) {
-      SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-    }
-    printf ("penis4\n");
-    BaseD::quitting = true;
-    break;
-
-    case SDL_MOUSEMOTION:
-    {
-      mouse::x = ev.motion.x; mouse::y = ev.motion.y;
-    } break;
-
     case SDL_KEYDOWN:
     {
       int scancode = ev.key.keysym.sym;

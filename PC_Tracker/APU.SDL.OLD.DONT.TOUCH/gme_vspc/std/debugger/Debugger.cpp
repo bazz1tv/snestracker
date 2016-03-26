@@ -99,198 +99,208 @@ void Debugger::run()
 
 void Debugger::handle_events()
 {
-  
   SDL_Event ev;
+
   while (SDL_PollEvent(&ev))
   {
-    if (ev.type == SDL_QUIT)
+    //DEBUGLOG("GOTEVENT 0x%x -", ev.type);
+    switch(ev.type)
     {
-      BaseD::quitting = true;
-    }
-    if (ev.type == SDL_WINDOWEVENT)
-    {
-      switch(ev.window.event)
+      case SDL_QUIT:
+        BaseD::quitting = true;
+        break;
+      case SDL_WINDOWEVENT:
       {
-        case SDL_WINDOWEVENT_RESIZED:
+        switch(ev.window.event)
         {
-
-          int w = ev.window.data1;
-          int h = ev.window.data2;
-
-          DEBUGLOG("window resize: w = %d, h = %d\n", w, h);
-          /*if (w > monitor_display_mode.w)
-            w = monitor_display_mode.w;
-          if (h > monitor_display_mode.h)
-            h = monitor_display_mode.h;*/
-
-          int wd, hd;
-          //if (w > SCREEN_WIDTH)
-          //{
-          wd = w - Render_Context::w;
-          //}
-          //else
-          //{
-           // wd = SCREEN_WIDTH - height;
-          //}
-
-          hd = h - Render_Context::h;
-
-          if (abs(wd) < abs(hd)) wd = hd;
-          else if (abs(wd) > abs(hd)) hd = wd;
-
-          Render_Context::w += wd;
-          Render_Context::h += hd;
-
-          DEBUGLOG("\twindow resize: w = %d, h = %d\n", Render_Context::w, Render_Context::h);
-          //DEBUGLOG("%d - %d = %d\n", Render_Context::h, monitor_display_mode.h, Render_Context::h - monitor_display_mode.h);
-
-          if (Render_Context::w > monitor_display_mode.w)
+          case SDL_WINDOWEVENT_RESIZED:
           {
-            int tmp_wd = Render_Context::w - monitor_display_mode.w;
-            Render_Context::w -= tmp_wd;
-            Render_Context::h -= tmp_wd;
-            DEBUGLOG("\t\twindow resize: tmp_wd = %d, w = %d, h = %d\n", tmp_wd, Render_Context::w, Render_Context::h);
-          }
-          if (Render_Context::h > monitor_display_mode.h)
-          {
-            int tmp_hd = Render_Context::h - monitor_display_mode.h;
-            Render_Context::w -= tmp_hd;
-            Render_Context::h -= tmp_hd;
-            DEBUGLOG("\t\twindow resize: tmp_hd = %d, w = %d, h = %d\n", tmp_hd, Render_Context::w, Render_Context::h);
 
-          }
+            int w = ev.window.data1;
+            int h = ev.window.data2;
 
-          SDL_SetWindowSize(sdlWindow, Render_Context::w, Render_Context::h);
-          DEBUGLOG("\t\t\twindow resize: w = %d, h = %d\n", Render_Context::w, Render_Context::h);
-        } break;
-        /*case SDL_WINDOWEVENT_LEAVE:
-        {
-          DEBUGLOG("Window %d Lost mouse focus\n", ev.window.windowID);
-        }
-        break;
-        case SDL_WINDOWEVENT_ENTER:
-        {
-          DEBUGLOG("Window %d Gained mouse focus\n", ev.window.windowID);
-        }
-        break;*/
-        case SDL_WINDOWEVENT_FOCUS_LOST:
-        {
-          DEBUGLOG("Window %d Lost keyboard focus\n", ev.window.windowID);
-        }
-        break;
-        case SDL_WINDOWEVENT_FOCUS_GAINED:
-        {
-          DEBUGLOG("Window %d Gained keyboard focus\n", ev.window.windowID);
-          
-          sub_window_experience = NULL;
-          for (int i=0; i < NUM_WINDOWS; i++)
-          {
-            if (ev.window.windowID == window_map[i]->windowID)
+            DEBUGLOG("window resize: w = %d, h = %d\n", w, h);
+            /*if (w > monitor_display_mode.w)
+              w = monitor_display_mode.w;
+            if (h > monitor_display_mode.h)
+              h = monitor_display_mode.h;*/
+
+            int wd, hd;
+            //if (w > SCREEN_WIDTH)
+            //{
+            wd = w - Render_Context::w;
+            //}
+            //else
+            //{
+             // wd = SCREEN_WIDTH - height;
+            //}
+
+            hd = h - Render_Context::h;
+
+            if (abs(wd) < abs(hd)) wd = hd;
+            else if (abs(wd) > abs(hd)) hd = wd;
+
+            Render_Context::w += wd;
+            Render_Context::h += hd;
+
+            DEBUGLOG("\twindow resize: w = %d, h = %d\n", Render_Context::w, Render_Context::h);
+            //DEBUGLOG("%d - %d = %d\n", Render_Context::h, monitor_display_mode.h, Render_Context::h - monitor_display_mode.h);
+
+            if (Render_Context::w > monitor_display_mode.w)
             {
-              if (window_map[i]->oktoshow)
-              {
-                DEBUGLOG("Window_map %d gained experience. :D\n", i);
-                sub_window_experience = (Experience *)window_map[i];
-                //window_map[i]->raise();
-              }
-              break;
+              int tmp_wd = Render_Context::w - monitor_display_mode.w;
+              Render_Context::w -= tmp_wd;
+              Render_Context::h -= tmp_wd;
+              DEBUGLOG("\t\twindow resize: tmp_wd = %d, w = %d, h = %d\n", tmp_wd, Render_Context::w, Render_Context::h);
             }
-          }
-        }
-        break;
-        case SDL_WINDOWEVENT_SHOWN:
-        {
-          SDL_Log("Window %d shown", ev.window.windowID);
-          for (int i=0; i < NUM_WINDOWS; i++)
-          {
-            if (ev.window.windowID == window_map[i]->windowID)
+            if (Render_Context::h > monitor_display_mode.h)
             {
-              if (!window_map[i]->oktoshow)
-              {
-                window_map[i]->hide();
-                /* maybe right here, instead of raising the main window, we should
-                  have a history of displayed windows.. and the last one should be raised.
-                */
-                sub_window_experience = NULL;
-                //SDL_RaiseWindow(Render_Context::sdlWindow);
-              }
-              else
-              {
-                sub_window_experience = NULL;
-                
-                DEBUGLOG("Window_map %d gained experience. :D\n", i);
-                sub_window_experience = (Experience *)window_map[i];
-                window_map[i]->raise();
-              }
-              break;
-            }
-          }
-        }
-        break;
-        case SDL_WINDOWEVENT_CLOSE:
-        {
-          SDL_Log("Window %d closed", ev.window.windowID);
-          if (ev.window.windowID == Render_Context::windowID)
-          {
-            // quit app
+              int tmp_hd = Render_Context::h - monitor_display_mode.h;
+              Render_Context::w -= tmp_hd;
+              Render_Context::h -= tmp_hd;
+              DEBUGLOG("\t\twindow resize: tmp_hd = %d, w = %d, h = %d\n", tmp_hd, Render_Context::w, Render_Context::h);
 
-            SDL_Event quit_ev;
-            quit_ev.type = SDL_QUIT;
-            SDL_PushEvent(&quit_ev);
-          }
-          else 
+            }
+
+            SDL_SetWindowSize(sdlWindow, Render_Context::w, Render_Context::h);
+            DEBUGLOG("\t\t\twindow resize: w = %d, h = %d\n", Render_Context::w, Render_Context::h);
+          } break;
+          /*case SDL_WINDOWEVENT_LEAVE:
           {
+            DEBUGLOG("Window %d Lost mouse focus\n", ev.window.windowID);
+          }
+          break;
+          case SDL_WINDOWEVENT_ENTER:
+          {
+            DEBUGLOG("Window %d Gained mouse focus\n", ev.window.windowID);
+          }
+          break;*/
+          case SDL_WINDOWEVENT_FOCUS_LOST:
+          {
+            DEBUGLOG("Window %d Lost keyboard focus\n", ev.window.windowID);
+          }
+          break;
+          case SDL_WINDOWEVENT_FOCUS_GAINED:
+          {
+            DEBUGLOG("Window %d Gained keyboard focus\n", ev.window.windowID);
+            //SDL_GetMouseState(&mouse::x, &mouse::y);
+            sub_window_experience = NULL;
             for (int i=0; i < NUM_WINDOWS; i++)
             {
               if (ev.window.windowID == window_map[i]->windowID)
               {
-                window_map[i]->hide();
-                // maybe right here, instead of raising the main window, we should
-                //  have a history of displayed windows.. and the last one should be raised.
-                
-                sub_window_experience = NULL;
-                //SDL_RaiseWindow(Render_Context::sdlWindow);
+                if (window_map[i]->oktoshow)
+                {
+                  DEBUGLOG("Window_map %d gained experience. :D\n", i);
+                  sub_window_experience = (Experience *)window_map[i];
+                  //window_map[i]->raise();
+                }
                 break;
               }
             }
           }
-        } 
-        break;
+          break;
+          case SDL_WINDOWEVENT_SHOWN:
+          {
+            SDL_Log("Window %d shown", ev.window.windowID);
+            for (int i=0; i < NUM_WINDOWS; i++)
+            {
+              if (ev.window.windowID == window_map[i]->windowID)
+              {
+                if (!window_map[i]->oktoshow)
+                {
+                  window_map[i]->hide();
+                  /* maybe right here, instead of raising the main window, we should
+                    have a history of displayed windows.. and the last one should be raised.
+                  */
+                  sub_window_experience = NULL;
+                  //SDL_RaiseWindow(Render_Context::sdlWindow);
+                }
+                else
+                {
+                  sub_window_experience = NULL;
+                  DEBUGLOG("Window_map %d gained experience. :D\n", i);
+                  sub_window_experience = (Experience *)window_map[i];
+                  window_map[i]->raise();
+                }
+                break;
+              }
+            }
+          }
+          break;
+          case SDL_WINDOWEVENT_CLOSE:
+          {
+            SDL_Log("Window %d closed", ev.window.windowID);
+            if (ev.window.windowID == Render_Context::windowID)
+            {
+              // quit app
 
-        default:break;
-        
-      }
-    }
-    else if (ev.type == SDL_DROPFILE)
-    {
-      char *dropped_filedir = ev.drop.file;
-      // Shows directory of dropped file
-      /*SDL_ShowSimpleMessageBox(
-          SDL_MESSAGEBOX_INFORMATION,
-          "File dropped on window",
-          dropped_filedir,
-          sdlWindow
-      );*/
-      BaseD::nfd.free_pathset();
-      check_paths_and_reload(&dropped_filedir, 1, true);
-      SDL_free(dropped_filedir);    // Free dropped_filedir memory
-      SDL_RaiseWindow(sdlWindow);
-    }
-    else if (ev.type == SDL_USEREVENT)
-    {
-      if (ev.user.code == UserEvents::sound_stop)
+              SDL_Event quit_ev;
+              quit_ev.type = SDL_QUIT;
+              SDL_PushEvent(&quit_ev);
+            }
+            else
+            {
+              for (int i=0; i < NUM_WINDOWS; i++)
+              {
+                if (ev.window.windowID == window_map[i]->windowID)
+                {
+                  window_map[i]->hide();
+                  // maybe right here, instead of raising the main window, we should
+                  //  have a history of displayed windows.. and the last one should be raised.
+
+                  sub_window_experience = NULL;
+                  //SDL_RaiseWindow(Render_Context::sdlWindow);
+                  break;
+                }
+              }
+            }
+          }
+          break;
+
+          default:break;
+        }
+      } break;
+      case SDL_DROPFILE:
       {
-        sound_stop();
-      }
+        char *dropped_filedir = ev.drop.file;
+        // Shows directory of dropped file
+        /*SDL_ShowSimpleMessageBox(
+            SDL_MESSAGEBOX_INFORMATION,
+            "File dropped on window",
+            dropped_filedir,
+            sdlWindow
+        );*/
+        BaseD::nfd.free_pathset();
+        check_paths_and_reload(&dropped_filedir, 1, true);
+        SDL_free(dropped_filedir);    // Free dropped_filedir memory
+        SDL_RaiseWindow(sdlWindow);
+      } break;
+      case SDL_USEREVENT:
+      {
+        if (ev.user.code == UserEvents::sound_stop)
+        {
+          sound_stop();
+        }
+      } break;
+      case SDL_MOUSEMOTION:
+      {
+        mouse::x = ev.motion.x;
+        mouse::y = ev.motion.y;
+      } break;
+      /*case SDL_MOUSEBUTTONDOWN:
+        DEBUGLOG("MOUSE BUTTON DOWN -");
+      break;
+      case SDL_MOUSEBUTTONUP:
+        DEBUGLOG("MOUSE BUTTON UP -");
+      break;*/
+
+      default:break;
     }
-    else if (ev.type == SDL_MOUSEMOTION)
-    {
-      mouse::x = ev.motion.x;
-      mouse::y = ev.motion.y;
-    }
-    
     if (sub_window_experience)
+    {
       sub_window_experience->receive_event(ev);
+    }
     else exp->receive_event(ev);
   }
 }

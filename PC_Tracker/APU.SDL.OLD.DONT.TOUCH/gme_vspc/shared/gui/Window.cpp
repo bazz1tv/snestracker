@@ -114,6 +114,7 @@ void Window::show()
 {
   SDL_Log("Window::show()");
   SDL_ShowWindow(sdlWindow);
+  SDL_RaiseWindow(sdlWindow);
   oktoshow = true;
   //init();
 }
