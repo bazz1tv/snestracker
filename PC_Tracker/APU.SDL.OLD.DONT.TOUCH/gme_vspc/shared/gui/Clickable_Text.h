@@ -14,8 +14,8 @@ struct Clickable_Text : public Render_Context, Clickable_Rect
     Uint32 color=Colors::Interface::color[Colors::Interface::text_fg]);
   Clickable_Text(std::string str, int x, int y, int (*action)(void *data)=NULL, void *data=NULL);
 
-  void draw(Uint32 &color, bool prefill=true, bool Vflip=false, bool Hflip=false, SDL_Surface *screen=screen);
-  void draw(bool prefill=true, bool Vflip=false, bool Hflip=false, SDL_Surface *screen=screen);
+  void draw(Uint32 &color, bool prefill=true, bool Vflip=false, bool Hflip=false, SDL_Surface *screen=Render_Context::screen);
+  void draw(bool prefill=true, bool Vflip=false, bool Hflip=false, SDL_Surface *screen=Render_Context::screen);
   
   void init_width_height();
   void setup(int x, int y, bool center_x=false);

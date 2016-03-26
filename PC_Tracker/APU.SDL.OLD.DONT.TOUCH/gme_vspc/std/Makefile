@@ -54,7 +54,7 @@ ifeq ($(uname_S), Darwin)
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
 	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)include
-	gme_LDFLAGS := -L$(gme_PREFIX)lib -lgme_m
+	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m -Xlinker -rpath -Xlinker $(gme_PREFIX)/lib
 
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
