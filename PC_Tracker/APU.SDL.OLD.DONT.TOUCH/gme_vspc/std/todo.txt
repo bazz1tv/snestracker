@@ -1,5 +1,6 @@
 New Numbered TODO List
 ----------------------
+008 Grey out File->Export items until SPC is loaded (avoid crash)
 007 Backquote momentary keyboard shortcut to temporarily speed up emulation (at least 4x)
 006 need gfx assets!!
 005 Occasional Use after free bug when shutting down the program :X not sure how-to trigger

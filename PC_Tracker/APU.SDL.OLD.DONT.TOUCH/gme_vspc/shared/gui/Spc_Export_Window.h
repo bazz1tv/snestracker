@@ -9,6 +9,7 @@ struct Spc_Export_Window : public Window
 {
 
   Spc_Export_Window();
+  ~Spc_Export_Window();
 
   int init();
   void show();
@@ -16,6 +17,8 @@ struct Spc_Export_Window : public Window
   void one_time_draw();
 
   Clickable_Text export_button;
+
+  unsigned char *state = NULL;
 
   //Clickable_Text text[6];
   enum {
@@ -31,4 +34,7 @@ struct Spc_Export_Window : public Window
   static int save_file(void *data);
 
   void clear_content_area();
+
+private:
+  void destroy_state();
 };

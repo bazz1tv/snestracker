@@ -1,0 +1,1 @@
+For Audio output -> see "Audio Overview" in QT5 manual. "Low Level Audio Playback and Recording." Relevant classes : QAudioOutput in push mode. Push mode is entered by using QIODevice *	start(). Use qint64 QIODevice::write(const char * data, qint64 maxSize) to write to buffer.

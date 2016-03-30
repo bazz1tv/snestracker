@@ -2,6 +2,7 @@
 #include "Screen.h"
 #include "My_Nfd.h"
 #include "BaseD.h"
+#include "File_System_Context.h"
 
 #define WIDTH 500
 #define HEIGHT 125
@@ -13,6 +14,10 @@ export_button("Export", Spc_Export_Window::save_file, (void *)this)
   
 }
 
+Spc_Export_Window::~Spc_Export_Window()
+{
+  destroy_state();
+}
 int Spc_Export_Window::init()
 {
   // Prepare SPC memory area for export
@@ -27,6 +32,18 @@ void Spc_Export_Window::show()
 
   SDL_StartTextInput();
   //SDL_ShowWindow(sdlWindow);
+  if (!state)
+    state = (unsigned char *) SDL_malloc(sizeof(unsigned char) * Snes_Spc::spc_file_size);
+
+  unsigned char* out = state;
+  Snes_Spc::init_header(out);
+
+  // Copy current SPC header info to this new one
+  Spc_Emu::header_t header = BaseD::player->spc_emu()->header();
+
+  Spc_Emu::header_t *new_header = (Spc_Emu::header_t *) state;
+
+  memcpy(new_header->song, &header.song, (size_t)((size_t)&new_header->emulator - (size_t)&new_header->song));
 }
 
 void Spc_Export_Window::one_time_draw()
@@ -37,6 +54,9 @@ void Spc_Export_Window::one_time_draw()
   y+=CHAR_HEIGHT;
   sprintf(BaseD::tmpbuf, "Title...: %s", BaseD::tag.song);
   sdlfont_drawString(this->screen, x, y, BaseD::tmpbuf); 
+  y+=CHAR_HEIGHT;
+  sprintf(BaseD::tmpbuf, "Length..: %ld", BaseD::tag.length);
+  sdlfont_drawString(this->screen, x, y, BaseD::tmpbuf);
   y+=CHAR_HEIGHT;
   sprintf(BaseD::tmpbuf, "Composer: %s", BaseD::tag.author);
   sdlfont_drawString(this->screen, x, y, BaseD::tmpbuf); 
@@ -57,11 +77,24 @@ void Spc_Export_Window::hide()
 {
   SDL_StopTextInput();
   Window::hide();
+
+  destroy_state();
+}
+
+void Spc_Export_Window::destroy_state()
+{
+  if (state)
+  {
+    SDL_free(state);
+    state = NULL;
+  }
 }
 
 int Spc_Export_Window::save_file(void *data)
 {
+  Spc_Export_Window *sew = (Spc_Export_Window *)data;
   nfdchar_t *outPath=NULL;
+
 
   nfdresult_t result = NFD_SaveDialog( "spc", NULL, &outPath );
   //SDL_RaiseWindow(BaseD::sdlWindow);
@@ -75,9 +108,17 @@ int Spc_Export_Window::save_file(void *data)
     //
 
     /* Begin writing to spc file */
-    
+    // copy header info
+    unsigned char *out = sew->state;
+    Spc_Emu::header_t *header = (Spc_Emu::header_t *)out;
+
+
+
+    BaseD::player->spc_emu()->can_has_apu()->save_spc(out);
+    File_System_Context::file_system->write_file( outPath, sew->state, Snes_Spc::spc_file_size );
     // restore player state
     BaseD::player->pause(was_paused, false, false);
+    sew->hide();
   }
   else if ( result == NFD_CANCEL ) 
   {
@@ -90,18 +131,9 @@ int Spc_Export_Window::save_file(void *data)
   }
   
   if (outPath)
-    free(outPath);
+    SDL_free(outPath);
   return result;
 }
-
-
-
-// void Spc_Export_Window::preload(int x, int y)
-// {
-//   tabs.preload(x,y);
-//   y += CHAR_HEIGHT*5;
-//   content_area.preload(x,y);
-// }
 
 void Spc_Export_Window::run()
 {
