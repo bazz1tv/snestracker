@@ -1,5 +1,7 @@
 Feature Requests
 ----------------
+004 Hotpluggable SPC drivers
+003 Piano Roll (tracker)
 002 "Hotpluggable" DSP (Accurate, Fast, DSP_SMOOTHING)
 001 Alphabetical Input (tracker) 
 	@Xyz_39808> yeah but you press the C key for C. The D key for D etc

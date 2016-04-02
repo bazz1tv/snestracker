@@ -1,5 +1,11 @@
 New Numbered TODO List
 ----------------------
+00D Speed up build process (less objects??)
+00C automate the compilation of libjkdmidi
+00B put STD in a better location
+00A detect (linux) gtk+-2.0 or gtk+-3.0 (add configure script)
+009 QT NFD implementation and conditional compile specification
+--
 008 Grey out File->Export items until SPC is loaded (avoid crash)
 007 Backquote momentary keyboard shortcut to temporarily speed up emulation (at least 4x)
 006 need gfx assets!!
