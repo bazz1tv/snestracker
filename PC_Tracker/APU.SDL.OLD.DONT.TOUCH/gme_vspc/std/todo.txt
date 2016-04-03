@@ -1,5 +1,41 @@
 New Numbered TODO List
 ----------------------
+012 Add ability to compile either dynamic or statically
+There is a specific concern of making sure Windows builds are distributed avoiding "DLL hell" - eg do not want
+to ship to a system and see something like "MFC34.dll is not found!"
+
+There are a variety of nuances to what the level of static and dynamic linking we could incorporate. eg:
+"app-level libraries"
+  . SDL, boost, etc.
+"system-level libraries"
+  . libc etc.
+
+So, should allow each level to be customized as dynamic or static. How do other autotools package specify
+static/dynamic results?
+
+Anyways, I'm rather content with building everything dynamically for now -- especially since everything is
+stable for me and I'm one of the only developers. It's more a long-term concern so that people have an option
+to compile statically if they so desire ..
+
+011 Response to ElHuesudoII
+Apr 01 23:59:50 <ElHuesudoII>	does it have in-tracker brr conversion
+.. the tracker has not yet been fully designed -- I would not be surprised if the answer is 'yes'
+The answer would only be 'no' if I find a very good reason for the conversion to be done outside of the tracker.
+Apr 02 00:00:18 <ElHuesudoII>	does the tracker track the track size
+ IT MOST DEFINITELY WILL. SNES Tracker Debugger can already keep track of all read/write/executions made
+ during a song's execution.. But the tracker will have a more precise report, for example of:
+ . engine size
+ . sample / instrument
+ . pattern data
+ . echo region
+ . (other things not yet considered)
+
+010 LibjdkMidi -- additionaly output a DLL than just a static lib
+00F "focus click" to NOT act as a real app window click -- "understand" when a click is a focus click so I can at times avoid it
+[17:24]  <Clefable> You could listen for focus events, and check on every app window click whether there wasn't a focus click less than 20 ms ago
+
+00E OSX - SDL mercurial "tip" needed for "focus click" functionality that is 
+identical to Windows/Linux -- using the new SDL_SetHint(SDL_HINT_MAC_MOUSE_FOCUS_CLICKTHROUGH, "1");
 00D Speed up build process (less objects??)
 00C automate the compilation of libjkdmidi
 00B put STD in a better location

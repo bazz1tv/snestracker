@@ -1,5 +1,6 @@
 Feature Requests
 ----------------
+005 Hotpluggable APU emulator
 004 Hotpluggable SPC drivers
 003 Piano Roll (tracker)
 002 "Hotpluggable" DSP (Accurate, Fast, DSP_SMOOTHING)
