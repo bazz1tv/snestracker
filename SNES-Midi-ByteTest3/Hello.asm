@@ -24,7 +24,7 @@
 
 ;=== Global Variables ===
 
-.ENUM $80
+.ENUM $80 ; before was $b0 -- OK I think?
 	var1	db
 	LSR		db
 	ISR		db
