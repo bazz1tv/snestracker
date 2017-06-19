@@ -1,8 +1,0 @@
-ff	RESET
-ff	RESET
-e0	Pitch Bend Wheel - Pg79
-0
-40	- these combine to form $2000 (weird operation imho)
-b0	- Controller Message
-1	- coarse adjustment for Modulation Wheel
-7	- 7
