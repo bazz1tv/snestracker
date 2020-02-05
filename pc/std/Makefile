@@ -105,8 +105,8 @@ else ifeq ($(uname_S), Cross_Windows)
 	# quick notes: /usr/lib/gcc/i686-pc-mingw32/4.9.3
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
-	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)include
-	gme_LDFLAGS := -L$(gme_PREFIX)lib -lgme_m
+	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)/include
+	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m
 
 	sdl2_cflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags)
 	sdl2_ldflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs)

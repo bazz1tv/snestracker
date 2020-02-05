@@ -132,6 +132,8 @@ void Mem_Surface::init_video()
   //SDL_SetAlpha(sdl_csurface, 0, 0);
   //SDL_SetAlpha(sdl_surface, 0, 0);
   //SDL_SetColorKey(SDL_Surface *surface, Uint32 flag, Uint32 key);
+
+  // Set black (0x0) as the transparent pixel
   SDL_SetColorKey(sdl_csurface, SDL_TRUE, 0);
 }
 void Mem_Surface::fade_arrays()

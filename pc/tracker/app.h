@@ -6,7 +6,6 @@
 #include "File_System_Context.h"
 #include "App_Settings_Context.h"
 #include "Audio.h"
-//#include "Tracker/Tracker.h"
 
 class App : public Render_Context, public Player_Context, public Midi_Context, public App_Settings_Context
 {
@@ -14,8 +13,6 @@ public:
   App(int &argc, char **argv, int samplerate=44100);
   ~App();
   void run();
-  int init();
-  int init_sdl(SDL_Window **, int,int);
   
 private:
   //int parse_args(int argc, char **argv);
@@ -28,5 +25,4 @@ private:
   Audio audio;
 
 private:
-  int init_sdl();
 };

@@ -19,7 +19,7 @@
 #include "Menu_Bar.h"
 #include "gui/Window.h"
 
-typedef Uint32 SDL_WindowID_Type;
+typedef Uint32 WindowID;
 
 struct Debugger : public BaseD
 {
@@ -38,7 +38,7 @@ public:
   //
   SDL_DisplayMode monitor_display_mode;
   //
-  //std::map<SDL_WindowID_Type, Window *> window_map;
+  //std::map<WindowID, Window *> window_map;
   Experience *sub_window_experience = NULL;
   
   Options_Window options_window;

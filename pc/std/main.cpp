@@ -6,7 +6,7 @@
 #include "Render_Context.h"
 
 int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **sdlTexture,
-  SDL_Surface **screen, int width, int height);
+  SDL_Surface **screen, int width, int height, Uint32 flags=0);
 
 int main(int argc, char **argv)
 {
@@ -23,9 +23,8 @@ int main(int argc, char **argv)
 
 
 int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **sdlTexture, 
-  SDL_Surface **screen, int width, int height)
+  SDL_Surface **screen, int width, int height, Uint32 flags/*=0*/)
 {
-  Uint32 flags=0;
   flags |= SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER; 
 
   if (SDL_Init(flags) != 0) 
@@ -38,14 +37,17 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
   }
   atexit(SDL_Quit);
 
-  SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN /*| SDL_WINDOW_BORDERLESS*/, sdlWindow, sdlRenderer);
+  SDL_CreateWindowAndRenderer(width, height, SDL_WINDOW_RESIZABLE |
+    SDL_WINDOW_HIDDEN /*| SDL_WINDOW_BORDERLESS*/, sdlWindow, sdlRenderer);
+
   if (*sdlWindow == NULL || *sdlRenderer == NULL)
   {
     fprintf(stderr, "FCK\n");
     return -1;
   }
-  //sdlWindow = *sdlWindow;
-  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");  // make the scaled rendering look smoother.
+
+  // make the scaled rendering look smoother.
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
   SDL_RenderSetLogicalSize(*sdlRenderer, width, height);
 
   *screen = SDL_CreateRGBSurface(0, width, height, 32,
