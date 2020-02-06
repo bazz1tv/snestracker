@@ -158,27 +158,28 @@ int BRR::check_brr(uint16_t *address)
   uint16_t lowest_offset2=0xffff;
   for (int i=0; i < MAX_SRCN_ENTRIES; i++)
   {
-    if (Spc_Report::src[i].brr_start == 0xffff) continue;
+    Spc_Report::Src *src = &Spc_Report::src[i];
+		if (src->brr_start == 0xffff) continue;
 
-    if (Spc_Report::src[i].brr_start < *address)
+    if (src->brr_start < *address)
     {
-      uint16_t offset = *address - Spc_Report::src[i].brr_start;
+      uint16_t offset = *address - src->brr_start;
       if (offset < lowest_offset)
       {
-        lowest_closest_srcn_address=Spc_Report::src[i].brr_start;
+        lowest_closest_srcn_address=src->brr_start;
 
         lowest_srcn_index=i;
         //fprintf(stderr, "lowest = %04X, %04X\n", lowest_closest_srcn_address, Spc_Report::srcN_used[i]);
         lowest_offset = offset;
       }
     }
-    if (Spc_Report::src[i].brr_loop_start < *address)
+    if (src->brr_loop_start < *address)
     {
-      uint16_t offset = *address - Spc_Report::src[i].brr_loop_start;
+      uint16_t offset = *address - src->brr_loop_start;
       if (offset < lowest_offset2)
       {
         lowest_loop_index = i;
-        lowest_closest_brrloopstart_address_from_click = Spc_Report::src[i].brr_loop_start;
+        lowest_closest_brrloopstart_address_from_click = src->brr_loop_start;
         lowest_offset2 = offset;
       }
     }
