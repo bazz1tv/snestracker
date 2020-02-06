@@ -145,8 +145,8 @@ int BRR::check_brr(uint16_t *address)
   //uint16_t *address = &context.addr_when_user_right_clicked;
   //fprintf(stderr, "address = %04X\n", context.addr_when_user_right_clicked);
   assert (address != 0);
-  lowest_srcn_index=0x0;
-  lowest_loop_index=0x0;
+  Uint8 lowest_srcn_index=0x0;
+  Uint8 lowest_loop_index=0x0;
   srcn_solo=0x0;
   fprintf(stderr, "one_solo = %d", 0);
   one_solo=0x0;

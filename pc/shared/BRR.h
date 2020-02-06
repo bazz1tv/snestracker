@@ -36,8 +36,6 @@ struct BRR
   Uint16 srcn[MAX_VOICES];  // current voices' SRCN addresses
   Uint16 brr_start,brr_end; // for downloading BRR samples
   Uint16 brr_loop_start,brr_loop_end;
-  Uint8 lowest_srcn_index=0x0;  // indexes into report::src[]
-  Uint8 lowest_loop_index=0x0;
   int check_brr(Uint16 *address);
   void play_sample(Instrument_Window *instr_window);
   void solo_sample();
