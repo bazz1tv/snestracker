@@ -48,16 +48,6 @@ namespace report
   extern unsigned char used[0x10006];
   extern Sdl_Spc_Report sdlSpcReport;
 
-  struct Src
-  {
-    uint16_t dir_addr; //unused for now
-    uint16_t brr_start=0xffff;
-    uint16_t brr_end=0xffff;
-    uint16_t brr_loop_start=0xffff;
-    uint16_t brr_loop_end=0xffff;
-  };
-  extern Src src[MAX_SRCN_ENTRIES];
-
   int backup_color(int addr);
 
   void restore_color(int addr);

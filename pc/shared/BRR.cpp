@@ -158,27 +158,27 @@ int BRR::check_brr(uint16_t *address)
   uint16_t lowest_offset2=0xffff;
   for (int i=0; i < MAX_SRCN_ENTRIES; i++)
   {
-    if (report::src[i].brr_start == 0xffff) continue;
+    if (Spc_Report::src[i].brr_start == 0xffff) continue;
 
-    if (report::src[i].brr_start < *address)
+    if (Spc_Report::src[i].brr_start < *address)
     {
-      uint16_t offset = *address - report::src[i].brr_start;
+      uint16_t offset = *address - Spc_Report::src[i].brr_start;
       if (offset < lowest_offset)
       {
-        lowest_closest_srcn_address=report::src[i].brr_start;
+        lowest_closest_srcn_address=Spc_Report::src[i].brr_start;
 
         lowest_srcn_index=i;
-        //fprintf(stderr, "lowest = %04X, %04X\n", lowest_closest_srcn_address, report::SRCN_used[i]);
+        //fprintf(stderr, "lowest = %04X, %04X\n", lowest_closest_srcn_address, Spc_Report::srcN_used[i]);
         lowest_offset = offset;
       }
     }
-    if (report::src[i].brr_loop_start < *address)
+    if (Spc_Report::src[i].brr_loop_start < *address)
     {
-      uint16_t offset = *address - report::src[i].brr_loop_start;
+      uint16_t offset = *address - Spc_Report::src[i].brr_loop_start;
       if (offset < lowest_offset2)
       {
         lowest_loop_index = i;
-        lowest_closest_brrloopstart_address_from_click = report::src[i].brr_loop_start;
+        lowest_closest_brrloopstart_address_from_click = Spc_Report::src[i].brr_loop_start;
         lowest_offset2 = offset;
       }
     }
@@ -219,10 +219,10 @@ int BRR::check_brr(uint16_t *address)
   // Find closest BRR end block after closest SRCN
   uint16_t lowest_closest_brrend_address_from_srcn = 0xffff;
 
-  /*if (report::src[lowest_srcn_index].brr_end != 0xffff)
+  /*if (Spc_Report::src[lowest_srcn_index].brr_end != 0xffff)
   {
     fprintf(stderr, "derp");
-    lowest_closest_brrend_address_from_srcn = report::src[lowest_srcn_index].brr_end;
+    lowest_closest_brrend_address_from_srcn = Spc_Report::src[lowest_srcn_index].brr_end;
   }
   else
   {*/
@@ -251,11 +251,11 @@ int BRR::check_brr(uint16_t *address)
   // get loop end
   uint16_t lowest_closest_brrend_address_from_loop = 0xffff;
 
-  /*if (report::src[lowest_loop_index].brr_loop_end != 0xffff)
-    ;lowest_closest_brrend_address_from_loop= report::src[lowest_loop_index].brr_loop_end;
+  /*if (Spc_Report::src[lowest_loop_index].brr_loop_end != 0xffff)
+    ;lowest_closest_brrend_address_from_loop= Spc_Report::src[lowest_loop_index].brr_loop_end;
   else
   {*/
-    p = report::src[lowest_loop_index].brr_loop_start;
+    p = Spc_Report::src[lowest_loop_index].brr_loop_start;
     while(1)
     {
       if (BaseD::IAPURAM[p] & 1)
@@ -266,7 +266,7 @@ int BRR::check_brr(uint16_t *address)
       p+=9;
     }
     lowest_closest_brrend_address_from_loop = p;
-    report::src[lowest_loop_index].brr_loop_end = p;
+    Spc_Report::src[lowest_loop_index].brr_loop_end = p;
   //}
 
   if (lowest_closest_brrend_address_from_loop == 0xffff)
@@ -278,22 +278,22 @@ int BRR::check_brr(uint16_t *address)
   if (!no_lower_loop_found && lowest_closest_brrloopstart_address_from_click > lowest_closest_brrend_address_from_srcn)
   {
     fprintf(stderr,"You clicked on an external Loop sample\n");
-    brr_start = report::src[lowest_loop_index].brr_start;
-    brr_end = report::src[lowest_loop_index].brr_end;
-    brr_loop_start = report::src[lowest_loop_index].brr_loop_start;
-    brr_loop_end = report::src[lowest_loop_index].brr_loop_end;
+    brr_start = Spc_Report::src[lowest_loop_index].brr_start;
+    brr_end = Spc_Report::src[lowest_loop_index].brr_end;
+    brr_loop_start = Spc_Report::src[lowest_loop_index].brr_loop_start;
+    brr_loop_end = Spc_Report::src[lowest_loop_index].brr_loop_end;
     return CLICKED_ON_LOOP_ONLY;
   }
   else 
   {
-    report::src[lowest_srcn_index].brr_end = lowest_closest_brrend_address_from_srcn;
+    Spc_Report::src[lowest_srcn_index].brr_end = lowest_closest_brrend_address_from_srcn;
     fprintf(stderr, "BRR @ 0x%04X-0x%04X\n", lowest_closest_srcn_address, lowest_closest_brrend_address_from_srcn);
     brr_start = lowest_closest_srcn_address;
     brr_end = lowest_closest_brrend_address_from_srcn; //inclusive
     if (is_looped_sample == true)
     {
-      brr_loop_start = report::src[lowest_srcn_index].brr_loop_start;
-      brr_loop_end = report::src[lowest_srcn_index].brr_loop_end;
+      brr_loop_start = Spc_Report::src[lowest_srcn_index].brr_loop_start;
+      brr_loop_end = Spc_Report::src[lowest_srcn_index].brr_loop_end;
 
       if (brr_loop_start > brr_end)
         is_loop_external = true;

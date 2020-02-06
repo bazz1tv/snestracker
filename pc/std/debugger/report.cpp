@@ -111,10 +111,10 @@ void Mem_Surface::clear()
   memset(cdata, 0, 512*512*4);
   for (int i=0; i < MAX_SRCN_ENTRIES; i++)
   {
-    report::src[i].brr_start = 0xffff;  // init to ROM address, brr would never be there
-    report::src[i].brr_loop_start = 0xffff;
-    report::src[i].brr_end = 0xffff;
-    report::src[i].brr_loop_end = 0xffff;
+    Spc_Report::src[i].brr_start = 0xffff;  // init to ROM address, brr would never be there
+    Spc_Report::src[i].brr_loop_start = 0xffff;
+    Spc_Report::src[i].brr_end = 0xffff;
+    Spc_Report::src[i].brr_loop_end = 0xffff;
   }
   /*memset(used, 0, sizeof(used));
   memset(used2, 0, sizeof(used2));*/
@@ -174,7 +174,6 @@ namespace report
   Mem_Surface memsurface;
   int last_pc = -1;
   int bcolor=0; // backup color
-  Src src[MAX_SRCN_ENTRIES];
   Sdl_Spc_Report sdlSpcReport;
 
   // backup colors is no longer an issue
