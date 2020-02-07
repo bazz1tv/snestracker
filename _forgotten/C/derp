@@ -1,6 +1,0 @@
-#!/bin/bash
-
-for ((c=0; c<$#; c++ )) 
-do
-	echo "$c"
-done

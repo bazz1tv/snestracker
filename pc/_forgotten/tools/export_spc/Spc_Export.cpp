@@ -1,1 +1,0 @@
-#include "Spc_Export.h"
