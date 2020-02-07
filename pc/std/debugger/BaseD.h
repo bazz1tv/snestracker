@@ -77,7 +77,7 @@ struct BaseD
   static void draw_menu_bar();
   static bool check_time();
   static void toggle_pause();
-  static void restart_track(); // goes to beginning of playlist too
+  static void reload_playlist(); // goes to beginning of playlist too
   static void prev_track();
   static void prev_track25();
   static void next_track();

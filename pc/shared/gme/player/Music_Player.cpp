@@ -62,8 +62,6 @@ uint8_t Music_Player::spc_read(int addr)
 }
 uint8_t Music_Player::spc_read_dsp(int dspaddr)
 {
-	//spc_emu_->write(0xf2, dspaddr, 1);
-	//return spc_emu_->read(0xf3);
 	uint8_t v = spc_emu_->read_dsp(dspaddr);
 	return v;
 }
@@ -103,7 +101,6 @@ void Music_Player::play_prev()
 
 void Music_Player::play_next()
 {
-	//fade_out();
 	if (files.empty())
 		return;
 	if (filetrack == (files.size()-1))
@@ -203,31 +200,12 @@ blargg_err_t Music_Player::load_file( const char* path )
 			std::string s (file1);
 			files.push_back(s);
 		}
-		//handle_error(player->load_file(files.at(0).c_str()));
 		path = files.at(0).c_str();
 	}
-	//else handle_error( player->load_file( path ) ); 
 	
 	RETURN_ERR( gme_open_file( path, &emu_, sample_rate ) );
 
 	spc_emu_ = (Spc_Emu*)emu_;
-
-	/*for (int i=i; i < track_count(); i++)
-	{
-		track_info_t info;
-		handle_error( gme_track_info( emu_, &info, i ) );
-		fprintf(stderr, )
-	}*/
-
-	
-	/*char m3u_path [256 + 5];
-	strncpy( m3u_path, path, 256 );
-	m3u_path [256] = 0;
-	char* p = strrchr( m3u_path, '.' );
-	if ( !p )
-		p = m3u_path + strlen( m3u_path );
-	strcpy( p, ".m3u" );
-	if ( emu_->load_m3u( m3u_path ) ) { } // ignore error*/
 
 	has_no_song = false;
 
@@ -239,6 +217,7 @@ int Music_Player::track_count() const
 {
 	return emu_ ? emu_->track_count() : false;
 }
+
 // Very simple thread - counts 0 to 9 delaying 50ms between increments
 int Music_Player::fade_out(void *ptr)
 {
@@ -253,11 +232,8 @@ void Music_Player::fade_out(bool threaded/*=false*/)
 	SDL_AudioStatus audio_status = SDL_GetAudioDeviceStatus(audio->devices.id);
 	if (audio_status == SDL_AUDIO_PAUSED || audio_status == SDL_AUDIO_STOPPED)
 		return;
-	//else if (emu_->tell() >= (track_info_.length))
-		//return;
-	//if (paused)
-		//return;
-	DEBUGLOG("\tprocessing\n");
+
+  DEBUGLOG("\tprocessing\n");
 
 	if (threaded)
 	{
@@ -301,11 +277,9 @@ blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
 	// after a previous track was paused.. you would sometimes hear some of that old song
 	// data play before the new track.. temporary fix is to reallocate the sound device..
 	// permanent fix would be to add "fadeout after pause" or "fade in after play"
-	//tempo = 1.0;
+
 	emu_->set_tempo(tempo);
-	//gain_db = 0.0;
 	gain_has_changed=false;
-	//new_gain_db = 0.0;
 	needs_to_fade_out=false;
 
   spc_filter->clear();
@@ -355,9 +329,7 @@ blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
 			when the set_fade was set to the length, where the fade_out routine would take forever to finish
 			due to a prolonged period inside the audio callback somehow related to the set_fade parameter..
 			by increasing the parameter by 1 second, I avoid the prolonged callback AKA delay after certain
-			songs end.. (ie Star Fox Track 1 intro track)
-			
-			*/
+			songs end.. (ie Star Fox Track 1 intro track) */
 			sound_start();
 		}
 	}

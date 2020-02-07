@@ -617,7 +617,7 @@ void BaseD::toggle_pause()
   // this will restart from beginning of playlist
   if (g_cur_entry>=g_cfg.num_files)
   {
-    restart_track();
+    reload_playlist();
   }
   else 
   {
@@ -626,12 +626,9 @@ void BaseD::toggle_pause()
   }
 }
 
-void BaseD::restart_track()
+void BaseD::reload_playlist()
 {
-  //player->fade_out();
-  //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry=0;
-  //player->pause(0);
   reload();
 }
 

@@ -22,14 +22,6 @@ void sound_stop();
 void sound_cleanup();
 
 
-// should be in the player
-void prev_track();
-void next_track();
-void toggle_pause();
-void restart_track();
-
-//
-
 class Music_Player : public Audio_Context {
 public:
 	bool filter_is_active=false;
