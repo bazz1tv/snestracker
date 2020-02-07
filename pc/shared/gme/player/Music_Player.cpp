@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 #include "DEBUGLOG.h"
 #include "sdl_userevents.h"
 
+Music_Player *player;
 // Number of audio buffers per second. Adjust if you encounter audio skipping.
 const int fill_rate = 64; //45;
 

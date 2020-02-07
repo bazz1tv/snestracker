@@ -162,4 +162,6 @@ private:
   void apply_gain(sample_t* out, int count );
 };
 
+extern Music_Player *player;
+
 #endif

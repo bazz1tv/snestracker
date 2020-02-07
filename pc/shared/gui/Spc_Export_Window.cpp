@@ -25,7 +25,7 @@ int Spc_Export_Window::init()
 
 void Spc_Export_Window::show()
 {
-  BaseD::player->pause(1, false, false);
+  ::player->pause(1, false, false);
   Window::show();
   clear_screen();
   one_time_draw();
@@ -39,7 +39,7 @@ void Spc_Export_Window::show()
   Snes_Spc::init_header(out);
 
   // Copy current SPC header info to this new one
-  Spc_Emu::header_t header = BaseD::player->spc_emu()->header();
+  Spc_Emu::header_t header = ::player->spc_emu()->header();
 
   Spc_Emu::header_t *new_header = (Spc_Emu::header_t *) state;
 
@@ -103,8 +103,8 @@ int Spc_Export_Window::save_file(void *data)
     if (outPath !=NULL)
       fprintf(stderr, "%s\n", outPath);
 
-    bool was_paused = BaseD::player->is_paused();
-    BaseD::player->pause(1, false, false);
+    bool was_paused = ::player->is_paused();
+    ::player->pause(1, false, false);
     //
 
     /* Begin writing to spc file */
@@ -114,10 +114,10 @@ int Spc_Export_Window::save_file(void *data)
 
 
 
-    BaseD::player->spc_emu()->can_has_apu()->save_spc(out);
+    ::player->spc_emu()->can_has_apu()->save_spc(out);
     ::file_system->write_file( outPath, sew->state, Snes_Spc::spc_file_size );
     // restore player state
-    BaseD::player->pause(was_paused, false, false);
+    ::player->pause(was_paused, false, false);
     sew->hide();
   }
   else if ( result == NFD_CANCEL ) 

@@ -87,7 +87,7 @@ void Menu_Bar::draw(SDL_Surface *screen)
 void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
 {
   Clickable_Text *ct = (Clickable_Text*) &menu_items[1].clickable_text;
-  if (BaseD::player->is_paused() || (BaseD::exp == BaseD::instr_window && BaseD::instr_window->start_stop.is_started) )
+  if (::player->is_paused() || (BaseD::exp == BaseD::instr_window && BaseD::instr_window->start_stop.is_started) )
   {
     ct->str = "play";
     //ct->str.clear();
@@ -102,13 +102,13 @@ void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
 
 int Menu_Bar::File_Context::open_spc(void *data)
 {
-  BaseD::player->pause(1,true,false);
+  ::player->pause(1,true,false);
   if (BaseD::nfd.get_multifile_read_path("spc,rsn,rar,7z") == NFD_OKAY)
   {
     DEBUGLOG("check_paths_and_reload\n");
     BaseD::check_paths_and_reload(BaseD::nfd.paths, BaseD::nfd.numpaths);
   }
-  BaseD::player->pause(0);
+  ::player->pause(0);
   return 0;
 }
 
@@ -137,21 +137,21 @@ int Menu_Bar::File_Context::export_wav(void *data)
       fprintf(stderr, "%s\n", outPath);
 
     /* Begin writing to wave file */
-    wave_open( BaseD::player->sample_rate, outPath );
+    wave_open( ::player->sample_rate, outPath );
     wave_enable_stereo();
 
-    BaseD::player->exporting = true;
+    ::player->exporting = true;
     //BaseD::reload();
-    BaseD::player->pause(0, false, false);
+    ::player->pause(0, false, false);
 
-    while ( (BaseD::player->emu()->tell()/1000) < BaseD::song_time )
+    while ( (::player->emu()->tell()/1000) < BaseD::song_time )
     {
       /* Sample buffer */
       #define buf_size 1024 /* can be any multiple of 2 */
       sample_t buf [buf_size];
       
       /* Fill sample buffer */
-      Music_Player::fill_buffer(BaseD::player, buf, buf_size);
+      Music_Player::fill_buffer(::player, buf, buf_size);
       
       /* Write samples to wave file */
       wave_write( buf, buf_size );
@@ -160,7 +160,7 @@ int Menu_Bar::File_Context::export_wav(void *data)
       //SDL_RWclose(file);
     free(outPath);
     wave_close();
-    BaseD::player->exporting = false;
+    ::player->exporting = false;
     return result;
   }
   else if ( result == NFD_CANCEL ) 
@@ -252,7 +252,7 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
     return true;
   }
 
-  if (BaseD::player->has_no_song)
+  if (::player->has_no_song)
     return false;
 
   if (track_context.menu.check_left_click_activate(x, y, button, ev))
@@ -279,7 +279,7 @@ int Menu_Bar::receive_event(SDL_Event &ev)
   
   if (ev.type == SDL_MOUSEBUTTONDOWN)
   {
-    if (!BaseD::player->has_no_song)
+    if (!::player->has_no_song)
     {
       bool r = tabs.check_mouse_and_execute(ev.button.x, ev.button.y);
       if (r) return r;
@@ -322,7 +322,7 @@ int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
       return EVENT_FILE;
     return EVENT_ACTIVE;
   }
-  if (!BaseD::player->has_no_song)
+  if (!::player->has_no_song)
   {
     if ((r=track_context.menu.receive_event(ev)))
     {
@@ -353,7 +353,7 @@ void Menu_Bar::Context_Menus::draw(SDL_Surface *screen)
 {
   file_context.menu.draw(screen);
   edit_context.menu.draw(screen);
-  if (!BaseD::player->has_no_song)
+  if (!::player->has_no_song)
   {
     track_context.draw(screen);
     window_context.menu.draw(screen);

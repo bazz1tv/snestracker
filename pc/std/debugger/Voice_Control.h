@@ -1,9 +1,9 @@
 #pragma once
 #include "SDL.h"
 #include "globals.h"
-#include "Player_Context.h"
+#include "gme/player/Music_Player.h"
 #include "Screen.h"
-struct Voice_Control : public Player_Context
+struct Voice_Control
 {
   Voice_Control();
 

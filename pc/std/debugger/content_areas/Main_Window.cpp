@@ -15,7 +15,7 @@
 
 int Main_Window::Gain::change(void *dblnewgain)
 {
-  BaseD::player->gain_has_changed = true;// = gain_db;
+  ::player->gain_has_changed = true;// = gain_db;
   //player->linear_gain = Audio::calculate_linear_gain_from_db(player->gain_db, Music_Player::min_gain_db);
   //BaseD::player->new_gain_db = *(double*)dblnewgain;// = pow ( 10.0, (0.05 * *(double*)dblnewgain) );
   return 0;
@@ -25,7 +25,7 @@ int Main_Window::Tempo::change(void *dblnewtempo)
   double v = *(double*)dblnewtempo;
   //if (v >= 0.950 && v < 1.0) v = 1.0;
   DEBUGLOG("tempo = %f", v);
-  BaseD::player->set_tempo(v);
+  ::player->set_tempo(v);
   return 0;
 }
 

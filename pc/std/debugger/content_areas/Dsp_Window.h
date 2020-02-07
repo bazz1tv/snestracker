@@ -16,7 +16,7 @@ int mute_solo_voice(void *data);
 static const Uint8 NUM_TIMERS=3;
 
 
-struct Dsp_Window : public BaseD, public Render_Context, public Player_Context,
+struct Dsp_Window : public BaseD, public Render_Context,
 public Experience
 {
 
@@ -46,7 +46,7 @@ public Experience
       {
         t = BaseD::IAPURAM[0xf1] |= (1<<*num);
       }
-      BaseD::player->spc_write(0xf1, t);
+      ::player->spc_write(0xf1, t);
       return 0;
     }
     Clickable_Text label[3] = 

@@ -85,11 +85,11 @@ void BaseD::Hack_Spc::restore_spc(bool resume/*=true*/)
 BaseD::Profile::Profile(const char* spc_filename)
 {
   is_profiling = true;
-  old_gain_db = BaseD::player->gain_db;
-  BaseD::player->pause(1, true, false);
+  old_gain_db = ::player->gain_db;
+  ::player->pause(1, true, false);
   BaseD::reload();
-  BaseD::player->pause(0, false, false);
-  BaseD::player->pause(1, false, false);
+  ::player->pause(0, false, false);
+  ::player->pause(1, false, false);
   // Set Volume to 0
   player->set_gain_db(Music_Player::min_gain_db, true);
   // open the SPC File
@@ -126,12 +126,12 @@ BaseD::Profile::Profile(const char* spc_filename)
 void BaseD::Profile::process()
 {
   /* Skip several seconds */
-  BaseD::player->spc_emu()->skip(120 * Snes_Spc::sample_rate * 2);
+  ::player->spc_emu()->skip(120 * Snes_Spc::sample_rate * 2);
 
   seconds_covered++;
   if (seconds_covered == 1)
   {
-    BaseD::player->set_gain_db(old_gain_db);
+    ::player->set_gain_db(old_gain_db);
     BaseD::Profile::is_profiling=false;
     delete this;
   }
