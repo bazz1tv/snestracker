@@ -532,31 +532,30 @@ static void* sound_callback_data;
 
 static void sdl_callback( void* data, Uint8* out, int count )
 {
-	if ( sound_callback )
+	static int mycount=0;
+	static int num = 0;
+	static int time_start =0;
+	static bool stop=false;
+  Uint32 time_end;
+
+	if (num == 0)
 	{
-		static int mycount=0;
-		static int num = 0;
-		static int time_start =0;
-		static bool stop=false;
-
-		if (num == 0)
-		{
-			time_start = SDL_GetTicks();
-		}
-		
-		int time_end = SDL_GetTicks();
-
-		if ((time_end - time_start) >= 1000 && !stop)
-		{
-			DEBUGLOG("%d buffs a sec, %lu stereo samples processed, count = %d\n",
-               num, (mycount/sizeof(sample_t))/2, count);
-			stop=true;
-		}
-
-		num++;
-		mycount+=count;
-		sound_callback( sound_callback_data, (sample_t*) out, count / 2 );
+		time_start = SDL_GetTicks();
 	}
+
+	if (!stop)
+    time_end = SDL_GetTicks();
+
+	if ((time_end - time_start) >= 1000 && !stop)
+	{
+		DEBUGLOG("%d buffs a sec, %lu stereo samples processed, count = %d\n",
+             num, (mycount/sizeof(sample_t))/2, count);
+		stop=true;
+	}
+
+	num++;
+	mycount+=count;
+	sound_callback( sound_callback_data, (sample_t*) out, count / 2 );
 }
 
 static const char* sound_init( long sample_rate, int buf_size,

@@ -76,24 +76,10 @@ static void _sdlfont_drawChar(SDL_Surface *dst, int X, int Y, const char ch, Uin
 
 	for (y=0; y<7; y++)
 	{
-		/*if (flipH)
-		{
-			for (x=7; x>=0; x--)
-			{
-				if ((*c)&(128>>x)) {
-					putpixel(dst, x+X, y+Y, color);	
-				}
-			}
-		}
-		else*/
-		{
-			for (x=0; x<8; x++)
-			{
-				if ( *c & (0x80 >> (flipH ? 7-x:x) ) ) {
-					putpixel(dst, x+X, y+Y, color);	
-				}
-			}
-		}
+		for (x=0; x<8; x++)
+			if ( *c & (0x80 >> (flipH ? 7-x:x) ) )
+				putpixel(dst, x+X, y+Y, color);
+
 		if (flipV)
 			c--;
 		else c++;

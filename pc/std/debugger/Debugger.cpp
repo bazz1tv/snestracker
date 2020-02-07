@@ -49,6 +49,25 @@ Debugger::~Debugger()
   DEBUGLOG("~Debugger");
 }
 
+/*static int fillbuff(void *p)
+{
+  sample_t sbuf[4096*2];
+  int num = 512 * 2 * 2;
+  SDL_AudioDeviceID id = Audio_Context::audio->devices.id;
+
+  SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
+
+  while (!BaseD::quitting)
+  {
+    if (!::player->is_paused() && SDL_GetQueuedAudioSize(id) < 24000)
+    {
+      ::player->fill_buffer(::player, sbuf, num);
+      SDL_QueueAudio(id, sbuf, num*2);
+    }
+    SDL_Delay(15);
+  }
+
+}*/
 
 void Debugger::run()
 {
@@ -59,12 +78,13 @@ void Debugger::run()
   exp->draw();
   SDL_ShowWindow(::render->sdlWindow);
 
+  /*SDL_Thread *thread;
+  thread = SDL_CreateThread(&fillbuff, "AudiobuffThread", this);
+  SDL_DetachThread(thread);*/
+
   // exp is changed from BaseD
   while (!quitting)
   {
-    Uint32 elapsed;
-    Uint32 ticks = SDL_GetTicks();
-
     exp->run();
     exp->draw();
 
@@ -75,13 +95,9 @@ void Debugger::run()
     }
     
     handle_events();
-
-    elapsed = SDL_GetTicks() - ticks;
-    if (elapsed < 16)
-      SDL_Delay( 16 - elapsed );
-
+    SDL_Delay(15);
   }
-  
+
   sub_window_experience = NULL;
 
   if (!player->is_paused() && player->track_started)
