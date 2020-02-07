@@ -39,3 +39,4 @@ public:
   File_System *file_system;
 };
 
+extern App_Settings *app_settings;

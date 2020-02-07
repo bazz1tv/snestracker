@@ -2,7 +2,7 @@
 
 #include <map>
 #include "RtMidi.h"
-#include "App_Settings_Context.h"
+#include "App_Settings.h"
 
 #include "jdkmidi/world.h"
 #include "jdkmidi/midi.h"
@@ -10,7 +10,7 @@
 #include "jdkmidi/sysex.h"
 #include "jdkmidi/parser.h"
 
-struct Midi : public App_Settings_Context
+struct Midi
 {
   Midi();
   ~Midi();

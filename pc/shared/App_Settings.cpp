@@ -7,17 +7,17 @@
 #include <cstring>
 #include "utility.h"
 #include "Audio.h"
-#include "App_Settings_Context.h"
 
 int App_Settings::MAXLINE=600;
 #define DEBUGLOG printf
+App_Settings *app_settings;
 
 App_Settings::App_Settings(File_System *file_system) : file_system(file_system)
 {
   if (!file_system->is_loaded)
     file_system->init();
   load();
-  App_Settings_Context::app_settings = this;
+  ::app_settings = this;
 }
 App_Settings::~App_Settings()
 {

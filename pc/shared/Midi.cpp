@@ -167,10 +167,10 @@ Midi::Midi() : parser(32*1024)
     in.ignoreTypes( false, false, false );
 
 
-    if (app_settings->vars.midi_port < nPorts)
+    if (::app_settings->vars.midi_port < nPorts)
     {
       // load default
-      in.openPort(app_settings->vars.midi_port);
+      in.openPort(::app_settings->vars.midi_port);
     }
     else in.openPort(0);
 
