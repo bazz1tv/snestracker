@@ -8,11 +8,7 @@
 #define L_FLAG 0
 #define R_FLAG 1
 
-Debugger::Debugger(int &argc, char **argv) : //, Music_Player *player,
-  //SDL_Window *win, SDL_Renderer *renderer, SDL_Texture *text, SDL_Surface *screen) : 
-//player(player), sdlWindow(win), sdlRenderer(renderer),sdlTexture(text),screen(screen),
-//main_memory_area(screen,player),
-//mouseover_hexdump_area(player,screen),
+Debugger::Debugger(int &argc, char **argv) :
 main_window(argc,argv)
 {
   BaseD::main_window = &main_window;
@@ -62,7 +58,7 @@ void Debugger::run()
   main_window.one_time_draw();
 
   exp->draw();
-  SDL_ShowWindow(sdlWindow);
+  SDL_ShowWindow(::render->sdlWindow);
 
   // exp is changed from BaseD
   while (!quitting)
@@ -128,42 +124,42 @@ void Debugger::handle_events()
             int wd, hd;
             //if (w > SCREEN_WIDTH)
             //{
-            wd = w - Render_Context::w;
+            wd = w - ::render->w;
             //}
             //else
             //{
              // wd = SCREEN_WIDTH - height;
             //}
 
-            hd = h - Render_Context::h;
+            hd = h - ::render->h;
 
             if (abs(wd) < abs(hd)) wd = hd;
             else if (abs(wd) > abs(hd)) hd = wd;
 
-            Render_Context::w += wd;
-            Render_Context::h += hd;
+            ::render->w += wd;
+            ::render->h += hd;
 
-            DEBUGLOG("\twindow resize: w = %d, h = %d\n", Render_Context::w, Render_Context::h);
-            //DEBUGLOG("%d - %d = %d\n", Render_Context::h, monitor_display_mode.h, Render_Context::h - monitor_display_mode.h);
+            DEBUGLOG("\twindow resize: w = %d, h = %d\n", ::render->w, ::render->h);
+            //DEBUGLOG("%d - %d = %d\n", ::render->h, monitor_display_mode.h, ::render->h - monitor_display_mode.h);
 
-            if (Render_Context::w > monitor_display_mode.w)
+            if (::render->w > monitor_display_mode.w)
             {
-              int tmp_wd = Render_Context::w - monitor_display_mode.w;
-              Render_Context::w -= tmp_wd;
-              Render_Context::h -= tmp_wd;
-              DEBUGLOG("\t\twindow resize: tmp_wd = %d, w = %d, h = %d\n", tmp_wd, Render_Context::w, Render_Context::h);
+              int tmp_wd = ::render->w - monitor_display_mode.w;
+              ::render->w -= tmp_wd;
+              ::render->h -= tmp_wd;
+              DEBUGLOG("\t\twindow resize: tmp_wd = %d, w = %d, h = %d\n", tmp_wd, ::render->w, ::render->h);
             }
-            if (Render_Context::h > monitor_display_mode.h)
+            if (::render->h > monitor_display_mode.h)
             {
-              int tmp_hd = Render_Context::h - monitor_display_mode.h;
-              Render_Context::w -= tmp_hd;
-              Render_Context::h -= tmp_hd;
-              DEBUGLOG("\t\twindow resize: tmp_hd = %d, w = %d, h = %d\n", tmp_hd, Render_Context::w, Render_Context::h);
+              int tmp_hd = ::render->h - monitor_display_mode.h;
+              ::render->w -= tmp_hd;
+              ::render->h -= tmp_hd;
+              DEBUGLOG("\t\twindow resize: tmp_hd = %d, w = %d, h = %d\n", tmp_hd, ::render->w, ::render->h);
 
             }
 
-            SDL_SetWindowSize(sdlWindow, Render_Context::w, Render_Context::h);
-            DEBUGLOG("\t\t\twindow resize: w = %d, h = %d\n", Render_Context::w, Render_Context::h);
+            SDL_SetWindowSize(::render->sdlWindow, ::render->w, ::render->h);
+            DEBUGLOG("\t\t\twindow resize: w = %d, h = %d\n", ::render->w, ::render->h);
           } break;
           /*case SDL_WINDOWEVENT_LEAVE:
           {
@@ -178,7 +174,7 @@ void Debugger::handle_events()
           case SDL_WINDOWEVENT_FOCUS_LOST:
           {
             DEBUGLOG("Window %d Lost keyboard focus\n", ev.window.windowID);
-            if (ev.window.windowID == Render_Context::windowID)
+            if (ev.window.windowID == ::render->windowID)
             {
               // OFF context menus
               menu_bar.context_menus.deactivate_all();
@@ -219,7 +215,7 @@ void Debugger::handle_events()
                     have a history of displayed windows.. and the last one should be raised.
                   */
                   sub_window_experience = NULL;
-                  //SDL_RaiseWindow(Render_Context::sdlWindow);
+                  //SDL_RaiseWindow(::render->::render->sdlWindow);
                 }
                 else
                 {
@@ -236,7 +232,7 @@ void Debugger::handle_events()
           case SDL_WINDOWEVENT_CLOSE:
           {
             SDL_Log("Window %d closed", ev.window.windowID);
-            if (ev.window.windowID == Render_Context::windowID)
+            if (ev.window.windowID == ::render->windowID)
             {
               // quit app
 
@@ -255,7 +251,7 @@ void Debugger::handle_events()
                   //  have a history of displayed windows.. and the last one should be raised.
 
                   sub_window_experience = NULL;
-                  //SDL_RaiseWindow(Render_Context::sdlWindow);
+                  //SDL_RaiseWindow(::render->::render->sdlWindow);
                   break;
                 }
               }
@@ -274,12 +270,12 @@ void Debugger::handle_events()
             SDL_MESSAGEBOX_INFORMATION,
             "File dropped on window",
             dropped_filedir,
-            sdlWindow
+            ::render->sdlWindow
         );*/
         BaseD::nfd.free_pathset();
         check_paths_and_reload(&dropped_filedir, 1, true);
         SDL_free(dropped_filedir);    // Free dropped_filedir memory
-        SDL_RaiseWindow(sdlWindow);
+        SDL_RaiseWindow(::render->sdlWindow);
       } break;
       case SDL_USEREVENT:
       {

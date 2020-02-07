@@ -3,20 +3,24 @@
 #include "Colors.h"
 #include "Organization.h"
 
-#include "Render_Context.h"
+#include "Render.h"
 
-int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **sdlTexture,
-  SDL_Surface **screen, int width, int height, Uint32 flags=0);
+int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
+             SDL_Texture **sdlTexture, SDL_Surface **screen,
+             int width, int height, Uint32 flags=0);
 
 int main(int argc, char **argv)
 {
-  init_sdl(&Render_Context::sdlWindow, &Render_Context::sdlRenderer, 
-    &Render_Context::sdlTexture, &Render_Context::screen, SCREEN_WIDTH, SCREEN_HEIGHT);
+  Render render;
+	::render = &render;
 
-  Render_Context::windowID = SDL_GetWindowID(Render_Context::sdlWindow);
-  //SDL_SetWindowSize(Render_Context::sdlWindow, 1024+100, 768+100);
+	init_sdl(&::render->sdlWindow, &::render->sdlRenderer, 
+    &::render->sdlTexture, &::render->screen, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-  //fprintf(stderr, "screen = %d\n", Render_Context::screen);
+  ::render->windowID = SDL_GetWindowID(::render->sdlWindow);
+  //SDL_SetWindowSize(::render->sdlWindow, 1024+100, 768+100);
+
+  //fprintf(stderr, "screen = %d\n", ::render->screen);
   App app(argc, argv, 32000);
   app.run();
 }

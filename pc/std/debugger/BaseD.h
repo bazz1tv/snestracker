@@ -1,5 +1,5 @@
 #pragma once
-#include "Render_Context.h"
+#include "Render.h"
 #include "gme/player/Music_Player.h"
 #include "gme/player/Music_Player.h"
 #include "globals.h"
@@ -16,7 +16,7 @@ struct Instrument_Window;
 struct Menu_Bar;
 struct Options_Window;
 struct Spc_Export_Window;
-struct BaseD : public Render_Context
+struct BaseD
 {
   static char tmpbuf[500];
   struct Hack_Spc

@@ -60,11 +60,11 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
     currently_selected_item = highlighted_item;
     currently_selected_item_index = highlighted_item_index;
   }
-  SDL_FillRect(BaseD::screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
+  SDL_FillRect(::render->screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
   currently_selected_item = &items[0];
   highlighted_item = &items[0];
   highlighted_item_index=0;
-  //SDL_FillRect(BaseD::screen, &single_item_rect, Colors::black);
+  //SDL_FillRect(::render->screen, &single_item_rect, Colors::black);
 }
 
 int Expanding_List::receive_event(SDL_Event &ev)

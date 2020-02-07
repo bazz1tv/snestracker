@@ -11,9 +11,9 @@ Uint32 Colors::voice[8];
 Uint32 Colors::Interface::color[Colors::Interface::Type::SIZEOF];
 //Uint32 Colors::Interface::text_bg, Colors::Interface::text_fg;
 
-void Colors::precompute(SDL_Surface *cscreen)
+void Colors::precompute(SDL_Surface *screen)
 {
-  screen = cscreen;
+  ::render->screen = screen;
   // precompute some colors
   black = SDL_MapRGB(screen->format, 0x00, 0x00, 0x00);
 
@@ -80,10 +80,10 @@ void Colors::precompute(SDL_Surface *cscreen)
 Uint32 Colors::subtract(Uint32 *c, Uint8 subval)
 {
   Uint8 r,g,b;
-  SDL_GetRGB(*c, screen->format, &r, &b, &g);
+  SDL_GetRGB(*c, ::render->screen->format, &r, &b, &g);
       // CAP at ZERO
   
-      return SDL_MapRGB(screen->format,
+      return SDL_MapRGB(::render->screen->format,
         r-subval >= 0x10 ? (r-subval):0x10,
         g-subval >= 0x10 ? (g-subval):0x10,
         b-subval >= 0x10 ? (b-subval):0x10);
@@ -92,9 +92,9 @@ Uint32 Colors::subtract(Uint32 *c, Uint8 subval)
 void Colors::subtractp(Uint32 *c, Uint8 subval)
 {
   Uint8 r,g,b;
-  SDL_GetRGB(*c, screen->format, &r, &b, &g);
+  SDL_GetRGB(*c, ::render->screen->format, &r, &b, &g);
       // CAP at ZERO
-      *c = SDL_MapRGB(screen->format,
+      *c = SDL_MapRGB(::render->screen->format,
         r-subval >= 0x10 ? (r-subval):0x10,
         g-subval >= 0x10 ? (g-subval):0x10,
         b-subval >= 0x10 ? (b-subval):0x10);

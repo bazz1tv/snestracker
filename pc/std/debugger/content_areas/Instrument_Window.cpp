@@ -115,14 +115,14 @@ void Instrument_Window::one_time_draw()
 
     y +=(CHAR_HEIGHT*3);
     sprintf(tmpbuf, "ADSR");
-    sdlfont_drawString(screen, voice.n_x, y, tmpbuf, Colors::gray);
+    sdlfont_drawString(::render->screen, voice.n_x, y, tmpbuf, Colors::gray);
     adsr.x = voice.n_x;
     adsr.y = y;
     y+= 2*CHAR_HEIGHT;
     
     int save_y = y;
     sprintf(tmpbuf, "Attack");
-    sdlfont_drawString(screen, voice.n_x, y, tmpbuf, Colors::gray); 
+    sdlfont_drawString(::render->screen, voice.n_x, y, tmpbuf, Colors::gray); 
     attack.x = voice.n_x;
     attack.y = y;
     y+= CHAR_HEIGHT;
@@ -132,20 +132,20 @@ void Instrument_Window::one_time_draw()
     decay.x = attack.x + (CHAR_WIDTH*(4+strlen("Attack")));
     decay.y = save_y;
     sprintf(tmpbuf, "Decay");
-    sdlfont_drawString(screen, decay.x, decay.y, tmpbuf, Colors::gray);
+    sdlfont_drawString(::render->screen, decay.x, decay.y, tmpbuf, Colors::gray);
     y = decay.y + CHAR_HEIGHT;
     adsr_context_menus.decay_context.menu.preload(decay.x, y);
 
     sustain_level.x = decay.x + (CHAR_WIDTH*(4+strlen("Decay")));
     sustain_level.y = save_y;
     sprintf(tmpbuf, "Sustain Level");
-    sdlfont_drawString(screen, sustain_level.x, sustain_level.y, tmpbuf, Colors::gray);
+    sdlfont_drawString(::render->screen, sustain_level.x, sustain_level.y, tmpbuf, Colors::gray);
     adsr_context_menus.sustain_level_context.menu.preload(sustain_level.x, y);
 
     sustain_release.x = sustain_level.x + (CHAR_WIDTH*(2+strlen("Sustain Level")));
     sustain_release.y = save_y;
     sprintf(tmpbuf, "Sustain Release");
-    sdlfont_drawString(screen, sustain_release.x, sustain_release.y, tmpbuf, Colors::gray);
+    sdlfont_drawString(::render->screen, sustain_release.x, sustain_release.y, tmpbuf, Colors::gray);
     adsr_context_menus.sustain_release_context.menu.preload(sustain_release.x, y);
 }
 
@@ -159,22 +159,22 @@ void Instrument_Window::draw()
   voice.label.draw(Colors::gray);
   voice.left_arrow.draw(Colors::white, true, false, true);
     sprintf(tmpbuf, "%d", voice.n);
-    sdlfont_drawString(screen, voice.n_x, voice.n_y, tmpbuf, Colors::voice[voice.n]);
+    sdlfont_drawString(::render->screen, voice.n_x, voice.n_y, tmpbuf, Colors::voice[voice.n]);
   voice.right_arrow.draw(Colors::white); // Vflip
 
   octave.label.draw(Colors::gray);
   octave.up_arrow.draw(Colors::white);
     sprintf(tmpbuf, "%d", octave.n);
-    sdlfont_drawString(screen, octave.n_x, octave.n_y, tmpbuf, Colors::magenta);
+    sdlfont_drawString(::render->screen, octave.n_x, octave.n_y, tmpbuf, Colors::magenta);
   octave.down_arrow.draw(Colors::white, true, true); // flipV
 
 
-  //SDL_FillRect(screen, &attack_context.menu.created_at, Colors::black);
+  //SDL_FillRect(::render->screen, &attack_context.menu.created_at, Colors::black);
   
-  adsr_context_menus.draw(screen);
+  adsr_context_menus.draw(::render->screen);
   draw_menu_bar();
   
-  sdl_draw();
+  ::render->sdl_draw();
 }
 
 int Instrument_Window::receive_event(SDL_Event &ev)
@@ -525,7 +525,7 @@ int Instrument_Window::receive_event(SDL_Event &ev)
       }
 
       if (
-      ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
+      ((ev.button.y >::render->screen->h-12) && (ev.button.y<::render->screen->h)))
       {
         int x = ev.button.x / CHAR_WIDTH;
         if (x>=1 && x<=4) { printf ("penis5\n"); quitting=true; } // exit

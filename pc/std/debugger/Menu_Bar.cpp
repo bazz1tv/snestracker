@@ -126,7 +126,7 @@ int Menu_Bar::File_Context::export_wav(void *data)
   nfdchar_t *outPath=NULL;
 
   nfdresult_t result = NFD_SaveDialog( "wav", NULL, &outPath );
-  SDL_RaiseWindow(BaseD::sdlWindow);
+  SDL_RaiseWindow(::render->sdlWindow);
   if ( result == NFD_OKAY )
   {
     //puts("Success!");
@@ -209,7 +209,7 @@ int Menu_Bar::Track_Context::create_profile(void *data)
 
 int Menu_Bar::Window_Context::restore_window_size(void *nada)
 {
-  SDL_SetWindowSize(BaseD::sdlWindow, SCREEN_WIDTH, SCREEN_HEIGHT);
+  SDL_SetWindowSize(::render->sdlWindow, SCREEN_WIDTH, SCREEN_HEIGHT);
   return 0;
 }
 

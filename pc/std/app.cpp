@@ -12,7 +12,6 @@ static int create_midi(void *vapp)
 
 App::App(int &argc, char **argv, int samplerate/*=44100*/)
 {
-  //Colors::precompute(*main_window->screen);
   file_system = new File_System;
   app_settings=new App_Settings(file_system);
   audio=new Audio;
@@ -25,7 +24,6 @@ App::App(int &argc, char **argv, int samplerate/*=44100*/)
 
   SDL_Thread *thread = SDL_CreateThread(create_midi, "create_midi", this);
   SDL_DetachThread(thread);
-
 }
 
 void App::run()
@@ -47,14 +45,5 @@ App::~App()
   delete audio;
 
   delete file_system;
-
-  if (screen)
-    SDL_FreeSurface(screen);
-  if (sdlTexture)
-    SDL_DestroyTexture(sdlTexture);
-  if (sdlRenderer)
-    SDL_DestroyRenderer(sdlRenderer);
-  if(sdlWindow)
-    SDL_DestroyWindow(sdlWindow);
 }
 

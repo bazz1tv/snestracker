@@ -4,13 +4,13 @@
 #include "gme/player/Music_Player.h"
 #include "BaseD.h"
 #include "gui/cursor.h"
-#include "Render_Context.h"
+#include "Render.h"
 #include "gme/player/Music_Player.h"
 
 #define IS_SPECIAL_ADDRESSES(addr) ( (addr == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) ||\
 addr==0xf1 || addr == 0xf0 || (addr >= 0xf4 && addr <= 0xf7) || (addr >= 0xfa && addr <= 0xfc)  )
 
-struct Memory : public BaseD, public Render_Context
+struct Memory : public BaseD
 {
   Memory();
 

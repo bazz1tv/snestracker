@@ -16,8 +16,7 @@ int mute_solo_voice(void *data);
 static const Uint8 NUM_TIMERS=3;
 
 
-struct Dsp_Window : public BaseD, public Render_Context,
-public Experience
+struct Dsp_Window : public BaseD, public Experience
 {
 
   bool is_srcn_used(Uint8 dirnum);

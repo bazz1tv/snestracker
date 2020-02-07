@@ -13,10 +13,10 @@ void Slider<T>::draw()
 	// void FillRectAlpha(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
 	
 	SDL_Rect value_rect = {panel_rect.x, panel_rect.y, adjuster_rect.x - panel_rect.x, panel_rect.h };
-	FillRectAlpha(sdlRenderer, &panel_rect,&colors.panel); // 50,50,50));
-	FillRectAlpha(sdlRenderer, &value_rect,&colors.value);
-	FillRectAlpha(sdlRenderer, &adjuster_rect, &colors.adjuster); // SDL_MapRGB(Screen->format,0,255,0));
-	SDL_FillRect(screen, &txt_rect, 0);
+	FillRectAlpha(::render->sdlRenderer, &panel_rect,&colors.panel); // 50,50,50));
+	FillRectAlpha(::render->sdlRenderer, &value_rect,&colors.value);
+	FillRectAlpha(::render->sdlRenderer, &adjuster_rect, &colors.adjuster); // SDL_MapRGB(Screen->format,0,255,0));
+	SDL_FillRect(::render->screen, &txt_rect, 0);
 	if (is_sliding)
 	{
 		if (is_db_slider)
@@ -50,7 +50,7 @@ void Slider<T>::draw()
 		txt_rect.y = adjuster_rect.y-CHAR_HEIGHT;
 		txt_rect.h = CHAR_HEIGHT;
 		txt_rect.w = strlen(str_buf) * CHAR_WIDTH;
-		sdlfont_drawString(screen, txt_rect.x, txt_rect.y, str_buf, Colors::white);
+		sdlfont_drawString(::render->screen, txt_rect.x, txt_rect.y, str_buf, Colors::white);
 	}
 }
 
@@ -360,7 +360,7 @@ bool Slider<T>::receive_event(SDL_Event &ev)
 		case SDL_MOUSEBUTTONUP:
 			DEBUGLOG("mousebutton up slider\n");
 			is_sliding=false;
-			SDL_FillRect(screen, &txt_rect, 0);
+			SDL_FillRect(::render->screen, &txt_rect, 0);
 			//Deactivate();
 			//DEBUGLOG("is_sliding = %d", is_sliding);
 			return true;

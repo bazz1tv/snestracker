@@ -520,7 +520,7 @@ void BaseD::start_track( int track, const char* path )
   sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
       game, track, player->track_count(), player->track_info().song,
       seconds / 60, seconds % 60 );
-  SDL_SetWindowTitle(sdlWindow, title);
+  SDL_SetWindowTitle(::render->sdlWindow, title);
 }
 
 // YEAHH!!!
@@ -626,7 +626,7 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
         game, 1, 1, player->track_info().song,
         seconds / 60, seconds % 60 );
   }*/
-  SDL_SetWindowTitle(sdlWindow, title);
+  SDL_SetWindowTitle(::render->sdlWindow, title);
 
 }
 
@@ -704,7 +704,7 @@ void BaseD::draw_menu_bar()
 {
   //
   //fprintf(stderr, "TTTT");
-  menu_bar->draw(screen);
+  menu_bar->draw(::render->screen);
 }
 
 void BaseD::restart_current_track()
@@ -729,7 +729,7 @@ void BaseD::switch_mode(int mode)
   if (grand_mode == mode)
     return;
   grand_mode = mode;
-  clear_screen();
+  ::render->clear_screen();
   draw_menu_bar();
 
   // If we switched from instrument window, need to re-enable regular spc playback

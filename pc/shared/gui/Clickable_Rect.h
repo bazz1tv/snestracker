@@ -1,9 +1,9 @@
 #pragma once
 #include "sdlfont.h"
-#include "Render_Context.h"
+#include "Render.h"
 
 
-struct Clickable_Rect : public Render_Context
+struct Clickable_Rect
 {
   Clickable_Rect(int (*action)(void *data)=NULL, void *data=NULL);
   Clickable_Rect();

@@ -12,7 +12,7 @@
 #include "Main_Memory_Area.h"
 #include "Colors.h"
 #include "platform.h"
-#include "Render_Context.h"
+#include "Render.h"
 #include "gme/player/Music_Player.h"
 #include "Experience.h"
 #include "gui/Context_Menu.h"
@@ -22,8 +22,7 @@
 
 
 
-struct Main_Window : public BaseD, public Render_Context, 
-public Experience
+struct Main_Window : public BaseD, public Experience
 {
   void scroll_track_tags();
   struct Scroll_Tag

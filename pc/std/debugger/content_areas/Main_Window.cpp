@@ -1,7 +1,7 @@
 #include "Main_Window.h"
 #include <getopt.h>
 #include "utility.h"
-#include "Screen.h"
+#include "Render.h"
 #include "Menu_Bar.h"
 
 #define L_FLAG 0
@@ -35,8 +35,8 @@ void Main_Window::draw_memory_outline()
   tmprect.y = MEMORY_VIEW_Y-1;
   tmprect.w = 512+2;
   tmprect.h = 512+2;
-  SDL_SetRenderDrawColor(sdlRenderer, 255, 255, 255, 255);
-  SDL_RenderDrawRect(sdlRenderer, &tmprect);
+  SDL_SetRenderDrawColor(::render->sdlRenderer, 255, 255, 255, 255);
+  SDL_RenderDrawRect(::render->sdlRenderer, &tmprect);
 }
 
 void Main_Window::draw()
@@ -49,34 +49,34 @@ void Main_Window::draw()
     
 
     //do_scroller(time_cur - time_last);
-    sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
+    sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
 
     /*tmprect.x = MEMORY_VIEW_X-1;
     tmprect.y = MEMORY_VIEW_Y-1;
     tmprect.w = 1;
     tmprect.h = 512+2;
-    SDL_FillRect(screen, &tmprect, Colors::white);
+    SDL_FillRect(::render->screen, &tmprect, Colors::white);
     tmprect.x = MEMORY_VIEW_X-1;
     tmprect.y = MEMORY_VIEW_Y-1;
     tmprect.w = 512+2;
     tmprect.h = 1;
-    SDL_FillRect(screen, &tmprect, Colors::white);
+    SDL_FillRect(::render->screen, &tmprect, Colors::white);
     tmprect.x = MEMORY_VIEW_X-1 + 513;
     tmprect.y = MEMORY_VIEW_Y-1;
     tmprect.w = 1;
     tmprect.h = 512+2;
-    SDL_FillRect(screen, &tmprect, Colors::white);
+    SDL_FillRect(::render->screen, &tmprect, Colors::white);
     tmprect.x = MEMORY_VIEW_X-1;
     tmprect.y = MEMORY_VIEW_Y-1 + 513;
     tmprect.w = 512+2;
     tmprect.h = 1;
-    SDL_FillRect(screen, &tmprect, Colors::white);*/
+    SDL_FillRect(::render->screen, &tmprect, Colors::white);*/
 
     
     fade_arrays();      
     
     // draw the memory read/write display area
-    report::memsurface.draw(screen);
+    report::memsurface.draw(::render->screen);
 
     draw_block_usage_bar();
 
@@ -86,12 +86,12 @@ void Main_Window::draw()
     if (player->has_no_song) 
     {
       draw_menu_bar();
-      //SDL_UpdateRect(screen, 0, 0, 0, 0);
-      SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
-      SDL_RenderClear(sdlRenderer);
-      SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
+      //SDL_UpdateRect(::render->screen, 0, 0, 0, 0);
+      SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
+      SDL_RenderClear(::render->sdlRenderer);
+      SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
       draw_memory_outline();
-      SDL_RenderPresent(sdlRenderer);
+      SDL_RenderPresent(::render->sdlRenderer);
       return; 
     }  
 
@@ -113,11 +113,11 @@ void Main_Window::draw()
     
     if (mode == MODE_EDIT_MOUSE_HEXDUMP)
     {
-      mouseover_hexdump_area.draw_cursor(screen, Colors::green);
+      mouseover_hexdump_area.draw_cursor(::render->screen, Colors::green);
     }
     else if (mode == MODE_EDIT_APU_PORT)
     {
-      port_tool.draw_cursor(screen, Colors::green);
+      port_tool.draw_cursor(::render->screen, Colors::green);
     }
 
     // toggle should be 0 ALWAYS when deactivated
@@ -133,27 +133,27 @@ void Main_Window::draw()
 
     if (mouse::show)
     {
-      if (mouse::x < (screen->w-40) && mouse::y < (screen->h - 8))
+      if (mouse::x < (::render->screen->w-40) && mouse::y < (::render->screen->h - 8))
       { 
         sprintf(tmpbuf, "(%d,%d)", mouse::x, mouse::y);
-        sdlfont_drawString(screen, mouse::x, mouse::y, tmpbuf);
+        sdlfont_drawString(::render->screen, mouse::x, mouse::y, tmpbuf);
       }
     }
 
     if (main_memory_area.context.menu.is_active)
     {
       //draw_context.menu();
-      main_memory_area.context.menu.draw(screen);
+      main_memory_area.context.menu.draw(::render->screen);
     }
     draw_menu_bar();
     
     
-    //SDL_UpdateRect(screen, 0, 0, 0, 0);
-    SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
-    //SDL_SetRenderDrawColor(sdlRenderer, 255, 0, 0, 255);
-    SDL_RenderClear(sdlRenderer);
-    SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-    // stuff that renders direct to renderer must happen after the screen copy
+    //SDL_UpdateRect(::render->screen, 0, 0, 0, 0);
+    SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
+    //SDL_SetRenderDrawColor(::render->sdlRenderer, 255, 0, 0, 255);
+    SDL_RenderClear(::render->sdlRenderer);
+    SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
+    // stuff that renders direct to renderer must happen after the ::render->screen copy
     draw_memory_outline();
 
     gain.slider->draw();
@@ -162,7 +162,7 @@ void Main_Window::draw()
     
 
 
-    SDL_RenderPresent(sdlRenderer);
+    SDL_RenderPresent(::render->sdlRenderer);
     time_last = time_cur;
     if (g_cfg.nice) {  SDL_Delay(100); }
     //SDL_Delay( 1000 / 100 );
@@ -173,16 +173,16 @@ void Main_Window::draw()
     draw_menu_bar();
     
     
-    //SDL_UpdateRect(screen, 0, 0, 0, 0);
-    SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
-    //SDL_SetRenderDrawColor(sdlRenderer, 255, 0, 0, 255);
-    SDL_RenderClear(sdlRenderer);
-    SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-    // stuff that renders direct to renderer must happen after the screen copy
+    //SDL_UpdateRect(::render->screen, 0, 0, 0, 0);
+    SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
+    //SDL_SetRenderDrawColor(::render->sdlRenderer, 255, 0, 0, 255);
+    SDL_RenderClear(::render->sdlRenderer);
+    SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
+    // stuff that renders direct to renderer must happen after the ::render->screen copy
 
     gain.slider->draw();
     tempo.slider->draw();
-    SDL_RenderPresent(sdlRenderer);
+    SDL_RenderPresent(::render->sdlRenderer);
   }
   is_first_run = false;
 }
@@ -367,16 +367,16 @@ int Main_Window::receive_event(SDL_Event &ev)
       }
       if (scancode == SDLK_k)
       {
-        //SCREEN_X_OFFSET--;
+        //::render->screen_X_OFFSET--;
         //player->spc_write_dsp(dsp_reg::koff,0xff);
       }
       else if (scancode == SDLK_l)
       {
-        //SCREEN_X_OFFSET++;
+        //::render->screen_X_OFFSET++;
       }
       if (scancode == SDLK_n)
       {
-        //SCREEN_Y_OFFSET--;
+        //::render->screen_Y_OFFSET--;
         //player->spc_write_dsp(dsp_reg::koff,0xff);
         static int val=0;
         val = !val;
@@ -384,7 +384,7 @@ int Main_Window::receive_event(SDL_Event &ev)
       }
       else if (scancode == SDLK_m)
       {
-        //SCREEN_Y_OFFSET++;
+        //::render->screen_Y_OFFSET++;
         static int val=0;
         val = !val;
         player->spc_write_dsp(dsp_reg::koff,val);
@@ -1169,7 +1169,7 @@ void Main_Window::Scroll_Tag::scroll_draw()
     cur_ticks_compare = SDL_GetTicks();
     direction = -direction;
   }
-  sdlfont_drawString(screen, rect.x, rect.y, &str[cur_index]);
+  sdlfont_drawString(::render->screen, rect.x, rect.y, &str[cur_index]);
   
 }
 
@@ -1262,9 +1262,9 @@ port_tool(&mouseover_hexdump_area.cursor)
     {0,0,0,0}
   };
 
-  if (screen == NULL)
+  if (::render->screen == NULL)
   {
-    fprintf(stderr, "Debugger::MainWindows::screen is Null\n"); //screen, Render_Context::screen);
+    fprintf(stderr, "Debugger::MainWindows::::render->screen is Null\n"); //::render->screen, Render_Context::::render->screen);
     exit(1);
   }
 
@@ -1382,13 +1382,13 @@ void Main_Window::draw_block_usage_bar()
     tmprect.y = MEMORY_VIEW_Y + i * 2;
     if (report::used2[i])
     {
-      SDL_FillRect(screen, &tmprect, Colors::white); 
+      SDL_FillRect(::render->screen, &tmprect, Colors::white); 
       tmp++;
     }
   }
   
   sprintf(tmpbuf, "Blocks report::used: %3d/256 (%.1f%%)  ", tmp, (float)tmp*100.0/256.0);
-  sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2, tmpbuf);
+  sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y + report::memsurface.sdl_surface->h + 2, tmpbuf);
 
 
   int x = MEMORY_VIEW_X;
@@ -1405,7 +1405,7 @@ void Main_Window::draw_block_usage_bar()
         packed_mask[24], packed_mask[25], packed_mask[26], packed_mask[27],
         packed_mask[28], packed_mask[29], packed_mask[30], packed_mask[31]);
 
-    sdlfont_drawString(screen, x, y, tmpbuf);
+    sdlfont_drawString(::render->screen, x, y, tmpbuf);
   }
   y+= CHAR_HEIGHT*2;
 
@@ -1436,14 +1436,14 @@ void Main_Window::draw_mouse_address()
   if (mouseover_hexdump_area.address >=0)
   {
     sprintf(tmpbuf, addr_mouse_str, main_memory_area.mouse_addr);
-    sdlfont_drawString(screen, x, y, tmpbuf);
+    sdlfont_drawString(::render->screen, x, y, tmpbuf);
   }
 
   // leeching coordinates ;P 
   int length = strlen(tmpbuf); length+=3;
   x += (length*CHAR_WIDTH);
   sprintf(tmpbuf, "Gain:");
-  sdlfont_drawString(screen, x, y, tmpbuf);
+  sdlfont_drawString(::render->screen, x, y, tmpbuf);
 
   length = strlen(tmpbuf); length+=0;
   x += length*CHAR_WIDTH + 4;
@@ -1461,7 +1461,7 @@ void Main_Window::draw_mouse_address()
 
   x+=gain.slider->panel_rect.w + CHAR_WIDTH*2;
   sprintf(tmpbuf, "Tempo:");
-  sdlfont_drawString(screen, x, y, tmpbuf);
+  sdlfont_drawString(::render->screen, x, y, tmpbuf);
   if (is_first_run)
   {
     int slider_width = 60;
@@ -1493,7 +1493,7 @@ void Main_Window::one_time_draw()
   //if (!g_cfg.novideo)
   //{
   
-    SDL_FillRect(screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
+    SDL_FillRect(::render->screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
       //Colors::Interface::color[Colors::Interface::Type::text_bg]);
     
     
@@ -1501,25 +1501,25 @@ void Main_Window::one_time_draw()
     tmprect.y = MEMORY_VIEW_Y-1;
     tmprect.w = 512+2;
     tmprect.h = 512+2;
-    SDL_FillRect(screen, &tmprect, Colors::white); */
+    SDL_FillRect(::render->screen, &tmprect, Colors::white); */
     
-    //sdlfont_drawString(screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
+    //sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
 
     if (player->emu())
       draw_track_tag();
 
     //sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");  
-    //sdlfont_drawString(screen, INFO_X, INFO_Y+64, tmpbuf, Colors::white);
+    //sdlfont_drawString(::render->screen, INFO_X, INFO_Y+64, tmpbuf, Colors::white);
   
     //sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg.autowritemask ? "Yes" : "No");
-    //sdlfont_drawString(screen, INFO_X, INFO_Y+72, tmpbuf, Colors::white);
+    //sdlfont_drawString(::render->screen, INFO_X, INFO_Y+72, tmpbuf, Colors::white);
 
     
 
     
 
     
-    sdlfont_drawString2(screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -");
+    sdlfont_drawString2(::render->screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -");
   //}
 }
 
@@ -1560,7 +1560,7 @@ void Main_Window::do_scroller(int elaps_milli)
 
   if (cur_marquee == NULL) { 
     cur_marquee = marquees[cur_marquee_id]; 
-    p = screen->w;
+    p = ::render->screen->w;
   }
   
   cur_len = strlen(cur_marquee);
@@ -1574,18 +1574,18 @@ void Main_Window::do_scroller(int elaps_milli)
   // clear area 
   tmprect.x = 0;
   tmprect.y = 0;
-  tmprect.w = screen->w;
+  tmprect.w = ::render->screen->w;
   tmprect.h = 28;
-  SDL_FillRect(screen, &tmprect, Colors::Interface::color[Colors::Interface::Type::bg]);
+  SDL_FillRect(::render->screen, &tmprect, Colors::Interface::color[Colors::Interface::Type::bg]);
   
   
   for (i=0; i<cur_len; i++)
   {
     off = sin(angle)*8.0;
     c[0] = cur_marquee[i];
-    if (  (tmprect.x + i*8 + p > 0) && (tmprect.x + i*8 + p < screen->w) )
+    if (  (tmprect.x + i*8 + p > 0) && (tmprect.x + i*8 + p < ::render->screen->w) )
     {
-      sdlfont_drawString(screen, tmprect.x + i*8 + p, 12 + off, c, Colors::colorscale[cs]);
+      sdlfont_drawString(::render->screen, tmprect.x + i*8 + p, 12 + off, c, Colors::colorscale[cs]);
     }
     angle-=0.1;
   }
@@ -1595,10 +1595,10 @@ void Main_Window::do_scroller(int elaps_milli)
   if (p<cur_min) {
     if (marquees[cur_marquee_id+1]!=NULL) {
       cur_marquee = marquees[++cur_marquee_id];
-      p = screen->w;
+      p = ::render->screen->w;
     }
     else {
-      p = screen->w;
+      p = ::render->screen->w;
     }
   }
 }
@@ -1611,20 +1611,20 @@ void Main_Window::draw_program_counter()
   if (player->has_no_song) report::last_pc = 0;
   else report::last_pc = (int)player->spc_emu()->pc(); 
   sprintf(tmpbuf, PC_STR, report::last_pc);
-  sdlfont_drawString2(screen, PC_X, PC_Y, tmpbuf); // Colors::white);
+  sdlfont_drawString2(::render->screen, PC_X, PC_Y, tmpbuf); // Colors::white);
 }
 
 void Main_Window::draw_voices_pitchs()
 {
   tmp = i+10; // y 
-  sdlfont_drawString2(screen, MEMORY_VIEW_X+520, tmp, "Voices pitches:"); // Colors::white);
+  sdlfont_drawString2(::render->screen, MEMORY_VIEW_X+520, tmp, "Voices pitches:"); // Colors::white);
   tmp += 9;
   
   tmprect.x=MEMORY_VIEW_X+520;
   tmprect.y=tmp;
-  tmprect.w=screen->w-tmprect.x;
+  tmprect.w=::render->screen->w-tmprect.x;
   tmprect.h=8*8;
-  SDL_FillRect(screen, &tmprect, Colors::Interface::color[Colors::Interface::Type::bg]);
+  SDL_FillRect(::render->screen, &tmprect, Colors::Interface::color[Colors::Interface::Type::bg]);
   tmprect.w=5;
   tmprect.h = 5;
   for (i=0; i<8; i++)
@@ -1664,7 +1664,7 @@ void Main_Window::draw_voices_pitchs()
     int x =MEMORY_VIEW_X+520;
     int y = tmp+ (i*8);
     sprintf(tmpbuf,"%d:",i);
-    sdlfont_drawString(screen, x, y, tmpbuf, *cur_color);
+    sdlfont_drawString(::render->screen, x, y, tmpbuf, *cur_color);
     if (is_first_run && i == 0)
     {
       Screen::voice0pitch.x = x;
@@ -1673,11 +1673,11 @@ void Main_Window::draw_voices_pitchs()
     
     tmprect.y= tmp+(i*8)+2;
     tmprect.x = MEMORY_VIEW_X+520+18;
-    tmprect.x += pitch*(screen->w-tmprect.x-20)/((0x10000)>>2);
+    tmprect.x += pitch*(::render->screen->w-tmprect.x-20)/((0x10000)>>2);
     if (voice_control.is_muted(i))
-      SDL_FillRect(screen, &tmprect, Colors::nearblack);
+      SDL_FillRect(::render->screen, &tmprect, Colors::nearblack);
     else
-      SDL_FillRect(screen, &tmprect, Colors::Interface::color[Colors::Interface::Type::text_fg]);
+      SDL_FillRect(::render->screen, &tmprect, Colors::Interface::color[Colors::Interface::Type::text_fg]);
     
   }
 }
@@ -1686,18 +1686,18 @@ void Main_Window::draw_voices_volumes()
 {
   tmp += 9*8;
 
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "Voices volumes:");
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520+(16*8), tmp, "Left", Colors::Interface::color[Colors::Interface::Type::voice_volume_left]);      
+  sdlfont_drawString(::render->screen, MEMORY_VIEW_X+520, tmp, "Voices volumes:");
+  sdlfont_drawString(::render->screen, MEMORY_VIEW_X+520+(16*8), tmp, "Left", Colors::Interface::color[Colors::Interface::Type::voice_volume_left]);      
 
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520+(20*8)+4, tmp, "Right", Colors::Interface::color[Colors::Interface::Type::voice_volume_right]);
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520+(26*8), tmp, "Gain", Colors::Interface::color[Colors::Interface::Type::voice_gain]);
+  sdlfont_drawString(::render->screen, MEMORY_VIEW_X+520+(20*8)+4, tmp, "Right", Colors::Interface::color[Colors::Interface::Type::voice_volume_right]);
+  sdlfont_drawString(::render->screen, MEMORY_VIEW_X+520+(26*8), tmp, "Gain", Colors::Interface::color[Colors::Interface::Type::voice_gain]);
   tmp += 9;
 
   tmprect.x=MEMORY_VIEW_X+520;
   tmprect.y=tmp;
-  tmprect.w=screen->w-tmprect.x;
+  tmprect.w=::render->screen->w-tmprect.x;
   tmprect.h=10*11;
-  SDL_FillRect(screen, &tmprect, Colors::Interface::color[Colors::Interface::Type::bg]);   
+  SDL_FillRect(::render->screen, &tmprect, Colors::Interface::color[Colors::Interface::Type::bg]);   
   tmprect.w=2;
   tmprect.h=2;
 
@@ -1741,7 +1741,7 @@ void Main_Window::draw_voices_volumes()
     else 
       color = &Colors::voice[i];
 
-    sdlfont_drawString(screen, x, y, tmpbuf, *color);
+    sdlfont_drawString(::render->screen, x, y, tmpbuf, *color);
     if (is_first_run && i == 0)
     {
       Screen::voice0vol.x = x;
@@ -1754,28 +1754,28 @@ void Main_Window::draw_voices_volumes()
       Colors::subtractp(Color1,0x60);
       Colors::subtractp(Color2,0x60);
     }
-    sdlfont_drawString2c(screen, MEMORY_VIEW_X+520 + 8, tmp + (i*10), tmpbuf, *Color1, *Color2);
+    sdlfont_drawString2c(::render->screen, MEMORY_VIEW_X+520 + 8, tmp + (i*10), tmpbuf, *Color1, *Color2);
     
 
     tmprect.x = MEMORY_VIEW_X+520+18;
     tmprect.y = tmp+(i*10);
-    tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
+    tmprect.w = left_vol*(::render->screen->w-tmprect.x-20)/255;
 
     
     // L volume
     if (voice_control.is_muted(i))
       color = &Colors::dark_yellow;
     else color = &Colors::yellow;
-    SDL_FillRect(screen, &tmprect, *color);
+    SDL_FillRect(::render->screen, &tmprect, *color);
 
     tmprect.x = MEMORY_VIEW_X+520+18;
-    tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
+    tmprect.w = right_vol*(::render->screen->w-tmprect.x-20)/255;
     tmprect.y = tmp+(i*10)+3;
     
     if (voice_control.is_muted(i))
       color = &Colors::dark_cyan;
     else color = &Colors::cyan;
-    SDL_FillRect(screen, &tmprect, *color);
+    SDL_FillRect(::render->screen, &tmprect, *color);
 
     // Gain needs customization
     if (!(gain & 0x80))
@@ -1790,16 +1790,16 @@ void Main_Window::draw_voices_volumes()
 
 
     tmprect.x = MEMORY_VIEW_X+520+18;
-    tmprect.w = gain * (screen->w-tmprect.x-20)/255;
+    tmprect.w = gain * (::render->screen->w-tmprect.x-20)/255;
     tmprect.y = tmp+(i*10)+6;
     if (voice_control.is_muted(i))
     {
       Uint8 r1,g1,b1;
-      SDL_GetRGB(c3, screen->format, &r1, &b1, &g1);
-      c3 = SDL_MapRGB(screen->format,r1-0x60,g1-0x60,b1-0x60);
+      SDL_GetRGB(c3, ::render->screen->format, &r1, &b1, &g1);
+      c3 = SDL_MapRGB(::render->screen->format,r1-0x60,g1-0x60,b1-0x60);
     }
 
-    SDL_FillRect(screen, &tmprect, c3);
+    SDL_FillRect(::render->screen, &tmprect, c3);
   }
 }
 
@@ -1849,21 +1849,21 @@ void Main_Window::draw_main_volume()
     }
 
     sprintf(tmpbuf,"M");
-    sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf);
+    sdlfont_drawString(::render->screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf);
     sprintf(tmpbuf,"\x1");
-    sdlfont_drawString2c(screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, *Color1, *Color2);
+    sdlfont_drawString2c(::render->screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, *Color1, *Color2);
 
     tmprect.x = MEMORY_VIEW_X+520+18;
     tmprect.y = tmp+(i*10)+1;
-    tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
+    tmprect.w = left_vol*(::render->screen->w-tmprect.x-20)/255;
 
-    SDL_FillRect(screen, &tmprect, Colors::yellow);
+    SDL_FillRect(::render->screen, &tmprect, Colors::yellow);
 
     tmprect.x = MEMORY_VIEW_X+520+18;
-    tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
+    tmprect.w = right_vol*(::render->screen->w-tmprect.x-20)/255;
     tmprect.y = tmp+(i*10)+4;
     
-    SDL_FillRect(screen, &tmprect, Colors::cyan);
+    SDL_FillRect(::render->screen, &tmprect, Colors::cyan);
   }
 }
 
@@ -1923,20 +1923,20 @@ void Main_Window::draw_echo_volume()
       leftbarvol_col=&Colors::dark_yellow;
       rightbarvol_col=&Colors::dark_cyan;
     }
-    sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, *c);
+    sdlfont_drawString(::render->screen, MEMORY_VIEW_X+520, tmp + (i*10), tmpbuf, *c);
     sprintf(tmpbuf,"\x1");
-    sdlfont_drawString2c(screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, Color1, Color2);
+    sdlfont_drawString2c(::render->screen, MEMORY_VIEW_X+520+8, tmp + (i*10), tmpbuf, Color1, Color2);
     tmprect.x = MEMORY_VIEW_X+520+18;
     tmprect.y = tmp+(i*10)+1;
-    tmprect.w = left_vol*(screen->w-tmprect.x-20)/255;
+    tmprect.w = left_vol*(::render->screen->w-tmprect.x-20)/255;
 
-    SDL_FillRect(screen, &tmprect, *leftbarvol_col);
+    SDL_FillRect(::render->screen, &tmprect, *leftbarvol_col);
 
     tmprect.x = MEMORY_VIEW_X+520+18;
-    tmprect.w = right_vol*(screen->w-tmprect.x-20)/255;
+    tmprect.w = right_vol*(::render->screen->w-tmprect.x-20)/255;
     tmprect.y = tmp+(i*10)+4;
     
-    SDL_FillRect(screen, &tmprect, *rightbarvol_col);
+    SDL_FillRect(::render->screen, &tmprect, *rightbarvol_col);
   }
 }
 
@@ -1952,12 +1952,12 @@ void Main_Window::draw_mouseover_hexdump()
 
   tmp += i*10 + 8;
   Screen::locked.y = tmp;
-  sdlfont_drawString(screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -");
+  sdlfont_drawString(::render->screen, MEMORY_VIEW_X+520, tmp, "  - Mouseover Hexdump -");
   if (locked()) {
     
-    sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, LOCKED_STR, Colors::Interface::color[Colors::Interface::Type::lock]);
+    sdlfont_drawString(::render->screen, MEMORY_VIEW_X+520+24*8, tmp, LOCKED_STR, Colors::Interface::color[Colors::Interface::Type::lock]);
   } else {
-    sdlfont_drawString(screen, MEMORY_VIEW_X+520+24*8, tmp, "      ", Colors::Interface::color[Colors::Interface::Type::lock]);
+    sdlfont_drawString(::render->screen, MEMORY_VIEW_X+520+24*8, tmp, "      ", Colors::Interface::color[Colors::Interface::Type::lock]);
   }
   
   tmp+=9;
@@ -1975,7 +1975,7 @@ void Main_Window::draw_mouseover_hexdump()
       int p = MEMORY_VIEW_X+520;
       
       sprintf(tmpbuf, "%04X: ", cut_addr);
-      sdlfont_drawString(screen, p, tmp, tmpbuf);
+      sdlfont_drawString(::render->screen, p, tmp, tmpbuf);
       p += 6*8;
 
       for (int j=0; j<8; j++) {
@@ -1984,7 +1984,7 @@ void Main_Window::draw_mouseover_hexdump()
         Uint32 color;
 
         idx += ((cut_addr+j) % 256)<<3;
-        color = SDL_MapRGB(screen->format, 
+        color = SDL_MapRGB(::render->screen->format, 
             0x7f + (report::memsurface.data[idx]>>1), 
             0x7f + (report::memsurface.data[idx+1]>>1), 
             0x7f + (report::memsurface.data[idx+2]>>1)
@@ -2030,7 +2030,7 @@ void Main_Window::draw_mouseover_hexdump()
 
         st++;
 
-        sdlfont_drawString(screen, p, tmp, tmpbuf, color);
+        sdlfont_drawString(::render->screen, p, tmp, tmpbuf, color);
         p+= 2*8 + 4;
       }
       
@@ -2043,18 +2043,18 @@ void Main_Window::draw_mouseover_hexdump()
 
 void Main_Window::draw_porttool()
 {
-  sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+8, " APU:");
-  sdlfont_drawString(screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:");
+  sdlfont_drawString(::render->screen, PORTTOOL_X, PORTTOOL_Y+8, " APU:");
+  sdlfont_drawString(::render->screen, PORTTOOL_X, PORTTOOL_Y+16, "SNES:");
 
   if (mode == MODE_EDIT_APU_PORT)
     sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", port_tool.tmp[0], port_tool.tmp[1], port_tool.tmp[2], port_tool.tmp[3]);    
   else 
     sprintf(tmpbuf, " -%02X+ -%02X+ -%02X+ -%02X+", port_tool.portdata[0], port_tool.portdata[1], port_tool.portdata[2], port_tool.portdata[3]);  
   
-  sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf);
+  sdlfont_drawString(::render->screen, PORTTOOL_X + (8*5), PORTTOOL_Y+8, tmpbuf);
   
   sprintf(tmpbuf, "  %02X   %02X   %02X   %02X", IAPURAM[0xf4], IAPURAM[0xf5], IAPURAM[0xf6], IAPURAM[0xf7]);   
-  sdlfont_drawString(screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf);
+  sdlfont_drawString(::render->screen, PORTTOOL_X + (8*5), PORTTOOL_Y+16, tmpbuf);
 }
 
 void Main_Window::draw_time_and_echo_status(int *x/*=0*/, int *y/*=0*/)
@@ -2076,11 +2076,11 @@ void Main_Window::draw_time_and_echo_status(int *x/*=0*/, int *y/*=0*/)
       (int(player->emu()->tell()/1000)/60),
       (int((player->emu()->tell()/1000))%60),
       song_time/60, song_time%60);
-  sdlfont_drawString(screen, xx, yyy, tmpbuf); yyy+=CHAR_HEIGHT;
+  sdlfont_drawString(::render->screen, xx, yyy, tmpbuf); yyy+=CHAR_HEIGHT;
 
 
   sprintf(tmpbuf, "Echo....: %s", player->spc_emu()->is_echoing() ? "On " : "Off"); 
-  sdlfont_drawString(screen, xx, yyy, tmpbuf); 
+  sdlfont_drawString(::render->screen, xx, yyy, tmpbuf); 
   if (is_first_run)
   {
     echo_on_x = xx + (strlen(tmpbuf)-3)*CHAR_WIDTH;
@@ -2120,7 +2120,7 @@ void Main_Window::update_window_title()
   sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
       game, g_cur_entry+1, g_cfg.num_files, player->track_info().song,
       seconds / 60, seconds % 60 );
-  SDL_SetWindowTitle(sdlWindow, title);
+  SDL_SetWindowTitle(::render->sdlWindow, title);
 }
 
 
@@ -2143,7 +2143,7 @@ void Main_Window::draw_track_tag()
 
   
   if (!is_first_run)
-    SDL_FillRect(screen, &r, Colors::Interface::color[Colors::Interface::Type::bg]);
+    SDL_FillRect(::render->screen, &r, Colors::Interface::color[Colors::Interface::Type::bg]);
 
   //fprintf(stderr, "comment = %s\n", tag.comment);
   //fprintf(stderr, "path = %s\nsong = %s\ngame = %s\ndumper = %s\ncomment = %s")
@@ -2163,7 +2163,7 @@ void Main_Window::draw_track_tag()
   y += CHAR_HEIGHT;
   
   //sprintf(tmpbuf, "Filename: %s", path);
-  //sdlfont_drawString(screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT*2;
+  //sdlfont_drawString(::render->screen, INFO_X, y, tmpbuf); y+=CHAR_HEIGHT*2;
   
   Scroll_Tag::compute(tag.game, &scroll_tags.game, 1000);
   Scroll_Tag::compute(tag.song, &scroll_tags.song, 1200);
@@ -2172,7 +2172,7 @@ void Main_Window::draw_track_tag()
   Scroll_Tag::compute(tag.comment, &scroll_tags.comment, 1800);
 
   sprintf(tmpbuf, "Game....: %s", tag.game);
-  sdlfont_drawString(screen, INFO_X, y, tmpbuf); 
+  sdlfont_drawString(::render->screen, INFO_X, y, tmpbuf); 
   if (is_first_run)
   {
     scroll_tags.game.rect.x = INFO_X + strlen("Game....: ")*CHAR_WIDTH;
@@ -2180,7 +2180,7 @@ void Main_Window::draw_track_tag()
   }
   y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Title...: %s", tag.song);
-  sdlfont_drawString(screen, INFO_X, y, tmpbuf); 
+  sdlfont_drawString(::render->screen, INFO_X, y, tmpbuf); 
   if (is_first_run)
   {
     scroll_tags.song.rect.x = INFO_X + strlen("Game....: ")*CHAR_WIDTH;
@@ -2188,7 +2188,7 @@ void Main_Window::draw_track_tag()
   }
   y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Composer: %s", tag.author);
-  sdlfont_drawString(screen, INFO_X, y, tmpbuf); 
+  sdlfont_drawString(::render->screen, INFO_X, y, tmpbuf); 
   if (is_first_run)
   {
     scroll_tags.author.rect.x = INFO_X + strlen("Game....: ")*CHAR_WIDTH;
@@ -2197,7 +2197,7 @@ void Main_Window::draw_track_tag()
   y+=CHAR_HEIGHT*2;
 
   sprintf(tmpbuf, "Dumper..: %s", tag.dumper);
-  sdlfont_drawString(screen, INFO_X, y, tmpbuf); 
+  sdlfont_drawString(::render->screen, INFO_X, y, tmpbuf); 
   if (is_first_run)
   {
     scroll_tags.dumper.rect.x = INFO_X + strlen("Game....: ")*CHAR_WIDTH;
@@ -2205,7 +2205,7 @@ void Main_Window::draw_track_tag()
   }
   y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Comment.: %s", tag.comment);
-  sdlfont_drawString(screen, INFO_X, y, tmpbuf); 
+  sdlfont_drawString(::render->screen, INFO_X, y, tmpbuf); 
   if (is_first_run)
   {
     scroll_tags.comment.rect.x = INFO_X + strlen("Game....: ")*CHAR_WIDTH;
@@ -2214,10 +2214,10 @@ void Main_Window::draw_track_tag()
   y+=CHAR_HEIGHT*2;
 
   sprintf(tmpbuf, "Ignore tag time: %s", g_cfg.ignoretagtime ? "Yes" : "No");
-  sdlfont_drawString2(screen, INFO_X, y, tmpbuf);
+  sdlfont_drawString2(::render->screen, INFO_X, y, tmpbuf);
 
   sprintf(tmpbuf, "Default time...: %d:%02d", g_cfg.defaultsongtime/60, g_cfg.defaultsongtime%60);
-  sdlfont_drawString2(screen, INFO_X, y, tmpbuf);
+  sdlfont_drawString2(::render->screen, INFO_X, y, tmpbuf);
   
   if (is_first_run)
   {

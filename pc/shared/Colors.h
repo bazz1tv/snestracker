@@ -1,8 +1,8 @@
 #pragma once
 
 #include "SDL.h"
-#include "Render_Context.h"
-struct Colors : public Render_Context
+#include "Render.h"
+struct Colors
 {
   //Colors(SDL_Surface *cscreen);
   //static SDL_Surface *screen;
@@ -34,7 +34,7 @@ struct Colors : public Render_Context
   static Uint32 colorscale[12];
   static Uint32 voice[8];
 
-  static void precompute(SDL_Surface *cscreen);
+  static void precompute(SDL_Surface *screen);
   // belongs in color namespace
   static Uint32 subtract(Uint32 *c, Uint8 subval);
   static void subtractp(Uint32 *c, Uint8 subval);

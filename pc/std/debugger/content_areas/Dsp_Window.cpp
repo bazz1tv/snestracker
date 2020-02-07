@@ -205,6 +205,7 @@ void Dsp_Window::init_gen_dsp_clickable(char *str, int &x, int &i)
 
 void Dsp_Window::run()
 {
+  SDL_Surface *screen = ::render->screen;
   BaseD::check_time();
 
   #define GENERAL_DSP_STR "General DSP"
@@ -753,15 +754,16 @@ outx.: $FF    outx.: $FF    outx.: $FF    outx.: $FF
 
   if (mode == MODE_EDIT_ADDR)
   {
-    cursor.draw(screen, Colors::green);
+    cursor.draw(::render->screen, Colors::green);
   }
 
   // Display all DSP registers
   //sprintf(tmpbuf, "%s")
-  SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
-  SDL_RenderClear(sdlRenderer);
-  SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-  SDL_RenderPresent(sdlRenderer);
+  SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels,
+                                      ::render->screen->pitch);
+  SDL_RenderClear(::render->sdlRenderer);
+  SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
+  SDL_RenderPresent(::render->sdlRenderer);
 }
 
 int Dsp_Window::receive_event(SDL_Event &ev)

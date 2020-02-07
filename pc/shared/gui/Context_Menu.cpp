@@ -16,7 +16,7 @@ bool Context_Menu::is_activated()
 bool Context_Menu::toggle_activate()
 {
   is_active = !is_active;
-  if (!is_active) SDL_FillRect(BaseD::screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
+  if (!is_active) SDL_FillRect(::render->screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
   return is_active;
 }
 void Context_Menu::activate()
@@ -26,7 +26,7 @@ void Context_Menu::activate()
 
 void Context_Menu::deactivate()
 {
-  SDL_FillRect(BaseD::screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
+  SDL_FillRect(::render->screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
   is_active=false;
 }
 

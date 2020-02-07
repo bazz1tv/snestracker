@@ -2,7 +2,7 @@
 #define __SLIDER_H__
 
 #include "globals.h"
-#include "Render_Context.h"
+#include "Render.h"
 #include "gui/Fill_Rect.h"
 
 // The Slider is a primitive graphics object that allows linear adjustments of values
@@ -31,7 +31,7 @@
 
 
 template <class T>
-struct Slider : public Render_Context
+struct Slider
 {
 public:
 	bool is_db_slider=false;

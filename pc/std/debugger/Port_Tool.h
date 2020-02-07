@@ -1,13 +1,13 @@
 #pragma once
 #include "gui/cursor.h"
 #include "gme/player/Music_Player.h"
-#include "Render_Context.h"
+#include "Render.h"
 #include "Screen.h"
 
 // 8 = tile width
 
 //extern Music_Player* player;
-struct Port_Tool : public Render_Context
+struct Port_Tool
 {
   Port_Tool(Cursor *cursor);
 
@@ -41,6 +41,4 @@ struct Port_Tool : public Render_Context
   void inc_cursor_pos();
 
   void dec_cursor_pos();
-
-
 };

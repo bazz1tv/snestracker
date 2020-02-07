@@ -6,8 +6,9 @@
 #include "App_Settings.h"
 #include "Audio.h"
 #include "gui/Cursors.h"
+#include "Render.h"
 
-class App : public Render_Context
+class App
 {
 public:
   App(int &argc, char **argv, int samplerate=44100);
