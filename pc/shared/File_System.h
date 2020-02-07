@@ -30,3 +30,5 @@ struct File_System
   char *tmp_path=NULL;
   char *tmp_path_quoted=NULL;
 };
+
+extern File_System *file_system;

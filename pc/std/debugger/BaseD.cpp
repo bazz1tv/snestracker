@@ -4,7 +4,7 @@ SDL_Surface *BaseD::screen;
 uint8_t *BaseD::IAPURAM;*/
 #include "Main_Window.h"
 #include "Menu_Bar.h"
-#include "File_System_Context.h"
+#include "File_System.h"
 
 char BaseD::tmpbuf[500];
 
@@ -258,16 +258,16 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       fprintf(stderr, "rsn || 7z found\n");
       char *mkdir_cmd = (char*) SDL_malloc(sizeof(char) * 
         (strlen(MKDIR_CMD)+
-          strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name+1)+1+5)) );
+          strlen(::file_system->tmp_path_quoted)+((ext-name+1)+1+5)) );
 
       char *dir_quoted = (char*) SDL_malloc(sizeof(char) * 
-        (strlen(File_System_Context::file_system->tmp_path_quoted)+((ext-name+1)+2+5)) );
+        (strlen(::file_system->tmp_path_quoted)+((ext-name+1)+2+5)) );
 
       strcpy(mkdir_cmd, MKDIR_CMD);
       char *dirp = mkdir_cmd + strlen(MKDIR_CMD);
       char *sp = mkdir_cmd + strlen(MKDIR_CMD);
-      strcpy(sp, File_System_Context::file_system->tmp_path_quoted);
-      sp += strlen(File_System_Context::file_system->tmp_path_quoted) - 1;
+      strcpy(sp, ::file_system->tmp_path_quoted);
+      sp += strlen(::file_system->tmp_path_quoted) - 1;
       // folderp is the game folder inside the tmp dir
       for (char *folderp = name; folderp != ext; folderp++)
       {
@@ -279,8 +279,8 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       *sp = 0;
       strcpy (dir_quoted, dirp);
       //strcat(dir_quoted, "/");
-      fprintf(stderr, "data_path_quoted = '%s'\n", File_System_Context::file_system->data_path_quoted);
-      fprintf(stderr, "tmp_path_quoted = '%s'\n", File_System_Context::file_system->tmp_path_quoted);
+      fprintf(stderr, "data_path_quoted = '%s'\n", ::file_system->data_path_quoted);
+      fprintf(stderr, "tmp_path_quoted = '%s'\n", ::file_system->tmp_path_quoted);
       fprintf(stderr, "mkdircmd = '%s'\n", mkdir_cmd);
       fprintf(stderr, "dir = %s\n", dir_quoted);
 #ifdef _WIN32
@@ -300,14 +300,14 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       // data_path_quoted + "unrar e " + path + " " + dir_quoted
       char *full_extract_cmd = (char*) SDL_malloc(sizeof(char) * 
         (
-          strlen(File_System_Context::file_system->data_path_quoted) +
+          strlen(::file_system->data_path_quoted) +
           strlen(extract_cmd.str()) + 3 + strlen(path) + 2 + strlen(dir_quoted) + 1 +10
         ));
 #ifdef _WIN32
       full_extract_cmd[0] = '"';
-      strcpy(full_extract_cmd + 1, File_System_Context::file_system->data_path_quoted);
+      strcpy(full_extract_cmd + 1, ::file_system->data_path_quoted);
 #else
-      strcpy(full_extract_cmd, File_System_Context::file_system->data_path_quoted);
+      strcpy(full_extract_cmd, ::file_system->data_path_quoted);
 #endif
       full_extract_cmd[strlen(full_extract_cmd)-1] = 0;
       strcat(full_extract_cmd, extract_cmd.str());

@@ -2,7 +2,7 @@
 #include "Screen.h"
 #include "My_Nfd.h"
 #include "BaseD.h"
-#include "File_System_Context.h"
+#include "File_System.h"
 
 #define WIDTH 500
 #define HEIGHT 125
@@ -115,7 +115,7 @@ int Spc_Export_Window::save_file(void *data)
 
 
     BaseD::player->spc_emu()->can_has_apu()->save_spc(out);
-    File_System_Context::file_system->write_file( outPath, sew->state, Snes_Spc::spc_file_size );
+    ::file_system->write_file( outPath, sew->state, Snes_Spc::spc_file_size );
     // restore player state
     BaseD::player->pause(was_paused, false, false);
     sew->hide();

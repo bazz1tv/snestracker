@@ -1,5 +1,6 @@
 #include "File_System.h"
-#include "File_System_Context.h"
+
+File_System *file_system=NULL;
 
 static void error( const char* str )
 {
@@ -9,8 +10,7 @@ static void error( const char* str )
 
 File_System::File_System()
 {
-  File_System_Context::file_system = this;
-  //this->init();
+  ::file_system = this;
 }
 
 #define PFREE(path) if (path) SDL_free(path)
