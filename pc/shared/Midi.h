@@ -33,3 +33,5 @@ struct Midi
   jdkmidi::MIDIParser parser;
   jdkmidi::MIDIMessage msg;
 };
+
+extern Midi *midi;
