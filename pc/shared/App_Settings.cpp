@@ -7,9 +7,9 @@
 #include <cstring>
 #include "utility.h"
 #include "Audio.h"
+#include "DEBUGLOG.h"
 
 int App_Settings::MAXLINE=600;
-#define DEBUGLOG printf
 App_Settings *app_settings;
 
 App_Settings::App_Settings(File_System *file_system) : file_system(file_system)
