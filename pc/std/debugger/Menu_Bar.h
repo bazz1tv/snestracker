@@ -6,25 +6,18 @@
 #include "Main_Window.h"
 #include "Options_Window.h"
 #include "gui/Spc_Export_Window.h"
+
 struct Menu_Bar
 {
-  
-  //Menu_Bar();
   bool is_first_run=true;
   void draw(SDL_Surface *screen);
   int receive_event(SDL_Event &ev);
   
-  //bool is_first_run=false;
-  // QUIT - PAUSE - RESTART - PREV - NEXT - WRITE MASK - MM - DM - INSTR"
-
-           
-
   struct File_Context
   {
     // Take parent class here
     File_Context() : menu(menu_items, true)
     {
-      
     }
 
     static int open_spc(void *data);
@@ -38,14 +31,13 @@ struct Menu_Bar
     {
       {"file",        true,  NULL,  NULL},
       {"open SPC",    true,  open_spc,  NULL},
-      //{"close SPC",   true,  NULL,  NULL},
-      //{"write mask",  true,  NULL,  NULL},
       {"export SPC", true, export_spc, NULL},
       {"export WAV", true, export_wav, NULL},
       {"quit",        true,  quit,  NULL},
       {"",            false, NULL,  NULL}
     };
   };
+
   struct Edit_Context
   {
     // Take parent class here
@@ -69,10 +61,8 @@ struct Menu_Bar
 
   struct Track_Context
   {
-    // Take parent class here
     Track_Context() : menu(menu_items, true)
     {
-      //menu_items[1].clickable_text.data = &menu_items[1].clickable_text.str;
     }
 
     void draw(SDL_Surface *screen);
@@ -81,7 +71,6 @@ struct Menu_Bar
     static int restart_current_track (void *data);
     static int prev_track (void *data);          
     static int next_track (void *data); 
-    //static int test(void *data) { fprintf(stderr, "test"); return 0; } 
     static int create_profile(void *data);
 
     Expanding_List menu;
@@ -97,6 +86,7 @@ struct Menu_Bar
       {"",                false,  NULL,                   NULL}
     };
   };
+
   struct Window_Context
   {
     Window_Context() : menu(menu_items, true)
@@ -104,7 +94,6 @@ struct Menu_Bar
       
     }
 
-    
     static int restore_window_size(void *nada);
 
     Expanding_List menu;
@@ -112,21 +101,22 @@ struct Menu_Bar
     {
       {"Window",        true,  NULL,  NULL},
       {"Original Size", true,  restore_window_size, NULL},
-      {"-------------", true, NULL, NULL},
+      {"-------------", true,  NULL, NULL},
       {"Memory",        true,  BaseD::switch_to_memory,  NULL},
       {"DSP",           true,  BaseD::switch_to_dsp,  NULL},
       {"Instrument",    true,  BaseD::switch_to_instrument,  NULL},
       {"",              false, NULL,  NULL}
     };
   };
+
   enum
-    {
-      EVENT_INACTIVE=0,
-      EVENT_ACTIVE=1,
-      EVENT_FILE,
-      EVENT_TRACK,
-      EVENT_WINDOW
-    };
+  {
+    EVENT_INACTIVE=0,
+    EVENT_ACTIVE=1,
+    EVENT_FILE,
+    EVENT_TRACK,
+    EVENT_WINDOW
+  };
 
   struct Context_Menus
   {
@@ -157,14 +147,14 @@ struct Menu_Bar
 
   struct Tabs
   {
-    SDL_Rect rect;
-    void preload(int x, int y);
     Tabs() : mem(3,3, "Mem", BaseD::switch_to_memory, NULL, true),
       dsp(3,3, "DSP", BaseD::switch_to_dsp, NULL),
       instr(3,3, "INSTR", BaseD::switch_to_instrument, NULL)
     {
-
     }
+
+    void preload(int x, int y);
+
     bool check_mouse_and_execute(int x, int y)
     {
       if (mem.check_mouse_and_execute(x,y)) 
@@ -190,12 +180,14 @@ struct Menu_Bar
       }
       return false;
     }
-    Tab mem, dsp, instr;
+
     void draw ();
     static int memory(void *data);
     static int DSP(void *data);
     static int Instrument(void *data);
 
+    SDL_Rect rect;
+    Tab mem, dsp, instr;
     int logged_grand_mode=BaseD::GrandMode::MAIN;
   } tabs;
 

@@ -4,9 +4,6 @@
 #include "Render.h"
 struct Colors
 {
-  //Colors(SDL_Surface *cscreen);
-  //static SDL_Surface *screen;
-
   struct Interface
   {
     enum Type
@@ -25,7 +22,7 @@ struct Colors
       SIZEOF
     };
     static Uint32 color[Type::SIZEOF];
-  };// interface;
+  };
 
   static Uint32 white, black, cyan, magenta, yellow, red;
   static Uint32 green, blue, nearblack;

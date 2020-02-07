@@ -12,15 +12,13 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
 int main(int argc, char **argv)
 {
   Render render;
-	::render = &render;
+  ::render = &render;
 
-	init_sdl(&::render->sdlWindow, &::render->sdlRenderer, 
-    &::render->sdlTexture, &::render->screen, SCREEN_WIDTH, SCREEN_HEIGHT);
+  init_sdl(&render.sdlWindow, &render.sdlRenderer,
+    &render.sdlTexture, &render.screen, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-  ::render->windowID = SDL_GetWindowID(::render->sdlWindow);
-  //SDL_SetWindowSize(::render->sdlWindow, 1024+100, 768+100);
+  render.windowID = SDL_GetWindowID(render.sdlWindow);
 
-  //fprintf(stderr, "screen = %d\n", ::render->screen);
   App app(argc, argv, 32000);
   app.run();
 }

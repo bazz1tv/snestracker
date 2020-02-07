@@ -52,7 +52,6 @@ Debugger::~Debugger()
 
 void Debugger::run()
 {
-  //SDL_CaptureMouse(SDL_TRUE);
   // gotta call this once to initialize important stuffz
   main_window.check_paths_and_reload();
   main_window.one_time_draw();

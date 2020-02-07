@@ -31,7 +31,7 @@ void Spc_Export_Window::show()
   one_time_draw();
 
   SDL_StartTextInput();
-  //SDL_ShowWindow(sdlWindow);
+
   if (!state)
     state = (unsigned char *) SDL_malloc(sizeof(unsigned char) * Snes_Spc::spc_file_size);
 

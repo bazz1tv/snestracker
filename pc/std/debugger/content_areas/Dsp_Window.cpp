@@ -856,7 +856,7 @@ int Dsp_Window::receive_event(SDL_Event &ev)
             uint32_t i=0;
             Uint16 addr = current_edit_addr;
             
-            i = Utility::hexchar_to_int((char)scancode);  
+            i = Utility::scancode_to_hex(scancode);
             fprintf(stderr, "i = %d", i);
             if (highnibble)
             {

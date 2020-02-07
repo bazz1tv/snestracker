@@ -4,10 +4,6 @@
 
 const int SCREEN_WIDTH=800;
 const int SCREEN_HEIGHT=700;
-//djust for 800x600 -> 1024x768
-
-
-
 
 const int PORTTOOL_X= 540 + SCREEN_X_OFFSET;
 const int PORTTOOL_Y= 380 + 40 + SCREEN_Y_OFFSET;

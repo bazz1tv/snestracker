@@ -2,17 +2,17 @@
 #include "utility.h"
 #include <assert.h>
 
-Clickable_Rect::Clickable_Rect(int (*action)(void *data)/*=NULL*/, void *data/*=NULL*/) : 
-action(action), data(data)
+Clickable_Rect::Clickable_Rect(int (*action)(void *data)/*=NULL*/,
+	void *data/*=NULL*/) : action(action), data(data)
 {
 
 }
 
 Clickable_Rect::Clickable_Rect(int x, int y, int w, int h, 
   int (*action)(void *data)/*=NULL*/, void *data/*=NULL*/) : 
-rect({x,y,w,h}), 
-action(action),
-data(data)
+    rect({x,y,w,h}),
+    action(action),
+    data(data)
 {
 
 }

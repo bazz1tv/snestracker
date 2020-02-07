@@ -28,8 +28,6 @@ App::App(int &argc, char **argv, int samplerate/*=44100*/)
 
 void App::run()
 {
-
-  // For now..
   debugger->run();
 }
 

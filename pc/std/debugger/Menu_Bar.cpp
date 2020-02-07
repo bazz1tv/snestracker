@@ -114,9 +114,10 @@ int Menu_Bar::File_Context::open_spc(void *data)
 
 int Menu_Bar::File_Context::export_spc(void *data)
 {
-  //BaseD::spc_export_window->init();
-  BaseD::spc_export_window->show();
-  
+  // Do not show the window if the player has nothing loaded
+  if (!::player->has_no_song)
+    BaseD::spc_export_window->show();
+
   return 0;
 }
 
