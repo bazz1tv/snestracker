@@ -13,10 +13,6 @@
   #define PATH_SEP '/'
 #endif
 
-// TEMPORARY LOCATION
-/* If str is not NULL, prints it and exits program, otherwise returns */
-void error( const char* str );
-
 struct File_System
 {
   File_System();
