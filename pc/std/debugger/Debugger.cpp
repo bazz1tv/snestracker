@@ -62,6 +62,9 @@ void Debugger::run()
   // exp is changed from BaseD
   while (!quitting)
   {
+    Uint32 elapsed;
+    Uint32 ticks = SDL_GetTicks();
+
     exp->run();
     exp->draw();
 
@@ -72,18 +75,14 @@ void Debugger::run()
     }
     
     handle_events();
-    SDL_Delay( 1000 / 100 );
-    
+
+    elapsed = SDL_GetTicks() - ticks;
+    if (elapsed < 16)
+      SDL_Delay( 16 - elapsed );
+
   }
   
   sub_window_experience = NULL;
-  for (int i=0; i < NUM_WINDOWS; i++)
-  {
-    //window_map[i]->hide();
-    // DO THIS because otherwise the hidden windows will blink
-    // quickly on exit
-    //window_map[i]->~Window();
-  }
 
   if (!player->is_paused() && player->track_started)
   {

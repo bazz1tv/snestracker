@@ -493,8 +493,6 @@ void BaseD::update_track_tag()
 
 void BaseD::start_track( int track, const char* path )
 {
-  //paused = false;
-  //if (!player->is_paused())
   handle_error( player->start_track( track - 1 ) );
   // update window title with track info
   
@@ -546,12 +544,8 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
     path = g_cfg.playlist[g_cur_entry];
   }
 
-
-
-  //DEBUGLOG("path = %d\n", path);
   if (path == NULL)
   {
-    //using_playlist = false;
     player->has_no_song = true;
     return; 
   }
@@ -572,24 +566,20 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
     // skip path sep
     g_real_filename++;
   } 
-  //main_window->reload();
+
   // Load file
   BaseD::path = path;
   handle_error( player->load_file( path ) );
   
   IAPURAM = player->spc_emu()->ram();
-  //Memory::IAPURAM = IAPURAM;  
-  // report::memsurface.init
   
   report::memsurface.clear();
 
   memset(report::used, 0, sizeof(report::used));
   memset(report::used2, 0, sizeof(report::used2));
-  //if (!mouseover_hexdump_area.address)mouseover_hexdump_area.address =0;
   report::last_pc = -1;
   player->mute_voices(voice_control.muted);
   start_track( 1, path );
-//  voice_control.was_keyed_on = 0;
   
   player->ignore_silence();
 
@@ -608,26 +598,16 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
       game++; // skip path separator
   }
 
-  //main_window->is_onetime_draw_necessary=true;
   update_track_tag();
   if (grand_mode == MAIN)
     main_window->draw_track_tag();
 
   char title [512];
-  //if (using_playlist)
-  //{
-    sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
+  sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
         game, g_cur_entry+1, g_cfg.num_files, player->track_info().song,
         seconds / 60, seconds % 60 );
-  /*}
-  else
-  {
-    sprintf( title, "%s: %d/%d %s (%ld:%02ld)",
-        game, 1, 1, player->track_info().song,
-        seconds / 60, seconds % 60 );
-  }*/
-  SDL_SetWindowTitle(::render->sdlWindow, title);
 
+  SDL_SetWindowTitle(::render->sdlWindow, title);
 }
 
 void BaseD::toggle_pause()
@@ -692,9 +672,6 @@ void BaseD::prev_track25()
 
 void BaseD::next_track()
 {
-  
-  //player->fade_out();
-  //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry++;
   if (g_cur_entry>=g_cfg.num_files) { g_cur_entry = 0; }
   reload();

@@ -7,10 +7,12 @@ bool Tab::check_mouse_and_execute(int x, int y, void *newdata/*=NULL*/)
 {
   return Clickable_Rect::check_mouse_and_execute(x,y,newdata);
 }
+
 int Tab::horiz_pixel_length()
 {
   return str.length()*CHAR_WIDTH + (pad_w * 2);
 }
+
 void Tab::draw(SDL_Surface *screen/*=Render_Context::screen*/)
 {
   Uint32 *bg_color, *fg_color;
