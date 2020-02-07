@@ -178,27 +178,26 @@ int BaseD::Clickable::dec_tempo(void *nada)
 #define DEC7Z_TOOLNAME "7zDec"
 #endif
 
-namespace fs = ::boost::filesystem;
+namespace bfs = ::boost::filesystem;
 // return the filenames of all files that have the specified extension
 // in the specified directory and all subdirectories
-void get_file_list_ext(const fs::path& root, const std::string& ext, std::vector<fs::path>& ret)
+void get_file_list_ext(const bfs::path& root, const std::string& ext, std::vector<bfs::path>& ret)
 {
-    if(!fs::exists(root) || !fs::is_directory(root)) return;
+    if(!bfs::exists(root) || !bfs::is_directory(root)) return;
 
     DEBUGLOG("!@#!@# ");
-    fs::recursive_directory_iterator it(root);
-    fs::recursive_directory_iterator endit;
+    bfs::recursive_directory_iterator it(root);
+    bfs::recursive_directory_iterator endit;
 
     while(it != endit)
     {
-        if(fs::is_regular_file(*it) && it->path().extension() == ext)
+        if(bfs::is_regular_file(*it) && it->path().extension() == ext)
         {
           ret.push_back(it->path().filename());
           std::cout << it->path().filename();
         }
         ++it;
     }
-
 }
 
 void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/, 
