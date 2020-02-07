@@ -23,5 +23,4 @@ public:
   Audio *audio;
 
 private:
-
 };
