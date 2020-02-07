@@ -111,7 +111,7 @@ void Debugger::handle_events()
         {
           case SDL_WINDOWEVENT_RESIZED:
           {
-
+            break;
             int w = ev.window.data1;
             int h = ev.window.data2;
 

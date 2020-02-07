@@ -11,7 +11,7 @@ Window::Window(int width, int height, const char *title)
 void Window::init()
 {
   this->destroy();
-  SDL_CreateWindowAndRenderer(rect.w, rect.h, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN /*| SDL_WINDOW_BORDERLESS*/, &sdlWindow, &sdlRenderer);
+  SDL_CreateWindowAndRenderer(rect.w, rect.h, SDL_WINDOW_HIDDEN /*| SDL_WINDOW_BORDERLESS*/, &sdlWindow, &sdlRenderer);
   if (sdlWindow == NULL || sdlRenderer == NULL)
   {
     fprintf(stderr, "FCK\n");
