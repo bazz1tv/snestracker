@@ -1,7 +1,4 @@
 #include "BaseD.h"
-/*Music_Player *BaseD::player;
-SDL_Surface *BaseD::screen;
-uint8_t *BaseD::IAPURAM;*/
 #include "Main_Window.h"
 #include "Menu_Bar.h"
 #include "File_System.h"
@@ -14,7 +11,6 @@ BaseD::Profile * BaseD::tmp_profile=NULL;
 
 My_Nfd BaseD::nfd;
 int BaseD::grand_mode=GrandMode::MAIN;
-//int BaseD::submode=0;
 BaseD::Cfg BaseD::g_cfg;// = { 0,0,0,0,0,0,DEFAULT_SONGTIME,0,0,0,0,0,NULL };
 
 bool BaseD::is_first_run=true;
@@ -30,8 +26,6 @@ int BaseD::song_time;
 track_info_t BaseD::tag;
 char * BaseD::g_real_filename=NULL;
 char BaseD::now_playing[1024];
-//bool BaseD::is_onetime_draw_necessary=false;
-
 
 Experience * BaseD::exp=NULL;
 Main_Window * BaseD::main_window=NULL;
@@ -80,15 +74,12 @@ void BaseD::Hack_Spc::pause_spc()
 void BaseD::Hack_Spc::restore_spc(bool resume/*=true*/)
 {
   // restore_pc()
-  //uint16_t *pc_ptr = (uint16_t*)&IAPURAM[report::last_pc];
   if (!pc_ptr || !is_started) return;
   player->pause(1, true, false);
   *pc_ptr = pc_backup;
   if (resume) player->pause(0);
   pc_ptr = NULL;
   is_started=false;
-  //BaseD::song_time = song_time_backup;
-  //track_info_backup = track_info_backup2;
 }
 
 BaseD::Profile::Profile(const char* spc_filename)
@@ -99,36 +90,33 @@ BaseD::Profile::Profile(const char* spc_filename)
   BaseD::reload();
   BaseD::player->pause(0, false, false);
   BaseD::player->pause(1, false, false);
-  //BaseD::player->restart_track();
   // Set Volume to 0
   player->set_gain_db(Music_Player::min_gain_db, true);
-  // get pointer to spc_file_t
   // open the SPC File
-  //DEBUGLOG("spc file path = %s\n", BaseD::g_cfg.playlist[BaseD::g_cur_entry]);
-  //const char *spc_filename = BaseD::g_cfg.playlist[BaseD::g_cur_entry];
-  // need to open a file
   SDL_RWops *orig_spc_file = SDL_RWFromFile(spc_filename, "rb");
   if (orig_spc_file == NULL)
   {
-    sprintf(BaseD::tmpbuf, "Warning: Unable to open file %s!\n %s", spc_filename, SDL_GetError() );
+    sprintf(BaseD::tmpbuf, "Warning: Unable to open file %s!\n %s",
+                            spc_filename, SDL_GetError() );
+
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                    "Could not open FILE!",
                    BaseD::tmpbuf,
                    NULL);
-    //return -1;
     is_profiling=false;
     delete this;
   }
 
   if (SDL_RWread(orig_spc_file, orig_spc_state, Snes_Spc::spc_file_size, 1) == 0)
   {
-    sprintf(BaseD::tmpbuf, "Warning: Unable to read file %s!\n %s", spc_filename, SDL_GetError() );
+    sprintf(BaseD::tmpbuf, "Warning: Unable to read file %s!\n %s",
+                            spc_filename, SDL_GetError() );
+
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                    "Could not read file!",
                    BaseD::tmpbuf,
                    NULL);
     SDL_RWclose(orig_spc_file);
-    //return -1;
     is_profiling=false;
     delete this;
   }
@@ -137,19 +125,10 @@ BaseD::Profile::Profile(const char* spc_filename)
 
 void BaseD::Profile::process()
 {
-  //BaseD::player->pause(0, false); // no fade
   /* Skip several seconds */
   BaseD::player->spc_emu()->skip(120 * Snes_Spc::sample_rate * 2);
 
-  /*elapsed_seconds = (int((BaseD::player->emu()->tell()/1000)));
-  if (elapsed_seconds == seconds_covered+1)
-  {
-    //BaseD::player->pause(1, false, false);
-    DEBUGLOG("seconds elapsed: %d\n", elapsed_seconds);
-    seconds_covered = elapsed_seconds;
-  }*/
   seconds_covered++;
-  //DEBUGLOG("f\n");
   if (seconds_covered == 1)
   {
     BaseD::player->set_gain_db(old_gain_db);
@@ -227,7 +206,9 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
 {
   struct
   {
-    std::string cmd[2] = { UNRAR_TOOLNAME "\" e -y \"", DEC7Z_TOOLNAME "\" e \""};
+    std::string cmd[2] = { UNRAR_TOOLNAME "\" e -y \"",
+                           DEC7Z_TOOLNAME "\" e \"" };
+
     unsigned index=0;
     const char * str() { return cmd[index].c_str(); }
   } extract_cmd;
