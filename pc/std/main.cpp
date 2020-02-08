@@ -39,8 +39,9 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
   }
   atexit(SDL_Quit);
 
-  SDL_CreateWindowAndRenderer(width, height,
-    SDL_WINDOW_HIDDEN /*| SDL_WINDOW_BORDERLESS*/, sdlWindow, sdlRenderer);
+  *sdlWindow = SDL_CreateWindow("snes tracker", SDL_WINDOWPOS_CENTERED,
+          SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_HIDDEN);
+  *sdlRenderer = SDL_CreateRenderer(*sdlWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
   if (*sdlWindow == NULL || *sdlRenderer == NULL)
   {
@@ -57,10 +58,15 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
                                       0x0000FF00,
                                       0x000000FF,
                                       0xFF000000);
+  SDL_SetColorKey(*screen, SDL_TRUE, 0);
+  SDL_SetSurfaceBlendMode(*screen, SDL_BLENDMODE_BLEND);
+
   *sdlTexture = SDL_CreateTexture(*sdlRenderer,
-                                          SDL_PIXELFORMAT_RGB888,
+                                          SDL_PIXELFORMAT_ARGB8888,
                                           SDL_TEXTUREACCESS_STREAMING,
                                           width, height);
+
+  SDL_SetTextureBlendMode(*sdlTexture, SDL_BLENDMODE_BLEND);
 
   if (*screen == NULL || *sdlTexture == NULL)
   {

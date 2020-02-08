@@ -7,6 +7,7 @@ Uint32 Colors::dark_magenta, Colors::dark_cyan, Colors::dark_yellow;
 Uint32 Colors::gray;
 Uint32 Colors::colorscale[12];
 Uint32 Colors::voice[8];
+Uint32 Colors::transparent;
 
 Uint32 Colors::Interface::color[Colors::Interface::Type::SIZEOF];
 //Uint32 Colors::Interface::text_bg, Colors::Interface::text_fg;
@@ -60,6 +61,8 @@ void Colors::precompute(SDL_Surface *screen)
   voice[6] = red;
   // gray
   voice[7] = SDL_MapRGB(screen->format, 0,250,154);
+
+  transparent = SDL_MapRGBA(screen->format, 0,0,0,0);
 
 
   Interface::color[Interface::Type::lock] = red;

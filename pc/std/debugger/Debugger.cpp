@@ -95,7 +95,6 @@ void Debugger::run()
     }
     
     handle_events();
-    SDL_Delay(15);
   }
 
   sub_window_experience = NULL;

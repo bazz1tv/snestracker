@@ -30,6 +30,7 @@ struct Colors
   static Uint32 gray;
   static Uint32 colorscale[12];
   static Uint32 voice[8];
+  static Uint32 transparent;
 
   static void precompute(SDL_Surface *screen);
   // belongs in color namespace

@@ -6,7 +6,7 @@
 #include "Notes.h"
 #include "platform.h"
 #include "Menu_Bar.h"
-
+#include "utility.h"
 
 
 
@@ -159,10 +159,11 @@ void Instrument_Window::draw()
   draw_menu_bar();
   
   SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
+  Utility::set_render_color_rgb(::render->sdlRenderer, Colors::black);
   SDL_RenderClear(::render->sdlRenderer);
-  SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
   adsrgraph.draw_bg();
   adsrgraph.draw_border();
+  SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
   SDL_RenderPresent(::render->sdlRenderer);
 
 }

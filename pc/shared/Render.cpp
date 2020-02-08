@@ -1,5 +1,7 @@
 #include "Render.h"
 #include "Screen.h"
+#include "Colors.h"
+#include "utility.h"
 
 Render *render;
 
@@ -34,6 +36,7 @@ void Render::clear_screen(SDL_Surface *screen/*=screen*/,
 {
   SDL_FillRect(screen, NULL, 0);
   SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
+  Utility::set_render_color_rgba(sdlRenderer, Colors::transparent);
   SDL_RenderClear(sdlRenderer);
   SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
   SDL_RenderPresent(sdlRenderer);

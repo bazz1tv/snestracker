@@ -60,7 +60,7 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
     currently_selected_item = highlighted_item;
     currently_selected_item_index = highlighted_item_index;
   }
-  SDL_FillRect(::render->screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
+  SDL_FillRect(::render->screen, &created_at, Colors::transparent);
   currently_selected_item = &items[0];
   highlighted_item = &items[0];
   highlighted_item_index=0;
