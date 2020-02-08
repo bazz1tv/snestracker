@@ -139,11 +139,13 @@ void BaseD::Profile::process()
 
 int BaseD::switch_to_memory(void *data)
 {
+  BaseD::Hack_Spc::restore_spc(false);
   BaseD::switch_mode(BaseD::GrandMode::MAIN);
   return 0;
 }
 int BaseD::switch_to_dsp(void *data)
 {
+  BaseD::Hack_Spc::restore_spc(false);
   BaseD::switch_mode(BaseD::GrandMode::DSP_MAP);
   return 0;
 }
@@ -294,9 +296,6 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       strcat(full_extract_cmd, path);
       strcat(full_extract_cmd, "\" ");
       strcat(full_extract_cmd, dir_quoted);
-      // int i = strlen(full_extract_cmd);
-      // full_extract_cmd[i++] = '"';
-      // full_extract_cmd[i++] = 0;
       fprintf(stderr, "full_extract_cmd = '%s'\n", full_extract_cmd);
 #ifdef _WIN32
       fflush(NULL);
@@ -359,10 +358,7 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       }
       BaseD::nfd.rsn_spc_paths = tmp;
       BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths] = (char*) SDL_calloc(strlen(path)+3, sizeof(char));
-      //strcpy(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], "\"");
       strcpy(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], path);
-      //strcat(BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths], "\"");
-      //fprintf(stderr, "path = %s\n", BaseD::nfd.rsn_spc_paths[BaseD::nfd.num_rsn_spc_paths]);
       BaseD::nfd.num_rsn_spc_paths++;
     }
   }
@@ -411,64 +407,17 @@ bool BaseD::check_time()
 
 int BaseD::menu_bar_events(SDL_Event &ev)
 {
-  /*switch (ev.type)
-  {
-    case SDL_MOUSEBUTTONDOWN:*/
-    /*if (
-      ((ev.button.y >screen->h-12) && (ev.button.y<screen->h)))
-    {
-      int x = ev.button.x / CHAR_WIDTH;
-      if (x>=1 && x<=4) { printf ("penis5\n"); quitting=true; } // exit
-      if (x>=CHAR_WIDTH && x<=12) { 
-        toggle_pause();
-      } // pause
-
-      if (x>=16 && x<=22) {  // restart
-        restart_current_track();
-      }
-
-      if (x>=26 && x<=29) {  // prev
-        SDL_PauseAudio(1);
-        prev_track();
-      }
-
-      if (x>=33 && x<=36) { // next
-        next_track();
-      }
-
-      if (x>=41 && x<=50) { // write mask
-        //write_mask(packed_mask);
-      }
-
-      if (x>=53 && x<=54) { // Main
-        //write_mask(packed_mask);
-        //mode = MODE_DSP_MAP;
-        switch_mode(GrandMode::MAIN);
-      }
-      if (x>=58 && x<=59) { // DSP MAP
-        //write_mask(packed_mask);
-        //mode = MODE_DSP_MAP;
-        switch_mode(GrandMode::DSP_MAP);
-      }
-      if (x>=63 && x<=67) { // Instr
-        //write_mask(packed_mask);
-        //mode = MODE_DSP_MAP;
-        switch_mode(GrandMode::INSTRUMENT);
-      }
-    }*/
-  //}
   return menu_bar->receive_event(ev);
 }
 
 void BaseD::update_track_tag()
 {
-  //update_window_title();
   tag = player->track_info();
 
 
   /* decide how much time the song will play */
   if (!g_cfg.ignoretagtime) {
-    song_time = (int)tag.length / 1000; //atoi((const char *)tag.seconds_til_fadeout);
+    song_time = (int)tag.length / 1000;
     if (song_time <= 0) {
       song_time = g_cfg.defaultsongtime;
     }

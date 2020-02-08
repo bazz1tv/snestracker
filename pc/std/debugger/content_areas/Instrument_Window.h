@@ -68,10 +68,8 @@ public Experience
   AdjustableUD octave;
   AdjustableLR voice;
   
-  int scancode=0; // there's a reason for saving the scancode.. not sure if it's purposed anymore
+  int scancode=0;
   
-  //track_info_t track_info_backup, track_info_backup2; // cause of pass by reference
-
   struct
   {
     int x,y;

@@ -26,7 +26,8 @@ void Context_Menu::activate()
 
 void Context_Menu::deactivate()
 {
-  SDL_FillRect(::render->screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
+  SDL_FillRect(::render->screen, &created_at,
+               Colors::Interface::color[Colors::Interface::Type::bg]);
   is_active=false;
 }
 
@@ -120,7 +121,7 @@ void Context_Menu::draw(SDL_Surface *screen)
   SDL_FillRect(screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
 
   // find highlighted strip
-    // this hsould go in its own function called from SDL_MOUSEMOTION event
+  // this hsould go in its own function called from SDL_MOUSEMOTION event
   // any given item will be at created_at.x, created_at.y + 2 + (index*TILE_HEIGHT)
 
   // draw highlight'd strip
@@ -133,14 +134,14 @@ void Context_Menu::draw(SDL_Surface *screen)
       
       if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
       {
-        //fprintf(stderr,"DERP1");
-        if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
+        if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) &&
+            mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
         {
-          //fprintf(stderr,"DERP2");
           // draw the highlighter
           if (should_highlight_hover)
           {
-            SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
+            SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT),
+                          created_at.w, TILE_HEIGHT};
             SDL_FillRect(screen, &r, Colors::magenta);
             bg_color = Colors::magenta;
           }
@@ -151,13 +152,17 @@ void Context_Menu::draw(SDL_Surface *screen)
       {
         if (&items[i] == currently_selected_item )
         {
-          SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
+          SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT),
+                        created_at.w, TILE_HEIGHT};
           SDL_FillRect(screen, &r, Colors::magenta);
           bg_color = Colors::magenta;
         }
       }
       // draw this nigga
-      sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + (drawn*TILE_HEIGHT), items[i].clickable_text.str.c_str(), Colors::white, bg_color, false);
+      sdlfont_drawString(screen, created_at.x+1,
+                         created_at.y + 1 + (drawn*TILE_HEIGHT),
+                         items[i].clickable_text.str.c_str(),
+                         Colors::white, bg_color, false);
       drawn++;
     }
     i++;
@@ -188,17 +193,9 @@ void Context_Menu::preload(int &x, int &y, bool use_cache)
       i++;
     }
   }
-  //if (is_static) visible_items--;
+
   created_at.w = greatest_length+TILE_WIDTH*3;
   created_at.h = visible_items*TILE_HEIGHT + TILE_HEIGHT/2;
-
-
-
-  // readjust existing items?
-  /*for ( auto &i : items ) 
-  {
-    std::cout << i.str << std::endl;
-  }*/
 }
 
 void Context_Menu::push(char *str)

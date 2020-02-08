@@ -41,30 +41,10 @@ void Instrument_Window::run()
     BaseD::Hack_Spc::is_started = false;
   }
 
-  //int current_voice = voice.n;
-  //voice.update_adsr_vals();
   adsr1 = player->spc_read_dsp(0x10*voice.n + dsp_reg::adsr1);
   adsr2 = player->spc_read_dsp(0x10*voice.n + dsp_reg::adsr2);
 
   adsr_context_menus.update(adsr1, adsr2);
-
-  //Uint8 envx = player->spc_read_dsp(0x10*voice.n + dsp_reg::envx);
-  /*if (envx)
-  {
-    if (!started)
-    {
-      
-      started = true;
-      mytime = SDL_GetTicks();
-    }
-  }
-  else if (started)
-  {
-    fprintf(stderr, "envx: %d\n", SDL_GetTicks() - mytime);
-    started = false;
-  }*/
-  
-  
 
   if (is_first_run)
   {
@@ -91,7 +71,6 @@ void Instrument_Window::one_time_draw()
     x += TILE_WIDTH;
     voice.n_x = x;
     voice.n_y = y;
-    //y+=TILE_HEIGHT;
     x += TILE_WIDTH;
     voice.right_arrow.rect.x = x;
     voice.right_arrow.rect.y = y;
@@ -128,7 +107,6 @@ void Instrument_Window::one_time_draw()
     y+= CHAR_HEIGHT;
     adsr_context_menus.attack_context.menu.preload(voice.n_x, y);
     
-    //
     decay.x = attack.x + (CHAR_WIDTH*(4+strlen("Attack")));
     decay.y = save_y;
     sprintf(tmpbuf, "Decay");
@@ -151,26 +129,18 @@ void Instrument_Window::one_time_draw()
 
 void Instrument_Window::draw()
 {
-  /*if (!start_stop.is_started)
-  {
-    start_stop.startc.draw(Colors::red);
-  }
-  else start_stop.stopc.draw(Colors::red);*/
   voice.label.draw(Colors::gray);
   voice.left_arrow.draw(Colors::white, true, false, true);
-    sprintf(tmpbuf, "%d", voice.n);
-    sdlfont_drawString(::render->screen, voice.n_x, voice.n_y, tmpbuf, Colors::voice[voice.n]);
+  sprintf(tmpbuf, "%d", voice.n);
+  sdlfont_drawString(::render->screen, voice.n_x, voice.n_y, tmpbuf, Colors::voice[voice.n]);
   voice.right_arrow.draw(Colors::white); // Vflip
 
   octave.label.draw(Colors::gray);
   octave.up_arrow.draw(Colors::white);
-    sprintf(tmpbuf, "%d", octave.n);
-    sdlfont_drawString(::render->screen, octave.n_x, octave.n_y, tmpbuf, Colors::magenta);
+  sprintf(tmpbuf, "%d", octave.n);
+  sdlfont_drawString(::render->screen, octave.n_x, octave.n_y, tmpbuf, Colors::magenta);
   octave.down_arrow.draw(Colors::white, true, true); // flipV
 
-
-  //SDL_FillRect(::render->screen, &attack_context.menu.created_at, Colors::black);
-  
   adsr_context_menus.draw(::render->screen);
   draw_menu_bar();
   
@@ -250,10 +220,6 @@ int Instrument_Window::receive_event(SDL_Event &ev)
   {
     
     case SDL_QUIT:
-      /*if (!g_cfg.nosound) {
-        SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-      }*/
-      printf ("penis4\n");
       BaseD::quitting = true;
       break;
     case SDL_MOUSEMOTION:
@@ -262,19 +228,13 @@ int Instrument_Window::receive_event(SDL_Event &ev)
       }
       break;
     case SDL_KEYUP:
-      //scancode = 0;
       // should really have a list of SDLK for keyboard playing
       if (ev.key.keysym.sym != SDLK_LEFT && ev.key.keysym.sym != SDLK_RIGHT)
         if (scancode == ev.key.keysym.sym) 
           keyoff_current_voice();
-      //SDL_Delay(1000);
-      
-      //fprintf(stderr, "DERP");
     break;
     case SDL_KEYDOWN:
     {
-      //if (scancode == ev.key.keysym.sym)
-        //break;
       if (ev.key.repeat != 0)
       break;
       scancode = ev.key.keysym.sym;
@@ -292,7 +252,6 @@ int Instrument_Window::receive_event(SDL_Event &ev)
       }
       if (ev.key.keysym.mod & (CMD_CTRL_KEY))
       {
-        //is_shift_pressed=true;
         switch (scancode)
         {
           case SDLK_LEFT:
@@ -331,7 +290,6 @@ int Instrument_Window::receive_event(SDL_Event &ev)
             BaseD::Hack_Spc::is_started=false;
             next_track25();
           }
-          //goto reload;
           this->reload();
         break;
 
@@ -446,7 +404,6 @@ int Instrument_Window::receive_event(SDL_Event &ev)
           play_pitch(31);
         break;
 
-        //
         case SDLK_UP:
           inc_octave();
         break;
@@ -467,7 +424,6 @@ int Instrument_Window::receive_event(SDL_Event &ev)
     {
       if (ev.user.code == UserEvents::mouse_react)
       {
-        //SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
       }
       else if (ev.user.code == UserEvents::play_pitch)
       {
@@ -491,21 +447,6 @@ int Instrument_Window::receive_event(SDL_Event &ev)
         return;
       }
       
-      /*if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &start_stop.startc.rect))
-      {
-        if (!start_stop.is_started)
-        {
-          pause_spc();
-          start_stop.is_started = true;
-        }
-        else
-        {
-          restore_spc();
-          start_stop.is_started = false;
-        }
-      }*/
-
-
       if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &voice.right_arrow.rect))
       {
         inc_voice();
@@ -548,24 +489,6 @@ int Instrument_Window::receive_event(SDL_Event &ev)
 
         if (x>=41 && x<=50) { // write mask
           //write_mask(packed_mask);
-        }
-
-        if (x>=53 && x<=54) { // Main
-          //write_mask(packed_mask);
-          //mode = MODE_DSP_MAP;
-          restore_spc(false);
-          switch_mode(GrandMode::MAIN);
-        }
-        if (x>=58 && x<=59) { // DSP MAP
-          //write_mask(packed_mask);
-          //mode = MODE_DSP_MAP;
-          restore_spc(false);
-          switch_mode(GrandMode::DSP_MAP);
-        }
-        if (x>=63 && x<=67) { // Instr
-          //write_mask(packed_mask);
-          //mode = MODE_DSP_MAP;
-          //switch_mode(GrandMode::INSTRUMENT);
         }
       }
     }

@@ -1,11 +1,16 @@
 #pragma once
 #include "SDL.h"
 #include "utility.h"
-#include "types.h"
 
 // GUI stuffz
 #include "gui/Expanding_List.h"
 
+struct AdsrMap
+{
+  int i;
+  const char *str;
+  float ms;
+};
 
 
 // ADSR Stuffz
@@ -34,10 +39,10 @@ struct ADSR
   static const int SUSTAIN_LEVEL_MAP_SIZE = 8;
   static const int SUSTAIN_RELEASE_MAP_SIZE = 0x20;
 
-  static const IntToCharStar attack_map[ATTACK_MAP_SIZE];
-  static const IntToCharStar decay_map[SUSTAIN_LEVEL_MAP_SIZE][DECAY_MAP_SIZE];
-  static const IntToCharStar sustain_level_map[SUSTAIN_LEVEL_MAP_SIZE];
-  static const IntToCharStar sustain_release_map[SUSTAIN_LEVEL_MAP_SIZE][SUSTAIN_RELEASE_MAP_SIZE];
+  static const AdsrMap attack_map[ATTACK_MAP_SIZE];
+  static const AdsrMap decay_map[SUSTAIN_LEVEL_MAP_SIZE][DECAY_MAP_SIZE];
+  static const AdsrMap sustain_level_map[SUSTAIN_LEVEL_MAP_SIZE];
+  static const AdsrMap sustain_release_map[SUSTAIN_LEVEL_MAP_SIZE][SUSTAIN_RELEASE_MAP_SIZE];
 
   struct Attack_Context
   {
