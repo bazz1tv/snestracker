@@ -46,6 +46,9 @@ void Instrument_Window::run()
 
   adsr_context_menus.update(adsr1, adsr2);
 
+  // Update our lovely new graph system
+
+
   if (is_first_run)
   {
     one_time_draw();
@@ -125,6 +128,17 @@ void Instrument_Window::one_time_draw()
     sprintf(tmpbuf, "Sustain Release");
     sdlfont_drawString(::render->screen, sustain_release.x, sustain_release.y, tmpbuf, Colors::gray);
     adsr_context_menus.sustain_release_context.menu.preload(sustain_release.x, y);
+
+    // Build graph below this. Just draw the bounding rect
+    adsrgraph.bounds.y = y + CHAR_HEIGHT * 2;
+    adsrgraph.bounds.x = attack.x;
+    adsrgraph.bounds.w = 400;
+    adsrgraph.bounds.h = 200;
+    adsrgraph.fg_color = Colors::green;
+    adsrgraph.bg_color = Colors::gray;
+    adsrgraph.border_color = Colors::white;
+    adsrgraph.draw_bg();
+    adsrgraph.draw_border();
 }
 
 void Instrument_Window::draw()
@@ -144,7 +158,13 @@ void Instrument_Window::draw()
   adsr_context_menus.draw(::render->screen);
   draw_menu_bar();
   
-  ::render->sdl_draw();
+  SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
+  SDL_RenderClear(::render->sdlRenderer);
+  SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
+  adsrgraph.draw_bg();
+  adsrgraph.draw_border();
+  SDL_RenderPresent(::render->sdlRenderer);
+
 }
 
 int Instrument_Window::receive_event(SDL_Event &ev)
@@ -463,33 +483,6 @@ int Instrument_Window::receive_event(SDL_Event &ev)
       else if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &octave.down_arrow.rect))
       {
         dec_octave();
-      }
-
-      if (
-      ((ev.button.y >::render->screen->h-12) && (ev.button.y<::render->screen->h)))
-      {
-        int x = ev.button.x / CHAR_WIDTH;
-        if (x>=1 && x<=4) { printf ("penis5\n"); quitting=true; } // exit
-        if (x>=CHAR_WIDTH && x<=12) { 
-          toggle_pause();
-        } // pause
-
-        if (x>=16 && x<=22) {  // restart
-          restart_current_track();
-        }
-
-        if (x>=26 && x<=29) {  // prev
-          SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-          prev_track();
-        }
-
-        if (x>=33 && x<=36) { // next
-          next_track();
-        }
-
-        if (x>=41 && x<=50) { // write mask
-          //write_mask(packed_mask);
-        }
       }
     }
     break;

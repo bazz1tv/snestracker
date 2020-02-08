@@ -10,7 +10,7 @@
 #include "utility.h"
 #include "ADSR.h"
 #include "gui/Expanding_List.h"
-
+#include "gui/Graph.h"
 
 
 
@@ -90,5 +90,12 @@ public Experience
   int submode=NONE;
   
   bool is_first_run=true;
+
+  struct AdsrGraph : Graph
+  {
+
+  };
+
+  AdsrGraph adsrgraph;
 };
 
