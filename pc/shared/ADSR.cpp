@@ -1,7 +1,6 @@
 #include "ADSR.h"
 
 
-
 bool ADSR::Context_Menus::check_left_click_activate(int &x, int &y)
 {
   static bool first=true;
@@ -480,12 +479,6 @@ Uint8 ADSR::reverse_attack_index(Uint8 i)
   return i & 0x0f;
 }
 
-/*const char * ADSR::get_decay_str(Uint8 adsr1)   
-{
-  Uint8 decay = (adsr1 & 0x70) >> 4;
-  return ADSR::decay_map[decay].str;
-}*/
-
 int ADSR::get_decay_index(Uint8 adsr1)   
 {
   return (adsr1 & 0x70) >> 4;
@@ -510,11 +503,6 @@ Uint8 ADSR::reverse_sustain_level_index(Uint8 i)
   return (i << 5) & 0xe0;
 }
 
-/*const char * ADSR::get_sustain_release_str(Uint8 adsr2)   
-{
-  Uint8 sustain_release = (adsr2 & 0x1f);
-  return sustain_release_map[sustain_release].str;
-}*/
 int ADSR::get_sustain_release_index(Uint8 adsr2)   
 {
   return (adsr2 & 0x1f);
