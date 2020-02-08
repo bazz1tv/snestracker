@@ -43,9 +43,7 @@ void Main_Window::draw()
   {
     time_cur = SDL_GetTicks();
 
-    
-
-    //do_scroller(time_cur - time_last);
+    do_scroller(time_cur - time_last);
     sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
 
     fade_arrays();      
@@ -61,7 +59,6 @@ void Main_Window::draw()
     if (player->has_no_song) 
     {
       draw_menu_bar();
-      //SDL_UpdateRect(::render->screen, 0, 0, 0, 0);
       SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
       SDL_RenderClear(::render->sdlRenderer);
       SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
@@ -82,10 +79,6 @@ void Main_Window::draw()
 
     scroll_track_tags();
     
-
-
-    
-    
     if (mode == MODE_EDIT_MOUSE_HEXDUMP)
     {
       mouseover_hexdump_area.draw_cursor(::render->screen, Colors::green);
@@ -104,7 +97,6 @@ void Main_Window::draw()
       }
       else report::restore_color(mouseover_hexdump_area.addr_being_edited);
     }
-    
 
     if (mouse::show)
     {
@@ -117,13 +109,10 @@ void Main_Window::draw()
 
     if (main_memory_area.context.menu.is_active)
     {
-      //draw_context.menu();
       main_memory_area.context.menu.draw(::render->screen);
     }
     draw_menu_bar();
     
-    
-    //SDL_UpdateRect(::render->screen, 0, 0, 0, 0);
     SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
     SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
     SDL_RenderClear(::render->sdlRenderer);
@@ -137,8 +126,7 @@ void Main_Window::draw()
     SDL_RenderPresent(::render->sdlRenderer);
     time_last = time_cur;
     if (g_cfg.nice) {  SDL_Delay(100); }
-    //SDL_Delay( 1000 / 100 );
-  } // if !g_cfg.novideo
+  }
   else
   {
     draw_mouse_address();
@@ -163,9 +151,6 @@ void Main_Window::check_quit(SDL_Event &ev)
   switch (ev.type)
   {
     case SDL_QUIT:
-    /*if (!g_cfg.nosound) {
-      SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-    }*/
     printf ("penis4\n");
     quitting = true;
     break;
@@ -176,9 +161,6 @@ void Main_Window::check_quit(SDL_Event &ev)
       if (!locked() && mode != MODE_EDIT_APU_PORT)
       {
         fprintf(stderr, "penis88\n");
-        /*if (!g_cfg.nosound) {
-          SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-        }*/
         quitting = true;
       }
       
@@ -208,8 +190,6 @@ int Main_Window::receive_event(SDL_Event &ev)
     bool b = tempo.slider->receive_event(ev);
     if (a || b) return;
   }
-  /*if (tempo.slider)
-    if (tempo.slider->receive_event(ev)) return;*/
   
   dblclick::check_event(&ev);
 
@@ -218,9 +198,6 @@ int Main_Window::receive_event(SDL_Event &ev)
     switch (ev.type)
     {
       case SDL_QUIT:
-      /*if (!g_cfg.nosound) {
-        SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-      }*/
       printf ("penis4\n");
       quitting = true;
       break;
@@ -272,10 +249,6 @@ int Main_Window::receive_event(SDL_Event &ev)
   switch (ev.type)
   {
     case SDL_QUIT:
-      /*if (!g_cfg.nosound) {
-        SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-      }*/
-      printf ("penis4\n");
       quitting = true;
       break;
     case SDL_MOUSEMOTION:
@@ -301,11 +274,10 @@ int Main_Window::receive_event(SDL_Event &ev)
             y -= MEMORY_VIEW_Y;
             x /= 2;
             y /= 2;
-            //set_addr(y*256+x);
             
             main_memory_area.mouse_addr = y*256+x;
             if (!locked()) {
-              mouseover_hexdump_area.set_addr(main_memory_area.mouse_addr); //_from_cursor(x,y);
+              mouseover_hexdump_area.set_addr(main_memory_area.mouse_addr);
             }
           }
         }
@@ -320,7 +292,6 @@ int Main_Window::receive_event(SDL_Event &ev)
       switch(scancode)
       {
         case SDLK_s:
-          //fprintf(stderr, "(%d,%d)\n", ev.motion.x, ev.motion.y);
           voice_control.checkmouse((Uint16&)mouse::x, (Uint16&)mouse::y, SDL_BUTTON_RIGHT); 
         break;
         case SDLK_UP:
@@ -338,24 +309,18 @@ int Main_Window::receive_event(SDL_Event &ev)
       }
       if (scancode == SDLK_k)
       {
-        //::render->screen_X_OFFSET--;
-        //player->spc_write_dsp(dsp_reg::koff,0xff);
       }
       else if (scancode == SDLK_l)
       {
-        //::render->screen_X_OFFSET++;
       }
       if (scancode == SDLK_n)
       {
-        //::render->screen_Y_OFFSET--;
-        //player->spc_write_dsp(dsp_reg::koff,0xff);
         static int val=0;
         val = !val;
         player->spc_write_dsp(dsp_reg::kon,val);
       }
       else if (scancode == SDLK_m)
       {
-        //::render->screen_Y_OFFSET++;
         static int val=0;
         val = !val;
         player->spc_write_dsp(dsp_reg::koff,val);
@@ -364,28 +329,10 @@ int Main_Window::receive_event(SDL_Event &ev)
       if (ev.key.keysym.sym == SDLK_u)
       {
         player->emu()->seek(10000);
-        //player->spc_write_dsp(dsp_reg::voice0_pitch_lo, 0xff);
-        //player->spc_write_dsp(dsp_reg::voice0_pitch_hi, 0x63);
-        /*player->spc_write_dsp(dsp_reg::eon, 0x1);
-        player->spc_write_dsp(dsp_reg::flg, 0x00);
-        player->spc_write_dsp(dsp_reg::esa, 0x50);
-        player->spc_write_dsp(dsp_reg::edl, 0x0f);
-        player->spc_write_dsp(dsp_reg::efb, 0x40);
-        player->spc_write_dsp(dsp_reg::evol_l, 127);
-        player->spc_write_dsp(dsp_reg::evol_r, 127);
-        player->spc_write_dsp(dsp_reg::c0, 0x7f);
-        player->spc_write_dsp(dsp_reg::kon,0x1);*/
-        //player->gain -= 0.1;
-        //fprintf(stderr, "gain = %f", player->gain, INT16_MIN, INT16_MAX);
-        //player->spc_write(0xf2, 0x4c);
-        //player->spc_write(0xf3, 0);
-        //player->spc_write(0xf3, 1);
       }
       else if (ev.key.keysym.sym == SDLK_i)
       {
         BaseD::switch_to_instrument(NULL);
-        //player->gain += 0.1;
-        //fprintf(stderr, "gain = %f", player->gain);
       }
       else if (scancode == SDLK_o)
       {
@@ -394,7 +341,6 @@ int Main_Window::receive_event(SDL_Event &ev)
       }
       else if (scancode == SDLK_SPACE)
       {
-        //fprintf(stderr, "pause ")
         BaseD::toggle_pause();
       }
       else if (scancode == SDLK_r)
@@ -412,8 +358,6 @@ int Main_Window::receive_event(SDL_Event &ev)
             voice_control.toggle_mute_all();
           if (i > 0 && i < 9)
             voice_control.toggle_mute(i); // channel num
-          //else
-            //voice_control.mute_all();
         }
 
         switch (scancode)
@@ -432,7 +376,6 @@ int Main_Window::receive_event(SDL_Event &ev)
             {
               next_track25();
             }
-            //goto reload;
             this->reload();
           break;
         }
@@ -463,8 +406,6 @@ int Main_Window::receive_event(SDL_Event &ev)
           mouseover_hexdump_area.submode = Mouse_Hexdump_Area::EASY_EDIT;
           // order matters .. call here: 
           lock();
-          //mouseover_hexdump_area.addr_being_edited = mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x
-          //mouseover_hexdump_area.res_x = 1; //mouseover_hexdump_area.address_remainder;
           
           mouseover_hexdump_area.cursor.start_timer();
         }
@@ -475,14 +416,6 @@ int Main_Window::receive_event(SDL_Event &ev)
             DEBUGLOG("eegbeb");
             unlock(); 
           }
-          /*else
-          {
-            fprintf(stderr, "penis2\n");
-            if (!g_cfg.nosound) {
-              SDL_PauseAudio(1);
-            }
-            quitting = true;
-          }*/
         }
       }
       else if (mode == MODE_EDIT_MOUSE_HEXDUMP)
@@ -490,7 +423,6 @@ int Main_Window::receive_event(SDL_Event &ev)
         int scancode = ev.key.keysym.sym;
         if (ev.key.keysym.mod & (CMD_CTRL_KEY))  // GUI in SDL2
         {
-          //fprintf(stderr, "EOO");
           if (scancode == SDLK_LEFT)
             prev_track();
           else if (scancode == SDLK_RIGHT)
@@ -504,9 +436,7 @@ int Main_Window::receive_event(SDL_Event &ev)
           ((scancode >= 'a') && (scancode <= 'f')) )
         {
           uint32_t i=0;
-          //int addr;
           Uint16 addr = mouseover_hexdump_area.addr_being_edited;
-          //fprintf(stderr, "Addr = %04x\n", addr);
           
           if ((scancode >= '0') && (scancode <= '9'))
             i = scancode - '0';
@@ -537,17 +467,14 @@ int Main_Window::receive_event(SDL_Event &ev)
           {
             i <<= 4;
             i &= 0xf0;
-            //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= 0x0f;
             mouseover_hexdump_area.tmp_ram &= 0x0f;
           }
           else
           {
             i &= 0x0f;
-            //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= 0xf0;
             mouseover_hexdump_area.tmp_ram &= 0xf0;
           }
 
-          //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] |= i;
           mouseover_hexdump_area.tmp_ram |= i;
 
           maybe_write_to_mem();
@@ -555,10 +482,6 @@ int Main_Window::receive_event(SDL_Event &ev)
           if (mouseover_hexdump_area.horizontal) mouseover_hexdump_area.inc_cursor_pos();
           
         }
-        /*else if (scancode == SDLK_SPACE)
-        {
-          mouseover_hexdump_area.inc_cursor_pos();
-        }*/
         else if (scancode == SDLK_TAB)
         {
           mouseover_hexdump_area.inc_cursor_pos();
@@ -571,7 +494,6 @@ int Main_Window::receive_event(SDL_Event &ev)
           while (i < (0x10000) )
           {
             player->spc_write(i-1, player->spc_read(i));
-            //IAPURAM[i-1] = IAPURAM[i];
             i++;
           }
           mouseover_hexdump_area.dec_cursor_pos();
@@ -585,7 +507,6 @@ int Main_Window::receive_event(SDL_Event &ev)
           while (i < (0x10000) )
           {
             player->spc_write(i, player->spc_read(i+1));
-            //IAPURAM[i] = IAPURAM[i+1];
             i++;
           }
           mouseover_hexdump_area.highnibble=1;
@@ -614,7 +535,6 @@ int Main_Window::receive_event(SDL_Event &ev)
         else if (scancode == SDLK_RETURN)
         {
           maybe_write_to_mem(true);
-          //exit_edit_mode();
         }
       }   
       else if (mode == MODE_EDIT_APU_PORT)
@@ -638,7 +558,6 @@ int Main_Window::receive_event(SDL_Event &ev)
           {
             i <<= 4;
             i &= 0xf0;
-            //IAPURAM[mouseover_hexdump_area.address+(mouseover_hexdump_area.res_y*8)+mouseover_hexdump_area.res_x] &= i;
             port_tool.tmp[port_tool.portnum] &= 0x0f;
           }
           else
@@ -651,10 +570,6 @@ int Main_Window::receive_event(SDL_Event &ev)
           
           if (port_tool.horizontal) port_tool.inc_cursor_pos();
         }
-        /*else if (scancode == SDLK_SPACE)
-        {
-          port_tool.inc_cursor_pos();
-        }*/
         else if (scancode == SDLK_TAB)
         {
           port_tool.inc_cursor_pos();
@@ -693,8 +608,6 @@ int Main_Window::receive_event(SDL_Event &ev)
           else
           {
             Uint8 tmp = port_tool.tmp[port_tool.portnum] + 1;
-            //tmp &= 0x0f;
-            //port_tool.tmp[port_tool.portnum] &= 0xf0;
             port_tool.tmp[port_tool.portnum] = tmp;
           }
         }
@@ -778,14 +691,10 @@ int Main_Window::receive_event(SDL_Event &ev)
               break;
             }
           }
-          
-         
 
           // order matters .. call here: 
           lock(1,0,0,res_x,res_y);
           mouseover_hexdump_area.highnibble = highnibble;
-          //mouseover_hexdump_area.res_x = res_x;
-          //mouseover_hexdump_area.res_y = res_y;
 
           
           if (mouseover_hexdump_area.res_y == 16) mouseover_hexdump_area.res_y = 15;
@@ -796,7 +705,6 @@ int Main_Window::receive_event(SDL_Event &ev)
             te->button.y >= PORTTOOL_Y && te->button.y < (PORTTOOL_Y + 16))
         {
           int x, y;
-          //x = te->button.x;
           x = te->button.x - (PORTTOOL_X + (CHAR_WIDTH*5));
           x /= 8;
 
@@ -819,8 +727,6 @@ int Main_Window::receive_event(SDL_Event &ev)
           y = te->button.y - PORTTOOL_Y;
           y /= 8;
 
-
-
           if (te->button.button == SDL_BUTTON_LEFT)
           {
             
@@ -833,7 +739,6 @@ int Main_Window::receive_event(SDL_Event &ev)
             switch (x)
             {
               // i think single click takes care of this
-              //case 1: IAPURAM[0xf4]++; break;
               case 2:
               {
                 port_tool.set_port(0);
@@ -849,8 +754,6 @@ int Main_Window::receive_event(SDL_Event &ev)
                 mode = MODE_EDIT_APU_PORT;
                 mouseover_hexdump_area.cursor.start_timer();
               } break;
-              //case 4: IAPURAM[0xf4]--; break;
-              //case 6: IAPURAM[0xf5]++; break;
               case 7:
               {
                 port_tool.set_port(1);
@@ -865,8 +768,6 @@ int Main_Window::receive_event(SDL_Event &ev)
                 mode = MODE_EDIT_APU_PORT;
                 mouseover_hexdump_area.cursor.start_timer();
               } break;
-              //case 9: IAPURAM[0xf5]--; break;
-              //case 11: IAPURAM[0xf6]++; break;
               case 12:
               {
                 port_tool.set_port(2);
@@ -881,8 +782,6 @@ int Main_Window::receive_event(SDL_Event &ev)
                 mode = MODE_EDIT_APU_PORT;
                 mouseover_hexdump_area.cursor.start_timer();
               } break;
-              //case 14: IAPURAM[0xf6]--; break;
-              //case 16: IAPURAM[0xf7]++; break;
               case 17:
               {
                 port_tool.set_port(3);
@@ -897,7 +796,6 @@ int Main_Window::receive_event(SDL_Event &ev)
                 mode = MODE_EDIT_APU_PORT;
                 mouseover_hexdump_area.cursor.start_timer();
               } break;
-              //case 19: IAPURAM[0xf7]--; break;
             }
           }
         }
@@ -914,21 +812,20 @@ int Main_Window::receive_event(SDL_Event &ev)
           x /= 8;
           y = mouse::y - PORTTOOL_Y;
           y /= 8;
-          //Uint8 i;
-            if (ev.wheel.y > 0)
-            {
-              if (x>1 && x<4) {   port_tool.inc_port(0); }
-              if (x>6 && x<9) {   port_tool.inc_port(1); }
-              if (x>11 && x<14) { port_tool.inc_port(2); }
-              if (x>16 && x<19) { port_tool.inc_port(3); }
-            }
-            else if (ev.wheel.y < 0)
-            {
-              if (x>1 && x<4) {   port_tool.dec_port(0); }
-              if (x>6 && x<9) {   port_tool.dec_port(1); }
-              if (x>11 && x<14) { port_tool.dec_port(2); }
-              if (x>16 && x<19) { port_tool.dec_port(3); }
-            }
+          if (ev.wheel.y > 0)
+          {
+            if (x>1 && x<4) {   port_tool.inc_port(0); }
+            if (x>6 && x<9) {   port_tool.inc_port(1); }
+            if (x>11 && x<14) { port_tool.inc_port(2); }
+            if (x>16 && x<19) { port_tool.inc_port(3); }
+          }
+          else if (ev.wheel.y < 0)
+          {
+            if (x>1 && x<4) {   port_tool.dec_port(0); }
+            if (x>6 && x<9) {   port_tool.dec_port(1); }
+            if (x>11 && x<14) { port_tool.dec_port(2); }
+            if (x>16 && x<19) { port_tool.dec_port(3); }
+          }
         }
         else
         {
@@ -960,11 +857,9 @@ int Main_Window::receive_event(SDL_Event &ev)
           if (ev.button.button == SDL_BUTTON_RIGHT)
           {
             // prototype 
-            // activate_context.menu()
             main_memory_area.log_the_fucking_address_for_the_fucking_context_window();
             main_memory_area.context.menu.is_active = true;
             
-            //int r = ;
             switch (main_memory_area.brr.check_brr(&main_memory_area.context.addr_when_user_right_clicked))
             {
               case BRR::NOT_A_SAMPLE:
@@ -1151,8 +1046,6 @@ void Main_Window::run()
   if ( player->has_no_song )
     return;
 
-  //DEBUGLOG("paused = %d", player->is_paused());
-
   if (BaseD::Profile::is_profiling)
   {
     tmp_profile->process();
@@ -1161,11 +1054,8 @@ void Main_Window::run()
   for (uint8_t voice=0; voice < MAX_VOICES; voice++)
   {
     dir = player->spc_read_dsp(dsp_reg::dir) * 0x100;
-    //fprintf(stderr, "dir = %04X\n", dir);
     uint16_t *p = (uint16_t*)&IAPURAM[dir+(player->spc_read_dsp(0x10*voice+4)*4)];
-    //fprintf(stderr, "RAM addr = %04X\n", dir+(player->spc_read_dsp(0x10*voice+4)*4));
     main_memory_area.brr.srcn[voice] = *p;
-    //fprintf(stderr,"srcn[%d] = %04X\n", voice, main_memory_area.srcn[voice]);
   } 
 
   pack_mask(packed_mask);
@@ -1173,9 +1063,7 @@ void Main_Window::run()
   if (g_cfg.statusline) {
     printf("%s / %d         \r", 
         g_cfg.playlist[g_cur_entry],
-        /*audio_samples_written/44100,*/
-        song_time
-        /*(audio_samples_written/44100)/(song_time)*/);
+        song_time);
     fflush(stdout);
   }
   
@@ -1210,7 +1098,6 @@ void Main_Window::unlock()
 Main_Window::Main_Window(int &argc, char **argv) : 
 main_memory_area(&mouseover_hexdump_area, &dir),
 port_tool(&mouseover_hexdump_area.cursor)
-//echo_on("on", BaseD::toggle_echo, NULL)
 {
   int res;
   static struct option long_options[] = {
@@ -1382,21 +1269,8 @@ void Main_Window::draw_block_usage_bar()
 
   if (is_first_run)
   {
-    int x = MEMORY_VIEW_X;
-    int y = MEMORY_VIEW_Y + 
-    DEBUGLOG("new time slider");
-    int slider_width = strlen(tmpbuf)*CHAR_WIDTH;
-    //time_seek.slider = new Slider<double>(NULL,x, y+1, slider_width, 4, 8,8, 
-    //0, song_time, 0.0, 3, Main_Window::Gain::change, "db", true);
-    is_first_run=true;
   }
 }
-
-/*Main_Window::~Main_Window()
-{
-  if (gain_slider)
-    delete gain_slider;
-}*/
 
 void Main_Window::draw_mouse_address()
 {
@@ -1427,7 +1301,6 @@ void Main_Window::draw_mouse_address()
     DEBUGLOG("new slider");
     gain.slider = new Slider<double>(&player->new_gain_db,x, y+1, slider_width, 4, 6,6, 
       player->min_gain_db, player->max_gain_db, 0.0, 3, Main_Window::Gain::change, "db", true);
-    //gain.slider->set_adjuster_color ( Colors::nearblack);
   }
 
   x+=gain.slider->panel_rect.w + CHAR_WIDTH*2;
@@ -1436,24 +1309,14 @@ void Main_Window::draw_mouse_address()
   if (is_first_run)
   {
     int slider_width = 60;
-    DEBUGLOG("new slider tempo\n");
-    
-    /*tempo.minus.setup(x,y);
-    tempo.plus.setup(x+CHAR_WIDTH*2, y);
-    tempo.minus.action = BaseD::Clickable::dec_tempo;
-    tempo.plus.action = BaseD::Clickable::inc_tempo;*/
-    
+
     x += strlen(tmpbuf)*CHAR_WIDTH + 4;
     tempo.slider = new Slider<double>(&player->tempo,x, y+1, slider_width, 4, 6,6, 0.02, 4.0, 1.0, 1, Main_Window::Tempo::change);
-    //tempo.slider->set_adjuster_color ( Colors::nearblack);
   }
-  
 }
 
 void Main_Window::reload()
 {
-  //scroll_tags.reset();
-  fprintf(stderr, "DERP");
   BaseD::reload();
   draw_track_tag();
 }
@@ -1598,7 +1461,6 @@ void Main_Window::draw_voices_pitchs()
       not changed
       :P pointers are back */
       cur_color = &Colors::nearblack;
-      //Colors::subtract(&cur_color, 0x60);
     }
 
     int x =MEMORY_VIEW_X+520;
