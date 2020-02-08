@@ -12,6 +12,9 @@ namespace Utility
             y >= r->y && y < (r->y+r->h) );
   }
 
+  void set_render_color_rgb(SDL_Renderer *r, Uint32 color);
+  void set_render_color_rgba(SDL_Renderer *r, Uint32 color);
+
   const char* rstrstr(const char* haystack, const char* needle);
 
   Uint8 scancode_to_hex(int &scancode);

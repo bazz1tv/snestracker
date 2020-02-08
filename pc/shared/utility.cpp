@@ -8,6 +8,24 @@ namespace Utility
 
 extern bool coord_is_in_rect(int x, int y, SDL_Rect *r);
 
+void set_render_color_rgb(SDL_Renderer *r, Uint32 color)
+{
+  SDL_SetRenderDrawColor(r,
+      (Uint8) ((color >> 16) & 0xff),
+      (Uint8) ((color >> 8)  & 0xff),
+      (Uint8) ((color)       & 0xff),
+      255);
+}
+
+void set_render_color_rgba(SDL_Renderer *r, Uint32 color)
+{
+  SDL_SetRenderDrawColor(r,
+      (Uint8) ((color >> 24) & 0xff),
+      (Uint8) ((color >> 16) & 0xff),
+      (Uint8) ((color >> 8)  & 0xff),
+      (Uint8) ((color)       & 0xff));
+}
+
 const char* rstrstr(const char* haystack, const char* needle)
 {
   int needle_length = strlen(needle);
