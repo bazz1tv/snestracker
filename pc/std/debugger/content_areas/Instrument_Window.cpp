@@ -60,12 +60,9 @@ void Instrument_Window::run()
   float sustain_frac = ADSR::sustain_level_map[7-sustain_i].ms;
   float release_ms = ADSR::sustain_release_map[7-sustain_i][release_i].ms;
 
-  fprintf(stderr, "decay_ms = %f\n", decay_ms);
-
   adsrgraph.points[0] = {0,0};
   adsrgraph.points[1] = {attack_ms, -100};
   adsrgraph.points[2] = {attack_ms + decay_ms, -(sustain_frac * 100)};
-  fprintf(stderr, "frac = %0.4f, result = %d\n", sustain_frac, adsrgraph.points[2].y);
 
   adsrgraph.points[3].x = attack_ms + decay_ms + release_ms;
   adsrgraph.points[3].y = 0;
@@ -109,8 +106,7 @@ void Instrument_Window::run()
     float y2 = adsrgraph.bounds.y + adsrgraph.bounds.h - 1;
     float percent = (adsrgraph.points[3].x - x1) / (x2 - x1);
     adsrgraph.points[3].y = (y1) + (percent * (y2 - y1));
-    fprintf(stderr, "x1: %f, x2: %f, XXX: %d, y1: %f, y2: %f, percent: %f, YYY=%d\n", x1, x2, adsrgraph.points[3].x, y1, y2, percent, adsrgraph.points[3].y);
-
+  }
 
   if (is_first_run)
   {
