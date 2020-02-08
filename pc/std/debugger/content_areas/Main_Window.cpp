@@ -1353,8 +1353,11 @@ void Main_Window::do_scroller(int elaps_milli)
   int steps;
   static int keep=0;
 
+  if (!player->emu())
+    return;
+
   keep += elaps_milli;  
-  
+
   steps = keep*60/1000;
   if (!steps) { return; }
 
@@ -1370,7 +1373,7 @@ void Main_Window::do_scroller(int elaps_milli)
   cur_min = -cur_len*8;
 
   angle = start_angle;
-        
+
   cs = player->emu()->tell() / 1000;
   cs %= 12;
 

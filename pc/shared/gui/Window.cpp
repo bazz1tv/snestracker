@@ -24,7 +24,6 @@ void Window::init()
 
   windowID = SDL_GetWindowID(sdlWindow);
 
-  //sdlWindow = *sdlWindow;
   //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");  // make the scaled rendering look smoother.
   SDL_RenderSetLogicalSize(sdlRenderer, rect.w, rect.h);
 
@@ -34,7 +33,7 @@ void Window::init()
                                       0x000000FF,
                                       0xFF000000);
   sdlTexture = SDL_CreateTexture(sdlRenderer,
-                                          SDL_PIXELFORMAT_RGB888,
+                                          SDL_PIXELFORMAT_ARGB8888,
                                           SDL_TEXTUREACCESS_STREAMING,
                                           rect.w, rect.h);
 
@@ -48,17 +47,12 @@ void Window::init()
     return;
   }
 
-  // needs to be more permanent eh!
-  //char tmpbuf[100];
-  //sprintf(tmpbuf, PROG_NAME_VERSION_STRING, APP_VERSION);
-  
-  //clear_screen();
-  //SDL_RaiseWindow(sdlWindow);
-  //clear_screen();
-  //SDL_HideWindow(sdlWindow);
+  SDL_SetColorKey(screen, SDL_TRUE, 0);
+  SDL_SetSurfaceBlendMode(screen, SDL_BLENDMODE_BLEND);
+
+  SDL_SetTextureBlendMode(sdlTexture, SDL_BLENDMODE_BLEND);
+
   SDL_SetWindowTitle(sdlWindow, title.c_str());
-  //SDL_Delay(5000);
-  //SDL_ShowWindow(sdlWindow);
 }
 
 void Window::destroy()
@@ -105,6 +99,7 @@ void Window::clear_screen()
 void Window::update_screen()
 {
   SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
+  SDL_SetRenderDrawColor (sdlRenderer, 0, 0, 0, 0);
   SDL_RenderClear(sdlRenderer);
   SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
   SDL_RenderPresent(sdlRenderer);

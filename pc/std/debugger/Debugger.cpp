@@ -20,6 +20,13 @@ main_window(argc,argv)
   BaseD::cursors = &cursors;
   exp = &main_window;
 
+  int x,y;
+  SDL_GetWindowPosition(::render->sdlWindow, &x, &y);
+  fprintf(stderr, "x: %d, y: %d\n", x, y);
+  x += 20;
+  y += 20;
+  SDL_SetWindowPosition(options_window.sdlWindow, x, y);
+
   //window_map.insert( std::pair<Uint32, Window*>())
   int i=0;
   window_map[i++] = &options_window;
