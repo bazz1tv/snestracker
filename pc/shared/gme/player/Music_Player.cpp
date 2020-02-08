@@ -321,10 +321,13 @@ blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
 					track_info_.length = track_info_.intro_length +
 							track_info_.loop_length * 2;
 			}
-			if ( track_info_.length <= 0 )
+
+      if ( track_info_.length <= 0 )
 				track_info_.length = (long) (2.5 * 60 * 1000);
-			emu_->set_fade( track_info_.length + 1000 );
-			/* I add 1000 above, because without, because I am calling fade_out from load_file,
+
+      emu_->set_fade( track_info_.length + 1000 );
+
+      /* I add 1000 above, because without, because I am calling fade_out from load_file,
 			which is sometimes called when a song's elapsed time >= it's track length, there was an issue
 			when the set_fade was set to the length, where the fade_out routine would take forever to finish
 			due to a prolonged period inside the audio callback somehow related to the set_fade parameter..

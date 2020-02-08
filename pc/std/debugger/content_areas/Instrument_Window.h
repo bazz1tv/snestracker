@@ -93,7 +93,15 @@ public Experience
 
   struct AdsrGraph : Graph
   {
-
+    AdsrGraph()
+    {
+      points = (SDL_Point *) malloc(sizeof(SDL_Point) * 4);
+      pcount = 4;
+    }
+    ~AdsrGraph()
+    {
+      SDL_free(points);
+    }
   };
 
   AdsrGraph adsrgraph;

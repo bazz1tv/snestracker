@@ -44,6 +44,10 @@ struct ADSR
   static const AdsrMap sustain_level_map[SUSTAIN_LEVEL_MAP_SIZE];
   static const AdsrMap sustain_release_map[SUSTAIN_LEVEL_MAP_SIZE][SUSTAIN_RELEASE_MAP_SIZE];
 
+  /* This is just a number higher than the highest ADSR value that isn't
+   * infinite */
+  static const int INFINITE; // = 50.0 * 1000;
+
   struct Attack_Context
   {
     // Take parent class here

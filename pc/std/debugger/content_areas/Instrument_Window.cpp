@@ -47,6 +47,69 @@ void Instrument_Window::run()
   adsr_context_menus.update(adsr1, adsr2);
 
   // Update our lovely new graph system
+  // the first point, based on the Attack envelope, decides how many ms
+  // before final value 100 is reached (for 100% volume).
+  // Now load the current attack float.
+  int attack_i = adsr_context_menus.attack_context.menu.currently_selected_item_index;
+  int decay_i = adsr_context_menus.decay_context.menu.currently_selected_item_index;
+  int sustain_i = adsr_context_menus.sustain_level_context.menu.currently_selected_item_index;
+  int release_i = adsr_context_menus.sustain_release_context.menu.currently_selected_item_index;
+
+  float attack_ms = ADSR::attack_map[attack_i].ms;
+  float decay_ms = ADSR::decay_map[7-sustain_i][decay_i].ms;
+  float sustain_frac = ADSR::sustain_level_map[7-sustain_i].ms;
+  float release_ms = ADSR::sustain_release_map[7-sustain_i][release_i].ms;
+
+  fprintf(stderr, "decay_ms = %f\n", decay_ms);
+
+  adsrgraph.points[0] = {0,0};
+  adsrgraph.points[1] = {attack_ms, -100};
+  adsrgraph.points[2] = {attack_ms + decay_ms, -(sustain_frac * 100)};
+  fprintf(stderr, "frac = %0.4f, result = %d\n", sustain_frac, adsrgraph.points[2].y);
+
+  adsrgraph.points[3].x = attack_ms + decay_ms + release_ms;
+  adsrgraph.points[3].y = 0;
+
+  for (int i=0; i < 4; i++)
+  {
+    adsrgraph.points[i].x /= 3;
+    adsrgraph.points[i].x += adsrgraph.bounds.x + 10;
+    adsrgraph.points[i].y += adsrgraph.bounds.y + adsrgraph.bounds.h - 2;
+  }
+
+  if (release_ms == ADSR::INFINITE)
+  {
+    adsrgraph.points[3].x = (adsrgraph.bounds.x + adsrgraph.bounds.w);
+    adsrgraph.points[3].y = adsrgraph.points[2].y;
+  }
+
+  if (adsrgraph.points[3].x > (adsrgraph.bounds.x + adsrgraph.bounds.w))
+  {
+    float x1 = adsrgraph.points[2].x;
+    float x2 = adsrgraph.points[3].x;
+    adsrgraph.points[3].x = adsrgraph.bounds.x + adsrgraph.bounds.w;
+    /*(50,-100)
+     * .        |
+     *    .     |(60,?)
+     *       .  |
+     *          .
+     *          |  .
+     *          |     .
+     *          |         . (100,0)
+     *
+     * Based on the horizontal percentage traveled, the final y coord can
+     * be calculated between the start and end y coords.
+     * EXAMPLE:
+     *  y1 = 100                 y1 = 200
+     *  y2 =   0                 y2 = 100
+     *  50% (y1 - y2) + y2       50% (y1 - y2) + y2
+     *  50% (100 - 0) + 0 = 50   50% (200-100) + 50 = 150
+     */
+    float y1 = adsrgraph.points[2].y;
+    float y2 = adsrgraph.bounds.y + adsrgraph.bounds.h - 1;
+    float percent = (adsrgraph.points[3].x - x1) / (x2 - x1);
+    adsrgraph.points[3].y = (y1) + (percent * (y2 - y1));
+    fprintf(stderr, "x1: %f, x2: %f, XXX: %d, y1: %f, y2: %f, percent: %f, YYY=%d\n", x1, x2, adsrgraph.points[3].x, y1, y2, percent, adsrgraph.points[3].y);
 
 
   if (is_first_run)
@@ -130,13 +193,14 @@ void Instrument_Window::one_time_draw()
     adsr_context_menus.sustain_release_context.menu.preload(sustain_release.x, y);
 
     // Build graph below this. Just draw the bounding rect
-    adsrgraph.bounds.y = y + CHAR_HEIGHT * 2;
+    adsrgraph.bounds.y = y + CHAR_HEIGHT * 4;
     adsrgraph.bounds.x = attack.x;
-    adsrgraph.bounds.w = 400;
-    adsrgraph.bounds.h = 200;
+    adsrgraph.bounds.w = 600;
+    adsrgraph.bounds.h = 120;
     adsrgraph.fg_color = Colors::green;
-    adsrgraph.bg_color = Colors::gray;
+    adsrgraph.bg_color = Colors::nearblack;
     adsrgraph.border_color = Colors::white;
+
     adsrgraph.draw_bg();
     adsrgraph.draw_border();
 }
@@ -162,10 +226,10 @@ void Instrument_Window::draw()
   Utility::set_render_color_rgb(::render->sdlRenderer, Colors::black);
   SDL_RenderClear(::render->sdlRenderer);
   adsrgraph.draw_bg();
+  adsrgraph.draw_lines();
   adsrgraph.draw_border();
   SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
   SDL_RenderPresent(::render->sdlRenderer);
-
 }
 
 int Instrument_Window::receive_event(SDL_Event &ev)

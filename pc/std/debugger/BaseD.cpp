@@ -428,6 +428,8 @@ void BaseD::update_track_tag()
 
   song_time += g_cfg.extratime;
 
+  player->emu()->set_fade(song_time * 1000 + 1000);
+
   now_playing[0] = 0;
   if (strcmp(tag.song, ""))
   {

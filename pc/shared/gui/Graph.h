@@ -25,7 +25,7 @@ struct Graph
         255);
     SDL_RenderFillRect(::render->sdlRenderer, &bounds);
   }
-  void draw()
+  void draw_lines()
   {
     draw_bg();
     SDL_SetRenderDrawColor(::render->sdlRenderer,
