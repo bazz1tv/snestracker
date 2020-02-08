@@ -59,7 +59,7 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
                                       0x000000FF,
                                       0xFF000000);
   SDL_SetColorKey(*screen, SDL_TRUE, 0);
-  SDL_SetSurfaceBlendMode(*screen, SDL_BLENDMODE_BLEND);
+  //SDL_SetSurfaceBlendMode(*screen, SDL_BLENDMODE_BLEND);
 
   *sdlTexture = SDL_CreateTexture(*sdlRenderer,
                                           SDL_PIXELFORMAT_ARGB8888,

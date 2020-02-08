@@ -15,15 +15,12 @@
 
 int Main_Window::Gain::change(void *dblnewgain)
 {
-  ::player->gain_has_changed = true;// = gain_db;
-  //player->linear_gain = Audio::calculate_linear_gain_from_db(player->gain_db, Music_Player::min_gain_db);
-  //BaseD::player->new_gain_db = *(double*)dblnewgain;// = pow ( 10.0, (0.05 * *(double*)dblnewgain) );
+  ::player->gain_has_changed = true;
   return 0;
 }
 int Main_Window::Tempo::change(void *dblnewtempo)
 {
   double v = *(double*)dblnewtempo;
-  //if (v >= 0.950 && v < 1.0) v = 1.0;
   DEBUGLOG("tempo = %f", v);
   ::player->set_tempo(v);
   return 0;
@@ -51,28 +48,6 @@ void Main_Window::draw()
     //do_scroller(time_cur - time_last);
     sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
 
-    /*tmprect.x = MEMORY_VIEW_X-1;
-    tmprect.y = MEMORY_VIEW_Y-1;
-    tmprect.w = 1;
-    tmprect.h = 512+2;
-    SDL_FillRect(::render->screen, &tmprect, Colors::white);
-    tmprect.x = MEMORY_VIEW_X-1;
-    tmprect.y = MEMORY_VIEW_Y-1;
-    tmprect.w = 512+2;
-    tmprect.h = 1;
-    SDL_FillRect(::render->screen, &tmprect, Colors::white);
-    tmprect.x = MEMORY_VIEW_X-1 + 513;
-    tmprect.y = MEMORY_VIEW_Y-1;
-    tmprect.w = 1;
-    tmprect.h = 512+2;
-    SDL_FillRect(::render->screen, &tmprect, Colors::white);
-    tmprect.x = MEMORY_VIEW_X-1;
-    tmprect.y = MEMORY_VIEW_Y-1 + 513;
-    tmprect.w = 512+2;
-    tmprect.h = 1;
-    SDL_FillRect(::render->screen, &tmprect, Colors::white);*/
-
-    
     fade_arrays();      
     
     // draw the memory read/write display area
@@ -150,7 +125,7 @@ void Main_Window::draw()
     
     //SDL_UpdateRect(::render->screen, 0, 0, 0, 0);
     SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
-    //SDL_SetRenderDrawColor(::render->sdlRenderer, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
     SDL_RenderClear(::render->sdlRenderer);
     SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
     // stuff that renders direct to renderer must happen after the ::render->screen copy
@@ -158,9 +133,6 @@ void Main_Window::draw()
 
     gain.slider->draw();
     tempo.slider->draw();
-
-    
-
 
     SDL_RenderPresent(::render->sdlRenderer);
     time_last = time_cur;
@@ -173,9 +145,8 @@ void Main_Window::draw()
     draw_menu_bar();
     
     
-    //SDL_UpdateRect(::render->screen, 0, 0, 0, 0);
     SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
-    //SDL_SetRenderDrawColor(::render->sdlRenderer, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0x00);
     SDL_RenderClear(::render->sdlRenderer);
     SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
     // stuff that renders direct to renderer must happen after the ::render->screen copy
@@ -1490,37 +1461,12 @@ void Main_Window::reload()
 void Main_Window::one_time_draw()
 {
   // draw one-time stuff
-  //if (!g_cfg.novideo)
-  //{
-  
     SDL_FillRect(::render->screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
-      //Colors::Interface::color[Colors::Interface::Type::text_bg]);
     
-    
-    /*tmprect.x = MEMORY_VIEW_X-1;
-    tmprect.y = MEMORY_VIEW_Y-1;
-    tmprect.w = 512+2;
-    tmprect.h = 512+2;
-    SDL_FillRect(::render->screen, &tmprect, Colors::white); */
-    
-    //sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:", Colors::white);
-
     if (player->emu())
       draw_track_tag();
 
-    //sprintf(tmpbuf, "Interp. : %s", spc_config.is_interpolation ? "On" : "Off");  
-    //sdlfont_drawString(::render->screen, INFO_X, INFO_Y+64, tmpbuf, Colors::white);
-  
-    //sprintf(tmpbuf, "Autowrite mask.: %s", g_cfg.autowritemask ? "Yes" : "No");
-    //sdlfont_drawString(::render->screen, INFO_X, INFO_Y+72, tmpbuf, Colors::white);
-
-    
-
-    
-
-    
     sdlfont_drawString2(::render->screen, PORTTOOL_X, PORTTOOL_Y, "     - Port tool -");
-  //}
 }
 
 
@@ -1528,12 +1474,6 @@ void Main_Window::fade_arrays()
 {
   report::memsurface.fade_arrays();
 }
-
-
-
-
-
-
 
 void Main_Window::do_scroller(int elaps_milli)
 {
@@ -1761,7 +1701,6 @@ void Main_Window::draw_voices_volumes()
     tmprect.y = tmp+(i*10);
     tmprect.w = left_vol*(::render->screen->w-tmprect.x-20)/255;
 
-    
     // L volume
     if (voice_control.is_muted(i))
       color = &Colors::dark_yellow;
