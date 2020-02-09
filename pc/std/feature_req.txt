@@ -1,9 +1,0 @@
-Feature Requests
-----------------
-005 Hotpluggable APU emulator
-004 Hotpluggable SPC drivers
-003 Piano Roll (tracker)
-002 "Hotpluggable" DSP (Accurate, Fast, DSP_SMOOTHING)
-001 Alphabetical Input (tracker) 
-	@Xyz_39808> yeah but you press the C key for C. The D key for D etc
-	22:56 <@Xyz_39808> rather than the Q key for C, the W key for C#, the E key for D
