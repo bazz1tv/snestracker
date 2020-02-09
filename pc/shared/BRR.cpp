@@ -121,8 +121,6 @@ void BRR::solo_sample()
 
 void BRR::play_sample(Instrument_Window *instr_window)
 {
-  //Instrument_Window *instr_window = 
-  fprintf(stderr, "one solo = %d", one_solo);
   instr_window->switch_mode(BaseD::GrandMode::INSTRUMENT);
   instr_window->voice.n = one_solo;
   instr_window->pause_spc();
@@ -142,15 +140,13 @@ int BRR::check_brr(uint16_t *address)
   is_looped_sample = false;
   is_loop_external = false;
   bool no_lower_loop_found=false;
-  //uint16_t *address = &context.addr_when_user_right_clicked;
-  //fprintf(stderr, "address = %04X\n", context.addr_when_user_right_clicked);
+
   assert (address != 0);
   Uint8 lowest_srcn_index=0x0;
   Uint8 lowest_loop_index=0x0;
   srcn_solo=0x0;
   fprintf(stderr, "one_solo = %d", 0);
   one_solo=0x0;
-  
 
   // get closest SRCN address before clicked address
   uint16_t lowest_closest_srcn_address=0xffff, lowest_offset=0xffff;
@@ -169,7 +165,6 @@ int BRR::check_brr(uint16_t *address)
         lowest_closest_srcn_address=src->brr_start;
 
         lowest_srcn_index=i;
-        //fprintf(stderr, "lowest = %04X, %04X\n", lowest_closest_srcn_address, Spc_Report::srcN_used[i]);
         lowest_offset = offset;
       }
     }
@@ -204,7 +199,6 @@ int BRR::check_brr(uint16_t *address)
       srcn_solo |= 1<<x;
       one_solo = x;
       corresponding_voice = x;
-      fprintf(stderr, "one_solos = %d", one_solo);
     }
   }
 
@@ -214,66 +208,50 @@ int BRR::check_brr(uint16_t *address)
   {
     no_lower_loop_found = true;
     fprintf(stderr, "no appropriate LOOP point was found :(\n");
-    //return -1;
   }
 
   // Find closest BRR end block after closest SRCN
   uint16_t lowest_closest_brrend_address_from_srcn = 0xffff;
 
-  /*if (Spc_Report::src[lowest_srcn_index].brr_end != 0xffff)
+  uint16_t p = lowest_closest_srcn_address;
+  while(1)
   {
-    fprintf(stderr, "derp");
-    lowest_closest_brrend_address_from_srcn = Spc_Report::src[lowest_srcn_index].brr_end;
-  }
-  else
-  {*/
-    uint16_t p = lowest_closest_srcn_address;
-    while(1)
+    if (BaseD::IAPURAM[p] & 1)
     {
-      if (BaseD::IAPURAM[p] & 1)
-      {
-        if (BaseD::IAPURAM[p] & 2)
-          is_looped_sample=true;
-        p+=8;
-        break;
-      }
-      p+=9;
+      if (BaseD::IAPURAM[p] & 2)
+        is_looped_sample=true;
+      p+=8;
+      break;
     }
-    lowest_closest_brrend_address_from_srcn = p;
-    // = p;
-  //}
+    p+=9;
+  }
+  lowest_closest_brrend_address_from_srcn = p;
 
   if (lowest_closest_brrend_address_from_srcn == 0xffff)
   {
     fprintf(stderr, "no appropriate BRR_END after SRCN was found :(\n");
-    //return -1;
   }
 
   // get loop end
   uint16_t lowest_closest_brrend_address_from_loop = 0xffff;
 
-  /*if (Spc_Report::src[lowest_loop_index].brr_loop_end != 0xffff)
-    ;lowest_closest_brrend_address_from_loop= Spc_Report::src[lowest_loop_index].brr_loop_end;
-  else
-  {*/
-    p = Spc_Report::src[lowest_loop_index].brr_loop_start;
-    while(1)
+  p = Spc_Report::src[lowest_loop_index].brr_loop_start;
+  while(1)
+  {
+    if (BaseD::IAPURAM[p] & 1)
     {
-      if (BaseD::IAPURAM[p] & 1)
-      {
-        p+=8;
-        break;
-      }
-      p+=9;
+      p+=8;
+      break;
     }
-    lowest_closest_brrend_address_from_loop = p;
-    Spc_Report::src[lowest_loop_index].brr_loop_end = p;
-  //}
+    p+=9;
+  }
+
+  lowest_closest_brrend_address_from_loop = p;
+  Spc_Report::src[lowest_loop_index].brr_loop_end = p;
 
   if (lowest_closest_brrend_address_from_loop == 0xffff)
   {
     fprintf(stderr, "no appropriate Loop BRR_END was found :(\n");
-    //return -1;
   }  
 
   if (!no_lower_loop_found && lowest_closest_brrloopstart_address_from_click > lowest_closest_brrend_address_from_srcn)
@@ -312,8 +290,5 @@ int BRR::check_brr(uint16_t *address)
 
   fprintf(stderr, "lowest_closest_srcn_address = %04X\n", lowest_closest_srcn_address);
   fprintf(stderr, "lowest_closest_brrend_address_from_srcn = %04X\n", lowest_closest_brrend_address_from_srcn);
-  //fprintf(stderr, "lowest closest")
   fprintf(stderr, "lowest_closest_brrloopstart_address_from_click = %04X\n", lowest_closest_brrloopstart_address_from_click);
-  //fprintf(stderr, "lowest_closest_brrend_address_from_click = %04X\n", lowest_closest_brrend_address_from_click);
-  
 }

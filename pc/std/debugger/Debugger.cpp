@@ -27,7 +27,6 @@ main_window(argc,argv)
   y += 20;
   SDL_SetWindowPosition(options_window.sdlWindow, x, y);
 
-  //window_map.insert( std::pair<Uint32, Window*>())
   int i=0;
   window_map[i++] = &options_window;
   window_map[i++] = &spc_export_window;

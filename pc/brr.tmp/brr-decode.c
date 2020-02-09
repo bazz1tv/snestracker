@@ -8,9 +8,7 @@
 #include <cstdlib>
 /* Each BRR block is a 1 byte header followed by 16 nibbles, or 8 bytes.
  * The nibble themselves are signed -8 to +7. The manual has a typo
- * stating -7 to +8; ignore it. But my machine is showing
- * these as -8 to +7, so I must re-interpret the units.
- * */
+ * stating -7 to +8; ignore it.*/
 #define BRR_LEN 0x9
 #define BRR_HDR_OFS 0x00
 // Bit field defs for the header byte
@@ -23,6 +21,7 @@ struct BrrFilter
 {
   double a, b;
 };
+
 BrrFilter brrfilter[4] =
 {
   {0,         0},
@@ -30,6 +29,7 @@ BrrFilter brrfilter[4] =
   {1.90625,  -0.9375},
   {1.796875, -0.8125 },
 };
+
 struct Brr
 {
   union
@@ -61,26 +61,6 @@ struct Brr
   int8_t sf :4;
 } __attribute__((packed));
 
-inline bool is_block_end(Brr *brr)
-{
-  return brr->hdr & BRR_HDR_BLKEND ? true : false;
-}
-// This is only found set in the block_end block
-inline bool is_loop(Brr *brr)
-{
-  return brr->hdr & BRR_HDR_LOOP ? true : false;
-}
-
-inline uint8_t get_filter(Brr *brr)
-{
-  return (brr->hdr & BRR_HDR_FILTER) >> 2;
-}
-
-inline uint8_t get_range(Brr *brr)
-{
-  return (brr->hdr & BRR_HDR_RANGE) >> 4;
-}
-
 struct WavFmtSubchunk
 {
   char id[4]; // "fmt "
@@ -111,14 +91,7 @@ struct RiffHdr
 
 #define WAV_OFFSET1 0x4
 #define WAV_OFFSET2 40
-/*"RIFF0000WAVE"
-"fmt \x10\x00\x00\x00" "\x01\x00" "\x01\x00"
-"\x00\x7d\x00\x00" "\x00\xf4\x01\x00" "\x04\x00" "\x10\x00"
-"data0000"*/
-// "RIFF" + LE4-filesize-8 + "WAVE"
-// "fmt " + 0x00000010 + 0x0001 + 0x0002
-// 0x00007d00 + 0x0001f400 + 0x0004 + 0x0010
-// "data" LE4size then ll the data
+
 void init_Riff(RiffHdr *hdr)
 {
   char *c = hdr->riff;
@@ -126,8 +99,6 @@ void init_Riff(RiffHdr *hdr)
   *(c++) = 'I';
   *(c++) = 'F';
   *(c++) = 'F';
-
-  // skipping chunk size
 
   c = hdr->wave;
   *(c++) = 'W';
