@@ -60,7 +60,7 @@ Debugger::~Debugger()
 {
   sample_t sbuf[4096*2];
   int num = 512 * 2 * 2;
-  SDL_AudioDeviceID id = Audio_Context::audio->devices.id;
+  SDL_AudioDeviceID id = ::audio->devices.id;
 
   SDL_SetThreadPriority(SDL_THREAD_PRIORITY_HIGH);
 

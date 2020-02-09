@@ -1,9 +1,9 @@
 #pragma once
 #include "Experience.h"
 #include "SDL.h"
-#include "Audio_Context.h"
+#include "Audio.h"
 #include "gui/Context_Menu.h"
-struct Audio_Options : public Experience, public Audio_Context
+struct Audio_Options : public Experience
 {
   Audio_Options(SDL_Surface *screen, SDL_Renderer *sdlRenderer);
   void one_time_draw();

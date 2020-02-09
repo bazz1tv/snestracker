@@ -783,9 +783,6 @@ int Dsp_Window::receive_event(SDL_Event &ev)
   switch (ev.type)
   {
     case SDL_QUIT:
-      /*if (!g_cfg.nosound) {
-        SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
-      }*/
       printf ("penis4\n");
       quitting = true;
       break;

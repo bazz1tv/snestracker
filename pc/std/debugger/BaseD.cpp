@@ -585,8 +585,6 @@ void BaseD::reload_playlist()
 
 void BaseD::prev_track()
 {
-  //player->fade_out();
-  //SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
   g_cur_entry--;
   if (g_cur_entry<0) { g_cur_entry = g_cfg.num_files-1; }
   reload();

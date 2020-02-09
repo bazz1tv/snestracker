@@ -19,3 +19,5 @@ struct Audio
     static const char *selected_audio_out_dev;
   } devices;
 };
+
+extern Audio *audio;

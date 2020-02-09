@@ -134,7 +134,7 @@ blargg_err_t Music_Player::init( long rate, const char *audio_out_dev/*=NULL*/ )
 {
 	DEBUGLOG("Music_Player::init\n");
 	bool change=false;
-	if (Audio_Context::audio->devices.id)
+	if (::audio->devices.id)
 	{
 		sound_cleanup();
 		change = true;
@@ -579,25 +579,25 @@ static const char* sound_init( long sample_rate, int buf_size,
 		bool match=false;
 		for (int i=0; i < Audio::Devices::how_many; i++)
 		{
-			if (!strcmp(audio_out_dev, Audio_Context::audio->devices.device_strings[i]))
+			if (!strcmp(audio_out_dev, ::audio->devices.device_strings[i]))
 			{
 				match = true;
 				break;
 			}
 		}
 		if (!match)
-			audio_out_dev = Audio_Context::audio->devices.device_strings[0];
+			audio_out_dev = ::audio->devices.device_strings[0];
 	}
-	else audio_out_dev = Audio_Context::audio->devices.device_strings[0];
+	else audio_out_dev = ::audio->devices.device_strings[0];
 
 
 	DEBUGLOG("Opening Audio out Device: %s\n", audio_out_dev);
 	Audio::Devices::selected_audio_out_dev = audio_out_dev;
-	Audio_Context::audio->devices.id = SDL_OpenAudioDevice(
+	::audio->devices.id = SDL_OpenAudioDevice(
                             audio_out_dev, Audio::Devices::playback,
                             &as, &have, 0 );
 
-	if (Audio_Context::audio->devices.id  == 0 )
+	if (::audio->devices.id  == 0 )
 	{
 		const char* err = SDL_GetError();
 		if ( !err )
@@ -623,25 +623,25 @@ static const char* sound_init( long sample_rate, int buf_size,
 
 void sound_start()
 {
-  SDL_UnlockAudioDevice(Audio_Context::audio->devices.id);
+  SDL_UnlockAudioDevice(::audio->devices.id);
 	if (!Music_Player::exporting)
-		SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 0);
+		SDL_PauseAudioDevice(::audio->devices.id, 0);
 }
 
 void sound_stop()
 {
-	SDL_PauseAudioDevice(Audio_Context::audio->devices.id, 1);
+	SDL_PauseAudioDevice(::audio->devices.id, 1);
 	
 	// be sure audio thread is not active
-	SDL_LockAudioDevice(Audio_Context::audio->devices.id);
-  SDL_UnlockAudioDevice(Audio_Context::audio->devices.id);
+	SDL_LockAudioDevice(::audio->devices.id);
+  SDL_UnlockAudioDevice(::audio->devices.id);
 }
 
 void sound_cleanup()
 {
 	sound_stop();
-	SDL_CloseAudioDevice(Audio_Context::audio->devices.id);
-	Audio_Context::audio->devices.id=0;
+	SDL_CloseAudioDevice(::audio->devices.id);
+	::audio->devices.id=0;
 }
 
 
