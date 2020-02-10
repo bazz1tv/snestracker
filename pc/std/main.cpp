@@ -40,13 +40,17 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
   atexit(SDL_Quit);
 
   *sdlWindow = SDL_CreateWindow("snes tracker", SDL_WINDOWPOS_CENTERED,
-          SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_HIDDEN);
+                SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_HIDDEN);
   *sdlRenderer = SDL_CreateRenderer(*sdlWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-  if (*sdlWindow == NULL || *sdlRenderer == NULL)
+  if (*sdlWindow == NULL)
   {
     fprintf(stderr, "FCK\n");
     return -1;
+  }
+  if (*sdlRenderer == NULL)
+  {
+    *sdlRenderer = SDL_CreateRenderer(*sdlWindow, -1, 0);
   }
 
   // make the scaled rendering look smoother.
