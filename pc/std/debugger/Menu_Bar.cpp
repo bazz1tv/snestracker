@@ -142,7 +142,7 @@ int Menu_Bar::File_Context::export_wav(void *data)
     wave_enable_stereo();
 
     ::player->exporting = true;
-    //BaseD::reload();
+    BaseD::reload();
     ::player->pause(0, false, false);
 
     while ( (::player->emu()->tell()/1000) < BaseD::song_time )
