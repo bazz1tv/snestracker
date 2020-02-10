@@ -6,7 +6,9 @@
 
 #define WIDTH 500
 #define HEIGHT 125
-// don't forget to use check_kon
+
+Spc_Export_Window *spc_export_window = NULL;
+
 Spc_Export_Window::Spc_Export_Window() :
 Window(WIDTH, HEIGHT, "Export SPC"),
 export_button("Export", Spc_Export_Window::save_file, (void *)this)
@@ -18,6 +20,7 @@ Spc_Export_Window::~Spc_Export_Window()
 {
   destroy_state();
 }
+
 int Spc_Export_Window::init()
 {
   // Prepare SPC memory area for export

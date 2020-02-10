@@ -12,7 +12,6 @@ struct Main_Window;
 struct Dsp_Window;
 struct Instrument_Window;
 struct Menu_Bar;
-struct Spc_Export_Window;
 struct BaseD
 {
   static char tmpbuf[500];
@@ -119,7 +118,6 @@ struct BaseD
   static Dsp_Window *dsp_window;
   static Instrument_Window *instr_window;
   static Menu_Bar *menu_bar;
-  static Spc_Export_Window *spc_export_window;
 
   static Cursors *cursors;
 

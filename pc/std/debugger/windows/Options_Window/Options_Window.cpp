@@ -36,11 +36,6 @@ void Options_Window::show()
   exp->one_time_draw();
   draw();
   Window::show();
-
-  //content_area.audio_options.screen = screen;
-  //content_area.audio_options.renderer = sdlRenderer;
-  
-  //SDL_ShowWindow(sdlWindow);
 }
 
 void Options_Window::preload(int x, int y)

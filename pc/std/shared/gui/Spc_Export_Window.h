@@ -7,7 +7,6 @@
 
 struct Spc_Export_Window : public Window
 {
-
   Spc_Export_Window();
   ~Spc_Export_Window();
 
@@ -20,7 +19,6 @@ struct Spc_Export_Window : public Window
 
   unsigned char *state = NULL;
 
-  //Clickable_Text text[6];
   enum {
     GAME=0, TITLE, COMPOSER, DUMPER, COMMENT, LENGTH
   };
@@ -38,3 +36,5 @@ struct Spc_Export_Window : public Window
 private:
   void destroy_state();
 };
+
+extern Spc_Export_Window *spc_export_window;

@@ -2,7 +2,6 @@
 #include "utility.h"
 #include "platform.h"
 #include "Instrument_Window.h"
-//#include <stdlib.h>
 #include "Options_Window.h"
 #include "gui/Spc_Export_Window.h"
 
@@ -98,7 +97,7 @@ int Menu_Bar::File_Context::export_spc(void *data)
 {
   // Do not show the window if the player has nothing loaded
   if (!::player->has_no_song)
-    BaseD::spc_export_window->show();
+    ::spc_export_window->show();
 
   return 0;
 }

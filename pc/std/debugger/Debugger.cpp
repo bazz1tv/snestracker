@@ -16,7 +16,7 @@ main_window(argc,argv)
   BaseD::instr_window = &instr_window;
   BaseD::menu_bar = &menu_bar;
   ::options_window = &options_window;
-  BaseD::spc_export_window = &spc_export_window;
+  ::spc_export_window = &spc_export_window;
   BaseD::cursors = &cursors;
   exp = &main_window;
 
@@ -29,12 +29,8 @@ main_window(argc,argv)
 
   int i=0;
   window_map[i++] = ::options_window;
-  window_map[i++] = &spc_export_window;
+  window_map[i++] = ::spc_export_window;
   window_map[i] = NULL;
-
-  
-  // Get current display mode of all displays.
-  //for(i = 0; i < SDL_GetNumVideoDisplays(); ++i){
 
   int should_be_zero = SDL_GetCurrentDisplayMode(0, &monitor_display_mode);
 

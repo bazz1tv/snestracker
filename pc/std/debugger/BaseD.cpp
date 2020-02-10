@@ -32,7 +32,6 @@ Main_Window * BaseD::main_window=NULL;
 Instrument_Window * BaseD::instr_window=NULL;
 Dsp_Window * BaseD::dsp_window=NULL;
 Menu_Bar * BaseD::menu_bar=NULL;
-Spc_Export_Window * BaseD::spc_export_window=NULL;
 
 Cursors * BaseD::cursors=NULL;
 
