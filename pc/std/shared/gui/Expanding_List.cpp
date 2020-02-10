@@ -21,8 +21,6 @@ bool Expanding_List::check_left_click_activate(const int &x, const int &y, const
   r = &single_item_rect;  
   static Uint8 button_held=0;
 
-  
-  fprintf(stderr, "check_left_click_activate\n");
   if (Utility::coord_is_in_rect(x, y, r))
   {
     if (button == SDL_BUTTON_LEFT  && !button_held)
@@ -30,7 +28,7 @@ bool Expanding_List::check_left_click_activate(const int &x, const int &y, const
       if (ev) 
       {
         button_held = 1;
-        fprintf(stderr, "button held");
+        //fprintf(stderr, "button held");
       }
       return toggle_activate();
     }
@@ -38,12 +36,11 @@ bool Expanding_List::check_left_click_activate(const int &x, const int &y, const
     if (ev)
       if ( ev->type == SDL_MOUSEBUTTONUP) 
       {
-        fprintf(stderr, "reset button\n");
+        //fprintf(stderr, "reset button\n");
         button_held = 0;
-        //return is_active;
       }
       
-    fprintf(stderr, "activate\n");
+    //fprintf(stderr, "activate\n");
     activate();
     return true;
   }
