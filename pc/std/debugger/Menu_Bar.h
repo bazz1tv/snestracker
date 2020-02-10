@@ -4,7 +4,7 @@
 #include "BaseD.h"
 #include "gui/Expanding_List.h"
 #include "Main_Window.h"
-#include "Options_Window.h"
+#include "shared/windows/Options_Window/Options_Window.h"
 #include "gui/Spc_Export_Window.h"
 
 struct Menu_Bar

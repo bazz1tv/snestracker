@@ -2,7 +2,7 @@
 #include "utility.h"
 #include "platform.h"
 #include "Instrument_Window.h"
-#include "Options_Window.h"
+#include "shared/windows/Options_Window/Options_Window.h"
 #include "gui/Spc_Export_Window.h"
 
 #include "gme/Wave_Writer.h"
