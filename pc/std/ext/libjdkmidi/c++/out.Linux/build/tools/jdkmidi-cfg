@@ -1,0 +1,13 @@
+#!/bin/bash
+for i in $*; do
+ case $i in 
+  (--ldflags) echo -n "   -L/opt/local/lib ";;
+  (--ldlibs) echo -n "  -ljdkmidi ";;
+  (--cflags) echo -n "   -I/opt/local/include    ";;
+  (--cxxflags) echo -n "   -I/opt/local/include    ";;
+  (--cppflags) echo -n " ";;
+  (--mflags) echo -n "   -I/opt/local/include    ";;
+  (--mmflags) echo -n "   -I/opt/local/include    ";;
+ esac
+done
+echo

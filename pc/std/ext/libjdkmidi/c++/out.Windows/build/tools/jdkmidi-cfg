@@ -1,0 +1,13 @@
+#!/bin/bash
+for i in $*; do
+ case $i in 
+  (--ldflags) echo -n "    -L/usr/i686-pc-mingw32/usr//lib ";;
+  (--ldlibs) echo -n "  -lwinmm  -ljdkmidi ";;
+  (--cflags) echo -n "   -I/usr/i686-pc-mingw32/usr//include -DTARGET_PLATFORM_MINGW32=1 -DTARGET_PLATFORM_WIN32=1   -mthreads  ";;
+  (--cxxflags) echo -n "   -I/usr/i686-pc-mingw32/usr//include -DTARGET_PLATFORM_MINGW32=1 -DTARGET_PLATFORM_WIN32=1   -mthreads  ";;
+  (--cppflags) echo -n "-DTARGET_PLATFORM_MINGW32=1 -DTARGET_PLATFORM_WIN32=1 ";;
+  (--mflags) echo -n "   -I/usr/i686-pc-mingw32/usr//include -DTARGET_PLATFORM_MINGW32=1 -DTARGET_PLATFORM_WIN32=1   -mthreads  ";;
+  (--mmflags) echo -n "   -I/usr/i686-pc-mingw32/usr//include -DTARGET_PLATFORM_MINGW32=1 -DTARGET_PLATFORM_WIN32=1   -mthreads  ";;
+ esac
+done
+echo

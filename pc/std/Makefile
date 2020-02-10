@@ -1,4 +1,5 @@
-#unwritten rule .. app.h RULES ALL. if it changes, the whole fucking thing needs to be recompiled...
+# the bin directory name, where all o and d files go as well
+BIN = bin
 # tells make to use this shell: 
 SHELL := /bin/bash
 # the only real reason I'm using that ^ is for pushd popd commands.. below..
@@ -12,11 +13,11 @@ ifdef CROSS_COMPILE
 	uname_S = Cross_Windows
 endif
 
-global_requirements = $(CPPSOURCES) $(CSOURCES) $(MSOURCES) $(EXECUTABLE)
+global_requirements = $(CPPSOURCES) $(CSOURCES) $(MSOURCES) $(BIN)/$(EXECUTABLE)
 
 # This is where source that both tracker and STD will use. NOTE THE inclusion of the forward slash ;)
-SHARED_DIR = ../shared/
-PROJ_DIR = ..
+SHARED_DIR = shared/
+PROJ_DIR = ext
 #
 
 CC=$(CROSS_COMPILE)g++
@@ -40,7 +41,7 @@ gme_PREFIX ?= $(prefix)
 #../configure --native-platform-linux=1 --cross-compiling=1 --compiler-prefix=i686-pc-mingw32- --target-platform-mingw32=1 --prefix=/usr/i686-pc-mingw32/usr/
 # sudo -E make install-dev
 ifeq ($(uname_S), Darwin)
-	global_requirements += $(EXECUTABLE).app 
+	global_requirements += $(BIN)/$(EXECUTABLE).app 
 	CPPFLAGS += -Wno-int-to-void-pointer-cast -Wno-c++11-narrowing
 	MIDI_DEFS     =   -D__MACOSX_CORE__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAudio -ljdkmidi
@@ -86,7 +87,7 @@ else ifeq ($(uname_S), Linux)
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
-	EXECUTABLE=std
+	EXECUTABLE = std
 	UNRAR = unrar
 	DEC7Z = 7zDec
 else ifeq ($(uname_S), Cross_Windows)
@@ -111,7 +112,7 @@ else ifeq ($(uname_S), Cross_Windows)
 	sdl2_cflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags)
 	sdl2_ldflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs)
 
-	EXECUTABLE=std.exe
+	EXECUTABLE = std.exe
 	UNRAR = unrar.exe
 	DEC7Z = 7zDec.exe
 else ifeq ($(uname_S), Windows)
@@ -137,18 +138,20 @@ OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
 #### CPPSOURCES
 CPPSOURCES += $(wildcard $(SHARED_DIR)*.cpp) $(wildcard $(SHARED_DIR)*/*.cpp)\
 $(wildcard $(SHARED_DIR)*/*/*.cpp)\
-$(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp)\
-$(wildcard */*/*/*.cpp) $(wildcard */*/*/*/*.cpp)
+$(wildcard *.cpp) $(wildcard debugger/*.cpp) $(wildcard debugger/*/*.cpp) \
+$(wildcard debugger/*/*/*.cpp)
+
 
 
 
 # 
-OBJECTS=$(CPPSOURCES:.cpp=.cpp.o) $(MSOURCES:.m=.m.o) $(CSOURCES:.c=.c.o)
+OBJECTS = $(CPPSOURCES:.cpp=.cpp.o) $(MSOURCES:.m=.m.o) $(CSOURCES:.c=.c.o)
 
+OBJECTS2 = $(addprefix bin/, $(OBJECTS))
 
 all: $(global_requirements)
 
-$(EXECUTABLE).app: $(EXECUTABLE) unrar 7zDec
+$(BIN)/$(EXECUTABLE).app: $(EXECUTABLE) unrar 7zDec
 	#rm -rf $@
 	mkdir -p $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
 	cp std $@/Contents/MacOS
@@ -157,39 +160,40 @@ $(EXECUTABLE).app: $(EXECUTABLE) unrar 7zDec
 	cp 7zDec $@/Contents/Resources
 	touch $@
 
-$(EXECUTABLE): $(OBJECTS) $(UNRAR) $(DEC7Z)
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+$(BIN)/$(EXECUTABLE): $(OBJECTS2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
+	$(CC) $(OBJECTS2) $(LDFLAGS) -o $@
 
-$(DEC7Z): ../lzma1505/C/Util/7z/7zDec ../lzma1505/C/Util/7z/7zMain.c
-	cp ../lzma1505/C/Util/7z/7zDec* .
+$(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/7zDec $(PROJ_DIR)/lzma1505/C/Util/7z/7zMain.c
+	cp $(PROJ_DIR)/lzma1505/C/Util/7z/7zDec* $(BIN)
 
-../lzma1505/C/Util/7z/7zDec:
-	uname_S=$(uname_S) make -C ../lzma1505/C/Util/7z -f makefile.gcc
+$(PROJ_DIR)/lzma1505/C/Util/7z/7zDec:
+	uname_S=$(uname_S) make -C $(PROJ_DIR)/lzma1505/C/Util/7z -f makefile.gcc
 
-$(UNRAR): ../unrar/$(UNRAR)
-	cp ../unrar/$(UNRAR) $(UNRAR)
-../unrar/$(UNRAR):
-	uname_S=$(uname_S) make -C ../unrar
+$(BIN)/$(UNRAR): $(PROJ_DIR)/unrar/$(UNRAR)
+	cp $(PROJ_DIR)/unrar/$(UNRAR) $(BIN)
+$(PROJ_DIR)/unrar/$(UNRAR):
+	uname_S=$(uname_S) make -C $(PROJ_DIR)/unrar
 #gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h debugger/report.h 
 #	$(CPP) $(CFLAGS) -c $< -o $@
 # Use the dependency files created by the -MMD option to gcc.
 
-%.c.o: %.c
+$(BIN)/%.c.o: %.c
+	mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
-%.cpp.o: %.cpp
+$(BIN)/%.cpp.o: %.cpp
+	mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
-%.m.o: %.m
+$(BIN)/%.m.o: %.m
+	mkdir -p $(@D)
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
 	
 clean:
-	rm -f $(EXECUTABLE); #gme/gme/*.o gme/demo/*.o gme/player/*.o debugger/*.o
-	#find . -name "*.o" -o -name "*.d" | xargs rm -rf
-	#find $(SHARED_DIR) -name "*.o" -o -name "*.d" | xargs rm -rf
-	find $(PROJ_DIR) -name "*.o" -o -name "*.d" | xargs rm -rf
-	rm -f {../lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
-	rm -f {../unrar/,}{unrar,unrar.exe}
+	rm -f $(BIN)/$(EXECUTABLE);
+	find . -name "*.o" -o -name "*.d" | xargs rm -rf
+	rm -f {$(PROJ_DIR)/lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
+	rm -f {$(PROJ_DIR)/unrar/,}{unrar,unrar.exe}
 
 
 
