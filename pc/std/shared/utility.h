@@ -17,9 +17,9 @@ namespace Utility
   {
     Uint32 i;
 
-    if ((scancode >= '0') && (scancode <= '9')
+    if ((scancode >= '0') && (scancode <= '9'))
       i = scancode - '0';
-    else if ((scancode >= 'A') && (scancode <= 'F')
+    else if ((scancode >= 'A') && (scancode <= 'F'))
       i = (scancode - 'A') + 0x0a;
     else if ((scancode >= 'a') && (scancode <= 'f'))
       i = (scancode - 'a') + 0x0a;
