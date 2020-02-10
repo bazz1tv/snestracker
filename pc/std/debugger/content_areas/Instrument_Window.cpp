@@ -69,7 +69,7 @@ void Instrument_Window::run()
 
   for (int i=0; i < 4; i++)
   {
-    adsrgraph.points[i].x /= 3;
+    adsrgraph.points[i].x /= 10;
     adsrgraph.points[i].x += adsrgraph.bounds.x + 10;
     adsrgraph.points[i].y += adsrgraph.bounds.y + adsrgraph.bounds.h - 2;
   }
