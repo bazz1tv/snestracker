@@ -2,6 +2,10 @@
 #include "SDL.h"
 #include "report.h"
 #include "gme/player/Music_Player.h"
+#include "shared/Voice_Control.h"
+
+extern uint8_t *IAPURAM;
+extern Voice_Control voice_control;
 
 void handle_error( const char* );
 

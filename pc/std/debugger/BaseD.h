@@ -1,7 +1,6 @@
 #pragma once
 #include "Render.h"
 #include "gme/player/Music_Player.h"
-#include "gme/player/Music_Player.h"
 #include "globals.h"
 #include "Experience.h"
 #include "Voice_Control.h"
@@ -54,6 +53,7 @@ struct BaseD
     static int dec_tempo(void *nada);
   };
 
+  static void play_sample(uint8_t voice);
 
   static int switch_to_memory(void *data);
   static int switch_to_dsp(void *data);
@@ -91,7 +91,7 @@ struct BaseD
   static char *g_real_filename;//=NULL;
   static bool is_first_run;
 
-  static Voice_Control voice_control;
+  static Voice_Control &voice_control;
   static unsigned char packed_mask[32];
   static char now_playing[1024];
   

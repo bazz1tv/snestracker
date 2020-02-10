@@ -13,7 +13,8 @@ ifdef CROSS_COMPILE
 	uname_S = Cross_Windows
 endif
 
-global_requirements = $(CPPSOURCES) $(CSOURCES) $(MSOURCES) $(BIN)/$(EXECUTABLE)
+global_requirements = $(CPPSOURCES) $(CSOURCES) $(MSOURCES) \
+$(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(EXECUTABLE_TRACKER)
 
 # This is where source that both tracker and STD will use. NOTE THE inclusion of the forward slash ;)
 SHARED_DIR = shared/
@@ -27,8 +28,14 @@ debug = -g
 optimize = -O3
 
 debugger_CPPFLAGS=$(debug) -I. -I$(SHARED_DIR) -I$(PROJ_DIR)/rtmidi -I$(PROJ_DIR)/NativeFileDialog/include\
--Idebugger/memory -Idebugger/content_areas -Idebugger/windows/Options_Window\
--funroll-loops -Wall -Idebugger -Wall
+-Idebugger/memory -Idebugger/content_areas -Ishared/windows/Options_Window\
+-funroll-loops -Wall -Idebugger
+
+tracker_CPPFLAGS=$(debug) -I. -I$(SHARED_DIR) -I$(PROJ_DIR)/rtmidi -I$(PROJ_DIR)/NativeFileDialog/include\
+-Itracker -Itracker/content_areas -Ishared/windows/Options_Window\
+-funroll-loops -Wall
+
+
 
 prefix ?= /opt/local
 gme_PREFIX ?= $(prefix)
@@ -41,7 +48,8 @@ gme_PREFIX ?= $(prefix)
 #../configure --native-platform-linux=1 --cross-compiling=1 --compiler-prefix=i686-pc-mingw32- --target-platform-mingw32=1 --prefix=/usr/i686-pc-mingw32/usr/
 # sudo -E make install-dev
 ifeq ($(uname_S), Darwin)
-	global_requirements += $(BIN)/$(EXECUTABLE).app 
+	global_requirements += $(BIN)/$(EXECUTABLE_DEBUGGER).app $(BIN)/$(EXECUTABLE_TRACKER).app 
+ 
 	CPPFLAGS += -Wno-int-to-void-pointer-cast -Wno-c++11-narrowing
 	MIDI_DEFS     =   -D__MACOSX_CORE__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAudio -ljdkmidi
@@ -60,7 +68,9 @@ ifeq ($(uname_S), Darwin)
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
-	EXECUTABLE=std
+	EXECUTABLE_DEBUGGER = std
+	EXECUTABLE_TRACKER = snes_tracker
+	
 	UNRAR = unrar
 	DEC7Z = 7zDec
 else ifeq ($(uname_S), Linux)
@@ -87,7 +97,9 @@ else ifeq ($(uname_S), Linux)
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
-	EXECUTABLE = std
+	EXECUTABLE_DEBUGGER = std
+	EXECUTABLE_TRACKER = snes_tracker
+	
 	UNRAR = unrar
 	DEC7Z = 7zDec
 else ifeq ($(uname_S), Cross_Windows)
@@ -112,7 +124,8 @@ else ifeq ($(uname_S), Cross_Windows)
 	sdl2_cflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags)
 	sdl2_ldflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs)
 
-	EXECUTABLE = std.exe
+	EXECUTABLE_DEBUGGER = std.exe
+	EXECUTABLE_TRACKER = snes_tracker.exe
 	UNRAR = unrar.exe
 	DEC7Z = 7zDec.exe
 else ifeq ($(uname_S), Windows)
@@ -131,28 +144,36 @@ $(sdl2_ldflags) -lm $(MIDI_LIBRARY) $(gme_LDFLAGS)
 # global CPP
 CPP_DEFS 	+= $(MIDI_DEFS) 
 CPPFLAGS 	+= $(sdl2_cflags) -Wno-return-type -std=c++11 $(MIDI_CPPFLAGS) \
-$(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
+$(gme_CPPFLAGS) -MMD -MP
 
 # currently, only because of Native File Dialog Implementation on OS X
 OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
 #### CPPSOURCES
-CPPSOURCES += $(wildcard $(SHARED_DIR)*.cpp) $(wildcard $(SHARED_DIR)*/*.cpp)\
-$(wildcard $(SHARED_DIR)*/*/*.cpp)\
-$(wildcard *.cpp) $(wildcard debugger/*.cpp) $(wildcard debugger/*/*.cpp) \
+CPPSOURCES_SHARED = $(wildcard $(SHARED_DIR)*.cpp) $(wildcard $(SHARED_DIR)*/*.cpp)\
+										$(wildcard $(SHARED_DIR)*/*/*.cpp)\
+
+CPPSOURCES_DEBUGGER = $(CPPSOURCES) $(CPPSOURCES_SHARED) \
+$(wildcard debugger/*.cpp) $(wildcard debugger/*/*.cpp) \
 $(wildcard debugger/*/*/*.cpp)
-
-
+											 
+CPPSOURCES_TRACKER = $(CPPSOURCES) $(CPPSOURCES_SHARED) \
+$(wildcard tracker/*.cpp) $(wildcard tracker/*/*.cpp) \
+$(wildcard tracker/*/*/*.cpp)
 
 
 # 
-OBJECTS = $(CPPSOURCES:.cpp=.cpp.o) $(MSOURCES:.m=.m.o) $(CSOURCES:.c=.c.o)
+OBJECTS_DEBUGGER = $(CPPSOURCES_DEBUGGER:.cpp=.cpp.o) $(MSOURCES:.m=.m.o) $(CSOURCES:.c=.c.o)
+OBJECTS_TRACKER = $(CPPSOURCES_TRACKER:.cpp=.cpp.o) $(MSOURCES:.m=.m.o) $(CSOURCES:.c=.c.o)
 
-OBJECTS2 = $(addprefix bin/, $(OBJECTS))
+OBJECTS_DEBUGGER2 = $(addprefix bin/, $(OBJECTS_DEBUGGER))
+OBJECTS_TRACKER2 = $(addprefix bin/, $(OBJECTS_TRACKER))
 
 all: $(global_requirements)
 
-$(BIN)/$(EXECUTABLE).app: $(EXECUTABLE) unrar 7zDec
-	#rm -rf $@
+$(OBJECTS_DEBUGGER2): CPPFLAGS += $(debugger_CPPFLAGS)
+$(OBJECTS_TRACKER2): CPPFLAGS += $(tracker_CPPFLAGS)
+
+$(BIN)/$(EXECUTABLE_DEBUGGER).app: $(EXECUTABLE_DEBUGGER) unrar 7zDec
 	mkdir -p $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
 	cp std $@/Contents/MacOS
 	cp Info.plist $@/Contents
@@ -160,8 +181,21 @@ $(BIN)/$(EXECUTABLE).app: $(EXECUTABLE) unrar 7zDec
 	cp 7zDec $@/Contents/Resources
 	touch $@
 
-$(BIN)/$(EXECUTABLE): $(OBJECTS2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
-	$(CC) $(OBJECTS2) $(LDFLAGS) -o $@
+$(BIN)/$(EXECUTABLE_TRACKER).app: $(EXECUTABLE_TRACKER) unrar 7zDec
+	mkdir -p $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
+	cp std $@/Contents/MacOS
+	cp Info.plist $@/Contents
+	cp unrar $@/Contents/Resources
+	cp 7zDec $@/Contents/Resources
+	touch $@
+
+
+$(BIN)/$(EXECUTABLE_DEBUGGER): $(OBJECTS_DEBUGGER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
+	$(CC) $(OBJECTS_DEBUGGER2) $(LDFLAGS) -o $@
+
+$(BIN)/$(EXECUTABLE_TRACKER): $(OBJECTS_TRACKER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
+	$(CC) $(OBJECTS_TRACKER2) $(LDFLAGS) -o $@
+
 
 $(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/7zDec $(PROJ_DIR)/lzma1505/C/Util/7z/7zMain.c
 	cp $(PROJ_DIR)/lzma1505/C/Util/7z/7zDec* $(BIN)
@@ -173,24 +207,22 @@ $(BIN)/$(UNRAR): $(PROJ_DIR)/unrar/$(UNRAR)
 	cp $(PROJ_DIR)/unrar/$(UNRAR) $(BIN)
 $(PROJ_DIR)/unrar/$(UNRAR):
 	uname_S=$(uname_S) make -C $(PROJ_DIR)/unrar
-#gme/gme/Spc_Cpu.o: gme/gme/Spc_Cpu.cpp gme/gme/Spc_Cpu.h debugger/report.h 
-#	$(CPP) $(CFLAGS) -c $< -o $@
-# Use the dependency files created by the -MMD option to gcc.
 
-$(BIN)/%.c.o: %.c
+$(BIN)/%.c.o: %.c %.h
 	mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
-$(BIN)/%.cpp.o: %.cpp
+$(BIN)/%.cpp.o: %.cpp %.h
 	mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
-$(BIN)/%.m.o: %.m
+$(BIN)/%.m.o: %.m %.h
 	mkdir -p $(@D)
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
 	
 clean:
-	rm -f $(BIN)/$(EXECUTABLE);
+	rm -f $(BIN)/$(EXECUTABLE_DEBUGGER);
+	rm -f $(BIN)/$(EXECUTABLE_TRACKER);
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 	rm -f {$(PROJ_DIR)/lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
 	rm -f {$(PROJ_DIR)/unrar/,}{unrar,unrar.exe}

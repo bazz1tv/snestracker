@@ -1,4 +1,7 @@
 #include "BRR.h"
+#include "shared/gme/player/Music_Player.h"
+#include "shared/Voice_Control.h"
+extern Voice_Control voice_control;
 
 const char BRR::BRRP_MAGIC_STR[] = "ST-BRRP";  // the S has the low 2 bits set, 
                                                 //an unlikely situation for any BRR Sample
@@ -18,7 +21,7 @@ int BRR::write_plain_brr_to_file(BRR *brr)
   {
     if (outPath !=NULL)
       fprintf(stderr, "%s\n", outPath);
-    SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
+    SDL_RWwrite(file, &::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
     SDL_RWclose(file);
     free(outPath);
   }
@@ -63,14 +66,14 @@ int BRR::write_brrp_to_file(BRR *brr)
     // 
     write_loop_info_to_file(brr, file);
     //BRR Sample
-    SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
+    SDL_RWwrite(file, &::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
     /* 1 Byte boolean "is_loop_external" : 0x00 or 0xff - no or yes
       if no.: next and final byte is 16bit offset into previous sample where the loop point is.
       if yes: Next BRR Sample is provided */
     //
 
     if (brr->is_looped_sample && brr->is_loop_external) // write the external loop sample
-      SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_loop_start], brr->brr_loop_end - brr->brr_loop_start + 1, 1);
+      SDL_RWwrite(file, &::IAPURAM[brr->brr_loop_start], brr->brr_loop_end - brr->brr_loop_start + 1, 1);
 
 
     SDL_RWclose(file);
@@ -103,10 +106,10 @@ int BRR::write_brri_to_file(BRR *brr)
     tmpb = ::player->spc_read_dsp(brr->corresponding_voice*0x10 + dsp_reg::gain);
     SDL_RWwrite(file, &tmpb, 1, 1); 
     //BRR Sample
-    SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
+    SDL_RWwrite(file, &::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
     //
     if (brr->is_looped_sample && brr->is_loop_external) // write the external loop sample
-      SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_loop_start], brr->brr_loop_end - brr->brr_loop_start + 1, 1);
+      SDL_RWwrite(file, &::IAPURAM[brr->brr_loop_start], brr->brr_loop_end - brr->brr_loop_start + 1, 1);
 
     SDL_RWclose(file);
     free(outPath);
@@ -116,15 +119,7 @@ int BRR::write_brri_to_file(BRR *brr)
 
 void BRR::solo_sample()
 {
-  BaseD::voice_control.solo_bits(srcn_solo);
-}
-
-void BRR::play_sample(Instrument_Window *instr_window)
-{
-  instr_window->switch_mode(BaseD::GrandMode::INSTRUMENT);
-  instr_window->voice.n = one_solo;
-  instr_window->pause_spc();
-  BaseD::voice_control.unmute_all();
+  ::voice_control.solo_bits(srcn_solo);
 }
 
 BRR::BRR()
@@ -216,9 +211,9 @@ int BRR::check_brr(uint16_t *address)
   uint16_t p = lowest_closest_srcn_address;
   while(1)
   {
-    if (BaseD::IAPURAM[p] & 1)
+    if (::IAPURAM[p] & 1)
     {
-      if (BaseD::IAPURAM[p] & 2)
+      if (::IAPURAM[p] & 2)
         is_looped_sample=true;
       p+=8;
       break;
@@ -238,7 +233,7 @@ int BRR::check_brr(uint16_t *address)
   p = Spc_Report::src[lowest_loop_index].brr_loop_start;
   while(1)
   {
-    if (BaseD::IAPURAM[p] & 1)
+    if (::IAPURAM[p] & 1)
     {
       p+=8;
       break;
@@ -266,7 +261,10 @@ int BRR::check_brr(uint16_t *address)
   else 
   {
     Spc_Report::src[lowest_srcn_index].brr_end = lowest_closest_brrend_address_from_srcn;
-    fprintf(stderr, "BRR @ 0x%04X-0x%04X\n", lowest_closest_srcn_address, lowest_closest_brrend_address_from_srcn);
+    fprintf(stderr, "BRR @ 0x%04X-0x%04X; one_solo=%d\n",
+            lowest_closest_srcn_address,
+            lowest_closest_brrend_address_from_srcn,
+            one_solo);
     brr_start = lowest_closest_srcn_address;
     brr_end = lowest_closest_brrend_address_from_srcn; //inclusive
     if (is_looped_sample == true)

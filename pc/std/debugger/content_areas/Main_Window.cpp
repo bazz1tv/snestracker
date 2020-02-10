@@ -839,8 +839,6 @@ int Main_Window::receive_event(SDL_Event &ev)
     } break;
     case SDL_MOUSEBUTTONDOWN:           
       {
-
-        //if (tempo.check_mouse_and_execute(ev.motion.x, ev.motion.y)) return;
         voice_control.checkmouse((Uint16&)ev.motion.x, (Uint16&)ev.motion.y, ev.button.button); 
 
         bool is_in_memory_window= (ev.motion.x >= MEMORY_VIEW_X && 

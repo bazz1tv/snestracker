@@ -1,5 +1,4 @@
 #include "Midi.h"
-#include "BaseD.h"
 #include "Instrument_Window.h"
 #include "Notes.h"
 
@@ -60,6 +59,7 @@ void Midi::PrintMsg( FILE *f, jdkmidi::MIDIMessage *m )
   // SNES shit
   if (m->IsNoteOn())
   {
+    /* FIX ME
     if (BaseD::grand_mode == BaseD::GrandMode::INSTRUMENT)
     {
       SDL_Event event2;
@@ -70,10 +70,11 @@ void Midi::PrintMsg( FILE *f, jdkmidi::MIDIMessage *m )
       event2.user.data2 = 0;
       SDL_PushEvent(&event2);
       last_note_on = m->GetNote();
-    }
+    }*/
   }
   else if (m->IsNoteOff())
   {
+    /* FIXME
     if (BaseD::grand_mode == BaseD::GrandMode::INSTRUMENT)
     {
       if (m->GetNote() == last_note_on)
@@ -86,14 +87,15 @@ void Midi::PrintMsg( FILE *f, jdkmidi::MIDIMessage *m )
         event2.user.data2 = 0;
         SDL_PushEvent(&event2);
       }
-    }
+    }*/
   }
   else if (m->IsProgramChange())
   {
+    /* FIXME
     if (BaseD::grand_mode == BaseD::GrandMode::INSTRUMENT)
     {
       BaseD::instr_window->set_voice(m->GetPGValue());
-    }  
+    }  */
   }
 
   int l = m->GetLength();

@@ -6,13 +6,11 @@
 #include "memory/Mouse_Hexdump_Area.h"
 #include "gui/Context_Menu.h"
 #include "gme/Spc_Dsp_Register_Map_Interface.h"
-#include "Instrument_Window.h"
 #include "BRR.h"
 // expects pre-calculated main_memory_area.brr
 int write_brri_to_file(void *data);
 int write_brrp_to_file(void *data);
 int write_plain_brr_to_file(void *data);  // data is main_memory_area ptr
-int play_sample(void *data);
 int solo_sample(void *data);
 
 
@@ -68,12 +66,14 @@ public:
       RIPBRRI,
       SIZEOF_MENU
     };
+    
+    static int play_sample(void *data);
 
     Context_Menu menu;
     Context_Menu_Item menu_items[SIZEOF_MENU+1] = 
     {
       {"Solo Sample",true, &solo_sample,NULL},
-      {"Play Sample",true, &play_sample, NULL},
+      {"Play Sample",true, &Main_Memory_Area::Context::play_sample, NULL},
       {"RIP BRR",true, &write_plain_brr_to_file, NULL},
       {"Rip BRR+",true, &write_brrp_to_file, NULL},
       {"Rip BRRI",true, &write_brri_to_file, NULL},

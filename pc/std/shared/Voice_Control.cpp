@@ -1,11 +1,6 @@
 #include "Voice_Control.h"
 #include "gme/player/Music_Player.h"
 
-Voice_Control::Voice_Control()
-{
-
-}
-
 void Voice_Control::checkmouse_mute(Uint16 &x,Uint16 &y)
 {
   char changed=0;
@@ -35,7 +30,7 @@ void Voice_Control::checkmouse_mute(Uint16 &x,Uint16 &y)
     }
   }
   if (changed)
-    player->mute_voices(muted);
+    ::player->mute_voices(muted);
 }
 void Voice_Control::checkmouse_solo(Uint16 &x,Uint16 &y)
 {
@@ -61,7 +56,7 @@ void Voice_Control::checkmouse_solo(Uint16 &x,Uint16 &y)
     
   }
   if (changed)
-    player->mute_voices(muted);
+    ::player->mute_voices(muted);
 }
 
 void Voice_Control::mute(uint8_t i)
@@ -72,19 +67,17 @@ void Voice_Control::mute(uint8_t i)
 void Voice_Control::solo(uint8_t i)
 {
   muted = ~(1<<(i-1));
-  player->mute_voices(muted);
+  ::player->mute_voices(muted);
 }
 
 void Voice_Control::solo_bits(uint8_t i)
 {
-  //fprintf(stderr, "muted = %02X, ~i = %02X", muted, ~i);
   if (muted == (uint8_t)(~i))
   {
-    //fprintf(stderr, "deede");
     muted = 0;
   }
   else muted = ~(i);
-  player->mute_voices(muted);
+  ::player->mute_voices(muted);
 }
 
 void Voice_Control::toggle_solo(uint8_t i)
@@ -94,29 +87,28 @@ void Voice_Control::toggle_solo(uint8_t i)
     muted = 0;
   }
   else muted = ~(1<<(i-1));
-  player->mute_voices(muted);
+  ::player->mute_voices(muted);
 }
 void Voice_Control::toggle_mute(uint8_t m)
 {
   assert (m>0 && m < 9 );
   muted ^= 1<<(m-1);
-  player->mute_voices(muted);
+  ::player->mute_voices(muted);
 }
 void Voice_Control::mute_all()
 {
-  player->mute_voices(muted=0);
+  ::player->mute_voices(muted=0);
 }
 void Voice_Control::toggle_mute_all()
 {
   if (!muted)
     muted = 0xff;
   else muted = 0;
-  //player->mute_voices(muted^=0xff);
-  player->mute_voices(muted);
+  ::player->mute_voices(muted);
 }
 void Voice_Control::unmute_all()
 {
-  player->mute_voices(muted=0);
+  ::player->mute_voices(muted=0);
 }
 void Voice_Control::checkmouse(Uint16 &x, Uint16 &y, int b)
 {

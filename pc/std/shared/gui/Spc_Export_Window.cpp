@@ -1,7 +1,6 @@
 #include "gui/Spc_Export_Window.h"
 #include "Screen.h"
 #include "My_Nfd.h"
-#include "BaseD.h"
 #include "File_System.h"
 
 #define WIDTH 500
@@ -52,25 +51,27 @@ void Spc_Export_Window::show()
 void Spc_Export_Window::one_time_draw()
 {
   int x=10, y=10;
-  sprintf(BaseD::tmpbuf, "Game....: %s", BaseD::tag.game);
-  sdlfont_drawString(this->screen, x, y, BaseD::tmpbuf); 
+  char tmpbuf[75];
+  // TODO: FIXME
+/*  sprintf(tmpbuf, "Game....: %s", BaseD::tag.game);
+  sdlfont_drawString(this->screen, x, y, tmpbuf); 
   y+=CHAR_HEIGHT;
-  sprintf(BaseD::tmpbuf, "Title...: %s", BaseD::tag.song);
-  sdlfont_drawString(this->screen, x, y, BaseD::tmpbuf); 
+  sprintf(tmpbuf, "Title...: %s", BaseD::tag.song);
+  sdlfont_drawString(this->screen, x, y, tmpbuf); 
   y+=CHAR_HEIGHT;
-  sprintf(BaseD::tmpbuf, "Length..: %ld", BaseD::tag.length);
-  sdlfont_drawString(this->screen, x, y, BaseD::tmpbuf);
+  sprintf(tmpbuf, "Length..: %ld", BaseD::tag.length);
+  sdlfont_drawString(this->screen, x, y, tmpbuf);
   y+=CHAR_HEIGHT;
-  sprintf(BaseD::tmpbuf, "Composer: %s", BaseD::tag.author);
-  sdlfont_drawString(this->screen, x, y, BaseD::tmpbuf); 
+  sprintf(tmpbuf, "Composer: %s", BaseD::tag.author);
+  sdlfont_drawString(this->screen, x, y, tmpbuf); 
   y+=CHAR_HEIGHT*2;
 
-  sprintf(BaseD::tmpbuf, "Dumper..: %s", BaseD::tag.dumper);
-  sdlfont_drawString(this->screen, x, y, BaseD::tmpbuf); 
+  sprintf(tmpbuf, "Dumper..: %s", BaseD::tag.dumper);
+  sdlfont_drawString(this->screen, x, y, tmpbuf); 
   y+=CHAR_HEIGHT;
-  sprintf(BaseD::tmpbuf, "Comment.: %s", BaseD::tag.comment);
-  sdlfont_drawString(this->screen, x, y, BaseD::tmpbuf); 
-  y+=CHAR_HEIGHT*5;
+  sprintf(tmpbuf, "Comment.: %s", BaseD::tag.comment);
+  sdlfont_drawString(this->screen, x, y, tmpbuf); 
+  y+=CHAR_HEIGHT*5;*/
 
   export_button.setup(WIDTH,y,true);
   draw();
@@ -100,7 +101,6 @@ int Spc_Export_Window::save_file(void *data)
 
 
   nfdresult_t result = NFD_SaveDialog( "spc", NULL, &outPath );
-  //SDL_RaiseWindow(BaseD::sdlWindow);
   if ( result == NFD_OKAY )
   {
     if (outPath !=NULL)

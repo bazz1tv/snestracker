@@ -3,9 +3,9 @@
 #include "SDL.h"
 #include "utility.h"
 #include "gme/Spc_Dsp_Register_Map_Interface.h"
-#include "BaseD.h"
-#include "Instrument_Window.h"
 #include "nfd.h"
+
+extern uint8_t *IAPURAM;
 
 struct BRR
 {
@@ -37,6 +37,5 @@ struct BRR
   Uint16 brr_start,brr_end; // for downloading BRR samples
   Uint16 brr_loop_start,brr_loop_end;
   int check_brr(Uint16 *address);
-  void play_sample(Instrument_Window *instr_window);
   void solo_sample();
 };

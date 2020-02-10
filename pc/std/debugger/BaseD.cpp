@@ -2,6 +2,7 @@
 #include "Main_Window.h"
 #include "Menu_Bar.h"
 #include "File_System.h"
+#include "Instrument_Window.h"
 
 char BaseD::tmpbuf[500];
 
@@ -36,7 +37,7 @@ Menu_Bar * BaseD::menu_bar=NULL;
 Cursors * BaseD::cursors=NULL;
 
 const char * BaseD::path=NULL;
-Voice_Control BaseD::voice_control;
+Voice_Control &BaseD::voice_control = ::voice_control;
 
 uint16_t BaseD::Hack_Spc::pc_backup;
 uint16_t *BaseD::Hack_Spc::pc_ptr=NULL;
@@ -133,6 +134,15 @@ void BaseD::Profile::process()
     BaseD::Profile::is_profiling=false;
     delete this;
   }
+}
+
+void BaseD::play_sample(uint8_t voicenum)
+{
+  fprintf(stderr, "voicenum = %d\n", voicenum);
+  instr_window->switch_mode(BaseD::GrandMode::INSTRUMENT);
+  instr_window->voice.n = voicenum;
+  instr_window->pause_spc();
+  ::voice_control.unmute_all();
 }
 
 int BaseD::switch_to_memory(void *data)
@@ -521,6 +531,7 @@ void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
   handle_error( player->load_file( path ) );
   
   IAPURAM = player->spc_emu()->ram();
+  ::IAPURAM = IAPURAM;
   
   report::memsurface.clear();
 
