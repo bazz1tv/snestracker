@@ -125,7 +125,7 @@ int Menu_Bar::File_Context::export_wav(void *data)
     while ( (::player->emu()->tell()/1000) < BaseD::song_time )
     {
       /* Sample buffer */
-      #define buf_size 1024 /* can be any multiple of 2 */
+      const unsigned int buf_size = 1024 /* can be any multiple of 2 */
       sample_t buf [buf_size];
       
       /* Fill sample buffer */
