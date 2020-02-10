@@ -1,6 +1,10 @@
 #include "Options_Window.h"
 #include "Screen.h"
 
+// currently gets init'd by Debugger class
+Options_Window *options_window=NULL;
+
+
 Options_Window::Tabs::Tabs(Options_Window &ref) : 
 options_window(ref),
 audio(3,3, "Audio", switch_to_audio_tab, &options_window, true)

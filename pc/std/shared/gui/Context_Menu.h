@@ -30,7 +30,6 @@ struct Context_Menu
   void push(char *str);
   void draw(SDL_Surface *screen);
   bool do_thing(void *data=NULL);
-  //std::vector<Clickable_Text> items;
   Context_Menu_Item *items=NULL;
   
   bool is_active=false;

@@ -88,3 +88,5 @@ struct Options_Window : public Window
     
   } content_area;
 };
+
+extern Options_Window *options_window;

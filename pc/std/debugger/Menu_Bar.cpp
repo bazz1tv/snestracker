@@ -43,25 +43,9 @@ void Menu_Bar::Tabs::draw()
 
 int Menu_Bar::Edit_Context::open_options_window(void *data)
 {
-  DEBUGLOG("open_options_window()\n");
-  //
-  BaseD::options_window->show();
-  BaseD::options_window->raise();
-  //BaseD::options_window->raise();
-  // there's a problem raising the window immediately after showing it... 
-  // So I raise it in the event loop when the window focus change event happens
-  
-  //SDL_Thread *thread;
-  //SDL_CreateThread(&Menu_Bar::Edit_Context::open_options_window_in_thread, "Options_Window_Thread", NULL);
-  return 0;
-}
+  ::options_window->show();
+  ::options_window->raise();
 
-int Menu_Bar::Edit_Context::open_options_window_in_thread(void *data)
-{
-  DEBUGLOG("open_options_window_in_thread()\n");
-  
-  
-  //SDL_Delay(5000);
   return 0;
 }
 
@@ -90,8 +74,6 @@ void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
   if (::player->is_paused() || (BaseD::exp == BaseD::instr_window && BaseD::instr_window->start_stop.is_started) )
   {
     ct->str = "play";
-    //ct->str.clear();
-    //ct->str.append( "resume" );
   }
   else 
   {
@@ -209,8 +191,6 @@ int Menu_Bar::Window_Context::restore_window_size(void *nada)
   return 0;
 }
 
-
-
 void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 {
   this->x = x; this->y = y;
@@ -225,8 +205,6 @@ void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 
   window_context.menu.preload(x,y);
   x +=  ( window_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
-
-  
 }
 
 bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Uint8 &button, const SDL_Event *ev)

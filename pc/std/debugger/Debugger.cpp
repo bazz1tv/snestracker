@@ -15,7 +15,7 @@ main_window(argc,argv)
   BaseD::dsp_window = &dsp_window;
   BaseD::instr_window = &instr_window;
   BaseD::menu_bar = &menu_bar;
-  BaseD::options_window = &options_window;
+  ::options_window = &options_window;
   BaseD::spc_export_window = &spc_export_window;
   BaseD::cursors = &cursors;
   exp = &main_window;
@@ -25,10 +25,10 @@ main_window(argc,argv)
   fprintf(stderr, "x: %d, y: %d\n", x, y);
   x += 20;
   y += 20;
-  SDL_SetWindowPosition(options_window.sdlWindow, x, y);
+  SDL_SetWindowPosition(::options_window->sdlWindow, x, y);
 
   int i=0;
-  window_map[i++] = &options_window;
+  window_map[i++] = ::options_window;
   window_map[i++] = &spc_export_window;
   window_map[i] = NULL;
 
