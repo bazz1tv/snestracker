@@ -3,8 +3,6 @@
 #include "gme/player/Music_Player.h"
 #include "gme/player/Music_Player.h"
 #include "globals.h"
-//#include "Main_Window.h"
-//#include "Dsp_Window.h"
 #include "Experience.h"
 #include "Voice_Control.h"
 #include "My_Nfd.h"
@@ -28,7 +26,7 @@ struct BaseD
     static bool is_started;
     static void pause_spc();
     static void restore_spc(bool resume=true);
-  }; //hack_spc;
+  };
   struct Profile
   {
     Profile(const char*spc_filename);
@@ -63,11 +61,9 @@ struct BaseD
   static int switch_to_dsp(void *data);
   static int switch_to_instrument(void *data);
     
-
-  //static char **rsn_spc_paths;
   static void if_exp_is_instr_window_then_restore_spc();
   static void check_paths_and_reload(char **paths=g_cfg.playlist, 
-    int numpaths=g_cfg.num_files, bool is_drop_event=false);
+  int numpaths=g_cfg.num_files, bool is_drop_event=false);
   static void pack_mask(unsigned char packed_mask[32]);
   static void applyBlockMask(char *filename);
   static void write_mask(unsigned char packed_mask[32]);
@@ -97,16 +93,12 @@ struct BaseD
   static char *g_real_filename;//=NULL;
   static bool is_first_run;
 
-
-  //static bool new_track_started;
   static Voice_Control voice_control;
   static unsigned char packed_mask[32];
   static char now_playing[1024];
   
   static int grand_mode;// =0;
-  //static int submode;// =  0;
   
-  // trim later. Get working now
   static struct Cfg {
     unsigned char filler = 0x00;
     int apply_block = 0;

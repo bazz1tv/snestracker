@@ -130,10 +130,6 @@ int Menu_Bar::File_Context::export_wav(void *data)
   SDL_RaiseWindow(::render->sdlWindow);
   if ( result == NFD_OKAY )
   {
-    //puts("Success!");
-    //puts(outPath);
-    //SDL_RWops* SDL_RWFromFile(const char* file,
-      //                const char* mode)
     if (outPath !=NULL)
       fprintf(stderr, "%s\n", outPath);
 
@@ -157,8 +153,7 @@ int Menu_Bar::File_Context::export_wav(void *data)
       /* Write samples to wave file */
       wave_write( buf, buf_size );
     }
-      //SDL_RWwrite(file, &BaseD::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
-      //SDL_RWclose(file);
+
     free(outPath);
     wave_close();
     ::player->exporting = false;

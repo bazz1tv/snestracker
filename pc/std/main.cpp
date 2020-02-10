@@ -89,13 +89,3 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
 
   return 0; 
 }
-
-
-
-
-
-
-
-
-
-

@@ -57,7 +57,6 @@ struct Main_Window : public BaseD, public Experience
 
 
   int echo_on_x=0, echo_on_y=0;
-  //Clickable_Text echo_on;
 
   void maybe_write_to_mem(bool force=false); // maybe write value to memory
   struct Gain
@@ -74,35 +73,16 @@ struct Main_Window : public BaseD, public Experience
     static int change(void *dblnewtempo);
   } tempo;
 
-  /*struct Time_Seek
-  {
-    ~Time_Seek() { if (slider) delete slider; }
-    Slider<double> *slider=NULL;
-    static int change(void *intnewtime);
-  } time_seek;*/
-
-  /*struct Tempo
-  {
-    Tempo() : minus("-"), plus("+") {}
-    bool check_mouse_and_execute(int &x, int &y)
-    {
-      if (minus.check_mouse_and_execute(x,y)) return true;
-      if (plus.check_mouse_and_execute(x,y)) return true;
-      return false;
-    }
-    Clickable_Text minus, plus;
-  } tempo;*/
-
   enum modes 
   { 
     MODE_NAV=0,
     MODE_EDIT_MOUSE_HEXDUMP,
     MODE_EDIT_APU_PORT,
     MODE_EDIT_TIME
-    //MODE_QUIT  
   };
+
   Main_Window(int &argc, char **argv);
-  //~Main_Window();
+
   void run();
   void check_quit(SDL_Event &ev);
 
@@ -149,43 +129,22 @@ struct Main_Window : public BaseD, public Experience
   Mouse_Hexdump_Area mouseover_hexdump_area;
   Port_Tool port_tool;
   
-  //Uint16 address, addr_being_edited; // shared variable between main_memory_area and mouseover_hexdump_area
-
-  // TRACK STUFFZZ  
-  
-  
   void update_window_title();
-  //void start_track( int track, const char* path );
   void draw_track_tag();
 
   int mode=MODE_NAV;
 
-  //bool main_memory_context_menu_is_active=false;
-  
-
-  // trim later. Get working now
-  
-
- 
   bool is_onetime_draw_necessary=true;
-   // holds the filename minus path
 
   int tmp=0, i=0;
   SDL_Rect tmprect;
-  
-  
 
-  
-  //int last_pc;
   Uint32 time_last=0, time_cur=0;
   
   bool is_first_run=true;
   
-
-  
   char *cur_marquee = NULL;
   int cur_marquee_id = 0;
   char *marquees[3] = { (char*)CREDITS, now_playing, NULL };
-
 };
 
