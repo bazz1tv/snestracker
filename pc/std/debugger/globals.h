@@ -6,6 +6,7 @@
 
 extern uint8_t *IAPURAM;
 extern Voice_Control voice_control;
+extern track_info_t tag;
 
 void handle_error( const char* );
 

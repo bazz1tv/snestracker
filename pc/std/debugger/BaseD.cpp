@@ -24,7 +24,6 @@ int BaseD::g_cur_entry= 0;
 bool BaseD::paused;
 
 int BaseD::song_time;
-track_info_t BaseD::tag;
 char * BaseD::g_real_filename=NULL;
 char BaseD::now_playing[1024];
 
@@ -420,12 +419,12 @@ int BaseD::menu_bar_events(SDL_Event &ev)
 
 void BaseD::update_track_tag()
 {
-  tag = player->track_info();
+  ::tag = player->track_info();
 
 
   /* decide how much time the song will play */
   if (!g_cfg.ignoretagtime) {
-    song_time = (int)tag.length / 1000;
+    song_time = (int)::tag.length / 1000;
     if (song_time <= 0) {
       song_time = g_cfg.defaultsongtime;
     }
@@ -439,10 +438,10 @@ void BaseD::update_track_tag()
   player->emu()->set_fade(song_time * 1000 + 1000);
 
   now_playing[0] = 0;
-  if (strcmp(tag.song, ""))
+  if (strcmp(::tag.song, ""))
   {
-    if (strlen((const char *)tag.song)) {
-      sprintf(now_playing, "Now playing: %s (%s), dumped by %s\n", tag.song, tag.game, tag.dumper);
+    if (strlen((const char *)::tag.song)) {
+      sprintf(now_playing, "Now playing: %s (%s), dumped by %s\n", ::tag.song, ::tag.game, ::tag.dumper);
     }   
   }
   if (strlen(now_playing)==0) {

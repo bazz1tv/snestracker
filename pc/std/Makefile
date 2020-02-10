@@ -208,15 +208,15 @@ $(BIN)/$(UNRAR): $(PROJ_DIR)/unrar/$(UNRAR)
 $(PROJ_DIR)/unrar/$(UNRAR):
 	uname_S=$(uname_S) make -C $(PROJ_DIR)/unrar
 
-$(BIN)/%.c.o: %.c %.h
+$(BIN)/%.c.o: %.c
 	mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
-$(BIN)/%.cpp.o: %.cpp %.h
+$(BIN)/%.cpp.o: %.cpp
 	mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
-$(BIN)/%.m.o: %.m %.h
+$(BIN)/%.m.o: %.m
 	mkdir -p $(@D)
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
 	
@@ -226,8 +226,6 @@ clean:
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 	rm -f {$(PROJ_DIR)/lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
 	rm -f {$(PROJ_DIR)/unrar/,}{unrar,unrar.exe}
-
-
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 -include $(CPPSOURCES:.cpp=.cpp.d) $(MSOURCES:.m=.m.d) $(CSOURCES:.c=.c.d)

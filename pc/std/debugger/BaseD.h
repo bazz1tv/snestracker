@@ -87,7 +87,6 @@ struct BaseD
   static const char* path;
 
   static int song_time;
-  static track_info_t tag;
   static char *g_real_filename;//=NULL;
   static bool is_first_run;
 

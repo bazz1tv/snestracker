@@ -1,14 +1,6 @@
 #include "Mouse_Hexdump_Area.h"
 int Mouse_Hexdump_Area::MOUSE_HEXDUMP_START_Y;
 
-
-
-
-/*void Mouse_Hexdump_Area::update_tmp_ram()
-{
-
-}*/
-
 void Mouse_Hexdump_Area::add_addr(int i)
 {
   address += i;
@@ -19,17 +11,14 @@ void Mouse_Hexdump_Area::update_editing_address()
 {
   report::restore_color(addr_being_edited);
   addr_being_edited = address+(res_y*8)+res_x;
-  //fprintf(stderr,"DERP");
-  //update_tmp_ram();
-  if ( IS_SPECIAL_ADDRESSES(addr_being_edited) )//(addr_being_edited == 0xf3 && (IAPURAM[0xf2] == 0x4c || IAPURAM[0xf2] == 0x5c) ) || addr_being_edited==0xf1 || addr_being_edited == 0xf0)
+
+  if ( IS_SPECIAL_ADDRESSES(addr_being_edited) )
   {
     // only update the buffer the first time.. if we haven't started writing in a new value
     if (!draw_tmp_ram)
     { 
       if (addr_being_edited == 0xf3)
         tmp_ram = player->spc_read(0xf2);
-      //else if (addr_being_edited >= 0xfa && addr_being_edited <= 0xfc)
-        //tmp_ram = IAPURAM[addr_being_edited];
       else tmp_ram = player->spc_read(addr_being_edited);
     }
     if (old_addr != addr_being_edited)
@@ -41,7 +30,6 @@ void Mouse_Hexdump_Area::update_editing_address()
       draw_tmp_ram=0;
     }
   }
-  //else tmp_ram = IAPURAM[addr_being_edited];
 }
 void Mouse_Hexdump_Area::inc_cursor_row()
 {
@@ -50,7 +38,7 @@ void Mouse_Hexdump_Area::inc_cursor_row()
   
   if (res_y == 15)
   {
-    add_addr(+8); //address += 8;
+    add_addr(+8);
   }
   else res_y++;    
   update_editing_address();
@@ -134,5 +122,3 @@ void Mouse_Hexdump_Area::draw_cursor(SDL_Surface *screen, Uint32 color)
     cursor.draw(screen, MOUSE_HEXDUMP_START_X + (res_x * MOUSE_HEXDUMP_ENTRY_X_INCREMENT + (7)), MOUSE_HEXDUMP_START_Y + (res_y * MOUSE_HEXDUMP_ENTRY_Y_INCREMENT), color);
   }
 }
-
-

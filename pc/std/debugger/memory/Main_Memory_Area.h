@@ -13,8 +13,6 @@ int write_brrp_to_file(void *data);
 int write_plain_brr_to_file(void *data);  // data is main_memory_area ptr
 int solo_sample(void *data);
 
-
-
 struct Main_Memory_Area : Memory
 {
 public:

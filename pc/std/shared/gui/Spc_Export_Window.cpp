@@ -2,6 +2,7 @@
 #include "Screen.h"
 #include "My_Nfd.h"
 #include "File_System.h"
+#include "globals.h"
 
 #define WIDTH 500
 #define HEIGHT 125
@@ -52,26 +53,25 @@ void Spc_Export_Window::one_time_draw()
 {
   int x=10, y=10;
   char tmpbuf[75];
-  // TODO: FIXME
-/*  sprintf(tmpbuf, "Game....: %s", BaseD::tag.game);
+  sprintf(tmpbuf, "Game....: %s", ::tag.game);
   sdlfont_drawString(this->screen, x, y, tmpbuf); 
   y+=CHAR_HEIGHT;
-  sprintf(tmpbuf, "Title...: %s", BaseD::tag.song);
+  sprintf(tmpbuf, "Title...: %s", ::tag.song);
   sdlfont_drawString(this->screen, x, y, tmpbuf); 
   y+=CHAR_HEIGHT;
-  sprintf(tmpbuf, "Length..: %ld", BaseD::tag.length);
+  sprintf(tmpbuf, "Length..: %ld", ::tag.length);
   sdlfont_drawString(this->screen, x, y, tmpbuf);
   y+=CHAR_HEIGHT;
-  sprintf(tmpbuf, "Composer: %s", BaseD::tag.author);
+  sprintf(tmpbuf, "Composer: %s", ::tag.author);
   sdlfont_drawString(this->screen, x, y, tmpbuf); 
   y+=CHAR_HEIGHT*2;
 
-  sprintf(tmpbuf, "Dumper..: %s", BaseD::tag.dumper);
+  sprintf(tmpbuf, "Dumper..: %s", ::tag.dumper);
   sdlfont_drawString(this->screen, x, y, tmpbuf); 
   y+=CHAR_HEIGHT;
-  sprintf(tmpbuf, "Comment.: %s", BaseD::tag.comment);
+  sprintf(tmpbuf, "Comment.: %s", ::tag.comment);
   sdlfont_drawString(this->screen, x, y, tmpbuf); 
-  y+=CHAR_HEIGHT*5;*/
+  y+=CHAR_HEIGHT*5;
 
   export_button.setup(WIDTH,y,true);
   draw();

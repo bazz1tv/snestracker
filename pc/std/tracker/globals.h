@@ -10,6 +10,7 @@ extern My_Nfd nfd;
 extern Experience *cur_exp;
 extern Voice_Control voice_control;
 extern uint8_t *IAPURAM;
+extern track_info_t tag;
 
 void handle_error( const char* );
 
