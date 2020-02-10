@@ -158,10 +158,8 @@ void Main_Window::check_quit(SDL_Event &ev)
     {
       if (!locked() && mode != MODE_EDIT_APU_PORT)
       {
-        fprintf(stderr, "penis88\n");
         quitting = true;
       }
-      
     }
   }
 }

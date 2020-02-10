@@ -7,6 +7,8 @@ namespace Utility
 {
 
 extern bool coord_is_in_rect(int x, int y, SDL_Rect *r);
+extern Uint32 scancode2ascii (int scancode);
+extern bool scancode_is_hex(int scancode);
 
 void set_render_color_rgb(SDL_Renderer *r, Uint32 color)
 {
