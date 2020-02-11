@@ -43,7 +43,3 @@ struct Graph
   SDL_Point *points;
   int pcount;
 };
-
-// impl run through
-// Side injection - coming from a points-of-vals -> points-of-coords
-

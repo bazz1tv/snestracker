@@ -7,7 +7,7 @@
 #include "Colors.h"
 
 
-struct Clickable_Text : Clickable_Rect
+struct Clickable_Text : public Clickable_Rect
 {
   Clickable_Text(); // if we must post-init
   Clickable_Text(const char * str, int (*action)(void *data)=NULL, void *data=NULL,

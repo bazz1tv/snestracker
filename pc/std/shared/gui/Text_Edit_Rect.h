@@ -5,7 +5,7 @@
 #include "shared/Colors.h"
 
 
-class Text_Edit_Rect : public Clickable_Text
+struct Text_Edit_Rect : public Clickable_Text
 {
   Text_Edit_Rect(int width) : Clickable_Text("", clicked_callback, this)
   {
@@ -14,16 +14,20 @@ class Text_Edit_Rect : public Clickable_Text
     rect.w = width;
   }
 
+  void one_time_draw();
+
   void draw(Uint32 &color, bool prefill=true, bool Vflip=false,
-            bool Hflip=false, SDL_Surface *screen=::render->screen)
-  {
-    cursor.draw(screen, rect.x + (SDL_strlen(str) * CHAR_WIDTH), rect.y,
-                Colors::green);
-  }
+            bool Hflip=false, SDL_Surface *screen=::render->screen);
 
   static int clicked_callback(void *data);
   /* The one cursor that will work across all T.E.Rs. */
   static Cursor cursor;
+  static int comp_start_point;
+  /* The one marked text thing */
+  static char markedText[SDL_TEXTEDITINGEVENT_TEXT_SIZE];
+  static SDL_Rect markedRect;
+  char *str;
   // Stateful info
   bool editing = false;
+  bool needs_redraw = false;
 };
