@@ -6,7 +6,7 @@
 #include "sdlfont.h"
 #include "Experience.h"
 #include "gui/Clickable_Text.h"
-#include "gui/cursor.h"
+#include "gui/Cursor.h"
 
 
 

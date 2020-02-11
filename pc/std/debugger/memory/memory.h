@@ -3,7 +3,7 @@
 #include "SDL.h"
 #include "gme/player/Music_Player.h"
 #include "BaseD.h"
-#include "gui/cursor.h"
+#include "gui/Cursor.h"
 #include "Render.h"
 #include "gme/player/Music_Player.h"
 

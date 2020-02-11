@@ -3,9 +3,8 @@
 #include "SDL.h"
 #include "gme/player/Music_Player.h"
 #include "sdl_userevents.h"
-#include "gui/cursor.h"
+#include "gui/Cursor.h"
 #include "report.h"
-#include "gui/cursor.h"
 #include "memory.h"
 #include "Screen.h"
 

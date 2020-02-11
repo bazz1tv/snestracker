@@ -8,8 +8,8 @@ int Audio_Options::Context::change_audio_out_device(void *item)
 {
 
   Context_Menu_Item *itemp = (Context_Menu_Item *)item;
-  SDL_Log("change_audio_out_device, %s", itemp->clickable_text.str.c_str());
-  ::player->init(::player->sample_rate, itemp->clickable_text.str.c_str());
+  SDL_Log("change_audio_out_device, %s", itemp->clickable_text.str);
+  ::player->init(::player->sample_rate, itemp->clickable_text.str);
 }
 
 Audio_Options::Context::Context()

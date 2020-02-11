@@ -1,5 +1,5 @@
 #pragma once
-#include "gui/cursor.h"
+#include "gui/Cursor.h"
 #include "gme/player/Music_Player.h"
 #include "Render.h"
 #include "Screen.h"

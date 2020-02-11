@@ -127,7 +127,7 @@ void Context_Menu::draw(SDL_Surface *screen)
   // draw highlight'd strip
   Uint32 bg_color = Colors::Interface::color[Colors::Interface::Type::text_bg];
   highlighted_item = NULL;
-  while (items[i].clickable_text.str != "")
+  while (items[i].clickable_text.str != 0)
   {
     if (items[i].is_visible)
     {
@@ -161,7 +161,7 @@ void Context_Menu::draw(SDL_Surface *screen)
       // draw this nigga
       sdlfont_drawString(screen, created_at.x+1,
                          created_at.y + 1 + (drawn*TILE_HEIGHT),
-                         items[i].clickable_text.str.c_str(),
+                         items[i].clickable_text.str,
                          Colors::white, bg_color, false);
       drawn++;
     }
@@ -184,7 +184,7 @@ void Context_Menu::preload(int &x, int &y, bool use_cache)
     int i=0;
     visible_items=0;
     greatest_length=0;
-    while (items[i].clickable_text.str != "")
+    while (*items[i].clickable_text.str != 0)
     {
       if (items[i].clickable_text.rect.w > greatest_length)
         greatest_length = items[i].clickable_text.rect.w;

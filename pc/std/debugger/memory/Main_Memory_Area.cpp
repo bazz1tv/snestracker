@@ -83,10 +83,6 @@ void Main_Memory_Area::set_addr_from_cursor(int x, int y)
   set_addr(y*256+x);
 }
 
-
-//void dec_cursor_row();
-//void inc_cursor_row();
-
 void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*=0*/, uint8_t ry/*=0*/)
 {
   
@@ -104,11 +100,10 @@ void Main_Memory_Area::lock(char l/*=1*/, int x/*=0*/, int y/*=0*/, uint8_t rx/*
       {
         address_remainder = address % 8;
         add_addr(-address_remainder);
-        res_x = 0; // address_remainder;
+        res_x = 0;
       }
     }
 
-    //mode = MODE_EDIT_MOUSE_HEXDUMP;
     cursor.start_timer();
 
     memcursor.start_timer();

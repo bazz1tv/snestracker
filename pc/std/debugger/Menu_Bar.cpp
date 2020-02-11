@@ -194,16 +194,16 @@ void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 {
   this->x = x; this->y = y;
   file_context.menu.preload(x, y);
-  x +=  ( file_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
+  x +=  ( strlen(file_context.menu_items[0].clickable_text.str) * CHAR_WIDTH ) + CHAR_WIDTH*2;
 
   edit_context.menu.preload(x, y);
-  x +=  ( file_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
+  x +=  ( strlen(file_context.menu_items[0].clickable_text.str) * CHAR_WIDTH ) + CHAR_WIDTH*2;
 
   track_context.menu.preload(x, y);
-  x +=  ( track_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
+  x +=  ( strlen(track_context.menu_items[0].clickable_text.str) * CHAR_WIDTH ) + CHAR_WIDTH*2;
 
   window_context.menu.preload(x,y);
-  x +=  ( window_context.menu_items[0].clickable_text.str.length() * CHAR_WIDTH ) + CHAR_WIDTH*2;
+  x +=  ( strlen(window_context.menu_items[0].clickable_text.str) * CHAR_WIDTH ) + CHAR_WIDTH*2;
 }
 
 bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Uint8 &button, const SDL_Event *ev)
