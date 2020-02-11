@@ -9,9 +9,10 @@ struct Text_Edit_Rect : public Clickable_Text
 {
   Text_Edit_Rect(int width) : Clickable_Text("", clicked_callback, this)
   {
-    if (width % CHAR_HEIGHT)
-      width += CHAR_HEIGHT - (width % CHAR_HEIGHT);
-    rect.w = width;
+    //if (width % CHAR_HEIGHT)
+      //width += CHAR_HEIGHT - (width % CHAR_HEIGHT);
+    rect.w = width * CHAR_WIDTH;
+    rect.h = 2 + CHAR_HEIGHT + 2;
   }
 
   void one_time_draw();

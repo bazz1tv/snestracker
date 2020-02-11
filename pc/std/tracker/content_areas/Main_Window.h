@@ -13,10 +13,12 @@
 #include "gui/Slider/Slider.h"
 #include "gui/Tab.h"
 #include "globals.h"
-
+#include "shared/gui/Text_Edit_Rect.h"
 struct Main_Window : public Experience
 {
   char tmpbuf[100];
+
+  Text_Edit_Rect song_title;
 
   struct Gain
   {

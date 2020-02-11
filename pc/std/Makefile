@@ -228,4 +228,4 @@ clean:
 	rm -f {$(PROJ_DIR)/unrar/,}{unrar,unrar.exe}
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
--include $(CPPSOURCES:.cpp=.cpp.d) $(MSOURCES:.m=.m.d) $(CSOURCES:.c=.c.d)
+-include $(OBJECTS_DEBUGGER2:.o=.d) $(OBJECTS_TRACKER2:.o=.d)

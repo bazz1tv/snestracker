@@ -31,19 +31,32 @@ void Main_Window::draw_memory_outline()
 
 void Main_Window::draw()
 {
+  int x,y;
   time_cur = SDL_GetTicks();
 
   sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
+
+  x = 150; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
+  y = 50;
+
+  sdlfont_drawString2(::render->screen, x, y, "Song Title:");
+  y += CHAR_HEIGHT + 2;
+  song_title.rect.x = x;
+  song_title.rect.y = y;
+
 
   // The following are correlated from i and tmp. DO NOT MESS WITH THAT
   // base height
   i = 32 + SCREEN_Y_OFFSET;  
   if (player->has_no_song) 
   {
+
     SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
     SDL_RenderClear(::render->sdlRenderer);
     SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
     draw_memory_outline();
+    song_title.one_time_draw();
+
     SDL_RenderPresent(::render->sdlRenderer);
     return; 
   }  
@@ -186,7 +199,8 @@ void Main_Window::run()
   
 }
 
-Main_Window::Main_Window(int &argc, char **argv)
+Main_Window::Main_Window(int &argc, char **argv) :
+song_title(25)
 {
   int res;
   
@@ -201,6 +215,8 @@ void Main_Window::one_time_draw()
 {
   // draw one-time stuff
   SDL_FillRect(::render->screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
+
+  song_title.one_time_draw();
 }
 
 void Main_Window::draw_voices_pitchs()
