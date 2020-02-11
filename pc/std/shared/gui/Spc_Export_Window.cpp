@@ -52,7 +52,7 @@ void Spc_Export_Window::show()
 void Spc_Export_Window::one_time_draw()
 {
   int x=10, y=10;
-  char tmpbuf[75];
+  char tmpbuf[267];
   sprintf(tmpbuf, "Game....: %s", ::tag.game);
   sdlfont_drawString(this->screen, x, y, tmpbuf); 
   y+=CHAR_HEIGHT;

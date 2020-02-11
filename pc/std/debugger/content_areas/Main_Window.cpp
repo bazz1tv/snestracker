@@ -178,13 +178,13 @@ int Main_Window::receive_event(SDL_Event &ev)
   }
   check_quit(ev);
 
-  if (player->has_no_song) return;
+  if (player->has_no_song) return 0;
 
   if (gain.slider && tempo.slider)
   {
     bool a=gain.slider->receive_event(ev);
     bool b = tempo.slider->receive_event(ev);
-    if (a || b) return;
+    if (a || b) return 0;
   }
   
   dblclick::check_event(&ev);
@@ -238,7 +238,7 @@ int Main_Window::receive_event(SDL_Event &ev)
       break;
       default:break;
     }
-    return;
+    return 0;
   }
 
 
@@ -643,7 +643,7 @@ int Main_Window::receive_event(SDL_Event &ev)
         SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
         
         if (te->motion.x >= PC_X && te->motion.x < (PC_X + (strlen(PC_STR)*TILE_WIDTH)) &&
-         te->motion.y >= PC_Y && te->motion.y < (PC_Y+TILE_HEIGHT) )
+         te->motion.y >= PC_Y && te->motion.y < (Sint32)(PC_Y+TILE_HEIGHT) )
         {
           player->pause(1, false);
           mouseover_hexdump_area.submode = Mouse_Hexdump_Area::EASY_EDIT;

@@ -17,7 +17,7 @@ void My_Nfd::free_pathset()
 
   if (rsn_spc_paths)
   {
-    for (int i = 0; i < num_rsn_spc_paths; i++ )
+    for (unsigned int i = 0; i < num_rsn_spc_paths; i++ )
     {
       SDL_free(rsn_spc_paths[i]);
     }
@@ -35,7 +35,7 @@ My_Nfd::~My_Nfd()
 
   if (rsn_spc_paths)
   {
-    for (int i = 0; i < num_rsn_spc_paths; i++ )
+    for (unsigned int i = 0; i < num_rsn_spc_paths; i++ )
     {
       SDL_free(rsn_spc_paths[i]);
     }

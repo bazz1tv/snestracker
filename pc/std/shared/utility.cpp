@@ -30,7 +30,7 @@ void set_render_color_rgba(SDL_Renderer *r, Uint32 color)
 
 const char* rstrstr(const char* haystack, const char* needle)
 {
-  int needle_length = strlen(needle);
+  unsigned int needle_length = strlen(needle);
   const char* haystack_end = haystack + strlen(haystack) - needle_length;
   const char* p;
   size_t i;

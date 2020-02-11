@@ -8,7 +8,7 @@ void Sdl_Spc_Report::report(Spc_Report::Type type, unsigned addr, unsigned opcod
     case Spc_Report::Execute:
       //std::cerr << "report_execution: $" << addr << ", $" << opcode << std::endl;
       int i;
-      if ((addr)!=report::last_pc)
+      if ( (addr) != (unsigned)report::last_pc)
       {
         for (i=0; i<5; i++)
         {

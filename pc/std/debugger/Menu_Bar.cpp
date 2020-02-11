@@ -208,7 +208,6 @@ void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 
 bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Uint8 &button, const SDL_Event *ev)
 {
-  fprintf(stderr, "button = %d", button);
   if (file_context.menu.check_left_click_activate(x, y, button, ev))
   {
     edit_context.menu.deactivate();

@@ -210,7 +210,7 @@ void get_file_list_ext(const bfs::path& root, const std::string& ext, std::vecto
 }
 
 void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/, 
-  int numpaths/*=g_cfg.num_files*/, bool is_drop_event/*=false*/)
+  unsigned int numpaths/*=g_cfg.num_files*/, bool is_drop_event/*=false*/)
 {
   struct
   {
@@ -221,7 +221,6 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
     const char * str() { return cmd[index].c_str(); }
   } extract_cmd;
   
-  bool rsn_found=false;
   // Check here if path is RSN
   for (size_t i=0; i < numpaths; i++)
   {
@@ -243,7 +242,6 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
 
     if (!strcmp(ext, ".rsn") || !strcmp(ext, ".rar") || !strcmp(ext, ".7z"))
     {
-      rsn_found = true; // not actually used
       fprintf(stderr, "rsn || 7z found\n");
       char *mkdir_cmd = (char*) SDL_malloc(sizeof(char) * 
         (strlen(MKDIR_CMD)+
@@ -309,10 +307,6 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
 #endif
       system(full_extract_cmd);
       SDL_free(full_extract_cmd);    
-
-      FILE *fp;
-      int status;
-      char spc_path[PATH_MAX];
 
       //int count=0;
       int old_nfd_rsn_spc_path_pos=BaseD::nfd.num_rsn_spc_paths;
@@ -483,12 +477,10 @@ void BaseD::start_track( int track, const char* path )
 void BaseD::reload(char **paths/*=NULL*/, int numpaths/*=0*/)
 {
   char *path=NULL;
-  bool using_playlist=false;
   
   if (!paths)
   {
     DEBUGLOG("A");
-    using_playlist=true;
     if (g_cfg.playlist[g_cur_entry])
       path = g_cfg.playlist[g_cur_entry];
     else path = NULL;
@@ -614,9 +606,9 @@ void BaseD::prev_track25()
 {
   g_cur_entry-=25;
   int tmp = abs(g_cur_entry);
-  if ((unsigned)g_cur_entry>=g_cfg.num_files)
+  if (g_cur_entry>=g_cfg.num_files)
   { 
-    if ((unsigned)(g_cfg.num_files-tmp) < g_cfg.num_files)
+    if ((g_cfg.num_files-tmp) < g_cfg.num_files)
       g_cur_entry=g_cfg.num_files-tmp;  
     else 
       g_cur_entry = 0;
@@ -772,7 +764,7 @@ void BaseD::write_mask(unsigned char packed_mask[32])
   if (sep) { *sep = 0; }
 
   // and use the .msk extension
-  strncat(filename, ".msk", 1024);
+  strncat(filename, ".msk", 1024 - 1);
 
   msk_file = fopen(filename, "wb");
   if (!msk_file) {

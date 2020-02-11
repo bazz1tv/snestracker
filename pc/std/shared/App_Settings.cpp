@@ -189,20 +189,24 @@ int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int 
   }
   else if ( strcmp( parts[0], "audio_out_dev") == 0 )
   {
+    unsigned int i;
+
     if (count < 2) return 0;
     if (strlen(parts[1]) > 1000)
       return 0;
     size_t total_strlen=0;
-    for (int i=1; i < count; i++)
+ 
+    for (i=1; i < count; i++)
     {
       total_strlen += strlen(parts[i]);
       total_strlen += 1;
     }
+
     vars.audio_out_dev = (char *) SDL_malloc(sizeof(char) * (total_strlen));
     strcpy(vars.audio_out_dev, parts[1]);
     if (count > 2)
     {
-      for (int i=2; i < count; i++)
+      for (i=2; i < count; i++)
       {
         strcat(vars.audio_out_dev, " ");
         strcat(vars.audio_out_dev, parts[i]);

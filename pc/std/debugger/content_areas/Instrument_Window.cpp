@@ -61,10 +61,10 @@ void Instrument_Window::run()
   float release_ms = ADSR::sustain_release_map[7-sustain_i][release_i].ms;
 
   adsrgraph.points[0] = {0,0};
-  adsrgraph.points[1] = {attack_ms, -100};
-  adsrgraph.points[2] = {attack_ms + decay_ms, -(sustain_frac * 100)};
+  adsrgraph.points[1] = {(int)attack_ms, -100};
+  adsrgraph.points[2] = {(int)(attack_ms + decay_ms), -(int)(sustain_frac * 100)};
 
-  adsrgraph.points[3].x = attack_ms + decay_ms + release_ms;
+  adsrgraph.points[3].x = (int)(attack_ms + decay_ms + release_ms);
   adsrgraph.points[3].y = 0;
 
   for (int i=0; i < 4; i++)
@@ -238,7 +238,7 @@ int Instrument_Window::receive_event(SDL_Event &ev)
     {
       default:break;
     }
-    return;
+    return 0;
   }
 
   if ((r=adsr_context_menus.receive_event(ev)))
@@ -287,7 +287,7 @@ int Instrument_Window::receive_event(SDL_Event &ev)
       break;
       default:break;
     }
-    return;
+    return 0;
   }
 
 
@@ -525,7 +525,7 @@ int Instrument_Window::receive_event(SDL_Event &ev)
     {
       if (adsr_context_menus.check_left_click_activate(ev.button.x, ev.button.y))
       {
-        return;
+        return 0;
       }
       
       if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &voice.right_arrow.rect))

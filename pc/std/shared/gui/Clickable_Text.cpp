@@ -8,7 +8,7 @@ Clickable_Rect(action,data),
 str("")
 {}
 
-Clickable_Text::Clickable_Text(char *str, int (*action)(void *data)/*=NULL*/,
+Clickable_Text::Clickable_Text(const char *str, int (*action)(void *data)/*=NULL*/,
 void *data/*=NULL*/,
 Uint32 color/*=Colors::Interface::color[Colors::Interface::text_fg]*/) : 
 Clickable_Rect(action,data),
@@ -17,7 +17,7 @@ color(color)
 {
   init_width_height();
 }
-Clickable_Text::Clickable_Text(char *str, int x, int y,
+Clickable_Text::Clickable_Text(const char *str, int x, int y,
 int (*action)(void *data)/*=NULL*/, void *data/*=NULL*/) : 
 Clickable_Rect(action,data),
 str(str)

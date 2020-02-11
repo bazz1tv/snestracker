@@ -39,7 +39,7 @@ File_System::~File_System()
 
 static inline void space2underline(char *p)
 {
-  for (int i=0; i < strlen(p); i++)
+  for (unsigned int i=0; i < strlen(p); i++)
     if (p[i] == ' ')
       p[i] = '_';
 }
@@ -47,8 +47,8 @@ static inline void space2underline(char *p)
 int File_System::init()
 {
   is_loaded=true;
-  char tmpbuf[100];
   char *base_path = SDL_GetBasePath();
+
   if (base_path)
   {
     data_path = base_path;
