@@ -36,27 +36,19 @@ void Main_Window::draw()
 
   sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
 
-  x = 150; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
-  y = 50;
-
-  sdlfont_drawString2(::render->screen, x, y, "Song Title:");
-  y += CHAR_HEIGHT + 2;
-  song_title.rect.x = x;
-  song_title.rect.y = y;
-
-
   // The following are correlated from i and tmp. DO NOT MESS WITH THAT
   // base height
   i = 32 + SCREEN_Y_OFFSET;  
   if (player->has_no_song) 
   {
-
+    //fprintf(stderr, "HERE!\n");
+    song_title.one_time_draw(::render->screen);
+    song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
     SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
+    SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
     SDL_RenderClear(::render->sdlRenderer);
     SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
     draw_memory_outline();
-    song_title.one_time_draw();
-
     SDL_RenderPresent(::render->sdlRenderer);
     return; 
   }  
@@ -101,13 +93,13 @@ int Main_Window::receive_event(SDL_Event &ev)
 {
   check_quit(ev);
 
-  if (player->has_no_song) return;
+  handle_text_edit_rect_event(ev, &song_title);
 
-  if (gain.slider)
+  /*if (gain.slider)
   {
     bool a=gain.slider->receive_event(ev);
     if (a) return;
-  }
+  }*/
   
   dblclick::check_event(&ev);
 
@@ -200,10 +192,12 @@ void Main_Window::run()
 }
 
 Main_Window::Main_Window(int &argc, char **argv) :
-song_title(25)
+song_title(25, song_title_str, sizeof(song_title_str))
 {
   int res;
   
+  song_title_str[0] = 0;
+
   if (::render->screen == NULL)
   {
     fprintf(stderr, "Debugger::MainWindows::::render->screen is Null\n");
@@ -216,7 +210,16 @@ void Main_Window::one_time_draw()
   // draw one-time stuff
   SDL_FillRect(::render->screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
 
-  song_title.one_time_draw();
+  int x,y;
+  x = 150; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
+  y = 50;
+
+  sdlfont_drawString2(::render->screen, x, y, "Song Title:");
+  y += CHAR_HEIGHT + 2;
+  song_title.rect.x = x;
+  song_title.rect.y = y;
+
+  song_title.one_time_draw(::render->screen);
 }
 
 void Main_Window::draw_voices_pitchs()

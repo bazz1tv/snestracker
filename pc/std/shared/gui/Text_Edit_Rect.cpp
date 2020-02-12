@@ -53,6 +53,13 @@ char *utf8_advance(char *p, size_t distance)
 /* Let's try putting the edit logic into the window's logic handler. */
 int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
 {
+  if (!ter->editing)
+  {
+    if (ev.type == SDL_MOUSEBUTTONDOWN)
+      ter->check_mouse_and_execute(ev.button.x, ev.button.y);
+    return 0;
+  }
+
   switch (ev.type)
   {
     case SDL_MOUSEBUTTONDOWN:
@@ -66,10 +73,12 @@ int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
           SDL_StopTextInput();
           Text_Edit_Rect::cursor.stop_timer();
           ter->needs_redraw = true;
+          ter->editing = false;
           break;
         case SDLK_BACKSPACE:
           {
             int textlen=strlen(ter->str);
+            ter->needs_redraw = true;
 
             do {
               if (textlen==0)
@@ -79,36 +88,47 @@ int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
               if ((ter->str[textlen-1] & 0x80) == 0x00)
               {
                 /* One byte */
-                ter->str[textlen-1]=0x00;
+                ((char *)ter->str)[textlen-1]=0x00;
                 break;
               }
               if ((ter->str[textlen-1] & 0xC0) == 0x80)
               {
                 /* Byte from the multibyte sequence */
-                ter->str[textlen-1]=0x00;
+                ((char *)ter->str)[textlen-1]=0x00;
                 textlen--;
               }
               if ((ter->str[textlen-1] & 0xC0) == 0xC0)
               {
                 /* First byte of multibyte sequence */
-                ter->str[textlen-1]=0x00;
+                ((char *)ter->str)[textlen-1]=0x00;
                 break;
               }
             } while(1);
-
-            ter->needs_redraw = true;
           }
           break;
       }
+      break;
     case SDL_TEXTINPUT:
+    {
       if (strlen(ev.text.text) == 0 || ev.text.text[0] == '\n')
         break;
 
-      fprintf(stderr, "sizeof(ter->str) = %ld\n", sizeof(ter->str));
+      //fprintf(stderr, "sizeof(ter->str) = %d\n", ter->strsize);
+      fprintf(stderr, "strlen evtxt = %ld\n", strlen(ev.text.text));
+      const char *c = ev.text.text;
+      do {
+        fprintf(stderr, "%02x ", *c);
+        c++;
+      } while (*c != 0);
 
-      if (strlen(ter->str) + strlen(ev.text.text) < sizeof(ter->str))
-        SDL_strlcat(ter->str, ev.text.text, sizeof(ter->str));
+      if (strlen(ter->str) + strlen(ev.text.text) < ter->strsize)
+      {
+        fprintf(stderr, "YAY\n");
+        SDL_strlcat((char *)ter->str, ev.text.text, ter->strsize);
+        ter->needs_redraw = true;
+      }
       break;
+    }
 
     case SDL_TEXTEDITING:
       fprintf(stderr, "text editing \"%s\", selected range (%d, %d)\n",
@@ -138,6 +158,7 @@ int Text_Edit_Rect::clicked_callback(void *data)
     // start the cursor
     // Provide the cursor with its location: For now, just put it at the
     // end of the string in the rect
+    fprintf(stderr, "WOOGOO\n");
     SDL_Rect *r = &Text_Edit_Rect::cursor.rect;
     *r = ter->rect;
     r->x += strlen(ter->str) * CHAR_WIDTH;
@@ -146,6 +167,7 @@ int Text_Edit_Rect::clicked_callback(void *data)
   }
   else
   {
+    fprintf(stderr, "WOOGOO2\n");
     /* IF a click happened inside the rect while we were editing, it
      * ccould have been a number of things:
      *
@@ -161,33 +183,56 @@ int Text_Edit_Rect::clicked_callback(void *data)
   }
 
   ter->editing = !ter->editing;
+  fprintf(stderr, "editing = %d\n", ter->editing);
 }
 
-void Text_Edit_Rect::one_time_draw()
+void Text_Edit_Rect::one_time_draw(SDL_Surface *screen)
 {
   // If there's any issues mixing renderer code with screen code in this
   // function, just use 2 SDL_FillRects, with an adjusted rect for the
   // border.
   // fill the BG color rect, then a border around it
-  Utility::set_render_color_rgb(::render->sdlRenderer,
-      Colors::Interface::color[Colors::Interface::Type::text_bg]);
-    SDL_RenderFillRect(::render->sdlRenderer, &rect);
+  SDL_Rect outer = rect;
+  outer.x -= 2;
+  outer.w += 4;
+  outer.y -= 2;
+  outer.h += 2;
+  SDL_Rect io = rect;
+  io.x -= 1;
+  io.w += 2;
+  io.y -= 1;
+  io.h;
 
+ /* Utility::set_render_color_rgb(::render->sdlRenderer,
+      Colors::Interface::color[Colors::Interface::Type::text_bg]);*/
+  //SDL_RenderFillRect(::render->sdlRenderer, &rect);
+  SDL_FillRect(screen, &outer, Colors::white);
+  SDL_FillRect(screen, &io, Colors::Interface::color[Colors::Interface::Type::text_bg]);
   // Draw border
-  Utility::set_render_color_rgb(::render->sdlRenderer,
-      Colors::white);
-  SDL_RenderDrawRect(::render->sdlRenderer, &rect);
+  //Utility::set_render_color_rgb(::render->sdlRenderer,
+  //    Colors::white);
+  //SDL_RenderDrawRect(::render->sdlRenderer, &rect);
 }
 
-void Text_Edit_Rect::draw(Uint32 &color, bool prefill/*=true*/,
+void Text_Edit_Rect::draw(Uint32 color, bool prefill/*=true*/,
             bool Vflip/*=false*/,
             bool Hflip/*=false*/, SDL_Surface *screen/*=::render->screen*/)
 {
   if (needs_redraw)
   {
+    //needs_redraw = false;
     markedRect = rect;
     markedRect.x = rect.x + (strlen(str) * CHAR_WIDTH);
     cursor.rect.x = markedRect.x;
+    const char *c = str;
+    //fprintf(stderr, "REDRAW\n");
+    fprintf(stderr, "str = %s; strlen = %d\n", str, strlen(str));
+    do {
+      fprintf(stderr, "%02x ", *c);
+      c++;
+    } while (*c != 0);
+    sdlfont_drawString(screen, rect.x, rect.y, str, color,
+        Colors::Interface::color[Colors::Interface::Type::text_bg], prefill, Vflip, Hflip);
 
     if (markedText[0])
     {
@@ -208,21 +253,24 @@ void Text_Edit_Rect::draw(Uint32 &color, bool prefill/*=true*/,
         *p = c;
       }
       // draw the marked text
-      sdlfont_drawString(screen, rect.x, rect.y, markedText, color,
+      sdlfont_drawString(screen, markedRect.x, markedRect.y, markedText, color,
           Colors::Interface::color[Colors::Interface::Type::text_bg], prefill, Vflip, Hflip);
- 
+
       underlineRect = markedRect;
       underlineRect.y += (markedRect.h - 2);
       underlineRect.h = 2;
       underlineRect.w = (mtlen * CHAR_WIDTH);
 
-      SDL_SetRenderDrawColor(::render->sdlRenderer, 0,0,0,0);
-      SDL_RenderFillRect(::render->sdlRenderer,&markedRect);
+      //SDL_SetRenderDrawColor(r, 0,0,0,0);
+      SDL_FillRect(screen, &markedRect, Colors::Interface::color[Colors::Interface::Type::text_fg]);
 
       SDL_SetTextInputRect(&markedRect);
     }
   }
-  // no worries. the cursor is only drawn based on internal logic
-  cursor.draw(screen, rect.x + (strlen(str) * CHAR_WIDTH), rect.y,
+  if (editing)
+  {// no worries. the cursor is only drawn based on internal logic
+    //fprintf(stderr, "drawing cursor at (%d,%d)\n", cursor.rect.x, cursor.rect.y);
+    cursor.draw(screen, cursor.rect.x, cursor.rect.y,
                 Colors::green);
+  }
 }

@@ -4,20 +4,21 @@
 #include "shared/gui/Cursor.h"
 #include "shared/Colors.h"
 
-
 struct Text_Edit_Rect : public Clickable_Text
 {
-  Text_Edit_Rect(int width) : Clickable_Text("", clicked_callback, this)
+  Text_Edit_Rect(int width, const char *str, int strsize) :
+          Clickable_Text(str, clicked_callback, this),
+          strsize(strsize)
   {
     //if (width % CHAR_HEIGHT)
       //width += CHAR_HEIGHT - (width % CHAR_HEIGHT);
     rect.w = width * CHAR_WIDTH;
-    rect.h = 2 + CHAR_HEIGHT + 2;
+    rect.h = CHAR_HEIGHT;
   }
 
-  void one_time_draw();
+  void one_time_draw(SDL_Surface *screen);
 
-  void draw(Uint32 &color, bool prefill=true, bool Vflip=false,
+  void draw(Uint32 color, bool prefill=true, bool Vflip=false,
             bool Hflip=false, SDL_Surface *screen=::render->screen);
 
   static int clicked_callback(void *data);
@@ -27,8 +28,10 @@ struct Text_Edit_Rect : public Clickable_Text
   /* The one marked text thing */
   static char markedText[SDL_TEXTEDITINGEVENT_TEXT_SIZE];
   static SDL_Rect markedRect;
-  char *str;
   // Stateful info
   bool editing = false;
   bool needs_redraw = false;
+  unsigned int strsize;
 };
+
+int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter);

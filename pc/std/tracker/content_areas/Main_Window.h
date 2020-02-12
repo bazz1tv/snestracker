@@ -19,6 +19,7 @@ struct Main_Window : public Experience
   char tmpbuf[100];
 
   Text_Edit_Rect song_title;
+  char song_title_str[256];
 
   struct Gain
   {
