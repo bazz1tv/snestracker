@@ -114,16 +114,16 @@ int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
         break;
 
       //fprintf(stderr, "sizeof(ter->str) = %d\n", ter->strsize);
-      fprintf(stderr, "strlen evtxt = %ld\n", strlen(ev.text.text));
-      const char *c = ev.text.text;
+      //fprintf(stderr, "strlen evtxt = %ld\n", strlen(ev.text.text));
+      /*const char *c = ev.text.text;
       do {
         fprintf(stderr, "%02x ", *c);
         c++;
-      } while (*c != 0);
+      } while (*c != 0);*/
 
       if (strlen(ter->str) + strlen(ev.text.text) < ter->strsize)
       {
-        fprintf(stderr, "YAY\n");
+        //fprintf(stderr, "YAY\n");
         SDL_strlcat((char *)ter->str, ev.text.text, ter->strsize);
         ter->needs_redraw = true;
       }
@@ -131,8 +131,8 @@ int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
     }
 
     case SDL_TEXTEDITING:
-      fprintf(stderr, "text editing \"%s\", selected range (%d, %d)\n",
-          ev.edit.text, ev.edit.start, ev.edit.length);
+      /*fprintf(stderr, "text editing \"%s\", selected range (%d, %d)\n",
+          ev.edit.text, ev.edit.start, ev.edit.length);*/
       strcpy(Text_Edit_Rect::markedText, ev.edit.text);
       Text_Edit_Rect::comp_start_point = ev.edit.start;
       break; 
@@ -158,7 +158,7 @@ int Text_Edit_Rect::clicked_callback(void *data)
     // start the cursor
     // Provide the cursor with its location: For now, just put it at the
     // end of the string in the rect
-    fprintf(stderr, "WOOGOO\n");
+    //fprintf(stderr, "WOOGOO\n");
     SDL_Rect *r = &Text_Edit_Rect::cursor.rect;
     *r = ter->rect;
     r->x += strlen(ter->str) * CHAR_WIDTH;
@@ -167,7 +167,7 @@ int Text_Edit_Rect::clicked_callback(void *data)
   }
   else
   {
-    fprintf(stderr, "WOOGOO2\n");
+    //fprintf(stderr, "WOOGOO2\n");
     /* IF a click happened inside the rect while we were editing, it
      * ccould have been a number of things:
      *
@@ -183,7 +183,7 @@ int Text_Edit_Rect::clicked_callback(void *data)
   }
 
   ter->editing = !ter->editing;
-  fprintf(stderr, "editing = %d\n", ter->editing);
+  //fprintf(stderr, "editing = %d\n", ter->editing);
 }
 
 void Text_Edit_Rect::one_time_draw(SDL_Surface *screen)
@@ -201,7 +201,6 @@ void Text_Edit_Rect::one_time_draw(SDL_Surface *screen)
   io.x -= 1;
   io.w += 2;
   io.y -= 1;
-  io.h;
 
  /* Utility::set_render_color_rgb(::render->sdlRenderer,
       Colors::Interface::color[Colors::Interface::Type::text_bg]);*/
@@ -229,7 +228,7 @@ void Text_Edit_Rect::draw(Uint32 color, bool prefill/*=true*/,
     markedRect.x = rect.x + (strlen(str) * CHAR_WIDTH);
     markedRect.w = mtlen * CHAR_WIDTH;
     cursor.rect.x = markedRect.x;
-    const char *c = str;
+    //const char *c = str;
     //fprintf(stderr, "REDRAW\n");
     /*fprintf(stderr, "str = %s; strlen = %d\n", str, strlen(str));
     do {

@@ -8,7 +8,7 @@ Uint32 Cursor::cursor_timerCB(Uint32 interval, void *param)
 // timer callback, dont worry about this
 Uint32 Cursor::cursor_timer(Uint32 interval)
 {
-  fprintf(stderr, "Cursor callback!\n");
+  //fprintf(stderr, "Cursor callback!\n");
   toggle = !toggle;
   return interval;
 }
