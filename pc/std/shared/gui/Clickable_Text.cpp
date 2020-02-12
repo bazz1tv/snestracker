@@ -56,4 +56,3 @@ void Clickable_Text::draw(bool prefill/*=true*/,
 {
   draw(color, prefill, Vflip, Hflip, screen);
 }
-

@@ -218,26 +218,30 @@ void Text_Edit_Rect::draw(Uint32 color, bool prefill/*=true*/,
             bool Vflip/*=false*/,
             bool Hflip/*=false*/, SDL_Surface *screen/*=::render->screen*/)
 {
+  if (!cursor.toggle)
+    needs_redraw = true;
   if (needs_redraw)
   {
-    //needs_redraw = false;
+    one_time_draw(screen);
+    needs_redraw = false;
+    size_t mtlen = strlen(markedText);
     markedRect = rect;
     markedRect.x = rect.x + (strlen(str) * CHAR_WIDTH);
+    markedRect.w = mtlen * CHAR_WIDTH;
     cursor.rect.x = markedRect.x;
     const char *c = str;
     //fprintf(stderr, "REDRAW\n");
-    fprintf(stderr, "str = %s; strlen = %d\n", str, strlen(str));
+    /*fprintf(stderr, "str = %s; strlen = %d\n", str, strlen(str));
     do {
       fprintf(stderr, "%02x ", *c);
       c++;
-    } while (*c != 0);
+    } while (*c != 0);*/
     sdlfont_drawString(screen, rect.x, rect.y, str, color,
         Colors::Interface::color[Colors::Interface::Type::text_bg], prefill, Vflip, Hflip);
 
     if (markedText[0])
     {
       SDL_Rect underlineRect;
-      size_t mtlen = strlen(markedText);
 
       if (comp_start_point)
       {

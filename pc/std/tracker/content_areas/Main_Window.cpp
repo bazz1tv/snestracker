@@ -42,7 +42,6 @@ void Main_Window::draw()
   if (player->has_no_song) 
   {
     //fprintf(stderr, "HERE!\n");
-    song_title.one_time_draw(::render->screen);
     song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
     SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
     SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);

@@ -144,7 +144,7 @@ $(sdl2_ldflags) -lm $(MIDI_LIBRARY) $(gme_LDFLAGS)
 # global CPP
 CPP_DEFS 	+= $(MIDI_DEFS) 
 CPPFLAGS 	+= $(sdl2_cflags) -Wno-return-type -std=c++11 $(MIDI_CPPFLAGS) \
-$(gme_CPPFLAGS) -MMD -MP
+$(gme_CPPFLAGS) -MMD -MP -MT '$@'
 
 # currently, only because of Native File Dialog Implementation on OS X
 OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
@@ -162,16 +162,19 @@ $(wildcard tracker/*/*/*.cpp)
 
 
 # 
-OBJECTS_DEBUGGER = $(CPPSOURCES_DEBUGGER:.cpp=.cpp.o) $(MSOURCES:.m=.m.o) $(CSOURCES:.c=.c.o)
-OBJECTS_TRACKER = $(CPPSOURCES_TRACKER:.cpp=.cpp.o) $(MSOURCES:.m=.m.o) $(CSOURCES:.c=.c.o)
+OBJECTS_DEBUGGER = $(CPPSOURCES_DEBUGGER:.cpp=.o) $(MSOURCES:.m=.o) $(CSOURCES:.c=.o)
+OBJECTS_TRACKER = $(CPPSOURCES_TRACKER:.cpp=.o) $(MSOURCES:.m=.o) $(CSOURCES:.c=.o)
 
 OBJECTS_DEBUGGER2 = $(addprefix bin/, $(OBJECTS_DEBUGGER))
 OBJECTS_TRACKER2 = $(addprefix bin/, $(OBJECTS_TRACKER))
 
+DEP_DEBUGGER = $(OBJECTS_DEBUGGER2:.o=.d)
+DEP_TRACKER = $(OBJECTS_TRACKER2:.o=.d)
+
 all: $(global_requirements)
 
-$(OBJECTS_DEBUGGER2): CPPFLAGS += $(debugger_CPPFLAGS)
-$(OBJECTS_TRACKER2): CPPFLAGS += $(tracker_CPPFLAGS)
+$(DEP_DEBUGGER) $(OBJECTS_DEBUGGER2): CPPFLAGS += $(debugger_CPPFLAGS)
+$(DEP_TRACKER) $(OBJECTS_TRACKER2): CPPFLAGS += $(tracker_CPPFLAGS)
 
 $(BIN)/$(EXECUTABLE_DEBUGGER).app: $(EXECUTABLE_DEBUGGER) unrar 7zDec
 	mkdir -p $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
@@ -208,15 +211,15 @@ $(BIN)/$(UNRAR): $(PROJ_DIR)/unrar/$(UNRAR)
 $(PROJ_DIR)/unrar/$(UNRAR):
 	uname_S=$(uname_S) make -C $(PROJ_DIR)/unrar
 
-$(BIN)/%.c.o: %.c
+$(BIN)/%.o: %.c
 	mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
-$(BIN)/%.cpp.o: %.cpp
+$(BIN)/%.o: %.cpp
 	mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
-$(BIN)/%.m.o: %.m
+$(BIN)/%.o: %.m
 	mkdir -p $(@D)
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
 	
@@ -228,4 +231,4 @@ clean:
 	rm -f {$(PROJ_DIR)/unrar/,}{unrar,unrar.exe}
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-include $(OBJECTS_DEBUGGER2:.o=.d) $(OBJECTS_TRACKER2:.o=.d)
+-include $(DEP_DEBUGGER) $(DEP_TRACKER)

@@ -4,6 +4,14 @@
 #include "shared/gui/Cursor.h"
 #include "shared/Colors.h"
 
+/* brainstorm on the scrollable todo:
+ *
+ * "HOME" button scrolls view to beginning
+ * "END" button scrolls view to end
+ *
+ * still haven't impl'd ability to click into an index
+ */
+
 struct Text_Edit_Rect : public Clickable_Text
 {
   Text_Edit_Rect(int width, const char *str, int strsize) :
@@ -14,6 +22,7 @@ struct Text_Edit_Rect : public Clickable_Text
       //width += CHAR_HEIGHT - (width % CHAR_HEIGHT);
     rect.w = width * CHAR_WIDTH;
     rect.h = CHAR_HEIGHT;
+    max_visible_chars = width;
   }
 
   void one_time_draw(SDL_Surface *screen);
@@ -31,7 +40,8 @@ struct Text_Edit_Rect : public Clickable_Text
   // Stateful info
   bool editing = false;
   bool needs_redraw = false;
-  unsigned int strsize;
+  unsigned int strsize; // this is the capacity of the string
+  unsigned int max_visible_chars;
 };
 
 int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter);
