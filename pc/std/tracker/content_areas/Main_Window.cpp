@@ -91,6 +91,7 @@ void Main_Window::check_quit(SDL_Event &ev)
 int Main_Window::receive_event(SDL_Event &ev)
 {
   check_quit(ev);
+  dblclick::check_event(&ev);
 
   handle_text_edit_rect_event(ev, &song_title);
 
@@ -100,8 +101,6 @@ int Main_Window::receive_event(SDL_Event &ev)
     if (a) return;
   }*/
   
-  dblclick::check_event(&ev);
-
   switch (ev.type)
   {
   case SDL_QUIT:

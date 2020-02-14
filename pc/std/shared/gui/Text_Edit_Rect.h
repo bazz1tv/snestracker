@@ -14,15 +14,15 @@
 
 struct Text_Edit_Rect : public Clickable_Text
 {
-  Text_Edit_Rect(int width, const char *str, int strsize) :
+  Text_Edit_Rect(int txtwidth, const char *str, int strsize) :
           Clickable_Text(str, clicked_callback, this),
           strsize(strsize)
   {
     //if (width % CHAR_HEIGHT)
       //width += CHAR_HEIGHT - (width % CHAR_HEIGHT);
-    rect.w = width * CHAR_WIDTH;
+    rect.w = txtwidth * CHAR_WIDTH;
     rect.h = CHAR_HEIGHT;
-    max_visible_chars = width;
+    max_visible_chars = txtwidth;
   }
 
   void one_time_draw(SDL_Surface *screen);

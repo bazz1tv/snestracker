@@ -87,8 +87,6 @@ struct ADSR
       
     }
 
-    
-
     Expanding_List menu;
     Context_Menu_Item menu_items[ADSR::SUSTAIN_LEVEL_MAP_SIZE+1] = 
     {

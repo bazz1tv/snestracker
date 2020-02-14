@@ -23,8 +23,6 @@ while (SDL_PollEvent(&ev))
 #include "SDL.h"
 #include "sdl_userevents.h"
 
-#define DBLCLICK_TIMEWINDOW 800 // ms
-
 namespace dblclick
 { 
   extern SDL_Event trigger_event;

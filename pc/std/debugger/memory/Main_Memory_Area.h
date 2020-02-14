@@ -6,7 +6,7 @@
 #include "memory/Mouse_Hexdump_Area.h"
 #include "gui/Context_Menu.h"
 #include "gme/Spc_Dsp_Register_Map_Interface.h"
-#include "BRR.h"
+#include "shared/gui/BRR.h"
 // expects pre-calculated main_memory_area.brr
 int write_brri_to_file(void *data);
 int write_brrp_to_file(void *data);

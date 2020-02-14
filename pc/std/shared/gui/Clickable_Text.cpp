@@ -44,7 +44,7 @@ void Clickable_Text::setup(int x, int y, bool center_x/*=false*/)
   }
 }
 
-void Clickable_Text::draw(Uint32 &color, bool prefill/*=true*/, 
+void Clickable_Text::draw(Uint32 color, bool prefill/*=true*/, 
   bool Vflip/*=false*/, bool Hflip/*=false*/, SDL_Surface *screen/*=RenderContext::screen*/)
 {
   sdlfont_drawString(screen, rect.x, rect.y, str, color, 

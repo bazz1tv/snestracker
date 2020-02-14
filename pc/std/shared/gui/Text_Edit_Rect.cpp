@@ -1,6 +1,6 @@
 #include "shared/gui/Text_Edit_Rect.h"
 #include "utility.h"
-
+#include "shared/sdl_userevents.h"
 Cursor Text_Edit_Rect::cursor;
 char Text_Edit_Rect::markedText[SDL_TEXTEDITINGEVENT_TEXT_SIZE] = "";
 int Text_Edit_Rect::comp_start_point = 0;
@@ -50,22 +50,31 @@ char *utf8_advance(char *p, size_t distance)
 }
 
 
+static inline int check_dblclick(const SDL_Event &ev, Text_Edit_Rect *ter)
+{
+  switch (ev.type)
+  {
+    case SDL_USEREVENT:
+      if (ev.user.code == UserEvents::mouse_react)
+      {
+        SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
+        if (ter->check_mouse_and_execute(te->button.x, te->button.y))
+          return 1;
+      }
+      break;
+    default:break;
+  }
+}
 /* Let's try putting the edit logic into the window's logic handler. */
 int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
 {
+  check_dblclick(ev, ter);
+
   if (!ter->editing)
-  {
-    if (ev.type == SDL_MOUSEBUTTONDOWN)
-      ter->check_mouse_and_execute(ev.button.x, ev.button.y);
     return 0;
-  }
 
   switch (ev.type)
   {
-    case SDL_MOUSEBUTTONDOWN:
-      if (ter->check_mouse_and_execute(ev.button.x, ev.button.y))
-        return 1;
-      break;
     case SDL_KEYDOWN: {
       switch (ev.key.keysym.sym)
       {

@@ -1,4 +1,5 @@
 #include "sdl_dblclick.h"
+#define DBLCLICK_TIMEWINDOW 400 // ms
 
 namespace dblclick
 { 

@@ -78,6 +78,12 @@ void Colors::precompute(SDL_Surface *screen)
   Interface::color[Interface::Type::inactive_tab_bg] = gray;
   Interface::color[Interface::Type::active_tab_bg] = SDL_MapRGB(screen->format, 0x20, 0x20, 0x20);
   Interface::color[Interface::Type::inactive_tab_fg] = Interface::color[Interface::Type::active_tab_fg] = white;
+
+  Interface::color[Interface::Type::button_bg] = gray;
+  Interface::color[Interface::Type::button_pressed_bg] = nearblack;
+  Interface::color[Interface::Type::button_fg] = white;
+  Interface::color[Interface::Type::button_pressed_fg] = white;
+  
 }
 
 Uint32 Colors::subtract(Uint32 *c, Uint8 subval)

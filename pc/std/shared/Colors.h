@@ -19,6 +19,10 @@ struct Colors
       inactive_tab_fg,
       active_tab_bg,
       active_tab_fg,
+      button_bg,
+      button_pressed_bg,
+      button_fg,
+      button_pressed_fg,
       SIZEOF
     };
     static Uint32 color[Type::SIZEOF];
