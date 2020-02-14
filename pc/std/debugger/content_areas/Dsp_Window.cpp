@@ -660,7 +660,7 @@ void Dsp_Window::run()
     }
     else 
     {
-      if (is_srcn_used(fakerow))
+      if (is_srcn_used(fakerow + dir_offset))
       {
         sdlfont_drawString(screen, x,i, tmpbuf, Colors::gray);
         do_loop_point_color(fakerow, &IAPURAM[dir[cur_dir_index]], Colors::gray, Colors::nearblack); 
