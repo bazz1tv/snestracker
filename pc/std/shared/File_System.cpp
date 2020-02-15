@@ -29,7 +29,7 @@ File_System::~File_System()
     strcpy (rm_cmd, RM_CMD);
     strcat (rm_cmd, tmp_path_quoted);
     printf("rm_cmd = %s\n", rm_cmd);
-    system(rm_cmd);
+    //system(rm_cmd);
 
     SDL_free(rm_cmd);
     SDL_free(tmp_path_quoted);
