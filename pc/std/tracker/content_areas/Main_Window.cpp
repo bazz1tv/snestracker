@@ -150,7 +150,7 @@ int Main_Window::receive_event(SDL_Event &ev)
 
       if (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT))
       {
-        ::voice_control.checkmouse_mute((Uint16&)ev.motion.x, (Uint16&)ev.motion.y);
+        //::voice_control.checkmouse_mute((Uint16&)ev.motion.x, (Uint16&)ev.motion.y);
       }
       if (mode == MODE_NAV || mode == MODE_EDIT_MOUSE_HEXDUMP)
       {

@@ -114,9 +114,9 @@ struct Instrument_Panel
   void set_coords(int x, int y);
 
   // callback funcs for the buttons
-  static int load(void *null);
-  static int save(void *null);
-  static int zap(void *null);
+  static int load(void *ipanel);
+  static int save(void *ipanel);
+  static int zap(void *ipanel);
 
   /*enum {
     LOAD=0,

@@ -28,9 +28,9 @@ static char nibble_to_ascii(uint8_t nibble)
 
 Instrument_Panel::Instrument_Panel(Instrument *iptr) :
     title("Instruments"),
-    loadbtn("Load", Instrument_Panel::load),
-    savebtn("Save", Instrument_Panel::save),
-    zapbtn("Zap", Instrument_Panel::zap),
+    loadbtn("Load", Instrument_Panel::load, this),
+    savebtn("Save", Instrument_Panel::save, this),
+    zapbtn("Zap", Instrument_Panel::zap, this),
     instruments(iptr)
 {
   // 5 is for eg. "01 |\0"
@@ -211,20 +211,29 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   }
 }
 
-int Instrument_Panel::load(void *null)
+/* In these following functions, we need an core instruments handle, and
+ * the index into that table. Can get that through the Instrument_Panel.
+ * This is still GUI centric.*/
+int Instrument_Panel::load(void *ipanel)
 {
+  Instrument_Panel *ip = (Instrument_Panel *)ipanel;
+  Instrument *instruments = ip->instruments;
+  int currow = ip->currow;
+
   fprintf(stderr, "LOAD\n");
   return 0;
 }
 
-int Instrument_Panel::save(void *null)
+int Instrument_Panel::save(void *ipanel)
 {
+  Instrument_Panel *ip = (Instrument_Panel *)ipanel;
   fprintf(stderr, "SAVE\n");
   return 0;
 }
 
-int Instrument_Panel::zap(void *null)
+int Instrument_Panel::zap(void *ipanel)
 {
+  Instrument_Panel *ip = (Instrument_Panel *)ipanel;
   fprintf(stderr, "ZAP\n");
   return 0;
 }
