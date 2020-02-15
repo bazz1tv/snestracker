@@ -1,9 +1,6 @@
 #include "tracker/Instruments.h"
 #include "shared/Colors.h"
 
-
-
-
 /* The instrument panel is something like
  * Instruments  (Load) (Save) (Zap)
  * ------+-------------------------+
@@ -27,9 +24,9 @@ static char nibble_to_ascii(uint8_t nibble)
 
 Instrument_Panel::Instrument_Panel(Instrument *iptr) :
     title("Instruments"),
-    buttons[LOAD]("Load", Instrument_Panel::load),
-    buttons[SAVE]("Save", Instrument_Panel::save),
-    buttons[ZAP]("Zap", Instrument_Panel::zap),
+    loadbtn("Load", Instrument_Panel::load),
+    savebtn("Save", Instrument_Panel::save),
+    zapbtn("Zap", Instrument_Panel::zap),
     instruments(iptr)
 {
   // 5 is for eg. "01 |\0"
@@ -54,15 +51,16 @@ void Instrument_Panel::set_coords(int x, int y)
   title.rect.y = y;
 
   x += title.rect.w + (2*CHAR_WIDTH);
-  buttons[LOAD].rect.x = x;
-  buttons[LOAD].rect.y = y;
+  loadbtn.rect.x = x;
+  loadbtn.rect.y = y;
 
-  for (int i=1; i < NUM_BUTTONS; i++)
-  {
-    x += buttons[i - 1].rect.w + (2*CHAR_WIDTH);
-    buttons[i].rect.x = x;
-    buttons[i].rect.y = y;
-  }
+  x += loadbtn.rect.w + (2*CHAR_WIDTH);
+  savebtn.rect.x = x;
+  savebtn.rect.y = y;
+
+  x += savebtn.rect.w + (2*CHAR_WIDTH);
+  zapbtn.rect.x = x;
+  zapbtn.rect.y = y;
 
   y += CHAR_HEIGHT;
 
@@ -105,8 +103,9 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   char *c = instr_index_strings;
   /* First, draw the "Instruments" strings and top buttons */
   title.draw(screen);
-  for (i=0; i < NUM_BUTTONS; i++)
-    buttons[i].draw(screen);
+  loadbtn.draw(screen);
+  savebtn.draw(screen);
+  zapbtn.draw(screen);
 
   /* This should really be put in init and event code, to decrease
    * redundant processing */

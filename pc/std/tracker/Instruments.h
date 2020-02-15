@@ -109,7 +109,7 @@ struct Instrument_Panel
   ~Instrument_Panel();
 
   int event_handler(const SDL_Event &ev);
-  void draw();
+  void draw(SDL_Surface *screen=::render->screen);
   void set_coords(int x, int y);
 
   // callback funcs for the buttons
@@ -117,14 +117,15 @@ struct Instrument_Panel
   static int save(void *null);
   static int zap(void *null);
 
-  enum {
+  /*enum {
     LOAD=0,
     SAVE,
     ZAP,
     NUM_BUTTONS
-  };
+  };*/
+
   Text title;
-  Button buttons[NUM_BUTTONS];
+  Button loadbtn, savebtn, zapbtn;
   Text instr_indices[NUM_INSTR];
   char *instr_index_strings;
   Text_Edit_Rect instr_names[NUM_INSTR]; // temporarily hard coding the number of instruments
