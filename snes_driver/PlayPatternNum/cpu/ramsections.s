@@ -100,7 +100,7 @@ spx_binary_loc		dw
 .RAMSECTION "7fbankram"  BANK $0 SLOT $20 ; RAM 7f:0000-ffff
 	
 	TextBuffer						dsb $400
-	;bg2copy							dsb	$800
+	bg2copy							dsb	$800
 	
 	
 	

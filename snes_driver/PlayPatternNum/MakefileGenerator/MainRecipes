@@ -21,6 +21,6 @@ apu/spc.bin: $(APU_OFILES) Makefile
 	$(LD) $(APU_LDFLAGS) linkfile_spc $(OBJDIR)/$@
 	cp $(OBJDIR)/$@ $@
 	mv $(APU_OBJDIR)/spc.sym .
-	size $@
+	bazz-size $@
 	rm linkfile_spc
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

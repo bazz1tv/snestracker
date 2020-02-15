@@ -56,7 +56,7 @@ apu/spc.bin: $(APU_OFILES) Makefile
 	$(LD) $(APU_LDFLAGS) linkfile_spc $(OBJDIR)/$@
 	cp $(OBJDIR)/$@ $@
 	mv $(APU_OBJDIR)/spc.sym .
-	size $@
+	bazz-size $@
 	rm linkfile_spc
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #------------------------------
@@ -143,7 +143,7 @@ cpu/initsnes.o: cpu/initsnes.s \
 # cpu/loadgraphics.s 
 cpu/loadgraphics.o: cpu/loadgraphics.s \
 	cpu/memorymap.i \
-	cpu/LoadGraphics.i | $(CPU_OBJDIR)
+	cpu/loadgraphics.i | $(CPU_OBJDIR)
 		$(CPU_CC) $(CPU_CFLAGS) $< $(OBJDIR)/$@
 # cpu/main.s 
 cpu/main.o: cpu/main.s \
@@ -170,7 +170,7 @@ cpu/plotter.o: cpu/plotter.s \
 # cpu/quicksetup.s 
 cpu/quicksetup.o: cpu/quicksetup.s \
 	cpu/memorymap.i \
-	cpu/LoadGraphics.i \
+	cpu/loadgraphics.i \
 	cpu/enums.i \
 	ascii.clr \
 	ascii.pic | $(CPU_OBJDIR)

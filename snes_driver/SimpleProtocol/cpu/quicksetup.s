@@ -4,7 +4,7 @@
 ;-     as I am always curious :)
 ;------------------------------------------------------------------------
 .include "cpu/memorymap.i"
-.include "cpu/LoadGraphics.i"
+.include "cpu/loadgraphics.i"
 .include "cpu/enums.i"
       
 .BANK 0 SLOT 0

@@ -1,5 +1,5 @@
 .include "cpu/memorymap.i"
-.include "cpu/LoadGraphics.i"
+.include "cpu/loadgraphics.i"
 ;.include "cpu/PatternTable/enums.i"
 
 .BANK 0

@@ -356,7 +356,7 @@ _noerrorsMidiByte:
 	
 	rep #$20
 	lda RINGFIFO_WRIDX.b
-	and #RINGFIFO_MASK.b
+	and #RINGFIFO_MASK.w
 	tax
 	inc RINGFIFO_WRIDX.b
 	;stx temp1
@@ -555,7 +555,7 @@ _check_for_fifo_overrun:
 		pha
 		PrintString "FIFO OverRun, "
 		pla
-_skip_error_checking:		
+;_skip_error_checking:		
 _noerrorsMidiByte2:
 	; YES
 ;;;;;;;
