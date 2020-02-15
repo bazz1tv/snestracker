@@ -4,6 +4,8 @@
 #include "gui/Text_Edit_Rect.h"
 #include "gui/Text.h"
 #include "gui/Button.h"
+#include "shared/Render.h"
+
 /* Represents volume level of sample, that is also the raw volume written
  * to SNES APU DSP register */
 struct DspVol
@@ -115,8 +117,14 @@ struct Instrument_Panel
   static int save(void *null);
   static int zap(void *null);
 
+  enum {
+    LOAD=0,
+    SAVE,
+    ZAP,
+    NUM_BUTTONS
+  };
   Text title;
-  Button loadbtn, savebtn, zapbtn;
+  Button buttons[NUM_BUTTONS];
   Text instr_indices[NUM_INSTR];
   char *instr_index_strings;
   Text_Edit_Rect instr_names[NUM_INSTR]; // temporarily hard coding the number of instruments
@@ -126,6 +134,9 @@ struct Instrument_Panel
   unsigned int currow = 0;
   /* a direct handle on the data, rather than accessing through an API */
   Instrument *instruments;
+  /* Todo, calculate the panel rect */
+  SDL_Rect rect; // define the boundaries of the entire panel
+  SDL_Rect highlight_r; // the highlight rect of current select instr
 };
 
 struct Sample_Panel
@@ -134,12 +145,9 @@ struct Sample_Panel
    * instrument. This access could be limited to the panel's currow member */
   Sample_Panel(Instrument_Panel *instrpanel);
   void event_handler(const SDL_Event &ev);
-  void draw();
+  void draw(SDL_Surface *screen=::render->screen);
   Text title;
   Button loadbtn, savebtn;
   Text_Edit_Rect *sample_name[NUM_SAMPLES];
+  Sample *samples;
 };
-
-/* {
-  Instrument instruments[0x10];
-};*/

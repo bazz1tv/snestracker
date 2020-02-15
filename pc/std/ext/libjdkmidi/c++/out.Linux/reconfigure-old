@@ -1,1 +1,0 @@
-../configure  "--native-platform-linux=1" "$@"
