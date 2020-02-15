@@ -25,6 +25,7 @@ struct Text_Edit_Rect : public Clickable_Text
     bool Hflip=false, SDL_Surface *screen=::render->screen);
 
   static int clicked_callback(void *data);
+  static void stop_editing(Text_Edit_Rect *ter=cur_editing_ter);
   /* The one cursor that will work across all T.E.Rs. */
   static Cursor cursor;
   static int comp_start_point;
@@ -32,7 +33,7 @@ struct Text_Edit_Rect : public Clickable_Text
   static char markedText[SDL_TEXTEDITINGEVENT_TEXT_SIZE];
   static SDL_Rect markedRect;
   // Stateful info
-  bool editing = false;
+  static Text_Edit_Rect *cur_editing_ter;
   bool needs_redraw = false;
   unsigned int strsize; // this is the capacity of the string
   unsigned int max_visible_chars;

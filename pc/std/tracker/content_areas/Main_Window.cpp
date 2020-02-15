@@ -127,10 +127,12 @@ void Main_Window::check_quit(SDL_Event &ev)
 int Main_Window::receive_event(SDL_Event &ev)
 {
   check_quit(ev);
-  dblclick::check_event(&ev);
 
   handle_text_edit_rect_event(ev, &song_title);
+  instrpanel.event_handler(ev);
 
+  // DIRTY :( ITS IMPORTANT THAT WE CHECK THE DBLCLICK EVENTS AFTER THE ABOVE
+  dblclick::check_event(&ev);
   /*if (gain.slider)
   {
     bool a=gain.slider->receive_event(ev);

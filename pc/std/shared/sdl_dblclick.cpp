@@ -11,7 +11,7 @@ namespace dblclick
   SDL_TimerID timerid;
   
   // Timer Callback.. Resets double click possibility
-  Uint32 dblclicktimer(Uint32 interval, void *param)
+  Uint32 reset_dblclicktimer(Uint32 interval/*=0*/, void *param/*=NULL*/)
   {
     SDL_Event event2;
 
@@ -53,7 +53,7 @@ namespace dblclick
         }
         else 
         {
-          dblclick::timerid = SDL_AddTimer(DBLCLICK_TIMEWINDOW, &dblclick::dblclicktimer, NULL);
+          dblclick::timerid = SDL_AddTimer(DBLCLICK_TIMEWINDOW, &dblclick::reset_dblclicktimer, NULL);
         }
       }
     }
@@ -68,9 +68,8 @@ namespace dblclick
       }
       else if (ev->user.code == UserEvents::mouse_reset)
       {
-        dblclick::numclicks = 0;
+        dblclick::numclicks = ev->user.data1;
       }
     }
   }
-
 }

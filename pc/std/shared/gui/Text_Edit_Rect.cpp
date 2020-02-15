@@ -5,6 +5,7 @@ Cursor Text_Edit_Rect::cursor;
 char Text_Edit_Rect::markedText[SDL_TEXTEDITINGEVENT_TEXT_SIZE] = "";
 int Text_Edit_Rect::comp_start_point = 0;
 SDL_Rect Text_Edit_Rect::markedRect;
+Text_Edit_Rect * Text_Edit_Rect::cur_editing_ter = NULL;
 
 Text_Edit_Rect::Text_Edit_Rect(int txtwidth/*=0*/, const char *str/*=""*/,
   int strsize/*=0*/, bool border/*=true*/) :
@@ -64,7 +65,6 @@ char *utf8_advance(char *p, size_t distance)
   return p;
 }
 
-
 static inline int check_dblclick(const SDL_Event &ev, Text_Edit_Rect *ter)
 {
   switch (ev.type)
@@ -80,12 +80,23 @@ static inline int check_dblclick(const SDL_Event &ev, Text_Edit_Rect *ter)
     default:break;
   }
 }
+
+void Text_Edit_Rect::stop_editing(Text_Edit_Rect *ter/*=cur_editing_ter*/)
+{
+  SDL_StopTextInput();
+  Text_Edit_Rect::cursor.stop_timer();
+  Text_Edit_Rect::cursor.draw(::render->screen, Colors::transparent, true);
+  ter->needs_redraw = true;
+  Text_Edit_Rect::cur_editing_ter = NULL;
+}
 /* Let's try putting the edit logic into the window's logic handler. */
 int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
 {
-  check_dblclick(ev, ter);
+  if (check_dblclick(ev, ter) == 1)
+    return 1; // we found the target of the event. no need to do further processing
+    // tell our parent that we found it as well
 
-  if (!ter->editing)
+  if (Text_Edit_Rect::cur_editing_ter != ter)
     return 0;
 
   switch (ev.type)
@@ -96,8 +107,9 @@ int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
         case SDLK_RETURN:
           SDL_StopTextInput();
           Text_Edit_Rect::cursor.stop_timer();
+          Text_Edit_Rect::cursor.draw(::render->screen, Colors::transparent, true);
           ter->needs_redraw = true;
-          ter->editing = false;
+          Text_Edit_Rect::cur_editing_ter = NULL;
           break;
         case SDLK_BACKSPACE:
           {
@@ -174,8 +186,9 @@ int Text_Edit_Rect::clicked_callback(void *data)
   Text_Edit_Rect *ter = (Text_Edit_Rect *)data;
   // the rect has been clicked (it is clickable_text, after all.
   /* Different handling based on editing */
-  if (!ter->editing)
+  if (cur_editing_ter != ter)
   {
+    cur_editing_ter = ter;
     /* if we re not editing, then we will start editing. Position the
      * cursor at the char nearest where the click occurred.*/
 
@@ -202,12 +215,10 @@ int Text_Edit_Rect::clicked_callback(void *data)
 
     // Don't deal those complicated rules yet. Just stop editing if we
     // clicked again
+    cur_editing_ter = NULL;
     SDL_StopTextInput();
     Text_Edit_Rect::cursor.stop_timer();
   }
-
-  ter->editing = !ter->editing;
-  //fprintf(stderr, "editing = %d\n", ter->editing);
 }
 
 void Text_Edit_Rect::one_time_draw(SDL_Surface *screen)
@@ -244,7 +255,7 @@ void Text_Edit_Rect::draw(
   bool Vflip/*=false*/,
   bool Hflip/*=false*/, SDL_Surface *screen/*=::render->screen*/)
 {
-  if (!cursor.toggle)
+  //if (!cursor.toggle && editing)
     needs_redraw = true;
   if (needs_redraw)
   {
@@ -252,11 +263,14 @@ void Text_Edit_Rect::draw(
       one_time_draw(screen);
     needs_redraw = false;
     size_t mtlen = strlen(markedText);
-    if (editing)
+    if (cur_editing_ter == this)
     {
       markedRect = rect;
       markedRect.x += (strlen(str) * CHAR_WIDTH);
       markedRect.w = mtlen * CHAR_WIDTH;
+      // incase the cursor is displayed we need to clear it now, before
+      // updating its position
+      cursor.draw(screen, Colors::transparent, false);
       cursor.rect.x = markedRect.x;
     }
     //const char *c = str;
@@ -266,6 +280,7 @@ void Text_Edit_Rect::draw(
       fprintf(stderr, "%02x ", *c);
       c++;
     } while (*c != 0);*/
+
     sdlfont_drawString(screen, rect.x, rect.y, str, color,
         Colors::Interface::color[Colors::Interface::Type::text_bg], prefill, Vflip, Hflip);
 
@@ -301,10 +316,9 @@ void Text_Edit_Rect::draw(
       SDL_SetTextInputRect(&markedRect);
     }
   }
-  if (editing)
+  if (cur_editing_ter == this)
   {// no worries. the cursor is only drawn based on internal logic
     //fprintf(stderr, "drawing cursor at (%d,%d)\n", cursor.rect.x, cursor.rect.y);
-    cursor.draw(screen, cursor.rect.x, cursor.rect.y,
-                Colors::green);
+    cursor.draw(screen, Colors::green, false);
   }
 }

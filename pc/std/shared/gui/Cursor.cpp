@@ -33,18 +33,20 @@ void Cursor::stop_timer()
   toggle = 0;
 }
 
-void Cursor::draw(SDL_Surface *screen, int x, int y, Uint32 color)
+void Cursor::draw(SDL_Surface *screen, int x, int y, Uint32 color,
+  bool draw_transparent/*=false*/)
 {
   if (toggle)
-  {
       sdlfont_drawString(screen, x, y, "\x5B", color);
-  }
+  else if (draw_transparent)
+    sdlfont_drawString(screen, x, y, "\x5B", Colors::transparent);
 }
 
-void Cursor::draw(SDL_Surface *screen, Uint32 color)
+void Cursor::draw(SDL_Surface *screen, Uint32 color,
+  bool draw_transparent/*=false*/)
 {
   if (toggle)
-  {
-      sdlfont_drawString(screen, rect.x, rect.y, "\x5B", color);
-  }
+    sdlfont_drawString(screen, rect.x, rect.y, "\x5B", color);
+  else if (draw_transparent)
+    sdlfont_drawString(screen, rect.x, rect.y, "\x5B", Colors::transparent);
 }

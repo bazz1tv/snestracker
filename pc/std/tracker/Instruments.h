@@ -133,7 +133,7 @@ struct Instrument_Panel
   // the number of instrument rows in GUI
   static const int NUM_ROWS = 8;
   // the current selected row
-  unsigned int currow = 0;
+  int currow = 0;
   /* a direct handle on the data, rather than accessing through an API */
   Instrument *instruments;
   /* Todo, calculate the panel rect */

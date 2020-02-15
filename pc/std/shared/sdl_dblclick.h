@@ -33,7 +33,7 @@ namespace dblclick
   extern SDL_TimerID timerid;
   
   // Timer Callback.. Resets double click possibility
-  Uint32 dblclicktimer(Uint32 interval, void *param);
+  Uint32 reset_dblclicktimer(Uint32 interval=0, void *param=NULL);
   void init();
 
   

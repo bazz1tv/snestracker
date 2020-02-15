@@ -1,5 +1,9 @@
 #include "tracker/Instruments.h"
 #include "shared/Colors.h"
+#include "shared/sdl_userevents.h"
+#include <assert.h>
+#include "utility.h"
+#include "shared/sdl_dblclick.h"
 
 /* The instrument panel is something like
  * Instruments  (Load) (Save) (Zap)
@@ -101,6 +105,70 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
   /* If the user clicks within a certain row rect. A row rect is comprised
    * of the index region (including padding), the spacer, and the
    * instrument name field (including padding).*/
+  for (int i=0; i < NUM_ROWS; i++)
+  {
+    /* Check the rect of the indice. Unfortunately, unless I edit the TER
+     * code to allow using an alternative Rect (Clickable_Rect code
+     * really), then I can't composite an all-inclusive rect to do the
+     * check once */
+    SDL_Rect r = instr_indices[i].rect;
+    /* Need to be careful this this rect does not overlap with the TER */
+    r.w += instr_names[i].rect.x - (r.x + r.w) - 1;
+    //assert(r.x + r.w < instr_names[i].rect.x);
+
+    switch (ev.type)
+    {
+      case SDL_USEREVENT:
+        if (ev.user.code == UserEvents::mouse_react)
+        {
+          SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
+          if (Utility::coord_is_in_rect(te->button.x,te->button.y, &r))
+          {
+            instr_names[i].do_thing(instr_names[i].data);
+            return 1;
+          }
+        }
+        break;
+      case SDL_MOUSEBUTTONDOWN:
+        {
+          if (Utility::coord_is_in_rect(ev.button.x,ev.button.y, &r)
+              || Utility::coord_is_in_rect(ev.button.x, ev.button.y,
+                                           &instr_names[i].rect))
+          {
+            if (currow != i)
+            {
+              SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
+              currow = i;
+              // Need to reset the double click code if this click was
+              // registered
+              //dblclick::reset_dblclicktimer();
+              /* Dirty way to implement the following functionality: if
+               * you click on an unselected entity, that counts as one
+               * click towards a double click, but if the second click is
+               * on a different entity, the logic must think only 1 click
+               * happened. The dirtyness comes from how the dblclick
+               * engine works. It's kind of an enigma atm. */
+              dblclick::numclicks = 0;
+              SDL_Event event2;
+
+              event2.type = SDL_USEREVENT;
+              event2.user.code = UserEvents::mouse_reset;
+              event2.user.data1 = 1;
+              event2.user.data2 = 0;
+              SDL_PushEvent(&event2);
+
+              if (Text_Edit_Rect::cur_editing_ter)
+                Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
+            }
+          }
+        } break;
+      default:break;
+    }
+
+    // just check the ter for now
+    if (handle_text_edit_rect_event(ev, &instr_names[i]) == 1)
+      return 1;
+  }
 }
 
 void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
