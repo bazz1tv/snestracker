@@ -31,7 +31,6 @@ void Main_Window::draw_memory_outline()
 
 void Main_Window::draw()
 {
-  int x,y;
   time_cur = SDL_GetTicks();
 
   sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
@@ -121,9 +120,6 @@ int Main_Window::receive_event(SDL_Event &ev)
             ev.motion.y >= MEMORY_VIEW_Y &&
             ev.motion.y < MEMORY_VIEW_Y + 512)
         {
-          int x, y;
-          x = ev.motion.x;
-          y = ev.motion.y;
         }
       }
     
@@ -190,12 +186,10 @@ void Main_Window::run()
 }
 
 Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
+    song_title(25, song_title_str, sizeof(song_title_str)),
     tracker(tracker),
-    instrpanel(tracker->instruments),
-    song_title(25, song_title_str, sizeof(song_title_str))
+    instrpanel(tracker->instruments)
 {
-  int res;
-  
   song_title_str[0] = 0;
 
   if (::render->screen == NULL)

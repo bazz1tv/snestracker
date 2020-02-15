@@ -130,7 +130,7 @@ struct Instrument_Panel
   char *instr_index_strings;
   Text_Edit_Rect instr_names[NUM_INSTR]; // temporarily hard coding the number of instruments
   // the number of instrument rows in GUI
-  static const unsigned int NUM_ROWS = 8;
+  static const int NUM_ROWS = 8;
   // the current selected row
   unsigned int currow = 0;
   /* a direct handle on the data, rather than accessing through an API */

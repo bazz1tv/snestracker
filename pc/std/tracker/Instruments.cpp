@@ -11,7 +11,7 @@
  * ------+-------------------------+
  */
 
-const unsigned int Instrument_Panel::NUM_ROWS;
+const int Instrument_Panel::NUM_ROWS;
 #define INSTR_NAME_GUI_CHAR_WIDTH 22
 
 

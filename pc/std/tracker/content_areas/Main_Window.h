@@ -76,8 +76,8 @@ struct Main_Window : public Experience
   
   bool is_first_run=true;
 
-  Instrument_Panel instrpanel;
   /* Handle to the tracker to access core components (instrument and
    * pattern data */
   Tracker *tracker;
+  Instrument_Panel instrpanel;
 };
