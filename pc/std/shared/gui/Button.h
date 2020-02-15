@@ -26,4 +26,5 @@ struct Button : public Clickable_Text
   //Uint32 bg_color[2], fg_color[2];
   // This makes a complete waste of Clickable_Text color variable :( That
   // can be fixed later. Rapid prototype!
+  SDL_Rect outer;
 };

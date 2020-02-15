@@ -10,6 +10,7 @@ Button::Button(const char * str, int (*action)(void *data)/*=NULL*/,
   fg_color[0] = Colors::Interface::color[Colors::Interface::button_fg];
   fg_color[1] = Colors::Interface::color[Colors::Interface::button_pressed_fg];
   */
+  //outer = {rect.x + 2, rect.y + 4, rect.w, rect.h};
 }
 
 void Button::check_event(const SDL_Event &ev)
@@ -29,18 +30,30 @@ void Button::check_event(const SDL_Event &ev)
       state = 0;
     }
     else if (ev.type == SDL_MOUSEBUTTONUP)
+    {
       check_mouse_and_execute(ev.button.x, ev.button.y);
+      state = 0;
+    }
   }
 }
 
 void Button::draw(SDL_Surface *screen)
 {
-  SDL_FillRect(screen, &rect,
+  // redudant calculating outer every frame :(
+  outer = {rect.x - 2, rect.y - 2, rect.w + 4, rect.h + 4};
+  SDL_FillRect(screen, &outer,
       Colors::Interface::color[Colors::Interface::button_bg + state]);
 
-  sdlfont_drawString(screen, rect.x + 2,
-      state ? rect.y + 4 : rect.y + 2, str,
+  sdlfont_drawString(screen, state ? rect.x : rect.x + 1,
+      state ? rect.y : rect.y + 2, str,
+      Colors::transparent,
+      Colors::Interface::color[Colors::Interface::button_bg + state],
+      false);
+
+  sdlfont_drawString(screen, state ? rect.x + 1 : rect.x,
+      state ? rect.y + 2 : rect.y, str,
       Colors::Interface::color[Colors::Interface::button_fg + state],
       Colors::Interface::color[Colors::Interface::button_bg + state],
       false);
+
 }

@@ -66,7 +66,7 @@ void Instrument_Panel::set_coords(int x, int y)
   zapbtn.rect.x = x;
   zapbtn.rect.y = y;
 
-  y += CHAR_HEIGHT*2;
+  y += CHAR_HEIGHT + (CHAR_HEIGHT/2);
 
   /* This init was postponed until now to avoid having to iterate through
    * all instruments multiple times */
@@ -160,15 +160,19 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
               if (Text_Edit_Rect::cur_editing_ter)
                 Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
             }
+            return 1;
           }
         } break;
       default:break;
     }
 
-    // just check the ter for now
     if (handle_text_edit_rect_event(ev, &instr_names[i]) == 1)
       return 1;
   }
+
+  loadbtn.check_event(ev);
+  savebtn.check_event(ev);
+  zapbtn.check_event(ev);
 }
 
 void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
@@ -209,15 +213,18 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
 
 int Instrument_Panel::load(void *null)
 {
+  fprintf(stderr, "LOAD\n");
   return 0;
 }
 
 int Instrument_Panel::save(void *null)
 {
+  fprintf(stderr, "SAVE\n");
   return 0;
 }
 
 int Instrument_Panel::zap(void *null)
 {
+  fprintf(stderr, "ZAP\n");
   return 0;
 }
