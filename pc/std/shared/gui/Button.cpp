@@ -39,7 +39,7 @@ void Button::check_event(const SDL_Event &ev)
 
 void Button::draw(SDL_Surface *screen)
 {
-  // redudant calculating outer every frame :(
+  // redudant calculating outer rect every frame :(
   outer = {rect.x - 2, rect.y - 2, rect.w + 4, rect.h + 4};
   SDL_FillRect(screen, &outer,
       Colors::Interface::color[Colors::Interface::button_bg + state]);
