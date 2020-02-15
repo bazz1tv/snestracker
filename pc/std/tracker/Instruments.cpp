@@ -1,5 +1,5 @@
 #include "tracker/Instruments.h"
-
+#include "shared/Colors.h"
 
 
 
@@ -27,9 +27,9 @@ static char nibble_to_ascii(uint8_t nibble)
 
 Instrument_Panel::Instrument_Panel(Instrument *iptr) :
     title("Instruments"),
-    loadbtn("Load", Instrument_Panel::load),
-    savebtn("Save", Instrument_Panel::save),
-    zapbtn("Zap", Instrument_Panel::zap),
+    buttons[LOAD]("Load", Instrument_Panel::load),
+    buttons[SAVE]("Save", Instrument_Panel::save),
+    buttons[ZAP]("Zap", Instrument_Panel::zap),
     instruments(iptr)
 {
   // 5 is for eg. "01 |\0"
@@ -39,30 +39,6 @@ Instrument_Panel::Instrument_Panel(Instrument *iptr) :
     fprintf(stderr, "Could not allocate string index memory. "
             "This is not normal so we're quitting out");
     exit(1);
-  }
-
-  char *c = instr_index_strings;
-
-  for (int i=0; i < NUM_INSTR; i++)
-  {
-    // convert index to ascii
-    *(c++) = nibble_to_ascii(i >> 4);
-    *(c++) = nibble_to_ascii(i);
-    *(c++) = ' '; // These 2 bytes are a waste :(
-    *(c++) = '|';
-    *(c++) = 0;
-
-    /* The GUI instr_names[i].str now points to the core (tracker)'s
-     * instruments[i].str, meaning that when we load a file into the
-     * tracker (core), these strings should automatically update after a
-     * redraw */
-    instr_names[i].str = instruments[i].name;
-    instr_names[i].strsize = INSTR_NAME_MAXLEN;
-    instr_names[i].rect = {0,
-                           0,
-                           INSTR_NAME_GUI_CHAR_WIDTH * CHAR_WIDTH,
-                           CHAR_HEIGHT};
-    instr_names[i].max_visible_chars = INSTR_NAME_GUI_CHAR_WIDTH;
   }
 }
 
@@ -78,18 +54,42 @@ void Instrument_Panel::set_coords(int x, int y)
   title.rect.y = y;
 
   x += title.rect.w + (2*CHAR_WIDTH);
-  loadbtn.rect.x = x;
-  loadbtn.rect.y = y;
+  buttons[LOAD].rect.x = x;
+  buttons[LOAD].rect.y = y;
 
-  x += loadbtn.rect.w + (2*CHAR_WIDTH);
-  savebtn.rect.x = x;
-  savebtn.rect.y = y;
-
-  x += savebtn.rect.w + (2*CHAR_WIDTH);
-  zapbtn.rect.x = x;
-  zapbtn.rect.y = y;
+  for (int i=1; i < NUM_BUTTONS; i++)
+  {
+    x += buttons[i - 1].rect.w + (2*CHAR_WIDTH);
+    buttons[i].rect.x = x;
+    buttons[i].rect.y = y;
+  }
 
   y += CHAR_HEIGHT;
+
+  /* This init was postponed until now to avoid having to iterate through
+   * all instruments multiple times */
+  char *c = instr_index_strings;
+  for (int i=0; i < NUM_INSTR; i++)
+  {
+    // convert index to ascii
+    *(c++) = nibble_to_ascii(i >> 4);
+    *(c++) = nibble_to_ascii(i);
+    *(c++) = ' '; // These 2 bytes are a waste :(
+    *(c++) = '|';
+    *(c++) = 0;
+
+    /* The GUI instr_names[i].str now points to the core (tracker)'s
+     * instruments[i].str, meaning that when we load a file into the
+     * tracker (core), these strings should automatically update after a
+     * redraw */
+    instr_names[i].str = instruments[i].name;
+    instr_names[i].strsize = INSTR_NAME_MAXLEN;
+    instr_names[i].rect = { i < NUM_ROWS ? xx : 0,
+      i < NUM_ROWS ? y + (CHAR_HEIGHT * i)    : 0,
+      INSTR_NAME_GUI_CHAR_WIDTH * CHAR_WIDTH,
+      CHAR_HEIGHT};
+    instr_names[i].max_visible_chars = INSTR_NAME_GUI_CHAR_WIDTH;
+  }
 }
 
 int Instrument_Panel::event_handler(const SDL_Event &ev)
@@ -99,10 +99,36 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
    * instrument name field (including padding).*/
 }
 
-void Instrument_Panel::draw()
+void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
 {
   unsigned int i=0;
-  //while (instruments[i]
+  char *c = instr_index_strings;
+  /* First, draw the "Instruments" strings and top buttons */
+  title.draw(screen);
+  for (i=0; i < NUM_BUTTONS; i++)
+    buttons[i].draw(screen);
+
+  /* This should really be put in init and event code, to decrease
+   * redundant processing */
+  highlight_r = instr_indices[currow].rect;
+  highlight_r.w +=
+    (instr_names[currow].rect.x - (highlight_r.x + highlight_r.w)) +
+    instr_names[currow].rect.w;
+
+  /* This color should not be hardcoded, but have a new entry in the GUI
+   * Colors array for highlighted stuff. Reference MilkyTracker config */
+  SDL_FillRect(screen, &highlight_r, Colors::magenta);
+
+  for (i=0; i < NUM_INSTR; i++)
+  {
+    // Draw the index followed by the instrname
+    // But beneath this, draw the highlighted currow rect
+    /* In order to draw this rect, we need to the total horizontal width
+     * of the index + instr_name, + some padding maybe. That should be
+     * calculated at init and in the event handler */
+    instr_indices[i].draw(screen);
+    instr_names[i].draw(screen);
+  }
 }
 
 int Instrument_Panel::load(void *null)
