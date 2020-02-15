@@ -9,8 +9,7 @@
 
 struct Clickable_Text : public Clickable_Rect
 {
-  Clickable_Text(); // if we must post-init
-  Clickable_Text(const char * str, int (*action)(void *data)=NULL, void *data=NULL,
+  Clickable_Text(const char * str="", int (*action)(void *data)=NULL, void *data=NULL,
     Uint32 color=Colors::Interface::color[Colors::Interface::text_fg]);
   Clickable_Text(const char * str, int x, int y, int (*action)(void *data)=NULL, void *data=NULL);
 

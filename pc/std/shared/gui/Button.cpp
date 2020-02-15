@@ -1,6 +1,7 @@
 #include "gui/Button.h"
 #include "utility.h"
-Button::Button(const char * str, int (*action)(void *data)=NULL, void *data=NULL) :
+Button::Button(const char * str, int (*action)(void *data)/*=NULL*/,
+  void *data/*=NULL*/) :
     Clickable_Text(str, action, data)
 {
   /*

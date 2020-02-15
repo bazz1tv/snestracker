@@ -189,8 +189,10 @@ void Main_Window::run()
   
 }
 
-Main_Window::Main_Window(int &argc, char **argv) :
-song_title(25, song_title_str, sizeof(song_title_str))
+Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
+    tracker(tracker),
+    instrpanel(tracker->instruments),
+    song_title(25, song_title_str, sizeof(song_title_str))
 {
   int res;
   

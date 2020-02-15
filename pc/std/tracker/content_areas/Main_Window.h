@@ -14,6 +14,10 @@
 #include "gui/Tab.h"
 #include "globals.h"
 #include "shared/gui/Text_Edit_Rect.h"
+#include "Instruments.h"
+
+struct Tracker;
+
 struct Main_Window : public Experience
 {
   char tmpbuf[100];
@@ -36,7 +40,7 @@ struct Main_Window : public Experience
     MODE_EDIT_TIME
   };
 
-  Main_Window(int &argc, char **argv);
+  Main_Window(int &argc, char **argv, Tracker *tracker);
 
   void run();
   void check_quit(SDL_Event &ev);
@@ -71,5 +75,9 @@ struct Main_Window : public Experience
   Uint32 time_last=0, time_cur=0;
   
   bool is_first_run=true;
-  
+
+  Instrument_Panel instrpanel;
+  /* Handle to the tracker to access core components (instrument and
+   * pattern data */
+  Tracker *tracker;
 };

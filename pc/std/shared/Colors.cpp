@@ -83,7 +83,6 @@ void Colors::precompute(SDL_Surface *screen)
   Interface::color[Interface::Type::button_pressed_bg] = nearblack;
   Interface::color[Interface::Type::button_fg] = white;
   Interface::color[Interface::Type::button_pressed_fg] = white;
-  
 }
 
 Uint32 Colors::subtract(Uint32 *c, Uint8 subval)

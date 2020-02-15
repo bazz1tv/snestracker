@@ -12,6 +12,8 @@
 #include "Menu_Bar.h"
 #include "gui/Window.h"
 
+#include "Instruments.h"
+
 typedef Uint32 WindowID;
 
 struct Tracker
@@ -33,4 +35,7 @@ public:
   Spc_Export_Window spc_export_window;
   static const int NUM_WINDOWS = 2;
   Window *window_map[NUM_WINDOWS+1];
+
+  // TRACKER CORE
+  Instrument instruments[NUM_INSTR];
 };

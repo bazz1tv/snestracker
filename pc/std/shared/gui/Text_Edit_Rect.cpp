@@ -5,6 +5,21 @@ Cursor Text_Edit_Rect::cursor;
 char Text_Edit_Rect::markedText[SDL_TEXTEDITINGEVENT_TEXT_SIZE] = "";
 int Text_Edit_Rect::comp_start_point = 0;
 SDL_Rect Text_Edit_Rect::markedRect;
+
+Text_Edit_Rect::Text_Edit_Rect(int txtwidth/*=0*/, const char *str/*=""*/,
+  int strsize/*=0*/) :
+        Clickable_Text(str, clicked_callback, this),
+        strsize(strsize)
+{
+  //if (width % CHAR_HEIGHT)
+    //width += CHAR_HEIGHT - (width % CHAR_HEIGHT);
+  rect.w = txtwidth * CHAR_WIDTH;
+  rect.h = CHAR_HEIGHT;
+  max_visible_chars = txtwidth;
+}
+
+
+
 /* utf8 helper funcs from
  * https://hg.libsdl.org/SDL/file/783d1cff9b20/test/testime.c */
 

@@ -9,7 +9,7 @@
 #define R_FLAG 1
 
 Tracker::Tracker(int &argc, char **argv) :
-main_window(argc,argv)
+main_window(argc,argv, this)
 {
   //::main_window = &main_window;
   //::menu_bar = &menu_bar;

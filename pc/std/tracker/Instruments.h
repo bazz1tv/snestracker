@@ -42,7 +42,7 @@ struct Adsr
  * done. Later, it will be made so that the limit can be dynamically
  * increased */
 #define NUM_SAMPLES 0x10
-#define SAMPLE_NAME_MAXLEN 128
+#define SAMPLE_NAME_MAXLEN 22
 #define SNES_MAX_VOL 0x7f
 
 struct Sample
@@ -71,7 +71,7 @@ private:
  * done. Later, it will be made so that the limit can be dynamically
  * increased */
 #define NUM_INSTR 0x10
-#define INSTR_NAME_MAXLEN 128
+#define INSTR_NAME_MAXLEN 22
 
 struct Instrument
 {
@@ -101,22 +101,42 @@ struct Instrument
 /* That defined the Data model above. Now time to get that into a view */
 struct Instrument_Panel
 {
+  /* Initialize the panel view from an X/Y coordinate. Additionally, we
+   * need a reference to the instruments */
   Instrument_Panel(Instrument *instruments);
-  void event_handler(SDL_Event &ev);
+  ~Instrument_Panel();
+
+  int event_handler(const SDL_Event &ev);
   void draw();
+  void set_coords(int x, int y);
+
+  // callback funcs for the buttons
+  static int load(void *null);
+  static int save(void *null);
+  static int zap(void *null);
 
   Text title;
-  Button load, save, zap;
-  Text_Edit_Rect instr_name[NUM_INSTR]; // temporarily hard coding the number of instruments
+  Button loadbtn, savebtn, zapbtn;
+  Text instr_indices[NUM_INSTR];
+  char *instr_index_strings;
+  Text_Edit_Rect instr_names[NUM_INSTR]; // temporarily hard coding the number of instruments
+  // the number of instrument rows in GUI
+  static const unsigned int NUM_ROWS = 8;
+  // the current selected row
+  unsigned int currow = 0;
+  /* a direct handle on the data, rather than accessing through an API */
   Instrument *instruments;
 };
 
 struct Sample_Panel
 {
+  /* Need a handle on the instrument panel to reference to selected
+   * instrument. This access could be limited to the panel's currow member */
+  Sample_Panel(Instrument_Panel *instrpanel);
   void event_handler(const SDL_Event &ev);
   void draw();
   Text title;
-  Button load, save;
+  Button loadbtn, savebtn;
   Text_Edit_Rect *sample_name[NUM_SAMPLES];
 };
 

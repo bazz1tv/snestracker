@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 /* Here is defined, most importantly, the raw Brr data block format. These
  * can be used to iterate through a BRR sample one block at a time until
  * the END block is reached (eg. brr->end is true).
@@ -11,13 +12,7 @@ struct BrrFilter
   double a, b;
 };
 
-BrrFilter brrfilter[4] =
-{
-  {0,         0},
-  {0.9375,    0},
-  {1.90625,  -0.9375},
-  {1.796875, -0.8125 },
-};
+extern const BrrFilter brrfilter[4];
 
 struct Brr
 {

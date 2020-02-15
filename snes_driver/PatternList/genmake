@@ -22,20 +22,22 @@ cat MakefileGenerator/compilerheader
 echo '' > /tmp/apu
 for file in apu/*.s; do
 	echo "$file" > /tmp/filename
-	objname=`sed s/"\.s"/"\.o"/ /tmp/filename`
+	objname=`sed 's/\.s/\.o/' /tmp/filename`
 	apuobjs="$apuobjs $objname"
 	printf '# %s \n' $file >> /tmp/apu
-	wla-spc700 -Mo $file $objname 2>> /tmp/apu
+	printf "$objname: " >> /tmp/apu
+  wla-spc700 -Mo $file $objname 2>&1 1>/dev/null | grep -v DISCARD >> /tmp/apu
 	printf '\t\t$(APU_CC) $(APU_CFLAGS) $< $(OBJDIR)/$@\n' >> /tmp/apu
 done
 
 echo '' > /tmp/cpu
 for file in cpu/*.s; do
 	echo "$file" > /tmp/filename
-	objname=`sed s/"\.s"/"\.o"/ /tmp/filename`
+	objname=`sed 's/\.s/\.o/' /tmp/filename`
 	cpuobjs="$cpuobjs $objname"
 	printf '# %s \n' $file >> /tmp/cpu
-	wla-65816 -Mo $file $objname 2>> /tmp/cpu
+	printf "$objname: " >> /tmp/cpu
+  wla-65816 -Mo $file $objname 2>&1 1>/dev/null | grep -v DISCARD >> /tmp/cpu
 	printf '\t\t$(CPU_CC) $(CPU_CFLAGS) $< $(OBJDIR)/$@\n' >> /tmp/cpu
 done
 
