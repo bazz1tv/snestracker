@@ -14,12 +14,15 @@
 
 struct Text_Edit_Rect : public Clickable_Text
 {
-  Text_Edit_Rect(int txtwidth=0, const char *str="", int strsize=0);
+  Text_Edit_Rect(int txtwidth=0, const char *str="", int strsize=0,
+    bool border=true);
 
   void one_time_draw(SDL_Surface *screen);
 
-  void draw(Uint32 color, bool prefill=true, bool Vflip=false,
-            bool Hflip=false, SDL_Surface *screen=::render->screen);
+  void draw(
+    Uint32 color=Colors::Interface::color[Colors::Interface::Type::text_fg],
+    bool prefill=true, bool Vflip=false,
+    bool Hflip=false, SDL_Surface *screen=::render->screen);
 
   static int clicked_callback(void *data);
   /* The one cursor that will work across all T.E.Rs. */
@@ -33,6 +36,7 @@ struct Text_Edit_Rect : public Clickable_Text
   bool needs_redraw = false;
   unsigned int strsize; // this is the capacity of the string
   unsigned int max_visible_chars;
+  bool border = false; // Whether to draw a border around the field
 };
 
 int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter);

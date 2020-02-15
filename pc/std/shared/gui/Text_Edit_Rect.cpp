@@ -7,9 +7,9 @@ int Text_Edit_Rect::comp_start_point = 0;
 SDL_Rect Text_Edit_Rect::markedRect;
 
 Text_Edit_Rect::Text_Edit_Rect(int txtwidth/*=0*/, const char *str/*=""*/,
-  int strsize/*=0*/) :
+  int strsize/*=0*/, bool border/*=true*/) :
         Clickable_Text(str, clicked_callback, this),
-        strsize(strsize)
+        strsize(strsize), border(border)
 {
   //if (width % CHAR_HEIGHT)
     //width += CHAR_HEIGHT - (width % CHAR_HEIGHT);
@@ -229,7 +229,8 @@ void Text_Edit_Rect::one_time_draw(SDL_Surface *screen)
  /* Utility::set_render_color_rgb(::render->sdlRenderer,
       Colors::Interface::color[Colors::Interface::Type::text_bg]);*/
   //SDL_RenderFillRect(::render->sdlRenderer, &rect);
-  SDL_FillRect(screen, &outer, Colors::white);
+  if (border)
+    SDL_FillRect(screen, &outer, Colors::white);
   SDL_FillRect(screen, &io, Colors::Interface::color[Colors::Interface::Type::text_bg]);
   // Draw border
   //Utility::set_render_color_rgb(::render->sdlRenderer,
@@ -237,21 +238,27 @@ void Text_Edit_Rect::one_time_draw(SDL_Surface *screen)
   //SDL_RenderDrawRect(::render->sdlRenderer, &rect);
 }
 
-void Text_Edit_Rect::draw(Uint32 color, bool prefill/*=true*/,
-            bool Vflip/*=false*/,
-            bool Hflip/*=false*/, SDL_Surface *screen/*=::render->screen*/)
+void Text_Edit_Rect::draw(
+  Uint32 color/*=Colors::Interface::color[Colors::Interface::Type::text_fg]*/,
+  bool prefill/*=true*/,
+  bool Vflip/*=false*/,
+  bool Hflip/*=false*/, SDL_Surface *screen/*=::render->screen*/)
 {
   if (!cursor.toggle)
     needs_redraw = true;
   if (needs_redraw)
   {
-    one_time_draw(screen);
+    if (border)
+      one_time_draw(screen);
     needs_redraw = false;
     size_t mtlen = strlen(markedText);
-    markedRect = rect;
-    markedRect.x = rect.x + (strlen(str) * CHAR_WIDTH);
-    markedRect.w = mtlen * CHAR_WIDTH;
-    cursor.rect.x = markedRect.x;
+    if (editing)
+    {
+      markedRect = rect;
+      markedRect.x += (strlen(str) * CHAR_WIDTH);
+      markedRect.w = mtlen * CHAR_WIDTH;
+      cursor.rect.x = markedRect.x;
+    }
     //const char *c = str;
     //fprintf(stderr, "REDRAW\n");
     /*fprintf(stderr, "str = %s; strlen = %d\n", str, strlen(str));

@@ -1,4 +1,3 @@
-
 unsigned char font[] = {
 0x00,0x00,0x00,0x00,0x00,0x00,0x00, // space
 0x30,0x78,0x78,0x30,0x30,0x00,0x30, // !
@@ -62,6 +61,48 @@ unsigned char font[] = {
 0x7e,0x7e,0x7e,0x7e,0x7e,0x7e,0x7e,  // block added by bazz use 0x5B
 0x00,0x00,0x00,0x10,0x38,0x7c,0xfe,  // vertical up triangle prototype bazz
 0x20,0x30,0x38,0x3c,0x38,0x30,0x20,  // horizontal right pointed triangle
+
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,
+
+
+0b00011000, // 0x7C
+0b00011000,
+0b00011000,
+0b00011000,
+0b00011000,
+0b00011000,
+0b00011000,
+
 };
 
 #define FONT_CODE_V_TRI 0x5C
@@ -109,7 +150,7 @@ unsigned char *font_getChar(char c)
 		c = 0x2e; // replace invalid chars by '.'
 	}
 	if (c>=0x61 && c<=0x7a) { c &= 0xdf; } // convert lowercase to uppercase
-	if (c>0x5D) { c = 0x2e; } // greater than 'Z' + 1 (cause of added block char)? Out of range!
+	if (c>0x5D && c != 0x7c) { c = 0x2e; } // greater than 'Z' + 1 (cause of added block char)? Out of range!
 	c -= 0x20;
 	
 	return &font[c*7];

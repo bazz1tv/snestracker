@@ -30,7 +30,7 @@ Instrument_Panel::Instrument_Panel(Instrument *iptr) :
     instruments(iptr)
 {
   // 5 is for eg. "01 |\0"
-  instr_index_strings = (char *) malloc( (sizeof(char) * 5) * NUM_INSTR );
+  instr_index_strings = (char *) malloc( (sizeof(char) * 4) * NUM_INSTR );
   if (instr_index_strings == NULL)
   {
     fprintf(stderr, "Could not allocate string index memory. "
@@ -62,19 +62,25 @@ void Instrument_Panel::set_coords(int x, int y)
   zapbtn.rect.x = x;
   zapbtn.rect.y = y;
 
-  y += CHAR_HEIGHT;
+  y += CHAR_HEIGHT*2;
 
   /* This init was postponed until now to avoid having to iterate through
    * all instruments multiple times */
   char *c = instr_index_strings;
   for (int i=0; i < NUM_INSTR; i++)
   {
+    instr_indices[i].str = c;
     // convert index to ascii
     *(c++) = nibble_to_ascii(i >> 4);
     *(c++) = nibble_to_ascii(i);
-    *(c++) = ' '; // These 2 bytes are a waste :(
     *(c++) = '|';
     *(c++) = 0;
+
+    instr_indices[i].rect = { i < NUM_ROWS ? xx : 0,
+      i < NUM_ROWS ? y + (CHAR_HEIGHT * i)    : 0,
+      3 * CHAR_WIDTH,
+      CHAR_HEIGHT};
+
 
     /* The GUI instr_names[i].str now points to the core (tracker)'s
      * instruments[i].str, meaning that when we load a file into the
@@ -82,11 +88,11 @@ void Instrument_Panel::set_coords(int x, int y)
      * redraw */
     instr_names[i].str = instruments[i].name;
     instr_names[i].strsize = INSTR_NAME_MAXLEN;
-    instr_names[i].rect = { i < NUM_ROWS ? xx : 0,
-      i < NUM_ROWS ? y + (CHAR_HEIGHT * i)    : 0,
-      INSTR_NAME_GUI_CHAR_WIDTH * CHAR_WIDTH,
-      CHAR_HEIGHT};
+    instr_names[i].rect = instr_indices[i].rect;
+    instr_names[i].rect.x += 3 * CHAR_WIDTH;
+    instr_names[i].rect.w = INSTR_NAME_GUI_CHAR_WIDTH * CHAR_WIDTH;
     instr_names[i].max_visible_chars = INSTR_NAME_GUI_CHAR_WIDTH;
+    instr_names[i].border = false;
   }
 }
 
@@ -118,15 +124,18 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
    * Colors array for highlighted stuff. Reference MilkyTracker config */
   SDL_FillRect(screen, &highlight_r, Colors::magenta);
 
-  for (i=0; i < NUM_INSTR; i++)
+  for (i=0; i < NUM_ROWS; i++)
   {
     // Draw the index followed by the instrname
     // But beneath this, draw the highlighted currow rect
     /* In order to draw this rect, we need to the total horizontal width
      * of the index + instr_name, + some padding maybe. That should be
      * calculated at init and in the event handler */
-    instr_indices[i].draw(screen);
-    instr_names[i].draw(screen);
+    instr_indices[i].draw(screen,
+      Colors::Interface::color[Colors::Interface::Type::text_fg],
+      false);
+    instr_names[i].draw(Colors::Interface::color[Colors::Interface::Type::text_fg],
+      false);
   }
 }
 

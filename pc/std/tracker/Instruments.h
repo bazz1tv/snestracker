@@ -77,6 +77,7 @@ private:
 
 struct Instrument
 {
+  Instrument() { name[0] = 0; }
   char name[INSTR_NAME_MAXLEN]; // the name of the instrument
   Sample samples[NUM_SAMPLES]; // the raw BRR sample
   /* signed offset in semitones to pitch the sample. This will be used

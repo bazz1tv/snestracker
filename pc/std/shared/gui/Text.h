@@ -6,9 +6,10 @@
 struct Text
 {
   Text(const char *str = "");
-  void draw(Uint32 color=Colors::Interface::color[Colors::Interface::Type::text_fg],
+  void draw(SDL_Surface *screen=::render->screen,
+      Uint32 color=Colors::Interface::color[Colors::Interface::Type::text_fg],
       bool prefill=true, bool Vflip=false,
-      bool Hflip=false, SDL_Surface *screen=::render->screen);
+      bool Hflip=false);
   /* defines the rect of this text entity. Only the coords are used
    * currently; the width and height are merely informational */
   SDL_Rect rect;

@@ -13,6 +13,35 @@
 #define PC_X MEMORY_VIEW_X+8*12
 #define PC_Y MEMORY_VIEW_Y-10
 
+Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
+  song_title_label("Song Title:"),
+  song_title(25, song_title_str, sizeof(song_title_str)),
+  tracker(tracker),
+  instrpanel(tracker->instruments)
+{
+  int x,y,xx,yy;
+
+  if (::render->screen == NULL)
+  {
+    fprintf(stderr, "Debugger::MainWindows::::render->screen is Null\n");
+    exit(1);
+  }
+  
+  song_title_str[0] = 0;
+
+  x = xx = 150; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
+  y = yy = 50;
+
+  song_title_label.rect.x = x;
+  song_title_label.rect.y = y;
+
+  y += CHAR_HEIGHT + 2;
+  song_title.rect.x = x;
+  song_title.rect.y = y;
+
+  instrpanel.set_coords(x + song_title.rect.w + (CHAR_WIDTH * 2), yy);
+}
+
 int Main_Window::Gain::change(void *dblnewgain)
 {
   ::player->gain_has_changed = true;
@@ -29,6 +58,13 @@ void Main_Window::draw_memory_outline()
   SDL_RenderDrawRect(::render->sdlRenderer, &tmprect);
 }
 
+void Main_Window::one_time_draw()
+{
+  // draw one-time stuff
+  SDL_FillRect(::render->screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
+  song_title_label.draw(::render->screen);
+}
+
 void Main_Window::draw()
 {
   time_cur = SDL_GetTicks();
@@ -42,6 +78,7 @@ void Main_Window::draw()
   {
     //fprintf(stderr, "HERE!\n");
     song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
+    instrpanel.draw(::render->screen);
     SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
     SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
     SDL_RenderClear(::render->sdlRenderer);
@@ -183,37 +220,6 @@ int Main_Window::receive_event(SDL_Event &ev)
 void Main_Window::run()
 {
   
-}
-
-Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
-    song_title(25, song_title_str, sizeof(song_title_str)),
-    tracker(tracker),
-    instrpanel(tracker->instruments)
-{
-  song_title_str[0] = 0;
-
-  if (::render->screen == NULL)
-  {
-    fprintf(stderr, "Debugger::MainWindows::::render->screen is Null\n");
-    exit(1);
-  }
-}
-
-void Main_Window::one_time_draw()
-{
-  // draw one-time stuff
-  SDL_FillRect(::render->screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
-
-  int x,y;
-  x = 150; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
-  y = 50;
-
-  sdlfont_drawString2(::render->screen, x, y, "Song Title:");
-  y += CHAR_HEIGHT + 2;
-  song_title.rect.x = x;
-  song_title.rect.y = y;
-
-  song_title.one_time_draw(::render->screen);
 }
 
 void Main_Window::draw_voices_pitchs()
