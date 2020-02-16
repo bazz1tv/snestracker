@@ -4,6 +4,14 @@
 
 namespace Utility
 {
+
+char nibble_to_ascii(uint8_t nibble)
+{
+  if ( ((nibble) & 0x0f) < 0x0a )
+    return '0' + nibble;
+  return 'a' + (nibble - 0x0a);
+}
+
 void DrawRect(const SDL_Rect *r, int thickness/*=2*/,
               Uint32 color/*=Colors::white*/,
               SDL_Surface *screen/*=::render->screen*/)

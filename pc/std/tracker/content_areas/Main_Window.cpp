@@ -17,7 +17,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_title_label("Song Title:"),
   song_title(22, song_title_str, sizeof(song_title_str)),
   tracker(tracker),
-  instrpanel(tracker->instruments)
+  instrpanel(tracker->instruments),
+  samplepanel(&instrpanel)
 {
   int x,y,xx,yy;
 
@@ -39,7 +40,10 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_title.rect.x = x;
   song_title.rect.y = y;
 
-  instrpanel.set_coords(x + song_title.rect.w + (CHAR_WIDTH * 2), yy);
+  x += song_title.rect.w + (CHAR_WIDTH * 2);
+  instrpanel.set_coords(x, yy);
+  x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH);
+  samplepanel.set_coords(x, yy);
 }
 
 int Main_Window::Gain::change(void *dblnewgain)
@@ -65,6 +69,7 @@ void Main_Window::one_time_draw()
   song_title_label.draw(::render->screen);
 
   instrpanel.one_time_draw();
+  samplepanel.one_time_draw();
 }
 
 void Main_Window::draw()
@@ -81,6 +86,7 @@ void Main_Window::draw()
     //fprintf(stderr, "HERE!\n");
     song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
     instrpanel.draw(::render->screen);
+    samplepanel.draw(::render->screen);
     SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
     SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
     SDL_RenderClear(::render->sdlRenderer);
@@ -132,6 +138,7 @@ int Main_Window::receive_event(SDL_Event &ev)
 
   handle_text_edit_rect_event(ev, &song_title);
   instrpanel.event_handler(ev);
+  samplepanel.event_handler(ev);
 
   // DIRTY :( ITS IMPORTANT THAT WE CHECK THE DBLCLICK EVENTS AFTER THE ABOVE
   dblclick::check_event(&ev);

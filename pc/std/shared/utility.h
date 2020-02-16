@@ -8,6 +8,8 @@
 
 namespace Utility
 {
+  char nibble_to_ascii(uint8_t nibble);
+
   void DrawRect(const SDL_Rect *rect, int thickness=2, Uint32 color=Colors::white,
                 SDL_Surface *screen=::render->screen);
 

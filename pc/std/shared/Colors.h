@@ -23,6 +23,7 @@ struct Colors
       button_pressed_bg,
       button_fg,
       button_pressed_fg,
+      selections,
       SIZEOF
     };
     static Uint32 color[Type::SIZEOF];

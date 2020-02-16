@@ -81,4 +81,5 @@ struct Main_Window : public Experience
    * pattern data */
   Tracker *tracker;
   Instrument_Panel instrpanel;
+  Sample_Panel samplepanel;
 };
