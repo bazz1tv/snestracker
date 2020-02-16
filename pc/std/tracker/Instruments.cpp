@@ -56,6 +56,12 @@ void Instrument_Panel::set_coords(int x, int y)
 
   y += CHAR_WIDTH + (CHAR_WIDTH / 2);
 
+  rect.x = x - 2; /* All rect.* are creating the bounding rect to be drawn
+  around the instruments list (not the buttons or main label. Unfortunately the
+  assignments are spread throughout this function rather than all being in one place,
+  due to the nature of the coordinates being manipulated to create the locations
+  of all ipanel entities */
+
   //x += title.rect.w + (2*CHAR_WIDTH);
   x += (CHAR_WIDTH * 0) + 2;
   loadbtn.rect.x = x;
@@ -70,6 +76,10 @@ void Instrument_Panel::set_coords(int x, int y)
   zapbtn.rect.y = y;
 
   y += CHAR_HEIGHT + (CHAR_HEIGHT/2);
+  y += 2;
+  rect.y = y;
+
+  y += 2; //(CHAR_HEIGHT / 2);
 
   /* This init was postponed until now to avoid having to iterate through
    * all instruments multiple times */
@@ -101,6 +111,10 @@ void Instrument_Panel::set_coords(int x, int y)
     instr_names[i].max_visible_chars = INSTR_NAME_GUI_CHAR_WIDTH;
     instr_names[i].border = false;
   }
+
+  rect.w = ((INSTR_NAME_GUI_CHAR_WIDTH + 3) * CHAR_WIDTH) + 2;
+  rect.h = (CHAR_HEIGHT * (NUM_ROWS)) + 1;
+
 }
 
 int Instrument_Panel::event_handler(const SDL_Event &ev)
@@ -178,6 +192,10 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
   zapbtn.check_event(ev);
 }
 
+void Instrument_Panel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
+{
+  Utility::DrawRect(&rect, 1);
+}
 void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
 {
   unsigned int i=0;

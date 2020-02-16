@@ -24,7 +24,7 @@ struct Main_Window : public Experience
 
   Text song_title_label;
   Text_Edit_Rect song_title;
-  char song_title_str[256];
+  char song_title_str[22];
 
   struct Gain
   {

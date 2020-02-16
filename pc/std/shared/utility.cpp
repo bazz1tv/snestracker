@@ -1,10 +1,43 @@
 #include "utility.h"
 #include <fstream>
 #include <sstream>
-#include "BaseD.h"
 
 namespace Utility
 {
+void DrawRect(const SDL_Rect *r, int thickness/*=2*/,
+              Uint32 color/*=Colors::white*/,
+              SDL_Surface *screen/*=::render->screen*/)
+{
+  SDL_Rect tmp;
+  /* Turns a rect that looks like
+   *  --
+   * |  |
+   *  --
+   *
+   *  into its left,top,right,button components for drawing a non-filled
+   *  rect*/
+
+  // Top
+  tmp.x = r->x;
+  tmp.y = r->y;
+  tmp.w = r->w;
+  tmp.h = thickness;
+  SDL_FillRect(screen, &tmp, color);
+
+  // bottom
+  tmp.y += r->h;
+  SDL_FillRect(screen, &tmp, color);
+
+  // left
+  tmp.y = r->y;
+  tmp.h = r->h + thickness;
+  tmp.w = thickness;
+  SDL_FillRect(screen, &tmp, color);
+
+  // right
+  tmp.x += r->w;
+  SDL_FillRect(screen, &tmp, color);
+}
 
 extern bool coord_is_in_rect(int x, int y, SDL_Rect *r);
 extern Uint32 scancode2ascii (int scancode);

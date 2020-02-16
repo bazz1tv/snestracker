@@ -3,9 +3,14 @@
 
 #include <string>
 #include <nfd.h>
+#include "Colors.h"
+#include "Render.h"
 
 namespace Utility
 {
+  void DrawRect(const SDL_Rect *rect, int thickness=2, Uint32 color=Colors::white,
+                SDL_Surface *screen=::render->screen);
+
   inline bool coord_is_in_rect(int x, int y, SDL_Rect *r)
   {
     return (x >= r->x && x < (r->x + r->w) &&

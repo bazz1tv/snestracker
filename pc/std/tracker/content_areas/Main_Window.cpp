@@ -15,7 +15,7 @@
 
 Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_title_label("Song Title:"),
-  song_title(25, song_title_str, sizeof(song_title_str)),
+  song_title(22, song_title_str, sizeof(song_title_str)),
   tracker(tracker),
   instrpanel(tracker->instruments)
 {
@@ -63,13 +63,15 @@ void Main_Window::one_time_draw()
   // draw one-time stuff
   SDL_FillRect(::render->screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
   song_title_label.draw(::render->screen);
+
+  instrpanel.one_time_draw();
 }
 
 void Main_Window::draw()
 {
   time_cur = SDL_GetTicks();
 
-  sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
+  //sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
 
   // The following are correlated from i and tmp. DO NOT MESS WITH THAT
   // base height
@@ -83,7 +85,7 @@ void Main_Window::draw()
     SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
     SDL_RenderClear(::render->sdlRenderer);
     SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
-    draw_memory_outline();
+    //draw_memory_outline();
     SDL_RenderPresent(::render->sdlRenderer);
     return; 
   }  
