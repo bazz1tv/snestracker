@@ -127,7 +127,7 @@ void Context_Menu::draw(SDL_Surface *screen)
   // draw highlight'd strip
   Uint32 bg_color = Colors::Interface::color[Colors::Interface::Type::text_bg];
   highlighted_item = NULL;
-  while (items[i].clickable_text.str != 0)
+  while (*items[i].clickable_text.str != 0)
   {
     if (items[i].is_visible)
     {

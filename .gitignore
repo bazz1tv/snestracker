@@ -3,3 +3,8 @@
 .DS_Store
 *.srm
 *.d
+*.swp
+cscope.out
+*.smc
+*.fig
+*.sfc

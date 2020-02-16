@@ -10,7 +10,7 @@ namespace Utility
 {
   char nibble_to_ascii(uint8_t nibble);
 
-  void DrawRect(const SDL_Rect *rect, int thickness=2, Uint32 color=Colors::white,
+  void DrawRect(const SDL_Rect *rect, int thickness=1, Uint32 color=Colors::white,
                 SDL_Surface *screen=::render->screen);
 
   inline bool coord_is_in_rect(int x, int y, SDL_Rect *r)

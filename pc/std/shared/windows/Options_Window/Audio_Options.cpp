@@ -99,6 +99,7 @@ int Audio_Options::receive_event(SDL_Event &ev)
     case SDL_MOUSEBUTTONDOWN:
     {
       SDL_Log("Audio_Options::receive_event");
+      context.menu->is_active = true;
       if (context.menu->receive_event(ev))
       {
         context.menu->is_active = true;

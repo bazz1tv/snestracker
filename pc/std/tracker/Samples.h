@@ -50,8 +50,6 @@ struct Sample_Panel
   Sample_Panel(Instrument_Panel *instrpanel);
   ~Sample_Panel();
 
-  void clear_all_rows(Text_Edit_Rect *ters, SDL_Surface *screen);
-  void clear_row(Text_Edit_Rect *ters, int row, SDL_Surface *screen);
   int event_handler(const SDL_Event &ev);
   void one_time_draw(SDL_Surface *screen=::render->screen);
   void draw(SDL_Surface *screen=::render->screen);
@@ -76,3 +74,8 @@ struct Sample_Panel
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr
 };
+
+// Helper functions shared between any panels. Putting here for now. Will
+// be shared between Sample and Instrument panels.
+void panel_clear_all_rows(Text_Edit_Rect *ters, int num_rows, SDL_Surface *screen);
+void panel_clear_row(Text_Edit_Rect *ters, int row, SDL_Surface *screen);
