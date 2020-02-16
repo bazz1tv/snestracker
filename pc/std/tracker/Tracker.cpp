@@ -109,6 +109,32 @@ void Tracker::run()
 void Tracker::handle_events()
 {
   SDL_Event ev;
+  int ev_frame = 0; /* track how many events are processed. Created primarily
+  for the soft click frame support detailed below */
+  int mbd_frame = -2; /* track the event frame that an SDL_MOUSEBUTTONDOWN
+  event occurred in. This is used to detect when event pair of SDL_MOUSEBUTTONDOWN
+  is followed immediately by an SDL_MOUSEBUTTONUP in the same graphical frame,
+  an otherwise perhaps impossible circumstance that only occurs for touchpad
+  "Soft" clicks. These variables help detect when such an event pair occurs and
+  pushes the MOUSEBUTTONUP event to be processed in the next graphical frame's event handler,
+  so that we can graphically have time to display reactions to the MOUSEBUTTONDOWN
+  event, and then later to the MOUSEBUTTONUP event. This at least gives us
+  1 frame of graphical change for display entities that update their visual
+  based on when the mouse button is down and then up. If I didn't do this,
+  there would be no graphical change for event pairs of this nature (once again,
+  that is touchpad "soft" clicks, when you simply lightly tap the touchpad rather
+  than a hard push down and release).*/
+  /* The -2 default value for mbd_frame is merely to disassociate the
+   * starting value from the code that will check this value between
+   * ev_frame */
+  SDL_Event mbu_postpone_ev; /* When the aforementioned event pair anomaly occurs,
+  a copy of the mousebuttonup (mbu) event is placed here for later pushing onto
+  the event queue after exiting the event poller loop*/
+
+  mbu_postpone_ev.type = SDL_QUIT; /* set the default to anything that isnt mousebuttonup,
+  that way we can reliably check later if the type has changed to SDL_MOUSEBUTTONUP
+  we know that we must then push this event copy to the queue for next frame's
+  processing */
 
   // Poll events for the remainder of this graphical frame time while the queue
   // has events.
@@ -271,8 +297,38 @@ void Tracker::handle_events()
         mouse::x = ev.motion.x;
         mouse::y = ev.motion.y;
       } break;
+      case SDL_MOUSEBUTTONDOWN:
+      {
+        /* In the case of touchpad soft clicking, it is expected that the
+         * MOUSEBUTTONUP is sent as the immediate next event after the
+         * mousebuttondown. In this case, it does not allow for the
+         * graphical updates between down and up mouse presses to take
+         * place, because they are all processed within the same frame.
+         * For this reason, I will check if the next event is
+         * MOUSEBUTTONUP, and if so, I will postpone it to the following
+         * graphical frame */
+        mbd_frame = ev_frame; // save the frame number the mbd occurred
+      } break;
+      case SDL_MOUSEBUTTONUP:
+      {
+        /* If the last frame was the mbd, we know we have found the soft
+         * click event pair. copy this mbu event to be postponed after
+         * this event loop exits */
+        if (mbd_frame == (ev_frame - 1))
+          mbu_postpone_ev = ev;
+      } break;
       default:break;
     }
+
+    ev_frame++;
+
+    /* If last frame was the mbd event, and this frame is the mbu event
+     * (also informed by the fact we have copied an SDL_MOUSEBUTTONUP
+     * event to mbu_postpone_ev),
+     * then we will not send this event to the event handlers, because it
+     * is being postponed for the next graphical frame */
+    if (mbd_frame == (ev_frame - 2) && mbu_postpone_ev.type == SDL_MOUSEBUTTONUP)
+      continue;
 
     menu_bar.receive_event(ev);
  
@@ -282,4 +338,9 @@ void Tracker::handle_events()
     }
     else cur_exp->receive_event(ev);
   }
+
+  /* If we have copied an mbu event to mbu_postpone_ev, then push it to
+   * the event queue for next graphical frame to pick up */
+  if (mbu_postpone_ev.type == SDL_MOUSEBUTTONUP)
+    SDL_PushEvent(&mbu_postpone_ev);
 }
