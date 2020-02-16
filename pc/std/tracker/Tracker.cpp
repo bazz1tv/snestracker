@@ -40,11 +40,20 @@ main_window(argc,argv, this)
       // On success, print the current display mode.
       SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz. \n", i, 
         monitor_display_mode.w, monitor_display_mode.h, monitor_display_mode.refresh_rate);
+
+  update_fps(30);
 }
 
 Tracker::~Tracker()
 {
   DEBUGLOG("~Tracker");
+}
+
+void Tracker::update_fps(int fps)
+{
+  this->fps = fps;
+  // calc from framerate. could put this into dynamic function later
+  frame_tick_duration = 1000 /*ms*/ / fps; // how many ms per frame
 }
 
 void Tracker::run()
@@ -58,6 +67,8 @@ void Tracker::run()
   // exp is changed from BaseD
   while (!::quitting)
   {
+    frame_tick_timeout = SDL_GetTicks() + frame_tick_duration;
+
     menu_bar.draw(::render->screen);
   
     cur_exp->run();
@@ -68,8 +79,22 @@ void Tracker::run()
       sub_window_experience->run();
       sub_window_experience->draw();
     }
-    
+
+    /* The reason I handle events at the end of the loop rather than
+     * before display code is so I can easily poll events for the rest of
+     * the frame time, otherwise I would have to calculate how much frame
+     * time to allocate for event polling, which wouldn't be so bad I
+     * imagine. but this works.. */
     handle_events();
+
+    // If we finished the frame early, sleep until the next frame start
+    Uint32 curticks = SDL_GetTicks();
+    if (!SDL_TICKS_PASSED(curticks, frame_tick_timeout))
+    {
+      SDL_Delay(frame_tick_timeout - curticks);
+      //DEBUGLOG("duration: %d, remaining: %d\n", frame_tick_duration,
+                 //frame_tick_timeout - curticks);
+    }
   }
 
   sub_window_experience = NULL;
@@ -85,7 +110,10 @@ void Tracker::handle_events()
 {
   SDL_Event ev;
 
-  while (SDL_PollEvent(&ev))
+  // Poll events for the remainder of this graphical frame time while the queue
+  // has events.
+  while (!SDL_TICKS_PASSED(SDL_GetTicks(), frame_tick_timeout)
+          && SDL_PollEvent(&ev))
   {
     switch(ev.type)
     {

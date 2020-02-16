@@ -36,6 +36,10 @@ public:
   static const int NUM_WINDOWS = 2;
   Window *window_map[NUM_WINDOWS+1];
 
+  void update_fps(int fps);
+  int fps;
+  Uint32 frame_tick_timeout, frame_tick_duration;
+
   // TRACKER CORE
   Instrument instruments[NUM_INSTR];
 };
