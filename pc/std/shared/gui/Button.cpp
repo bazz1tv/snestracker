@@ -17,7 +17,7 @@ Button::Button(const char * str, int (*action)(void *data)/*=NULL*/,
 void Button::check_event(const SDL_Event &ev)
 {
   if (ev.type == SDL_MOUSEBUTTONDOWN &&
-      (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &rect)) &&
+      (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &outer)) &&
       ev.button.button == SDL_BUTTON_LEFT)
   {
     //DEBUGLOG("Button mousebuttondown; ");
@@ -27,14 +27,14 @@ void Button::check_event(const SDL_Event &ev)
   {
     if (ev.type == SDL_MOUSEMOTION &&
         (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT)) &&
-        !Utility::coord_is_in_rect(ev.motion.x, ev.motion.y, &rect))
+        !Utility::coord_is_in_rect(ev.motion.x, ev.motion.y, &outer))
     {
       state = 0;
     }
     else if (ev.type == SDL_MOUSEBUTTONUP)
     {
       //DEBUGLOG("Button Mousebuttonup; ");
-      check_mouse_and_execute(ev.button.x, ev.button.y);
+      check_mouse_and_execute(ev.button.x, ev.button.y, &outer);
       state = 0;
     }
   }

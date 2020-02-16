@@ -11,6 +11,8 @@ struct Clickable_Rect
 
   void set_rect(int x, int y, int w, int h);
   bool check_mouse_and_execute(int x, int y, void *newdata=NULL);
+  bool check_mouse_and_execute(int x, int y, SDL_Rect *rect, void *newdata=NULL);
+
   void do_thing(void *newdata=NULL);
 
   SDL_Rect rect;

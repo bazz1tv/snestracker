@@ -17,9 +17,23 @@ Clickable_Rect::Clickable_Rect(int x, int y, int w, int h,
 
 }
 
-bool Clickable_Rect::check_mouse_and_execute(int x, int y, void *newdata/*=NULL*/)
+bool Clickable_Rect::check_mouse_and_execute(int x, int y,
+    void *newdata/*=NULL*/)
 {
+  // direct copy of below function
   if (Utility::coord_is_in_rect(x,y, &rect))
+  {
+    do_thing(newdata);
+    return true;
+  }
+  return false;
+}
+
+bool Clickable_Rect::check_mouse_and_execute(int x, int y,
+                                              SDL_Rect *rect,
+                                              void *newdata/*=NULL*/)
+{
+  if (Utility::coord_is_in_rect(x,y, rect))
   {
     do_thing(newdata);
     return true;
