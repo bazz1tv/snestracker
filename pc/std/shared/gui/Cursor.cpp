@@ -34,19 +34,19 @@ void Cursor::stop_timer()
 }
 
 void Cursor::draw(SDL_Surface *screen, int x, int y, Uint32 color,
-  bool draw_transparent/*=false*/)
+  bool draw_transparent/*=false*/, const char *cursor_str/*="\x5b"*/)
 {
   if (toggle)
-      sdlfont_drawString(screen, x, y, "\x5B", color);
+      sdlfont_drawString(screen, x, y, cursor_str, color);
   else if (draw_transparent)
-    sdlfont_drawString(screen, x, y, "\x5B", Colors::transparent);
+    sdlfont_drawString(screen, x, y, cursor_str, Colors::transparent);
 }
 
 void Cursor::draw(SDL_Surface *screen, Uint32 color,
-  bool draw_transparent/*=false*/)
+  bool draw_transparent/*=false*/, const char *cursor_str/*="\x5B"*/)
 {
   if (toggle)
-    sdlfont_drawString(screen, rect.x, rect.y, "\x5B", color);
+    sdlfont_drawString(screen, rect.x, rect.y, cursor_str, color);
   else if (draw_transparent)
-    sdlfont_drawString(screen, rect.x, rect.y, "\x5B", Colors::transparent);
+    sdlfont_drawString(screen, rect.x, rect.y, cursor_str, Colors::transparent);
 }

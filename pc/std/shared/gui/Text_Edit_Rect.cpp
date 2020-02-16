@@ -85,7 +85,7 @@ void Text_Edit_Rect::stop_editing(Text_Edit_Rect *ter/*=cur_editing_ter*/)
 {
   SDL_StopTextInput();
   Text_Edit_Rect::cursor.stop_timer();
-  Text_Edit_Rect::cursor.draw(::render->screen, Colors::transparent, true);
+  Text_Edit_Rect::cursor.draw(::render->screen, Colors::transparent, true, "\x5e");
   ter->needs_redraw = true;
   Text_Edit_Rect::cur_editing_ter = NULL;
 }
@@ -107,7 +107,7 @@ int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
         case SDLK_RETURN:
           SDL_StopTextInput();
           Text_Edit_Rect::cursor.stop_timer();
-          Text_Edit_Rect::cursor.draw(::render->screen, Colors::transparent, true);
+          Text_Edit_Rect::cursor.draw(::render->screen, Colors::transparent, true, "\x5e");
           ter->needs_redraw = true;
           Text_Edit_Rect::cur_editing_ter = NULL;
           break;
@@ -255,7 +255,7 @@ void Text_Edit_Rect::draw(
   bool Vflip/*=false*/,
   bool Hflip/*=false*/, SDL_Surface *screen/*=::render->screen*/)
 {
-  //if (!cursor.toggle && editing)
+  //if (!cursor.toggle && cur_editing_ter == this)
     needs_redraw = true;
   if (needs_redraw)
   {
@@ -270,7 +270,7 @@ void Text_Edit_Rect::draw(
       markedRect.w = mtlen * CHAR_WIDTH;
       // incase the cursor is displayed we need to clear it now, before
       // updating its position
-      cursor.draw(screen, Colors::transparent, false);
+      cursor.draw(screen, Colors::transparent, false, "\x5e");
       cursor.rect.x = markedRect.x;
     }
     //const char *c = str;
@@ -319,6 +319,6 @@ void Text_Edit_Rect::draw(
   if (cur_editing_ter == this)
   {// no worries. the cursor is only drawn based on internal logic
     //fprintf(stderr, "drawing cursor at (%d,%d)\n", cursor.rect.x, cursor.rect.y);
-    cursor.draw(screen, Colors::green, false);
+    cursor.draw(screen, Colors::green, false, "\x5e");
   }
 }

@@ -54,7 +54,10 @@ void Instrument_Panel::set_coords(int x, int y)
   title.rect.x = x;
   title.rect.y = y;
 
-  x += title.rect.w + (2*CHAR_WIDTH);
+  y += CHAR_WIDTH + (CHAR_WIDTH / 2);
+
+  //x += title.rect.w + (2*CHAR_WIDTH);
+  x += (CHAR_WIDTH * 0) + 2;
   loadbtn.rect.x = x;
   loadbtn.rect.y = y;
 
@@ -188,6 +191,7 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   /* This should really be put in init and event code, to decrease
    * redundant processing */
   highlight_r = instr_indices[currow].rect;
+  highlight_r.y -= 1;
   highlight_r.w +=
     (instr_names[currow].rect.x - (highlight_r.x + highlight_r.w)) +
     instr_names[currow].rect.w;

@@ -18,9 +18,9 @@ struct Cursor
   virtual void stop_timer();
 
   virtual void draw(SDL_Surface *screen, int x, int y, Uint32 color,
-      bool draw_transparent = false);
+      bool draw_transparent = false, const char *cursor_str="\x5B");
   virtual void draw(SDL_Surface *screen, Uint32 color,
-      bool draw_transparent = false);
+      bool draw_transparent = false, const char *cursor_str="\x5B");
 
   ~Cursor() { stop_timer(); }
 }; 
