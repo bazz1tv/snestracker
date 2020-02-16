@@ -21,7 +21,7 @@ struct Button : public Clickable_Text
   {
     LEFTMOUSEBUTTON_HELD_IN_RECT=1,
   };
-  unsigned int state :1;
+  unsigned int state :1 = 0;
 
   //Uint32 bg_color[2], fg_color[2];
   // This makes a complete waste of Clickable_Text color variable :( That

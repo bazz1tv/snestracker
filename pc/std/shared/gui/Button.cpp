@@ -1,5 +1,6 @@
 #include "gui/Button.h"
 #include "utility.h"
+#include "DEBUGLOG.h"
 Button::Button(const char * str, int (*action)(void *data)/*=NULL*/,
   void *data/*=NULL*/) :
     Clickable_Text(str, action, data)
@@ -19,6 +20,7 @@ void Button::check_event(const SDL_Event &ev)
       (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &rect)) &&
       ev.button.button == SDL_BUTTON_LEFT)
   {
+    //DEBUGLOG("Button mousebuttondown; ");
     state = LEFTMOUSEBUTTON_HELD_IN_RECT;
   }
   else if (state == LEFTMOUSEBUTTON_HELD_IN_RECT)
@@ -31,6 +33,7 @@ void Button::check_event(const SDL_Event &ev)
     }
     else if (ev.type == SDL_MOUSEBUTTONUP)
     {
+      //DEBUGLOG("Button Mousebuttonup; ");
       check_mouse_and_execute(ev.button.x, ev.button.y);
       state = 0;
     }
@@ -39,6 +42,7 @@ void Button::check_event(const SDL_Event &ev)
 
 void Button::draw(SDL_Surface *screen)
 {
+  //DEBUGLOG("Button::draw; ");
   // redudant calculating outer rect every frame :(
   outer = {rect.x - 2, rect.y - 2, rect.w + 4, rect.h + 4};
   SDL_FillRect(screen, &outer,
