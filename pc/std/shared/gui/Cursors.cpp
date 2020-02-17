@@ -15,11 +15,12 @@ enum {
   CURSOR_SIZEALL,
   CURSOR_NO,
   CURSOR_HAND,
-  // BMP CURSORS
-  CURSOR_YOSHI_NORMAL,
+  CURSOR_BMP_START, // BMP CURSORS
+  CURSOR_YOSHI_NORMAL=CURSOR_BMP_START,
   CURSOR_YOSHI_REC,
   CURSOR_KIRBYSTAR,
   CURSOR_MKART_1UP,
+  CURSOR_MKART_MUSHROOM,
   CURSOR_THING,
   CURSOR_THING2,
   CURSOR_MPAINT_MARIO,
@@ -29,7 +30,7 @@ enum {
   NUM_CURSORS
 };
 
-#define NUM_BMP_CURSORS (NUM_CURSORS - CURSOR_YOSHI_NORMAL)
+#define NUM_BMP_CURSORS (NUM_CURSORS - CURSOR_BMP_START)
 
 Cursors::Cursors()
 {
@@ -52,6 +53,7 @@ Cursors::Cursors()
     { {8, 8}, "cursor-rec" },
     { {7, 7}, "cursor-kirbystar" },
     { {5, 5}, "cursor-mariokart-1up" },
+    { {5, 5}, "cursor-mariokart-mushroom" },
     { {8, 8}, "thing" },
     { {8, 8}, "thing2" },
     { {6, 7}, "mpaint-mario" },
@@ -96,21 +98,22 @@ void Cursors::set_yoshi()
       DEBUGLOG("SURFACE: %s\n", SDL_GetError());
       goto _exit;
     }
-    cursor[CURSOR_YOSHI_NORMAL + i] = SDL_CreateColorCursor(bci[i].surface,
+    cursor[CURSOR_BMP_START + i] = SDL_CreateColorCursor(bci[i].surface,
             bci[i].hotspot.x, bci[i].hotspot.y);
-    if (!cursor[CURSOR_YOSHI_NORMAL + i])
+    if (!cursor[CURSOR_BMP_START + i])
       goto _exit;
   }
 
+  index = CURSOR_MPAINT_WHITE_HAND;
   SDL_SetCursor(cursor[CURSOR_MPAINT_WHITE_HAND]);
   return;
 _exit:
   fprintf(stderr, "OH NO!\n");
   for (int i=0; i < NUM_BMP_CURSORS; i++)
   {
-    if (cursor[CURSOR_YOSHI_NORMAL + i]) {
-      SDL_FreeCursor(cursor[CURSOR_YOSHI_NORMAL + i]);
-      cursor[CURSOR_YOSHI_NORMAL + i] = NULL;
+    if (cursor[CURSOR_BMP_START + i]) {
+      SDL_FreeCursor(cursor[CURSOR_BMP_START + i]);
+      cursor[CURSOR_BMP_START + i] = NULL;
     }
     if (bci[i].surface) {
         SDL_FreeSurface(bci[i].surface);
@@ -125,6 +128,7 @@ void Cursors::next()
 		index = 0;
 	SDL_SetCursor(cursor[index]);
 }
+
 void Cursors::prev()
 {
 	if (--index < 0)
