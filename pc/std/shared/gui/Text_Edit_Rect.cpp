@@ -83,16 +83,24 @@ static inline int check_dblclick(const SDL_Event &ev, Text_Edit_Rect *ter)
       }
       break;
     case SDL_MOUSEBUTTONDOWN:
-      /* Do not ack single clicks if dblclick to activate is enabled, or
-       * if this ter is already editing */
-      if (ter->dblclick || Text_Edit_Rect::cur_editing_ter == ter)
-        return 0;
-      if (ter->check_mouse_and_execute(ev.button.x, ev.button.y))
+      switch (ev.button.button)
       {
-        // do not allow this click toward a dblclick
-        dblclick::reset_dblclicktimer();
-        return 1;
+        case SDL_BUTTON_LEFT:
+        {
+          /* Do not ack single clicks if dblclick to activate is enabled, or
+           * if this ter is already editing */
+          if (ter->dblclick || Text_Edit_Rect::cur_editing_ter == ter)
+            return 0;
+          if (ter->check_mouse_and_execute(ev.button.x, ev.button.y))
+          {
+            // do not allow this click toward a dblclick
+            dblclick::reset_dblclicktimer();
+            return 1;
+          }
+        } break;
+        default:break;
       }
+      break;
     default:break;
   }
 }

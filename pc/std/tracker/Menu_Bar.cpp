@@ -271,7 +271,7 @@ bool Menu_Bar::Context_Menus::is_anything_active()
 int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
 {
   int r;
-  if ( ev.type == SDL_MOUSEBUTTONDOWN || is_anything_active() )
+  if ( ev.type == SDL_MOUSEBUTTONDOWN  && ev.button.button == SDL_BUTTON_LEFT || is_anything_active() )
   {
     if (check_left_click_activate(ev.button.x, ev.button.y, ev.button.button, &ev))
     {

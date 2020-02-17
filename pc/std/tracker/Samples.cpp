@@ -131,36 +131,43 @@ int Sample_Panel::event_handler(const SDL_Event &ev)
         break;
       case SDL_MOUSEBUTTONDOWN:
         {
-          if (Utility::coord_is_in_rect(ev.button.x,ev.button.y, &r)
-              || Utility::coord_is_in_rect(ev.button.x, ev.button.y,
-                                           &sample_names[i].rect))
+          switch (ev.button.button)
           {
-            if ((currow - rows_scrolled) != i)
+            case SDL_BUTTON_LEFT:
             {
-              SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
-              currow = rows_scrolled + i;
-              // Need to reset the double click code if this click was
-              // registered
-              //dblclick::reset_dblclicktimer();
-              /* Dirty way to implement the following functionality: if
-               * you click on an unselected entity, that counts as one
-               * click towards a double click, but if the second click is
-               * on a different entity, the logic must think only 1 click
-               * happened. The dirtyness comes from how the dblclick
-               * engine works. It's kind of an enigma atm. */
-              dblclick::numclicks = 0;
-              SDL_Event event2;
+              if (Utility::coord_is_in_rect(ev.button.x,ev.button.y, &r)
+                  || Utility::coord_is_in_rect(ev.button.x, ev.button.y,
+                                               &sample_names[i].rect))
+              {
+                if ((currow - rows_scrolled) != i)
+                {
+                  SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
+                  currow = rows_scrolled + i;
+                  // Need to reset the double click code if this click was
+                  // registered
+                  //dblclick::reset_dblclicktimer();
+                  /* Dirty way to implement the following functionality: if
+                   * you click on an unselected entity, that counts as one
+                   * click towards a double click, but if the second click is
+                   * on a different entity, the logic must think only 1 click
+                   * happened. The dirtyness comes from how the dblclick
+                   * engine works. It's kind of an enigma atm. */
+                  dblclick::numclicks = 0;
+                  SDL_Event event2;
 
-              event2.type = SDL_USEREVENT;
-              event2.user.code = UserEvents::mouse_reset;
-              event2.user.data1 = 1;
-              event2.user.data2 = 0;
-              SDL_PushEvent(&event2);
+                  event2.type = SDL_USEREVENT;
+                  event2.user.code = UserEvents::mouse_reset;
+                  event2.user.data1 = 1;
+                  event2.user.data2 = 0;
+                  SDL_PushEvent(&event2);
 
-              if (Text_Edit_Rect::cur_editing_ter)
-                Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
-            }
-            return 1;
+                  if (Text_Edit_Rect::cur_editing_ter)
+                    Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
+                }
+                return 1;
+              }
+            } break;
+            default:break;
           }
         } break;
       default:break;
