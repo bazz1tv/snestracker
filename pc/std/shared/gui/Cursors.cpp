@@ -79,14 +79,14 @@ Cursors::Cursors()
     { {1, 1}, "mpaint-white-hand" },
     { {1, 1}, "cursor-zsnes" },
     { {1, 1}, "cursor-zsnes2" },
-    { {8,8}, "smrpg-smallcoinani1" },
-    { {8,8}, "smrpg-smallcoinani2" },
-    { {8,8}, "smrpg-smallcoinani3" },
-    { {8,8}, "smrpg-smallcoinani4" },
-    { {8,8}, "smrpg-smallcoinani5" },
-    { {8,8}, "smrpg-smallcoinani6" },
-    { {8,8}, "smrpg-smallcoinani7" },
-    { {8,8}, "smrpg-smallcoinani8" },
+    { {8,6}, "smrpg-smallcoinani1" },
+    { {8,6}, "smrpg-smallcoinani2" },
+    { {8,6}, "smrpg-smallcoinani3" },
+    { {8,6}, "smrpg-smallcoinani4" },
+    { {8,6}, "smrpg-smallcoinani5" },
+    { {8,6}, "smrpg-smallcoinani6" },
+    { {8,6}, "smrpg-smallcoinani7" },
+    { {8,6}, "smrpg-smallcoinani8" },
   };
 
 }
