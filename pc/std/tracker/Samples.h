@@ -87,17 +87,3 @@ struct Sample_Panel
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr
 };
-
-// Helper functions shared between any panels. Putting here for now. Will
-// be shared between Sample and Instrument panels.
-void panel_clear_all_rows(Text_Edit_Rect *ters, int num_rows, SDL_Surface *screen);
-void panel_clear_row(Text_Edit_Rect *ters, int row, SDL_Surface *screen);
-
-inline void conv_idx2ascii(int i, char *c)
-{
-  // convert index to ascii
-  *(c++) = Utility::nibble_to_ascii(i >> 4);
-  *(c++) = Utility::nibble_to_ascii(i);
-  *(c++) = '|';
-  *(c++) = 0;
-}

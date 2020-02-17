@@ -5,7 +5,8 @@
 #include <assert.h>
 #include "utility.h"
 #include "shared/sdl_dblclick.h"
-
+#include "globals.h" // for ::mouse
+#include "Panel.h"
 
 const int Sample_Panel::NUM_ROWS;
 #define SAMPLE_NAME_GUI_CHAR_WIDTH 22
@@ -99,6 +100,7 @@ void Sample_Panel::set_coords(int x, int y)
 
 int Sample_Panel::event_handler(const SDL_Event &ev)
 {
+  mousewheel_rows_event_handler(ev, &rows_scrolled, NUM_ROWS, NUM_SAMPLES, &rect);
   /* If the user clicks within a certain row rect. A row rect is comprised
    * of the index region (including padding), the spacer, and the
    * instrument name field (including padding).*/
@@ -247,22 +249,3 @@ int Sample_Panel::clear(void *spanel)
   fprintf(stderr, "Sample_Panel::CLEAR\n");
   return 0;
 }
-
-void panel_clear_all_rows(Text_Edit_Rect *ters, int num_rows, SDL_Surface *screen)
-{
-  SDL_Rect r = ters[0].rect;
-  r.h += (ters[num_rows-1].rect.y - r.y) - 1;
-  r.w = (ters[0].max_visible_chars * CHAR_WIDTH);
-  SDL_FillRect(screen, &r, Colors::transparent);
-  //fprintf(stderr, "x:%d y:%d w:%d h:%d\n", r.x, r.y, r.w, r.h);
-}
-
-void panel_clear_row(Text_Edit_Rect *ters, int row, SDL_Surface *screen)
-{
-  Text_Edit_Rect *ter = &ters[row];
-  SDL_Rect r = ter->rect;
-  r.w = (ter->max_visible_chars * CHAR_WIDTH);
-  SDL_FillRect(screen, &r, Colors::transparent);
-}
-
-extern void conv_idx2ascii(int i, char **c);
