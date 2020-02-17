@@ -21,12 +21,16 @@ enum {
   CURSOR_KIRBYSTAR,
   CURSOR_MKART_1UP,
   CURSOR_MKART_MUSHROOM,
+  CURSOR_MKART_BLUEMUSHROOM,
+  CURSOR_MKART_YELLOWMUSHROOM,
   CURSOR_THING,
   CURSOR_THING2,
   CURSOR_MPAINT_MARIO,
   CURSOR_MPAINT_FROGGY,
   CURSOR_MPAINT_GOLDEN_HAND,
   CURSOR_MPAINT_WHITE_HAND,
+  CURSOR_ZSNES,
+  CURSOR_ZSNES2,
   NUM_CURSORS
 };
 
@@ -54,12 +58,16 @@ Cursors::Cursors()
     { {7, 7}, "cursor-kirbystar" },
     { {5, 5}, "cursor-mariokart-1up" },
     { {5, 5}, "cursor-mariokart-mushroom" },
+    { {5, 5}, "cursor-mariokart-bluemushroom" },
+    { {5, 5}, "cursor-mariokart-yellowmushroom" },
     { {8, 8}, "thing" },
     { {8, 8}, "thing2" },
     { {6, 7}, "mpaint-mario" },
     { {7, 8}, "mpaint-froggy" },
     { {1, 1}, "mpaint-golden-hand" },
     { {1, 1}, "mpaint-white-hand" },
+    { {1, 1}, "cursor-zsnes" },
+    { {1, 1}, "cursor-zsnes2" },
   };
 
 }
@@ -106,6 +114,7 @@ void Cursors::set_yoshi()
 
   index = CURSOR_MPAINT_WHITE_HAND;
   SDL_SetCursor(cursor[CURSOR_MPAINT_WHITE_HAND]);
+
   return;
 _exit:
   fprintf(stderr, "OH NO!\n");
