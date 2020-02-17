@@ -1,6 +1,7 @@
 #include "shared/gui/Text_Edit_Rect.h"
 #include "utility.h"
 #include "shared/sdl_userevents.h"
+#include "shared/sdl_dblclick.h"
 Cursor Text_Edit_Rect::cursor;
 char Text_Edit_Rect::markedText[SDL_TEXTEDITINGEVENT_TEXT_SIZE] = "";
 int Text_Edit_Rect::comp_start_point = 0;
@@ -87,7 +88,11 @@ static inline int check_dblclick(const SDL_Event &ev, Text_Edit_Rect *ter)
       if (ter->dblclick || Text_Edit_Rect::cur_editing_ter == ter)
         return 0;
       if (ter->check_mouse_and_execute(ev.button.x, ev.button.y))
+      {
+        // do not allow this click toward a dblclick
+        dblclick::reset_dblclicktimer();
         return 1;
+      }
     default:break;
   }
 }
