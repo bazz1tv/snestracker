@@ -68,13 +68,17 @@ struct Instrument_Panel
   Text title;
   Button loadbtn, savebtn, zapbtn;
   Text instr_indices[NUM_INSTR];
-  char *instr_index_strings;
-  Text_Edit_Rect instr_names[NUM_INSTR]; // temporarily hard coding the number of instruments
+
   // the number of instrument rows in GUI
   static const int NUM_ROWS = 8;
+  int rows_scrolled;
   // the current selected row
   int currow = 0;
-  /* a direct handle on the data, rather than accessing through an API */
+
+  // 4 is for eg. "01|\0"
+  char instr_index_strings[NUM_ROWS][4];
+  Text_Edit_Rect instr_names[NUM_INSTR]; // temporarily hard coding the number of instruments
+    /* a direct handle on the data, rather than accessing through an API */
   Instrument *instruments;
   /* Todo, calculate the panel rect */
   SDL_Rect rect; // define the boundaries of the entire panel

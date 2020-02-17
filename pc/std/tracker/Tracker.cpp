@@ -41,6 +41,7 @@ main_window(argc,argv, this)
       SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz. \n", i, 
         monitor_display_mode.w, monitor_display_mode.h, monitor_display_mode.refresh_rate);
 
+  cursors.set_yoshi();
   update_fps(30);
 }
 

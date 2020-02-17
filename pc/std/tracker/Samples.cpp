@@ -23,20 +23,12 @@ Sample_Panel::Sample_Panel(Instrument_Panel *ip) :
  
   instrpanel(ip)  
 {
-  // 4 is for eg. "01|\0"
-  sample_index_strings = (char *) malloc( (sizeof(char) * 4) * NUM_SAMPLES );
-  if (sample_index_strings == NULL)
-  {
-    fprintf(stderr, "Could not allocate string index memory. "
-        "This is not normal so we're quitting out");
-    exit(1);
-  }
 }
 
 Sample_Panel::~Sample_Panel()
 {
-  free(sample_index_strings);
 }
+
 
 void Sample_Panel::set_coords(int x, int y)
 {
@@ -73,20 +65,19 @@ void Sample_Panel::set_coords(int x, int y)
 
   /* This init was postponed until now to avoid having to iterate through
    * all samples multiple times */
-  char *c = sample_index_strings;
-  for (int i=0; i < NUM_SAMPLES; i++)
+  for (int i=0; i < NUM_ROWS; i++)
   {
-    sample_indices[i].str = c;
-    // convert index to ascii
-    *(c++) = Utility::nibble_to_ascii(i >> 4);
-    *(c++) = Utility::nibble_to_ascii(i);
-    *(c++) = '|';
-    *(c++) = 0;
+    sample_indices[i].str = sample_index_strings[i];
 
-    sample_indices[i].rect = { i < NUM_ROWS ? xx : 0,
-      i < NUM_ROWS ? y + (CHAR_HEIGHT * i)    : 0,
+    conv_idx2ascii(rows_scrolled + i, sample_index_strings[i]);
+
+    sample_indices[i].rect =
+    {
+      xx,
+      y + (CHAR_HEIGHT * i),
       3 * CHAR_WIDTH,
-      CHAR_HEIGHT};
+      CHAR_HEIGHT
+    };
 
 
     /* The GUI sample_names[i].str now points to the core (tracker)'s
@@ -94,7 +85,7 @@ void Sample_Panel::set_coords(int x, int y)
      * tracker (core), these strings should automatically update after a
      * redraw */
     sample_names[i].str = instrpanel->instruments[instrpanel->currow].samples[i].name;
-    sample_names[i].strsize = INSTR_NAME_MAXLEN;
+    sample_names[i].strsize = SAMPLE_NAME_MAXLEN;
     sample_names[i].rect = sample_indices[i].rect; /* Base this rect off of the index rect */
     sample_names[i].rect.x += 3 * CHAR_WIDTH;
     sample_names[i].rect.w = SAMPLE_NAME_GUI_CHAR_WIDTH * CHAR_WIDTH;
@@ -189,14 +180,15 @@ void Sample_Panel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
 void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
 {
   unsigned int i=0;
-  char *c = sample_index_strings;
   /* First, draw the "Instruments" strings and top buttons */
   title.draw(screen);
   loadbtn.draw(screen);
   savebtn.draw(screen);
   clearbtn.draw(screen);
   
-  panel_clear_all_rows(sample_names, NUM_ROWS, ::render->screen);
+  //panel_clear_all_rows(sample_names, NUM_ROWS, ::render->screen);
+  SDL_Rect r = {rect.x + 1, rect.y + 1, rect.w - 1, rect.h - 1};
+  SDL_FillRect(screen, &r, Colors::transparent);
 
   /* This should really be put in init and event code, to decrease
    * redundant processing */
@@ -217,10 +209,13 @@ void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
     /* In order to draw this rect, we need to the total horizontal width
      * of the index + instr_name, + some padding maybe. That should be
      * calculated at init and in the event handler */
+    conv_idx2ascii(rows_scrolled + i, sample_index_strings[i]);
     sample_indices[i].draw(screen,
       Colors::Interface::color[Colors::Interface::Type::text_fg],
       false);
-    sample_names[i].str = instrpanel->instruments[instrpanel->currow].samples[i].name;
+    sample_names[i].str =
+      instrpanel->instruments[instrpanel->rows_scrolled
+      + instrpanel->currow].samples[rows_scrolled + i].name;
     sample_names[i].draw(Colors::Interface::color[Colors::Interface::Type::text_fg],
       false);
   }
@@ -269,3 +264,5 @@ void panel_clear_row(Text_Edit_Rect *ters, int row, SDL_Surface *screen)
   r.w = (ter->max_visible_chars * CHAR_WIDTH);
   SDL_FillRect(screen, &r, Colors::transparent);
 }
+
+extern void conv_idx2ascii(int i, char **c);

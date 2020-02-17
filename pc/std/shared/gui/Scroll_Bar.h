@@ -1,6 +1,14 @@
 #pragma once
 
-/* This is not a complex scroller. It just scrolls by "item" rows. For
+/* I've got an idea how the scrollbar can be created to modify arbitrary
+ * widgets. We know can discover the math to determine the scroll bar
+ * height. The scroll bar's position controls an offset value into the
+ * rows that will be displayed by the widget. This offset value should be
+ * directly owned by the widget. When the widget creates the scrollbar
+ * object it owns, it should pass a pointer to the scroll bar so that it
+ * can be manipulated by the scrollbar as it's controlled by the user.*/
+
+/* This is not a "pixel" scroller. It scrolls by rows. For
  * example:
  *
  * +----+----+ ^
@@ -24,8 +32,8 @@
 class Scroll_Bar
 {
 public:
-  Scroll_Bar(Uint32 x, Uint32 y, const Uint32 *total, const Uint32 *num_vis,
-             const Uint32 *cur_offset) :
+  Scroll_Bar(const Uint32 *total_rows, const Uint32 *num_vis,
+              const Uint32 *display_offset) :
     up_arrow(FONT_CODE_V_TRI_STR),
     down_arrow(FONT_CODE_V_TRI_STR),
     x(x), y(y), total_entries(total), num_visible(num_vis),
@@ -43,15 +51,15 @@ public:
   // This is the actual scrollbar whose height is dynamic.
   Clickable_Rect scrollbar;
 
-  Uint32 x, y, w, h; // (x,y) location of top-left of scroll-bar
+  SDL_Rect rect; // (x,y) location of top-left of scroll-bar
   // also its  width, height
 
   // These are read-only pointers to the original data, for easy keeping
   // up to date if the graphical specifications change in real time (eg. a
   // pattern changing in length, window being resized could up/downgrade
   // the maximum possible displayed constraints
-  const Uint32 *total_entries; // number of rows pertaining to this scroll bar
-  const Uint32 *num_visible; // number of rows that can be visible in the scrollable area
-  const Uint32 *cur_offset; // the starting offset we are displaying into the total_entries
+  const int *vis_invis_rows; // number of rows pertaining to this scroll bar
+  const int *vis_rows; // number of rows that can be visible in the scrollable area
+  int *disp_offset; // the starting offset we are displaying into the total_entries
   // So, we display entries from offset to (offset + num_visible)
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "DEBUGLOG.h"
+#include "SDL.h"
 /* This is a collection of cursors 
 
 Set the cursor with SDL_SetCursor:
@@ -24,25 +25,10 @@ SDL_SetCursor(cursors.cursor[Cursors::CURSOR_SIZEALL]);
 
 struct Cursors
 {
-	Cursors() {
-		cursor[CURSOR_ARROW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-		cursor[CURSOR_IBEAM] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
-		cursor[CURSOR_WAIT] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
-		cursor[CURSOR_CROSSHAIR] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
-		cursor[CURSOR_WAITARROW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAITARROW);
-		cursor[CURSOR_SIZENWSE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
-		cursor[CURSOR_SIZENESW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
-		cursor[CURSOR_SIZEWE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
-		cursor[CURSOR_SIZENS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-		cursor[CURSOR_SIZEALL] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
-		cursor[CURSOR_NO] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_NO);
-		cursor[CURSOR_HAND] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-	}
-	~Cursors() {
-		DEBUGLOG("~Cursors\n");
-		for (int i=0; i < NUM_CURSORS; i++)
-			SDL_FreeCursor(cursor[i]);
-	}
+	Cursors();
+	~Cursors();
+
+  void set_yoshi();
 
 	enum {
 		CURSOR_ARROW=0,
@@ -57,11 +43,14 @@ struct Cursors
 		CURSOR_SIZEALL,
 		CURSOR_NO,
 		CURSOR_HAND,
+    CURSOR_YOSHI_NORMAL,
+    CURSOR_YOSHI_REC,
 		NUM_CURSORS
 	};
 
 	SDL_Cursor *cursor[NUM_CURSORS];
 	int index=0;
+  SDL_Surface *surfaces[2];
 
 	void next()
 	{

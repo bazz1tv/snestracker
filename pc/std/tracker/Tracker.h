@@ -14,6 +14,8 @@
 
 #include "Instruments.h"
 
+#include "gui/Cursors.h"
+
 typedef Uint32 WindowID;
 
 struct Tracker
@@ -35,6 +37,8 @@ public:
   Spc_Export_Window spc_export_window;
   static const int NUM_WINDOWS = 2;
   Window *window_map[NUM_WINDOWS+1];
+
+  Cursors cursors;
 
   void update_fps(int fps);
   int fps;

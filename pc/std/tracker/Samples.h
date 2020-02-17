@@ -7,6 +7,7 @@
 #include "shared/gui/Text_Edit_Rect.h"
 #include "shared/gui/Button.h"
 #include "shared/Render.h"
+#include "shared/utility.h"
 /* This sample number is hardcoded for now until sucessful testing is
  * done. Later, it will be made so that the limit can be dynamically
  * increased */
@@ -43,6 +44,13 @@ private:
 //include the full from the CPP file
 struct Instrument_Panel;
 
+/*struct PanelRowSpec
+{
+  int visible_rows;
+  int all_rows;
+  int offset;
+};*/
+
 struct Sample_Panel
 {
   /* Need a handle on the instrument panel to reference to selected
@@ -58,16 +66,21 @@ struct Sample_Panel
 
   Button loadbtn, savebtn, clearbtn;
 
-  Text sample_indices[NUM_SAMPLES];
-  Text_Edit_Rect sample_names[NUM_SAMPLES];
+  //PanelRowSpec prs;
   static const int NUM_ROWS = 8;
+  int rows_scrolled = 0; // specified in rows
+
+  Text sample_indices[NUM_ROWS];
+  Text_Edit_Rect sample_names[NUM_ROWS];
+
   int currow = 0;
   // callback funcs for the buttons
   static int load(void *spanel);
   static int save(void *spanel);
   static int clear(void *spanel);
 
-  char *sample_index_strings;
+  // 4 is for eg. "01|\0"
+  char sample_index_strings[NUM_ROWS][4];
   //const int *inst_currow;
   Instrument_Panel *instrpanel;
   Sample *samples;
@@ -79,3 +92,12 @@ struct Sample_Panel
 // be shared between Sample and Instrument panels.
 void panel_clear_all_rows(Text_Edit_Rect *ters, int num_rows, SDL_Surface *screen);
 void panel_clear_row(Text_Edit_Rect *ters, int row, SDL_Surface *screen);
+
+inline void conv_idx2ascii(int i, char *c)
+{
+  // convert index to ascii
+  *(c++) = Utility::nibble_to_ascii(i >> 4);
+  *(c++) = Utility::nibble_to_ascii(i);
+  *(c++) = '|';
+  *(c++) = 0;
+}

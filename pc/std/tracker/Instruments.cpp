@@ -25,19 +25,10 @@ Instrument_Panel::Instrument_Panel(Instrument *iptr) :
     zapbtn("Zap", Instrument_Panel::zap, this),
     instruments(iptr)
 {
-  // 4 is for eg. "01|\0"
-  instr_index_strings = (char *) malloc( (sizeof(char) * 4) * NUM_INSTR );
-  if (instr_index_strings == NULL)
-  {
-    fprintf(stderr, "Could not allocate string index memory. "
-            "This is not normal so we're quitting out");
-    exit(1);
-  }
 }
 
 Instrument_Panel::~Instrument_Panel()
 {
-  free(instr_index_strings);
 }
 
 void Instrument_Panel::set_coords(int x, int y)
@@ -75,18 +66,15 @@ void Instrument_Panel::set_coords(int x, int y)
 
   /* This init was postponed until now to avoid having to iterate through
    * all instruments multiple times */
-  char *c = instr_index_strings;
-  for (int i=0; i < NUM_INSTR; i++)
+  for (int i=0; i < NUM_ROWS; i++)
   {
-    instr_indices[i].str = c;
-    // convert index to ascii
-    *(c++) = Utility::nibble_to_ascii(i >> 4);
-    *(c++) = Utility::nibble_to_ascii(i);
-    *(c++) = '|';
-    *(c++) = 0;
+    instr_indices[i].str = instr_index_strings[i];
+    conv_idx2ascii(rows_scrolled + i, instr_index_strings[i]);
 
-    instr_indices[i].rect = { i < NUM_ROWS ? xx : 0,
-      i < NUM_ROWS ? y + (CHAR_HEIGHT * i)    : 0,
+    instr_indices[i].rect =
+    {
+      xx,
+      y + (CHAR_HEIGHT * i),
       3 * CHAR_WIDTH,
       CHAR_HEIGHT};
 
@@ -192,12 +180,14 @@ void Instrument_Panel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
 void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
 {
   unsigned int i=0;
-  char *c = instr_index_strings;
   /* First, draw the "Instruments" strings and top buttons */
   title.draw(screen);
   loadbtn.draw(screen);
   savebtn.draw(screen);
   zapbtn.draw(screen);
+
+  SDL_Rect r = {rect.x + 1, rect.y + 1, rect.w - 1, rect.h - 1};
+  SDL_FillRect(screen, &r, Colors::transparent);
 
   /* This should really be put in init and event code, to decrease
    * redundant processing */
@@ -218,9 +208,11 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
     /* In order to draw this rect, we need to the total horizontal width
      * of the index + instr_name, + some padding maybe. That should be
      * calculated at init and in the event handler */
+    conv_idx2ascii(rows_scrolled + i, instr_index_strings[i]);
     instr_indices[i].draw(screen,
       Colors::Interface::color[Colors::Interface::Type::text_fg],
       false);
+    instr_names[i].str = instruments[rows_scrolled + i].name;
     instr_names[i].draw(Colors::Interface::color[Colors::Interface::Type::text_fg],
       false);
   }
