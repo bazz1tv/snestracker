@@ -31,14 +31,17 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   
   song_title_str[0] = 0;
 
-  x = xx = 150; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
+  x = xx = 10; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
   y = yy = 50;
+
+  //patseqpanel.set_coords(x, y);
+  x = 150;
 
   song_title_label.rect.x = x;
   song_title_label.rect.y = y;
-
+  
   y += CHAR_HEIGHT + 2;
-  song_title.rect.x = x;
+  song_title.rect.x = 150;
   song_title.rect.y = y;
 
   x += song_title.rect.w + (CHAR_WIDTH * 2);

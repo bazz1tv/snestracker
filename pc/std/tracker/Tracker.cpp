@@ -290,9 +290,14 @@ void Tracker::handle_events()
       } break;
       case SDL_USEREVENT:
       {
-        if (ev.user.code == UserEvents::sound_stop)
+        switch (ev.user.code)
         {
-          sound_stop();
+          case UserEvents::sound_stop:
+            sound_stop();
+            break;
+          case UserEvents::mouse_ani:
+            cursors.set_cursor((int)ev.user.data1);
+            break;
         }
       } break;
       case SDL_MOUSEMOTION:

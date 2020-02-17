@@ -46,5 +46,8 @@ public:
   ///Uint32 gframe = 0; // should worry about overflow
 
   // TRACKER CORE
-  Instrument instruments[NUM_INSTR];
+  Instrument instruments[NUM_INSTR]; // also holds the samples
+  // Of course Pattern datatype will be going here. Perhaps just like
+  // there are Samples as part of Instruments, Patterns will be part of
+  // PatternSequencer
 };

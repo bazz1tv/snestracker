@@ -15,6 +15,7 @@
 #include "globals.h"
 #include "shared/gui/Text_Edit_Rect.h"
 #include "Instruments.h"
+#include "Pattern.h"
 
 struct Tracker;
 
@@ -82,4 +83,5 @@ struct Main_Window : public Experience
   Tracker *tracker;
   Instrument_Panel instrpanel;
   Sample_Panel samplepanel;
+  //PatSeqPanel patseqpanel;
 };

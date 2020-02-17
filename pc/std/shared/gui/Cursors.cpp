@@ -1,6 +1,7 @@
 #include "gui/Cursors.h"
 #include "shared/File_System.h"
 #include "shared/Render.h"
+#include "sdl_userevents.h"
 
 enum {
   CURSOR_ARROW=0,
@@ -31,6 +32,16 @@ enum {
   CURSOR_MPAINT_WHITE_HAND,
   CURSOR_ZSNES,
   CURSOR_ZSNES2,
+  
+  CURSOR_ANI_START,
+  CURSOR_SMRPG_COIN1=CURSOR_ANI_START,
+  CURSOR_SMRPG_COIN2,
+  CURSOR_SMRPG_COIN3,
+  CURSOR_SMRPG_COIN4,
+  CURSOR_SMRPG_COIN5,
+  CURSOR_SMRPG_COIN6,
+  CURSOR_SMRPG_COIN7,
+  CURSOR_SMRPG_COIN8,
   NUM_CURSORS
 };
 
@@ -68,6 +79,14 @@ Cursors::Cursors()
     { {1, 1}, "mpaint-white-hand" },
     { {1, 1}, "cursor-zsnes" },
     { {1, 1}, "cursor-zsnes2" },
+    { {8,8}, "smrpg-smallcoinani1" },
+    { {8,8}, "smrpg-smallcoinani2" },
+    { {8,8}, "smrpg-smallcoinani3" },
+    { {8,8}, "smrpg-smallcoinani4" },
+    { {8,8}, "smrpg-smallcoinani5" },
+    { {8,8}, "smrpg-smallcoinani6" },
+    { {8,8}, "smrpg-smallcoinani7" },
+    { {8,8}, "smrpg-smallcoinani8" },
   };
 
 }
@@ -114,6 +133,8 @@ void Cursors::set_yoshi()
 
   index = CURSOR_MPAINT_WHITE_HAND;
   SDL_SetCursor(cursor[CURSOR_MPAINT_WHITE_HAND]);
+  ani_idx = CURSOR_SMRPG_COIN1; 
+  timerid = SDL_AddTimer(50, &push_cursor_ani_update_event, &ani_idx);
 
   return;
 _exit:
@@ -130,6 +151,33 @@ _exit:
     }
   }
 }
+
+void Cursors::set_cursor(int i)
+{
+  //fprintf(stderr, "i = %d\n");
+  SDL_SetCursor(cursor[i]);
+}
+
+Uint32 Cursors::push_cursor_ani_update_event(Uint32 interval/*=0*/, void *param/*=NULL*/)
+{
+  int *index = (int *)param;
+  //fprintf(stderr, "in timer: index=%d\n", *index);
+
+  *index += 1;
+  if (*index >= (CURSOR_SMRPG_COIN1 + 8))
+    *index = CURSOR_SMRPG_COIN1;
+  //SDL_Cursor *c = cursor[CURSOR_SMRPG_COIN1 + *index];
+  // check param for index of smrpg cursor
+  SDL_Event event;
+  event.type = SDL_USEREVENT;
+  event.user.code = UserEvents::mouse_ani;
+  event.user.data1 = (void *)*index;
+  event.user.data2 = 0;
+  SDL_PushEvent(&event);
+
+  return interval;
+}
+
 
 void Cursors::next()
 {

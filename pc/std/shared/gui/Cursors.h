@@ -42,4 +42,10 @@ struct Cursors
 
 	void next();
 	void prev();
+  
+  void set_cursor(int i);
+
+  Uint32 timerid;
+  int ani_idx;
+  static Uint32 push_cursor_ani_update_event(Uint32 interval=0, void *param=NULL);
 };
