@@ -136,10 +136,10 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
               || Utility::coord_is_in_rect(ev.button.x, ev.button.y,
                                            &instr_names[i].rect))
           {
-            if (currow != i)
+            if ((currow - rows_scrolled) != i)
             {
               SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
-              currow = i;
+              currow = rows_scrolled + i;
               // Need to reset the double click code if this click was
               // registered
               //dblclick::reset_dblclicktimer();
@@ -195,15 +195,16 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
 
   /* This should really be put in init and event code, to decrease
    * redundant processing */
-  highlight_r = instr_indices[currow].rect;
-  highlight_r.y -= 1;
-  highlight_r.w +=
-    (instr_names[currow].rect.x - (highlight_r.x + highlight_r.w)) +
-    instr_names[currow].rect.w;
+  if (currow >= rows_scrolled && currow < (rows_scrolled + NUM_ROWS))
+  {
+    highlight_r = instr_indices[currow - rows_scrolled].rect;
+    highlight_r.y -= 1;
+    highlight_r.w +=
+    (instr_names[currow - rows_scrolled].rect.x - (highlight_r.x + highlight_r.w)) +
+    instr_names[currow - rows_scrolled].rect.w;
 
-  /* This color should not be hardcoded, but have a new entry in the GUI
-   * Colors array for highlighted stuff. Reference MilkyTracker config */
-  SDL_FillRect(screen, &highlight_r, Colors::Interface::color[Colors::Interface::Type::selections]);
+    SDL_FillRect(screen, &highlight_r, Colors::Interface::color[Colors::Interface::Type::selections]);
+  }
 
   for (i=0; i < NUM_ROWS; i++)
   {

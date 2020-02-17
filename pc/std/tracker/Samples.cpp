@@ -85,7 +85,8 @@ void Sample_Panel::set_coords(int x, int y)
      * instruments[selected].samples[i].str, meaning that when we load a file into the
      * tracker (core), these strings should automatically update after a
      * redraw */
-    sample_names[i].str = instrpanel->instruments[instrpanel->currow].samples[i].name;
+    sample_names[i].str =
+          instrpanel->instruments[instrpanel->currow].samples[i].name;
     sample_names[i].strsize = SAMPLE_NAME_MAXLEN;
     sample_names[i].rect = sample_indices[i].rect; /* Base this rect off of the index rect */
     sample_names[i].rect.x += 3 * CHAR_WIDTH;
@@ -134,10 +135,10 @@ int Sample_Panel::event_handler(const SDL_Event &ev)
               || Utility::coord_is_in_rect(ev.button.x, ev.button.y,
                                            &sample_names[i].rect))
           {
-            if (currow != i)
+            if ((currow - rows_scrolled) != i)
             {
               SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
-              currow = i;
+              currow = rows_scrolled + i;
               // Need to reset the double click code if this click was
               // registered
               //dblclick::reset_dblclicktimer();
@@ -194,15 +195,18 @@ void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
 
   /* This should really be put in init and event code, to decrease
    * redundant processing */
-  highlight_r = sample_indices[currow].rect;
-  highlight_r.y -= 1;
-  highlight_r.w +=
-    (sample_names[currow].rect.x - (highlight_r.x + highlight_r.w)) +
-    sample_names[currow].rect.w;
+  if (currow >= rows_scrolled && currow < (rows_scrolled + NUM_ROWS))
+  {
+    highlight_r = sample_indices[currow - rows_scrolled].rect;
+    highlight_r.y -= 1;
+    highlight_r.w +=
+      (sample_names[currow - rows_scrolled].rect.x - (highlight_r.x + highlight_r.w)) +
+      sample_names[currow - rows_scrolled].rect.w;
 
-  /* This color should not be hardcoded, but have a new entry in the GUI
-   * Colors array for highlighted stuff. Reference MilkyTracker config */
-  SDL_FillRect(screen, &highlight_r, Colors::Interface::color[Colors::Interface::Type::selections]);
+    /* This color should not be hardcoded, but have a new entry in the GUI
+    * Colors array for highlighted stuff. Reference MilkyTracker config */
+    SDL_FillRect(screen, &highlight_r, Colors::Interface::color[Colors::Interface::Type::selections]);
+  }
 
   for (i=0; i < NUM_ROWS; i++)
   {
@@ -216,8 +220,7 @@ void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
       Colors::Interface::color[Colors::Interface::Type::text_fg],
       false);
     sample_names[i].str =
-      instrpanel->instruments[instrpanel->rows_scrolled
-      + instrpanel->currow].samples[rows_scrolled + i].name;
+      instrpanel->instruments[instrpanel->currow].samples[rows_scrolled + i].name;
     sample_names[i].draw(Colors::Interface::color[Colors::Interface::Type::text_fg],
       false);
   }
