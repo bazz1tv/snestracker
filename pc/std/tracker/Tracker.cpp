@@ -332,6 +332,20 @@ void Tracker::handle_events()
         }
         scrolled_this_gframe = 300;*/
       } break;
+      case SDL_KEYDOWN:
+      {
+        int scancode = ev.key.keysym.sym;
+        int mod = ev.key.keysym.mod;
+        switch (scancode)
+        {
+          case SDLK_LEFT:
+          cursors.prev();
+          break;
+          case SDLK_RIGHT:
+          cursors.next();
+          break;
+        }
+      } break;
       default:break;
     }
 

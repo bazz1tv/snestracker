@@ -30,38 +30,16 @@ struct Cursors
 
   void set_yoshi();
 
-	enum {
-		CURSOR_ARROW=0,
-		CURSOR_IBEAM,
-		CURSOR_WAIT,
-		CURSOR_CROSSHAIR,
-		CURSOR_WAITARROW,
-		CURSOR_SIZENWSE,
-		CURSOR_SIZENESW,
-		CURSOR_SIZEWE,
-		CURSOR_SIZENS,
-		CURSOR_SIZEALL,
-		CURSOR_NO,
-		CURSOR_HAND,
-    CURSOR_YOSHI_NORMAL,
-    CURSOR_YOSHI_REC,
-		NUM_CURSORS
-	};
-
-	SDL_Cursor *cursor[NUM_CURSORS];
+	SDL_Cursor **cursor;
 	int index=0;
-  SDL_Surface *surfaces[2];
+  struct BmpCursor
+  {
+    SDL_Point hotspot;
+    const char *filename;
+    SDL_Surface *surface;
+  };
+  BmpCursor *bci;
 
-	void next()
-	{
-		if (++index >= NUM_CURSORS)
-			index = 0;
-		SDL_SetCursor(cursor[index]);
-	}
-	void prev()
-	{
-		if (--index < 0)
-			index = NUM_CURSORS - 1;
-		SDL_SetCursor(cursor[index]);
-	}
+	void next();
+	void prev();
 };
