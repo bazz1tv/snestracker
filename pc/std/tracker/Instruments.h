@@ -71,7 +71,7 @@ struct Instrument_Panel
 
   // the number of instrument rows in GUI
   static const int NUM_ROWS = 8;
-  int rows_scrolled;
+  int rows_scrolled = 0;
   // the current selected row
   int currow = 0;
 
