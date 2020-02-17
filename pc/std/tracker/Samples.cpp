@@ -21,8 +21,8 @@ Sample_Panel::Sample_Panel(Instrument_Panel *ip) :
   loadbtn("Load", Sample_Panel::load, this),
   savebtn("Save", Sample_Panel::save, this),
   clearbtn("Clear", Sample_Panel::clear, this),
- 
-  instrpanel(ip)  
+  instrpanel(ip),
+  snapback(true)
 {
 }
 
@@ -178,6 +178,16 @@ int Sample_Panel::event_handler(const SDL_Event &ev)
 void Sample_Panel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
 {
   Utility::DrawRect(&rect, 1);
+}
+
+void Sample_Panel::run()
+{
+  if (snapback && last_instr_currow != instrpanel->currow)
+  {
+    currow = 0;
+    rows_scrolled = 0;
+    last_instr_currow = instrpanel->currow;
+  }
 }
 
 void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)

@@ -58,6 +58,7 @@ struct Sample_Panel
   Sample_Panel(Instrument_Panel *instrpanel);
   ~Sample_Panel();
 
+  void run();
   int event_handler(const SDL_Event &ev);
   void one_time_draw(SDL_Surface *screen=::render->screen);
   void draw(SDL_Surface *screen=::render->screen);
@@ -83,6 +84,12 @@ struct Sample_Panel
   char sample_index_strings[NUM_ROWS][4];
   //const int *inst_currow;
   Instrument_Panel *instrpanel;
+
+  ////// For SNAPBACK (which is when a different instrument is selected,
+  // the sample row is reset to 0
+  int last_instr_currow = -1; // set to impossible match
+  bool snapback;
+  //////
   Sample *samples;
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr

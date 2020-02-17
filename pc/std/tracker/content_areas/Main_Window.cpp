@@ -231,7 +231,7 @@ int Main_Window::receive_event(SDL_Event &ev)
 
 void Main_Window::run()
 {
-  
+  samplepanel.run();
 }
 
 void Main_Window::draw_voices_pitchs()
