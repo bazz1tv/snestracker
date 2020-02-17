@@ -132,6 +132,8 @@ void Tracker::handle_events()
   a copy of the mousebuttonup (mbu) event is placed here for later pushing onto
   the event queue after exiting the event poller loop*/
 
+  //static int scrolled_this_gframe = 0; // if we scrolled in this graphical frame
+
   mbu_postpone_ev.type = SDL_QUIT; /* set the default to anything that isnt mousebuttonup,
   that way we can reliably check later if the type has changed to SDL_MOUSEBUTTONUP
   we know that we must then push this event copy to the queue for next frame's
@@ -314,22 +316,24 @@ void Tracker::handle_events()
       {
         /* If the last frame was the mbd, we know we have found the soft
          * click event pair. copy this mbu event to be postponed after
-         * this event loop exits */
+         * this event loop exits. Also don't process this event */
         if (mbd_frame == (ev_frame - 1))
+        {
           mbu_postpone_ev = ev;
+          goto next_event;
+        }
+      } break;
+      case SDL_MOUSEWHEEL:
+      {
+        //DEBUGLOG("gframe: %d, ev_frame: %d\n", gframe, ev_frame);
+        /*if (scrolled_this_gframe)
+        {
+          goto next_event;
+        }
+        scrolled_this_gframe = 300;*/
       } break;
       default:break;
     }
-
-    ev_frame++;
-
-    /* If last frame was the mbd event, and this frame is the mbu event
-     * (also informed by the fact we have copied an SDL_MOUSEBUTTONUP
-     * event to mbu_postpone_ev),
-     * then we will not send this event to the event handlers, because it
-     * is being postponed for the next graphical frame */
-    if (mbd_frame == (ev_frame - 2) && mbu_postpone_ev.type == SDL_MOUSEBUTTONUP)
-      continue;
 
     menu_bar.receive_event(ev);
  
@@ -338,10 +342,15 @@ void Tracker::handle_events()
       sub_window_experience->receive_event(ev);
     }
     else cur_exp->receive_event(ev);
+next_event:
+    ev_frame++;
   }
 
   /* If we have copied an mbu event to mbu_postpone_ev, then push it to
    * the event queue for next graphical frame to pick up */
   if (mbu_postpone_ev.type == SDL_MOUSEBUTTONUP)
     SDL_PushEvent(&mbu_postpone_ev);
+
+  /*if (scrolled_this_gframe)
+    scrolled_this_gframe--;*/
 }

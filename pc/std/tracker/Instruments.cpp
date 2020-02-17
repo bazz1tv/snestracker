@@ -4,7 +4,7 @@
 #include <assert.h>
 #include "utility.h"
 #include "shared/sdl_dblclick.h"
-
+#include "globals.h" // for mouse::
 /* The instrument panel is something like
  * Instruments  (Load) (Save) (Zap)
  * ------+-------------------------+
@@ -99,6 +99,31 @@ void Instrument_Panel::set_coords(int x, int y)
 
 int Instrument_Panel::event_handler(const SDL_Event &ev)
 {
+  switch (ev.type)
+  {
+    case SDL_MOUSEWHEEL:
+    {
+      if (Utility::coord_is_in_rect(mouse::x, mouse::y, &rect))
+      {
+        /*int sign = (ev.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) ? 1 : -1;
+        int val;
+        if (ev.wheel.y > 0)
+          val = 1 * sign;
+        else if (ev.wheel.y < 0)
+          val = -1 * sign;
+        else // == 0
+          val = 0;*/
+
+        rows_scrolled += (ev.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) ?
+                          ev.wheel.y : -ev.wheel.y;
+        //fprintf(stderr,"val = %d; ", val); //rows_scrolled);
+        if (rows_scrolled < 0)
+          rows_scrolled = 0;
+        else if (rows_scrolled >= (NUM_INSTR - NUM_ROWS))
+          rows_scrolled = NUM_INSTR - NUM_ROWS;
+      }
+    } break;
+  }
   /* If the user clicks within a certain row rect. A row rect is comprised
    * of the index region (including padding), the spacer, and the
    * instrument name field (including padding).*/

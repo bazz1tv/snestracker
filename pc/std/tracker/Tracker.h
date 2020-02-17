@@ -43,6 +43,7 @@ public:
   void update_fps(int fps);
   int fps;
   Uint32 frame_tick_timeout, frame_tick_duration;
+  ///Uint32 gframe = 0; // should worry about overflow
 
   // TRACKER CORE
   Instrument instruments[NUM_INSTR];
