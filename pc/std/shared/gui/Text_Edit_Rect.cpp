@@ -72,11 +72,22 @@ static inline int check_dblclick(const SDL_Event &ev, Text_Edit_Rect *ter)
     case SDL_USEREVENT:
       if (ev.user.code == UserEvents::mouse_react)
       {
+        /* if dblclick is off, then only process a double click to turn
+         * off the currently editing ter */
+        if (!ter->dblclick && Text_Edit_Rect::cur_editing_ter != ter)
+          return 0;
         SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
         if (ter->check_mouse_and_execute(te->button.x, te->button.y))
           return 1;
       }
       break;
+    case SDL_MOUSEBUTTONDOWN:
+      /* Do not ack single clicks if dblclick to activate is enabled, or
+       * if this ter is already editing */
+      if (ter->dblclick || Text_Edit_Rect::cur_editing_ter == ter)
+        return 0;
+      if (ter->check_mouse_and_execute(ev.button.x, ev.button.y))
+        return 1;
     default:break;
   }
 }

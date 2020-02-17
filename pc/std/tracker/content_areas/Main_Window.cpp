@@ -21,6 +21,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   samplepanel(&instrpanel)
 {
   int x,y,xx,yy;
+  song_title.dblclick = false; // do not require dblclick to edit. single
 
   if (::render->screen == NULL)
   {

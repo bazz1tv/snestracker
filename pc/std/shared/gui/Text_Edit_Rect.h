@@ -38,6 +38,7 @@ struct Text_Edit_Rect : public Clickable_Text
   unsigned int strsize; // this is the capacity of the string
   unsigned int max_visible_chars;
   bool border = false; // Whether to draw a border around the field
+  bool dblclick = true; // whether it is required to dblclick to enable editing
 };
 
 int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter);
