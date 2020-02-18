@@ -299,7 +299,7 @@ void Tracker::handle_events()
             sound_stop();
             break;
           case UserEvents::mouse_ani:
-            Cursors::BmpCursorAni::set((int)ev.user.data1);
+            Cursors::BmpCursorAni::set_frame((int)ev.user.data1);
             break;
         }
       } break;

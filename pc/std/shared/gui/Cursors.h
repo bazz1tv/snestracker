@@ -30,40 +30,51 @@ struct Cursors
 
   void set_yoshi();
 
-	SDL_Cursor **cursor;
+	SDL_Cursor **syscursors;
 	int index=0;
+
   struct BmpCursor
   {
-    //~BmpCursor();
+    ~BmpCursor();
     SDL_Point hotspot;
     const char *filename;
     SDL_Surface *surface;
+    SDL_Cursor *cursor;
     bool loaded;
   };
   BmpCursor *bci;
 
   struct BmpCursorFrame
   {
-    //~BmpCursorFrame();
-    // could add this if dynamic hotspots are needed
-    //SDL_Point hotspot;
+    ~BmpCursorFrame();
     const char *filename;
-    int delay; // only supporting constant framerate for the time being
+    int delay; // you can specify a per-frame delay :)
     SDL_Surface *surface;
     SDL_Cursor *cursor;
   };
 
   struct BmpCursorAni
   {
-    //~BmpCursorAni();
+    ~BmpCursorAni();
+    /* Use one hotspot for the whole animation. It would be possible to
+     * have custom hotspot per animation frame, but I imagine that kind of
+     * moving hotspot would be terrible to use! So we use one. */
     SDL_Point hotspot;
-    int num_frames; // only used if ani is true
+    int num_frames;
     bool loaded;
-    static BmpCursorAni *animating;
-    static Uint32 timerid;
+    static BmpCursorAni *animating; /* The currently animating cursor,
+    if any. NULL when there is none */
+    static Uint32 timerid; /* the SDL timer id for the active animated
+    cursor, 0 if no timer is active */
+    /* Sends a custom SDL User event to update the cursor from the main
+     * thread */
     static Uint32 push_cursor_ani_update_event(Uint32 interval=0, void *param=NULL);
-    static void stop();
-    static void set(int i);
+    static void stop(); /* stop animating. Used when changing the cursor from external
+    API (set_cursor), and also from destructor code, precluding object deletion */
+    /* called from the custom UserEvent "mouse_ani", this takes an index
+     * into actively animating BmpCursorAni, not to be confused as an index into the
+     * all-encompassing cursor enum found in Cursors.cpp. */
+    static void set_frame(int i);
     static int ani_idx;
     BmpCursorFrame *frames;
   };
