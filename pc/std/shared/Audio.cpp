@@ -39,8 +39,8 @@ Audio::Audio()
 
 Audio::Devices::Devices()
 {
+  DEBUGLOG("Devices()\n");
   query();
-  
 }
 
 Audio::Devices::~Devices()
@@ -60,6 +60,11 @@ void Audio::Devices::query()
 {
   //the value ranges from 0 to SDL_GetNumAudioDevices() - 1
   Devices::how_many = SDL_GetNumAudioDevices(Devices::Type::playback);
+  if (Devices::how_many <= 0)
+  {
+    DEBUGLOG("no audio out devices found: %s\n", SDL_GetError());
+    exit(1);
+  }
   DEBUGLOG("num audio devices: %d\n", Devices::how_many);
   device_strings = (char**) SDL_malloc(sizeof(char*) * Devices::how_many);
   for (int i = 0; i < Devices::how_many; ++i)

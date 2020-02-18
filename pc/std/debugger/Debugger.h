@@ -18,6 +18,7 @@
 #include "Instrument_Window.h"
 #include "Menu_Bar.h"
 #include "gui/Window.h"
+#include "gui/Cursors.h"
 
 typedef Uint32 WindowID;
 

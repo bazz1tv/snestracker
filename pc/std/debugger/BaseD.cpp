@@ -33,8 +33,6 @@ Instrument_Window * BaseD::instr_window=NULL;
 Dsp_Window * BaseD::dsp_window=NULL;
 Menu_Bar * BaseD::menu_bar=NULL;
 
-Cursors * BaseD::cursors=NULL;
-
 const char * BaseD::path=NULL;
 Voice_Control &BaseD::voice_control = ::voice_control;
 

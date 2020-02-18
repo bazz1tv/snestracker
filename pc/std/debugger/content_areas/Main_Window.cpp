@@ -291,10 +291,10 @@ int Main_Window::receive_event(SDL_Event &ev)
           voice_control.checkmouse((Uint16&)mouse::x, (Uint16&)mouse::y, SDL_BUTTON_RIGHT); 
         break;
         case SDLK_UP:
-          BaseD::cursors->next();
+          //BaseD::cursors->next();
           break;
         case SDLK_DOWN:
-          BaseD::cursors->prev();
+          //BaseD::cursors->prev();
         break;
         default:break;
       }

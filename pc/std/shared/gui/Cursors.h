@@ -34,18 +34,46 @@ struct Cursors
 	int index=0;
   struct BmpCursor
   {
+    //~BmpCursor();
     SDL_Point hotspot;
     const char *filename;
     SDL_Surface *surface;
+    bool loaded;
   };
   BmpCursor *bci;
+
+  struct BmpCursorFrame
+  {
+    //~BmpCursorFrame();
+    // could add this if dynamic hotspots are needed
+    //SDL_Point hotspot;
+    const char *filename;
+    int delay; // only supporting constant framerate for the time being
+    SDL_Surface *surface;
+    SDL_Cursor *cursor;
+  };
+
+  struct BmpCursorAni
+  {
+    //~BmpCursorAni();
+    SDL_Point hotspot;
+    int num_frames; // only used if ani is true
+    bool loaded;
+    static BmpCursorAni *animating;
+    static Uint32 timerid;
+    static Uint32 push_cursor_ani_update_event(Uint32 interval=0, void *param=NULL);
+    static void stop();
+    static void set(int i);
+    static int ani_idx;
+    BmpCursorFrame *frames;
+  };
+  BmpCursorAni *bca;
 
 	void next();
 	void prev();
   
   void set_cursor(int i);
-
-  Uint32 timerid;
-  int ani_idx;
-  static Uint32 push_cursor_ani_update_event(Uint32 interval=0, void *param=NULL);
+private:
+  void load_bmp();
+  void load_ani();
 };

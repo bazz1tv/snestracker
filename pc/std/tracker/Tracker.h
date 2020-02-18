@@ -38,7 +38,7 @@ public:
   static const int NUM_WINDOWS = 2;
   Window *window_map[NUM_WINDOWS+1];
 
-  Cursors cursors;
+  Cursors *cursors;
 
   void update_fps(int fps);
   int fps;

@@ -3,7 +3,6 @@
 #include "utility.h"
 #include "Screen.h"
 #include "sdl_userevents.h"
-#include "gui/Cursors.h"
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -17,7 +16,6 @@ main_window(argc,argv)
   BaseD::menu_bar = &menu_bar;
   ::options_window = &options_window;
   ::spc_export_window = &spc_export_window;
-  BaseD::cursors = &cursors;
   exp = &main_window;
 
   int x,y;

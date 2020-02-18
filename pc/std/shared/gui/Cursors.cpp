@@ -3,6 +3,12 @@
 #include "shared/Render.h"
 #include "sdl_userevents.h"
 
+Cursors::BmpCursorAni * Cursors::BmpCursorAni::animating = NULL;
+Uint32 Cursors::BmpCursorAni::timerid = 0;
+int Cursors::BmpCursorAni::ani_idx;
+
+
+/* enum of all cursors, including BMP, and ANImated BMP */
 enum {
   CURSOR_ARROW=0,
   CURSOR_IBEAM,
@@ -32,24 +38,26 @@ enum {
   CURSOR_MPAINT_WHITE_HAND,
   CURSOR_ZSNES,
   CURSOR_ZSNES2,
-  
-  CURSOR_ANI_START,
-  CURSOR_SMRPG_COIN1=CURSOR_ANI_START,
-  CURSOR_SMRPG_COIN2,
-  CURSOR_SMRPG_COIN3,
-  CURSOR_SMRPG_COIN4,
-  CURSOR_SMRPG_COIN5,
-  CURSOR_SMRPG_COIN6,
-  CURSOR_SMRPG_COIN7,
-  CURSOR_SMRPG_COIN8,
-  NUM_CURSORS
+  /* Track the num of SYS and BMP cursors because the same function is
+   * used to load cursors of these types. On the other hand, we have the
+   * animated cursors */
+  NUM_SYS_AND_BMP_CURSORS,
+  CURSOR_ANI_START=NUM_SYS_AND_BMP_CURSORS,
+  CURSOR_SMRPG_COIN=CURSOR_ANI_START,
+  CURSOR_ANI_END,
+  NUM_CURSORS=CURSOR_ANI_END
 };
 
-#define NUM_BMP_CURSORS (NUM_CURSORS - CURSOR_BMP_START)
-
+#define NUM_BMP_CURSORS (NUM_SYS_AND_BMP_CURSORS - CURSOR_BMP_START)
+#define NUM_ANI_CURSORS (NUM_CURSORS - CURSOR_ANI_START)
+#define NUM_BMP_AND_ANI_CURSORS (NUM_BMP_CURSORS + NUM_ANI_CURSORS)
+//#define BMP_CURSORS_ANI_START_IDX (CURSOR_ANI_START - CURSOR_BMP_START)
+#define GET_ANI_IDX(x) (x - CURSOR_ANI_START)
 Cursors::Cursors()
 {
-  cursor = new SDL_Cursor*[NUM_CURSORS];
+  // cursor is just a collection of sys and bmp cursors. animated cursors
+  // have a different system
+  cursor = new SDL_Cursor*[NUM_SYS_AND_BMP_CURSORS];
 	cursor[CURSOR_ARROW] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 	cursor[CURSOR_IBEAM] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
 	cursor[CURSOR_WAIT] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
@@ -79,38 +87,125 @@ Cursors::Cursors()
     { {1, 1}, "mpaint-white-hand" },
     { {1, 1}, "cursor-zsnes" },
     { {1, 1}, "cursor-zsnes2" },
-    { {8,6}, "smrpg-smallcoinani1" },
-    { {8,6}, "smrpg-smallcoinani2" },
-    { {8,6}, "smrpg-smallcoinani3" },
-    { {8,6}, "smrpg-smallcoinani4" },
-    { {8,6}, "smrpg-smallcoinani5" },
-    { {8,6}, "smrpg-smallcoinani6" },
-    { {8,6}, "smrpg-smallcoinani7" },
-    { {8,6}, "smrpg-smallcoinani8" },
   };
 
+  bca = new BmpCursorAni[NUM_ANI_CURSORS];
+  BmpCursorAni *bcap;
+
+// ADD NEW ANIMATIONS LIKE FOLLOWS
+  bcap = &bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)];
+  bcap->hotspot = {8, 6};
+  bcap->num_frames = 8;
+  bcap->frames = new BmpCursorFrame[bcap->num_frames]
+  { // opportunity to optimize out the basename string
+    { "smrpg-smallcoinani1", 40 },
+    { "smrpg-smallcoinani2", 40 },
+    { "smrpg-smallcoinani3", 40 },
+    { "smrpg-smallcoinani4", 40 },
+    { "smrpg-smallcoinani5", 40 },
+    { "smrpg-smallcoinani6", 40 },
+    { "smrpg-smallcoinani7", 40 },
+    { "smrpg-smallcoinani8", 40 },
+  };
+
+  load_bmp();
+  load_ani();
 }
+
+/*Cursors::BmpCursor::~BmpCursor()
+{
+  if (surface)
+    SDL_FreeSurface(surface);
+}*/
 
 Cursors::~Cursors() {
 	DEBUGLOG("~Cursors\n");
-	for (int i=0; i < NUM_CURSORS; i++)
-		SDL_FreeCursor(cursor[i]);
+	for (int i=0; i < NUM_SYS_AND_BMP_CURSORS; i++)
+    if (cursor[i]) {
+      SDL_FreeCursor(cursor[i]);
+      cursor[i] = NULL;
+    }
 
   for (int i=0; i < NUM_BMP_CURSORS; i++)
-    SDL_free(bci[i].surface);
+    if (bci[i].surface)
+      SDL_FreeSurface(bci[i].surface);
 
+  BmpCursorAni::stop();
+  for (int i=0; i < NUM_ANI_CURSORS; i++)
+  {
+    BmpCursorAni *bcap = &bca[i];
+    for (int j=0; j < bcap->num_frames; j++)
+    {
+      BmpCursorFrame *bcf = &bcap->frames[j];
+      if (bcf->cursor)
+        SDL_FreeCursor(bcf->cursor);
+      if (bcf->surface)
+        SDL_FreeSurface(bcf->surface);
+    }
+    delete[] bcap->frames;
+  }
+  delete[] bca;
   delete[] bci;
   delete[] cursor;
 }
 
-void Cursors::set_yoshi()
+void Cursors::load_ani()
 {
-  char tb[200];
+  char tb[260];
   int len;
   assert(::file_system);
   // quoted data path does not play nice here
   strcpy(tb, ::file_system->data_path);
   len = strlen(tb);
+
+  for (int i=0; i < NUM_ANI_CURSORS; i++)
+  {
+    for (int j=0; j < bca[i].num_frames; j++)
+    {
+      BmpCursorFrame *f = &bca[i].frames[j];
+      tb[len] = 0;
+      strcat(tb, f->filename);
+      strcat(tb, ".bmp");
+      //strcat(tb, "\"");
+      f->surface = SDL_LoadBMP(tb);
+      // hard coded color key should be pulled as a data member later
+      SDL_SetColorKey(f->surface, SDL_TRUE, SDL_MapRGB(f->surface->format, 0, 0xff, 0));
+      DEBUGLOG("path = %s\n", tb);
+      if (!f->surface)
+      {
+        DEBUGLOG("SURFACE: %s\n", SDL_GetError());
+        bca[i].loaded = false;
+        continue;
+      }
+
+      f->cursor = SDL_CreateColorCursor(f->surface,
+          bca[i].hotspot.x, bca[i].hotspot.y);
+
+      if (!f->cursor)
+      {
+        if (f->surface)
+        {
+          SDL_FreeSurface(f->surface);
+          f->surface = NULL;
+        }
+        bca[i].loaded = false;
+        continue;
+      }
+      else
+        bca[i].loaded = true;
+    }
+  }
+}
+
+void Cursors::load_bmp()
+{
+  char tb[260];
+  int len;
+  assert(::file_system);
+  // quoted data path does not play nice here
+  strcpy(tb, ::file_system->data_path);
+  len = strlen(tb);
+
   for (int i=0; i < NUM_BMP_CURSORS; i++)
   {
     tb[len] = 0;
@@ -123,59 +218,113 @@ void Cursors::set_yoshi()
     if (!bci[i].surface)
     {
       DEBUGLOG("SURFACE: %s\n", SDL_GetError());
-      goto _exit;
+      bci[i].loaded = false;
+      continue;
     }
-    cursor[CURSOR_BMP_START + i] = SDL_CreateColorCursor(bci[i].surface,
+    SDL_Cursor **c = &cursor[CURSOR_BMP_START + i];
+    *c = SDL_CreateColorCursor(bci[i].surface,
             bci[i].hotspot.x, bci[i].hotspot.y);
-    if (!cursor[CURSOR_BMP_START + i])
-      goto _exit;
-  }
-
-  index = CURSOR_MPAINT_WHITE_HAND;
-  SDL_SetCursor(cursor[CURSOR_MPAINT_WHITE_HAND]);
-  ani_idx = CURSOR_SMRPG_COIN1; 
-  timerid = SDL_AddTimer(50, &push_cursor_ani_update_event, &ani_idx);
-
-  return;
-_exit:
-  fprintf(stderr, "OH NO!\n");
-  for (int i=0; i < NUM_BMP_CURSORS; i++)
-  {
-    if (cursor[CURSOR_BMP_START + i]) {
-      SDL_FreeCursor(cursor[CURSOR_BMP_START + i]);
-      cursor[CURSOR_BMP_START + i] = NULL;
-    }
-    if (bci[i].surface) {
+    if (!*c)
+    {
+      if(bci[i].surface)
+      {
         SDL_FreeSurface(bci[i].surface);
         bci[i].surface = NULL;
+      }
+      bci[i].loaded = false;
+      continue;
     }
+    bci[i].loaded = true;
   }
+}
+
+void Cursors::BmpCursorAni::stop()
+{
+  if (timerid)
+    SDL_RemoveTimer(timerid);
+  timerid = 0;
+  animating = NULL;
+  ani_idx = 0;
+}
+
+void Cursors::BmpCursorAni::set(int i)
+{
+  if (animating)
+    SDL_SetCursor(animating->frames[i].cursor);
+  else
+    fprintf(stderr, "BmpCursorAni::set() called while no animating cursor set?!\n");
 }
 
 void Cursors::set_cursor(int i)
 {
-  //fprintf(stderr, "i = %d\n");
-  SDL_SetCursor(cursor[i]);
+  // IF NECESSARY, could turn this func into a switch so that index
+  // assignment goes at end of func (if you need to use index)
+  index = i;
+
+  if (i < NUM_SYS_AND_BMP_CURSORS)
+  {
+    // just set the cursor. but before that, we need check if we were
+    // animating a cursor, and if so, stop the timer and cancel the
+    // variablle
+    BmpCursorAni::stop();
+    SDL_SetCursor(cursor[i]);
+  }
+  else if (i >= CURSOR_ANI_START && i < CURSOR_ANI_END)
+  {
+    // get the BmpCursorAni related to this index
+    BmpCursorAni *b = &bca[GET_ANI_IDX(i)];
+    BmpCursorAni *aa = BmpCursorAni::animating;
+    // is there already a cursor animating?
+    if (aa == b)
+      return;
+
+    BmpCursorAni::stop();
+    // set the first frame
+    BmpCursorAni::animating = b;
+    SDL_SetCursor(b->frames[0].cursor);
+    BmpCursorAni::timerid = SDL_AddTimer(b->frames[0].delay,
+                &BmpCursorAni::push_cursor_ani_update_event,
+                &BmpCursorAni::ani_idx);
+  }
+
 }
 
-Uint32 Cursors::push_cursor_ani_update_event(Uint32 interval/*=0*/, void *param/*=NULL*/)
+/*Cursors::BmpCursorFrame::~BmpCursorFrame()
 {
-  int *index = (int *)param;
-  //fprintf(stderr, "in timer: index=%d\n", *index);
+  if (cursor)
+  {
+    SDL_FreeCursor(cursor);
+    cursor = NULL;
+  }
+  if (surface)
+  {
+    SDL_FreeSurface(surface);
+    surface = NULL;
+  }
+}*/
 
-  *index += 1;
-  if (*index >= (CURSOR_SMRPG_COIN1 + 8))
-    *index = CURSOR_SMRPG_COIN1;
-  //SDL_Cursor *c = cursor[CURSOR_SMRPG_COIN1 + *index];
-  // check param for index of smrpg cursor
+/*Cursors::BmpCursorAni::~BmpCursorAni()
+{
+  delete[] frames;
+}*/
+
+Uint32 Cursors::BmpCursorAni::push_cursor_ani_update_event(Uint32 interval/*=0*/, void *param/*=NULL*/)
+{
+  int *i = (int *)param;
+  //fprintf(stderr, "in timer: index=%d\n", *index);
+  assert(animating);
+  *i += 1;
+  if (*i >= animating->num_frames)
+    *i = 0;
+
   SDL_Event event;
   event.type = SDL_USEREVENT;
   event.user.code = UserEvents::mouse_ani;
-  event.user.data1 = (void *)*index;
+  event.user.data1 = (void *)(*i);
   event.user.data2 = 0;
   SDL_PushEvent(&event);
 
-  return interval;
+  return animating->frames[*i].delay;
 }
 
 
@@ -183,12 +332,12 @@ void Cursors::next()
 {
 	if (++index >= NUM_CURSORS)
 		index = 0;
-	SDL_SetCursor(cursor[index]);
+  set_cursor(index);
 }
 
 void Cursors::prev()
 {
 	if (--index < 0)
 		index = NUM_CURSORS - 1;
-	SDL_SetCursor(cursor[index]);
+  set_cursor(index);
 }

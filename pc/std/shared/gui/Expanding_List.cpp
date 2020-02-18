@@ -1,6 +1,5 @@
 #include "gui/Expanding_List.h"
 #include "globals.h"
-#include "BaseD.h"
 #include "utility.h"
 //Expanding_List_Item::Expanding_List_Item(const char *str, 
 //  int (*action)(void *)/*=NULL*/, void* data/*=NULL*/) : 

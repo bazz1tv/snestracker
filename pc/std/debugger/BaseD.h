@@ -5,7 +5,6 @@
 #include "Experience.h"
 #include "Voice_Control.h"
 #include "My_Nfd.h"
-#include "gui/Cursors.h"
 
 struct Main_Window;
 struct Dsp_Window;
@@ -117,8 +116,6 @@ struct BaseD
   static Dsp_Window *dsp_window;
   static Instrument_Window *instr_window;
   static Menu_Bar *menu_bar;
-
-  static Cursors *cursors;
 
   static int g_paused;// = 0;
   static bool quitting;

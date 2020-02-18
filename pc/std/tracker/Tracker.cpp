@@ -41,13 +41,16 @@ main_window(argc,argv, this)
       SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz. \n", i, 
         monitor_display_mode.w, monitor_display_mode.h, monitor_display_mode.refresh_rate);
 
-  cursors.set_yoshi();
+  cursors = new Cursors;
+
   update_fps(30);
 }
 
 Tracker::~Tracker()
 {
   DEBUGLOG("~Tracker");
+  delete cursors;
+  cursors = NULL;
 }
 
 void Tracker::update_fps(int fps)
@@ -296,7 +299,7 @@ void Tracker::handle_events()
             sound_stop();
             break;
           case UserEvents::mouse_ani:
-            cursors.set_cursor((int)ev.user.data1);
+            Cursors::BmpCursorAni::set((int)ev.user.data1);
             break;
         }
       } break;
@@ -344,10 +347,10 @@ void Tracker::handle_events()
         switch (scancode)
         {
           case SDLK_LEFT:
-          cursors.prev();
+          cursors->prev();
           break;
           case SDLK_RIGHT:
-          cursors.next();
+          cursors->next();
           break;
         }
       } break;

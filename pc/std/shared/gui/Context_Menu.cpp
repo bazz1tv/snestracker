@@ -3,10 +3,6 @@
 #include "sdlfont.h"
 
 #include "globals.h"
-#include "BaseD.h"
-
-
-
 
 bool Context_Menu::is_activated()
 {
