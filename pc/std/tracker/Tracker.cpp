@@ -3,7 +3,6 @@
 #include "utility.h"
 #include "Screen.h"
 #include "sdl_userevents.h"
-#include "gui/Cursors.h"
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -41,7 +40,7 @@ main_window(argc,argv, this)
       SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz. \n", i, 
         monitor_display_mode.w, monitor_display_mode.h, monitor_display_mode.refresh_rate);
 
-  cursors = new Cursors;
+  mousecursors = new MouseCursors;
 
   update_fps(30);
 }
@@ -49,8 +48,8 @@ main_window(argc,argv, this)
 Tracker::~Tracker()
 {
   DEBUGLOG("~Tracker");
-  delete cursors;
-  cursors = NULL;
+  delete mousecursors;
+  mousecursors = NULL;
 }
 
 void Tracker::update_fps(int fps)
@@ -299,7 +298,7 @@ void Tracker::handle_events()
             sound_stop();
             break;
           case UserEvents::mouse_ani:
-            Cursors::BmpCursorAni::set_frame((int)ev.user.data1);
+            /*MouseCursors::*/BmpCursorAni::set_frame((int)ev.user.data1);
             break;
         }
       } break;
@@ -347,10 +346,10 @@ void Tracker::handle_events()
         switch (scancode)
         {
           case SDLK_LEFT:
-          cursors->prev();
+          mousecursors->prev();
           break;
           case SDLK_RIGHT:
-          cursors->next();
+          mousecursors->next();
           break;
         }
       } break;

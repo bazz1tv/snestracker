@@ -5,7 +5,6 @@
 #include "File_System.h"
 #include "App_Settings.h"
 #include "Audio.h"
-#include "gui/Cursors.h"
 #include "Render.h"
 
 class App

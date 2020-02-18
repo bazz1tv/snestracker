@@ -1,13 +1,13 @@
-#include "gui/Cursors.h"
+#include "MouseCursors.h"
 #include "shared/File_System.h"
 #include "shared/Render.h"
 #include "sdl_userevents.h"
 
 /* These are animated cursor variables that only 1 instance is needed of.
  * Will be used for any specific animated cursor that becomes active */
-Cursors::BmpCursorAni * Cursors::BmpCursorAni::animating = NULL;
-Uint32 Cursors::BmpCursorAni::timerid = 0;
-int Cursors::BmpCursorAni::ani_idx;
+BmpCursorAni * BmpCursorAni::animating = NULL;
+Uint32 BmpCursorAni::timerid = 0;
+int BmpCursorAni::ani_idx;
 
 
 /* enum of all cursors, including BMP, and ANImated BMP */
@@ -58,7 +58,104 @@ enum {
 //#define BMP_CURSORS_ANI_START_IDX (CURSOR_ANI_START - CURSOR_BMP_START)
 #define GET_BMP_IDX(x) (x - CURSOR_BMP_START)
 #define GET_ANI_IDX(x) (x - CURSOR_ANI_START)
-Cursors::Cursors()
+
+
+
+
+
+
+
+
+
+
+
+BmpCursor::~BmpCursor()
+{
+  if (cursor)
+  {
+    SDL_FreeCursor(cursor);
+    cursor = NULL;
+  }
+  if (surface)
+  {
+    SDL_FreeSurface(surface);
+    surface = NULL;
+  }
+}
+
+BmpCursorAniFrame::~BmpCursorAniFrame()
+{
+  if (cursor)
+  {
+    SDL_FreeCursor(cursor);
+    cursor = NULL;
+  }
+  if (surface)
+  {
+    SDL_FreeSurface(surface);
+    surface = NULL;
+  }
+}
+
+BmpCursorAni::~BmpCursorAni()
+{
+  delete[] frames;
+}
+
+void BmpCursorAni::set_cursor(BmpCursorAni *b)
+{
+  BmpCursorAni **aa = &BmpCursorAni::animating;
+  // is there already a cursor animating?
+  if (*aa == b)
+    return;
+
+  BmpCursorAni::stop();
+  // start the first frame
+  *aa = b;
+  SDL_SetCursor(b->frames[0].cursor);
+  BmpCursorAni::timerid = SDL_AddTimer(b->frames[0].delay,
+      &BmpCursorAni::push_cursor_ani_update_event,
+      &BmpCursorAni::ani_idx);
+
+}
+
+Uint32 BmpCursorAni::push_cursor_ani_update_event(Uint32 interval/*=0*/, void *param/*=NULL*/)
+{
+  int *i = (int *)param;
+  //fprintf(stderr, "in timer: index=%d\n", *index);
+  assert(animating);
+  *i += 1;
+  if (*i >= animating->num_frames)
+    *i = 0;
+
+  SDL_Event event;
+  event.type = SDL_USEREVENT;
+  event.user.code = UserEvents::mouse_ani;
+  event.user.data1 = (void *)(*i);
+  event.user.data2 = 0;
+  SDL_PushEvent(&event);
+
+  return animating->frames[*i].delay;
+}
+
+void BmpCursorAni::set_frame(int i)
+{
+  if (animating)
+    SDL_SetCursor(animating->frames[i].cursor);
+  else
+    fprintf(stderr, "BmpCursorAni::set() called while no animating cursor set?!\n");
+}
+
+void BmpCursorAni::stop()
+{
+  if (timerid)
+    SDL_RemoveTimer(timerid);
+  timerid = 0;
+  animating = NULL;
+  ani_idx = 0;
+}
+
+MouseCursors::MouseCursors()
 {
   // cursor is just a collection of sys and bmp cursors. animated cursors
   // have a different system
@@ -101,7 +198,7 @@ Cursors::Cursors()
   bcap = &bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)];
   bcap->hotspot = {8, 6};
   bcap->num_frames = 8;
-  bcap->frames = new BmpCursorFrame[bcap->num_frames]
+  bcap->frames = new BmpCursorAniFrame[bcap->num_frames]
   { // opportunity to optimize out the basename string
     { "smrpg-smallcoinani1", 40 },
     { "smrpg-smallcoinani2", 40 },
@@ -117,21 +214,7 @@ Cursors::Cursors()
   load_ani();
 }
 
-Cursors::BmpCursor::~BmpCursor()
-{
-  if (cursor)
-  {
-    SDL_FreeCursor(cursor);
-    cursor = NULL;
-  }
-  if (surface)
-  {
-    SDL_FreeSurface(surface);
-    surface = NULL;
-  }
-}
-
-Cursors::~Cursors() {
+MouseCursors::~MouseCursors() {
 	DEBUGLOG("~Cursors\n");
 	for (int i=0; i < NUM_SYS_CURSORS; i++)
     if (syscursors[i]) {
@@ -146,7 +229,7 @@ Cursors::~Cursors() {
   delete[] syscursors;
 }
 
-void Cursors::load_ani()
+void MouseCursors::load_ani()
 {
   char tb[260];
   int len;
@@ -159,7 +242,7 @@ void Cursors::load_ani()
   {
     for (int j=0; j < bca[i].num_frames; j++)
     {
-      BmpCursorFrame *f = &bca[i].frames[j];
+      BmpCursorAniFrame *f = &bca[i].frames[j];
       tb[len] = 0;
       strcat(tb, f->filename);
       strcat(tb, ".bmp");
@@ -194,7 +277,7 @@ void Cursors::load_ani()
   }
 }
 
-void Cursors::load_bmp()
+void MouseCursors::load_bmp()
 {
   char tb[260];
   int len;
@@ -235,24 +318,7 @@ void Cursors::load_bmp()
   }
 }
 
-void Cursors::BmpCursorAni::stop()
-{
-  if (timerid)
-    SDL_RemoveTimer(timerid);
-  timerid = 0;
-  animating = NULL;
-  ani_idx = 0;
-}
-
-void Cursors::BmpCursorAni::set_frame(int i)
-{
-  if (animating)
-    SDL_SetCursor(animating->frames[i].cursor);
-  else
-    fprintf(stderr, "BmpCursorAni::set() called while no animating cursor set?!\n");
-}
-
-void Cursors::set_cursor(int i)
+void MouseCursors::set_cursor(int i)
 {
   // IF NECESSARY, could turn this func into a switch so that index
   // assignment goes at end of func (if you need to use index)
@@ -274,70 +340,18 @@ void Cursors::set_cursor(int i)
   else if (i >= CURSOR_ANI_START && i < CURSOR_ANI_END)
   {
     // get the BmpCursorAni related to this index
-    BmpCursorAni *b = &bca[GET_ANI_IDX(i)];
-    BmpCursorAni *aa = BmpCursorAni::animating;
-    // is there already a cursor animating?
-    if (aa == b)
-      return;
-
-    BmpCursorAni::stop();
-    // set the first frame
-    BmpCursorAni::animating = b;
-    SDL_SetCursor(b->frames[0].cursor);
-    BmpCursorAni::timerid = SDL_AddTimer(b->frames[0].delay,
-                &BmpCursorAni::push_cursor_ani_update_event,
-                &BmpCursorAni::ani_idx);
-  }
-
-}
-
-Cursors::BmpCursorFrame::~BmpCursorFrame()
-{
-  if (cursor)
-  {
-    SDL_FreeCursor(cursor);
-    cursor = NULL;
-  }
-  if (surface)
-  {
-    SDL_FreeSurface(surface);
-    surface = NULL;
+    BmpCursorAni::set_cursor(&bca[GET_ANI_IDX(i)]);
   }
 }
 
-Cursors::BmpCursorAni::~BmpCursorAni()
-{
-  delete[] frames;
-}
-
-Uint32 Cursors::BmpCursorAni::push_cursor_ani_update_event(Uint32 interval/*=0*/, void *param/*=NULL*/)
-{
-  int *i = (int *)param;
-  //fprintf(stderr, "in timer: index=%d\n", *index);
-  assert(animating);
-  *i += 1;
-  if (*i >= animating->num_frames)
-    *i = 0;
-
-  SDL_Event event;
-  event.type = SDL_USEREVENT;
-  event.user.code = UserEvents::mouse_ani;
-  event.user.data1 = (void *)(*i);
-  event.user.data2 = 0;
-  SDL_PushEvent(&event);
-
-  return animating->frames[*i].delay;
-}
-
-
-void Cursors::next()
+void MouseCursors::next()
 {
 	if (++index >= NUM_CURSORS)
 		index = 0;
   set_cursor(index);
 }
 
-void Cursors::prev()
+void MouseCursors::prev()
 {
 	if (--index < 0)
 		index = NUM_CURSORS - 1;

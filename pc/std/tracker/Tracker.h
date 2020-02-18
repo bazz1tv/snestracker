@@ -14,7 +14,7 @@
 
 #include "Instruments.h"
 
-#include "gui/Cursors.h"
+#include "gui/MouseCursors.h"
 
 typedef Uint32 WindowID;
 
@@ -38,7 +38,7 @@ public:
   static const int NUM_WINDOWS = 2;
   Window *window_map[NUM_WINDOWS+1];
 
-  Cursors *cursors;
+  MouseCursors *mousecursors;
 
   void update_fps(int fps);
   int fps;
