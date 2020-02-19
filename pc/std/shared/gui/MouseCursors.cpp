@@ -64,7 +64,8 @@ enum {
 #define GET_BMP_IDX(x) (x - CURSOR_BMP_START)
 #define GET_ANI_IDX(x) (x - CURSOR_ANI_START)
 
-
+#define IS_BMP(x) (x >= CURSOR_BMP_START && x < CURSOR_BMP_END)
+#define IS_ANI(x) (x >= CURSOR_ANI_START && x < CURSOR_ANI_END)
 
 
 
@@ -225,7 +226,7 @@ MouseCursors::MouseCursors()
 
 // ADD NEW ANIMATIONS LIKE FOLLOWS
   bcap = &bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)];
-  bcap->hotspot = {8, 6};
+  bcap->hotspot = {4, 5};
   bcap->num_frames = 8;
   bcap->frames = new BmpCursorAniFrame[bcap->num_frames]
   { // opportunity to optimize out the basename string
@@ -324,8 +325,8 @@ MouseCursors::MouseCursors()
 
   for (int i=0; i < (mcaap->num_sprites * mcaap->num_frames); i++)
   {
-    mcaap->frames[i].coord.x += -162 - (bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.x / 2) -1;
-    mcaap->frames[i].coord.y += -67 - bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.y;// - 3;
+    mcaap->frames[i].coord.x += -162 - (bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.x - 2);
+    mcaap->frames[i].coord.y += -67 - bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.y + 2;
   }
 
   TextureAni::selected = mcaap;
@@ -441,10 +442,6 @@ void MouseCursors::load_bmp()
 
 void MouseCursors::set_cursor(int i)
 {
-  // IF NECESSARY, could turn this func into a switch so that index
-  // assignment goes at end of func (if you need to use index)
-  index = i;
-
   if (i < NUM_SYS_CURSORS)
   {
     // just set the cursor. but before that, we need check if we were
@@ -463,6 +460,44 @@ void MouseCursors::set_cursor(int i)
     // get the BmpCursorAni related to this index
     BmpCursorAni::set_cursor(&bca[GET_ANI_IDX(i)]);
   }
+
+  if (i >= CURSOR_BMP_START && i < CURSOR_ANI_END && index >= CURSOR_BMP_START && index < CURSOR_ANI_END)
+  {
+    TextureAni *selected = TextureAni::selected;
+    if (selected)
+    {
+      int hx, hy, ohx, ohy;
+
+      if (IS_BMP(index))
+      {
+        ohx = bci[GET_BMP_IDX(index)].hotspot.x;// / 2;
+        ohy = bci[GET_BMP_IDX(index)].hotspot.y;// / 2;
+      }
+      else if (IS_ANI(index))
+      {
+        ohx = bca[GET_ANI_IDX(index)].hotspot.x;// / 2;
+        ohy = bca[GET_ANI_IDX(index)].hotspot.y;// / 2;
+      }
+
+      if (IS_BMP(i))
+      {
+        hx = bci[GET_BMP_IDX(i)].hotspot.x;// / 2;
+        hy = bci[GET_BMP_IDX(i)].hotspot.y;// / 2;
+      }
+      else if (IS_ANI(i))
+      {
+        hx = bca[GET_ANI_IDX(i)].hotspot.x;// / 2;
+        hy = bca[GET_ANI_IDX(i)].hotspot.y;// / 2;
+      }
+
+      for (int j=0; j < (selected->num_sprites * selected->num_frames); j++)
+      {
+        selected->frames[j].coord.x += ohx - hx;
+        selected->frames[j].coord.y += ohy - hy;
+      }
+    }
+  }
+  index = i;
 }
 
 void MouseCursors::next()
