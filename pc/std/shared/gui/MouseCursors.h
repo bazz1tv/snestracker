@@ -15,7 +15,7 @@ struct BmpCursor
   SDL_Cursor *cursor;
   bool loaded;// not yet impl'd :( would help bug-free runtime if for some reason a cursor failed to load
 };
-
+/////////////////////////////////////////////////////////////////////////
 struct BmpCursorAniFrame
 {
   ~BmpCursorAniFrame();
@@ -34,7 +34,7 @@ struct BmpCursorAni
   static int handle_event(const SDL_Event &ev);
   
   static void stop(); /* stop animating. Used when changing the cursor from external
-  API (set_cursor), and also from destructor code, precluding object deletion */
+  API (MouseCursors::set_cursor), and also from destructor code, precluding object deletion */
 
   /* Use one hotspot for the whole animation. It would be possible to
    * have custom hotspot per animation frame, but I imagine that kind of
