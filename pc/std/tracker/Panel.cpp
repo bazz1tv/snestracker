@@ -1,4 +1,4 @@
-#include "Panel.h"
+#include "PanelCommon.h"
 #include "mouse.h"
 
 void panel_clear_all_rows(Text_Edit_Rect *ters, int num_rows, SDL_Surface *screen)

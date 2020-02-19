@@ -5,7 +5,7 @@
 #include "utility.h"
 #include "shared/sdl_dblclick.h"
 #include "globals.h" // for mouse::
-#include "Panel.h"
+#include "PanelCommon.h"
 
 /* The instrument panel is something like
  * Instruments  (Load) (Save) (Zap)

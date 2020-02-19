@@ -6,7 +6,7 @@
 #include "utility.h"
 #include "shared/sdl_dblclick.h"
 #include "globals.h" // for ::mouse
-#include "Panel.h"
+#include "PanelCommon.h"
 
 const int Sample_Panel::NUM_ROWS;
 #define SAMPLE_NAME_GUI_CHAR_WIDTH 22
