@@ -10,6 +10,14 @@ struct Texture
   static void queryXY(Texture *t);
 
   const char *filename; // no extension, e.g "filename"
+  union {
+    Uint32 rgb;
+    struct {
+      Uint8 r;
+      Uint8 g;
+      Uint8 b;
+    } __attribute__((packed));
+  } colorkey;
   int w,h;
   SDL_Surface *surface; // keep the surface just in case
   SDL_Texture *sdltexture;

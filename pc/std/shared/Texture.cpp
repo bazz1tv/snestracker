@@ -36,7 +36,8 @@ void Texture::load_bmp(Texture *t, const char *filename, SDL_Renderer *r)
     printf("couldn't load %s: %s\n", path, SDL_GetError());
   }
 
-  SDL_SetColorKey(t->surface, SDL_TRUE, SDL_MapRGB(t->surface->format, 0, 0xff, 0));
+  SDL_SetColorKey(t->surface, SDL_TRUE, SDL_MapRGB(t->surface->format,
+                  t->colorkey.r, t->colorkey.g, t->colorkey.b));
 
   t->sdltexture = SDL_CreateTextureFromSurface( r, t->surface);
   if (t->sdltexture == NULL)

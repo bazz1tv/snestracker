@@ -236,9 +236,9 @@ MouseCursors::MouseCursors()
   mcaap = &mcaa[0];
   mcaap->num_textures = 3;
   mcaap->texture = new Texture[mcaap->num_textures] {
-    {"sparkle-big", 5, 5},
-    {"sparkle-med", 3, 3},
-    {"sparkle-small", 1, 1},
+    {"sparkle-big", {0x00ff00}, 5, 5},
+    {"sparkle-med", {0x00ff00}, 3, 3},
+    {"sparkle-small", {0x00ff00}, 1, 1},
   };
   Texture::load_bmp(mcaap->texture, mcaap->texture->filename, ::render->sdlRenderer);
   Texture::load_bmp(mcaap->texture+1, mcaap->texture->filename, ::render->sdlRenderer);
