@@ -195,21 +195,21 @@ MouseCursors::MouseCursors()
 	syscursors[CURSOR_HAND] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
 
   bci = new BmpCursor[NUM_BMP_CURSORS]{
-    { {8, 8}, "cursor" },
-    { {8, 8}, "cursor-rec" },
-    { {7, 7}, "cursor-kirbystar" },
-    { {5, 5}, "cursor-mariokart-1up" },
-    { {5, 5}, "cursor-mariokart-mushroom" },
-    { {5, 5}, "cursor-mariokart-bluemushroom" },
-    { {5, 5}, "cursor-mariokart-yellowmushroom" },
-    { {8, 8}, "thing" },
-    { {8, 8}, "thing2" },
-    { {6, 7}, "mpaint-mario" },
-    { {7, 8}, "mpaint-froggy" },
-    { {1, 1}, "mpaint-golden-hand" },
-    { {1, 1}, "mpaint-white-hand" },
-    { {1, 1}, "cursor-zsnes" },
-    { {1, 1}, "cursor-zsnes2" },
+    { {0x00ff00}, {8, 8}, "cursor" },
+    { {0x00ff00}, {8, 8}, "cursor-rec" },
+    { {0x00ff00}, {7, 7}, "cursor-kirbystar" },
+    { {0x00ff00}, {5, 5}, "cursor-mariokart-1up" },
+    { {0x00ff00}, {5, 5}, "cursor-mariokart-mushroom" },
+    { {0x00ff00}, {5, 5}, "cursor-mariokart-bluemushroom" },
+    { {0x00ff00}, {5, 5}, "cursor-mariokart-yellowmushroom" },
+    { {0x00ff00}, {8, 8}, "thing" },
+    { {0x00ff00}, {8, 8}, "thing2" },
+    { {0x00ff00}, {6, 7}, "mpaint-mario" },
+    { {0x00ff00}, {7, 8}, "mpaint-froggy" },
+    { {0x00ff00}, {1, 1}, "mpaint-golden-hand" },
+    { {0x00ff00}, {1, 1}, "mpaint-white-hand" },
+    { {0x00ff00}, {1, 1}, "cursor-zsnes" },
+    { {0x00ff00}, {1, 1}, "cursor-zsnes2" },
   };
 
   bca = new BmpCursorAni[NUM_ANI_CURSORS];
@@ -221,14 +221,14 @@ MouseCursors::MouseCursors()
   bcap->num_frames = 8;
   bcap->frames = new BmpCursorAniFrame[bcap->num_frames]
   { // opportunity to optimize out the basename string
-    { "smrpg-smallcoinani1", 40 },
-    { "smrpg-smallcoinani2", 40 },
-    { "smrpg-smallcoinani3", 40 },
-    { "smrpg-smallcoinani4", 40 },
-    { "smrpg-smallcoinani5", 40 },
-    { "smrpg-smallcoinani6", 40 },
-    { "smrpg-smallcoinani7", 40 },
-    { "smrpg-smallcoinani8", 40 },
+    { {0x00ff00}, "smrpg-smallcoinani1", 40 },
+    { {0x00ff00}, "smrpg-smallcoinani2", 40 },
+    { {0x00ff00}, "smrpg-smallcoinani3", 40 },
+    { {0x00ff00}, "smrpg-smallcoinani4", 40 },
+    { {0x00ff00}, "smrpg-smallcoinani5", 40 },
+    { {0x00ff00}, "smrpg-smallcoinani6", 40 },
+    { {0x00ff00}, "smrpg-smallcoinani7", 40 },
+    { {0x00ff00}, "smrpg-smallcoinani8", 40 },
   };
 
   mcaa = new MouseTextureAni[1];
@@ -362,7 +362,10 @@ void MouseCursors::load_ani()
       //strcat(tb, "\"");
       f->surface = SDL_LoadBMP(tb);
       // hard coded color key should be pulled as a data member later
-      SDL_SetColorKey(f->surface, SDL_TRUE, SDL_MapRGB(f->surface->format, 0, 0xff, 0));
+      SDL_SetColorKey(f->surface, SDL_TRUE,
+        SDL_MapRGB(f->surface->format, f->colorkey.r, f->colorkey.g,
+                   f->colorkey.b));
+
       DEBUGLOG("path = %s\n", tb);
       if (!f->surface)
       {
@@ -401,33 +404,37 @@ void MouseCursors::load_bmp()
 
   for (int i=0; i < NUM_BMP_CURSORS; i++)
   {
+    BmpCursor *b = &bci[i];
     tb[len] = 0;
-    strcat(tb, bci[i].filename);
+    strcat(tb, b->filename);
     strcat(tb, ".bmp");
     //strcat(tb, "\"");
-    bci[i].surface = SDL_LoadBMP(tb);
-    SDL_SetColorKey(bci[i].surface, SDL_TRUE, SDL_MapRGB(bci[i].surface->format, 0, 0xff, 0));
+    b->surface = SDL_LoadBMP(tb);
+    SDL_SetColorKey(b->surface, SDL_TRUE,
+        SDL_MapRGB(b->surface->format,
+                    b->colorkey.r, b->colorkey.g, b->colorkey.b));
+
     DEBUGLOG("path = %s\n", tb);
-    if (!bci[i].surface)
+    if (!b->surface)
     {
       DEBUGLOG("SURFACE: %s\n", SDL_GetError());
-      bci[i].loaded = false;
+      b->loaded = false;
       continue;
     }
-    SDL_Cursor **c = &bci[i].cursor;
+    SDL_Cursor **c = &b->cursor;
     *c = SDL_CreateColorCursor(bci[i].surface,
-            bci[i].hotspot.x, bci[i].hotspot.y);
+            b->hotspot.x, b->hotspot.y);
     if (!*c)
     {
-      if(bci[i].surface)
+      if(b->surface)
       {
         SDL_FreeSurface(bci[i].surface);
-        bci[i].surface = NULL;
+        b->surface = NULL;
       }
-      bci[i].loaded = false;
+      b->loaded = false;
       continue;
     }
-    bci[i].loaded = true;
+    b->loaded = true;
   }
 }
 

@@ -6,7 +6,15 @@
 struct BmpCursor
 {
   ~BmpCursor();
-  SDL_Point hotspot;
+  union {
+    Uint32 rgb;
+    struct {
+      Uint8 r;
+      Uint8 g;
+      Uint8 b;
+    } __attribute__((packed));
+  } colorkey;
+ SDL_Point hotspot;
   const char *filename;
   SDL_Surface *surface;
   SDL_Cursor *cursor;
@@ -16,7 +24,15 @@ struct BmpCursor
 struct BmpCursorAniFrame
 {
   ~BmpCursorAniFrame();
-  const char *filename;
+  union {
+    Uint32 rgb;
+    struct {
+      Uint8 r;
+      Uint8 g;
+      Uint8 b;
+    } __attribute__((packed));
+  } colorkey;
+const char *filename;
   int delay; // you can specify a per-frame delay :)
   SDL_Surface *surface;
   SDL_Cursor *cursor;
