@@ -763,7 +763,6 @@ outx.: $FF    outx.: $FF    outx.: $FF    outx.: $FF
                                       ::render->screen->pitch);
   SDL_RenderClear(::render->sdlRenderer);
   SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
-  SDL_RenderPresent(::render->sdlRenderer);
 }
 
 int Dsp_Window::receive_event(SDL_Event &ev)

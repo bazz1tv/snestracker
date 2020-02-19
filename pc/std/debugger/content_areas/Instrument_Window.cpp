@@ -225,7 +225,6 @@ void Instrument_Window::draw()
   adsrgraph.draw_lines();
   adsrgraph.draw_border();
   SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
-  SDL_RenderPresent(::render->sdlRenderer);
 }
 
 int Instrument_Window::receive_event(SDL_Event &ev)

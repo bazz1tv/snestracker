@@ -93,6 +93,9 @@ void Debugger::run()
       sub_window_experience->run();
       sub_window_experience->draw();
     }
+
+    mousecursors.draw_aux();
+    SDL_RenderPresent(::render->sdlRenderer);
     
     handle_events();
   }
@@ -311,6 +314,9 @@ void Debugger::handle_events()
 
       default:break;
     }
+
+    mousecursors.handle_event(ev);
+
     if (sub_window_experience)
     {
       sub_window_experience->receive_event(ev);
