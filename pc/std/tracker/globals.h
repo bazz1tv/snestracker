@@ -14,11 +14,6 @@ extern track_info_t tag;
 
 void handle_error( const char* );
 
-namespace mouse {
-  extern int x,y;
-  extern char show;
-}
-
 // 5 minutes default
 #define DEFAULT_SONGTIME  (60*5) 
 

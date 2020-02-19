@@ -83,6 +83,12 @@ void Tracker::run()
       sub_window_experience->draw();
     }
 
+    // Optionally, let's draw on top of EVERYTHING ELSE, any auxiliary
+    // mouse FX
+    mousecursors->draw_aux();
+
+    SDL_RenderPresent(::render->sdlRenderer);
+
     /* The reason I handle events at the end of the loop rather than
      * before display code is so I can easily poll events for the rest of
      * the frame time, otherwise I would have to calculate how much frame

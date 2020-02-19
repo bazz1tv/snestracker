@@ -2,7 +2,7 @@
 #include "Colors.h"
 #include "sdlfont.h"
 
-#include "globals.h"
+#include "mouse.h"
 
 bool Context_Menu::is_activated()
 {

@@ -9,7 +9,6 @@
 #include <vector>
 #include <iostream>
 #include "gme/Spc_Filter.h"
-#include "types.h"
 #include "Audio.h"
 #include "App_Settings.h"
 

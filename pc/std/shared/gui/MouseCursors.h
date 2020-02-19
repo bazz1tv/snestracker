@@ -26,6 +26,7 @@ struct BmpCursorAni
 {
   ~BmpCursorAni();
   static void set_cursor(BmpCursorAni *b);
+  static int handle_event(const SDL_Event &ev);
   /* Sends a custom SDL User event to update the cursor from the main
    * thread */
   static Uint32 push_cursor_ani_update_event(Uint32 interval=0, void *param=NULL);
@@ -55,6 +56,57 @@ struct BmpCursorAni
 };
 /////////////////////////////////////////////////////////////////////////
 
+/* An animation might require a collection of animations to occur
+ * simultaneously. In this case we need to rethink the system. But for
+ * now, let's just get one animation working. To get multiple working, we
+ * can make a lot of those static variable instance variables, and have
+ * those particularly instance-useful static functions take class object
+ * as an argument, or just make it an instance function, duh */
+
+struct Texture
+{
+  //Texture();
+  ~Texture();
+  static void load_bmp(Texture *t, const char *filename, SDL_Renderer *r);
+  // you may optionally query the width and height from SDL
+  static void queryXY(Texture *t);
+
+  const char *filename; // no extension, e.g "filename"
+  int w,h;
+  SDL_Surface *surface; // keep the surface just in case
+  SDL_Texture *sdltexture;
+};
+
+struct TextureFrame
+{
+  Texture *texture;
+  SDL_Point coord; //relative coordinate from mouse
+  int delay; // you can specify a per-frame delay :)
+};
+
+struct TextureAni
+{
+  ~TextureAni();
+  bool loaded;
+  int num_frames;
+  Texture *texture; // this will be pluralized
+  TextureFrame *frames;
+  static int handle_event (const SDL_Event &ev);
+  static void stop();
+  static void set_ani(TextureAni *b);
+  static Uint32 update_ani_idx(Uint32 interval, void *param);
+  static void draw();
+  static TextureAni *animating, *selected;
+  static Uint32 timerid;
+  static int ani_idx;
+};
+
+/////////////////////////////////////////////////////////////////////////
+
+/* SIDE NOT IDEA!!! When the tracker opens, a rotating star sprite
+ * horizontally traverses the screen, drizzling sparkles that fall down
+ * the screen in its trail/wake. */
+
 struct MouseCursors
 {
 	MouseCursors();
@@ -65,12 +117,15 @@ struct MouseCursors
 	void prev();
 
   int handle_event(const SDL_Event &ev);
+  void draw_aux();
 
   SDL_Cursor **syscursors;
   int index=0;
 
   BmpCursor *bci;
   BmpCursorAni *bca;
+
+  TextureAni *mcaa;
 
 private:
   void load_bmp();

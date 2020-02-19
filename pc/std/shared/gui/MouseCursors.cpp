@@ -2,6 +2,7 @@
 #include "shared/File_System.h"
 #include "shared/Render.h"
 #include "sdl_userevents.h"
+#include "mouse.h"
 
 /* These are animated cursor variables that only 1 instance is needed of.
  * Will be used for any specific animated cursor that becomes active */
@@ -9,6 +10,9 @@ BmpCursorAni * BmpCursorAni::animating = NULL;
 Uint32 BmpCursorAni::timerid = 0;
 int BmpCursorAni::ani_idx;
 
+TextureAni * TextureAni::animating, *TextureAni::selected;
+Uint32 TextureAni::timerid;
+int TextureAni::ani_idx;
 
 /* enum of all cursors, including BMP, and ANImated BMP */
 enum {
@@ -104,19 +108,42 @@ BmpCursorAni::~BmpCursorAni()
 
 void BmpCursorAni::set_cursor(BmpCursorAni *b)
 {
-  BmpCursorAni **aa = &BmpCursorAni::animating;
+  BmpCursorAni **aa = &animating;
   // is there already a cursor animating?
   if (*aa == b)
     return;
 
-  BmpCursorAni::stop();
+  stop();
   // start the first frame
   *aa = b;
+  /* Since SDL_SetCursor is called from this function, this function must
+   * be called from the main thread, which fortunately is the case right
+   * now. If not, this function could easily be modified to get the timer
+   * callback to be the start of the animation. (call it with virtually no
+   * delay and index of 0 - 1*/
   SDL_SetCursor(b->frames[0].cursor);
-  BmpCursorAni::timerid = SDL_AddTimer(b->frames[0].delay,
-      &BmpCursorAni::push_cursor_ani_update_event,
-      &BmpCursorAni::ani_idx);
+  timerid = SDL_AddTimer(b->frames[0].delay,
+      &push_cursor_ani_update_event,
+      &ani_idx);
 
+}
+
+int BmpCursorAni::handle_event(const SDL_Event &ev)
+{
+  switch (ev.type)
+  {
+    case SDL_USEREVENT:
+    {
+      switch (ev.user.code)
+      {
+        case UserEvents::mouse_ani:
+          set_frame((int)ev.user.data1);
+          return 1;
+      }
+    } break;
+    default:break;
+  }
+  return 0;
 }
 
 Uint32 BmpCursorAni::push_cursor_ani_update_event(Uint32 interval/*=0*/, void *param/*=NULL*/)
@@ -209,6 +236,37 @@ MouseCursors::MouseCursors()
     { "smrpg-smallcoinani7", 40 },
     { "smrpg-smallcoinani8", 40 },
   };
+
+  mcaa = new TextureAni[2];
+  TextureAni *mcaap;
+  mcaap = &mcaa[0];
+  mcaap->texture = new Texture {
+    "sparkle-big", 5, 5
+  };
+  Texture::load_bmp(mcaap->texture, mcaap->texture->filename, ::render->sdlRenderer);
+
+  mcaap->num_frames = 16;
+  mcaap->frames = new TextureFrame[mcaap->num_frames]
+  {
+    { mcaap->texture, {0, 0}, 20 },
+    { mcaap->texture, {0, -1}, 20 },
+    { mcaap->texture, {0, -2}, 20 },
+    { mcaap->texture, {0, -3}, 20 },
+    { mcaap->texture, {0, -4}, 20 },
+    { mcaap->texture, {0, -5}, 20 },
+    { mcaap->texture, {0, -6}, 20 },
+    { mcaap->texture, {0, -7}, 20 },
+    { mcaap->texture, {0, -8}, 20 },
+    { mcaap->texture, {0, -7}, 20 },
+    { mcaap->texture, {0, -6}, 20 },
+    { mcaap->texture, {0, -5}, 20 },
+    { mcaap->texture, {0, -4}, 20 },
+    { mcaap->texture, {0, -3}, 20 },
+    { mcaap->texture, {0, -2}, 20 },
+    { mcaap->texture, {0, -1}, 20 },
+  };
+
+  TextureAni::selected = mcaap;
 
   load_bmp();
   load_ani();
@@ -360,18 +418,186 @@ void MouseCursors::prev()
 
 int MouseCursors::handle_event(const SDL_Event &ev)
 {
+  BmpCursorAni::handle_event(ev);
+  TextureAni::handle_event(ev);
+}
+
+
+//////////////////////// START TEXTUREANI ///////////////////////////////
+int TextureAni::handle_event(const SDL_Event &ev)
+{
   switch (ev.type)
   {
-    case SDL_USEREVENT:
-    {
-      switch (ev.user.code)
+    case SDL_MOUSEBUTTONDOWN:
       {
-        case UserEvents::mouse_ani:
-          BmpCursorAni::set_frame((int)ev.user.data1);
-          return 1;
-      }
-    } break;
+        // trigger an auxiliary animation. this should later be made
+        // conditional.
+        /* The animation should re-trigger even if already animating.
+         * Anything more complex is TOO much. Little by little buddy */
+        set_ani(selected);
+      } break;
+    case SDL_USEREVENT:
+      {
+        switch (ev.user.code)
+        {
+          case UserEvents::mouse_ani_aux:
+            //set_frame((int)ev.user.data1);
+            return 1;
+        }
+      } break;
     default:break;
   }
   return 0;
+}
+
+void TextureAni::stop()
+{
+  if (timerid)
+    SDL_RemoveTimer(timerid);
+  timerid = 0;
+  animating = NULL;
+  ani_idx = 0;
+}
+
+void TextureAni::set_ani(TextureAni *b)
+{
+  TextureAni **aa = &animating;
+  /* Dont care if same ani is already runnning. we restart it. */
+  /*
+  // is there already a cursor animating?
+  if (*aa == b)
+    return;
+  */
+  stop();
+  // start the first frame
+  *aa = b;
+
+  timerid = SDL_AddTimer(b->frames[0].delay,
+      &update_ani_idx,
+      &ani_idx);
+
+}
+
+Uint32 TextureAni::update_ani_idx(Uint32 interval, void *param)
+{
+  assert(animating);
+  int *i = (int *)param;
+  *i += 1;
+  if (*i >= animating->num_frames)
+  {
+    stop();
+    return 0;
+  }
+  return animating->frames[*i].delay;
+}
+
+void TextureAni::draw()
+{
+  TextureAni *aa = animating;
+  if (aa)
+  {
+    SDL_Rect dr {
+      mouse::x + aa->frames[ani_idx].coord.x,
+      mouse::y + aa->frames[ani_idx].coord.y,
+      aa->frames[ani_idx].texture->w, aa->frames[ani_idx].texture->h
+    };
+    SDL_RenderCopy(::render->sdlRenderer, aa->frames[ani_idx].texture->sdltexture, NULL, &dr);
+  }
+}
+////////////////////////////////////////////////////////////////////
+void MouseCursors::draw_aux()
+{
+  TextureAni::draw();
+  // Here, we should check if there is a cursor with auxiliary drawing
+  // feature enabled. In that case, the only feature is going to be a
+  // mouse click animation triggered from a mouse button down left click
+  // event (it's sounds so specific!! lol) but yeah... so let's do that!
+  /* Since it's not coming to mind immediately, let's just assume to the
+   * effect is enabled, and code it in to get it working! */
+
+  // OK pretend we checked if the feature is enabled for this cursor. and
+  // now let's draw that animation effect!
+  //
+  // Assume the animation has already been started. We never have to start
+  // the animation from here. But we need to check that it's been
+  // triggered. Could copy the cursor ani code, like checking for a
+  // "animating" != NULL
+  //if (aux_animating != NULL)
+    // in the case we are animating, we're in the main thread so we can
+    // just.. oh wait.. this is not going to use SDL_SetCursor because we
+    // want to overlay the existing cursor (at least in this case..) So
+    // ..? we are going to blit to the renderer the current animation
+    // frame. Since there is no process function or (run), we need to
+    // update the animation frame HERE before drawing
+    
+    /* PLOT TWIST: this function doesn't need to be called every time from
+     * the main game loop, but can simply be invoked from the timer as a
+     * UserEvent. :) . Another plot twist, it DOES need to be called from
+     * the game loop to ensure that it is drawn LAST. and the MainWindow
+     * and other such windows should NOT be calling SDL_RenderPresent, but
+     * rather the game loop owner should do it. The Window is not the end
+     * all be all, the Tracker owner is~!*/
+}
+
+
+//////////////////////// START TEXTURE CODE ///////////////////////////////
+
+/*Texture::Texture() : surface(NULL), texture(NULL)
+{
+}*/
+Texture::~Texture()
+{
+  if (sdltexture)
+  {
+    SDL_DestroyTexture(sdltexture);
+    sdltexture = NULL;
+  }
+  if (surface)
+  {
+    SDL_FreeSurface(surface);
+    surface = NULL;
+  }
+}
+
+void Texture::load_bmp(Texture *t, const char *filename, SDL_Renderer *r)
+{
+  char path[260];
+  assert(::file_system);
+  // quoted data path does not play nice here
+  strcpy(path, ::file_system->data_path);
+  strcat(path, filename);
+  strcat(path, ".bmp");
+
+  t->surface = SDL_LoadBMP(path);
+  if (t->surface == NULL)
+  {
+    printf("couldn't load %s: %s\n", path, SDL_GetError());
+  }
+
+  SDL_SetColorKey(t->surface, SDL_TRUE, SDL_MapRGB(t->surface->format, 0, 0xff, 0));
+
+  t->sdltexture = SDL_CreateTextureFromSurface( r, t->surface);
+  if (t->sdltexture == NULL)
+  {
+    printf("Unabled to create texture from %s: %s\n",
+        path, SDL_GetError());
+  }
+}
+
+void Texture::queryXY(Texture *t)
+{
+  int r = SDL_QueryTexture(t->sdltexture, NULL, NULL, &t->w, &t->h);
+  if (r < 0)
+    DEBUGLOG("couldn't query texture \"%s\": %s\n", t->filename, SDL_GetError());
+}
+
+//////////////////////// END TEXTURE CODE ///////////////////////////////
+
+TextureAni::~TextureAni()
+{
+  stop();
+  delete texture;
+  texture = NULL;
+  delete[] frames;
+  frames = NULL;
 }

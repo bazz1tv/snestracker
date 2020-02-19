@@ -1,7 +1,7 @@
 #ifndef __SLIDER_H__
 #define __SLIDER_H__
 
-#include "globals.h"
+#include "mouse.h"
 #include "Render.h"
 #include "gui/Fill_Rect.h"
 

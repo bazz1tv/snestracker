@@ -96,7 +96,6 @@ void Main_Window::draw()
     SDL_RenderClear(::render->sdlRenderer);
     SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
     //draw_memory_outline();
-    SDL_RenderPresent(::render->sdlRenderer);
     return; 
   }  
 
@@ -114,7 +113,6 @@ void Main_Window::draw()
 
   gain.slider->draw();
 
-  SDL_RenderPresent(::render->sdlRenderer);
   time_last = time_cur;
   
   is_first_run = false;
