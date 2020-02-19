@@ -56,7 +56,7 @@ void Tracker::update_fps(int fps)
 {
   this->fps = fps;
   // calc from framerate. could put this into dynamic function later
-  frame_tick_duration = 1000 /*ms*/ / fps; // how many ms per frame
+  frame_tick_duration = 1000 / fps; // how many ms per frame
 }
 
 void Tracker::run()
