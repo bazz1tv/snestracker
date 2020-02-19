@@ -357,3 +357,21 @@ void MouseCursors::prev()
 		index = NUM_CURSORS - 1;
   set_cursor(index);
 }
+
+int MouseCursors::handle_event(const SDL_Event &ev)
+{
+  switch (ev.type)
+  {
+    case SDL_USEREVENT:
+    {
+      switch (ev.user.code)
+      {
+        case UserEvents::mouse_ani:
+          BmpCursorAni::set_frame((int)ev.user.data1);
+          return 1;
+      }
+    } break;
+    default:break;
+  }
+  return 0;
+}

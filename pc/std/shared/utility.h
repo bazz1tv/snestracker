@@ -8,6 +8,8 @@
 
 namespace Utility
 {
+  SDL_Texture *load_texture_bmp( const char *path, SDL_Renderer *r );
+
   char nibble_to_ascii(uint8_t nibble);
 
   void DrawRect(const SDL_Rect *rect, int thickness=1, Uint32 color=Colors::white,

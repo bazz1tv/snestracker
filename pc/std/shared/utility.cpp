@@ -5,6 +5,26 @@
 namespace Utility
 {
 
+SDL_Texture *load_texture_bmp( const char *path, SDL_Renderer *r )
+{
+  SDL_Texture *tex = NULL;
+
+  SDL_Surface *surface = SDL_LoadBMP(path);
+  if (surface == NULL)
+  {
+    printf("couldn't load %s: %s\n", path, SDL_GetError());
+    return tex;
+  }
+
+  tex = SDL_CreateTextureFromSurface( r, surface);
+  if (tex == NULL)
+  {
+    printf("Unabled to create texture from %s: %s\n",
+        path, SDL_GetError());
+  }
+
+  return tex;
+}
 char nibble_to_ascii(uint8_t nibble)
 {
   if ( ((nibble) & 0x0f) < 0x0a )

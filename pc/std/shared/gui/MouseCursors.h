@@ -2,6 +2,7 @@
 #include "DEBUGLOG.h"
 #include "SDL.h"
 
+/////////////////////////////////////////////////////////////////////////
 struct BmpCursor
 {
   ~BmpCursor();
@@ -52,23 +53,25 @@ struct BmpCursorAni
   static int ani_idx;
   BmpCursorAniFrame *frames;
 };
+/////////////////////////////////////////////////////////////////////////
 
 struct MouseCursors
 {
 	MouseCursors();
 	~MouseCursors();
 
-	SDL_Cursor **syscursors;
-	int index=0;
+	void set_cursor(int i);
+	void next();
+	void prev();
+
+  int handle_event(const SDL_Event &ev);
+
+  SDL_Cursor **syscursors;
+  int index=0;
 
   BmpCursor *bci;
   BmpCursorAni *bca;
 
-  void set_cursor(int i);
-
-	void next();
-	void prev();
-  
 private:
   void load_bmp();
   void load_ani();

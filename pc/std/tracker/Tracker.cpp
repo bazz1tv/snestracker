@@ -297,9 +297,6 @@ void Tracker::handle_events()
           case UserEvents::sound_stop:
             sound_stop();
             break;
-          case UserEvents::mouse_ani:
-            /*MouseCursors::*/BmpCursorAni::set_frame((int)ev.user.data1);
-            break;
         }
       } break;
       case SDL_MOUSEMOTION:
@@ -355,6 +352,8 @@ void Tracker::handle_events()
       } break;
       default:break;
     }
+
+    mousecursors->handle_event(ev);
 
     menu_bar.receive_event(ev);
  
