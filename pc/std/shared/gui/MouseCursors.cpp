@@ -322,9 +322,11 @@ MouseCursors::MouseCursors()
 
   MouseTextureAni::selected = mcaap;
 
-  load_bmp();
-  load_ani();
-
+  //load_bmp();
+  for (int i=0; i < NUM_BMP_CURSORS; i++)
+    BmpCursor::load_bmp(&bci[i]);
+  for (int i=0; i < NUM_ANI_CURSORS; i++)
+    BmpCursorAni::load_bmps(&bca[i]);
   set_cursor(CURSOR_SMRPG_COIN);
 }
 
@@ -342,7 +344,7 @@ MouseCursors::~MouseCursors() {
   delete[] syscursors;
 }
 
-void MouseCursors::load_ani()
+void BmpCursorAni::load_bmps(BmpCursorAni *a)
 {
   char tb[260];
   int len;
@@ -351,11 +353,9 @@ void MouseCursors::load_ani()
   strcpy(tb, ::file_system->data_path);
   len = strlen(tb);
 
-  for (int i=0; i < NUM_ANI_CURSORS; i++)
-  {
-    for (int j=0; j < bca[i].num_frames; j++)
+    for (int j=0; j < a->num_frames; j++)
     {
-      BmpCursorAniFrame *f = &bca[i].frames[j];
+      BmpCursorAniFrame *f = &a->frames[j];
       tb[len] = 0;
       strcat(tb, f->filename);
       strcat(tb, ".bmp");
@@ -370,12 +370,12 @@ void MouseCursors::load_ani()
       if (!f->surface)
       {
         DEBUGLOG("SURFACE: %s\n", SDL_GetError());
-        bca[i].loaded = false;
-        continue;
+        a->loaded = false;
+        return;
       }
 
       f->cursor = SDL_CreateColorCursor(f->surface,
-          bca[i].hotspot.x, bca[i].hotspot.y);
+          a->hotspot.x, a->hotspot.y);
 
       if (!f->cursor)
       {
@@ -384,16 +384,15 @@ void MouseCursors::load_ani()
           SDL_FreeSurface(f->surface);
           f->surface = NULL;
         }
-        bca[i].loaded = false;
-        continue;
+        a->loaded = false;
+        return;
       }
       else
-        bca[i].loaded = true;
+        a->loaded = true;
     }
-  }
 }
 
-void MouseCursors::load_bmp()
+void BmpCursor::load_bmp(BmpCursor *b)
 {
   char tb[260];
   int len;
@@ -402,9 +401,6 @@ void MouseCursors::load_bmp()
   strcpy(tb, ::file_system->data_path);
   len = strlen(tb);
 
-  for (int i=0; i < NUM_BMP_CURSORS; i++)
-  {
-    BmpCursor *b = &bci[i];
     tb[len] = 0;
     strcat(tb, b->filename);
     strcat(tb, ".bmp");
@@ -419,23 +415,22 @@ void MouseCursors::load_bmp()
     {
       DEBUGLOG("SURFACE: %s\n", SDL_GetError());
       b->loaded = false;
-      continue;
+      return;
     }
     SDL_Cursor **c = &b->cursor;
-    *c = SDL_CreateColorCursor(bci[i].surface,
+    *c = SDL_CreateColorCursor(b->surface,
             b->hotspot.x, b->hotspot.y);
     if (!*c)
     {
       if(b->surface)
       {
-        SDL_FreeSurface(bci[i].surface);
+        SDL_FreeSurface(b->surface);
         b->surface = NULL;
       }
       b->loaded = false;
-      continue;
+      return;
     }
     b->loaded = true;
-  }
 }
 
 void MouseCursors::set_cursor(int i)

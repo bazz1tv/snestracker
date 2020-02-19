@@ -7,19 +7,20 @@
 struct BmpCursor
 {
   ~BmpCursor();
+  static void load_bmp(BmpCursor *b);
   Colorkey colorkey;
   SDL_Point hotspot;
   const char *filename;
   SDL_Surface *surface;
   SDL_Cursor *cursor;
-  bool loaded;
+  bool loaded;// not yet impl'd :( would help bug-free runtime if for some reason a cursor failed to load
 };
 
 struct BmpCursorAniFrame
 {
   ~BmpCursorAniFrame();
   Colorkey colorkey;
-const char *filename;
+  const char *filename;
   int delay; // you can specify a per-frame delay :)
   SDL_Surface *surface;
   SDL_Cursor *cursor;
@@ -28,9 +29,9 @@ const char *filename;
 struct BmpCursorAni
 {
   ~BmpCursorAni();
+  static void load_bmps(BmpCursorAni *a);
   static void set_cursor(BmpCursorAni *b);
   static int handle_event(const SDL_Event &ev);
-
   
   static void stop(); /* stop animating. Used when changing the cursor from external
   API (set_cursor), and also from destructor code, precluding object deletion */
@@ -40,8 +41,7 @@ struct BmpCursorAni
    * moving hotspot would be terrible to use! So we use one. */
   SDL_Point hotspot;
   int num_frames;
-  bool loaded;
-
+  bool loaded; // not yet impl'd :( would help bug-free runtime if for some reason a cursor failed to load
 
   BmpCursorAniFrame *frames;
 private:
@@ -94,15 +94,11 @@ struct MouseCursors
   int handle_event(const SDL_Event &ev);
   void draw_aux();
 
+private:
   SDL_Cursor **syscursors;
   int index=0;
-
   BmpCursor *bci;
   BmpCursorAni *bca;
 
   MouseTextureAni *mcaa;
-
-private:
-  void load_bmp();
-  void load_ani();
 };
