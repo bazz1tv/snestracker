@@ -27,14 +27,7 @@ struct BmpCursorAni
   ~BmpCursorAni();
   static void set_cursor(BmpCursorAni *b);
   static int handle_event(const SDL_Event &ev);
-  /* Sends a custom SDL User event to update the cursor from the main
-   * thread */
-  static Uint32 push_cursor_ani_update_event(Uint32 interval=0, void *param=NULL);
 
-  /* called from the custom UserEvent "mouse_ani", this takes an index
-   * into actively animating BmpCursorAni, not to be confused as an index into the
-   * all-encompassing cursor enum found in Cursors.cpp. */
-  static void set_frame(int i);
   
   static void stop(); /* stop animating. Used when changing the cursor from external
   API (set_cursor), and also from destructor code, precluding object deletion */
@@ -45,14 +38,23 @@ struct BmpCursorAni
   SDL_Point hotspot;
   int num_frames;
   bool loaded;
+
+
+  BmpCursorAniFrame *frames;
+private:
+  /* called from the custom UserEvent "mouse_ani", this takes an index
+  * into actively animating BmpCursorAni, not to be confused as an index into the
+  * all-encompassing cursor enum found in Cursors.cpp. */
+  static void set_frame(int i);
+ 
+ /* Sends a custom SDL User event to update the cursor from the main
+   * thread */
+  static Uint32 push_cursor_ani_update_event(Uint32 interval=0, void *param=NULL);
+  static int ani_idx;
+  static Uint32 timerid; /* the SDL timer id for the active animated
+                            cursor, 0 if no timer is active */
   static BmpCursorAni *animating; /* The currently animating cursor,
                                      if any. NULL when there is none */
-
-  static Uint32 timerid; /* the SDL timer id for the active animated
-  cursor, 0 if no timer is active */
-
-  static int ani_idx;
-  BmpCursorAniFrame *frames;
 };
 /////////////////////////////////////////////////////////////////////////
 
@@ -93,16 +95,21 @@ struct TextureAni
   int frametime; // in ms
   Texture *texture; // this will be pluralized
   TextureFrame *frames;
-  Uint32 timeout;
-  //static SDL_Mutex *mutex;
+};
+
+struct MouseTextureAni : public TextureAni
+{
+  ~MouseTextureAni();
   static int handle_event (const SDL_Event &ev);
   static void stop();
-  static void set_ani(TextureAni *b);
-  static Uint32 update_ani_idx(Uint32 interval, void *param);
   static void draw();
-  static TextureAni *animating, *selected;
+  static MouseTextureAni *selected;
+  private:
+  static void set_ani(MouseTextureAni *b);
+  static Uint32 update_ani_idx(Uint32 interval, void *param);
   static Uint32 timerid;
   static int ani_idx;
+  static MouseTextureAni *animating;
 };
 
 /////////////////////////////////////////////////////////////////////////

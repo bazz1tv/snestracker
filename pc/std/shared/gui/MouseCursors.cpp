@@ -10,10 +10,9 @@ BmpCursorAni * BmpCursorAni::animating = NULL;
 Uint32 BmpCursorAni::timerid = 0;
 int BmpCursorAni::ani_idx;
 
-TextureAni * TextureAni::animating, *TextureAni::selected;
-Uint32 TextureAni::timerid;
-int TextureAni::ani_idx;
-//SDL_Mutex *TextureAni::mutex;
+MouseTextureAni * MouseTextureAni::animating, *MouseTextureAni::selected;
+Uint32 MouseTextureAni::timerid;
+int MouseTextureAni::ani_idx;
 
 /* enum of all cursors, including BMP, and ANImated BMP */
 enum {
@@ -66,14 +65,6 @@ enum {
 
 #define IS_BMP(x) (x >= CURSOR_BMP_START && x < CURSOR_BMP_END)
 #define IS_ANI(x) (x >= CURSOR_ANI_START && x < CURSOR_ANI_END)
-
-
-
-
-
-
-
-
 
 BmpCursor::~BmpCursor()
 {
@@ -240,8 +231,8 @@ MouseCursors::MouseCursors()
     { "smrpg-smallcoinani8", 40 },
   };
 
-  mcaa = new TextureAni[1];
-  TextureAni *mcaap;
+  mcaa = new MouseTextureAni[1];
+  MouseTextureAni *mcaap;
   mcaap = &mcaa[0];
   mcaap->num_textures = 3;
   mcaap->texture = new Texture[mcaap->num_textures] {
@@ -329,7 +320,7 @@ MouseCursors::MouseCursors()
     mcaap->frames[i].coord.y += -67 - bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.y + 2;
   }
 
-  TextureAni::selected = mcaap;
+  MouseTextureAni::selected = mcaap;
 
   load_bmp();
   load_ani();
@@ -463,7 +454,7 @@ void MouseCursors::set_cursor(int i)
 
   if (i >= CURSOR_BMP_START && i < CURSOR_ANI_END && index >= CURSOR_BMP_START && index < CURSOR_ANI_END)
   {
-    TextureAni *selected = TextureAni::selected;
+    MouseTextureAni *selected = MouseTextureAni::selected;
     if (selected)
     {
       int hx, hy, ohx, ohy;
@@ -517,14 +508,13 @@ void MouseCursors::prev()
 int MouseCursors::handle_event(const SDL_Event &ev)
 {
   BmpCursorAni::handle_event(ev);
-  TextureAni::handle_event(ev);
+  MouseTextureAni::handle_event(ev);
 }
 
 
 //////////////////////// START TEXTUREANI ///////////////////////////////
 TextureAni::~TextureAni()
 {
-  stop();
   if (texture)
     delete[] texture;
   texture = NULL;
@@ -532,8 +522,13 @@ TextureAni::~TextureAni()
     delete[] frames;
   frames = NULL;
 }
+/////////////////////// MOUSETEXTUREANI START ///////////////////
+MouseTextureAni::~MouseTextureAni()
+{
+  stop();
+}
 
-int TextureAni::handle_event(const SDL_Event &ev)
+int MouseTextureAni::handle_event(const SDL_Event &ev)
 {
   switch (ev.type)
   {
@@ -560,7 +555,7 @@ int TextureAni::handle_event(const SDL_Event &ev)
   return 0;
 }
 
-void TextureAni::stop()
+void MouseTextureAni::stop()
 {
   if (timerid)
     SDL_RemoveTimer(timerid);
@@ -569,9 +564,9 @@ void TextureAni::stop()
   ani_idx = 0;
 }
 
-void TextureAni::set_ani(TextureAni *b)
+void MouseTextureAni::set_ani(MouseTextureAni *b)
 {
-  TextureAni **aa = &animating;
+  MouseTextureAni **aa = &animating;
   /* Dont care if same ani is already runnning. we restart it. */
   /*
   // is there already a cursor animating?
@@ -588,7 +583,7 @@ void TextureAni::set_ani(TextureAni *b)
       &ani_idx);
 }
 
-Uint32 TextureAni::update_ani_idx(Uint32 interval, void *param)
+Uint32 MouseTextureAni::update_ani_idx(Uint32 interval, void *param)
 {
   if (!animating)
     return 0;
@@ -602,41 +597,48 @@ Uint32 TextureAni::update_ani_idx(Uint32 interval, void *param)
   return animating->frametime; //frames[*i].delay;
 }
 
-void TextureAni::draw()
+void MouseTextureAni::draw()
 {
-  TextureAni *aa = animating;
-  if (aa)
-  {
-    /*Uint32 now = SDL_GetTicks();
-    if (SDL_TICKS_PASSED(now, aa->timeout))
-    {
-      ani_idx++;
-      if (ani_idx >= animating->num_frames)
-      {
-        stop();
-        return;
-      }
+  MouseTextureAni *aa = animating;
+  /* also addressing an SDL bug where if the program is opened and the
+   * mouse is in the window but hasn't been moved yet, the coords are
+   * reported as (0,0) from SDL_GetMouseState. So, let's just not render
+   * the animation until the mouse has been moved. Note that this bug also
+   * causes the coordinates of normal MOUSEBUTTON{DOWN,UP} events to
+   * misleadingly believe a click is happening at (0,0) before the mouse
+   * is moved. Not a big deal... */
+  if (!aa || (!mouse::x && !mouse::y))
+    return;
 
-      aa->timeout = now + aa->frametime;
-    }*/
-    for (int i=0; i < aa->num_sprites; i++)
+  /*Uint32 now = SDL_GetTicks();
+  if (SDL_TICKS_PASSED(now, aa->timeout))
+  {
+    ani_idx++;
+    if (ani_idx >= animating->num_frames)
     {
-      TextureFrame *tf = &aa->frames[(aa->num_frames * i) + ani_idx];
-      Texture *t = tf->texture;
-      if (!t) continue;
-      SDL_Rect dr {
-        mouse::x + tf->coord.x,
-        mouse::y + tf->coord.y,
-        t->w, t->h
-      };
-      SDL_RenderCopy(::render->sdlRenderer, t->sdltexture, NULL, &dr);
+      stop();
+      return;
     }
+
+    aa->timeout = now + aa->frametime;
+  }*/
+  for (int i=0; i < aa->num_sprites; i++)
+  {
+    TextureFrame *tf = &aa->frames[(aa->num_frames * i) + ani_idx];
+    Texture *t = tf->texture;
+    if (!t) continue;
+    SDL_Rect dr {
+      mouse::x + tf->coord.x,
+      mouse::y + tf->coord.y,
+      t->w, t->h
+    };
+    SDL_RenderCopy(::render->sdlRenderer, t->sdltexture, NULL, &dr);
   }
 }
 ////////////////////////////////////////////////////////////////////
 void MouseCursors::draw_aux()
 {
-  TextureAni::draw();
+  MouseTextureAni::draw();
   // Here, we should check if there is a cursor with auxiliary drawing
   // feature enabled. In that case, the only feature is going to be a
   // mouse click animation triggered from a mouse button down left click
@@ -713,6 +715,7 @@ void Texture::load_bmp(Texture *t, const char *filename, SDL_Renderer *r)
   }
 }
 
+/* untested */
 void Texture::queryXY(Texture *t)
 {
   int r = SDL_QueryTexture(t->sdltexture, NULL, NULL, &t->w, &t->h);
