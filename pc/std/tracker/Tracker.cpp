@@ -42,7 +42,7 @@ main_window(argc,argv, this)
 
   mousecursors = new MouseCursors;
 
-  update_fps(30);
+  update_fps(60);
 }
 
 Tracker::~Tracker()
@@ -104,6 +104,7 @@ void Tracker::run()
       //DEBUGLOG("duration: %d, remaining: %d\n", frame_tick_duration,
                  //frame_tick_timeout - curticks);
     }
+    //else DEBUGLOG("no time to wait :(\n");
   }
 
   sub_window_experience = NULL;

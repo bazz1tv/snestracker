@@ -81,16 +81,20 @@ struct TextureFrame
 {
   Texture *texture;
   SDL_Point coord; //relative coordinate from mouse
-  int delay; // you can specify a per-frame delay :)
 };
 
 struct TextureAni
 {
   ~TextureAni();
-  bool loaded;
+  //bool loaded;
   int num_frames;
+  int num_sprites;
+  int num_textures;
+  int frametime; // in ms
   Texture *texture; // this will be pluralized
   TextureFrame *frames;
+  Uint32 timeout;
+  //static SDL_Mutex *mutex;
   static int handle_event (const SDL_Event &ev);
   static void stop();
   static void set_ani(TextureAni *b);

@@ -13,6 +13,7 @@ int BmpCursorAni::ani_idx;
 TextureAni * TextureAni::animating, *TextureAni::selected;
 Uint32 TextureAni::timerid;
 int TextureAni::ani_idx;
+//SDL_Mutex *TextureAni::mutex;
 
 /* enum of all cursors, including BMP, and ANImated BMP */
 enum {
@@ -103,6 +104,7 @@ BmpCursorAniFrame::~BmpCursorAniFrame()
 
 BmpCursorAni::~BmpCursorAni()
 {
+  stop();
   delete[] frames;
 }
 
@@ -237,39 +239,101 @@ MouseCursors::MouseCursors()
     { "smrpg-smallcoinani8", 40 },
   };
 
-  mcaa = new TextureAni[2];
+  mcaa = new TextureAni[1];
   TextureAni *mcaap;
   mcaap = &mcaa[0];
-  mcaap->texture = new Texture {
-    "sparkle-big", 5, 5
+  mcaap->num_textures = 3;
+  mcaap->texture = new Texture[mcaap->num_textures] {
+    {"sparkle-big", 5, 5},
+    {"sparkle-med", 3, 3},
+    {"sparkle-small", 1, 1},
   };
   Texture::load_bmp(mcaap->texture, mcaap->texture->filename, ::render->sdlRenderer);
+  Texture::load_bmp(mcaap->texture+1, mcaap->texture->filename, ::render->sdlRenderer);
+  Texture::load_bmp(mcaap->texture+2, mcaap->texture->filename, ::render->sdlRenderer);
 
-  mcaap->num_frames = 16;
-  mcaap->frames = new TextureFrame[mcaap->num_frames]
+  mcaap->num_frames = 15;
+  mcaap->num_sprites = 4;
+  mcaap->frametime = 27;
+  mcaap->frames = new TextureFrame[mcaap->num_sprites * mcaap->num_frames]
   {
-    { mcaap->texture, {0, 0}, 20 },
-    { mcaap->texture, {0, -1}, 20 },
-    { mcaap->texture, {0, -2}, 20 },
-    { mcaap->texture, {0, -3}, 20 },
-    { mcaap->texture, {0, -4}, 20 },
-    { mcaap->texture, {0, -5}, 20 },
-    { mcaap->texture, {0, -6}, 20 },
-    { mcaap->texture, {0, -7}, 20 },
-    { mcaap->texture, {0, -8}, 20 },
-    { mcaap->texture, {0, -7}, 20 },
-    { mcaap->texture, {0, -6}, 20 },
-    { mcaap->texture, {0, -5}, 20 },
-    { mcaap->texture, {0, -4}, 20 },
-    { mcaap->texture, {0, -3}, 20 },
-    { mcaap->texture, {0, -2}, 20 },
-    { mcaap->texture, {0, -1}, 20 },
+      { mcaap->texture, {162, 69}  },
+      { mcaap->texture, {162, 67} },
+      { mcaap->texture, {162, 67} },
+      { mcaap->texture, {162, 70} },
+      { mcaap->texture+1, {169, 67} },
+      { mcaap->texture+1, {169, 67} },
+      { mcaap->texture+1, {170, 70} },
+      { mcaap->texture+1, {170, 69} },
+      { mcaap->texture+2, {172, 74} },
+      { mcaap->texture+2, {172, 74} },
+      { mcaap->texture+2, {173, 80} },
+      { mcaap->texture+2, {173, 80} },
+      { mcaap->texture, {162, 82} },
+      { mcaap->texture, {162, 82} },
+      { mcaap->texture, {162, 82} },
+
+      { mcaap->texture, {159, 68}  },
+      { mcaap->texture, {158, 65} },
+      { mcaap->texture, {158, 65} },
+      { mcaap->texture, {157, 66} },
+      { mcaap->texture+1, {162, 64} },
+      { mcaap->texture+1, {162, 64} },
+      { mcaap->texture+1, {162, 67} },
+      { mcaap->texture+1, {162, 66} },
+      { mcaap->texture+2, {162, 71} },
+      { mcaap->texture+2, {162, 71} },
+      { mcaap->texture+2, {162, 77} },
+      { mcaap->texture+2, {162, 77} },
+      { NULL },
+      { NULL },
+      { NULL },
+
+      { mcaap->texture,   {165, 68}  },
+      { mcaap->texture, {158+8, 65} },
+      { mcaap->texture, {158+8, 65} },
+      { mcaap->texture, {167, 66} },
+      { mcaap->texture+1, {162, 64+8} },
+      { mcaap->texture+1, {162, 64+8} },
+      { mcaap->texture+1, {162, 67+8} },
+      { mcaap->texture+1, {162, 66+8} },
+      { mcaap->texture+2, {162, 71+8} },
+      { mcaap->texture+2, {162, 71+8} },
+      { mcaap->texture+2, {162, 77+8} },
+      { mcaap->texture+2, {162, 77+8} },
+      { NULL },
+      { NULL },
+      { NULL },
+
+      { mcaap->texture, {162, 67} },
+      { mcaap->texture, {162, 63} },
+      { mcaap->texture, {162, 63} },
+      { mcaap->texture, {162, 64} },
+      { mcaap->texture+1, {155, 67} },
+      { mcaap->texture+1, {155, 67} },
+      { mcaap->texture+1, {154, 70} },
+      { mcaap->texture+1, {154, 69} },
+      { mcaap->texture+2, {152, 74} },
+      { mcaap->texture+2, {152, 74} },
+      { mcaap->texture+2, {151, 80} },
+      { mcaap->texture+2, {151, 80} },
+      { NULL },
+      { NULL },
+      { NULL },
   };
+
+  for (int i=0; i < (mcaap->num_sprites * mcaap->num_frames); i++)
+  {
+    mcaap->frames[i].coord.x += -162 - (bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.x / 2) -1;
+    mcaap->frames[i].coord.y += -67 - bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.y;// - 3;
+  }
 
   TextureAni::selected = mcaap;
 
   load_bmp();
   load_ani();
+
+  set_cursor(CURSOR_SMRPG_COIN);
 }
 
 MouseCursors::~MouseCursors() {
@@ -280,8 +344,7 @@ MouseCursors::~MouseCursors() {
       syscursors[i] = NULL;
     }
 
-  BmpCursorAni::stop();
-
+  delete[] mcaa;
   delete[] bca;
   delete[] bci;
   delete[] syscursors;
@@ -424,6 +487,17 @@ int MouseCursors::handle_event(const SDL_Event &ev)
 
 
 //////////////////////// START TEXTUREANI ///////////////////////////////
+TextureAni::~TextureAni()
+{
+  stop();
+  if (texture)
+    delete[] texture;
+  texture = NULL;
+  if (frames)
+    delete[] frames;
+  frames = NULL;
+}
+
 int TextureAni::handle_event(const SDL_Event &ev)
 {
   switch (ev.type)
@@ -434,15 +508,16 @@ int TextureAni::handle_event(const SDL_Event &ev)
         // conditional.
         /* The animation should re-trigger even if already animating.
          * Anything more complex is TOO much. Little by little buddy */
-        set_ani(selected);
+        //if (rand() % 8 == 0)
       } break;
     case SDL_USEREVENT:
       {
         switch (ev.user.code)
         {
-          case UserEvents::mouse_ani_aux:
-            //set_frame((int)ev.user.data1);
-            return 1;
+          case UserEvents::mouse_react:
+            //if (rand() % 4 == 3)
+              set_ani(selected);
+            break;
         }
       } break;
     default:break;
@@ -472,15 +547,16 @@ void TextureAni::set_ani(TextureAni *b)
   // start the first frame
   *aa = b;
 
-  timerid = SDL_AddTimer(b->frames[0].delay,
+  //b->timeout = SDL_GetTicks() + b->frametime;
+  timerid = SDL_AddTimer(b->frametime,
       &update_ani_idx,
       &ani_idx);
-
 }
 
 Uint32 TextureAni::update_ani_idx(Uint32 interval, void *param)
 {
-  assert(animating);
+  if (!animating)
+    return 0;
   int *i = (int *)param;
   *i += 1;
   if (*i >= animating->num_frames)
@@ -488,7 +564,7 @@ Uint32 TextureAni::update_ani_idx(Uint32 interval, void *param)
     stop();
     return 0;
   }
-  return animating->frames[*i].delay;
+  return animating->frametime; //frames[*i].delay;
 }
 
 void TextureAni::draw()
@@ -496,12 +572,30 @@ void TextureAni::draw()
   TextureAni *aa = animating;
   if (aa)
   {
-    SDL_Rect dr {
-      mouse::x + aa->frames[ani_idx].coord.x,
-      mouse::y + aa->frames[ani_idx].coord.y,
-      aa->frames[ani_idx].texture->w, aa->frames[ani_idx].texture->h
-    };
-    SDL_RenderCopy(::render->sdlRenderer, aa->frames[ani_idx].texture->sdltexture, NULL, &dr);
+    /*Uint32 now = SDL_GetTicks();
+    if (SDL_TICKS_PASSED(now, aa->timeout))
+    {
+      ani_idx++;
+      if (ani_idx >= animating->num_frames)
+      {
+        stop();
+        return;
+      }
+
+      aa->timeout = now + aa->frametime;
+    }*/
+    for (int i=0; i < aa->num_sprites; i++)
+    {
+      TextureFrame *tf = &aa->frames[(aa->num_frames * i) + ani_idx];
+      Texture *t = tf->texture;
+      if (!t) continue;
+      SDL_Rect dr {
+        mouse::x + tf->coord.x,
+        mouse::y + tf->coord.y,
+        t->w, t->h
+      };
+      SDL_RenderCopy(::render->sdlRenderer, t->sdltexture, NULL, &dr);
+    }
   }
 }
 ////////////////////////////////////////////////////////////////////
@@ -592,12 +686,3 @@ void Texture::queryXY(Texture *t)
 }
 
 //////////////////////// END TEXTURE CODE ///////////////////////////////
-
-TextureAni::~TextureAni()
-{
-  stop();
-  delete texture;
-  texture = NULL;
-  delete[] frames;
-  frames = NULL;
-}

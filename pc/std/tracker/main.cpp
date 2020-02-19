@@ -4,6 +4,7 @@
 #include "Organization.h"
 
 #include "Render.h"
+#include <time.h>
 
 int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
              SDL_Texture **sdlTexture, SDL_Surface **screen,
@@ -11,6 +12,9 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
 
 int main(int argc, char **argv)
 {
+  time_t t = time(NULL);
+  srand((unsigned int)t);
+
   Render render;
   ::render = &render;
 
@@ -41,7 +45,7 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
 
   *sdlWindow = SDL_CreateWindow("snes tracker", SDL_WINDOWPOS_CENTERED,
                 SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_HIDDEN);
-  *sdlRenderer = SDL_CreateRenderer(*sdlWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  *sdlRenderer = SDL_CreateRenderer(*sdlWindow, -1, SDL_RENDERER_ACCELERATED);// | SDL_RENDERER_PRESENTVSYNC);
 
   if (*sdlWindow == NULL)
   {

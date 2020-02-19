@@ -4,6 +4,7 @@
 
 namespace Utility
 {
+  extern int random(int min, int max);
 
 SDL_Texture *load_texture_bmp( const char *path, SDL_Renderer *r )
 {

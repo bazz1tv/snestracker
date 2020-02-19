@@ -7,7 +7,6 @@ namespace UserEvents
   {
     #include "sdl_dblclick_events.enum"
     mouse_ani,
-    mouse_ani_aux,
 
     play_pitch,
     keyoff,

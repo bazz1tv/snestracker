@@ -8,6 +8,7 @@
 
 namespace Utility
 {
+  inline int random(int min, int max) {  return rand() % (max - min + 1) + min; }
   SDL_Texture *load_texture_bmp( const char *path, SDL_Renderer *r );
 
   char nibble_to_ascii(uint8_t nibble);
