@@ -1,7 +1,7 @@
 #pragma once
 #include "DEBUGLOG.h"
 #include "SDL.h"
-
+#include "shared/Texture.h"
 /////////////////////////////////////////////////////////////////////////
 struct BmpCursor
 {
@@ -58,45 +58,6 @@ private:
 };
 /////////////////////////////////////////////////////////////////////////
 
-/* An animation might require a collection of animations to occur
- * simultaneously. In this case we need to rethink the system. But for
- * now, let's just get one animation working. To get multiple working, we
- * can make a lot of those static variable instance variables, and have
- * those particularly instance-useful static functions take class object
- * as an argument, or just make it an instance function, duh */
-
-struct Texture
-{
-  //Texture();
-  ~Texture();
-  static void load_bmp(Texture *t, const char *filename, SDL_Renderer *r);
-  // you may optionally query the width and height from SDL
-  static void queryXY(Texture *t);
-
-  const char *filename; // no extension, e.g "filename"
-  int w,h;
-  SDL_Surface *surface; // keep the surface just in case
-  SDL_Texture *sdltexture;
-};
-
-struct TextureFrame
-{
-  Texture *texture;
-  SDL_Point coord; //relative coordinate from mouse
-};
-
-struct TextureAni
-{
-  ~TextureAni();
-  //bool loaded;
-  int num_frames;
-  int num_sprites;
-  int num_textures;
-  int frametime; // in ms
-  Texture *texture; // this will be pluralized
-  TextureFrame *frames;
-};
-
 struct MouseTextureAni : public TextureAni
 {
   ~MouseTextureAni();
@@ -136,7 +97,7 @@ struct MouseCursors
   BmpCursor *bci;
   BmpCursorAni *bca;
 
-  TextureAni *mcaa;
+  MouseTextureAni *mcaa;
 
 private:
   void load_bmp();
