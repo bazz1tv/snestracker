@@ -1,20 +1,14 @@
 #pragma once
 #include "DEBUGLOG.h"
 #include "SDL.h"
+#include "colorkey.h"
 #include "shared/Texture.h"
 /////////////////////////////////////////////////////////////////////////
 struct BmpCursor
 {
   ~BmpCursor();
-  union {
-    Uint32 rgb;
-    struct {
-      Uint8 r;
-      Uint8 g;
-      Uint8 b;
-    } __attribute__((packed));
-  } colorkey;
- SDL_Point hotspot;
+  Colorkey colorkey;
+  SDL_Point hotspot;
   const char *filename;
   SDL_Surface *surface;
   SDL_Cursor *cursor;
@@ -24,14 +18,7 @@ struct BmpCursor
 struct BmpCursorAniFrame
 {
   ~BmpCursorAniFrame();
-  union {
-    Uint32 rgb;
-    struct {
-      Uint8 r;
-      Uint8 g;
-      Uint8 b;
-    } __attribute__((packed));
-  } colorkey;
+  Colorkey colorkey;
 const char *filename;
   int delay; // you can specify a per-frame delay :)
   SDL_Surface *surface;

@@ -1,5 +1,6 @@
 #pragma once
 #include "SDL.h"
+#include "colorkey.h"
 
 struct Texture
 {
@@ -9,15 +10,9 @@ struct Texture
   // you may optionally query the width and height from SDL
   static void queryXY(Texture *t);
 
+  Colorkey colorkey;
+
   const char *filename; // no extension, e.g "filename"
-  union {
-    Uint32 rgb;
-    struct {
-      Uint8 r;
-      Uint8 g;
-      Uint8 b;
-    } __attribute__((packed));
-  } colorkey;
   int w,h;
   SDL_Surface *surface; // keep the surface just in case
   SDL_Texture *sdltexture;
