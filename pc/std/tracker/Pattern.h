@@ -64,7 +64,7 @@ struct PatternRow // defines one row of Pattern Data
   Note note;
   int instr; /* an index into the instruments table. But how will we 
   get the handle on it?*/
-  int vol_fx; /* primarily volume. note that this column may also be used for effects.
+  int vol; /* primarily volume. note that this column may also be used for effects.
   Maybe it should be called col1 or something?*/
   int fx, fx_param;
   /* It is possible SNES Tracker will deviate from traditional tracker
@@ -146,12 +146,38 @@ struct PatSeqPanel // PatternSequencerPanel
   PatternSequencer *patseq;
 };
 
-struct PatternPanel
+struct PatternEditorPanel
 {
-  static const int VISIBLE_ROWS = 0x20; // temp value to get started
-  int currow = 0;
-  char index_strings[VISIBLE_ROWS][3];
+  PatternEditorPanel(PatternSequencer *patseq);
+  ~PatternEditorPanel();
+
+  void set_coords(int x, int y);
+  int event_handler(const SDL_Event &ev);
+  void one_time_draw(SDL_Surface *screen=::render->screen);
+  void draw(SDL_Surface *screen=::render->screen);
+
+  static const int VISIBLE_ROWS = 0x20;
+  int currow = 0; /* This is not only controlled by the user, but also by
+  the playback engine. At least that's the plan. */
+
+  int rows_scrolled = 0;
   SDL_Rect rect;
-  SDL_Rect highlight_r;
-  // Lots of clickable text
+  SDL_Rect highlight_r; // the highlight rect of current select instr
+
+  Clickable_Text track_headers[MAX_TRACKS];
+  char track_header_strings[MAX_TRACKS][sizeof("   1   ")];
+  Text index_text[VISIBLE_ROWS];
+  char index_strings[MAX_PATTERN_LEN][4]; // eg "00|\0"
+  Clickable_Text note_ctext;
+  char note_strings[MAX_PATTERN_LEN][sizeof("C-4")];
+  Clickable_Text instr_ctext;
+  char instr_strings[MAX_PATTERN_LEN][sizeof("0f")];
+  Clickable_Text vol_ctext;
+  char vol_strings[MAX_PATTERN_LEN][sizeof("0f")];
+  Clickable_Text fx_ctext;
+  char fx_strings[MAX_PATTERN_LEN][sizeof("0")];
+  Clickable_Text fxparam_ctext;
+  char fxparam_strings[MAX_PATTERN_LEN][sizeof("00")];
+
+  PatternSequencer *patseq;
 };
