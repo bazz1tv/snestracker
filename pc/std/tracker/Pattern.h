@@ -4,6 +4,7 @@
 #include "gui/Text.h"
 #include "gui/Clickable_Text.h"
 #include "gui/Button.h"
+#include <vector>
 /* When a new Song is created. we need to perform a minimal SPC emulator
  * init and load the driver into SPC RAM. Then the user must be able to
  * get their BRR samples into the song. Then edit pattern data. Then play
@@ -18,6 +19,8 @@
  * The Pattern represents each unique pattern data
  * of the song; The main composing area where notes and effects are
  * specified.*/
+
+
 #define n(n,o) NOTE_ ## n ## o
 #define no(o) \
   n(C, o), \
@@ -36,7 +39,11 @@ enum Note
 {
   // SNES can go quite low (but with tremendously reduced accuracy),
   // might have to translate base octave higher. need to test if that's
-  // useful
+  // useful. After having done some testing, it won't be useful to have a
+  // note table lower than 4 octaves below base. Later I will code in a
+  // pitch envelope to have fun with all kinds of pitches in the entire
+  // pitch range.
+    no(0),
     no(1),
     no(2),
     no(3),
@@ -67,12 +74,22 @@ struct PatternRow // defines one row of Pattern Data
 #define MAX_TRACKS 8
 #define MAX_PATTERNS 0x80
 #define MAX_PATTERN_LEN 0x100
+#define DEFAULT_PATTERN_LEN 0x20
+
+struct Pattern
+{
+  int used = 0; // number of sequence entries this pattern is in
+  int len = DEFAULT_PATTERN_LEN;
+  PatternRow trackrows[MAX_TRACKS][MAX_PATTERN_LEN];
+};
 
 struct PatternSequencer
 {
-  int num_entries = 1;
-  int sequence[MAX_PATTERNS]; // sequence of patterns defining the song
-  PatternRow tprows[MAX_TRACKS][MAX_PATTERNS][MAX_PATTERN_LEN];
+  PatternSequencer();
+  int num_entries = 1; // how many entries are in the sequencer
+  std::vector<int> sequence; // sequence of patterns defining the song
+
+  Pattern patterns[MAX_PATTERNS];
   // track-pattern rows. Like many other data types I have conjured, they
   // will need to later be converted to types that dynamically allocate
   // space. Or allocate max'es every time like is done now.
@@ -109,10 +126,13 @@ struct PatSeqPanel // PatternSequencerPanel
   the playback engine. At least that's the plan. */
 
   Button clonebtn, seqbtn, clearbtn;
+  Button incpatbtn, decpatbtn;
   // callback funcs for the buttons
   static int clone(void *pspanel);
   static int seq(void *pspanel);
   static int clear(void *pspanel);
+  static int incpat(void *pspanel);
+  static int decpat(void *pspanel);
 
   Text index_text[VISIBLE_ROWS];
   char index_strings[VISIBLE_ROWS][4];

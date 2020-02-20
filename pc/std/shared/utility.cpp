@@ -28,9 +28,10 @@ SDL_Texture *load_texture_bmp( const char *path, SDL_Renderer *r )
 }
 char nibble_to_ascii(uint8_t nibble)
 {
-  if ( ((nibble) & 0x0f) < 0x0a )
+  nibble &= 0x0f;
+  if ( nibble < 0x0a )
     return '0' + nibble;
-  return 'a' + (nibble - 0x0a);
+  return 'A' + (nibble - 0x0a);
 }
 
 void DrawRect(const SDL_Rect *r, int thickness/*=1*/,
