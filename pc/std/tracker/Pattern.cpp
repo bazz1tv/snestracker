@@ -43,11 +43,11 @@ void PatSeqPanel::set_coords(int x, int y)
   clonebtn.rect.x = x;
   clonebtn.rect.y = y;
 
-  x += clonebtn.rect.w + (2*CHAR_WIDTH);
+  x += clonebtn.rect.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
   seqbtn.rect.x = x;
   seqbtn.rect.y = y;
 
-  x += seqbtn.rect.w + (2*CHAR_WIDTH);
+  x += seqbtn.rect.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
   clearbtn.rect.x = x;
   clearbtn.rect.y = y;
 
@@ -86,7 +86,7 @@ void PatSeqPanel::set_coords(int x, int y)
   rect.h = (CHAR_HEIGHT * (VISIBLE_ROWS)) + 1;
 
   // put the inc/dec pat buttons to the right of the rect.
-  incpatbtn.rect.x = rect.x + rect.w + CHAR_WIDTH;
+  incpatbtn.rect.x = rect.x + rect.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
   incpatbtn.rect.y = rect.y + 4;
   decpatbtn.rect.x = incpatbtn.rect.x + incpatbtn.rect.w + 5;
   decpatbtn.rect.y = incpatbtn.rect.y;// + CHAR_HEIGHT;
