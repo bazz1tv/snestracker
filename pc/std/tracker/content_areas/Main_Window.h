@@ -83,5 +83,5 @@ struct Main_Window : public Experience
   Tracker *tracker;
   Instrument_Panel instrpanel;
   Sample_Panel samplepanel;
-  //PatSeqPanel patseqpanel;
+  PatSeqPanel patseqpanel;
 };

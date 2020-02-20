@@ -18,7 +18,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_title(22, song_title_str, sizeof(song_title_str)),
   tracker(tracker),
   instrpanel(tracker->instruments),
-  samplepanel(&instrpanel)
+  samplepanel(&instrpanel),
+  patseqpanel(&tracker->patseq)
 {
   int x,y,xx,yy;
   song_title.dblclick = false; // do not require dblclick to edit. single
@@ -34,7 +35,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   x = xx = 10; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
   y = yy = 50;
 
-  //patseqpanel.set_coords(x, y);
+  patseqpanel.set_coords(x, y);
   x = 150;
 
   song_title_label.rect.x = x;
@@ -74,6 +75,7 @@ void Main_Window::one_time_draw()
 
   instrpanel.one_time_draw();
   samplepanel.one_time_draw();
+  patseqpanel.one_time_draw();
 }
 
 void Main_Window::draw()
@@ -91,10 +93,7 @@ void Main_Window::draw()
     song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
     instrpanel.draw(::render->screen);
     samplepanel.draw(::render->screen);
-    SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
-    SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
-    SDL_RenderClear(::render->sdlRenderer);
-    SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
+    patseqpanel.draw(::render->screen);
     //draw_memory_outline();
     return; 
   }  
@@ -104,10 +103,6 @@ void Main_Window::draw()
   draw_main_volume();
   draw_echo_volume();
 
-  SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
-  SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
-  SDL_RenderClear(::render->sdlRenderer);
-  SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
   // stuff that renders direct to renderer must happen after the ::render->screen copy
   draw_memory_outline();
 
@@ -141,7 +136,7 @@ int Main_Window::receive_event(SDL_Event &ev)
   handle_text_edit_rect_event(ev, &song_title);
   instrpanel.event_handler(ev);
   samplepanel.event_handler(ev);
-
+  patseqpanel.event_handler(ev);
   // DIRTY :( ITS IMPORTANT THAT WE CHECK THE DBLCLICK EVENTS AFTER THE ABOVE
   dblclick::check_event(&ev);
   /*if (gain.slider)

@@ -72,8 +72,6 @@ void Tracker::run()
   {
     frame_tick_timeout = SDL_GetTicks() + frame_tick_duration;
 
-    menu_bar.draw(::render->screen);
-  
     cur_exp->run();
     cur_exp->draw();
 
@@ -83,7 +81,13 @@ void Tracker::run()
       sub_window_experience->draw();
     }
 
-    // Optionally, let's draw on top of EVERYTHING ELSE, any auxiliary
+    menu_bar.draw(::render->screen);
+
+    SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
+    SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
+    SDL_RenderClear(::render->sdlRenderer);
+    SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
+// Optionally, let's draw on top of EVERYTHING ELSE, any auxiliary
     // mouse FX
     mousecursors->draw_aux();
 
@@ -362,7 +366,8 @@ void Tracker::handle_events()
 
     mousecursors->handle_event(ev);
 
-    menu_bar.receive_event(ev);
+    if (menu_bar.receive_event(ev))
+      continue;
  
     if (sub_window_experience)
     {

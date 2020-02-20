@@ -39,7 +39,7 @@ void Instrument_Panel::set_coords(int x, int y)
   title.rect.x = x;
   title.rect.y = y;
 
-  y += CHAR_WIDTH + (CHAR_WIDTH / 2);
+  y += CHAR_HEIGHT + (CHAR_HEIGHT / 2);
 
   rect.x = x - 2; /* All rect.* are creating the bounding rect to be drawn
   around the instruments list (not the buttons or main label. Unfortunately the

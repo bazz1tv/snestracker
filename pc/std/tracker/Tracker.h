@@ -45,9 +45,11 @@ public:
   Uint32 frame_tick_timeout, frame_tick_duration;
   ///Uint32 gframe = 0; // should worry about overflow
 
-  // TRACKER CORE
+  /* TRACKER CORE -- Here is located the "model" data structures, not GUI
+   * */
   Instrument instruments[NUM_INSTR]; // also holds the samples
   // Of course Pattern datatype will be going here. Perhaps just like
   // there are Samples as part of Instruments, Patterns will be part of
   // PatternSequencer
+  PatternSequencer patseq;
 };

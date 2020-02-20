@@ -19,6 +19,7 @@ void panel_clear_row(Text_Edit_Rect *ters, int row, SDL_Surface *screen)
 }
 
 extern void conv_idx2ascii(int i, char **c);
+extern void conv_idx2ascii2(int i, char **c);
 
 int mousewheel_rows_event_handler(const SDL_Event &ev, int *rows_scrolled,
     int visible_rows, int total_rows, SDL_Rect *rect)
@@ -29,22 +30,17 @@ int mousewheel_rows_event_handler(const SDL_Event &ev, int *rows_scrolled,
       {
         if (Utility::coord_is_in_rect(mouse::x, mouse::y, rect))
         {
-          /*int sign = (ev.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) ? 1 : -1;
-            int val;
-            if (ev.wheel.y > 0)
-            val = 1 * sign;
-            else if (ev.wheel.y < 0)
-            val = -1 * sign;
-            else // == 0
-            val = 0;*/
+          int tmp = (total_rows - visible_rows);
+          if (tmp < 0)
+            tmp = 0;
 
           *rows_scrolled += (ev.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) ?
             ev.wheel.y : -ev.wheel.y;
           //fprintf(stderr,"val = %d; ", val); //rows_scrolled);
           if (*rows_scrolled < 0)
             *rows_scrolled = 0;
-          else if (*rows_scrolled >= (total_rows - visible_rows))
-            *rows_scrolled = total_rows - visible_rows;
+          else if (*rows_scrolled > tmp)
+            *rows_scrolled = tmp;
 
           return 1;
         }

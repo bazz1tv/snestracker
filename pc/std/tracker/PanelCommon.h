@@ -15,6 +15,14 @@ inline void conv_idx2ascii(int i, char *c)
   *(c++) = 0;
 }
 
+inline void conv_idx2ascii2(int i, char *c)
+{
+  // convert index to ascii
+  *(c++) = Utility::nibble_to_ascii(i >> 4);
+  *(c++) = Utility::nibble_to_ascii(i);
+  *(c++) = 0;
+}
+
 int mousewheel_rows_event_handler(const SDL_Event &ev, int *rows_scrolled,
     int visible_rows, int total_rows, SDL_Rect *rect);
 
