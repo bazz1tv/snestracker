@@ -620,7 +620,7 @@ void Dsp_Window::run()
     /* The only time the below is 0x100 is when the right-side rows
      * reference 0x00. But the calculations below continue to offset from
      * fakerow, so we need to negatively account for that to get to 0x00
-     * again.
+     * again.*/
     if (fakerow+dir_offset == 0x100)
       dir_index = 0 - (fakerow*2);
 
