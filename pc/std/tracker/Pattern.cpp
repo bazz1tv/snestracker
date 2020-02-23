@@ -797,22 +797,48 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
         Colors::Interface::color[Colors::Interface::Type::text_fg], false);
     Utility::DrawRect(&trackheader[t].outline, 1);
 
-    for (int i=0; i < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); i++)
+    for (int r=0; r < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); r++)
     {
-      index_text[i].str = index_strings[rows_scrolled + i];
-      index_text[i].draw(screen,
+      index_text[r].str = index_strings[rows_scrolled + r];
+      index_text[r].draw(screen,
           Colors::Interface::color[Colors::Interface::Type::text_fg],
           false);
 
-      gtr->note_ctext[i].draw(
+      PatternRow *patrow = &pat->trackrows[t][r];
+      Clickable_Text *ctext;
+      char *string;
+
+      //--------------------------------------------------
+      ctext  = &gtr->note_ctext[r];
+      string = gtr->note_strings[r];
+      note2ascii(patrow->note, string);
+      //--------------------------------------------------
+      ctext  = &gtr->instr_ctext[r];
+      string = gtr->instr_strings[r];
+      instr2ascii(patrow->instr, string);
+      //--------------------------------------------------
+      ctext  = &gtr->vol_ctext[r];
+      string = gtr->vol_strings[r];
+      vol2ascii(patrow->vol, string);
+      //--------------------------------------------------
+      ctext  = &gtr->fx_ctext[r];
+      string = gtr->fx_strings[r];
+      fx2ascii(patrow->fx, string);
+      //--------------------------------------------------
+      ctext  = &gtr->fxparam_ctext[r];
+      string = gtr->fxparam_strings[r];
+      fxparam2ascii(patrow->fx, patrow->fxparam, string);
+      //--------------------------------------------------
+
+      gtr->note_ctext[r].draw(
         Colors::Interface::color[Colors::Interface::Type::note], false);
-      gtr->instr_ctext[i].draw(
+      gtr->instr_ctext[r].draw(
         Colors::Interface::color[Colors::Interface::Type::instr], false);
-      gtr->vol_ctext[i].draw(
+      gtr->vol_ctext[r].draw(
         Colors::Interface::color[Colors::Interface::Type::vol], false);
-      gtr->fx_ctext[i].draw(
+      gtr->fx_ctext[r].draw(
         Colors::Interface::color[Colors::Interface::Type::fx], false);
-      gtr->fxparam_ctext[i].draw(
+      gtr->fxparam_ctext[r].draw(
         Colors::Interface::color[Colors::Interface::Type::fxparam], false);
     }
   }
