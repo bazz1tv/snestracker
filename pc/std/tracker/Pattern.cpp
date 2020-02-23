@@ -411,10 +411,10 @@ inline static void fxparam2ascii(int fx, int fxparam, char *c)
   }
 }
 
-inline static void fx2ascii(int fx, char *c)
+inline static void fx2ascii(int fx, int fxparam, char *c)
 {
   c[1] = 0;
-  if (fx == 0)
+  if (fx == 0 && fxparam == 0)
   {
     c[0] = FONT_CENTERDOT_CHAR; //'.';
   }
@@ -424,14 +424,14 @@ inline static void fx2ascii(int fx, char *c)
 
 inline static void vol2ascii(int vol, char *c)
 {
-  if (vol < 0x10)
+  if (vol == 0)//< 0x10)
   {
     *(c++) = FONT_CENTERDOT_CHAR; //'.';
     *(c++) = FONT_CENTERDOT_CHAR; //'.';
     *(c++) = 0;
   }
-  else if (vol >= 0x10 && vol <= 0x50)
-    conv_idx2ascii2(vol - 0x10, c);
+  else if (vol >= 0x1 && vol <= 0x7f)
+    conv_idx2ascii2(vol, c);
 }
 
 inline static void instr2ascii(int instr, char *c)
@@ -637,7 +637,7 @@ void PatternEditorPanel::set_coords(int x, int y)
         string = gtr->fx_strings[r];
 
         // what can be used as the default volume value?
-        fx2ascii(patrow->fx, string);
+        fx2ascii(patrow->fx, patrow->fxparam, string);
 
         ctext->str = string;
         ctext->rect = {
@@ -685,18 +685,18 @@ static Pattern * get_current_pattern(PatSeqPanel *psp)
   return &psp->patseq->patterns[psp->patseq->sequence[psp->currow]];
 }
 
-static void helper(int ndex, PatternEditorPanel *pep)
+void PatternEditorPanel::notehelper(int ndex)
 {
-  Pattern *pat = get_current_pattern(pep->psp);
-  PatternRow *pw = &pat->trackrows[pep->cur_track][pep->currow];
-  int n = NOTE_C0 + ndex + (pep->cur_octave * 12);
+  Pattern *pat = get_current_pattern(psp);
+  PatternRow *pw = &pat->trackrows[cur_track][currow];
+  int n = NOTE_C0 + ndex + (cur_octave * 12);
   if (n <= NOTE_C6)
   {
-    if (pep->recording)
+    if (recording)
     {
       pw->note = n;
       note2ascii(pw->note,
-        pep->guitrackrow[pep->cur_track].note_strings[pep->currow]);
+        guitrackrow[cur_track].note_strings[currow]);
     }
     else
     {
@@ -704,6 +704,110 @@ static void helper(int ndex, PatternEditorPanel *pep)
        * window */
     }
   }
+}
+
+void PatternEditorPanel::instrhelper(int n)
+{
+  Pattern *pat = get_current_pattern(psp);
+  PatternRow *pw = &pat->trackrows[cur_track][currow];
+
+  if (n < 0)
+    return;
+
+  if (highlighted_subsection != INSTR_HI && highlighted_subsection != INSTR_LO)
+  {
+    DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
+        __LINE__, __FILE__, __func__);
+    return;
+  }
+
+  if (highlighted_subsection == INSTR_HI)
+  {
+    pw->instr &= 0x0f;
+    pw->instr |= (n << 4);
+  }
+  else
+  {
+    pw->instr &= 0xf0;
+    pw->instr |= n & 0x0f;
+  }
+  instr2ascii(pw->note, guitrackrow[cur_track].instr_strings[currow]);
+}
+
+void PatternEditorPanel::volhelper(int n)
+{
+  Pattern *pat = get_current_pattern(psp);
+  PatternRow *pw = &pat->trackrows[cur_track][currow];
+
+  if (n < 0)
+    return;
+
+  if (highlighted_subsection != VOL_HI && highlighted_subsection != VOL_LO)
+  {
+    DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
+        __LINE__, __FILE__, __func__);
+    return;
+  }
+
+  if (highlighted_subsection == VOL_HI)
+  {
+    pw->vol &= 0x0f;
+    pw->vol |= (n << 4);
+  }
+  else
+  {
+    pw->vol &= 0xf0;
+    pw->vol |= n & 0x0f;
+  }
+  vol2ascii(pw->vol, guitrackrow[cur_track].vol_strings[currow]);
+}
+
+void PatternEditorPanel::fxhelper(int n)
+{
+  Pattern *pat = get_current_pattern(psp);
+  PatternRow *pw = &pat->trackrows[cur_track][currow];
+
+  if (n < 0)
+    return;
+
+  if (highlighted_subsection != FX)
+  {
+    DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
+        __LINE__, __FILE__, __func__);
+    return;
+  }
+
+  pw->fx = n;
+
+  fx2ascii(pw->fx, pw->fxparam, guitrackrow[cur_track].fx_strings[currow]);
+}
+
+void PatternEditorPanel::fxparamhelper(int n)
+{
+  Pattern *pat = get_current_pattern(psp);
+  PatternRow *pw = &pat->trackrows[cur_track][currow];
+
+  if (n < 0)
+    return;
+
+  if (highlighted_subsection != FXPARAM_HI && highlighted_subsection != FXPARAM_LO)
+  {
+    DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
+        __LINE__, __FILE__, __func__);
+    return;
+  }
+
+  if (highlighted_subsection == FXPARAM_HI)
+  {
+    pw->fxparam &= 0x0f;
+    pw->fxparam |= (n << 4);
+  }
+  else
+  {
+    pw->fxparam &= 0xf0;
+    pw->fxparam |= n & 0x0f;
+  }
+  fxparam2ascii(pw->fx, pw->fxparam, guitrackrow[cur_track].fxparam_strings[currow]);
 }
 
 void PatternEditorPanel::inc_curtrack()
@@ -825,284 +929,365 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
         int scancode = ev.key.keysym.sym;
         int mod = ev.key.keysym.mod;
 
-
-        switch(scancode)
+        events_kb_universal(scancode, mod);
+        if (!recording)
+          piano_kb(scancode, mod);
+        else
         {
-          case SDLK_PAGEUP:
-            if (currow >= 16)
-            {
-              int val = ((currow - rows_scrolled) % VISIBLE_ROWS);
-
-              currow -= 16;
-              rows_scrolled -= (VISIBLE_ROWS-1) - val >= (VISIBLE_ROWS-16) ? : 0;
-            }
-            else
-            {
-              currow = 0;
-              rows_scrolled = 0;
-            }
-          break;
-          case SDLK_PAGEDOWN:
-          {
-            int len = get_current_pattern(psp)->len;
-            int sublen = len - 1 - 16;
-            if (sublen < 0) sublen = 0;
-            if (currow < sublen)
-            {
-              int val = ((currow - rows_scrolled) % VISIBLE_ROWS);
-              rows_scrolled += VISIBLE_ROWS - val <= 16 ? : 0;
-
-              currow += 16;
-            }
-            else
-            {
-              currow = len - 1;
-              rows_scrolled = currow - (VISIBLE_ROWS-1);
-            }
-          }
-          break;
-          case SDLK_HOME:
-            currow = 0;
-            rows_scrolled = 0;
-          break;
-          case SDLK_END:
-            currow = get_current_pattern(psp)->len - 1;
-            rows_scrolled = currow - (VISIBLE_ROWS-1);
-          break;
-          case SDLK_UP:
-            if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
-              break;
-            if (currow > 0)
-            {
-              if ((currow - rows_scrolled) % VISIBLE_ROWS == 0)
-                rows_scrolled--;
-              currow--;
-            }
-            else
-            {
-              currow = get_current_pattern(psp)->len - 1;
-              rows_scrolled = currow - (VISIBLE_ROWS-1);
-            }
-          break;
-          case SDLK_DOWN:
-          {
-            if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
-              break;
-            if (currow < (get_current_pattern(psp)->len - 1))
-            {
-              if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
-                rows_scrolled++;
-              currow++;
-            }
-            else
-            {
-              currow = 0;
-              rows_scrolled = 0;
-            }
-          } break;
-          case SDLK_LEFT:
-          if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
-            break;
-          if (highlighted_subsection > 0)
-            highlighted_subsection--;
-          else
-          {
-            dec_curtrack();
-            highlighted_subsection = FXPARAM_LO;
-          }
-          break;
-          case SDLK_RIGHT:
-          {
-            if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
-              break;
-            if (highlighted_subsection < FXPARAM_LO)
-              highlighted_subsection++;
-            else
-            {
-              inc_curtrack();
-              highlighted_subsection = NOTE;
-            }
-          } break;
-          case SDLK_SPACE:
-            if (!(mod & KMOD_SHIFT) && !(mod & KMOD_CTRL))
-            {
-              recording = !recording;
-              mousecursors->set_cursor(CURSOR_MPAINT_WHITE_HAND - recording);
-            }
-          break;
-          case SDLK_TAB:
-          {
-            if (mod & KMOD_SHIFT)
-              dec_curtrack();
-            else
-              inc_curtrack();
-          } break;
-          case SDLK_F1:
-            cur_octave = 0;
-          break;
-          case SDLK_F2:
-            cur_octave = 1;
-          break;
-          case SDLK_F3:
-          cur_octave = 2;
-          break;
-          case SDLK_F4:
-          cur_octave = 3;
-          break;
-          case SDLK_F5:
-          cur_octave = 4;
-          break;
-          case SDLK_F6:
-          cur_octave = 5;
-          break;
-          case SDLK_z:
-          {
-            helper(0, this);
-          } break;
-          case SDLK_s:
-          {
-            helper(1, this);
-          } break;
-          case SDLK_x:
-          {
-            helper(2, this);
-          } break;
-          case SDLK_d: /*marked */
-          {
-            helper(3, this);
-          } break;
-          case SDLK_c: /*marked */
-          {
-            helper(4, this);
-          } break;
-          case SDLK_v:
-          {
-            helper(5, this);
-          } break;
-          case SDLK_g:
-          {
-            helper(6, this);
-          } break;
-          case SDLK_b: /*marked */
-          {
-            helper(7, this);
-          } break;
-          case SDLK_h:
-          {
-            helper(8, this);
-          } break;
-          case SDLK_n:
-          {
-            helper(9, this);
-          } break;
-          case SDLK_j:
-          {
-            helper(10, this);
-          } break;
-          case SDLK_m:
-          {
-            helper(11, this);
-          } break;
-          case SDLK_COMMA:
-          {
-            helper(12, this);
-          } break;
-          case SDLK_l:
-            helper(13, this);
-          break;
-          case SDLK_PERIOD:
-            helper(14, this);
-          break;
-          case SDLK_SEMICOLON:
-            helper(15, this);
-          break;
-          case SDLK_SLASH:
-            helper(16, this);
-          break;
-          case SDLK_q:
-          {
-            helper(12, this);
-          } break;
-          case SDLK_2: /*marked */
-          {
-            helper(13, this);
-          } break;
-          case SDLK_w:
-          {
-            helper(14, this);
-          } break;
-          case SDLK_3: /*marked */
-          {
-            helper(15, this);
-          } break;
-          case SDLK_e: /*marked */
-          {
-            helper(16, this);
-          } break;
-          case SDLK_r:
-          {
-            helper(17, this);
-          } break;
-          case SDLK_5: /*marked */
-          {
-            helper(18, this);
-          } break;
-          case SDLK_t:
-          {
-            helper(19, this);
-          } break;
-          case SDLK_6: /*marked */
-          {
-            helper(20, this);
-          } break;
-          case SDLK_y:
-          {
-            helper(21, this);
-          } break;
-          case SDLK_7: /*marked */
-          {
-            helper(22, this);
-          } break;
-          case SDLK_u:
-          {
-            helper(23, this);
-          } break;
-          case SDLK_i:
-          {
-            helper(24, this);
-          } break;
-          case SDLK_9: /*marked */
-          {
-            helper(25, this);
-          } break;
-          case SDLK_o:
-          {
-            helper(26, this);
-          } break;
-          case SDLK_0: /*marked */
-          {
-            helper(27, this);
-          } break;
-          case SDLK_p:
-          {
-            helper(28, this);
-          } break;
-          case SDLK_LEFTBRACKET:
-          {
-            helper(29, this);
-          } break;
-          case SDLK_EQUALS:
-          {
-            helper(30, this);
-          } break;
-          case SDLK_RIGHTBRACKET:
-          {
-            helper(31, this);
-          } break;
-
-          default:break;
+          // we are recording, a lot depends on what subhighlight we have
+          recording_kb(scancode, mod);
         }
+
       } break;
+    default:break;
+  }
+}
+
+#define q(n) case SDLK_ ## n : \
+  return 0x##n;
+
+static int gethexkb(const int scancode, const int mod)
+{
+  if (mod)
+    return -1;
+
+  switch (scancode)
+  {
+    q(0);
+    q(1);
+    q(2);
+    q(3);
+    q(4);
+    q(5);
+    q(6);
+    q(7);
+    q(8);
+    q(9);
+    q(a);
+    q(b);
+    q(c);
+    q(d);
+    q(e);
+    q(f);
+    default:
+    return -1;
+  }
+}
+#undef q
+
+void PatternEditorPanel::recording_kb(const int scancode, const int mod)
+{
+  switch(highlighted_subsection)
+  {
+    case NOTE:
+      piano_kb(scancode, mod);
+    break;
+    case INSTR_HI:
+    case INSTR_LO:
+      instrhelper(gethexkb(scancode, mod));
+    break;
+    case VOL_HI:
+    case VOL_LO:
+      volhelper(gethexkb(scancode, mod));
+    break;
+    case FX:
+      fxhelper(gethexkb(scancode, mod));
+    break;
+    case FXPARAM_HI:
+    case FXPARAM_LO:
+      fxparamhelper(gethexkb(scancode, mod));
+    break;
+    default:
+      DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
+                __LINE__, __FILE__, __func__);
+    break;
+  }
+}
+
+void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
+{
+  switch(scancode)
+  {
+    case SDLK_PAGEUP:
+      if (currow >= 16)
+      {
+        int val = ((currow - rows_scrolled) % VISIBLE_ROWS);
+
+        currow -= 16;
+        rows_scrolled -= (VISIBLE_ROWS-1) - val >= (VISIBLE_ROWS-16) ? : 0;
+      }
+      else
+      {
+        currow = 0;
+        rows_scrolled = 0;
+      }
+    break;
+    case SDLK_PAGEDOWN:
+    {
+      int len = get_current_pattern(psp)->len;
+      int sublen = len - 1 - 16;
+      if (sublen < 0) sublen = 0;
+      if (currow < sublen)
+      {
+        int val = ((currow - rows_scrolled) % VISIBLE_ROWS);
+        rows_scrolled += VISIBLE_ROWS - val <= 16 ? : 0;
+
+        currow += 16;
+      }
+      else
+      {
+        currow = len - 1;
+        rows_scrolled = currow - (VISIBLE_ROWS-1);
+      }
+    }
+    break;
+    case SDLK_HOME:
+      currow = 0;
+      rows_scrolled = 0;
+    break;
+    case SDLK_END:
+      currow = get_current_pattern(psp)->len - 1;
+      rows_scrolled = currow - (VISIBLE_ROWS-1);
+    break;
+    case SDLK_UP:
+      if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+        break;
+      if (currow > 0)
+      {
+        if ((currow - rows_scrolled) % VISIBLE_ROWS == 0)
+          rows_scrolled--;
+        currow--;
+      }
+      else
+      {
+        currow = get_current_pattern(psp)->len - 1;
+        rows_scrolled = currow - (VISIBLE_ROWS-1);
+      }
+    break;
+    case SDLK_DOWN:
+    {
+      if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+        break;
+      if (currow < (get_current_pattern(psp)->len - 1))
+      {
+        if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
+          rows_scrolled++;
+        currow++;
+      }
+      else
+      {
+        currow = 0;
+        rows_scrolled = 0;
+      }
+    } break;
+    case SDLK_LEFT:
+    if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+      break;
+    if (highlighted_subsection > 0)
+      highlighted_subsection--;
+    else
+    {
+      dec_curtrack();
+      highlighted_subsection = FXPARAM_LO;
+    }
+    break;
+    case SDLK_RIGHT:
+    {
+      if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+        break;
+      if (highlighted_subsection < FXPARAM_LO)
+        highlighted_subsection++;
+      else
+      {
+        inc_curtrack();
+        highlighted_subsection = NOTE;
+      }
+    } break;
+    case SDLK_SPACE:
+      if (!(mod & KMOD_SHIFT) && !(mod & KMOD_CTRL))
+      {
+        recording = !recording;
+        mousecursors->set_cursor(CURSOR_MPAINT_WHITE_HAND - recording);
+      }
+    break;
+    case SDLK_TAB:
+    {
+      if (mod & KMOD_SHIFT)
+        dec_curtrack();
+      else
+        inc_curtrack();
+    } break;
+    case SDLK_F1:
+      cur_octave = 0;
+    break;
+    case SDLK_F2:
+      cur_octave = 1;
+    break;
+    case SDLK_F3:
+    cur_octave = 2;
+    break;
+    case SDLK_F4:
+    cur_octave = 3;
+    break;
+    case SDLK_F5:
+    cur_octave = 4;
+    break;
+    case SDLK_F6:
+    cur_octave = 5;
+    break;
+    default:break;
+  }
+}
+
+void PatternEditorPanel::piano_kb(const int scancode, const int mod)
+{
+  switch (scancode)
+  {
+    case SDLK_z:
+      {
+        notehelper(0);
+      } break;
+    case SDLK_s:
+      {
+        notehelper(1);
+      } break;
+    case SDLK_x:
+      {
+        notehelper(2);
+      } break;
+    case SDLK_d: /*marked */
+      {
+        notehelper(3);
+      } break;
+    case SDLK_c: /*marked */
+      {
+        notehelper(4);
+      } break;
+    case SDLK_v:
+      {
+        notehelper(5);
+      } break;
+    case SDLK_g:
+      {
+        notehelper(6);
+      } break;
+    case SDLK_b: /*marked */
+      {
+        notehelper(7);
+      } break;
+    case SDLK_h:
+      {
+        notehelper(8);
+      } break;
+    case SDLK_n:
+      {
+        notehelper(9);
+      } break;
+    case SDLK_j:
+      {
+        notehelper(10);
+      } break;
+    case SDLK_m:
+      {
+        notehelper(11);
+      } break;
+    case SDLK_COMMA:
+      {
+        notehelper(12);
+      } break;
+    case SDLK_l:
+      notehelper(13);
+      break;
+    case SDLK_PERIOD:
+      notehelper(14);
+      break;
+    case SDLK_SEMICOLON:
+      notehelper(15);
+      break;
+    case SDLK_SLASH:
+      notehelper(16);
+      break;
+    case SDLK_q:
+      {
+        notehelper(12);
+      } break;
+    case SDLK_2: /*marked */
+      {
+        notehelper(13);
+      } break;
+    case SDLK_w:
+      {
+        notehelper(14);
+      } break;
+    case SDLK_3: /*marked */
+      {
+        notehelper(15);
+      } break;
+    case SDLK_e: /*marked */
+      {
+        notehelper(16);
+      } break;
+    case SDLK_r:
+      {
+        notehelper(17);
+      } break;
+    case SDLK_5: /*marked */
+      {
+        notehelper(18);
+      } break;
+    case SDLK_t:
+      {
+        notehelper(19);
+      } break;
+    case SDLK_6: /*marked */
+      {
+        notehelper(20);
+      } break;
+    case SDLK_y:
+      {
+        notehelper(21);
+      } break;
+    case SDLK_7: /*marked */
+      {
+        notehelper(22);
+      } break;
+    case SDLK_u:
+      {
+        notehelper(23);
+      } break;
+    case SDLK_i:
+      {
+        notehelper(24);
+      } break;
+    case SDLK_9: /*marked */
+      {
+        notehelper(25);
+      } break;
+    case SDLK_o:
+      {
+        notehelper(26);
+      } break;
+    case SDLK_0: /*marked */
+      {
+        notehelper(27);
+      } break;
+    case SDLK_p:
+      {
+        notehelper(28);
+      } break;
+    case SDLK_LEFTBRACKET:
+      {
+        notehelper(29);
+      } break;
+    case SDLK_EQUALS:
+      {
+        notehelper(30);
+      } break;
+    case SDLK_RIGHTBRACKET:
+      {
+        notehelper(31);
+      } break;
+
     default:break;
   }
 }
@@ -1206,7 +1391,7 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
       //--------------------------------------------------
       ctext  = &gtr->fx_ctext[r];
       string = gtr->fx_strings[r];
-      fx2ascii(patrow->fx, string);
+      fx2ascii(patrow->fx, patrow->fxparam, string);
       //--------------------------------------------------
       ctext  = &gtr->fxparam_ctext[r];
       string = gtr->fxparam_strings[r];

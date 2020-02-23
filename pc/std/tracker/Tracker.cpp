@@ -356,10 +356,12 @@ void Tracker::handle_events()
         switch (scancode)
         {
           case SDLK_LEFT:
-          mousecursors->prev();
+            if ((mod & KMOD_SHIFT) &&  (mod & KMOD_CTRL))
+              mousecursors->prev();
           break;
           case SDLK_RIGHT:
-          mousecursors->next();
+            if ((mod & KMOD_SHIFT) &&  (mod & KMOD_CTRL))
+              mousecursors->next();
           break;
         }
       } break;

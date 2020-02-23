@@ -222,4 +222,15 @@ struct PatternEditorPanel
 private:
   void inc_curtrack();
   void dec_curtrack();
+
+  // needs to be renamed
+  void notehelper(int ndex);
+  void instrhelper(int n);
+  void volhelper(int n);
+  void fxhelper(int n);
+  void fxparamhelper(int n);
+
+  void events_kb_universal(const int scancode, const int mod);
+  void piano_kb(int scancode, const int mod);
+  void recording_kb(const int scancode, const int mod);
 };
