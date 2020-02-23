@@ -4,6 +4,7 @@
 #include "shared/Colors.h"
 #include <assert.h>
 #include "DEBUGLOG.h"
+#include "shared/font.h"
 
 const int PatSeqPanel::VISIBLE_ROWS;
 
@@ -391,8 +392,8 @@ inline static void fxparam2ascii(int fx, int fxparam, char *c)
   c[2] = 0;
   if (fx == 0 && fxparam == 0)
   {
-    c[0] = '.';
-    c[1] = '.';
+    c[0] = FONT_CENTERDOT_CHAR; //'.';
+    c[1] = FONT_CENTERDOT_CHAR; //'.';
   }
   else
   {
@@ -406,7 +407,7 @@ inline static void fx2ascii(int fx, char *c)
   c[1] = 0;
   if (fx == 0)
   {
-    c[0] = '.';
+    c[0] = FONT_CENTERDOT_CHAR; //'.';
   }
   else
     c[0] = Utility::nibble_to_ascii(fx);
@@ -416,8 +417,8 @@ inline static void vol2ascii(int vol, char *c)
 {
   if (vol < 0x10)
   {
-    *(c++) = '.';
-    *(c++) = '.';
+    *(c++) = FONT_CENTERDOT_CHAR; //'.';
+    *(c++) = FONT_CENTERDOT_CHAR; //'.';
     *(c++) = 0;
   }
   else if (vol >= 0x10 && vol <= 0x50)
@@ -428,8 +429,8 @@ inline static void instr2ascii(int instr, char *c)
 {
   if (instr == 0)
   {
-    *(c++) = '.';
-    *(c++) = '.';
+    *(c++) = FONT_CENTERDOT_CHAR; //'.';
+    *(c++) = FONT_CENTERDOT_CHAR; //'.';
     *(c++) = 0;
   }
   else
@@ -440,9 +441,9 @@ inline static void note2ascii(Note note, char *c)
 {
   if (note == NOTE_NONE)
   {
-    *(c++) = '.';
-    *(c++) = '.';
-    *(c++) = '.';
+    *(c++) = FONT_CENTERDOT_CHAR; //'.';
+    *(c++) = FONT_CENTERDOT_CHAR; //'.';
+    *(c++) = FONT_CENTERDOT_CHAR; //'.';
     *(c++) = 0;
     return;
   }

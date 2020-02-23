@@ -72,9 +72,27 @@ unsigned char font[] = {
 0b01111110,
 0b00000000,
 
+// 0x5f, period in middle veritcal
+0b00000000,
+0b00000000,
+0b00000000,
+0b00010000,
+0b00000000,
+0b00000000,
+0b00000000,
 
-0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,
+// 0x60, period in middle veritcal
+0b00000000,
+0b00000000,
+0b00000000,
+0b00011000,
+0b00011000,
+0b00000000,
+0b00000000,
+
+
+
+
 0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
@@ -160,7 +178,7 @@ unsigned char *font_getChar(char c)
 		c = 0x2e; // replace invalid chars by '.'
 	}
 	if (c>=0x61 && c<=0x7a) { c &= 0xdf; } // convert lowercase to uppercase
-	if (c>0x5e && c != 0x7c) { c = 0x2e; } // greater than 'Z' + 1 (cause of added block char)? Out of range!
+	if (c>0x60 && c != 0x7c) { c = 0x2e; } // greater than 'Z' + 1 (cause of added block char)? Out of range!
 	c -= 0x20;
 	
 	return &font[c*7];
