@@ -398,46 +398,59 @@ inline static void note2ascii(Note note, char *c)
     return;
   }
   // get the octave by dividing by 12
-  int octave = (int)note / 12;
-  int n = (int)note % 12;
+  int octave = (int)(note - 1) / 12;
+  int n = (int)((note - 1) % 12);
   switch (n)
   {
     case 0:
       *(c++) = 'C';
       *(c++) = '-';
+      break;
     case 1:
       *(c++) = 'C';
       *(c++) = '#';
+      break;
     case 2:
       *(c++) = 'D';
       *(c++) = '-';
+      break;
     case 3:
       *(c++) = 'D';
       *(c++) = '#';
+      break;
     case 4:
       *(c++) = 'E';
       *(c++) = '-';
+      break;
     case 5:
       *(c++) = 'F';
       *(c++) = '-';
+      break;
     case 6:
       *(c++) = 'F';
       *(c++) = '#';
+      break;
     case 7:
       *(c++) = 'G';
       *(c++) = '-';
+      break;
     case 8:
       *(c++) = 'G';
       *(c++) = '#';
+      break;
     case 9:
       *(c++) = 'A';
       *(c++) = '-';
+      break;
     case 10:
       *(c++) = 'A';
       *(c++) = '#';
+      break;
     case 11:
       *(c++) = 'B';
       *(c++) = '-';
+      break;
+    default:break;
   }
   *(c++) = '0' + octave;
   *(c++) = 0;
