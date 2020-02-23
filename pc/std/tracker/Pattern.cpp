@@ -855,6 +855,14 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
             }
           }
           break;
+          case SDLK_HOME:
+            currow = 0;
+            rows_scrolled = 0;
+          break;
+          case SDLK_END:
+            currow = get_current_pattern(psp)->len - 1;
+            rows_scrolled = currow - (VISIBLE_ROWS-1);
+          break;
           case SDLK_UP:
             if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
               break;
