@@ -616,10 +616,15 @@ void Dsp_Window::run()
     int voice_iter;
     bool is_voice_dir_entry=false;
     // check if this belongs to a voice right now
-    if (fakerow+dir_offset == 0x100)
-      dir_index = 0;
 
-    int cur_dir_index = dir_index + (fakerow*2);
+    /* The only time the below is 0x100 is when the right-side rows
+     * reference 0x00. But the calculations below continue to offset from
+     * fakerow, so we need to negatively account for that to get to 0x00
+     * again.
+    if (fakerow+dir_offset == 0x100)
+      dir_index = 0 - (fakerow*2);
+
+    uint16_t cur_dir_index = dir_index + (fakerow*2);
 
     for (voice_iter=0; voice_iter < MAX_VOICES; voice_iter++)
     {
