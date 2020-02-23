@@ -75,7 +75,7 @@ struct PatternRow // defines one row of Pattern Data
 #define MAX_TRACKS 8
 #define MAX_PATTERNS 0x80
 #define MAX_PATTERN_LEN 0x100
-#define DEFAULT_PATTERN_LEN 0x20
+#define DEFAULT_PATTERN_LEN 0x40
 
 struct Pattern
 {
@@ -157,7 +157,7 @@ struct PatternEditorPanel
   void one_time_draw(SDL_Surface *screen=::render->screen);
   void draw(SDL_Surface *screen=::render->screen);
 
-  static const int VISIBLE_ROWS = 0x20;
+  static const int VISIBLE_ROWS = 0x30;
   int currow = 0; /* This is not only controlled by the user, but also by
   the playback engine. At least that's the plan. */
   enum Highlight {
@@ -181,7 +181,6 @@ struct PatternEditorPanel
     char strings[sizeof("1")];
     SDL_Rect outline;
   } trackheader[MAX_TRACKS];
-  //TrackHeader trackheader[MAX_TRACKS];
 
   Text index_text[VISIBLE_ROWS];
   char index_strings[MAX_PATTERN_LEN][sizeof("00|")];
