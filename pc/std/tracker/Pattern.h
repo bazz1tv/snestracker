@@ -203,5 +203,7 @@ struct PatternEditorPanel
     char fxparam_strings[MAX_PATTERN_LEN][sizeof("00")];
   } guitrackrow[MAX_TRACKS];
 
+  int cur_octave = 4;
+
   PatSeqPanel *psp;
 };

@@ -654,15 +654,15 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
   /* If the user clicks within a certain row rect. A row rect is comprised
    * of the index region (including padding), the spacer, and the
    * instrument name field (including padding).*/
-  for (int i=0; i < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); i++)
+  switch (ev.type)
   {
-    switch (ev.type)
-    {
-      case SDL_MOUSEBUTTONDOWN:
+    case SDL_MOUSEBUTTONDOWN:
+      {
+        switch (ev.button.button)
         {
-          switch (ev.button.button)
-          {
-            case SDL_BUTTON_LEFT:
+          case SDL_BUTTON_LEFT:
+            {
+              for (int i=0; i < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); i++)
               {
                 if (Utility::coord_is_in_rect(ev.button.x,ev.button.y, &row_rects[i]))
                 {
@@ -735,12 +735,43 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
                   }
                   return 1;
                 }
-              } break;
-            default:break;
-          }
-        } break;
-      default:break;
-    }
+              }
+            } break;
+          default:break;
+        }
+      } break;
+    case SDL_KEYDOWN:
+      {
+        int scancode = ev.key.keysym.sym;
+        int mod = ev.key.keysym.mod;
+
+        switch(scancode)
+        {
+          case SDLK_UP:
+            if (currow > 0)
+              currow--;
+            else currow = get_current_pattern(psp)->len - 1;
+          break;
+          case SDLK_DOWN:
+          {
+            if (currow < (get_current_pattern(psp)->len - 1))
+              currow++;
+            else currow = 0;
+          } break;
+          case SDLK_z:
+          {
+            /* for now lets just put the highlighted note to C */
+            Pattern *pat = get_current_pattern(psp);
+            PatternRow *pw = &pat->trackrows[cur_track][currow];
+            pw->note = NOTE_C4;
+            note2ascii(pw->note, guitrackrow[cur_track].note_strings[currow]);
+
+          } break;
+          default:
+            break;
+        }
+      } break;
+    default:break;
   }
 }
 
