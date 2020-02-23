@@ -6,6 +6,9 @@
 #include "DEBUGLOG.h"
 #include "shared/font.h"
 #include "Instruments.h" // for Instrument_Panel
+#include "shared/gui/MouseCursors.h"
+
+extern MouseCursors *mousecursors;
 
 const int PatSeqPanel::VISIBLE_ROWS;
 
@@ -388,7 +391,7 @@ const int PatternEditorPanel::VISIBLE_ROWS;
 
 PatternEditorPanel::PatternEditorPanel(PatSeqPanel *psp,
   Instrument_Panel *ip) :
-    cur_track(0), cur_octave(4),
+    cur_track(0), cur_octave(4), recording(0),
     psp(psp), ip(ip)
 {
 }
@@ -689,30 +692,19 @@ static void helper(int ndex, PatternEditorPanel *pep)
   int n = NOTE_C0 + ndex + (pep->cur_octave * 12);
   if (n <= NOTE_C6)
   {
-    pw->note = n;
-    note2ascii(pw->note, pep->guitrackrow[pep->cur_track].note_strings[pep->currow]);
+    if (pep->recording)
+    {
+      pw->note = n;
+      note2ascii(pw->note,
+        pep->guitrackrow[pep->cur_track].note_strings[pep->currow]);
+    }
+    else
+    {
+      /* TODO: Play the sample through the API just like in std instrument
+       * window */
+    }
   }
 }
-
-/* The event handler must do the following:
- * If an index is clicked,
- *
- * there is a row-wide highlight_rect, and also a track-specific
- * sub-highlight rect that highlights either the note, instr, vol, fx, or
- * fx-param sub-sections. We need to track which sub-section that is highlighted so that when the main row is changed by a click on an index, the currently specified sub-section is highlighted. */
-
-/*int which_row(const SDL_Event &ev, PatternEditorPanel *pep)
-{
-  // for all rows, create a rect that spans the entire width of that row,
-   // to optimize the checks.
-  for (int i=0; i < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); i++)
-  {
-    // start from the leftmost rect
-    if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &row_rects[i]))
-      return i;
-    return -1;
-  }
-}*/
 
 void PatternEditorPanel::inc_curtrack()
 {
@@ -931,6 +923,13 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
               highlighted_subsection = NOTE;
             }
           } break;
+          case SDLK_SPACE:
+            if (!(mod & KMOD_SHIFT) && !(mod & KMOD_CTRL))
+            {
+              recording = !recording;
+              mousecursors->set_cursor(CURSOR_MPAINT_WHITE_HAND - recording);
+            }
+          break;
           case SDLK_TAB:
           {
             if (mod & KMOD_SHIFT)
@@ -1008,6 +1007,18 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(12, this);
           } break;
+          case SDLK_l:
+            helper(13, this);
+          break;
+          case SDLK_PERIOD:
+            helper(14, this);
+          break;
+          case SDLK_SEMICOLON:
+            helper(15, this);
+          break;
+          case SDLK_SLASH:
+            helper(16, this);
+          break;
           case SDLK_q:
           {
             helper(12, this);
@@ -1155,7 +1166,9 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
 
     subhighlight_r.y -= 1;
 
-    SDL_FillRect(screen, &highlight_r, Colors::Interface::color[Colors::Interface::Type::selections]);
+    SDL_FillRect(screen, &highlight_r,
+      recording ? Colors::Interface::color[Colors::Interface::Type::recording]
+                : Colors::Interface::color[Colors::Interface::Type::selections]);
     SDL_FillRect(screen, &subhighlight_r, Colors::Interface::color[Colors::Interface::Type::subselections]);
   }
 

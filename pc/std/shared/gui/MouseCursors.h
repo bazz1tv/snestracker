@@ -3,6 +3,50 @@
 #include "SDL.h"
 #include "colorkey.h"
 #include "shared/Texture.h"
+
+/* enum of all cursors, including BMP, and ANImated BMP */
+enum {
+  CURSOR_ARROW=0,
+  CURSOR_IBEAM,
+  CURSOR_WAIT,
+  CURSOR_CROSSHAIR,
+  CURSOR_WAITARROW,
+  CURSOR_SIZENWSE,
+  CURSOR_SIZENESW,
+  CURSOR_SIZEWE,
+  CURSOR_SIZENS,
+  CURSOR_SIZEALL,
+  CURSOR_NO,
+  CURSOR_HAND,
+  NUM_SYS_CURSORS,
+  CURSOR_BMP_START=NUM_SYS_CURSORS, // BMP CURSORS
+  CURSOR_YOSHI_NORMAL=CURSOR_BMP_START,
+  CURSOR_YOSHI_REC,
+  CURSOR_KIRBYSTAR,
+  CURSOR_MKART_1UP,
+  CURSOR_MKART_MUSHROOM,
+  CURSOR_MKART_BLUEMUSHROOM,
+  CURSOR_MKART_YELLOWMUSHROOM,
+  CURSOR_THING,
+  CURSOR_THING2,
+  CURSOR_MPAINT_MARIO,
+  CURSOR_MPAINT_FROGGY,
+  CURSOR_MPAINT_GOLDEN_HAND,
+  CURSOR_MPAINT_WHITE_HAND,
+  CURSOR_ZSNES,
+  CURSOR_ZSNES2,
+  /* Track the num of SYS and BMP cursors because the same function is
+   * used to load cursors of these types. On the other hand, we have the
+   * animated cursors */
+  CURSOR_BMP_END,
+  NUM_SYS_AND_BMP_CURSORS=CURSOR_BMP_END,
+  CURSOR_ANI_START=NUM_SYS_AND_BMP_CURSORS,
+  CURSOR_SMRPG_COIN=CURSOR_ANI_START,
+  CURSOR_YOSHI_TARGET,
+  CURSOR_ANI_END,
+  NUM_CURSORS=CURSOR_ANI_END
+};
+
 /////////////////////////////////////////////////////////////////////////
 struct BmpCursor
 {

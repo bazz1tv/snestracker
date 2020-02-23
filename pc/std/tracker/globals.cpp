@@ -7,3 +7,4 @@ Experience *cur_exp = NULL;
 Voice_Control voice_control;
 uint8_t *IAPURAM = NULL;
 track_info_t tag;
+MouseCursors *mousecursors = NULL;

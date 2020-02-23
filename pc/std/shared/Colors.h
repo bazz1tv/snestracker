@@ -24,6 +24,7 @@ struct Colors
       button_fg,
       button_pressed_fg,
       selections,
+      recording,
       subselections,
       note,
       instr,

@@ -212,6 +212,7 @@ struct PatternEditorPanel
 
   unsigned int cur_track :3;
   unsigned int cur_octave :3;
+  unsigned int recording :1;   // recording or not
 
 /* The psp is our doorway to pattern data */
   PatSeqPanel *psp;

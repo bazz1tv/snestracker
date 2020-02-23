@@ -4,6 +4,7 @@
 #include "shared/My_Nfd.h"
 #include "shared/Experience.h"
 #include "shared/Voice_Control.h"
+#include "shared/gui/MouseCursors.h"
 
 extern bool quitting;
 extern My_Nfd nfd;
@@ -11,6 +12,7 @@ extern Experience *cur_exp;
 extern Voice_Control voice_control;
 extern uint8_t *IAPURAM;
 extern track_info_t tag;
+extern MouseCursors *mousecursors;
 
 void handle_error( const char* );
 

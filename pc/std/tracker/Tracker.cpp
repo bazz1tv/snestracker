@@ -41,6 +41,8 @@ main_window(argc,argv, this)
         monitor_display_mode.w, monitor_display_mode.h, monitor_display_mode.refresh_rate);
 
   mousecursors = new MouseCursors;
+  ::mousecursors = mousecursors;
+  mousecursors->set_cursor(CURSOR_MPAINT_WHITE_HAND);
 
   update_fps(30);
 }

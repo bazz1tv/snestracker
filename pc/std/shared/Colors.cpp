@@ -89,7 +89,8 @@ void Colors::precompute(SDL_Surface *screen)
   Interface::color[Interface::Type::button_pressed_fg] = white;
 
   Interface::color[Interface::Type::selections] = SDL_MapRGB(screen->format, 0x14, 0x80, 0xff);
-  Interface::color[Interface::Type::subselections] = magenta; //SDL_MapRGB(screen->format, 0x14, 0x80, 0xff);
+  Interface::color[Interface::Type::recording] = SDL_MapRGB(screen->format, 0xc4, 0x20, 0x2f);
+  Interface::color[Interface::Type::subselections] = SDL_MapRGB(screen->format, 0x34, 0x40, 0xb0);
 
   Interface::color[Interface::Type::note] = white;
   Interface::color[Interface::Type::instr] = cyan;
