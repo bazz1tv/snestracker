@@ -822,20 +822,69 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
 
         switch(scancode)
         {
+          case SDLK_PAGEUP:
+            if (currow >= 16)
+            {
+              int val = ((currow - rows_scrolled) % VISIBLE_ROWS);
+
+              currow -= 16;
+              rows_scrolled -= (VISIBLE_ROWS-1) - val >= (VISIBLE_ROWS-16) ? : 0;
+            }
+            else
+            {
+              currow = 0;
+              rows_scrolled = 0;
+            }
+          break;
+          case SDLK_PAGEDOWN:
+          {
+            int len = get_current_pattern(psp)->len;
+            int sublen = len - 1 - 16;
+            if (sublen < 0) sublen = 0;
+            if (currow < sublen)
+            {
+              int val = ((currow - rows_scrolled) % VISIBLE_ROWS);
+              rows_scrolled += VISIBLE_ROWS - val <= 16 ? : 0;
+
+              currow += 16;
+            }
+            else
+            {
+              currow = len - 1;
+              rows_scrolled = currow - (VISIBLE_ROWS-1);
+            }
+          }
+          break;
           case SDLK_UP:
             if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
               break;
             if (currow > 0)
+            {
+              if ((currow - rows_scrolled) % VISIBLE_ROWS == 0)
+                rows_scrolled--;
               currow--;
-            else currow = get_current_pattern(psp)->len - 1;
+            }
+            else
+            {
+              currow = get_current_pattern(psp)->len - 1;
+              rows_scrolled = currow - (VISIBLE_ROWS-1);
+            }
           break;
           case SDLK_DOWN:
           {
             if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
               break;
             if (currow < (get_current_pattern(psp)->len - 1))
+            {
+              if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
+                rows_scrolled++;
               currow++;
-            else currow = 0;
+            }
+            else
+            {
+              currow = 0;
+              rows_scrolled = 0;
+            }
           } break;
           case SDLK_LEFT:
           if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
