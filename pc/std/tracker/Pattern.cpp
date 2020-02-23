@@ -1168,7 +1168,7 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
           Colors::Interface::color[Colors::Interface::Type::text_fg],
           false);
 
-      PatternRow *patrow = &pat->trackrows[t][r];
+      PatternRow *patrow = &pat->trackrows[t][rows_scrolled + r];
       Clickable_Text *ctext;
       char *string;
 
