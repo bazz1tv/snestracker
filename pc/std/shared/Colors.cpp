@@ -88,13 +88,14 @@ void Colors::precompute(SDL_Surface *screen)
   Interface::color[Interface::Type::button_fg] = white;
   Interface::color[Interface::Type::button_pressed_fg] = white;
 
+  Interface::color[Interface::Type::selections] = SDL_MapRGB(screen->format, 0x14, 0x80, 0xff);
+  Interface::color[Interface::Type::subselections] = magenta; //SDL_MapRGB(screen->format, 0x14, 0x80, 0xff);
+
   Interface::color[Interface::Type::note] = white;
-  Interface::color[Interface::Type::instr] = blue;
+  Interface::color[Interface::Type::instr] = cyan;
   Interface::color[Interface::Type::vol] = green;
   Interface::color[Interface::Type::fx] = magenta;
   Interface::color[Interface::Type::fxparam] = orange;
-  // should make a color def for this?
-  Interface::color[Interface::Type::selections] = SDL_MapRGB(screen->format, 0x14, 0x80, 0xff);
 }
 
 Uint32 Colors::subtract(Uint32 *c, Uint8 subval)

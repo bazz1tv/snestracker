@@ -501,12 +501,12 @@ void PatternEditorPanel::set_coords(int x, int y)
     index_text[i].str = index_strings[i];
     index_text[i].rect = {
       xx,
-      y + (CHAR_HEIGHT * i) + 2,
+      y + (CHAR_HEIGHT * i) + 4,
       3 * CHAR_WIDTH, // eg 00|
       CHAR_HEIGHT
     };
   }
-
+  y += 4;
   for (int t=0; t < MAX_TRACKS; t++)
   {
     {
@@ -528,7 +528,7 @@ void PatternEditorPanel::set_coords(int x, int y)
 
         ctext->str = string;
         ctext->rect = {
-          x + (t*11*CHAR_WIDTH),
+          x + (t*((12*CHAR_WIDTH)-(CHAR_WIDTH/2))) + (3*CHAR_WIDTH) + 3,
           y + (CHAR_HEIGHT * r),
           3 * CHAR_WIDTH, // eg C-4
           CHAR_HEIGHT
@@ -541,7 +541,7 @@ void PatternEditorPanel::set_coords(int x, int y)
 
         ctext->str = string;
         ctext->rect = {
-          x + (t*11*CHAR_WIDTH) + (3*CHAR_WIDTH) + 1,
+          x + (t*((12*CHAR_WIDTH)-(CHAR_WIDTH/2))) + (3*CHAR_WIDTH)+ (3*CHAR_WIDTH) + 3,
           y + (CHAR_HEIGHT * r),
           2 * CHAR_WIDTH, // eg C-4
           CHAR_HEIGHT
@@ -555,7 +555,7 @@ void PatternEditorPanel::set_coords(int x, int y)
 
         ctext->str = string;
         ctext->rect = {
-          x + (t*11*CHAR_WIDTH) + ((3 + 2)*CHAR_WIDTH) + 1,
+          x + (t*((12*CHAR_WIDTH)-(CHAR_WIDTH/2))) + (3*CHAR_WIDTH)+ ((3 + 2)*CHAR_WIDTH) + 3,
           y + (CHAR_HEIGHT * r),
           2 * CHAR_WIDTH, // eg C-4
           CHAR_HEIGHT
@@ -569,7 +569,7 @@ void PatternEditorPanel::set_coords(int x, int y)
 
         ctext->str = string;
         ctext->rect = {
-          x + (t*11*CHAR_WIDTH) + ((3 + 2 + 2)*CHAR_WIDTH) + 1,
+          x + (t*((12*CHAR_WIDTH)-(CHAR_WIDTH/2))) + (3*CHAR_WIDTH)+ ((3 + 2 + 2)*CHAR_WIDTH) + 3,
           y + (CHAR_HEIGHT * r),
           1 * CHAR_WIDTH, // eg C-4
           CHAR_HEIGHT
@@ -583,7 +583,7 @@ void PatternEditorPanel::set_coords(int x, int y)
 
         ctext->str = string;
         ctext->rect = {
-          x + (t*11*CHAR_WIDTH) + ((3 + 2 + 2 + 1)*CHAR_WIDTH) + 1,
+          x + (t*((12*CHAR_WIDTH)-(CHAR_WIDTH/2))) + (3*CHAR_WIDTH)+ ((3 + 2 + 2 + 1)*CHAR_WIDTH) + 3,
           y + (CHAR_HEIGHT * r),
           2 * CHAR_WIDTH, // eg C-4
           CHAR_HEIGHT
@@ -597,13 +597,14 @@ void PatternEditorPanel::set_coords(int x, int y)
 
 
   rect.w = (maxx->x - rect.x) + maxx->w; // (3 * CHAR_WIDTH) + ((3 + 2 + 2 + 1 + 2 * CHAR_WIDTH) * MAX_TRACKS) + 2;
-  rect.h = (CHAR_HEIGHT * (1 + VISIBLE_ROWS)) + 1;
+  rect.h = (CHAR_HEIGHT * (1 + VISIBLE_ROWS)) + 7;
 
 
   for (int i=0; i < VISIBLE_ROWS; i++)
   {
     row_rects[i] = index_text[i].rect;
-    row_rects[i].w += rect.w - 2;
+    row_rects[i].x -= 1;
+    row_rects[i].w += rect.w - (3*CHAR_WIDTH) - 1;
   }
 }
 
@@ -666,8 +667,8 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
                   // let's just brute force it I s'pose
                   for (int t=0; t < MAX_TRACKS; t++)
                   {
-                    SDL_Rect *rr;
-                    GUITrackRow *guitr = &guitrackrow[t];
+                    const SDL_Rect *rr;
+                    const GUITrackRow *guitr = &guitrackrow[t];
                     bool hit = false;
 
                     rr = &guitr->note_ctext[i].rect;
@@ -712,6 +713,10 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
                       hit = true;
                       cur_track = t;
                       highlighted_subsection = FXPARAM;
+                      /*subhighlight_r.x -= 1;
+                      subhighlight_r.y -= 1;
+                      subhighlight_r.w += 2;
+                      subhighlight_r.h += 2;*/
                       return 1;
                     }
                   }
@@ -746,7 +751,29 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
     highlight_r = row_rects[currow - rows_scrolled];
     highlight_r.y -= 1;
 
+    switch (highlighted_subsection) {
+      case NOTE:
+        subhighlight_r = guitrackrow[cur_track].note_ctext[currow - rows_scrolled].rect;
+      break;
+      case INSTR:
+        subhighlight_r = guitrackrow[cur_track].instr_ctext[currow - rows_scrolled].rect;
+      break;
+      case VOL:
+        subhighlight_r = guitrackrow[cur_track].vol_ctext[currow - rows_scrolled].rect;
+      break;
+      case FX:
+        subhighlight_r = guitrackrow[cur_track].fx_ctext[currow - rows_scrolled].rect;
+      break;
+      case FXPARAM:
+        subhighlight_r = guitrackrow[cur_track].fxparam_ctext[currow - rows_scrolled].rect;
+      break;
+      default:break;
+    }
+
+    subhighlight_r.y -= 1;
+
     SDL_FillRect(screen, &highlight_r, Colors::Interface::color[Colors::Interface::Type::selections]);
+    SDL_FillRect(screen, &subhighlight_r, Colors::Interface::color[Colors::Interface::Type::subselections]);
   }
 
   for (int t=0; t < MAX_TRACKS; t++)
