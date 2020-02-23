@@ -436,14 +436,19 @@ inline static void vol2ascii(int vol, char *c)
 
 inline static void instr2ascii(int instr, char *c)
 {
-  if (instr == 0)
-  {
+  c[2] = 0;
+  int hi = instr >> 4;
+  int lo = instr & 0x0f;
+
+  if (hi == 0)
     *(c++) = FONT_CENTERDOT_CHAR; //'.';
-    *(c++) = FONT_CENTERDOT_CHAR; //'.';
-    *(c++) = 0;
-  }
   else
-    conv_idx2ascii2(instr, c);
+    *(c++) = Utility::nibble_to_ascii(hi);
+
+  if (lo == 0 && !hi)
+    *(c++) = FONT_CENTERDOT_CHAR; //'.';
+  else
+    *(c++) = Utility::nibble_to_ascii(lo);
 }
 
 static void note2ascii(Note note, char *c)
@@ -694,9 +699,10 @@ void PatternEditorPanel::notehelper(int ndex)
   {
     if (recording)
     {
+      // get current instrument
       pw->note = n;
-      note2ascii(pw->note,
-        guitrackrow[cur_track].note_strings[currow]);
+      pw->instr = ip->currow + 1;
+      //note2ascii(pw->note, guitrackrow[cur_track].note_strings[currow]);
     }
     else
     {
@@ -731,7 +737,7 @@ void PatternEditorPanel::instrhelper(int n)
     pw->instr &= 0xf0;
     pw->instr |= n & 0x0f;
   }
-  instr2ascii(pw->note, guitrackrow[cur_track].instr_strings[currow]);
+  //instr2ascii(pw->note, guitrackrow[cur_track].instr_strings[currow]);
 }
 
 void PatternEditorPanel::volhelper(int n)
@@ -759,7 +765,7 @@ void PatternEditorPanel::volhelper(int n)
     pw->vol &= 0xf0;
     pw->vol |= n & 0x0f;
   }
-  vol2ascii(pw->vol, guitrackrow[cur_track].vol_strings[currow]);
+  //vol2ascii(pw->vol, guitrackrow[cur_track].vol_strings[currow]);
 }
 
 void PatternEditorPanel::fxhelper(int n)
@@ -779,7 +785,7 @@ void PatternEditorPanel::fxhelper(int n)
 
   pw->fx = n;
 
-  fx2ascii(pw->fx, pw->fxparam, guitrackrow[cur_track].fx_strings[currow]);
+  //fx2ascii(pw->fx, pw->fxparam, guitrackrow[cur_track].fx_strings[currow]);
 }
 
 void PatternEditorPanel::fxparamhelper(int n)
@@ -807,7 +813,7 @@ void PatternEditorPanel::fxparamhelper(int n)
     pw->fxparam &= 0xf0;
     pw->fxparam |= n & 0x0f;
   }
-  fxparam2ascii(pw->fx, pw->fxparam, guitrackrow[cur_track].fxparam_strings[currow]);
+  //fxparam2ascii(pw->fx, pw->fxparam, guitrackrow[cur_track].fxparam_strings[currow]);
 }
 
 void PatternEditorPanel::inc_curtrack()
