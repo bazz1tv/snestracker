@@ -9,7 +9,7 @@
 /* This sample number is hardcoded for now until sucessful testing is
  * done. Later, it will be made so that the limit can be dynamically
  * increased */
-#define NUM_INSTR 0x10
+#define NUM_INSTR 0x40
 #define INSTR_NAME_MAXLEN 22
 
 struct Instrument

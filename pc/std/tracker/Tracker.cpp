@@ -42,7 +42,7 @@ main_window(argc,argv, this)
 
   mousecursors = new MouseCursors;
 
-  update_fps(60);
+  update_fps(30);
 }
 
 Tracker::~Tracker()

@@ -165,9 +165,9 @@ struct PatternEditorPanel
     INSTR,
     VOL,
     FX,
-    FXPARAM
+    FXPARAM,
   };
-  Highlight highlighted_subsection=NOTE;
+  /*Highlight*/int highlighted_subsection=NOTE;
   int cur_track = 0;
 
   int rows_scrolled = 0;
@@ -206,4 +206,8 @@ struct PatternEditorPanel
   int cur_octave = 4;
 
   PatSeqPanel *psp;
+
+private:
+  void inc_curtrack();
+  void dec_curtrack();
 };

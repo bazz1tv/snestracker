@@ -626,6 +626,18 @@ static Pattern * get_current_pattern(PatSeqPanel *psp)
   return &psp->patseq->patterns[psp->patseq->sequence[psp->currow]];
 }
 
+static void helper(int ndex, PatternEditorPanel *pep)
+{
+  Pattern *pat = get_current_pattern(pep->psp);
+  PatternRow *pw = &pat->trackrows[pep->cur_track][pep->currow];
+  int n = NOTE_C0 + ndex + (pep->cur_octave * 12);
+  if (n <= NOTE_C6)
+  {
+    pw->note = n;
+    note2ascii(pw->note, pep->guitrackrow[pep->cur_track].note_strings[pep->currow]);
+  }
+}
+
 /* The event handler must do the following:
  * If an index is clicked,
  *
@@ -646,6 +658,18 @@ static Pattern * get_current_pattern(PatSeqPanel *psp)
   }
 }*/
 
+void PatternEditorPanel::inc_curtrack()
+{
+  if (cur_track == (MAX_TRACKS - 1))
+    cur_track = 0;
+  else cur_track++;
+}
+void PatternEditorPanel::dec_curtrack()
+{
+  if (cur_track == 0)
+    cur_track = MAX_TRACKS - 1;
+  else cur_track--;
+}
 int PatternEditorPanel::event_handler(const SDL_Event &ev)
 {
   Pattern *pat = get_current_pattern(psp);
@@ -758,17 +782,85 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
               currow++;
             else currow = 0;
           } break;
+          case SDLK_LEFT:
+          if (highlighted_subsection > 0)
+            highlighted_subsection--;
+          else
+          {
+            dec_curtrack();
+            highlighted_subsection = FXPARAM;
+          }
+          break;
+          case SDLK_RIGHT:
+          {
+            if (highlighted_subsection < FXPARAM)
+              highlighted_subsection++;
+            else
+            {
+              inc_curtrack();
+              highlighted_subsection = NOTE;
+            }
+          } break;
+          case SDLK_TAB:
+          {
+            if (mod & KMOD_SHIFT)
+              dec_curtrack();
+            else
+              inc_curtrack();
+          } break;
           case SDLK_z:
           {
-            /* for now lets just put the highlighted note to C */
-            Pattern *pat = get_current_pattern(psp);
-            PatternRow *pw = &pat->trackrows[cur_track][currow];
-            pw->note = NOTE_C4;
-            note2ascii(pw->note, guitrackrow[cur_track].note_strings[currow]);
-
+            helper(0, this);
           } break;
-          default:
-            break;
+          case SDLK_s:
+          {
+            helper(1, this);
+          } break;
+          case SDLK_x:
+          {
+            helper(2, this);
+          } break;
+          case SDLK_d:
+          {
+            helper(3, this);
+          } break;
+          case SDLK_c:
+          {
+            helper(4, this);
+          } break;
+          case SDLK_v:
+          {
+            helper(5, this);
+          } break;
+          case SDLK_g:
+          {
+            helper(6, this);
+          } break;
+          case SDLK_b:
+          {
+            helper(7, this);
+          } break;
+          case SDLK_h:
+          {
+            helper(8, this);
+          } break;
+          case SDLK_n:
+          {
+            helper(9, this);
+          } break;
+          case SDLK_j:
+          {
+            helper(10, this);
+          } break;
+          case SDLK_m:
+          {
+            helper(11, this);
+          } break;
+          case SDLK_COMMA:
+          {
+            helper(12, this);
+          } break;
+          default:break;
         }
       } break;
     default:break;

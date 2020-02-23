@@ -178,6 +178,54 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
       return 1;
   }
 
+  switch (ev.type)
+  {
+    case SDL_KEYDOWN:
+      {
+        int scancode = ev.key.keysym.sym;
+        int mod = ev.key.keysym.mod;
+
+        switch(scancode)
+        {
+          case SDLK_UP:
+            if (mod & KMOD_SHIFT)
+            {
+              //dec_currow();
+              if (currow > 0)
+              {
+                if ((currow - rows_scrolled) % NUM_ROWS == 0)
+                  rows_scrolled--;
+                currow--;
+              }
+              else
+              {
+                currow = NUM_INSTR - 1;
+                rows_scrolled = currow - (NUM_ROWS-1);
+              }
+            }
+            break;
+          case SDLK_DOWN:
+            if (mod & KMOD_SHIFT)
+            {
+              //inc_currow();
+              if (currow >= (NUM_INSTR - 1))
+              {
+                currow = 0;
+                rows_scrolled = 0;
+              }
+              else
+              {
+                if ((currow - rows_scrolled) % NUM_ROWS == (NUM_ROWS - 1))
+                  rows_scrolled++;
+                currow++;
+              }
+            }
+            break;
+          default:break;
+        }
+      } break;
+  }
+
   loadbtn.check_event(ev);
   savebtn.check_event(ev);
   zapbtn.check_event(ev);
