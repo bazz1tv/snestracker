@@ -71,7 +71,7 @@ void Instrument_Panel::set_coords(int x, int y)
   for (int i=0; i < NUM_ROWS; i++)
   {
     instr_indices[i].str = instr_index_strings[i];
-    conv_idx2ascii(rows_scrolled + i, instr_index_strings[i]);
+    conv_idx2ascii(rows_scrolled + i + 1, instr_index_strings[i]);
 
     instr_indices[i].rect =
     {
@@ -220,7 +220,7 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
     /* In order to draw this rect, we need to the total horizontal width
      * of the index + instr_name, + some padding maybe. That should be
      * calculated at init and in the event handler */
-    conv_idx2ascii(rows_scrolled + i, instr_index_strings[i]);
+    conv_idx2ascii(rows_scrolled + i + 1, instr_index_strings[i]);
     instr_indices[i].draw(screen,
       Colors::Interface::color[Colors::Interface::Type::text_fg],
       false);
