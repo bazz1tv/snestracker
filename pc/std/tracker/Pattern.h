@@ -70,6 +70,10 @@ struct PatternRow // defines one row of Pattern Data
   int fx = 0, fxparam = 0;
   /* It is possible SNES Tracker will deviate from traditional tracker
    * effects commands, or add additional effects as fit */
+  struct Memory
+  {
+    int last_instr = 0;
+  } mem;
 };
 
 #define MAX_TRACKS 8
@@ -162,10 +166,13 @@ struct PatternEditorPanel
   the playback engine. At least that's the plan. */
   enum Highlight {
     NOTE,
-    INSTR,
-    VOL,
+    INSTR_HI,
+    INSTR_LO,
+    VOL_HI,
+    VOL_LO,
     FX,
-    FXPARAM,
+    FXPARAM_HI,
+    FXPARAM_LO,
   };
   /*Highlight*/int highlighted_subsection=NOTE;
   int cur_track = 0;

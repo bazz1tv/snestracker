@@ -756,39 +756,46 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
                   {
                     const SDL_Rect *rr;
                     const GUITrackRow *guitr = &guitrackrow[t];
-                    bool hit = false;
 
                     rr = &guitr->note_ctext[i].rect;
                     if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, rr))
                     {
-                      hit = true;
-                      cur_track = t;
                       highlighted_subsection = NOTE;
+                      cur_track = t;
                       return 1;
                     }
 
                     rr = &guitr->instr_ctext[i].rect;
                     if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, rr))
                     {
-                      hit = true;
+                      SDL_Rect rhilo = *rr;
+                      rhilo.w -= CHAR_WIDTH;
+                      if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &rhilo))
+                        highlighted_subsection = INSTR_HI;
+                      else
+                        highlighted_subsection = INSTR_LO;
+
                       cur_track = t;
-                      highlighted_subsection = INSTR;
                       return 1;
                     }
 
                     rr = &guitr->vol_ctext[i].rect;
                     if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, rr))
                     {
-                      hit = true;
+                      SDL_Rect rhilo = *rr;
+                      rhilo.w -= CHAR_WIDTH;
+                      if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &rhilo))
+                        highlighted_subsection = VOL_HI;
+                      else
+                        highlighted_subsection = VOL_LO;
+
                       cur_track = t;
-                      highlighted_subsection = VOL;
                       return 1;
                     }
 
                     rr = &guitr->fx_ctext[i].rect;
                     if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, rr))
                     {
-                      hit = true;
                       cur_track = t;
                       highlighted_subsection = FX;
                       return 1;
@@ -797,13 +804,14 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
                     rr = &guitr->fxparam_ctext[i].rect;
                     if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, rr))
                     {
-                      hit = true;
+                      SDL_Rect rhilo = *rr;
+                      rhilo.w -= CHAR_WIDTH;
+                      if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &rhilo))
+                        highlighted_subsection = FXPARAM_HI;
+                      else
+                        highlighted_subsection = FXPARAM_LO;
+
                       cur_track = t;
-                      highlighted_subsection = FXPARAM;
-                      /*subhighlight_r.x -= 1;
-                      subhighlight_r.y -= 1;
-                      subhighlight_r.w += 2;
-                      subhighlight_r.h += 2;*/
                       return 1;
                     }
                   }
@@ -902,14 +910,14 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           else
           {
             dec_curtrack();
-            highlighted_subsection = FXPARAM;
+            highlighted_subsection = FXPARAM_LO;
           }
           break;
           case SDLK_RIGHT:
           {
             if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
               break;
-            if (highlighted_subsection < FXPARAM)
+            if (highlighted_subsection < FXPARAM_LO)
               highlighted_subsection++;
             else
             {
@@ -1106,17 +1114,35 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
       case NOTE:
         subhighlight_r = guitrackrow[cur_track].note_ctext[currow - rows_scrolled].rect;
       break;
-      case INSTR:
-        subhighlight_r = guitrackrow[cur_track].instr_ctext[currow - rows_scrolled].rect;
+      case INSTR_HI:
+      subhighlight_r = guitrackrow[cur_track].instr_ctext[currow - rows_scrolled].rect;
+      subhighlight_r.w -= CHAR_WIDTH + 1;
       break;
-      case VOL:
+      case INSTR_LO:
+        subhighlight_r = guitrackrow[cur_track].instr_ctext[currow - rows_scrolled].rect;
+        subhighlight_r.x += CHAR_WIDTH;
+        subhighlight_r.w -= CHAR_WIDTH + 1;
+      break;
+      case VOL_HI:
+      subhighlight_r = guitrackrow[cur_track].vol_ctext[currow - rows_scrolled].rect;
+      subhighlight_r.w -= CHAR_WIDTH + 1;
+      break;
+      case VOL_LO:
         subhighlight_r = guitrackrow[cur_track].vol_ctext[currow - rows_scrolled].rect;
+        subhighlight_r.x += CHAR_WIDTH;
+        subhighlight_r.w -= CHAR_WIDTH + 1;
       break;
       case FX:
         subhighlight_r = guitrackrow[cur_track].fx_ctext[currow - rows_scrolled].rect;
       break;
-      case FXPARAM:
+      case FXPARAM_HI:
+      subhighlight_r = guitrackrow[cur_track].fxparam_ctext[currow - rows_scrolled].rect;
+      subhighlight_r.w -= CHAR_WIDTH + 1;
+      break;
+      case FXPARAM_LO:
         subhighlight_r = guitrackrow[cur_track].fxparam_ctext[currow - rows_scrolled].rect;
+        subhighlight_r.x += CHAR_WIDTH;
+        subhighlight_r.w -= CHAR_WIDTH + 1;
       break;
       default:break;
     }
