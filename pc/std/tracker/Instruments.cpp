@@ -188,7 +188,7 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
         switch(scancode)
         {
           case SDLK_UP:
-            if (mod & KMOD_SHIFT)
+            if (mod & KMOD_SHIFT && !(mod & KMOD_CTRL))
             {
               //dec_currow();
               if (currow > 0)
@@ -205,7 +205,7 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
             }
             break;
           case SDLK_DOWN:
-            if (mod & KMOD_SHIFT)
+            if (mod & KMOD_SHIFT && !(mod & KMOD_CTRL))
             {
               //inc_currow();
               if (currow >= (NUM_INSTR - 1))

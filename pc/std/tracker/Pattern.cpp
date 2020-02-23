@@ -146,8 +146,8 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
 
         switch(scancode)
         {
-          case SDLK_LEFT:
-            if (mod & KMOD_SHIFT)
+          case SDLK_UP:
+            if (!(mod & KMOD_SHIFT) && mod & KMOD_CTRL)
             {
               //dec_currow();
               if (currow > 0)
@@ -163,8 +163,8 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
               }
             }
             break;
-          case SDLK_RIGHT:
-            if (mod & KMOD_SHIFT)
+          case SDLK_DOWN:
+            if (!(mod & KMOD_SHIFT) && mod & KMOD_CTRL)
             {
               //inc_currow();
               if (currow >= (patseq->num_entries - 1))
@@ -818,23 +818,27 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
         int scancode = ev.key.keysym.sym;
         int mod = ev.key.keysym.mod;
 
-        if (mod & KMOD_SHIFT)
-          break;
 
         switch(scancode)
         {
           case SDLK_UP:
+            if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+              break;
             if (currow > 0)
               currow--;
             else currow = get_current_pattern(psp)->len - 1;
           break;
           case SDLK_DOWN:
           {
+            if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+              break;
             if (currow < (get_current_pattern(psp)->len - 1))
               currow++;
             else currow = 0;
           } break;
           case SDLK_LEFT:
+          if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+            break;
           if (highlighted_subsection > 0)
             highlighted_subsection--;
           else
@@ -845,6 +849,8 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           break;
           case SDLK_RIGHT:
           {
+            if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+              break;
             if (highlighted_subsection < FXPARAM)
               highlighted_subsection++;
             else
