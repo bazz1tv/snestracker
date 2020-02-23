@@ -19,7 +19,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   tracker(tracker),
   instrpanel(tracker->instruments),
   samplepanel(&instrpanel),
-  patseqpanel(&tracker->patseq)
+  patseqpanel(&tracker->patseq),
+  pateditpanel(&patseqpanel)
 {
   int x,y,xx,yy;
   song_title.dblclick = false; // do not require dblclick to edit. single
@@ -49,6 +50,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   instrpanel.set_coords(x, yy);
   x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH);
   samplepanel.set_coords(x, yy);
+
+  pateditpanel.set_coords(xx, y + instrpanel.rect.h + CHAR_HEIGHT);
 }
 
 int Main_Window::Gain::change(void *dblnewgain)
@@ -76,6 +79,7 @@ void Main_Window::one_time_draw()
   instrpanel.one_time_draw();
   samplepanel.one_time_draw();
   patseqpanel.one_time_draw();
+  pateditpanel.one_time_draw();
 }
 
 void Main_Window::draw()
@@ -94,6 +98,7 @@ void Main_Window::draw()
     instrpanel.draw(::render->screen);
     samplepanel.draw(::render->screen);
     patseqpanel.draw(::render->screen);
+    pateditpanel.draw(::render->screen);
     //draw_memory_outline();
     return; 
   }  
@@ -137,6 +142,7 @@ int Main_Window::receive_event(SDL_Event &ev)
   instrpanel.event_handler(ev);
   samplepanel.event_handler(ev);
   patseqpanel.event_handler(ev);
+  pateditpanel.event_handler(ev);
   // DIRTY :( ITS IMPORTANT THAT WE CHECK THE DBLCLICK EVENTS AFTER THE ABOVE
   dblclick::check_event(&ev);
   /*if (gain.slider)

@@ -37,21 +37,22 @@
   n(B, o)
 enum Note
 {
+  NOTE_NONE=0,
   // SNES can go quite low (but with tremendously reduced accuracy),
   // might have to translate base octave higher. need to test if that's
   // useful. After having done some testing, it won't be useful to have a
   // note table lower than 4 octaves below base. Later I will code in a
   // pitch envelope to have fun with all kinds of pitches in the entire
   // pitch range.
-    no(0),
-    no(1),
-    no(2),
-    no(3),
-    no(4), // BASE OCTAVE
-    no(5),
-    NOTE_C6 // SNES APU limit is C 2 octaves from base
-    //no(7),
-    //no(8),
+  no(0),
+  no(1),
+  no(2),
+  no(3),
+  no(4), // BASE OCTAVE
+  no(5),
+  NOTE_C6 // SNES APU limit is C 2 octaves from base
+  //no(7),
+  //no(8),
 };
 #undef n
 #undef no
@@ -61,12 +62,12 @@ struct PatternRow // defines one row of Pattern Data
 {
   /*what data type to use?? Rather than hardcode a DSP pitch value, let's
    * just save the note value */
-  Note note;
-  int instr; /* an index into the instruments table. But how will we 
+  Note note = NOTE_NONE;
+  int instr = 0; /* an index into the instruments table. But how will we
   get the handle on it?*/
-  int vol; /* primarily volume. note that this column may also be used for effects.
+  int vol = 0; /* primarily volume. note that this column may also be used for effects.
   Maybe it should be called col1 or something?*/
-  int fx, fx_param;
+  int fx = 0, fxparam = 0;
   /* It is possible SNES Tracker will deviate from traditional tracker
    * effects commands, or add additional effects as fit */
 };
@@ -148,8 +149,8 @@ struct PatSeqPanel // PatternSequencerPanel
 
 struct PatternEditorPanel
 {
-  PatternEditorPanel(PatternSequencer *patseq);
-  ~PatternEditorPanel();
+  PatternEditorPanel(PatSeqPanel *psp);
+  //~PatternEditorPanel();
 
   void set_coords(int x, int y);
   int event_handler(const SDL_Event &ev);
@@ -159,25 +160,48 @@ struct PatternEditorPanel
   static const int VISIBLE_ROWS = 0x20;
   int currow = 0; /* This is not only controlled by the user, but also by
   the playback engine. At least that's the plan. */
+  enum Highlight {
+    NOTE,
+    INSTR,
+    VOL,
+    FX,
+    FXPARAM
+  };
+  Highlight highlighted_subsection=NOTE;
+  int cur_track = 0;
 
   int rows_scrolled = 0;
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr
+  SDL_Rect subhighlight_r;
+  SDL_Rect row_rects[VISIBLE_ROWS];
 
-  Clickable_Text track_headers[MAX_TRACKS];
-  char track_header_strings[MAX_TRACKS][sizeof("   1   ")];
+  struct TrackHeader {
+    Clickable_Text ctext;
+    char strings[sizeof("1")];
+    SDL_Rect outline;
+  } trackheader[MAX_TRACKS];
+  //TrackHeader trackheader[MAX_TRACKS];
+
   Text index_text[VISIBLE_ROWS];
-  char index_strings[MAX_PATTERN_LEN][4]; // eg "00|\0"
-  Clickable_Text note_ctext;
-  char note_strings[MAX_PATTERN_LEN][sizeof("C-4")];
-  Clickable_Text instr_ctext;
-  char instr_strings[MAX_PATTERN_LEN][sizeof("0f")];
-  Clickable_Text vol_ctext;
-  char vol_strings[MAX_PATTERN_LEN][sizeof("0f")];
-  Clickable_Text fx_ctext;
-  char fx_strings[MAX_PATTERN_LEN][sizeof("0")];
-  Clickable_Text fxparam_ctext;
-  char fxparam_strings[MAX_PATTERN_LEN][sizeof("00")];
+  char index_strings[MAX_PATTERN_LEN][sizeof("00|")];
 
-  PatternSequencer *patseq;
+  struct GUITrackRow {
+    Clickable_Text note_ctext[VISIBLE_ROWS];
+    char note_strings[MAX_PATTERN_LEN][sizeof("C-4")];
+
+    Clickable_Text instr_ctext[VISIBLE_ROWS];
+    char instr_strings[MAX_PATTERN_LEN][sizeof("0f")];
+
+    Clickable_Text vol_ctext[VISIBLE_ROWS];
+    char vol_strings[MAX_PATTERN_LEN][sizeof("0f")];
+
+    Clickable_Text fx_ctext[VISIBLE_ROWS];
+    char fx_strings[MAX_PATTERN_LEN][sizeof("0")];
+
+    Clickable_Text fxparam_ctext[VISIBLE_ROWS];
+    char fxparam_strings[MAX_PATTERN_LEN][sizeof("00")];
+  } guitrackrow[MAX_TRACKS];
+
+  PatSeqPanel *psp;
 };

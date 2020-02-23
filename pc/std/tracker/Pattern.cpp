@@ -200,6 +200,8 @@ void PatSeqPanel::draw(SDL_Surface *screen/*=::render->screen*/)
   }
 }
 
+////////////////////// START PATTERN EDITOR STUFF ///////////////////////
+
 static Pattern * get_unused_pattern(PatternSequencer *ps)
 {
   for (int i=0; i < MAX_PATTERNS; i++)
@@ -325,4 +327,453 @@ int PatSeqPanel::decpat(void *pspanel)
     *derp = 0;
 
   patseq->patterns[patseq->sequence[psp->currow]].used++;
+}
+
+///////////////////////////////////////////////////////////////////////
+//////////////// BEGIN PATTERN EDITOR //////////////////////////////////
+//
+
+const int PatternEditorPanel::VISIBLE_ROWS;
+
+PatternEditorPanel::PatternEditorPanel(PatSeqPanel *psp) : psp(psp) {}
+
+inline static void fxparam2ascii(int fx, int fxparam, char *c)
+{
+  c[2] = 0;
+  if (fx == 0 && fxparam == 0)
+  {
+    c[0] = '.';
+    c[1] = '.';
+  }
+  else
+  {
+    c[0] = Utility::nibble_to_ascii(fxparam>>4);
+    c[1] = Utility::nibble_to_ascii(fxparam);
+  }
+}
+
+inline static void fx2ascii(int fx, char *c)
+{
+  c[1] = 0;
+  if (fx == 0)
+  {
+    c[0] = '.';
+  }
+  else
+    c[0] = Utility::nibble_to_ascii(fx);
+}
+
+inline static void vol2ascii(int vol, char *c)
+{
+  if (vol < 0x10)
+  {
+    *(c++) = '.';
+    *(c++) = '.';
+    *(c++) = 0;
+  }
+  else if (vol >= 0x10 && vol <= 0x50)
+    conv_idx2ascii2(vol - 0x10, c);
+}
+
+inline static void instr2ascii(int instr, char *c)
+{
+  if (instr == 0)
+  {
+    *(c++) = '.';
+    *(c++) = '.';
+    *(c++) = 0;
+  }
+  else
+    conv_idx2ascii2(instr, c);
+}
+
+inline static void note2ascii(Note note, char *c)
+{
+  if (note == NOTE_NONE)
+  {
+    *(c++) = '.';
+    *(c++) = '.';
+    *(c++) = '.';
+    *(c++) = 0;
+    return;
+  }
+  // get the octave by dividing by 12
+  int octave = (int)note / 12;
+  int n = (int)note % 12;
+  switch (n)
+  {
+    case 0:
+      *(c++) = 'C';
+      *(c++) = '-';
+    case 1:
+      *(c++) = 'C';
+      *(c++) = '#';
+    case 2:
+      *(c++) = 'D';
+      *(c++) = '-';
+    case 3:
+      *(c++) = 'D';
+      *(c++) = '#';
+    case 4:
+      *(c++) = 'E';
+      *(c++) = '-';
+    case 5:
+      *(c++) = 'F';
+      *(c++) = '-';
+    case 6:
+      *(c++) = 'F';
+      *(c++) = '#';
+    case 7:
+      *(c++) = 'G';
+      *(c++) = '-';
+    case 8:
+      *(c++) = 'G';
+      *(c++) = '#';
+    case 9:
+      *(c++) = 'A';
+      *(c++) = '-';
+    case 10:
+      *(c++) = 'A';
+      *(c++) = '#';
+    case 11:
+      *(c++) = 'B';
+      *(c++) = '-';
+  }
+  *(c++) = '0' + octave;
+  *(c++) = 0;
+}
+
+void PatternEditorPanel::set_coords(int x, int y)
+{
+  int xx = x, yy = y;
+
+  rect.x = x - 2; /* All rect.* are creating the bounding rect to be drawn
+                     around the instruments list (not the buttons or main label. Unfortunately the
+                     assignments are spread throughout this function rather than all being in one place,
+                     due to the nature of the coordinates being manipulated to create the locations
+                     of all pspanel entities */
+
+  y += (CHAR_HEIGHT*4) + (CHAR_HEIGHT/2);
+  y += 2;
+  rect.y = y;
+
+  y += 2;
+
+  for (int t=0; t < MAX_TRACKS; t++)
+  {
+    int tx = xx + (CHAR_WIDTH * 3)
+            + (CHAR_WIDTH * 5);
+    {
+      TrackHeader *th = &trackheader[t];
+      char *s = th->strings;
+
+      s[0] = Utility::nibble_to_ascii(t + 1);
+      s[1] = 0;
+
+      th->ctext.str = th->strings;
+      th->ctext.rect = {
+        tx + (t*((12*CHAR_WIDTH)-(CHAR_WIDTH/2))),// + (16*t),
+        y,
+        1*CHAR_WIDTH,
+        CHAR_HEIGHT
+      };
+      // do the bounding rect later here
+      th->outline = {
+        th->ctext.rect.x - (CHAR_WIDTH*6) + (CHAR_WIDTH/2),
+        th->ctext.rect.y - 2,
+        (CHAR_WIDTH*12) - (CHAR_WIDTH/2),
+        th->ctext.rect.h + 2,
+      };
+    }
+  }
+
+  y += CHAR_HEIGHT * 1;
+
+  for (int i=0; i < MAX_PATTERN_LEN; i++)
+  {
+    conv_idx2ascii2(i, index_strings[i]);
+    // load up (zero the default pattern and its ctext)
+    // assume the tracker has zero'd the pattern data
+  }
+
+  for (int i=0; i < VISIBLE_ROWS; i++)
+  {
+    index_text[i].str = index_strings[i];
+    index_text[i].rect = {
+      xx,
+      y + (CHAR_HEIGHT * i) + 2,
+      3 * CHAR_WIDTH, // eg 00|
+      CHAR_HEIGHT
+    };
+  }
+
+  for (int t=0; t < MAX_TRACKS; t++)
+  {
+    {
+      GUITrackRow *gtr = &guitrackrow[t];
+
+      PatternSequencer *patseq = psp->patseq;
+      Pattern *pat = &patseq->patterns[0];
+      /* Here we can load default pattern data */
+      for (int r=0; r < VISIBLE_ROWS; r++)
+      {
+        PatternRow *patrow = &pat->trackrows[t][r];
+        Clickable_Text *ctext;
+        char *string;
+        //--------------------------------------------------
+        ctext  = &gtr->note_ctext[r];
+        string = gtr->note_strings[r];
+
+        note2ascii(patrow->note, string);
+
+        ctext->str = string;
+        ctext->rect = {
+          x + (t*11*CHAR_WIDTH),
+          y + (CHAR_HEIGHT * r),
+          3 * CHAR_WIDTH, // eg C-4
+          CHAR_HEIGHT
+        };
+        //--------------------------------------------------
+        ctext  = &gtr->instr_ctext[r];
+        string = gtr->instr_strings[r];
+
+        instr2ascii(patrow->instr, string);
+
+        ctext->str = string;
+        ctext->rect = {
+          x + (t*11*CHAR_WIDTH) + (3*CHAR_WIDTH) + 1,
+          y + (CHAR_HEIGHT * r),
+          2 * CHAR_WIDTH, // eg C-4
+          CHAR_HEIGHT
+        };
+        //--------------------------------------------------
+        ctext  = &gtr->vol_ctext[r];
+        string = gtr->vol_strings[r];
+
+        // what can be used as the default volume value?
+        vol2ascii(patrow->vol, string);
+
+        ctext->str = string;
+        ctext->rect = {
+          x + (t*11*CHAR_WIDTH) + ((3 + 2)*CHAR_WIDTH) + 1,
+          y + (CHAR_HEIGHT * r),
+          2 * CHAR_WIDTH, // eg C-4
+          CHAR_HEIGHT
+        };
+        //--------------------------------------------------
+        ctext  = &gtr->fx_ctext[r];
+        string = gtr->fx_strings[r];
+
+        // what can be used as the default volume value?
+        fx2ascii(patrow->fx, string);
+
+        ctext->str = string;
+        ctext->rect = {
+          x + (t*11*CHAR_WIDTH) + ((3 + 2 + 2)*CHAR_WIDTH) + 1,
+          y + (CHAR_HEIGHT * r),
+          1 * CHAR_WIDTH, // eg C-4
+          CHAR_HEIGHT
+        };
+        //--------------------------------------------------
+        ctext  = &gtr->fxparam_ctext[r];
+        string = gtr->fxparam_strings[r];
+
+        // what can be used as the default volume value?
+        fxparam2ascii(patrow->fx, patrow->fxparam, string);
+
+        ctext->str = string;
+        ctext->rect = {
+          x + (t*11*CHAR_WIDTH) + ((3 + 2 + 2 + 1)*CHAR_WIDTH) + 1,
+          y + (CHAR_HEIGHT * r),
+          2 * CHAR_WIDTH, // eg C-4
+          CHAR_HEIGHT
+        };
+        //--------------------------------------------------
+      }
+    }
+  }
+
+  const SDL_Rect *maxx = &trackheader[MAX_TRACKS - 1].outline;
+
+
+  rect.w = (maxx->x - rect.x) + maxx->w; // (3 * CHAR_WIDTH) + ((3 + 2 + 2 + 1 + 2 * CHAR_WIDTH) * MAX_TRACKS) + 2;
+  rect.h = (CHAR_HEIGHT * (1 + VISIBLE_ROWS)) + 1;
+
+
+  for (int i=0; i < VISIBLE_ROWS; i++)
+  {
+    row_rects[i] = index_text[i].rect;
+    row_rects[i].w += rect.w - 2;
+  }
+}
+
+static Pattern * get_current_pattern(PatSeqPanel *psp)
+{
+  return &psp->patseq->patterns[psp->patseq->sequence[psp->currow]];
+}
+
+/* The event handler must do the following:
+ * If an index is clicked,
+ *
+ * there is a row-wide highlight_rect, and also a track-specific
+ * sub-highlight rect that highlights either the note, instr, vol, fx, or
+ * fx-param sub-sections. We need to track which sub-section that is highlighted so that when the main row is changed by a click on an index, the currently specified sub-section is highlighted. */
+
+/*int which_row(const SDL_Event &ev, PatternEditorPanel *pep)
+{
+  // for all rows, create a rect that spans the entire width of that row,
+   // to optimize the checks.
+  for (int i=0; i < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); i++)
+  {
+    // start from the leftmost rect
+    if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &row_rects[i]))
+      return i;
+    return -1;
+  }
+}*/
+
+int PatternEditorPanel::event_handler(const SDL_Event &ev)
+{
+  Pattern *pat = get_current_pattern(psp);
+  mousewheel_rows_event_handler(ev, &rows_scrolled, VISIBLE_ROWS, pat->len, &rect);
+
+  /* If the user clicks within a certain row rect. A row rect is comprised
+   * of the index region (including padding), the spacer, and the
+   * instrument name field (including padding).*/
+  for (int i=0; i < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); i++)
+  {
+    switch (ev.type)
+    {
+      case SDL_MOUSEBUTTONDOWN:
+        {
+          switch (ev.button.button)
+          {
+            case SDL_BUTTON_LEFT:
+              {
+                if (Utility::coord_is_in_rect(ev.button.x,ev.button.y, &row_rects[i]))
+                {
+                  // update the row highlighter (really we are "un"drawing
+                  // the old highlighter. this may be unnecessary drawing
+                  if ((currow - rows_scrolled) != i)
+                  {
+                    SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
+                    SDL_FillRect(::render->screen, &subhighlight_r, Colors::transparent);
+                    currow = rows_scrolled + i;
+                  }
+
+                  /* At this point, we know what row, but which sub
+                   * component was clicked?? */
+                  // let's just brute force it I s'pose
+                  for (int t=0; t < MAX_TRACKS; t++)
+                  {
+                    SDL_Rect *rr;
+                    GUITrackRow *guitr = &guitrackrow[t];
+                    bool hit = false;
+
+                    rr = &guitr->note_ctext[i].rect;
+                    if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, rr))
+                    {
+                      hit = true;
+                      cur_track = t;
+                      highlighted_subsection = NOTE;
+                      return 1;
+                    }
+
+                    rr = &guitr->instr_ctext[i].rect;
+                    if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, rr))
+                    {
+                      hit = true;
+                      cur_track = t;
+                      highlighted_subsection = INSTR;
+                      return 1;
+                    }
+
+                    rr = &guitr->vol_ctext[i].rect;
+                    if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, rr))
+                    {
+                      hit = true;
+                      cur_track = t;
+                      highlighted_subsection = VOL;
+                      return 1;
+                    }
+
+                    rr = &guitr->fx_ctext[i].rect;
+                    if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, rr))
+                    {
+                      hit = true;
+                      cur_track = t;
+                      highlighted_subsection = FX;
+                      return 1;
+                    }
+
+                    rr = &guitr->fxparam_ctext[i].rect;
+                    if (Utility::coord_is_in_rect(ev.button.x, ev.button.y, rr))
+                    {
+                      hit = true;
+                      cur_track = t;
+                      highlighted_subsection = FXPARAM;
+                      return 1;
+                    }
+                  }
+                  return 1;
+                }
+              } break;
+            default:break;
+          }
+        } break;
+      default:break;
+    }
+  }
+}
+
+void PatternEditorPanel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
+{
+  Utility::DrawRect(&rect, 1);
+}
+
+void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
+{
+  Pattern *pat = get_current_pattern(psp);
+  one_time_draw();
+  /* First, draw the "Instruments" strings and top buttons */
+  //title.draw(screen);
+
+  SDL_Rect r = {rect.x + 1, rect.y + 1, rect.w - 1, rect.h - 1};
+  SDL_FillRect(screen, &r, Colors::transparent);
+
+  if (currow >= rows_scrolled && currow < (rows_scrolled + VISIBLE_ROWS))
+  {
+    highlight_r = row_rects[currow - rows_scrolled];
+    highlight_r.y -= 1;
+
+    SDL_FillRect(screen, &highlight_r, Colors::Interface::color[Colors::Interface::Type::selections]);
+  }
+
+  for (int t=0; t < MAX_TRACKS; t++)
+  {
+    GUITrackRow *gtr = &guitrackrow[t];
+
+    trackheader[t].ctext.draw(
+        Colors::Interface::color[Colors::Interface::Type::text_fg], false);
+    Utility::DrawRect(&trackheader[t].outline, 1);
+
+    for (int i=0; i < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); i++)
+    {
+      index_text[i].str = index_strings[rows_scrolled + i];
+      index_text[i].draw(screen,
+          Colors::Interface::color[Colors::Interface::Type::text_fg],
+          false);
+
+      gtr->note_ctext[i].draw(
+        Colors::Interface::color[Colors::Interface::Type::note], false);
+      gtr->instr_ctext[i].draw(
+        Colors::Interface::color[Colors::Interface::Type::instr], false);
+      gtr->vol_ctext[i].draw(
+        Colors::Interface::color[Colors::Interface::Type::vol], false);
+      gtr->fx_ctext[i].draw(
+        Colors::Interface::color[Colors::Interface::Type::fx], false);
+      gtr->fxparam_ctext[i].draw(
+        Colors::Interface::color[Colors::Interface::Type::fxparam], false);
+    }
+  }
 }

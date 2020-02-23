@@ -2,6 +2,7 @@
 
 //SDL_Surface *Colors::screen=NULL;
 Uint32 Colors::white, Colors::black, Colors::cyan, Colors::magenta, Colors::yellow, Colors::red;
+Uint32 Colors::orange;
 Uint32 Colors::green, Colors::blue, Colors::nearblack;
 Uint32 Colors::dark_magenta, Colors::dark_cyan, Colors::dark_yellow;
 Uint32 Colors::gray;
@@ -25,6 +26,9 @@ void Colors::precompute(SDL_Surface *screen)
   magenta = SDL_MapRGB(screen->format, 0xff, 0x00, 0xff);
   gray = SDL_MapRGB(screen->format, 0x7f, 0x7f, 0x7f);
   red = SDL_MapRGB(screen->format, 0xff, 0x00, 0x00);
+
+  orange = SDL_MapRGB(screen->format, 255, 160, 0);
+
   green = SDL_MapRGB(screen->format, 0x00, 0xff, 0x00);
   blue = SDL_MapRGB(screen->format, 0x00, 0x00, 0xff);
 
@@ -48,7 +52,7 @@ void Colors::precompute(SDL_Surface *screen)
   // white
   voice[0] = SDL_MapRGB(screen->format,153,153,255);
   // orange
-  voice[1] = SDL_MapRGB(screen->format, 255, 160, 0);
+  voice[1] = orange;
   // yellow
   voice[2] = yellow;
   // geen
@@ -84,6 +88,11 @@ void Colors::precompute(SDL_Surface *screen)
   Interface::color[Interface::Type::button_fg] = white;
   Interface::color[Interface::Type::button_pressed_fg] = white;
 
+  Interface::color[Interface::Type::note] = white;
+  Interface::color[Interface::Type::instr] = blue;
+  Interface::color[Interface::Type::vol] = green;
+  Interface::color[Interface::Type::fx] = magenta;
+  Interface::color[Interface::Type::fxparam] = orange;
   // should make a color def for this?
   Interface::color[Interface::Type::selections] = SDL_MapRGB(screen->format, 0x14, 0x80, 0xff);
 }

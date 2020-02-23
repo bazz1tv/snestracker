@@ -18,8 +18,8 @@ void panel_clear_row(Text_Edit_Rect *ters, int row, SDL_Surface *screen)
   SDL_FillRect(screen, &r, Colors::transparent);
 }
 
-extern void conv_idx2ascii(int i, char **c);
-extern void conv_idx2ascii2(int i, char **c);
+extern void conv_idx2ascii(int i, char *c);
+extern void conv_idx2ascii2(int i, char *c);
 
 int mousewheel_rows_event_handler(const SDL_Event &ev, int *rows_scrolled,
     int visible_rows, int total_rows, SDL_Rect *rect)

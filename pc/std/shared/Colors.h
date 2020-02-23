@@ -24,12 +24,18 @@ struct Colors
       button_fg,
       button_pressed_fg,
       selections,
+      note,
+      instr,
+      vol,
+      fx,
+      fxparam,
       SIZEOF
     };
     static Uint32 color[Type::SIZEOF];
   };
 
   static Uint32 white, black, cyan, magenta, yellow, red;
+  static Uint32 orange;
   static Uint32 green, blue, nearblack;
   static Uint32 dark_magenta, dark_cyan, dark_yellow;
   static Uint32 gray;

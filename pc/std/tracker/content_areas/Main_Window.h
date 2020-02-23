@@ -84,4 +84,5 @@ struct Main_Window : public Experience
   Instrument_Panel instrpanel;
   Sample_Panel samplepanel;
   PatSeqPanel patseqpanel;
+  PatternEditorPanel pateditpanel;
 };
