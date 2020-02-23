@@ -808,6 +808,24 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
             else
               inc_curtrack();
           } break;
+          case SDLK_F1:
+            cur_octave = 0;
+          break;
+          case SDLK_F2:
+            cur_octave = 1;
+          break;
+          case SDLK_F3:
+          cur_octave = 2;
+          break;
+          case SDLK_F4:
+          cur_octave = 3;
+          break;
+          case SDLK_F5:
+          cur_octave = 4;
+          break;
+          case SDLK_F6:
+          cur_octave = 5;
+          break;
           case SDLK_z:
           {
             helper(0, this);
@@ -860,6 +878,87 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(12, this);
           } break;
+          case SDLK_q:
+          {
+            helper(12, this);
+          } break;
+          case SDLK_2:
+          {
+            helper(13, this);
+          } break;
+          case SDLK_w:
+          {
+            helper(14, this);
+          } break;
+          case SDLK_3:
+          {
+            helper(15, this);
+          } break;
+          case SDLK_e:
+          {
+            helper(16, this);
+          } break;
+          case SDLK_r:
+          {
+            helper(17, this);
+          } break;
+          case SDLK_5:
+          {
+            helper(18, this);
+          } break;
+          case SDLK_t:
+          {
+            helper(19, this);
+          } break;
+          case SDLK_6:
+          {
+            helper(20, this);
+          } break;
+          case SDLK_y:
+          {
+            helper(21, this);
+          } break;
+          case SDLK_7:
+          {
+            helper(22, this);
+          } break;
+          case SDLK_u:
+          {
+            helper(23, this);
+          } break;
+          case SDLK_i:
+          {
+            helper(24, this);
+          } break;
+          case SDLK_9:
+          {
+            helper(25, this);
+          } break;
+          case SDLK_o:
+          {
+            helper(26, this);
+          } break;
+          case SDLK_0:
+          {
+            helper(27, this);
+          } break;
+          case SDLK_p:
+          {
+            helper(28, this);
+          } break;
+          case SDLK_LEFTBRACKET:
+          {
+            helper(29, this);
+          } break;
+          case SDLK_EQUALS:
+          {
+            helper(30, this);
+          } break;
+          case SDLK_RIGHTBRACKET:
+          {
+            helper(31, this);
+          } break;
+
           default:break;
         }
       } break;
