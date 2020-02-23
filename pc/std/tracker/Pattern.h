@@ -151,9 +151,11 @@ struct PatSeqPanel // PatternSequencerPanel
   PatternSequencer *patseq;
 };
 
+struct Instrument_Panel;
+
 struct PatternEditorPanel
 {
-  PatternEditorPanel(PatSeqPanel *psp);
+  PatternEditorPanel(PatSeqPanel *psp, Instrument_Panel *ip);
   //~PatternEditorPanel();
 
   void set_coords(int x, int y);
@@ -175,7 +177,6 @@ struct PatternEditorPanel
     FXPARAM_LO,
   };
   /*Highlight*/int highlighted_subsection=NOTE;
-  int cur_track = 0;
 
   int rows_scrolled = 0;
   SDL_Rect rect;
@@ -209,9 +210,13 @@ struct PatternEditorPanel
     char fxparam_strings[MAX_PATTERN_LEN][sizeof("00")];
   } guitrackrow[MAX_TRACKS];
 
-  int cur_octave = 4;
+  unsigned int cur_track :3;
+  unsigned int cur_octave :3;
 
+/* The psp is our doorway to pattern data */
   PatSeqPanel *psp;
+/* The instrument panel lets us reference the currently selected instr */
+  const Instrument_Panel *ip;
 
 private:
   void inc_curtrack();

@@ -20,7 +20,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   instrpanel(tracker->instruments),
   samplepanel(&instrpanel),
   patseqpanel(&tracker->patseq),
-  pateditpanel(&patseqpanel)
+  pateditpanel(&patseqpanel, &instrpanel)
 {
   int x,y,xx,yy;
   song_title.dblclick = false; // do not require dblclick to edit. single

@@ -5,6 +5,7 @@
 #include <assert.h>
 #include "DEBUGLOG.h"
 #include "shared/font.h"
+#include "Instruments.h" // for Instrument_Panel
 
 const int PatSeqPanel::VISIBLE_ROWS;
 
@@ -385,7 +386,12 @@ int PatSeqPanel::decpat(void *pspanel)
 
 const int PatternEditorPanel::VISIBLE_ROWS;
 
-PatternEditorPanel::PatternEditorPanel(PatSeqPanel *psp) : psp(psp) {}
+PatternEditorPanel::PatternEditorPanel(PatSeqPanel *psp,
+  Instrument_Panel *ip) :
+    cur_track(0), cur_octave(4),
+    psp(psp), ip(ip)
+{
+}
 
 inline static void fxparam2ascii(int fx, int fxparam, char *c)
 {
@@ -437,7 +443,7 @@ inline static void instr2ascii(int instr, char *c)
     conv_idx2ascii2(instr, c);
 }
 
-inline static void note2ascii(Note note, char *c)
+static void note2ascii(Note note, char *c)
 {
   if (note == NOTE_NONE)
   {
@@ -962,11 +968,11 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(2, this);
           } break;
-          case SDLK_d:
+          case SDLK_d: /*marked */
           {
             helper(3, this);
           } break;
-          case SDLK_c:
+          case SDLK_c: /*marked */
           {
             helper(4, this);
           } break;
@@ -978,7 +984,7 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(6, this);
           } break;
-          case SDLK_b:
+          case SDLK_b: /*marked */
           {
             helper(7, this);
           } break;
@@ -1006,7 +1012,7 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(12, this);
           } break;
-          case SDLK_2:
+          case SDLK_2: /*marked */
           {
             helper(13, this);
           } break;
@@ -1014,11 +1020,11 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(14, this);
           } break;
-          case SDLK_3:
+          case SDLK_3: /*marked */
           {
             helper(15, this);
           } break;
-          case SDLK_e:
+          case SDLK_e: /*marked */
           {
             helper(16, this);
           } break;
@@ -1026,7 +1032,7 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(17, this);
           } break;
-          case SDLK_5:
+          case SDLK_5: /*marked */
           {
             helper(18, this);
           } break;
@@ -1034,7 +1040,7 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(19, this);
           } break;
-          case SDLK_6:
+          case SDLK_6: /*marked */
           {
             helper(20, this);
           } break;
@@ -1042,7 +1048,7 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(21, this);
           } break;
-          case SDLK_7:
+          case SDLK_7: /*marked */
           {
             helper(22, this);
           } break;
@@ -1054,7 +1060,7 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(24, this);
           } break;
-          case SDLK_9:
+          case SDLK_9: /*marked */
           {
             helper(25, this);
           } break;
@@ -1062,7 +1068,7 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
           {
             helper(26, this);
           } break;
-          case SDLK_0:
+          case SDLK_0: /*marked */
           {
             helper(27, this);
           } break;
