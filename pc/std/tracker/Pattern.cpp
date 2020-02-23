@@ -136,6 +136,55 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
       default:break;
     }
   }
+
+  switch(ev.type)
+  {
+    case SDL_KEYDOWN:
+      {
+        int scancode = ev.key.keysym.sym;
+        int mod = ev.key.keysym.mod;
+
+        switch(scancode)
+        {
+          case SDLK_LEFT:
+            if (mod & KMOD_SHIFT)
+            {
+              //dec_currow();
+              if (currow > 0)
+              {
+                if ((currow - rows_scrolled) % VISIBLE_ROWS == 0)
+                  rows_scrolled--;
+                currow--;
+              }
+              else
+              {
+                currow = patseq->num_entries - 1;
+                rows_scrolled = patseq->num_entries >= VISIBLE_ROWS ? currow - (VISIBLE_ROWS-1) : 0;
+              }
+            }
+            break;
+          case SDLK_RIGHT:
+            if (mod & KMOD_SHIFT)
+            {
+              //inc_currow();
+              if (currow >= (patseq->num_entries - 1))
+              {
+                currow = 0;
+                rows_scrolled = 0;
+              }
+              else
+              {
+                if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
+                  rows_scrolled++;
+
+                currow++;
+              }
+            }
+            break;
+          default:break;
+        }
+      } break;
+  }
   clonebtn.check_event(ev);
   seqbtn.check_event(ev);
   clearbtn.check_event(ev);
@@ -768,6 +817,9 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
       {
         int scancode = ev.key.keysym.sym;
         int mod = ev.key.keysym.mod;
+
+        if (mod & KMOD_SHIFT)
+          break;
 
         switch(scancode)
         {
