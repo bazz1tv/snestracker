@@ -52,6 +52,7 @@ enum {
   NUM_SYS_AND_BMP_CURSORS=CURSOR_BMP_END,
   CURSOR_ANI_START=NUM_SYS_AND_BMP_CURSORS,
   CURSOR_SMRPG_COIN=CURSOR_ANI_START,
+  CURSOR_YOSHI_TARGET,
   CURSOR_ANI_END,
   NUM_CURSORS=CURSOR_ANI_END
 };
@@ -231,6 +232,20 @@ MouseCursors::MouseCursors()
     { {0x00ff00}, "smrpg-smallcoinani8", 40 },
   };
 
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+  bcap = &bca[GET_ANI_IDX(CURSOR_YOSHI_TARGET)];
+  bcap->hotspot = {8, 8};
+  bcap->num_frames = 2;
+  bcap->frames = new BmpCursorAniFrame[bcap->num_frames]
+  { // opportunity to optimize out the basename string
+    { {0x00ff00}, "cursor", 100 },
+      { {0x00ff00}, "cursor-rec", 100 },
+  };
+////////////////// END ANIMATED CURSORS ////////////////////////
+
+
+////// START ANIMATED TEXTURE EFFECTS ///////////////////////
   mcaa = new MouseTextureAni[1];
   MouseTextureAni *mcaap;
   mcaap = &mcaa[0];
