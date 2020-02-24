@@ -993,6 +993,16 @@ static void moveback(Pattern *pattern, int track, int pos)
   }
 }
 
+static void moveforward(Pattern *pattern, int track, int pos)
+{
+  if (pos == 0)
+    return;
+  PatternRow *patrow = pattern->trackrows[track];
+  for (int p = pattern->len - 1; p > pos; p--)
+    patrow[p] = patrow[p-1];
+  patrow[pos] = PatternRow();
+}
+
 void PatternEditorPanel::recording_kb(const int scancode, const int mod)
 {
   switch(highlighted_subsection)
@@ -1024,9 +1034,19 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
   switch (scancode)
   {
     case SDLK_BACKSPACE:
-      moveback(get_current_pattern(psp), cur_track, currow);
+      if (mod & KMOD_SHIFT && !(mod & KMOD_CTRL))
+        for (int t=0; t < MAX_TRACKS; t++)
+          moveback(get_current_pattern(psp), t, currow);
+      else moveback(get_current_pattern(psp), cur_track, currow);
       dec_currow();
     break;
+    case SDLK_INSERT:
+      if (mod & KMOD_SHIFT && !(mod & KMOD_CTRL))
+        for (int t=0; t < MAX_TRACKS; t++)
+          moveforward(get_current_pattern(psp), t, currow);
+      else moveforward(get_current_pattern(psp), cur_track, currow);
+    break;
+    default:break;
   }
 }
 
