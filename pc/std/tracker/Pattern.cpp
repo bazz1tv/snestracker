@@ -944,6 +944,7 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
         int mod = ev.key.keysym.mod;
 
         events_kb_universal(scancode, mod);
+
         if (!recording)
           piano_kb(scancode, mod);
         else
@@ -1416,27 +1417,21 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
           false);
 
       PatternRow *patrow = &pat->trackrows[t][rows_scrolled + r];
-      Clickable_Text *ctext;
       char *string;
 
       //--------------------------------------------------
-      ctext  = &gtr->note_ctext[r];
       string = gtr->note_strings[r];
       note2ascii(patrow->note, string);
       //--------------------------------------------------
-      ctext  = &gtr->instr_ctext[r];
       string = gtr->instr_strings[r];
       instr2ascii(patrow->instr, string);
       //--------------------------------------------------
-      ctext  = &gtr->vol_ctext[r];
       string = gtr->vol_strings[r];
       vol2ascii(patrow->vol, string);
       //--------------------------------------------------
-      ctext  = &gtr->fx_ctext[r];
       string = gtr->fx_strings[r];
       fx2ascii(patrow->fx, patrow->fxparam, string);
       //--------------------------------------------------
-      ctext  = &gtr->fxparam_ctext[r];
       string = gtr->fxparam_strings[r];
       fxparam2ascii(patrow->fx, patrow->fxparam, string);
       //--------------------------------------------------
