@@ -465,8 +465,8 @@ inline static void fxparam2ascii(int fx, int fxparam, char *c)
   c[2] = 0;
   if (fx == 0 && fxparam == 0)
   {
-    c[0] = FONT_CENTERDOT_CHAR; //'.';
-    c[1] = FONT_CENTERDOT_CHAR; //'.';
+    c[0] = FONT_CENTERDOT_CHAR;
+    c[1] = FONT_CENTERDOT_CHAR;
   }
   else
   {
@@ -480,7 +480,7 @@ inline static void fx2ascii(int fx, int fxparam, char *c)
   c[1] = 0;
   if (fx == 0 && fxparam == 0)
   {
-    c[0] = FONT_CENTERDOT_CHAR; //'.';
+    c[0] = FONT_CENTERDOT_CHAR;
   }
   else
     c[0] = Utility::nibble_to_ascii(fx);
@@ -490,8 +490,8 @@ inline static void vol2ascii(int vol, char *c)
 {
   if (vol == 0)//< 0x10)
   {
-    *(c++) = FONT_CENTERDOT_CHAR;//FONT_THINDASH_CHAR; // //'.';
-    *(c++) = FONT_CENTERDOT_CHAR;//FONT_THINDASH_CHAR; // //'.';
+    *(c++) = FONT_CENTERDOT_CHAR;
+    *(c++) = FONT_CENTERDOT_CHAR;
     *(c++) = 0;
   }
   else if (vol >= 0x1 && vol <= 0x7f)
@@ -505,12 +505,12 @@ inline static void instr2ascii(int instr, char *c)
   int lo = instr & 0x0f;
 
   if (hi == 0)
-    *(c++) = FONT_CENTERDOT_CHAR; //FONT_THINDASH_CHAR; //FONT_CENTERDOT_CHAR; //'.';
+    *(c++) = FONT_CENTERDOT_CHAR;
   else
     *(c++) = Utility::nibble_to_ascii(hi);
 
   if (lo == 0 && !hi)
-    *(c++) = FONT_CENTERDOT_CHAR;//FONT_THINDASH_CHAR; //FONT_CENTERDOT_CHAR; //'.';
+    *(c++) = FONT_CENTERDOT_CHAR;
   else
     *(c++) = Utility::nibble_to_ascii(lo);
 }
@@ -519,9 +519,9 @@ static void note2ascii(Note note, char *c)
 {
   if (note == NOTE_NONE)
   {
-    *(c++) = FONT_ELLIPSIS_CHAR; //FONT_CENTERDOT_CHAR; //'.';
-    *(c++) = FONT_ELLIPSIS_CHAR; //FONT_CENTERDOT_CHAR; //'.';
-    *(c++) = FONT_ELLIPSIS_CHAR; //FONT_CENTERDOT_CHAR; //'.';
+    *(c++) = FONT_ELLIPSIS_CHAR;
+    *(c++) = FONT_ELLIPSIS_CHAR;
+    *(c++) = FONT_ELLIPSIS_CHAR;
     *(c++) = 0;
     return;
   }
