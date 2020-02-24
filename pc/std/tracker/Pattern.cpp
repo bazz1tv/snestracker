@@ -700,7 +700,7 @@ void PatternEditorPanel::notehelper(int ndex)
     if (recording)
     {
       // get current instrument
-      pw->note = n;
+      pw->note = (Note)n;
       pw->instr = ip->currow + 1;
       //note2ascii(pw->note, guitrackrow[cur_track].note_strings[currow]);
     }
