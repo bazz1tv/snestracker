@@ -233,14 +233,6 @@ void PatSeqPanel::draw(SDL_Surface *screen/*=::render->screen*/)
 
 ////////////////////// START PATTERN EDITOR STUFF ///////////////////////
 
-static Pattern * get_unused_pattern(PatternSequencer *ps)
-{
-  for (int i=0; i < MAX_PATTERNS; i++)
-    if (ps->patterns[i].used == 0)
-      return &ps->patterns[i];
-  return NULL;
-}
-
 static int get_unused_pattern_index(PatternSequencer *ps)
 {
   for (int i=0; i < MAX_PATTERNS; i++)
