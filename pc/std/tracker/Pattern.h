@@ -70,10 +70,6 @@ struct PatternRow // defines one row of Pattern Data
   int fx = 0, fxparam = 0;
   /* It is possible SNES Tracker will deviate from traditional tracker
    * effects commands, or add additional effects as fit */
-  struct Memory
-  {
-    int last_instr = 0;
-  } mem;
 };
 
 #define MAX_TRACKS 8
@@ -86,6 +82,13 @@ struct Pattern
   int used = 0; // number of sequence entries this pattern is in
   int len = DEFAULT_PATTERN_LEN;
   PatternRow trackrows[MAX_TRACKS][MAX_PATTERN_LEN];
+  /* this hasn't been developed yet but I know we'll be needing track
+   * memory. On 2nd thought, perhaps this is needed be only the playback
+   * engine */
+  /*struct Memory
+  {
+    int last_instr = 0;
+  } mem[MAX_TRACKS];*/
 };
 
 struct PatternSequencer
@@ -194,7 +197,7 @@ struct PatternEditorPanel
   } trackheader[MAX_TRACKS];
 
   Text index_text[VISIBLE_ROWS];
-  char index_strings[MAX_PATTERN_LEN][sizeof("00|")];
+  char index_strings[MAX_PATTERN_LEN][sizeof("00")];
 
   struct GUITrackRow {
     Clickable_Text note_ctext[VISIBLE_ROWS];

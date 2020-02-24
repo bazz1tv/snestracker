@@ -162,7 +162,6 @@ void App_Settings::parse(char *line, int line_num)
   }
   
   delete []parts;
-
 }
 
 int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int line_num )

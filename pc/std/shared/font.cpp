@@ -90,9 +90,6 @@ unsigned char font[] = {
 0b00000000,
 0b00000000,
 
-
-
-
 0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
@@ -130,6 +127,35 @@ unsigned char font[] = {
 0b00011000,
 0b00011000,
 0b00011000,
+
+// 0x7D thindash
+0b00000000,
+0b00000000,
+0b00000000,
+0b00111000,
+0b00000000,
+0b00000000,
+0b00000000,
+
+// 0x7e ellipsis
+0b00000000,
+0b00000000,
+0b00000000,
+0b01010100,
+0b00000000,
+0b00000000,
+0b00000000,
+
+// 0x7f longdash (connected)
+0b00000000,
+0b00000000,
+0b00000000,
+0b11111111,
+0b00000000,
+0b00000000,
+0b00000000,
+
+
 
 };
 
@@ -178,7 +204,7 @@ unsigned char *font_getChar(char c)
 		c = 0x2e; // replace invalid chars by '.'
 	}
 	if (c>=0x61 && c<=0x7a) { c &= 0xdf; } // convert lowercase to uppercase
-	if (c>0x60 && c != 0x7c) { c = 0x2e; } // greater than 'Z' + 1 (cause of added block char)? Out of range!
+	if (c>0x60 && (c > 0x7f)) { c = 0x2e; } // greater than 'Z' + 1 (cause of added block char)? Out of range!
 	c -= 0x20;
 	
 	return &font[c*7];
