@@ -1068,33 +1068,55 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
   }
 }
 
-void PatternEditorPanel::inc_currow()
+void PatternEditorPanel::inc_currow(int howmany/*=1*/, bool wrap/*=true*/)
 {
-  if (currow < (get_current_pattern(psp)->len - 1))
+  int len = get_current_pattern(psp)->len;
+  int sublen = len - howmany;
+  if (sublen < 0) sublen = 0;
+  if (currow < sublen)
   {
-    if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
-      rows_scrolled++;
-    currow++;
+    currow += howmany;
+    if (currow >= (rows_scrolled + VISIBLE_ROWS))
+    {
+      rows_scrolled = currow - VISIBLE_ROWS + 1;
+    }
   }
   else
   {
-    currow = 0;
-    rows_scrolled = 0;
+    if (!wrap)
+    {
+      currow = len - 1;
+      rows_scrolled = currow - (VISIBLE_ROWS-1);
+    }
+    else
+    {
+      currow = 0 + (howmany - (len - currow));
+      rows_scrolled = 0;
+    }
   }
 }
 
-void PatternEditorPanel::dec_currow()
+void PatternEditorPanel::dec_currow(int howmany/*=1*/, bool wrap/*=true*/)
 {
-  if (currow > 0)
+  if (currow >= howmany)
   {
-    if ((currow - rows_scrolled) % VISIBLE_ROWS == 0)
-      rows_scrolled--;
-    currow--;
+    currow -= howmany;
+    if (currow < rows_scrolled)
+      rows_scrolled = currow;
   }
   else
   {
-    currow = get_current_pattern(psp)->len - 1;
-    rows_scrolled = currow - (VISIBLE_ROWS-1);
+    if (!wrap)
+    {
+      currow = 0;
+      rows_scrolled = 0;
+    }
+    else
+    {
+      int len = get_current_pattern(psp)->len;
+      currow = len - (howmany - currow);
+      rows_scrolled = currow - (VISIBLE_ROWS - 1);
+    }
   }
 }
 
@@ -1103,37 +1125,10 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
   switch(scancode)
   {
     case SDLK_PAGEUP:
-      if (currow >= 16)
-      {
-        currow -= 16;
-        if (currow < rows_scrolled)
-          rows_scrolled = currow;
-      }
-      else
-      {
-        currow = 0;
-        rows_scrolled = 0;
-      }
+      dec_currow(16, false);
     break;
     case SDLK_PAGEDOWN:
-    {
-      int len = get_current_pattern(psp)->len;
-      int sublen = len - 1 - 16;
-      if (sublen < 0) sublen = 0;
-      if (currow < sublen)
-      {
-        currow += 16;
-        if (currow >= (rows_scrolled + VISIBLE_ROWS))
-        {
-          rows_scrolled = currow - VISIBLE_ROWS + 1;
-        }
-      }
-      else
-      {
-        currow = len - 1;
-        rows_scrolled = currow - (VISIBLE_ROWS-1);
-      }
-    }
+      inc_currow(16, false);
     break;
     case SDLK_HOME:
       currow = 0;

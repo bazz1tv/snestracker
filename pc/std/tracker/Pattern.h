@@ -223,8 +223,8 @@ struct PatternEditorPanel
   const Instrument_Panel *ip;
 
 private:
-  void inc_currow();
-  void dec_currow();
+  void inc_currow(int howmany=1, bool wrap=true);
+  void dec_currow(int howmany=1, bool wrap=true);
   void inc_curtrack();
   void dec_curtrack();
 
