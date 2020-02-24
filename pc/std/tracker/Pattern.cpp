@@ -405,6 +405,14 @@ PatternEditorPanel::PatternEditorPanel(PatSeqPanel *psp,
     move_like_addval(0),
     psp(psp), ip(ip)
 {
+  SDL_PixelFormat *format = ::render->screen->format;
+  flasher.clr[0] = SDL_MapRGB(format, 0x0, 0x0, 0x80);
+  flasher.clr[1] = SDL_MapRGB(format, 0x0, 0x20, 0xf0);
+  flasher.clr[2] = SDL_MapRGB(format, 0x20, 0x40, 0xe0);
+  flasher.clr[3] = SDL_MapRGB(format, 0x10, 0x70, 0xc0);
+  flasher.clr[4] = SDL_MapRGB(format, 0x15, 0xa0, 0xa0);
+  flasher.clr[5] = SDL_MapRGB(format, 0x10, 0x70, 0xc0);
+  flasher.clr[6] = SDL_MapRGB(format, 0x20, 0x40, 0xe0);
 }
 
 inline static void fxparam2ascii(int fx, int fxparam, char *c)
@@ -1447,7 +1455,9 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
     SDL_FillRect(screen, &highlight_r,
       recording ? Colors::Interface::color[Colors::Interface::Type::recording]
                 : Colors::Interface::color[Colors::Interface::Type::selections]);
-    SDL_FillRect(screen, &subhighlight_r, Colors::Interface::color[Colors::Interface::Type::subselections]);
+    SDL_FillRect(screen, &subhighlight_r,
+      recording ? flasher.color()
+                : Colors::Interface::color[Colors::Interface::Type::subselections]);
   }
 
   for (int t=0; t < MAX_TRACKS; t++)

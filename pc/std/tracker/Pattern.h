@@ -243,4 +243,33 @@ private:
   void events_kb_universal(const int scancode, const int mod);
   void piano_kb(int scancode, const int mod);
   void recording_kb(const int scancode, const int mod);
+
+  /* Provide color flashing for recording mode of the subhighlight rect.
+   * This is a shout to goattrk2, though I never learned to use it :\ */
+  struct
+  {
+  public:
+    // provides a cycled color
+    inline Uint32 color()
+    {
+      cycle();
+      return clr[cnt >> 1];
+    }
+
+    // these colors get set directly from PatternEditorPanel constructor
+    Uint32 clr[7];
+
+  private:
+    /* cycles through the colors. The framerate is 1/2 the rate draw() is
+     * called. The bit shifts are just fancy divide by 2's. If you want a
+     * constant framerate for this independent of the tracker framerate,
+     * you need to create a timer and all that jazz. */
+    inline void cycle() {
+      cnt++;
+      if (cnt >> 1 == 8)
+        cnt = 0;
+    }
+
+    int cnt=0;
+  } flasher;
 };
