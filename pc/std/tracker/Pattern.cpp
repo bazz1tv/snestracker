@@ -981,6 +981,17 @@ static int gethexkb(const int scancode, const int mod)
 }
 #undef q
 
+static void moveback(Pattern *pattern, int track, int pos)
+{
+  if (pos == 0)
+    return;
+  PatternRow *patrow = pattern->trackrows[track];
+  for (; pos < pattern->len; pos++)
+  {
+    patrow[pos - 1] = patrow[pos];
+  }
+}
+
 void PatternEditorPanel::recording_kb(const int scancode, const int mod)
 {
   switch(highlighted_subsection)
@@ -1006,6 +1017,14 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
     default:
       DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
                 __LINE__, __FILE__, __func__);
+    break;
+  }
+
+  switch (scancode)
+  {
+    case SDLK_BACKSPACE:
+      moveback(get_current_pattern(psp), cur_track, currow);
+      dec_currow();
     break;
   }
 }
