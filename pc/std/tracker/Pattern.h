@@ -149,6 +149,9 @@ struct PatSeqPanel // PatternSequencerPanel
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr
   PatternSequencer *patseq;
+private:
+  void inc_currow();
+  void dec_currow();
 };
 
 struct Instrument_Panel;

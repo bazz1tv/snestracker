@@ -10,12 +10,12 @@
 
 extern MouseCursors *mousecursors;
 
-const int PatSeqPanel::VISIBLE_ROWS;
-
 PatternSequencer::PatternSequencer() : sequence(MAX_PATTERNS)
 {
   patterns[0].used = true;
 }
+
+const int PatSeqPanel::VISIBLE_ROWS;
 
 PatSeqPanel::PatSeqPanel(PatternSequencer *patseq) :
   clonebtn("Clone", PatSeqPanel::clone, this),
@@ -154,36 +154,13 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
           case SDLK_UP:
             if (!(mod & KMOD_SHIFT) && mod & KMOD_CTRL)
             {
-              //dec_currow();
-              if (currow > 0)
-              {
-                if ((currow - rows_scrolled) % VISIBLE_ROWS == 0)
-                  rows_scrolled--;
-                currow--;
-              }
-              else
-              {
-                currow = patseq->num_entries - 1;
-                rows_scrolled = patseq->num_entries >= VISIBLE_ROWS ? currow - (VISIBLE_ROWS-1) : 0;
-              }
+              dec_currow();
             }
             break;
           case SDLK_DOWN:
             if (!(mod & KMOD_SHIFT) && mod & KMOD_CTRL)
             {
-              //inc_currow();
-              if (currow >= (patseq->num_entries - 1))
-              {
-                currow = 0;
-                rows_scrolled = 0;
-              }
-              else
-              {
-                if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
-                  rows_scrolled++;
-
-                currow++;
-              }
+              inc_currow();
             }
             break;
           default:break;
@@ -381,6 +358,37 @@ int PatSeqPanel::decpat(void *pspanel)
     *derp = 0;
 
   patseq->patterns[patseq->sequence[psp->currow]].used++;
+}
+
+void PatSeqPanel::inc_currow()
+{
+  if (currow >= (patseq->num_entries - 1))
+  {
+    currow = 0;
+    rows_scrolled = 0;
+  }
+  else
+  {
+    if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
+      rows_scrolled++;
+
+    currow++;
+  }
+}
+
+void PatSeqPanel::dec_currow()
+{
+  if (currow > 0)
+  {
+    if ((currow - rows_scrolled) % VISIBLE_ROWS == 0)
+      rows_scrolled--;
+    currow--;
+  }
+  else
+  {
+    currow = patseq->num_entries - 1;
+    rows_scrolled = patseq->num_entries >= VISIBLE_ROWS ? currow - (VISIBLE_ROWS-1) : 0;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
