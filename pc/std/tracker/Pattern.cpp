@@ -149,6 +149,13 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
         int scancode = ev.key.keysym.sym;
         int mod = ev.key.keysym.mod;
 
+        /* You're currently editing a TER, so the only way you'll be
+         * getting out of that is manually finishing (eg pressing enter or
+         * double clicking on the field, or by clicking on some other area
+         * that cancels focus on the TER */
+        if (Text_Edit_Rect::cur_editing_ter)
+          break;
+
         switch(scancode)
         {
           case SDLK_UP:
@@ -848,6 +855,11 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
               {
                 if (Utility::coord_is_in_rect(ev.button.x,ev.button.y, &row_rects[i]))
                 {
+                  /* We've clicked inside the pattern editor, cancel any
+                   * currently editing TER */
+                  if (Text_Edit_Rect::cur_editing_ter)
+                    Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
+
                   // update the row highlighter (really we are "un"drawing
                   // the old highlighter. this may be unnecessary drawing
                   if ((currow - rows_scrolled) != i)
@@ -934,6 +946,9 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
       {
         int scancode = ev.key.keysym.sym;
         int mod = ev.key.keysym.mod;
+
+        if (Text_Edit_Rect::cur_editing_ter)
+          break;
 
         events_kb_universal(scancode, mod);
 
