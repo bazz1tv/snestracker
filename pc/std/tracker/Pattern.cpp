@@ -401,7 +401,7 @@ const int PatternEditorPanel::VISIBLE_ROWS;
 
 PatternEditorPanel::PatternEditorPanel(PatSeqPanel *psp,
   Instrument_Panel *ip) :
-    cur_track(0), cur_octave(4), recording(0),
+    cur_track(0), cur_octave(4), recording(0), addval(4),
     psp(psp), ip(ip)
 {
 }
@@ -712,6 +712,7 @@ void PatternEditorPanel::notehelper(int ndex)
       // get current instrument
       pw->note = (Note)n;
       pw->instr = ip->currow + 1;
+      inc_currow(addval);
       //note2ascii(pw->note, guitrackrow[cur_track].note_strings[currow]);
     }
     else
@@ -1064,6 +1065,24 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
           moveforward(get_current_pattern(psp), t, currow);
       else moveforward(get_current_pattern(psp), cur_track, currow);
     break;
+    case SDLK_MINUS:
+      //dec_addval
+      if (MODONLY(mod, KMOD_ALT))
+      {
+        if (addval == 0x00)
+          addval = 0x10;
+        else addval--;
+      }
+    break;
+    case SDLK_EQUALS:
+      //inc_addval
+      if (MODONLY(mod, KMOD_ALT))
+      {
+        if (addval == 0x10)
+          addval = 0;
+        else addval++;
+      }
+    break;
     default:break;
   }
 }
@@ -1141,13 +1160,13 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
     case SDLK_UP:
       if (MOD_ANY(mod))
         break;
-      dec_currow();
+      dec_currow(/*addval ? addval : 1*/);
     break;
     case SDLK_DOWN:
     {
       if (MOD_ANY(mod))
         break;
-      inc_currow();
+      inc_currow(/*addval ? addval : 1*/);
     } break;
     case SDLK_LEFT:
       if (MOD_ANY(mod))

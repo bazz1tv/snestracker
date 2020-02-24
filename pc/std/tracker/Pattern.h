@@ -216,6 +216,10 @@ struct PatternEditorPanel
   unsigned int cur_track :3;
   unsigned int cur_octave :3;
   unsigned int recording :1;   // recording or not
+  /* by how much the cursor increments after inputting a value. I might also
+   * elect to have the cursor move by this value when navigating (barring
+   * 0)*/
+  unsigned int addval :5; // valid range 0-0x10 (inclusive) so 5bits
 
 /* The psp is our doorway to pattern data */
   PatSeqPanel *psp;
