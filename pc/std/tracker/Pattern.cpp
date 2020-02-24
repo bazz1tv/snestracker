@@ -402,6 +402,7 @@ const int PatternEditorPanel::VISIBLE_ROWS;
 PatternEditorPanel::PatternEditorPanel(PatSeqPanel *psp,
   Instrument_Panel *ip) :
     cur_track(0), cur_octave(4), recording(0), addval(4),
+    move_like_addval(0),
     psp(psp), ip(ip)
 {
 }
@@ -1065,6 +1066,10 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
           moveforward(get_current_pattern(psp), t, currow);
       else moveforward(get_current_pattern(psp), cur_track, currow);
     break;
+    case SDLK_0:
+      if (MODONLY(mod, KMOD_ALT))
+        move_like_addval = !move_like_addval;
+    break;
     case SDLK_MINUS:
       //dec_addval
       if (MODONLY(mod, KMOD_ALT))
@@ -1160,13 +1165,13 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
     case SDLK_UP:
       if (MOD_ANY(mod))
         break;
-      dec_currow(/*addval ? addval : 1*/);
+      dec_currow(move_like_addval ? addval : 1);
     break;
     case SDLK_DOWN:
     {
       if (MOD_ANY(mod))
         break;
-      inc_currow(/*addval ? addval : 1*/);
+      inc_currow(move_like_addval ? addval : 1);
     } break;
     case SDLK_LEFT:
       if (MOD_ANY(mod))
