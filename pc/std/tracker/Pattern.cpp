@@ -519,6 +519,7 @@ static void note2ascii(Note note, char *c)
 {
   if (note == NOTE_NONE)
   {
+    /* shoutz to renoise */
     *(c++) = FONT_ELLIPSIS_CHAR;
     *(c++) = FONT_ELLIPSIS_CHAR;
     *(c++) = FONT_ELLIPSIS_CHAR;
