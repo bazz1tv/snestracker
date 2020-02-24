@@ -1037,6 +1037,36 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
   }
 }
 
+void PatternEditorPanel::inc_currow()
+{
+  if (currow < (get_current_pattern(psp)->len - 1))
+  {
+    if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
+      rows_scrolled++;
+    currow++;
+  }
+  else
+  {
+    currow = 0;
+    rows_scrolled = 0;
+  }
+}
+
+void PatternEditorPanel::dec_currow()
+{
+  if (currow > 0)
+  {
+    if ((currow - rows_scrolled) % VISIBLE_ROWS == 0)
+      rows_scrolled--;
+    currow--;
+  }
+  else
+  {
+    currow = get_current_pattern(psp)->len - 1;
+    rows_scrolled = currow - (VISIBLE_ROWS-1);
+  }
+}
+
 void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
 {
   switch(scancode)
@@ -1085,33 +1115,13 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
     case SDLK_UP:
       if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
         break;
-      if (currow > 0)
-      {
-        if ((currow - rows_scrolled) % VISIBLE_ROWS == 0)
-          rows_scrolled--;
-        currow--;
-      }
-      else
-      {
-        currow = get_current_pattern(psp)->len - 1;
-        rows_scrolled = currow - (VISIBLE_ROWS-1);
-      }
+      dec_currow();
     break;
     case SDLK_DOWN:
     {
       if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
         break;
-      if (currow < (get_current_pattern(psp)->len - 1))
-      {
-        if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
-          rows_scrolled++;
-        currow++;
-      }
-      else
-      {
-        currow = 0;
-        rows_scrolled = 0;
-      }
+      inc_currow();
     } break;
     case SDLK_LEFT:
     if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
