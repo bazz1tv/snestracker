@@ -259,7 +259,7 @@ static int clone_seq_common(PatSeqPanel *psp)
   //psp->currow, psp->patseq->{unused, num_entries, sequence, patterns}
   // Make sure whether there are no more free patterns
   int unused_index = get_unused_pattern_index(patseq);
-  Pattern *up = &patseq->patterns[unused_index];
+  Pattern *up = unused_index == -1 ? NULL : &patseq->patterns[unused_index];
 
   if (!up || psp->currow >= (MAX_PATTERNS - 1))
     return -1;
@@ -285,7 +285,7 @@ int PatSeqPanel::clone(void *pspanel)
   PatternSequencer *patseq = psp->patseq;
   fprintf(stderr, "PatSeqPanel::clone()\n");
   if(!clone_seq_common(psp))
-    memcpy(&patseq->patterns[psp->currow],
+    memcpy(&patseq->patterns[patseq->sequence[psp->currow]],
       &patseq->patterns[patseq->sequence[psp->currow - 1]],
       sizeof(Pattern));
 
