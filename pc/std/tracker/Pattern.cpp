@@ -8,6 +8,9 @@
 #include "Instruments.h" // for Instrument_Panel
 #include "shared/gui/MouseCursors.h"
 
+#define MODONLY(mod, k) ( (mod) & (k) && !( (mod) & ~(k) ) )
+#define MOD_ANY(mod) (mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI))
+
 extern MouseCursors *mousecursors;
 
 PatternSequencer::PatternSequencer() : sequence(MAX_PATTERNS)
@@ -159,13 +162,13 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
         switch(scancode)
         {
           case SDLK_UP:
-            if (!(mod & KMOD_SHIFT) && mod & KMOD_CTRL)
+            if (MODONLY(mod, KMOD_CTRL))
             {
               dec_currow();
             }
             break;
           case SDLK_DOWN:
-            if (!(mod & KMOD_SHIFT) && mod & KMOD_CTRL)
+            if (MODONLY(mod, KMOD_CTRL))
             {
               inc_currow();
             }
@@ -1049,14 +1052,14 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
   switch (scancode)
   {
     case SDLK_BACKSPACE:
-      if (mod & KMOD_SHIFT && !(mod & KMOD_CTRL))
+      if (MODONLY(mod, KMOD_SHIFT))
         for (int t=0; t < MAX_TRACKS; t++)
           moveback(get_current_pattern(psp), t, currow);
       else moveback(get_current_pattern(psp), cur_track, currow);
       dec_currow();
     break;
     case SDLK_INSERT:
-      if (mod & KMOD_SHIFT && !(mod & KMOD_CTRL))
+      if (MODONLY(mod, KMOD_SHIFT))
         for (int t=0; t < MAX_TRACKS; t++)
           moveforward(get_current_pattern(psp), t, currow);
       else moveforward(get_current_pattern(psp), cur_track, currow);
@@ -1141,30 +1144,30 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
       rows_scrolled = currow - (VISIBLE_ROWS-1);
     break;
     case SDLK_UP:
-      if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+      if (MOD_ANY(mod))
         break;
       dec_currow();
     break;
     case SDLK_DOWN:
     {
-      if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+      if (MOD_ANY(mod))
         break;
       inc_currow();
     } break;
     case SDLK_LEFT:
-    if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
-      break;
-    if (highlighted_subsection > 0)
-      highlighted_subsection--;
-    else
-    {
-      dec_curtrack();
-      highlighted_subsection = FXPARAM_LO;
-    }
+      if (MOD_ANY(mod))
+        break;
+      if (highlighted_subsection > 0)
+        highlighted_subsection--;
+      else
+      {
+        dec_curtrack();
+        highlighted_subsection = FXPARAM_LO;
+      }
     break;
     case SDLK_RIGHT:
     {
-      if (mod & KMOD_SHIFT || mod & KMOD_CTRL)
+      if (MOD_ANY(mod))
         break;
       if (highlighted_subsection < FXPARAM_LO)
         highlighted_subsection++;
@@ -1175,7 +1178,7 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
       }
     } break;
     case SDLK_SPACE:
-      if (!(mod & KMOD_SHIFT) && !(mod & KMOD_CTRL))
+      if (!MOD_ANY(mod))
       {
         recording = !recording;
         mousecursors->set_cursor(CURSOR_MPAINT_WHITE_HAND - recording);
@@ -1183,7 +1186,7 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
     break;
     case SDLK_TAB:
     {
-      if (mod & KMOD_SHIFT)
+      if (MODONLY(mod, KMOD_SHIFT))
         dec_curtrack();
       else
         inc_curtrack();
