@@ -149,7 +149,7 @@ struct PatSeqPanel // PatternSequencerPanel
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr
   PatternSequencer *patseq;
-private:
+
   void inc_currow();
   void dec_currow();
 };
@@ -222,6 +222,7 @@ struct PatternEditorPanel
   unsigned int addval :5; // valid range 0-0x10 (inclusive) so 5bits
   /* Whether the nav will refer to addval for movement increments */
   unsigned int move_like_addval :1;
+  unsigned int pattern_wrap :1;
 
 /* The psp is our doorway to pattern data */
   PatSeqPanel *psp;

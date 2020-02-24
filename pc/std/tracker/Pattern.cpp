@@ -447,7 +447,7 @@ const int PatternEditorPanel::VISIBLE_ROWS;
 PatternEditorPanel::PatternEditorPanel(PatSeqPanel *psp,
   Instrument_Panel *ip) :
     cur_track(0), cur_octave(4), recording(0), addval(4),
-    move_like_addval(0),
+    move_like_addval(0), pattern_wrap(1),
     psp(psp), ip(ip)
 {
   SDL_PixelFormat *format = ::render->screen->format;
@@ -1169,6 +1169,9 @@ void PatternEditorPanel::inc_currow(int howmany/*=1*/, bool wrap/*=true*/)
     {
       currow = 0 + (howmany - (len - currow));
       rows_scrolled = 0;
+
+      if (!pattern_wrap) // switch to the next pattern
+        psp->inc_currow();
     }
   }
 }
@@ -1193,6 +1196,9 @@ void PatternEditorPanel::dec_currow(int howmany/*=1*/, bool wrap/*=true*/)
       int len = get_current_pattern(psp)->len;
       currow = len - (howmany - currow);
       rows_scrolled = currow - (VISIBLE_ROWS - 1);
+
+      if (!pattern_wrap)
+        psp->dec_currow();
     }
   }
 }
@@ -1201,6 +1207,10 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
 {
   switch(scancode)
   {
+    case SDLK_w:
+      if (MODONLY(mod, KMOD_CTRL))
+        pattern_wrap = !pattern_wrap;
+    break;
     case SDLK_PAGEUP:
       dec_currow(16, false);
     break;
