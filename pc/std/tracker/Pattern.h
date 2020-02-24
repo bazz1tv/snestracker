@@ -220,6 +220,7 @@ struct PatternEditorPanel
    * elect to have the cursor move by this value when navigating (barring
    * 0)*/
   unsigned int addval :5; // valid range 0-0x10 (inclusive) so 5bits
+  /* Whether the nav will refer to addval for movement increments */
   unsigned int move_like_addval :1;
 
 /* The psp is our doorway to pattern data */

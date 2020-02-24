@@ -8,6 +8,9 @@
 #include "Instruments.h" // for Instrument_Panel
 #include "shared/gui/MouseCursors.h"
 
+int clone_seq_common(PatSeqPanel *psp);
+Pattern * get_current_pattern(PatSeqPanel *psp);
+
 #define MODONLY(mod, k) ( (mod) & (k) && !( (mod) & ~(k) ) )
 #define MOD_ANY(mod) (mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI))
 
@@ -15,7 +18,7 @@ extern MouseCursors *mousecursors;
 
 PatternSequencer::PatternSequencer() : sequence(MAX_PATTERNS)
 {
-  patterns[0].used = true;
+  patterns[0].used = 1;
 }
 
 const int PatSeqPanel::VISIBLE_ROWS;
@@ -173,6 +176,48 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
               inc_currow();
             }
             break;
+          case SDLK_LEFT:
+            if (MODONLY(mod, KMOD_CTRL))
+              decpat(this);
+          break;
+          case SDLK_RIGHT:
+            if (MODONLY(mod, KMOD_CTRL))
+              incpat(this);
+          break;
+          case SDLK_F9:
+            if (MODONLY(mod, KMOD_CTRL))
+              clear(this);
+          break;
+          case SDLK_F10:
+            if (MODONLY(mod, KMOD_CTRL))
+            {
+              //insert_pattern();
+              Pattern *p = get_current_pattern(this);
+
+              if (!p || currow >= (MAX_PATTERNS - 1))
+                break;
+              // Add the entry to the sequencer by inserting it after currow
+              patseq->sequence.insert(patseq->sequence.begin()+currow+1,
+                  patseq->sequence[currow]);
+
+              p->used += 1;
+
+              if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
+                rows_scrolled++;
+
+              patseq->num_entries++;
+              currow++;
+            }
+          break;
+          case SDLK_F11:
+            if (MODONLY(mod, KMOD_CTRL))
+              clone_seq_common(this);
+          break;
+          case SDLK_F12:
+          if (MODONLY(mod, KMOD_CTRL))
+            clone(this);
+          break;
+
           default:break;
         }
       } break;
