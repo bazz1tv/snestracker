@@ -1074,10 +1074,9 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
     case SDLK_PAGEUP:
       if (currow >= 16)
       {
-        int val = ((currow - rows_scrolled) % VISIBLE_ROWS);
-
         currow -= 16;
-        rows_scrolled -= (VISIBLE_ROWS-1) - val >= (VISIBLE_ROWS-16) ? : 0;
+        if (currow < rows_scrolled)
+          rows_scrolled = currow;
       }
       else
       {
@@ -1092,10 +1091,11 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
       if (sublen < 0) sublen = 0;
       if (currow < sublen)
       {
-        int val = ((currow - rows_scrolled) % VISIBLE_ROWS);
-        rows_scrolled += VISIBLE_ROWS - val <= 16 ? : 0;
-
         currow += 16;
+        if (currow >= (rows_scrolled + VISIBLE_ROWS))
+        {
+          rows_scrolled = currow - VISIBLE_ROWS + 1;
+        }
       }
       else
       {
