@@ -1106,6 +1106,9 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
 
   switch (scancode)
   {
+    case SDLK_DELETE:
+      get_current_pattern(psp)->trackrows[cur_track][currow] = PatternRow();
+    break;
     case SDLK_BACKSPACE:
       if (MODONLY(mod, KMOD_SHIFT))
         for (int t=0; t < MAX_TRACKS; t++)
