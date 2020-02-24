@@ -877,8 +877,8 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
                   // the old highlighter. this may be unnecessary drawing
                   if ((currow - rows_scrolled) != i)
                   {
-                    SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
-                    SDL_FillRect(::render->screen, &subhighlight_r, Colors::transparent);
+                    //SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
+                    //SDL_FillRect(::render->screen, &subhighlight_r, Colors::transparent);
                     currow = rows_scrolled + i;
                   }
 
