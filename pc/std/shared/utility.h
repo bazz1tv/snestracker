@@ -16,7 +16,7 @@ namespace Utility
   void DrawRect(const SDL_Rect *rect, int thickness=1, Uint32 color=Colors::white,
                 SDL_Surface *screen=::render->screen);
 
-  inline bool coord_is_in_rect(int x, int y, SDL_Rect *r)
+  inline bool coord_is_in_rect(int x, int y, const SDL_Rect *r)
   {
     return (x >= r->x && x < (r->x + r->w) &&
             y >= r->y && y < (r->y+r->h) );
