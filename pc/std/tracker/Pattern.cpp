@@ -788,8 +788,7 @@ void PatternEditorPanel::instrhelper(int n)
 
   if (highlighted_subsection != INSTR_HI && highlighted_subsection != INSTR_LO)
   {
-    DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
-        __LINE__, __FILE__, __func__);
+    DEBUGLOG("SHOULDN'T BE HERE!" FILE_LINE_FUNC_STR, FILE_LINE_FUNC_ARGS);
     return;
   }
 
@@ -816,8 +815,7 @@ void PatternEditorPanel::volhelper(int n)
 
   if (highlighted_subsection != VOL_HI && highlighted_subsection != VOL_LO)
   {
-    DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
-        __LINE__, __FILE__, __func__);
+    DEBUGLOG("SHOULDN'T BE HERE!"  FILE_LINE_FUNC_STR, FILE_LINE_FUNC_ARGS);
     return;
   }
 
@@ -844,8 +842,7 @@ void PatternEditorPanel::fxhelper(int n)
 
   if (highlighted_subsection != FX)
   {
-    DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
-        __LINE__, __FILE__, __func__);
+    DEBUGLOG("SHOULDN'T BE HERE!"  FILE_LINE_FUNC_STR, FILE_LINE_FUNC_ARGS);
     return;
   }
 
@@ -864,8 +861,7 @@ void PatternEditorPanel::fxparamhelper(int n)
 
   if (highlighted_subsection != FXPARAM_HI && highlighted_subsection != FXPARAM_LO)
   {
-    DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
-        __LINE__, __FILE__, __func__);
+    DEBUGLOG("SHOULDN'T BE HERE!"  FILE_LINE_FUNC_STR, FILE_LINE_FUNC_ARGS);
     return;
   }
 
@@ -1100,8 +1096,7 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
       fxparamhelper(gethexkb(scancode, mod));
     break;
     default:
-      DEBUGLOG("SHOULDN'T BE HERE! line %d of file %s (function %s)\n",
-                __LINE__, __FILE__, __func__);
+      DEBUGLOG("SHOULDN'T BE HERE!"  FILE_LINE_FUNC_STR, FILE_LINE_FUNC_ARGS);
     break;
   }
 
