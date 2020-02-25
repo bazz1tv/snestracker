@@ -312,6 +312,10 @@ void Tracker::handle_events()
           case UserEvents::sound_stop:
             sound_stop();
             break;
+          case UserEvents::callback:
+            void (*p) (void*) = ev.user.data1;
+            p(ev.user.data2);
+          break;
         }
       } break;
       case SDL_MOUSEMOTION:
