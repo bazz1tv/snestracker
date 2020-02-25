@@ -6,20 +6,20 @@ BpmSpdAddWidget::BpmSpdAddWidget(Tracker *tracker, PatternEditorPanel *pep) :
   bpm_cbuf("120"),
   bpm_title("BPM"),
   bpm_valtext(bpm_cbuf),
-  bpm_incbtn("+", incbpm, this),
-  bpm_decbtn("-", decbpm, this),
+  bpm_incbtn("+", incbpm, this, true),
+  bpm_decbtn("-", decbpm, this, true),
 
   spd_cbuf("06"),
   spd_title("Spd"),
   spd_valtext(spd_cbuf),
-  spd_incbtn("+", incspd, this),
-  spd_decbtn("-", decspd, this),
+  spd_incbtn("+", incspd, this, true),
+  spd_decbtn("-", decspd, this, true),
 
   add_cbuf("04"),
   add_title("Add"),
   add_valtext(add_cbuf),
-  add_incbtn("+", incadd, this),
-  add_decbtn("-", decadd, this),
+  add_incbtn("+", incadd, this, true),
+  add_decbtn("-", decadd, this, true),
 
   tracker(tracker),
   pep(pep)

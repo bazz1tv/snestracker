@@ -1,17 +1,57 @@
 #include "gui/Button.h"
 #include "utility.h"
 #include "DEBUGLOG.h"
+#include "shared/mouse.h" // for mouse coords
+#include "shared/sdl_userevents.h"
+
+const unsigned int Button::holdtime = 200; //ms
+const unsigned int Button::triggerfreq = 15; // ms
+Uint32 Button::hold_tid=0; // timer ID
+
 Button::Button(const char * str, int (*action)(void *data)/*=NULL*/,
-  void *data/*=NULL*/) :
-    Clickable_Text(str, action, data)
+  void *data/*=NULL*/, bool holdrepeat/*=false*/) :
+    Clickable_Text(str, action, data),
+    state(0), holdrepeat(holdrepeat)
 {
-  /*
-  bg_color[0] = Colors::Interface::color[Colors::Interface::button_bg];
-  bg_color[1] = Colors::Interface::color[Colors::Interface::button_pressed_bg];
-  fg_color[0] = Colors::Interface::color[Colors::Interface::button_fg];
-  fg_color[1] = Colors::Interface::color[Colors::Interface::button_pressed_fg];
-  */
-  //outer = {rect.x + 2, rect.y + 4, rect.w, rect.h};
+   //outer = {rect.x + 2, rect.y + 4, rect.w, rect.h};
+}
+
+void Button::trigger_callback(void *b)
+{
+  Button *btn = (Button *)b;
+  btn->check_mouse_and_execute(mouse::x, mouse::y, &btn->outer);
+}
+
+Uint32 Button::held_callback(Uint32 interval, void *b)
+{
+  if (interval == holdtime)
+  {
+    // nothing needs to be done ?
+  }
+  else if (interval == triggerfreq)
+  {
+    SDL_Event event;
+    SDL_UserEvent userevent;
+
+    /* In this example, our callback pushes a function
+       into the queue, and causes our callback to be called again at the
+       same interval: */
+
+    userevent.type = SDL_USEREVENT;
+    userevent.code = UserEvents::callback;
+    userevent.data1 = &trigger_callback;
+    userevent.data2 = b;
+
+    event.type = SDL_USEREVENT;
+    event.user = userevent;
+
+    SDL_PushEvent(&event);
+  }
+  else
+  {
+    DEBUGLOG("Oops, shouldn't be here!" FILE_LINE_FUNC_STR, FILE_LINE_FUNC_ARGS);
+  }
+  return triggerfreq;
 }
 
 void Button::check_event(const SDL_Event &ev)
@@ -22,22 +62,45 @@ void Button::check_event(const SDL_Event &ev)
   {
     //DEBUGLOG("Button mousebuttondown; ");
     state = LEFTMOUSEBUTTON_HELD_IN_RECT;
+    // start the timer
+    if (holdrepeat)
+      hold_tid = SDL_AddTimer(holdtime, held_callback, (void *)this);
   }
   else if (state == LEFTMOUSEBUTTON_HELD_IN_RECT)
   {
     if (ev.type == SDL_MOUSEMOTION &&
-        (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT)) &&
-        !Utility::coord_is_in_rect(ev.motion.x, ev.motion.y, &outer))
+        (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT)))
     {
-      state = 0;
+      if (!Utility::coord_is_in_rect(ev.motion.x, ev.motion.y, &outer))
+      {
+        state = 0;
+        // reset the timer
+        if (holdrepeat)
+          remove_hold_timer();
+      }
     }
     else if (ev.type == SDL_MOUSEBUTTONUP)
     {
       //DEBUGLOG("Button Mousebuttonup; ");
       check_mouse_and_execute(ev.button.x, ev.button.y, &outer);
       state = 0;
+
+      if (holdrepeat)
+        remove_hold_timer();
     }
   }
+}
+
+void Button::remove_hold_timer()
+{
+  /* ASSUMES holdrepeat flag check has already been done */
+  if (hold_tid)
+  {
+    SDL_RemoveTimer(hold_tid);
+    hold_tid = 0;
+  }
+  else
+    DEBUGLOG("Button::remove_hold_timer() called when no timer was active\n");
 }
 
 void Button::draw(SDL_Surface *screen)
@@ -59,5 +122,4 @@ void Button::draw(SDL_Surface *screen)
       Colors::Interface::color[Colors::Interface::button_fg + state],
       Colors::Interface::color[Colors::Interface::button_bg + state],
       false);
-
 }
