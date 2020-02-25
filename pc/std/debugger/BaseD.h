@@ -60,7 +60,7 @@ struct BaseD
     
   static void if_exp_is_instr_window_then_restore_spc();
   static void check_paths_and_reload(char **paths=g_cfg.playlist, 
-      unsigned int numpaths=g_cfg.num_files, bool is_drop_event=false);
+  unsigned int numpaths=g_cfg.num_files, bool is_drop_event=false);
   static void pack_mask(unsigned char packed_mask[32]);
   static void applyBlockMask(char *filename);
   static void write_mask(unsigned char packed_mask[32]);
@@ -81,6 +81,9 @@ struct BaseD
   static int menu_bar_events(SDL_Event &ev);
 
   static My_Nfd nfd;
+  static char **rsn_spc_paths;
+  static size_t *num_rsn_spc_paths;
+
   static int g_cur_entry;// = 0;
   static bool paused;
   static const char* path;

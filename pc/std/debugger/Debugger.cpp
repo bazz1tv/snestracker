@@ -8,8 +8,12 @@
 #define R_FLAG 1
 
 Debugger::Debugger(int &argc, char **argv) :
-main_window(argc,argv)
+main_window(argc,argv),
+rsn_spc_paths(NULL),
+num_rsn_spc_paths(0)
 {
+  BaseD::rsn_spc_paths = rsn_spc_paths;
+  BaseD::num_rsn_spc_paths = &num_rsn_spc_paths;
   BaseD::main_window = &main_window;
   BaseD::dsp_window = &dsp_window;
   BaseD::instr_window = &instr_window;
@@ -47,6 +51,17 @@ main_window(argc,argv)
 Debugger::~Debugger()
 {
   DEBUGLOG("~Debugger");
+  if (rsn_spc_paths)
+  {
+    for (unsigned int i = 0; i < num_rsn_spc_paths; i++ )
+    {
+      SDL_free(rsn_spc_paths[i]);
+    }
+
+    SDL_free(rsn_spc_paths);
+    rsn_spc_paths = NULL;
+    num_rsn_spc_paths=0;
+  }
 }
 
 /*static int fillbuff(void *p)
