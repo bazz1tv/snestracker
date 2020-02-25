@@ -103,8 +103,8 @@ int BRR::write_brri_to_file(BRR *brr)
     tmpb = ::player->spc_read_dsp(brr->corresponding_voice*0x10 + dsp_reg::adsr2);
     SDL_RWwrite(file, &tmpb, 1, 1); 
     // GAIN
-    tmpb = ::player->spc_read_dsp(brr->corresponding_voice*0x10 + dsp_reg::gain);
-    SDL_RWwrite(file, &tmpb, 1, 1); 
+    //tmpb = ::player->spc_read_dsp(brr->corresponding_voice*0x10 + dsp_reg::gain);
+    //SDL_RWwrite(file, &tmpb, 1, 1);
     //BRR Sample
     SDL_RWwrite(file, &::IAPURAM[brr->brr_start], brr->brr_end - brr->brr_start + 1, 1);
     //
