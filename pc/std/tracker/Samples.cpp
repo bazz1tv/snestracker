@@ -11,9 +11,19 @@
 const int Sample_Panel::NUM_ROWS;
 #define SAMPLE_NAME_GUI_CHAR_WIDTH 22
 
-Sample::Sample()
+Sample::Sample() : brr(NULL), brrsize(0), rel_loop(0)
 {
   name[0] = 0;
+}
+
+Sample::~Sample()
+{
+  if (brr != NULL)
+  {
+    free(brr);
+    brr = NULL;
+    brrsize = 0;
+  }
 }
 
 Sample_Panel::Sample_Panel(Instrument_Panel *ip) :
@@ -296,11 +306,50 @@ void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
  * This is still GUI centric.*/
 int Sample_Panel::load(void *spanel)
 {
+  SDL_RWops *file;
+  nfdchar_t *outpath = NULL;
+
   Sample_Panel *sp = (Sample_Panel *)spanel;
-  Sample *samples = sp->instrpanel->instruments[sp->instrpanel->currow].samples;
-  int currow = sp->currow;
+  Sample *s = &sp->instrpanel->instruments[sp->instrpanel->currow].samples[sp->currow];
 
   fprintf(stderr, "Sample_Panel::LOAD\n");
+
+  if (Utility::get_file_read_handle(&outpath, &file, "brr") == NFD_OKAY)
+  {
+    Sint64 brrsize = SDL_RWsize(file);
+
+
+    DEBUGLOG("sample path:%s\n", outpath);
+    if (brrsize <= 0)
+    {
+      DEBUGLOG("Could not detect filesize :( aborting loading sample\n");
+      return -1;
+    }
+
+    Brr *brr = (Brr *) malloc(brrsize);
+
+    Sint64 nb_read_total = 0, nb_read = 1;
+    char* buf = (char *)brr;
+    while (nb_read_total < brrsize && nb_read != 0) {
+            nb_read = SDL_RWread(file, buf, 1, (brrsize - nb_read_total));
+            nb_read_total += nb_read;
+            buf += nb_read;
+    }
+    SDL_RWclose(file);
+
+    if (nb_read_total != brrsize)
+    {
+      free(brr);
+      return -1;
+    }
+
+    if (s->brr != NULL)
+      free(s->brr);
+
+    s->brr = brr;
+    s->brrsize = brrsize;
+  }
+
   return 0;
 }
 

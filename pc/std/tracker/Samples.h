@@ -17,6 +17,7 @@
 struct Sample
 {
   Sample();
+  ~Sample();
   char name[SAMPLE_NAME_MAXLEN]; // name of the sample
   /* pointer to first BRR block. can act as an iterator until end block is
    * found */
@@ -27,6 +28,7 @@ struct Sample
   Brr *brr; // raw brr sample data. Have to iterate it to END block
   /* offset into sample where loop starts, specified by number of BRR
    * blocks or [by samples and must be divisible by 16]*/
+  size_t brrsize;
   uint16_t rel_loop;
   /* signed offset in semitones to pitch the sample. This will be used
    * directly by the SNES driver. The tracker must impose the restraints

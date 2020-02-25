@@ -7,6 +7,14 @@
 #include "globals.h" // for mouse::
 #include "PanelCommon.h"
 
+Instrument::Instrument()
+{
+  name[0] = 0;
+}
+
+Instrument::~Instrument()
+{
+}
 /* The instrument panel is something like
  * Instruments  (Load) (Save) (Zap)
  * ------+-------------------------+

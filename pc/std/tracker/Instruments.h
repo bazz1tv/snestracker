@@ -14,7 +14,8 @@
 
 struct Instrument
 {
-  Instrument() { name[0] = 0; }
+  Instrument();
+  ~Instrument();
   char name[INSTR_NAME_MAXLEN]; // the name of the instrument
   /* the app-level sample data. How that gets exported into the snes
    * driver data is a different story */
