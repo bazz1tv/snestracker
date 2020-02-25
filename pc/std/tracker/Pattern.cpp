@@ -1128,25 +1128,29 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
         move_like_addval = !move_like_addval;
     break;
     case SDLK_MINUS:
-      //dec_addval
       if (MODONLY(mod, KMOD_ALT))
-      {
-        if (addval == 0x00)
-          addval = 0x10;
-        else addval--;
-      }
+        dec_addval();
     break;
     case SDLK_EQUALS:
-      //inc_addval
       if (MODONLY(mod, KMOD_ALT))
-      {
-        if (addval == 0x10)
-          addval = 0;
-        else addval++;
-      }
+        inc_addval();
     break;
     default:break;
   }
+}
+
+void PatternEditorPanel::inc_addval()
+{
+  if (addval == 0x10)
+    addval = 0;
+  else addval++;
+}
+
+void PatternEditorPanel::dec_addval()
+{
+  if (addval == 0x00)
+    addval = 0x10;
+  else addval--;
 }
 
 void PatternEditorPanel::inc_currow(int howmany/*=1*/, bool wrap/*=true*/)

@@ -8,6 +8,8 @@
 #define R_FLAG 1
 
 Tracker::Tracker(int &argc, char **argv) :
+bpm(120),
+spd(6),
 main_window(argc,argv, this)
 {
   //::main_window = &main_window;
@@ -386,7 +388,32 @@ next_event:
    * the event queue for next graphical frame to pick up */
   if (mbu_postpone_ev.type == SDL_MOUSEBUTTONUP)
     SDL_PushEvent(&mbu_postpone_ev);
+}
 
-  /*if (scrolled_this_gframe)
-    scrolled_this_gframe--;*/
+void Tracker::inc_bpm()
+{
+  if (bpm >= 300)
+    bpm = 300;
+  else bpm++;
+}
+
+void Tracker::dec_bpm()
+{
+  if (bpm <= 32)
+    bpm = 32;
+  else bpm--;
+}
+
+void Tracker::inc_spd()
+{
+  if (spd >= 31)
+    spd = 31;
+  else spd++;
+}
+
+void Tracker::dec_spd()
+{
+  if (spd <= 1)
+    spd = 1;
+  else spd--;
 }

@@ -26,6 +26,15 @@ public:
   void run();
   void handle_events();
 
+  /* This is stuff that will go into a Song struct, but for now just put
+   * it here */
+  unsigned int bpm :9;
+  unsigned int spd :5;
+  void inc_bpm();
+  void dec_bpm();
+  void inc_spd();
+  void dec_spd();
+
   Menu_Bar menu_bar;
   Main_Window main_window;
 
@@ -48,8 +57,5 @@ public:
   /* TRACKER CORE -- Here is located the "model" data structures, not GUI
    * */
   Instrument instruments[NUM_INSTR]; // also holds the samples
-  // Of course Pattern datatype will be going here. Perhaps just like
-  // there are Samples as part of Instruments, Patterns will be part of
-  // PatternSequencer
   PatternSequencer patseq;
 };

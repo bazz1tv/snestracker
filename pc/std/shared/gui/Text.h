@@ -6,6 +6,7 @@
 struct Text
 {
   Text(const char *str = "");
+  void init_width_height();
   void draw(SDL_Surface *screen=::render->screen,
       Uint32 color=Colors::Interface::color[Colors::Interface::Type::text_fg],
       bool prefill=true, bool Vflip=false,

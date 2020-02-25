@@ -16,6 +16,7 @@
 #include "shared/gui/Text_Edit_Rect.h"
 #include "Instruments.h"
 #include "Pattern.h"
+#include "BpmSpdAddWidget.h"
 
 struct Tracker;
 
@@ -85,4 +86,5 @@ struct Main_Window : public Experience
   Sample_Panel samplepanel;
   PatSeqPanel patseqpanel;
   PatternEditorPanel pateditpanel;
+  BpmSpdAddWidget bsawidget;
 };

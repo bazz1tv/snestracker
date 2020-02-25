@@ -20,7 +20,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   instrpanel(tracker->instruments),
   samplepanel(&instrpanel),
   patseqpanel(&tracker->patseq),
-  pateditpanel(&patseqpanel, &instrpanel)
+  pateditpanel(&patseqpanel, &instrpanel),
+  bsawidget(tracker, &pateditpanel)
 {
   int x,y,xx,yy;
   song_title.dblclick = false; // do not require dblclick to edit. single
@@ -45,6 +46,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   y += CHAR_HEIGHT + 2;
   song_title.rect.x = 150;
   song_title.rect.y = y;
+
+  bsawidget.set_coords(150, y + song_title.rect.h + CHAR_HEIGHT);
 
   x += song_title.rect.w + (CHAR_WIDTH * 2);
   instrpanel.set_coords(x, yy);
@@ -95,6 +98,7 @@ void Main_Window::draw()
   {
     //fprintf(stderr, "HERE!\n");
     song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
+    bsawidget.draw(::render->screen);
     instrpanel.draw(::render->screen);
     samplepanel.draw(::render->screen);
     patseqpanel.draw(::render->screen);
@@ -139,6 +143,7 @@ int Main_Window::receive_event(SDL_Event &ev)
   check_quit(ev);
 
   handle_text_edit_rect_event(ev, &song_title);
+  bsawidget.handle_event(ev);
   instrpanel.event_handler(ev);
   samplepanel.event_handler(ev);
   patseqpanel.event_handler(ev);

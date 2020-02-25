@@ -4,7 +4,12 @@
 
 Text::Text(const char *str/*=""*/) : str(str)
 {
-  rect.w = strlen(str) * CHAR_WIDTH;
+  init_width_height();
+}
+
+void Text::init_width_height()
+{
+  rect.w = strlen(str)*CHAR_WIDTH; // could add padding
   rect.h = CHAR_HEIGHT;
 }
 

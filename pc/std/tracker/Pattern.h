@@ -232,9 +232,11 @@ struct PatternEditorPanel
 /* The instrument panel lets us reference the currently selected instr */
   const Instrument_Panel *ip;
 
-private:
+  void inc_addval();
+  void dec_addval();
   void inc_currow(int howmany=1, bool wrap=true);
   void dec_currow(int howmany=1, bool wrap=true);
+private:
   void inc_curtrack();
   void dec_curtrack();
 
