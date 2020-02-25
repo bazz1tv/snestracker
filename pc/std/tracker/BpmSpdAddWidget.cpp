@@ -111,6 +111,8 @@ void BpmSpdAddWidget::draw(SDL_Surface *screen/*=::render->screen*/)
   spd_valtext.draw(screen);
   spd_incbtn.draw(screen);
   spd_decbtn.draw(screen);
+
+  updateadd();
   add_title.draw(screen);
   add_valtext.draw(screen);
   add_incbtn.draw(screen);
@@ -149,13 +151,11 @@ int BpmSpdAddWidget::incadd(void *bsaw)
 {
   BpmSpdAddWidget *b = (BpmSpdAddWidget *)bsaw;
   b->pep->inc_addval();
-  b->updateadd();
 }
 
 int BpmSpdAddWidget::decadd(void *bsaw)
 {
   BpmSpdAddWidget *b = (BpmSpdAddWidget *)bsaw;
   b->pep->dec_addval();
-  b->updateadd();
 }
 
