@@ -361,7 +361,7 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       rsn_spc_paths = tmp;
       rsn_spc_paths[*num_rsn_spc_paths] = (char*) SDL_calloc(strlen(path)+3, sizeof(char));
       strcpy(rsn_spc_paths[*num_rsn_spc_paths], path);
-      *num_rsn_spc_paths++;
+      *num_rsn_spc_paths += 1;
     }
   }
 
