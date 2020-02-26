@@ -15,6 +15,43 @@ Instrument::Instrument()
 Instrument::~Instrument()
 {
 }
+
+void Instrument::inc_vol(Instrument *i)
+{
+  if (i->vol != 0x7f)
+    i->vol++;
+}
+
+void Instrument::dec_vol(Instrument *i)
+{
+  if (i->vol != 0x80)
+    i->vol--;
+}
+
+void Instrument::inc_pan(Instrument *i)
+{
+  if (i->pan != 0xff)
+    i->pan++;
+}
+
+void Instrument::dec_pan(Instrument *i)
+{
+  if (i->pan != 0x00)
+    i->pan--;
+}
+
+void Instrument::inc_finetune(Instrument *i)
+{
+  if (i->finetune != 0xff)
+    i->finetune++;
+}
+
+void Instrument::dec_finetune(Instrument *i)
+{
+  if (i->finetune != 0x00)
+    i->finetune--;
+}
+
 /* The instrument panel is something like
  * Instruments  (Load) (Save) (Zap)
  * ------+-------------------------+

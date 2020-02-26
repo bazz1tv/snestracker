@@ -47,12 +47,13 @@ void BpmSpdAddWidget :: updateadd()
 
 void BpmSpdAddWidget :: set_coords(int x, int y)
 {
-
+  rect.x = x;
+  rect.y = y;
   /* (x,y)
    * BPM  123 +-
    * Spd   03 +-
    * Add   02 +-*/
-  int xx = x;
+
   bpm_title.rect.x = x;
   bpm_title.rect.y = y;
   bpm_valtext.rect.x = x + ((3 + 1) * CHAR_WIDTH);
@@ -83,6 +84,9 @@ void BpmSpdAddWidget :: set_coords(int x, int y)
   add_incbtn.rect.y = y;
   add_decbtn.rect.x = add_incbtn.rect.x + CHAR_WIDTH + 5;
   add_decbtn.rect.y = y;
+
+  rect.w = add_decbtn.rect.x + add_decbtn.rect.w - rect.x + 2;
+  rect.h = add_decbtn.rect.y + add_decbtn.rect.h - rect.y + 2;
 }
 
 int BpmSpdAddWidget::handle_event(const SDL_Event &ev)

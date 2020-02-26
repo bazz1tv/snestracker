@@ -21,7 +21,9 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   samplepanel(&instrpanel),
   patseqpanel(&tracker->patseq),
   pateditpanel(&patseqpanel, &instrpanel),
-  bsawidget(tracker, &pateditpanel)
+  bsawidget(tracker, &pateditpanel),
+  instreditor(&instrpanel),
+  instreditor_btn("Inst. Ed.", toggle_instreditor, this)
 {
   int x,y,xx,yy;
   song_title.dblclick = false; // do not require dblclick to edit. single
@@ -49,12 +51,35 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   bsawidget.set_coords(150, y + song_title.rect.h + CHAR_HEIGHT);
 
+  instreditor_btn.rect.x = 150;
+  instreditor_btn.rect.y = bsawidget.rect.y + bsawidget.rect.h + 4;
+
   x += song_title.rect.w + (CHAR_WIDTH * 2);
   instrpanel.set_coords(x, yy);
   x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH);
   samplepanel.set_coords(x, yy);
 
-  pateditpanel.set_coords(xx, y + instrpanel.rect.h + CHAR_HEIGHT);
+  y = y + instrpanel.rect.h + CHAR_HEIGHT;
+  pateditpanel.set_coords(xx, y);
+  y = y + pateditpanel.rect.h / 2;
+  instreditor.set_coords(xx, y);
+}
+
+int Main_Window::toggle_instreditor(void *m)
+{
+  Main_Window *mw = (Main_Window *)m;
+  mw->instreditor_active = !mw->instreditor_active;
+
+  SDL_FillRect(::render->screen, &mw->pateditpanel.rect, Colors::transparent);
+
+  if (mw->instreditor_active)
+  {
+    mw->pateditpanel.set_visible_rows(0x10); //mw->pateditpanel.MAX_VISIBLE_ROWS / 2);
+  }
+  else
+  {
+    mw->pateditpanel.set_visible_rows(mw->pateditpanel.MAX_VISIBLE_ROWS);
+  }
 }
 
 int Main_Window::Gain::change(void *dblnewgain)
@@ -99,10 +124,13 @@ void Main_Window::draw()
     //fprintf(stderr, "HERE!\n");
     song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
     bsawidget.draw(::render->screen);
+    instreditor_btn.draw(::render->screen);
     instrpanel.draw(::render->screen);
     samplepanel.draw(::render->screen);
     patseqpanel.draw(::render->screen);
     pateditpanel.draw(::render->screen);
+    if (instreditor_active)
+      instreditor.draw(::render->screen);
     //draw_memory_outline();
     return; 
   }  
@@ -143,11 +171,14 @@ int Main_Window::receive_event(SDL_Event &ev)
   check_quit(ev);
 
   handle_text_edit_rect_event(ev, &song_title);
+  instreditor_btn.check_event(ev);
   bsawidget.handle_event(ev);
   instrpanel.event_handler(ev);
   samplepanel.event_handler(ev);
   patseqpanel.event_handler(ev);
   pateditpanel.event_handler(ev);
+  if (instreditor_active)
+    instreditor.handle_event(ev);
   // DIRTY :( ITS IMPORTANT THAT WE CHECK THE DBLCLICK EVENTS AFTER THE ABOVE
   dblclick::check_event(&ev);
   /*if (gain.slider)
@@ -265,8 +296,6 @@ void Main_Window::draw_voices_pitchs()
     uint8_t voice_base_addr = (i*0x10);
     uint8_t outx = player->spc_read_dsp(voice_base_addr+0x09);
     uint8_t envx = player->spc_read_dsp(voice_base_addr+0x08);
-
-   
 
     if (outx || envx) 
     {

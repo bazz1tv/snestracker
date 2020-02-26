@@ -17,6 +17,7 @@
 #include "Instruments.h"
 #include "Pattern.h"
 #include "BpmSpdAddWidget.h"
+#include "InstrumentEditor.h"
 
 struct Tracker;
 
@@ -87,4 +88,8 @@ struct Main_Window : public Experience
   PatSeqPanel patseqpanel;
   PatternEditorPanel pateditpanel;
   BpmSpdAddWidget bsawidget;
+  InstrumentEditor instreditor;
+  bool instreditor_active = false;
+  Button instreditor_btn;
+  static int toggle_instreditor(void *m);
 };
