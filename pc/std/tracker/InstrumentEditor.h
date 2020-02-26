@@ -36,5 +36,5 @@ struct InstrumentEditor
   static int decfinetune(void *i);
 
 private:
-  Instrument_Panel *instrpanel; 
+  Instrument_Panel *instrpanel;
 };

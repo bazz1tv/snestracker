@@ -107,7 +107,7 @@ void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
   vol_valtext.draw(screen);
   vol_incbtn.draw(screen);
   vol_decbtn.draw(screen);
-  
+
   pan_title.draw(screen);
   pan_valtext.draw(screen);
   pan_incbtn.draw(screen);
