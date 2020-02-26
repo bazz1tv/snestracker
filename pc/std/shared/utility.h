@@ -8,6 +8,8 @@
 
 namespace Utility
 {
+  char * getFileName(const char *s);
+
   inline int random(int min, int max) {  return rand() % (max - min + 1) + min; }
   SDL_Texture *load_texture_bmp( const char *path, SDL_Renderer *r );
 

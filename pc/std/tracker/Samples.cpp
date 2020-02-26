@@ -348,6 +348,9 @@ int Sample_Panel::load(void *spanel)
 
     s->brr = brr;
     s->brrsize = brrsize;
+
+    strncpy(s->name, Utility::getFileName(outpath), SAMPLE_NAME_MAXLEN - 1);
+    s->name[SAMPLE_NAME_MAXLEN-1] = 0;
   }
 
   return 0;

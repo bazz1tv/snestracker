@@ -4,6 +4,20 @@
 
 namespace Utility
 {
+char * getFileName(const char *s)
+{
+  if (s == NULL)
+    return ("");
+
+  char sep = '/';
+
+#ifdef _WIN32
+  sep = '\\';
+#endif
+  char *whoami;
+  (whoami = strrchr(s, sep)) ? ++whoami : (whoami = "???");
+  return whoami;
+}
   extern int random(int min, int max);
 
 SDL_Texture *load_texture_bmp( const char *path, SDL_Renderer *r )
