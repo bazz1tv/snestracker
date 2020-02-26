@@ -442,10 +442,12 @@ void PatSeqPanel::dec_currow()
 //////////////// BEGIN PATTERN EDITOR //////////////////////////////////
 //
 
-const int PatternEditorPanel::VISIBLE_ROWS;
+const int PatternEditorPanel::MAX_VISIBLE_ROWS;
+int PatternEditorPanel::VISIBLE_ROWS = PatternEditorPanel::MAX_VISIBLE_ROWS;
 
 PatternEditorPanel::PatternEditorPanel(PatSeqPanel *psp,
   Instrument_Panel *ip) :
+    //VISIBLE_ROWS(MAX_VISIBLE_ROWS),
     cur_track(0), cur_octave(4), recording(0), addval(4),
     move_like_addval(0), pattern_wrap(1),
     psp(psp), ip(ip)
@@ -739,8 +741,7 @@ void PatternEditorPanel::set_coords(int x, int y)
 
 
   rect.w = (maxx->x - rect.x) + maxx->w; // (3 * CHAR_WIDTH) + ((3 + 2 + 2 + 1 + 2 * CHAR_WIDTH) * MAX_TRACKS) + 2;
-  rect.h = (CHAR_HEIGHT * (1 + VISIBLE_ROWS)) + 7;
-
+  set_visible_rows(VISIBLE_ROWS); // called to update rect.h
 
   for (int i=0; i < VISIBLE_ROWS; i++)
   {
@@ -748,6 +749,12 @@ void PatternEditorPanel::set_coords(int x, int y)
     row_rects[i].x -= 1;
     row_rects[i].w += rect.w - (3*CHAR_WIDTH) - 1;
   }
+}
+
+void PatternEditorPanel::set_visible_rows(int rows)
+{
+  VISIBLE_ROWS = rows;
+  rect.h = (CHAR_HEIGHT * (1 + VISIBLE_ROWS)) + 6;
 }
 
 static Pattern * get_current_pattern(PatSeqPanel *psp)

@@ -169,7 +169,10 @@ struct PatternEditorPanel
   void one_time_draw(SDL_Surface *screen=::render->screen);
   void draw(SDL_Surface *screen=::render->screen);
 
-  static const int VISIBLE_ROWS = 0x30;
+  void set_visible_rows(int rows);
+
+  static const int MAX_VISIBLE_ROWS = 0x30;
+  static int VISIBLE_ROWS;
   int currow = 0; /* This is not only controlled by the user, but also by
   the playback engine. At least that's the plan. */
   enum Highlight {
@@ -188,7 +191,7 @@ struct PatternEditorPanel
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr
   SDL_Rect subhighlight_r;
-  SDL_Rect row_rects[VISIBLE_ROWS];
+  SDL_Rect row_rects[MAX_VISIBLE_ROWS];
 
   struct TrackHeader {
     Clickable_Text ctext;
@@ -196,23 +199,23 @@ struct PatternEditorPanel
     SDL_Rect outline;
   } trackheader[MAX_TRACKS];
 
-  Text index_text[VISIBLE_ROWS];
+  Text index_text[MAX_VISIBLE_ROWS];
   char index_strings[MAX_PATTERN_LEN][sizeof("00")];
 
   struct GUITrackRow {
-    Clickable_Text note_ctext[VISIBLE_ROWS];
+    Clickable_Text note_ctext[MAX_VISIBLE_ROWS];
     char note_strings[MAX_PATTERN_LEN][sizeof("C-4")];
 
-    Clickable_Text instr_ctext[VISIBLE_ROWS];
+    Clickable_Text instr_ctext[MAX_VISIBLE_ROWS];
     char instr_strings[MAX_PATTERN_LEN][sizeof("0f")];
 
-    Clickable_Text vol_ctext[VISIBLE_ROWS];
+    Clickable_Text vol_ctext[MAX_VISIBLE_ROWS];
     char vol_strings[MAX_PATTERN_LEN][sizeof("0f")];
 
-    Clickable_Text fx_ctext[VISIBLE_ROWS];
+    Clickable_Text fx_ctext[MAX_VISIBLE_ROWS];
     char fx_strings[MAX_PATTERN_LEN][sizeof("0")];
 
-    Clickable_Text fxparam_ctext[VISIBLE_ROWS];
+    Clickable_Text fxparam_ctext[MAX_VISIBLE_ROWS];
     char fxparam_strings[MAX_PATTERN_LEN][sizeof("00")];
   } guitrackrow[MAX_TRACKS];
 
