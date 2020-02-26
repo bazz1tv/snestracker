@@ -82,7 +82,7 @@ struct BaseD
 
   static My_Nfd nfd;
   static char **rsn_spc_paths;
-  static size_t *num_rsn_spc_paths;
+  static size_t num_rsn_spc_paths;
 
   static int g_cur_entry;// = 0;
   static bool paused;

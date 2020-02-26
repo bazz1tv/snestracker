@@ -8,12 +8,8 @@
 #define R_FLAG 1
 
 Debugger::Debugger(int &argc, char **argv) :
-main_window(argc,argv),
-rsn_spc_paths(NULL),
-num_rsn_spc_paths(0)
+main_window(argc,argv)
 {
-  BaseD::rsn_spc_paths = rsn_spc_paths;
-  BaseD::num_rsn_spc_paths = &num_rsn_spc_paths;
   BaseD::main_window = &main_window;
   BaseD::dsp_window = &dsp_window;
   BaseD::instr_window = &instr_window;
@@ -51,6 +47,7 @@ num_rsn_spc_paths(0)
 Debugger::~Debugger()
 {
   DEBUGLOG("~Debugger");
+  // Belongs to BaseD
   if (rsn_spc_paths)
   {
     for (unsigned int i = 0; i < num_rsn_spc_paths; i++ )

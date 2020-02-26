@@ -11,8 +11,8 @@ bool BaseD::Profile::is_profiling=false;
 BaseD::Profile * BaseD::tmp_profile=NULL;
 
 My_Nfd BaseD::nfd;
-char **BaseD::rsn_spc_paths;
-size_t *BaseD::num_rsn_spc_paths;
+char **BaseD::rsn_spc_paths = NULL;
+size_t BaseD::num_rsn_spc_paths;
 
 int BaseD::grand_mode=GrandMode::MAIN;
 BaseD::Cfg BaseD::g_cfg;// = { 0,0,0,0,0,0,DEFAULT_SONGTIME,0,0,0,0,0,NULL };
@@ -310,7 +310,7 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       SDL_free(full_extract_cmd);    
 
       //int count=0;
-      int old_nfd_rsn_spc_path_pos=*num_rsn_spc_paths;
+      int old_nfd_rsn_spc_path_pos=BaseD::num_rsn_spc_paths;
       // count how many paths!!
       // ls *.spc
       char *dir_unquoted = &dir_quoted[1];
@@ -324,13 +324,13 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
                                             // is not ordered on some file systems
 
     
-      *num_rsn_spc_paths += v.size();
+      BaseD::num_rsn_spc_paths += v.size();
 
-      rsn_spc_paths=(char**)SDL_realloc(
-        rsn_spc_paths,
-        sizeof(char*) * (*num_rsn_spc_paths+1));
+      BaseD::rsn_spc_paths=(char**)SDL_realloc(
+        BaseD::rsn_spc_paths,
+        sizeof(char*) * (BaseD::num_rsn_spc_paths+1));
 
-      if (rsn_spc_paths == NULL)
+      if (BaseD::rsn_spc_paths == NULL)
       {
         perror ("realloc");
         break;
@@ -340,8 +340,8 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
       {
         std::cout << "woot" << std::endl;
         std::string spc_path = dir_unquoted + it->string();
-        rsn_spc_paths[old_nfd_rsn_spc_path_pos] = (char*) SDL_calloc(spc_path.length()+3, sizeof(char));
-        strcpy(rsn_spc_paths[old_nfd_rsn_spc_path_pos], spc_path.c_str());
+        BaseD::rsn_spc_paths[old_nfd_rsn_spc_path_pos] = (char*) SDL_calloc(spc_path.length()+3, sizeof(char));
+        strcpy(BaseD::rsn_spc_paths[old_nfd_rsn_spc_path_pos], spc_path.c_str());
         old_nfd_rsn_spc_path_pos++; 
       }
 
@@ -353,20 +353,20 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
     else
     {
       char **tmp;
-      if ( (tmp=(char**)SDL_realloc(rsn_spc_paths, sizeof(char*) * (*num_rsn_spc_paths+1))) == NULL)
+      if ( (tmp=(char**)SDL_realloc(BaseD::rsn_spc_paths, sizeof(char*) * (BaseD::num_rsn_spc_paths+1))) == NULL)
       {
         perror ("realloc");
         break;
       }
-      rsn_spc_paths = tmp;
-      rsn_spc_paths[*num_rsn_spc_paths] = (char*) SDL_calloc(strlen(path)+3, sizeof(char));
-      strcpy(rsn_spc_paths[*num_rsn_spc_paths], path);
-      *num_rsn_spc_paths += 1;
+      BaseD::rsn_spc_paths = tmp;
+      BaseD::rsn_spc_paths[BaseD::num_rsn_spc_paths] = (char*) SDL_calloc(strlen(path)+3, sizeof(char));
+      strcpy(BaseD::rsn_spc_paths[BaseD::num_rsn_spc_paths], path);
+      BaseD::num_rsn_spc_paths++;
     }
   }
 
 
-  BaseD::reload(rsn_spc_paths,*num_rsn_spc_paths);
+  BaseD::reload(BaseD::rsn_spc_paths,BaseD::num_rsn_spc_paths);
 
 }
 bool BaseD::check_time()

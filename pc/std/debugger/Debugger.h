@@ -45,7 +45,4 @@ public:
   Window *window_map[NUM_WINDOWS+1];
 
   MouseCursors mousecursors;
-  char **rsn_spc_paths;
-  size_t num_rsn_spc_paths;
-
 };
