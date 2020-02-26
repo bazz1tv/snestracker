@@ -60,6 +60,4 @@ namespace Utility
   SDL_bool file_is_valid( std::string filename );
 
   void clearsstream(std::stringstream &s);
-
-  void draw_rect(SDL_Surface * dst, const SDL_Rect * rect, int depth, Uint32 color);
 }

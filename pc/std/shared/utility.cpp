@@ -268,31 +268,4 @@ void clearsstream(std::stringstream &s)
   s.clear();//clear any bits set
   s.str(std::string());
 }
-
-void
-draw_rect(SDL_Surface * screen, const SDL_Rect * r, int depth, Uint32 color)
-{
-  SDL_Rect tmprect;
-  tmprect.x = r->x-depth;
-  tmprect.y = r->y-depth;
-  tmprect.w = depth;
-  tmprect.h = r->h+(2*depth);
-  SDL_FillRect(screen, &tmprect, color);
-  tmprect.x = r->x-depth;
-  tmprect.y = r->y-depth;
-  tmprect.w = r->w+(2*depth);
-  tmprect.h = depth;
-  SDL_FillRect(screen, &tmprect, color);
-  tmprect.x = r->x-depth + r->w + depth;
-  tmprect.y = r->y-depth;
-  tmprect.w = depth;
-  tmprect.h = r->h+(2*depth);
-  SDL_FillRect(screen, &tmprect, color);
-  tmprect.x = r->x-depth;
-  tmprect.y = r->y-depth + r->h + depth;
-  tmprect.w = r->w+(2*depth);
-  tmprect.h = depth;
-  SDL_FillRect(screen, &tmprect, color);
-}
-
 }
