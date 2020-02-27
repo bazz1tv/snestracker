@@ -8,8 +8,8 @@
 #include "Instruments.h" // for Instrument_Panel
 #include "shared/gui/MouseCursors.h"
 
-int clone_seq_common(PatSeqPanel *psp);
-Pattern * get_current_pattern(PatSeqPanel *psp);
+static int clone_seq_common(PatSeqPanel *psp);
+static Pattern * get_current_pattern(PatSeqPanel *psp);
 
 #define MODONLY(mod, k) ( (mod) & (k) && !( (mod) & ~(k) ) )
 #define MOD_ANY(mod) (mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI))
@@ -296,7 +296,7 @@ static int get_unused_pattern_index(PatternSequencer *ps)
   return -1;
 }
 
-static int clone_seq_common(PatSeqPanel *psp)
+int clone_seq_common(PatSeqPanel *psp)
 {
   PatternSequencer *patseq = psp->patseq;
   /* Copy the "currow" pattern into the next pattern marked by "unused" */
@@ -757,7 +757,7 @@ void PatternEditorPanel::set_visible_rows(int rows)
   rect.h = (CHAR_HEIGHT * (1 + VISIBLE_ROWS)) + 6;
 }
 
-static Pattern * get_current_pattern(PatSeqPanel *psp)
+Pattern * get_current_pattern(PatSeqPanel *psp)
 {
   return &psp->patseq->patterns[psp->patseq->sequence[psp->currow]];
 }
