@@ -7,6 +7,8 @@
 #define L_FLAG 0
 #define R_FLAG 1
 
+std::unordered_set<DrawRenderer *> Tracker::prerenders, Tracker::postrenders;
+
 Tracker::Tracker(int &argc, char **argv) :
 bpm(120),
 spd(6),
@@ -90,8 +92,20 @@ void Tracker::run()
     SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
     SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
     SDL_RenderClear(::render->sdlRenderer);
+
+    // Certain things want to draw directly to renderer before the screen
+    // texture is copied
+    for (const auto& elem : prerenders)
+      elem->draw_renderer();
+
     SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
-// Optionally, let's draw on top of EVERYTHING ELSE, any auxiliary
+
+    // Other things may want to draw directly to renderer after the screen
+    // texture is copied
+    for (const auto& elem : postrenders)
+      elem->draw_renderer();
+
+    // Optionally, let's draw on top of EVERYTHING ELSE, any auxiliary
     // mouse FX
     mousecursors->draw_aux();
 

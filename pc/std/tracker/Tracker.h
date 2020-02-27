@@ -16,6 +16,9 @@
 
 #include "gui/MouseCursors.h"
 
+#include "shared/DrawRenderer.h"
+#include <unordered_set>
+
 typedef Uint32 WindowID;
 
 struct Tracker
@@ -53,6 +56,8 @@ public:
   int fps;
   Uint32 frame_tick_timeout, frame_tick_duration;
   ///Uint32 gframe = 0; // should worry about overflow
+
+  static std::unordered_set<DrawRenderer *> prerenders, postrenders;
 
   /* TRACKER CORE -- Here is located the "model" data structures, not GUI
    * */
