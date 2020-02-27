@@ -110,6 +110,7 @@ void Debugger::run()
     SDL_RenderPresent(::render->sdlRenderer);
     
     handle_events();
+    SDL_Delay(50);
   }
 
   sub_window_experience = NULL;
