@@ -10,6 +10,8 @@
 Instrument::Instrument()
 {
   name[0] = 0;
+  adsr.adsr1 = 0xff;
+  adsr.adsr2 = 0xe0;
 }
 
 Instrument::~Instrument()
