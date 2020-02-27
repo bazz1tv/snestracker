@@ -20,7 +20,7 @@ struct Context_Menu
   void hover_highlight(bool yesno);
   void highlight_currently_selected_item(bool yesno);
 
-  bool receive_event(SDL_Event &ev);
+  bool receive_event(const SDL_Event &ev);
   
 
   SDL_Rect created_at;  // the mouse coordinate when context menu was created

@@ -1,7 +1,7 @@
 #include "ADSR.h"
 
 
-bool ADSR::Context_Menus::check_left_click_activate(int &x, int &y)
+bool ADSR::Context_Menus::check_left_click_activate(const int x, const int y)
 {
   static bool first=true;
 
@@ -25,7 +25,7 @@ bool ADSR::Context_Menus::check_left_click_activate(int &x, int &y)
   return false;
 }
 
-int ADSR::Context_Menus::receive_event(SDL_Event &ev)
+int ADSR::Context_Menus::receive_event(const SDL_Event &ev)
 {
   int r;
   if ((r=attack_context.menu.receive_event(ev)))

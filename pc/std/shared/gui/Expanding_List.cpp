@@ -63,7 +63,7 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
   //SDL_FillRect(::render->screen, &single_item_rect, Colors::black);
 }
 
-int Expanding_List::receive_event(SDL_Event &ev)
+int Expanding_List::receive_event(const SDL_Event &ev)
 {
   if (!is_active)
     return EVENT_INACTIVE;
@@ -121,7 +121,7 @@ Context_Menu(array, isActive, isStatic)
   currently_selected_item = &items[0];
 }
 
-void Expanding_List::preload(int &x, int &y, bool use_cache/*=false*/)
+void Expanding_List::preload(int x, int y, bool use_cache/*=false*/)
 {
   Context_Menu::preload(x,y,use_cache);
   single_item_rect.x = created_at.x;

@@ -230,8 +230,8 @@ struct ADSR
       SUSTAIN_RELEASE_CHANGED
     };
 
-    bool check_left_click_activate(int &x, int &y);
-    int receive_event(SDL_Event &ev);
+    bool check_left_click_activate(const int x, const int y);
+    int receive_event(const SDL_Event &ev);
     void draw(SDL_Surface *screen);
     void update(Uint8 adsr, Uint8 adsr2);
     Attack_Context          attack_context;

@@ -34,7 +34,7 @@ clickable_text(str, action, data), is_visible(is_visible)
 
 }
 
-bool Context_Menu::receive_event(SDL_Event &ev)
+bool Context_Menu::receive_event(const SDL_Event &ev)
 {
   if (!is_active)
     return false;
