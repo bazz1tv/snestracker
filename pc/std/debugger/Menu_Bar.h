@@ -182,9 +182,6 @@ struct Menu_Bar
     }
 
     void draw ();
-    static int memory(void *data);
-    static int DSP(void *data);
-    static int Instrument(void *data);
 
     SDL_Rect rect;
     Tab mem, dsp, instr;

@@ -344,5 +344,5 @@ void Menu_Bar::Tabs::preload(int x, int y)
   instr.rect.x = dsp.rect.x + dsp.horiz_pixel_length() + CHAR_WIDTH;
   instr.rect.y = mem.rect.y;
 
-  rect = {mem.rect.x, mem.rect.y, instr.rect.x + instr.rect.w, CHAR_HEIGHT};
+  rect = {mem.rect.x, mem.rect.y, instr.rect.x - mem.rect.x + instr.rect.w, CHAR_HEIGHT};
 }
