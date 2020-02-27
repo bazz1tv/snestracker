@@ -9,7 +9,7 @@ InstrumentEditor::InstrumentEditor(Instrument_Panel *instrpanel) :
   vol_decbtn("-", decvol, this, true),
 
   pan_cbuf("80"),
-  pan_title("pan"),
+  pan_title("Pan"),
   pan_valtext(pan_cbuf),
   pan_incbtn("+", incpan, this, true),
   pan_decbtn("-", decpan, this, true),
@@ -22,9 +22,6 @@ InstrumentEditor::InstrumentEditor(Instrument_Panel *instrpanel) :
 
   instrpanel(instrpanel)
 {
-  update_vol();
-  update_pan();
-  update_finetune();
 }
 
 void InstrumentEditor :: update_vol()
@@ -39,11 +36,12 @@ void InstrumentEditor :: update_pan()
 
 void InstrumentEditor :: update_finetune()
 {
-  int ft = instrpanel->instruments[instrpanel->currow].finetune;
+  int8_t ft = instrpanel->instruments[instrpanel->currow].finetune;
   char sign = '+';
   if (ft < 0)
-    sign = '-';
-  sprintf(finetune_cbuf, "%c%03d", sign, ft);
+    sprintf(finetune_cbuf, "%04d", ft);
+  else
+    sprintf(finetune_cbuf, "%c%03d", sign, ft);
 }
 
 void InstrumentEditor :: set_coords(int x, int y)
@@ -103,6 +101,10 @@ int InstrumentEditor::handle_event(const SDL_Event &ev)
 
 void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
 {
+  update_vol();
+  update_pan();
+  update_finetune();
+
   vol_title.draw(screen);
   vol_valtext.draw(screen);
   vol_incbtn.draw(screen);

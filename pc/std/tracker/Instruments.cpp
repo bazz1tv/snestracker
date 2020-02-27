@@ -24,7 +24,7 @@ void Instrument::inc_vol(Instrument *i)
 
 void Instrument::dec_vol(Instrument *i)
 {
-  if (i->vol != 0x80)
+  if (i->vol != 0x00)
     i->vol--;
 }
 
@@ -42,13 +42,13 @@ void Instrument::dec_pan(Instrument *i)
 
 void Instrument::inc_finetune(Instrument *i)
 {
-  if (i->finetune != 0xff)
+  if (i->finetune < 127)
     i->finetune++;
 }
 
 void Instrument::dec_finetune(Instrument *i)
 {
-  if (i->finetune != 0x00)
+  if (i->finetune > -128)
     i->finetune--;
 }
 

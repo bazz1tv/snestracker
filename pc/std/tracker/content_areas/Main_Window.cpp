@@ -70,7 +70,11 @@ int Main_Window::toggle_instreditor(void *m)
   Main_Window *mw = (Main_Window *)m;
   mw->instreditor_active = !mw->instreditor_active;
 
-  SDL_FillRect(::render->screen, &mw->pateditpanel.rect, Colors::transparent);
+  SDL_Rect r = mw->pateditpanel.rect;
+  r.x +=1;
+  r.w -=1;
+  r.h -=1;
+  SDL_FillRect(::render->screen, &r, Colors::transparent);
 
   if (mw->instreditor_active)
   {

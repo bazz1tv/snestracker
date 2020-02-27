@@ -21,9 +21,10 @@ struct Instrument
   /* the app-level sample data. How that gets exported into the snes
    * driver data is a different story */
   Sample samples[NUM_SAMPLES];
-  int8_t vol = APU_MAXVOL;
+  bool phaseflip=false;
+  uint8_t vol = APU_MAXVOL;
   /* 0x80 = dead center, 0xFF = hard right, 0x00 = hard left */
-  int8_t pan = 0x80;
+  uint8_t pan = 0x80;
   /* signed offset in semitones to pitch the sample. This will be used
    * directly by the SNES driver. The tracker must impose the restraints
    * on the range allowed */
@@ -31,7 +32,7 @@ struct Instrument
   /* used to pitch the sample for range of +/- one semitone. Tracker
    * software must impose retraints on the allowed range of values. Will
    * be used by SNES Driver */
-  int finetune = 0;
+  int8_t finetune = 0;
   Adsr adsr; // The volume envelope that will be used for this instrument
   /* Aside from the ADSR hardware volume envelope, the voice stereo volume
    * may be adjusted real-time for additional effects.*/
