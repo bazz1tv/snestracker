@@ -61,7 +61,9 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   y = y + instrpanel.rect.h + CHAR_HEIGHT;
   pateditpanel.set_coords(xx, y);
-  y = y + pateditpanel.rect.h / 2;
+  pateditpanel.set_visible_rows(0x08); // called to update rect.h
+  y = pateditpanel.rect.y + pateditpanel.rect.h + (CHAR_HEIGHT*2);
+  pateditpanel.set_visible_rows(PatternEditorPanel::MAX_VISIBLE_ROWS); // called to update rect.h
   instreditor.set_coords(xx, y);
 }
 
@@ -78,11 +80,15 @@ int Main_Window::toggle_instreditor(void *m)
 
   if (mw->instreditor_active)
   {
-    mw->pateditpanel.set_visible_rows(0x10); //mw->pateditpanel.MAX_VISIBLE_ROWS / 2);
+    mw->pateditpanel.set_visible_rows(0x08); //mw->pateditpanel.MAX_VISIBLE_ROWS / 2);
+    if (mw->instreditor.tabs.adsr.active)
+      Tracker::prerenders.insert((DrawRenderer *)&mw->instreditor.adsrpanel);
   }
   else
   {
     mw->pateditpanel.set_visible_rows(mw->pateditpanel.MAX_VISIBLE_ROWS);
+    if (mw->instreditor.tabs.adsr.active)
+      Tracker::prerenders.erase((DrawRenderer *)&mw->instreditor.adsrpanel);
   }
 }
 

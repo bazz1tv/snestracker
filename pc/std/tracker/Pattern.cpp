@@ -741,7 +741,6 @@ void PatternEditorPanel::set_coords(int x, int y)
 
 
   rect.w = (maxx->x - rect.x) + maxx->w; // (3 * CHAR_WIDTH) + ((3 + 2 + 2 + 1 + 2 * CHAR_WIDTH) * MAX_TRACKS) + 2;
-  set_visible_rows(VISIBLE_ROWS); // called to update rect.h
 
   for (int i=0; i < VISIBLE_ROWS; i++)
   {
