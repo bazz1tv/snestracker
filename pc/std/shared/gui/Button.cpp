@@ -82,7 +82,7 @@ void Button::check_event(const SDL_Event &ev)
     else if (ev.type == SDL_MOUSEBUTTONUP)
     {
       //DEBUGLOG("Button Mousebuttonup; ");
-      check_mouse_and_execute(ev.button.x, ev.button.y, &outer);
+      check_mouse_and_execute(mouse::x, mouse::y, &outer);
       state = 0;
 
       if (holdrepeat)
