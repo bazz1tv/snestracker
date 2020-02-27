@@ -171,7 +171,7 @@ struct PatternEditorPanel
 
   void set_visible_rows(int rows);
 
-  static const int MAX_VISIBLE_ROWS = 0x30;
+  static const int MAX_VISIBLE_ROWS = 0x28;
   static int VISIBLE_ROWS;
   int currow = 0; /* This is not only controlled by the user, but also by
   the playback engine. At least that's the plan. */
