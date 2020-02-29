@@ -24,7 +24,7 @@ void AdsrPanel::set_coords(int x, int y)
   // Build graph below this. Just draw the bounding rect
   adsrgraph.bounds.y = y + (CHAR_HEIGHT*3);
   adsrgraph.bounds.x = x;
-  adsrgraph.bounds.w = 500;
+  adsrgraph.bounds.w = 525;
   adsrgraph.bounds.h = 120;
   adsrgraph.fg_color = Colors::green;
   adsrgraph.bg_color = Colors::nearblack;
