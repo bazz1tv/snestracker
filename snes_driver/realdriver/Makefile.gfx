@@ -1,0 +1,11 @@
+####### GRAPHICS
+G := gfx/ascii/ascii
+$(G).pic $(G).clr: $(G).pcx
+	cd gfx/ascii ; pcx2snes -c4 -o4 ascii
+
+G := gfx/mainlogo/mainlogo
+$(G).pic $(G).clr $(G).map: $(G).pcx
+	cd gfx/mainlogo ; pcx2snes -n -s8 -c4 -screen -o4 mainlogo
+
+clean-gfx:
+	find gfx -name "*.pic" -o -name "*.clr" -o -name "*.map" | xargs rm -f

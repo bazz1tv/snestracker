@@ -1,0 +1,149 @@
+#!/bin/bash
+
+# this file needs to exist for main.s makedeps
+touch apu/spc.bin
+
+objdir=obj
+apuobjs=""
+cpuobjs=""
+romtitle=""
+# Checks for Existence of RomTitle Argument 1
+if [ -z $1 ]
+  then
+    romtitle="Tracker.smc"
+  else
+	  romtitle="$1"
+fi
+
+echo '# ROM TITLE'
+echo "ROMTITLE = $romtitle"
+#cat MakefileGenerator/compilerheader
+echo '
+# Wla-65816 Compiler information (CPU SIDE)
+CPU_CC = wla-65816
+CPU_CFLAGS = -vo
+LD = wlalink
+LDFLAGS = -vS
+#--
+
+# Wla-spc700 Compiler information (APU SIDE)
+APU_CC = wla-spc700
+APU_CFLAGS = -ov
+APU_LDFLAGS = -bvS
+
+'
+
+#APU
+echo '' > /tmp/apu
+for file in apu/*.s; do
+	echo "$file" > /tmp/filename
+	objname="`sed 's/\.s/\.o/' /tmp/filename`"
+	apuobjs="$apuobjs $objname"
+	#printf '# %s \n' $file >> /tmp/apu
+  printf "$objdir/$objname: " >> /tmp/apu
+  wla-spc700 -Mo $file $objdir/$objname 2>&1 1>/dev/null | grep -v DISCARD >> /tmp/apu
+	echo >> /tmp/apu
+	#printf '\t\t$(APU_CC) $(APU_CFLAGS) $< $(OBJDIR)/$@\n' >> /tmp/apu
+done
+
+echo '' > /tmp/cpu
+for file in cpu/*.s; do
+	echo "$file" > /tmp/filename
+	objname="`sed 's/\.s/\.o/' /tmp/filename`"
+	cpuobjs="$cpuobjs $objname"
+	#printf '# %s \n' $file >> /tmp/cpu
+  printf "$objdir/$objname: " >> /tmp/cpu
+  wla-65816 -Mo $file $objdir/$objname 2>&1 1>/dev/null | grep -v DISCARD >> /tmp/cpu
+	echo >> /tmp/cpu
+	#printf '\t\t$(CPU_CC) $(CPU_CFLAGS) $< $(OBJDIR)/$@\n' >> /tmp/cpu
+done
+
+echo "
+CPU_OFILES = $cpuobjs
+APU_OFILES = $apuobjs
+
+OBJDIR = $objdir
+
+"
+
+echo '
+# Object Information
+CPU_OBJDIR = $(OBJDIR)/cpu
+CPU_OBJS = $(addprefix $(OBJDIR)/,$(CPU_OFILES))
+APU_OBJDIR = $(OBJDIR)/apu
+APU_OBJS = $(addprefix $(OBJDIR)/,$(APU_OFILES))
+
+OBJS = $(CPU_OBJS)
+OBJS += $(APU_OBJS)
+# --
+'
+echo 'VPATH = $(OBJDIR):gfx:gfx/ascii'
+echo ''
+
+#cat MakefileGenerator/MainRecipes
+echo '
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# MAIN GOALS / RECIPES
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+$(ROMTITLE): $(CPU_OBJS) Makefile
+	echo "" > linkfile.tmp
+	echo "[objects]" >> linkfile.tmp
+	echo "$(CPU_OBJS)" >> linkfile.tmp
+	sed y/" "/"\n"/ linkfile.tmp > linkfile
+	echo "" >> linkfile
+	rm linkfile.tmp
+	$(LD) $(LDFLAGS) linkfile $(ROMTITLE)
+	rm linkfile
+
+apu/spc.bin: $(APU_OBJS) Makefile
+	echo "" > linkfile_spc.tmp
+	echo "[objects]" >> linkfile_spc.tmp
+	echo "$(APU_OBJS)" >> linkfile_spc.tmp
+	sed y/" "/"\n"/ linkfile_spc.tmp > linkfile_spc
+	echo "" >> linkfile_spc
+	rm linkfile_spc.tmp
+	$(LD) $(APU_LDFLAGS) linkfile_spc $(OBJDIR)/$@
+	cp $(OBJDIR)/$@ $@
+	mv $(APU_OBJDIR)/spc.sym .
+	bazz-size $@
+	rm linkfile_spc
+
+$(OBJDIR)/cpu/%.o: cpu/%.s
+	mkdir -p $(@D)
+	$(CPU_CC) $(CPU_CFLAGS) $< $@
+
+$(OBJDIR)/apu/%.o: apu/%.s
+	mkdir -p $(@D)
+	$(APU_CC) $(APU_CFLAGS) $< $@
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+'
+
+#cat MakefileGenerator/DirectoryCreators
+#echo '
+#$(CPU_OBJDIR):
+#	mkdir -p $(CPU_OBJDIR)
+#$(APU_OBJDIR):
+#	mkdir -p $(APU_OBJDIR)
+#
+#'
+
+echo '#------------------------------'
+echo '#APU SIDE'
+echo '#------------------------------'
+cat /tmp/apu
+#./MakefileGenerator/format apu /tmp/apu
+echo '#------------------------------'
+echo '#CPU SIDE'
+echo '#------------------------------'
+cat /tmp/cpu
+#./MakefileGenerator/format cpu /tmp/cpu
+echo ''
+#cat MakefileGenerator/clean
+echo '
+.PHONY: clean
+clean:
+	rm -rf $(OBJDIR) $(OFILES) core *~ $(ROMTITLE) *.lib obj/*.o *.sym apu/spc.bin
+	find gfx -name "*.pic" -o -name "*.clr" -o -name "*.map" | xargs rm -f
+
+include Makefile.gfx
+'
