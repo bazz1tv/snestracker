@@ -644,4 +644,16 @@ void sound_cleanup()
 	::audio->devices.id=0;
 }
 
+/*const char * Music_Player::create_emu()
+{
+  if (emu_)
+    return "Already created!";
+  emu_ = gme_new_emu( gme_spc_type, sample_rate );
+  CHECK_ALLOC( emu_ );
+  spc_emu_ = (Spc_Emu*)emu_;
 
+  // Now create the area of RAM, assign it to ::IAPURAM and specify it to
+  // the emu
+
+  return NULL;
+}*/

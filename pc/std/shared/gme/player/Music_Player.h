@@ -124,6 +124,8 @@ public:
 
 	static void fill_buffer( void*, sample_t*, int );
 	static bool exporting;
+
+  //const char * create_emu();
 private:
 	Spc_Filter* spc_filter;
 	Music_Emu* emu_;
