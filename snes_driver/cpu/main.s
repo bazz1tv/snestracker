@@ -344,12 +344,13 @@ scr_check6:
     
 .ENDS
 
+.include "apu/memorymap_defs.i"
 .SECTION "MusicData"
 
 ;.incdir "apu"
 spx_binary: 
     
-	.dw $0200, spc_end-spc_start		; start address to upload to in SPC
+	.dw SPC_CODE_START, spc_end-spc_start		; start address to upload to in SPC
 spc_start:
 	.INCBIN "apu/spc.bin"
 spc_end:

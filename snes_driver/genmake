@@ -3,6 +3,11 @@
 # this file needs to exist for main.s makedeps
 touch apu/spc.bin
 
+wlaprefix=~/tmp/wla-dx/build/binaries/
+APU_CC=${wlaprefix}wla-spc700
+CPU_CC=${wlaprefix}wla-65816
+LD=${wlaprefix}wlalink
+
 objdir=obj
 apuobjs=""
 cpuobjs=""
@@ -18,20 +23,20 @@ fi
 echo '# ROM TITLE'
 echo "ROMTITLE = $romtitle"
 #cat MakefileGenerator/compilerheader
-echo '
+echo "
 # Wla-65816 Compiler information (CPU SIDE)
-CPU_CC = wla-65816
-CPU_CFLAGS = -vo
-LD = wlalink
-LDFLAGS = -vS
+CPU_CC = ${CPU_CC}
+CPU_CFLAGS = -v -o
+LD = ${LD}
+LDFLAGS = -v -S
 #--
 
 # Wla-spc700 Compiler information (APU SIDE)
-APU_CC = wla-spc700
-APU_CFLAGS = -ov
-APU_LDFLAGS = -bvS
+APU_CC = ${APU_CC}
+APU_CFLAGS = -v -o
+APU_LDFLAGS = -b -v -S
 
-'
+"
 
 #APU
 echo '' > /tmp/apu
@@ -40,8 +45,8 @@ for file in apu/*.s; do
 	objname="`sed 's/\.s/\.o/' /tmp/filename`"
 	apuobjs="$apuobjs $objname"
 	#printf '# %s \n' $file >> /tmp/apu
-  printf "$objdir/$objname: " >> /tmp/apu
-  wla-spc700 -Mo $file $objdir/$objname 2>&1 1>/dev/null | grep -v DISCARD >> /tmp/apu
+  #printf "$objdir/$objname: " >> /tmp/apu
+  ${APU_CC} -M -o $objdir/$objname $file | grep -v DISCARD >> /tmp/apu
 	echo >> /tmp/apu
 	#printf '\t\t$(APU_CC) $(APU_CFLAGS) $< $(OBJDIR)/$@\n' >> /tmp/apu
 done
@@ -52,8 +57,8 @@ for file in cpu/*.s; do
 	objname="`sed 's/\.s/\.o/' /tmp/filename`"
 	cpuobjs="$cpuobjs $objname"
 	#printf '# %s \n' $file >> /tmp/cpu
-  printf "$objdir/$objname: " >> /tmp/cpu
-  wla-65816 -Mo $file $objdir/$objname 2>&1 1>/dev/null | grep -v DISCARD >> /tmp/cpu
+  #printf "$objdir/$objname: " >> /tmp/cpu
+  ${CPU_CC} -M -o $objdir/$objname $file | grep -v DISCARD >> /tmp/cpu
 	echo >> /tmp/cpu
 	#printf '\t\t$(CPU_CC) $(CPU_CFLAGS) $< $(OBJDIR)/$@\n' >> /tmp/cpu
 done
@@ -110,11 +115,11 @@ apu/spc.bin: $(APU_OBJS) Makefile
 
 $(OBJDIR)/cpu/%.o: cpu/%.s
 	mkdir -p $(@D)
-	$(CPU_CC) $(CPU_CFLAGS) $< $@
+	$(CPU_CC) $(CPU_CFLAGS) $@ $<
 
 $(OBJDIR)/apu/%.o: apu/%.s
 	mkdir -p $(@D)
-	$(APU_CC) $(APU_CFLAGS) $< $@
+	$(APU_CC) $(APU_CFLAGS) $@ $<
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 '
 

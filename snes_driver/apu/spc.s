@@ -1,8 +1,21 @@
 .INCLUDE "apu/memorymap.i"	
 .INCLUDE "apu/enums.i"
 
-.BANK 0 SLOT 0
-.ORG $200
+; Zero page variables!
+.RAMSECTION "gp-dp0" BANK 0 SLOT SPC_DP0_SLOT
+temp				    dw
+
+PrevCmd				  db
+SnesBuffer0			db
+SnesBuffer1			db
+
+bFlags  			  db
+.ends
+
+
+
+.BANK 0 SLOT SPC_CODE_SLOT
+.ORG 0
 .SECTION "SPCCODE" FORCE
 	
 MAIN:
@@ -31,9 +44,9 @@ MAIN:
 	
 ; Enter MAIN LOOP
 MainLoop:
-	mov a, bPlaySong
-	beq Poll
-		;call !PlayPattern
+	bbc bFlags.bPlaySong, Poll
+  ;call !PlayPattern
+
 Poll:
   mov a,spcport1  		; Fetch io1
   beq PollExit    		; was NULL CMD
@@ -45,7 +58,7 @@ Poll:
     
 ; Check cmd
   cmp a, #CmdEnd
-  bpl PollExit    ; carry will be set for valid command range
+  bpl PollExit
   ; push the PollExit address to stack and do a table jump
   asl a ; word-sized index into jump table
   mov x, a
@@ -57,7 +70,7 @@ Poll:
 PollExit:
 	mov a,PrevCmd		; pass back cmd to SNES to tell it we're done
 	mov spcport1,a	; io1
-  jmp !MainLoop   ; repoll snes
+  bra MainLoop   ; repoll snes
 
 CmdJumpTable:
   .dw FetchRamValue, WriteRamByte, PlaySong, StopSong

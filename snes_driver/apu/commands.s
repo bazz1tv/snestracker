@@ -2,27 +2,27 @@
 .INCLUDE "apu/memorymap.i"	
 .INCLUDE "apu/enums.i"
 
-.BANK 0 SLOT 0
-.ORG $200
+.BANK 0 SLOT SPC_CODE_SLOT
+.org 0
 .SECTION "Commands" SEMIFREE
 
 PlaySong:
-	mov bPlaySong, #1
+	set1 bFlags.bPlaySong
 	ret
 	
 StopSong:
-	mov bPlaySong, #0
+  clr1 bFlags.bPlaySong
 	ret
 
 FetchRamValue:   
-    ; fetch RAM value
-    mov a,spcport2     	; fetch lo byte if addr from io2
-    mov temp,a     		; store as lo byte of word pointer
-    mov a,spcport3     	; fetch high byte from io3
-    mov temp+1,a     	; store as hi byte of word pointer
-    mov x,#$00      	; init index to nada
-    mov a,[temp+x]   	; fetch RAM value
-    mov spcport2,a     	; pass back to snes via io3
+  ; fetch RAM value
+  mov a,spcport2     	; fetch lo byte if addr from io2
+  mov temp,a     		; store as lo byte of word pointer
+  mov a,spcport3     	; fetch high byte from io3
+  mov temp+1,a     	; store as hi byte of word pointer
+  mov x,#$00      	; init index to nada
+  mov a,[temp+x]   	; fetch RAM value
+  mov spcport2,a     	; pass back to snes via io3
 	mov a, temp
 	clrc
 	adc a,#1
@@ -38,14 +38,14 @@ _adjustcarry:
 ; Addr in Port2.3
 ; Val in Port 0	
 WriteRamByte:   
-    ; fetch RAM value
-    mov a,spcport2     	; fetch lo byte if addr from io2
-    mov temp,a     		; store as lo byte of word pointer
-    mov a,spcport3     	; fetch high byte from io3
-    mov temp+1,a     	; store as hi byte of word pointer
+  ; fetch RAM value
+  mov a,spcport2     	; fetch lo byte if addr from io2
+  mov temp,a     		; store as lo byte of word pointer
+  mov a,spcport3     	; fetch high byte from io3
+  mov temp+1,a     	; store as hi byte of word pointer
 	mov a,spcport0
-    mov x,#$00      	; init index to nada
-    mov [temp+x],a   ; fetch RAM value
+  mov x,#$00      	; init index to nada
+  mov [temp+x],a   ; fetch RAM value
 	ret
 
 .ends

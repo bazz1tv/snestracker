@@ -1,5 +1,4 @@
 .include "apu/commands.i"
-
 ; index into any voice dsp reg
 .enum 0
   vol_l db
@@ -169,13 +168,7 @@
 	ptr		dw
 .ENDST
 
-; Zero page variables!
-.ENUM $00 ;DESC 
-	temp				dw
-	
-	PrevCmd				  db
-	SnesBuffer0			db
-	SnesBuffer1			db
-	
-	bPlaySong			db
+; bFlags
+.enum 0
+  bPlaySong       db
 .ende
