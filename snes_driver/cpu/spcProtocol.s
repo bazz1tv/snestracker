@@ -1,6 +1,6 @@
 .include "cpu/memorymap.i"
 .include "cpu/SNESRegs.i"
-.include "apu/enums.i"
+.include "apu/commands.i"
 .include "cpu/enums.i"
 
 .bank 0
@@ -11,20 +11,20 @@
 SPCPlaySong:
 	.index 16
 	.accu 8
-	lda #SPCPlaySongCmd 
+	lda #PlaySongCmd 
 	sta SNESPort1
 -	lda SNESPort1
-	cmp #SPCPlaySongCmd
+	cmp #PlaySongCmd
 	bne -
 	jmp SPCCommand0
 	
 SPCStopSong:
 	.index 16
 	.accu 8
-	lda #SPCStopSongCmd 
+	lda #StopSongCmd 
 	sta SNESPort1
 -	lda SNESPort1
-	cmp #SPCStopSongCmd
+	cmp #StopSongCmd
 	bne -
 	jmp SPCCommand0
 	
@@ -45,10 +45,10 @@ SPCWriteRamByte:
 .accu 8
 	stx SNESPort2
 	sta SNESPort0
-	lda #SPCWriteRamByteCmd 
+	lda #WriteRamByteCmd 
 	sta SNESPort1
 -	lda SNESPort1
-	cmp #SPCWriteRamByteCmd
+	cmp #WriteRamByteCmd
 	bne -
 	jmp SPCCommand0
 
@@ -61,10 +61,10 @@ SPCReadRam:
 	.index 16
 	.accu 8
 	stx SNESPort2
-	lda #SPCReadRamCmd
+	lda #ReadRamCmd
 	sta SNESPort1
 -	lda SNESPort1
-	cmp #SPCReadRamCmd
+	cmp #ReadRamCmd
 	bne -
 	rep #$20
 	lda SNESPort2
@@ -77,47 +77,4 @@ SPCReadRam:
 	rep #$10
 	rts
 	
-; IN:
-; A = 0-2
-;
-.accu 	8
-.index 16
-SPCWriteTimerSelect:
-	ldx #SPCTimerSelect
-	;jsr SPCWriteRamByte
-	;
-	stx SNESPort2
-	sta SNESPort0
-	lda #SPCSelectTimerCmd
-	sta SNESPort1
--	lda SNESPort1
-	cmp #SPCSelectTimerCmd
-	bne -
-	jmp SPCCommand0	; so you can send the same command twice
-	
-.accu 	8
-.index 16	
-SPCWriteTimerValue:
-	ldx #SPCTimerValue
-	;jsr SPCWriteRamByte
-	stx SNESPort2
-	sta SNESPort0
-	lda #SPCWriteTimerValueCmd
-	sta SNESPort1
--	lda SNESPort1
-	cmp #SPCWriteTimerValueCmd
-	bne -
-	jmp SPCCommand0	; so you can send the same command twice
-	rts
-	
-SPCWriteTimerCountValueLo:
-	ldx #SPCTimerCountValue
-	jsr SPCWriteRamByte
-	rts
-SPCWriteTimerCountValueHi:
-	ldx #SPCTimerCountValue+1
-	jsr SPCWriteRamByte
-	rts
-
-
 .ends

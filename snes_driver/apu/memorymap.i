@@ -14,4 +14,4 @@ Banksize $10000
 Banks 1
 .ENDrO
 
-.EMPTYFILL 0
+.EMPTYFILL $FF

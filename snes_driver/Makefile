@@ -15,7 +15,7 @@ APU_LDFLAGS = -bvS
 
 
 
-CPU_OFILES =  cpu/2input.o cpu/emptyhandler.o cpu/fadein.o cpu/initsnes.o cpu/loadgraphics.o cpu/main.o cpu/plotter.o cpu/quicksetup.o cpu/SelectionRect.o cpu/spcProtocol.o cpu/strings.o cpu/TimerOptionsScreenInput.o cpu/TimerOptionsScreenMain.o cpu/Underline.o cpu/vblank.o
+CPU_OFILES =  cpu/2input.o cpu/emptyhandler.o cpu/fadein.o cpu/initsnes.o cpu/loadgraphics.o cpu/main.o cpu/plotter.o cpu/quicksetup.o cpu/spcProtocol.o cpu/strings.o cpu/vblank.o
 APU_OFILES =  apu/commands.o apu/PatternPlayback.o apu/spc.o
 
 OBJDIR = obj
@@ -77,17 +77,17 @@ $(OBJDIR)/apu/%.o: apu/%.s
 obj/apu/commands.o: apu/commands.s \
 	apu/memorymap.i \
 	apu/enums.i \
-	apu/SPCCommands.i
+	apu/commands.i
 
 obj/apu/PatternPlayback.o: apu/PatternPlayback.s \
 	apu/memorymap.i \
 	apu/enums.i \
-	apu/SPCCommands.i
+	apu/commands.i
 
 obj/apu/spc.o: apu/spc.s \
 	apu/memorymap.i \
 	apu/enums.i \
-	apu/SPCCommands.i
+	apu/commands.i
 
 #------------------------------
 #CPU SIDE
@@ -137,40 +137,15 @@ obj/cpu/quicksetup.o: cpu/quicksetup.s \
 	ascii.clr \
 	ascii.pic
 
-obj/cpu/SelectionRect.o: cpu/SelectionRect.s \
-	cpu/memorymap.i \
-	cpu/enums.i \
-	cpu/TimerOptionsScreen.i
-
 obj/cpu/spcProtocol.o: cpu/spcProtocol.s \
 	cpu/memorymap.i \
 	cpu/SNESRegs.i \
-	apu/enums.i \
-	apu/SPCCommands.i \
+	apu/commands.i \
 	cpu/enums.i
 
 obj/cpu/strings.o: cpu/strings.s \
 	cpu/memorymap.i \
 	cpu/enums.i
-
-obj/cpu/TimerOptionsScreenInput.o: cpu/TimerOptionsScreenInput.s \
-	cpu/memorymap.i \
-	cpu/TimerOptionsScreen.i
-
-obj/cpu/TimerOptionsScreenMain.o: cpu/TimerOptionsScreenMain.s \
-	cpu/memorymap.i \
-	cpu/loadgraphics.i \
-	cpu/initsnes.i \
-	cpu/strings.i \
-	cpu/fadein.i \
-	cpu/enums.i \
-	apu/enums.i \
-	apu/SPCCommands.i \
-	cpu/TimerOptionsScreen.i \
-	cpu/SNESRegs.i
-
-obj/cpu/Underline.o: cpu/Underline.s \
-	cpu/memorymap.i
 
 obj/cpu/vblank.o: cpu/vblank.s \
 	cpu/memorymap.i

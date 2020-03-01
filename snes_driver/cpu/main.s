@@ -46,8 +46,10 @@ Start:
 	stx spx_binary_loc
 	sta spx_binary_loc+2
 	jsr LoadMusic
+  jsr SPCPlaySong
 DERP:
-	jmp TimerOptions
+	bra DERP
+  ;jmp TimerOptions
 
 	
 	
@@ -146,8 +148,8 @@ enter_tracker:
 	; Here we will check for SNESTracker First time Run?? By checking SRAM at Bank 70
 	;lda $700000 ; = First run? 
 	;bne NotFirstTime
-	
-	jmp TimerOptions
+-
+  bra -
 	
 ; We are HERE
 	; VRAM got cleared, it's time to get our Main Menu loaded up
