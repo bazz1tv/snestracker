@@ -12,6 +12,11 @@ SnesBuffer0			db
 SnesBuffer1			db
 
 flags  			  db
+/* "Public" RAM made aware to PC tracker */
+PUBLIC_START  dsb 0
+ticks         db    ; 125 uS increments to timer 0
+spd           db
+PUBLIC_END    dsb 0
 .ends
 
 .BANK 0 SLOT SPC_CODE_SLOT

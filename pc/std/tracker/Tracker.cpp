@@ -435,3 +435,39 @@ void Tracker::dec_spd()
     spd = 1;
   else spd--;
 }
+
+#define TIMER01_FREQS 0.000125
+void Tracker::render_to_apu()
+{
+  /* Quick thoughts on Timer : We could add a checkmark to use the high
+   * frequency timer. Also could have a mode where you specify ticks and
+   * see the actual BPM */
+  /* Convert BPM to ticks */
+  // Ticks = 60 / ( BPM * 4 * Spd * freqS )
+  double ticks = 60.0 / ( (double)bpm * 4.0 * (double)spd * TIMER01_FREQS );
+  int ticksi = (int) floor(ticks + 0.5);
+
+  /* Save ticks to SPC RAM. Wait, how do we know where to put that?? We
+   * need a way to synchronize the spc program RAM and our C program
+   * knowledge of those RAM locations. There a couple ways it could be
+   * done
+   *
+   * 1. Invent a simple definition that exports to both C and SPCasm
+   * 2. Depend on the spc program being built first, then import its
+   * symbol table into a C format header file.
+   *
+   * Then there's the matter of embedding the SPC driver directly into the
+   * PC program or not. It seems I should not, because that might provide
+   * an opportunity to update the APU driver while not having to recompile
+   * the tracker.
+   *
+   * There is also the notion of public facing RAM that pc tracker should
+   * know about, and private driver RAM that it doesn't need to know
+   * about. It would be nice if I could specify RAM sections as public and
+   * then get a symbol file of all of those specific sections only. Of
+   * course, if there are modifications to the public RAM table the pc
+   * side program will need to be recompiled even if the driver is not
+   * embedded, because it will no longer understand the RAM mapping. I
+   * could load the mapping from outside, but it seems the mapping would
+   * only change when a new feature needs to be implemented anyways.. */
+}

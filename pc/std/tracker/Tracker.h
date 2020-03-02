@@ -37,6 +37,7 @@ public:
   void dec_bpm();
   void inc_spd();
   void dec_spd();
+  void render_to_apu();
 
   Menu_Bar menu_bar;
   Main_Window main_window;

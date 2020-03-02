@@ -20,7 +20,29 @@
  * of the song; The main composing area where notes and effects are
  * specified.*/
 
+/* My thought process on how SNES Tracker will work regarding editing and
+ * playback: The currently editing pattern is special in that it is fully
+ * uncompressed and all edits are directly reflected in APU ram. Playing
+ * back the current pattern plays back this uncompressed version. No
+ * rendering required. However, for song playback, all patterns will be
+ * rendered to a compressed format.
+ *
+ * After mulling it over, I am starting to think it's safest and best to
+ * do all editing in PC memory, and anytime playback is requested, the
+ * song data is compressed into the playback version in APU ram */
 
+/* For packing the playback data. I am thinking about 2 major things
+ *
+ * 1. Pack note/inst/vol/fx/fxparam by using unused bits to specify what
+ * bytes actually come next (similar to XM file format)
+ *
+ * 2. changing the pattern length per track. For some pattern, for each
+ * track, a search is done to determine the last row of data. That row is
+ * marked the length for that track of the pattern. During playback, the
+ * track should wait for the pattern to finished (and marked free if
+ * relevant to do so).
+ *
+ * */
 #define n(n,o) NOTE_ ## n ## o
 #define no(o) \
   n(C, o), \
@@ -62,25 +84,24 @@ struct PatternRow // defines one row of Pattern Data
 {
   /*what data type to use?? Rather than hardcode a DSP pitch value, let's
    * just save the note value */
-  Note note = NOTE_NONE;
-  int instr = 0; /* an index into the instruments table. But how will we
+  uint8_t note = NOTE_NONE;
+  uint8_t instr = 0; /* an index into the instruments table. But how will we
   get the handle on it?*/
-  int vol = 0; /* primarily volume. note that this column may also be used for effects.
+  uint8_t vol = 0; /* primarily volume. note that this column may also be used for effects.
   Maybe it should be called col1 or something?*/
-  int fx = 0, fxparam = 0;
+  uint8_t fx = 0, fxparam = 0;
   /* It is possible SNES Tracker will deviate from traditional tracker
    * effects commands, or add additional effects as fit */
 };
 
 #define MAX_TRACKS 8
 #define MAX_PATTERNS 0x80
-#define MAX_PATTERN_LEN 0x100
+#define MAX_PATTERN_LEN 0x40
 #define DEFAULT_PATTERN_LEN 0x40
 
 struct Pattern
 {
-  int used = 0; // number of sequence entries this pattern is in
-  int len = DEFAULT_PATTERN_LEN;
+  uint8_t len = DEFAULT_PATTERN_LEN;
   PatternRow trackrows[MAX_TRACKS][MAX_PATTERN_LEN];
   /* this hasn't been developed yet but I know we'll be needing track
    * memory. On 2nd thought, perhaps this is needed be only the playback
@@ -91,13 +112,22 @@ struct Pattern
   } mem[MAX_TRACKS];*/
 };
 
+// Pattern with sequencer meta data
+struct PatternMeta
+{
+  Pattern p;
+  // used is meta data that is not part of the structure mapped into SNES
+  // APU RAM
+  int used = 0; // number of sequence entries this pattern is in
+};
+
 struct PatternSequencer
 {
   PatternSequencer();
   int num_entries = 1; // how many entries are in the sequencer
   std::vector<int> sequence; // sequence of patterns defining the song
 
-  Pattern patterns[MAX_PATTERNS];
+  PatternMeta patterns[MAX_PATTERNS];
   // track-pattern rows. Like many other data types I have conjured, they
   // will need to later be converted to types that dynamically allocate
   // space. Or allocate max'es every time like is done now.

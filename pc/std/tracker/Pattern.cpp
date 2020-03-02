@@ -10,6 +10,8 @@
 
 static int clone_seq_common(PatSeqPanel *psp);
 static Pattern * get_current_pattern(PatSeqPanel *psp);
+static PatternMeta * get_current_pattern_meta(PatSeqPanel *psp);
+
 
 #define MODONLY(mod, k) ( (mod) & (k) && !( (mod) & ~(k) ) )
 #define MOD_ANY(mod) (mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI))
@@ -192,7 +194,7 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
             if (MODONLY(mod, KMOD_CTRL))
             {
               //insert_pattern();
-              Pattern *p = get_current_pattern(this);
+              PatternMeta *p = get_current_pattern_meta(this);
 
               if (!p || currow >= (MAX_PATTERNS - 1))
                 break;
@@ -304,7 +306,7 @@ int clone_seq_common(PatSeqPanel *psp)
   //psp->currow, psp->patseq->{unused, num_entries, sequence, patterns}
   // Make sure whether there are no more free patterns
   int unused_index = get_unused_pattern_index(patseq);
-  Pattern *up = unused_index == -1 ? NULL : &patseq->patterns[unused_index];
+  PatternMeta *up = unused_index == -1 ? NULL : &patseq->patterns[unused_index];
 
   if (!up || psp->currow >= (MAX_PATTERNS - 1))
     return -1;
@@ -330,8 +332,8 @@ int PatSeqPanel::clone(void *pspanel)
   PatternSequencer *patseq = psp->patseq;
   fprintf(stderr, "PatSeqPanel::clone()\n");
   if(!clone_seq_common(psp))
-    memcpy(&patseq->patterns[patseq->sequence[psp->currow]],
-      &patseq->patterns[patseq->sequence[psp->currow - 1]],
+    memcpy(&patseq->patterns[patseq->sequence[psp->currow]].p,
+      &patseq->patterns[patseq->sequence[psp->currow - 1]].p,
       sizeof(Pattern));
 
   return 0;
@@ -354,7 +356,7 @@ int PatSeqPanel::clear(void *pspanel)
   if (patseq->num_entries == 1)
     return -1;
 
-  Pattern *tp = &patseq->patterns[patseq->sequence[psp->currow]];
+  PatternMeta *tp = &patseq->patterns[patseq->sequence[psp->currow]];
   tp->used--;
   if (tp->used < 0)
   {
@@ -657,7 +659,7 @@ void PatternEditorPanel::set_coords(int x, int y)
       GUITrackRow *gtr = &guitrackrow[t];
 
       PatternSequencer *patseq = psp->patseq;
-      Pattern *pat = &patseq->patterns[0];
+      Pattern *pat = &patseq->patterns[0].p;
       /* Here we can load default pattern data */
       for (int r=0; r < VISIBLE_ROWS; r++)
       {
@@ -756,9 +758,14 @@ void PatternEditorPanel::set_visible_rows(int rows)
   rect.h = (CHAR_HEIGHT * (1 + VISIBLE_ROWS)) + 6;
 }
 
-Pattern * get_current_pattern(PatSeqPanel *psp)
+PatternMeta * get_current_pattern_meta(PatSeqPanel *psp)
 {
   return &psp->patseq->patterns[psp->patseq->sequence[psp->currow]];
+}
+
+Pattern * get_current_pattern(PatSeqPanel *psp)
+{
+  return &psp->patseq->patterns[psp->patseq->sequence[psp->currow]].p;
 }
 
 void PatternEditorPanel::notehelper(int ndex)
