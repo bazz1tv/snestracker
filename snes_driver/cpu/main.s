@@ -296,7 +296,7 @@ spx_binary:
 
 	.dw SPC_CODE_START, spc_end-spc_start		; start address to upload to in SPC
 spc_start:
-	.INCBIN "apu/spc.bin"
+	.INCBIN "spc.bin"
 spc_end:
 
 	.dw $1000, piano_end-piano_start

@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# this file needs to exist for main.s makedeps
-touch apu/spc.bin
+# with my incbin patch on WLA DX, it is no longer needed to touch binfiles
+# that haven't yet been created.
+#touch apu/spc.bin
 
 wlaprefix=~/Code/git-repos/wla-dx/build/binaries/
 APU_CC=${wlaprefix}wla-spc700
@@ -22,7 +23,6 @@ fi
 
 echo '# ROM TITLE'
 echo "ROMTITLE = $romtitle"
-#cat MakefileGenerator/compilerheader
 echo "
 # Wla-65816 Compiler information (CPU SIDE)
 CPU_CC = ${CPU_CC}
@@ -38,17 +38,13 @@ APU_LDFLAGS = -b -v -S
 
 "
 
-#APU
 echo '' > /tmp/apu
 for file in apu/*.s; do
 	echo "$file" > /tmp/filename
 	objname="`sed 's/\.s/\.o/' /tmp/filename`"
 	apuobjs="$apuobjs $objname"
-	#printf '# %s \n' $file >> /tmp/apu
-  #printf "$objdir/$objname: " >> /tmp/apu
   ${APU_CC} -M -o $objdir/$objname $file | grep -v DISCARD >> /tmp/apu
 	echo >> /tmp/apu
-	#printf '\t\t$(APU_CC) $(APU_CFLAGS) $< $(OBJDIR)/$@\n' >> /tmp/apu
 done
 
 echo '' > /tmp/cpu
@@ -56,11 +52,8 @@ for file in cpu/*.s; do
 	echo "$file" > /tmp/filename
 	objname="`sed 's/\.s/\.o/' /tmp/filename`"
 	cpuobjs="$cpuobjs $objname"
-	#printf '# %s \n' $file >> /tmp/cpu
-  #printf "$objdir/$objname: " >> /tmp/cpu
   ${CPU_CC} -M -o $objdir/$objname $file | grep -v DISCARD >> /tmp/cpu
 	echo >> /tmp/cpu
-	#printf '\t\t$(CPU_CC) $(CPU_CFLAGS) $< $(OBJDIR)/$@\n' >> /tmp/cpu
 done
 
 echo "
@@ -100,7 +93,7 @@ $(ROMTITLE): $(CPU_OBJS) Makefile
 	$(LD) $(LDFLAGS) linkfile $(ROMTITLE)
 	rm linkfile
 
-apu/spc.bin: $(APU_OBJS) Makefile
+spc.bin: $(APU_OBJS) Makefile
 	echo "" > linkfile_spc.tmp
 	echo "[objects]" >> linkfile_spc.tmp
 	echo "$(APU_OBJS)" >> linkfile_spc.tmp
@@ -108,12 +101,12 @@ apu/spc.bin: $(APU_OBJS) Makefile
 	echo "" >> linkfile_spc
 	rm linkfile_spc.tmp
 	$(LD) $(APU_LDFLAGS) linkfile_spc $(OBJDIR)/$@
-	cp $(OBJDIR)/$@ $@
-	mv $(APU_OBJDIR)/spc.sym .
-	bazz-size $@
+	cp $(OBJDIR)/$@ .
+	mv $(OBJDIR)/$(basename $@).sym .
+	printf "spc.bin is 0x%x bytes\n" `ls -l $@ | awk "{print \\$$5}"`
 	rm linkfile_spc
 
-$(OBJDIR)/cpu/%.o: cpu/%.s
+$(OBJDIR)/cpu/%.o: cpu/%.s spc.bin
 	mkdir -p $(@D)
 	$(CPU_CC) $(CPU_CFLAGS) $@ $<
 
@@ -123,31 +116,19 @@ $(OBJDIR)/apu/%.o: apu/%.s
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 '
 
-#cat MakefileGenerator/DirectoryCreators
-#echo '
-#$(CPU_OBJDIR):
-#	mkdir -p $(CPU_OBJDIR)
-#$(APU_OBJDIR):
-#	mkdir -p $(APU_OBJDIR)
-#
-#'
-
 echo '#------------------------------'
 echo '#APU SIDE'
 echo '#------------------------------'
 cat /tmp/apu
-#./MakefileGenerator/format apu /tmp/apu
 echo '#------------------------------'
 echo '#CPU SIDE'
 echo '#------------------------------'
 cat /tmp/cpu
-#./MakefileGenerator/format cpu /tmp/cpu
 echo ''
-#cat MakefileGenerator/clean
 echo '
 .PHONY: clean
 clean:
-	rm -rf $(OBJDIR) $(OFILES) core *~ $(ROMTITLE) *.lib obj/*.o *.sym apu/spc.bin
+	rm -rf $(OBJDIR) $(OFILES) core *~ $(ROMTITLE) *.lib obj/*.o *.sym spc.bin
 	find gfx -name "*.pic" -o -name "*.clr" -o -name "*.map" | xargs rm -f
 
 include Makefile.gfx
