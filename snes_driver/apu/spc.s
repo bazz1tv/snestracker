@@ -54,14 +54,11 @@ MainLoop:
 
 Poll:
   mov a,spcport1  		; Fetch io1
-  beq PollExit    		; was NULL CMD
   cmp a,PrevCmd     	; same as PrevCmd?
   beq MainLoop
 
-; New cmd
   mov PrevCmd,a     	; Store as PrevCmd
     
-; Check cmd
   cmp a, #CmdEnd
   bpl PollExit
   ; push the PollExit address to stack and do a table jump
@@ -71,15 +68,18 @@ Poll:
   push a
   mov a, #<PollExit
   push a
-  jmp [!CmdJumpTable-2+X]
+  jmp [!CmdJumpTable+X]
+
 PollExit:
 	mov a,PrevCmd		; pass back cmd to SNES to tell it we're done
 	mov spcport1,a	; io1
   bra MainLoop   ; repoll snes
 
 CmdJumpTable:
-  .dw FetchRamValue, WriteRamByte, PlaySong, StopSong
-	
+  .dw EmptyHandler, FetchRamValue, WriteRamByte, PlaySong, StopSong
+EmptyHandler:
+  ret
+
 ; ====== WRITE A BYTE TO THE S-SDSP =========
 WDSP:
     MOV !$00F2,Y
