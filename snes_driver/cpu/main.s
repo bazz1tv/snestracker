@@ -188,18 +188,15 @@ SetupVideo:
 ; Call with Address stored in $00
 LoadMusic:
 	; loop until spc is ready
-	REP #$20	; 16-bit akku
 scr_checkready:
-	lda #$BBAA
+	lda #$AA
 	cmp $2140
 	bne scr_checkready
- 
-	SEP #$20	; 8-bit akku
- 
+  lda #$BB
+  cmp $2141
+  bne scr_checkready
+
 	ldy #0
- 
-	lda #0
-	xba
  
 scr_firstblock:
  
@@ -224,40 +221,22 @@ scr_check2:
  
  ; size bytes -> X
  	rep #$20
-	pha
 	lda [spx_binary_loc], y
 	tax
-	pla
 	sep #$20
 	iny
 	iny
+  lda #$FF
 ; byte to transfer
 REDO:
-	lda [spx_binary_loc], y
-	iny
-	
-; store it with 0
-	sta $2141
- 
-	lda #0
-	sta $2140
-	
-	; check for 0
-scr_check3:
-	cmp $2140
-	bne scr_check3
- 
- ; decrement byte transfer count
-	dex
- ; switch to our counter in a
-	xba
- 
 scr_data_loop:
+; switch counter to hi-byte
+  xba
 ; load a byte
 	lda [spx_binary_loc], y
 	iny
 	sta $2141
-	xba			; counter
+	xba			; counter to lobyte
  	ina
 	sta $2140
 	
@@ -266,33 +245,24 @@ scr_check4:
 	cmp $2140
 	bne scr_check4
  
-	xba			; data
- 
 	dex
 	bne scr_data_loop
  
- 	rep #$20
 	pha
+  rep #$20
 	lda [spx_binary_loc], y
+  beq scr_terminate
 	iny
 	iny
-	tax
-	pla
-	cpx #0
-	beq scr_terminate
+  sep #$20
+  sta $2142
+  xba
+  sta $2143
  	
- 	sep #$20
  	; X has starting address
 	lda #1	; non-zero
 	sta $2141
-	
-	;Store it
-	stx $2142
-	
-	
-	
-	; stx $2142	; address
-	xba
+  pla
 	ina
 scr_nz1:
 	ina
@@ -303,31 +273,27 @@ scr_check5:
 	cmp $2140
 	bne scr_check5
 	
-	and #0
-	xba	; data
-	
 	rep #$20
-	pha 
 	lda [spx_binary_loc], y
 	tax
-	pla
 	sep #$20
 	iny
 	iny
-	
+  lda #$FF ; reset counter too
 	bra REDO
  
 scr_terminate:
- 
-	stz $2141
-	rep #$20
-	pha
-	lda [spx_binary_loc], y
- 
-	sta $2142
-	pla
 	sep #$20
+  sta $2141
+	rep #$20
+  iny
+  iny
+	lda [spx_binary_loc], y
+  sep #$20
+	sta $2142
 	xba
+  sta $2143
+  pla
 	ina
 scr_nz2:
 	ina

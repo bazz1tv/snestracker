@@ -471,3 +471,10 @@ void Tracker::render_to_apu()
    * could load the mapping from outside, but it seems the mapping would
    * only change when a new feature needs to be implemented anyways.. */
 }
+
+/* Create a Parent makefile (or add steps to the snes driver makefile that
+ * creates the driver spc file and moves that into the tracker data
+ * directory (Std/bin). In order to programmatically create the SPC file,
+ * we need to create a template. A reliable template can be created for
+ * bsnes-plus by using its debugger to hit the entry point of our spc
+ * code, and taking that SPC to becom the template. */
