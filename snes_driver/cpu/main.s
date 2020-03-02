@@ -367,7 +367,7 @@ bass_start:
 	;.INCBIN "sound.brr"
 bass_end:
 
-    .dw $0000, $200	; 00 to finish transfer, then address to jump SPC700 too to begin code execution
+    .dw $0000, SPC_CODE_START	; 00 to finish transfer, then address to jump SPC700 too to begin code execution
 .ENDS
 
 
