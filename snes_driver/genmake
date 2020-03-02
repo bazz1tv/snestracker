@@ -3,7 +3,7 @@
 # this file needs to exist for main.s makedeps
 touch apu/spc.bin
 
-wlaprefix=~/tmp/wla-dx/build/binaries/
+wlaprefix=~/Code/git-repos/wla-dx/build/binaries/
 APU_CC=${wlaprefix}wla-spc700
 CPU_CC=${wlaprefix}wla-65816
 LD=${wlaprefix}wlalink
