@@ -24,6 +24,10 @@ PUBLIC_END    dsb 0
 .SECTION "SPCCODE" FORCE
 	
 MAIN:
+	; Following only used to trigger an SPC dump by bsnes-plus
+	;mov dspaddr, #kon
+	;mov dspval, #1
+
 	CLRP ; set dp to 0
   ; We are not dealing with echo yet. so just set it so ff00 at the 
   mov dspaddr, #esa
