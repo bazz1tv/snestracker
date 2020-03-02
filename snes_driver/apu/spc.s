@@ -1,5 +1,7 @@
 .INCLUDE "apu/memorymap.i"	
+.INCLUDE "apu/regdefs.i"
 .INCLUDE "apu/enums.i"
+.INCLUDE "apu/commands.i"
 
 ; Zero page variables!
 .RAMSECTION "gp-dp0" BANK 0 SLOT SPC_DP0_SLOT
@@ -9,10 +11,8 @@ PrevCmd				  db
 SnesBuffer0			db
 SnesBuffer1			db
 
-bFlags  			  db
+flags  			  db
 .ends
-
-
 
 .BANK 0 SLOT SPC_CODE_SLOT
 .ORG 0
@@ -44,7 +44,7 @@ MAIN:
 	
 ; Enter MAIN LOOP
 MainLoop:
-	bbc bFlags.bPlaySong, Poll
+	bbc flags.bPlaySong, Poll
   ;call !PlayPattern
 
 Poll:
