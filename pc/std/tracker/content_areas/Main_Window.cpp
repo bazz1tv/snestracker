@@ -129,31 +129,17 @@ void Main_Window::draw()
   // The following are correlated from i and tmp. DO NOT MESS WITH THAT
   // base height
   i = 32 + SCREEN_Y_OFFSET;  
-  if (player->has_no_song) 
-  {
-    //fprintf(stderr, "HERE!\n");
-    song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
-    bsawidget.draw(::render->screen);
-    instreditor_btn.draw(::render->screen);
-    instrpanel.draw(::render->screen);
-    samplepanel.draw(::render->screen);
-    patseqpanel.draw(::render->screen);
-    pateditpanel.draw(::render->screen);
-    if (instreditor_active)
-      instreditor.draw(::render->screen);
-    //draw_memory_outline();
-    return; 
-  }  
-
-  draw_voices_pitchs(); // tmp is fucked with inside this function. DONT MESS
-  draw_voices_volumes();
-  draw_main_volume();
-  draw_echo_volume();
-
-  // stuff that renders direct to renderer must happen after the ::render->screen copy
-  draw_memory_outline();
-
-  gain.slider->draw();
+  //fprintf(stderr, "HERE!\n");
+  song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
+  bsawidget.draw(::render->screen);
+  instreditor_btn.draw(::render->screen);
+  instrpanel.draw(::render->screen);
+  samplepanel.draw(::render->screen);
+  patseqpanel.draw(::render->screen);
+  pateditpanel.draw(::render->screen);
+  if (instreditor_active)
+    instreditor.draw(::render->screen);
+  //draw_memory_outline();
 
   time_last = time_cur;
   

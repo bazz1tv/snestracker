@@ -20,6 +20,7 @@
 #include <unordered_set>
 
 typedef Uint32 WindowID;
+struct TrackerApuRam;
 
 struct Tracker
 {
@@ -60,6 +61,8 @@ public:
 
   static std::unordered_set<DrawRenderer *> prerenders, postrenders;
 
+	/* Tracker APU RAM mapping */
+	TrackerApuRam *apuram;
   /* TRACKER CORE -- Here is located the "model" data structures, not GUI
    * */
   Instrument instruments[NUM_INSTR]; // also holds the samples

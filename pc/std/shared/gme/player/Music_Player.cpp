@@ -166,6 +166,7 @@ void Music_Player::stop()
 
 Music_Player::~Music_Player()
 {
+	DEBUGLOG("~Music_Player");
 	stop();
 	gme_delete(emu_);
 	sound_cleanup();

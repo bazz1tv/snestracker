@@ -15,13 +15,17 @@ bpm(120),
 spd(6),
 main_window(argc,argv, this)
 {
-  //::main_window = &main_window;
-  //::menu_bar = &menu_bar;
-  
+	/* eventually I want to make sub-windows just an overlay in the one main
+	 * window, rather than having separate windows. That's my choice. But
+	 * since I have already impl'd some separate window functionality, might
+	 * as well keep it and make it an optional thing?? */
+	// MARK START of subwindow code
   ::options_window = &options_window;
   ::spc_export_window = &spc_export_window;
   cur_exp = &main_window;
 
+	// Make subwindow location deviate slightly from mainwindow position to
+	// make it easier to toggle and position windows.
   int x,y;
   SDL_GetWindowPosition(::render->sdlWindow, &x, &y);
   fprintf(stderr, "x: %d, y: %d\n", x, y);
@@ -33,6 +37,7 @@ main_window(argc,argv, this)
   window_map[i++] = ::options_window;
   window_map[i++] = ::spc_export_window;
   window_map[i] = NULL;
+	// MARK END of subwindow code
 
   int should_be_zero = SDL_GetCurrentDisplayMode(0, &monitor_display_mode);
 
@@ -45,9 +50,27 @@ main_window(argc,argv, this)
       SDL_Log("Display #%d: current display mode is %dx%dpx @ %dhz. \n", i, 
         monitor_display_mode.w, monitor_display_mode.h, monitor_display_mode.refresh_rate);
 
+	/* Init mouse cursors. This could probably be on the stack, but during
+	 * my testing it became dynamic and I just kept it */
   mousecursors = new MouseCursors;
   ::mousecursors = mousecursors;
   mousecursors->set_cursor(CURSOR_MPAINT_WHITE_HAND);
+
+	// We need to load the APU emulator at some point. Why not here, right
+	// now?
+	/* APU EMU LOAD CODE */
+	char tb[260];
+	int len;
+	assert(::file_system);
+
+	strcpy(tb, ::file_system->data_path);
+	strcat(tb, SPCDRIVER_FILENAME);
+	assert(::player);
+	handle_error( ::player->load_file(tb) );
+
+	::IAPURAM = player->spc_emu()->ram();
+	apuram = (TrackerApuRam *)::IAPURAM;
+	/* END APU EMU LOAD CODE */
 
   update_fps(30);
 }
@@ -447,7 +470,7 @@ void Tracker::render_to_apu()
   // Ticks = 60 / ( BPM * 4 * Spd * freqS )
   double ticks = 60.0 / ( (double)bpm * 4.0 * (double)spd * TIMER01_FREQS );
   int ticksi = (int) floor(ticks + 0.5);
-	::IAPURAM[apuram::ticks] = ticksi;
+	apuram->ticks = ticksi;
 
   /* Save ticks to SPC RAM. Wait, how do we know where to put that?? We
    * need a way to synchronize the spc program RAM and our C program
