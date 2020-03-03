@@ -3,6 +3,7 @@
 #include "utility.h"
 #include "Screen.h"
 #include "sdl_userevents.h"
+#include "apuram.h"
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -446,6 +447,7 @@ void Tracker::render_to_apu()
   // Ticks = 60 / ( BPM * 4 * Spd * freqS )
   double ticks = 60.0 / ( (double)bpm * 4.0 * (double)spd * TIMER01_FREQS );
   int ticksi = (int) floor(ticks + 0.5);
+	::IAPURAM[apuram::ticks] = ticksi;
 
   /* Save ticks to SPC RAM. Wait, how do we know where to put that?? We
    * need a way to synchronize the spc program RAM and our C program

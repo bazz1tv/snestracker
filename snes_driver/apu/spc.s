@@ -16,6 +16,7 @@ flags  			  db
 PUBLIC_START  dsb 0
 ticks         db    ; 125 uS increments to timer 0
 spd           db
+derp          db
 PUBLIC_END    dsb 0
 .ends
 

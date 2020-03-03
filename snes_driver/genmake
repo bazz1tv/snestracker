@@ -106,7 +106,7 @@ spc.bin: $(APU_OBJS) Makefile
 	printf "spc.bin is 0x%x bytes\n" `ls -l $@ | awk "{print \\$$5}"`
 	rm linkfile_spc
 
-$(OBJDIR)/cpu/%.o: cpu/%.s spc.bin
+$(OBJDIR)/cpu/%.o: cpu/%.s
 	mkdir -p $(@D)
 	$(CPU_CC) $(CPU_CFLAGS) $@ $<
 
