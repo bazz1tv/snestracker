@@ -9,3 +9,15 @@ cscope.out
 *.fig
 *.sfc
 *.dll
+# Generated files that should be ignored
+snes_driver/Makefile
+pc/std/tracker/apuram.h
+*.clr
+*.pic
+*.map
+snes_driver/obj/
+pc/std/bin/
+pc/std/ext/lzma1505/C/Util/7z/7zDec
+pc/std/ext/unrar/unrar
+snes_driver/spc.bin
+snes_driver/unused/
