@@ -77,7 +77,6 @@ OBJS = $(CPU_OBJS)
 OBJS += $(APU_OBJS)
 # --
 '
-echo 'VPATH = $(OBJDIR):gfx:gfx/ascii'
 echo ''
 
 #cat MakefileGenerator/MainRecipes
