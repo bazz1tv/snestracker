@@ -4,7 +4,9 @@
 # that haven't yet been created.
 #touch apu/spc.bin
 
-wlaprefix=~/Code/git-repos/wla-dx/build/binaries/
+# Don't hardcode the wlaprefix here, because it's used from the parent
+# Makefile
+#wlaprefix=~/Code/git-repos/wla-dx/build/binaries/
 APU_CC=${wlaprefix}wla-spc700
 CPU_CC=${wlaprefix}wla-65816
 LD=${wlaprefix}wlalink

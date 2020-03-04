@@ -1,4 +1,4 @@
-.ENUM $00 EXPORT
+.ENUM $00
 Joy1Raw     DW              ; Holder of RAW joypad data from register
 Joy2Raw     DW
 
@@ -81,6 +81,6 @@ enum1_end	db
 
 .ENDE
 
-.enum enum1_end export
+.enum enum1_end
 bg2copy		dsw	$400
 .ende

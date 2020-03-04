@@ -70,6 +70,10 @@ main_window(argc,argv, this)
 
 	::IAPURAM = player->spc_emu()->ram();
 	apuram = (TrackerApuRam *)::IAPURAM;
+#ifndef NDEBUG
+	::IAPURAM[6] = 5;
+	assert(apuram->ticks == 5);
+#endif
 	/* END APU EMU LOAD CODE */
 
   update_fps(30);
@@ -463,6 +467,7 @@ void Tracker::dec_spd()
 #define TIMER01_FREQS 0.000125
 void Tracker::render_to_apu()
 {
+	/* BPM AND SPD */
   /* Quick thoughts on Timer : We could add a checkmark to use the high
    * frequency timer. Also could have a mode where you specify ticks and
    * see the actual BPM */
@@ -470,36 +475,65 @@ void Tracker::render_to_apu()
   // Ticks = 60 / ( BPM * 4 * Spd * freqS )
   double ticks = 60.0 / ( (double)bpm * 4.0 * (double)spd * TIMER01_FREQS );
   int ticksi = (int) floor(ticks + 0.5);
+	if (ticksi == 256)
+		ticksi = 0; // max timer setting is 0
+	else if (ticksi > 256)
+	{
+		DEBUGLOG("Ticks value too high\n");
+		ticksi = 255;
+	}
+	// Forcing using timer0 for ticks, but that's fine for now (or forever)
 	apuram->ticks = ticksi;
+	apuram->spd = spd;
+	/* END BPM AND SPD */
 
-  /* Save ticks to SPC RAM. Wait, how do we know where to put that?? We
-   * need a way to synchronize the spc program RAM and our C program
-   * knowledge of those RAM locations. There a couple ways it could be
-   * done
-   *
-   * 1. Invent a simple definition that exports to both C and SPCasm
-   * 2. Depend on the spc program being built first, then import its
-   * symbol table into a C format header file.
-   *
-   * Then there's the matter of embedding the SPC driver directly into the
-   * PC program or not. It seems I should not, because that might provide
-   * an opportunity to update the APU driver while not having to recompile
-   * the tracker.
-   *
-   * There is also the notion of public facing RAM that pc tracker should
-   * know about, and private driver RAM that it doesn't need to know
-   * about. It would be nice if I could specify RAM sections as public and
-   * then get a symbol file of all of those specific sections only. Of
-   * course, if there are modifications to the public RAM table the pc
-   * side program will need to be recompiled even if the driver is not
-   * embedded, because it will no longer understand the RAM mapping. I
-   * could load the mapping from outside, but it seems the mapping would
-   * only change when a new feature needs to be implemented anyways.. */
+	// what's next? How about the instrument import? (export to spc ram)
+	// INSTRUMENTS (and inadvertantly samples)
+	/* Need a way to check that an instrument is used. How about checking if
+	 * the first sample slot's BRR ptr is valid */
+	/* I will probably remove the ability for multiple samples to be
+	 * specified to one instrument */
+	for (int i=0; i < NUM_INSTR; i++)
+	{
+		Sample *first_sample = &instruments[i].samples[0];
+		if (first_sample->brr == NULL)
+			continue;
+
+		//SPCDRIVER_CODEESTART + SPCDRIVER_CODESIZE
+		// has a sample. this instrument is valid for export. However, perhaps
+		// an even better exporter would also check if this instrument has
+		// been used in any (in)active pattern data.
+
+		/* Could add a (SHA1) signature to Sample struct so that we can
+		 * identify repeat usage of the same sample and only load it once to
+		 * SPC RAM. For now, don't do this!! We're trying to get to first
+		 * working tracker status here! Plus, it's possible the user wants the
+		 * 2 identical samples to be treated individually (maybe their doing
+		 * something complicated) */
+
+		/* Where will the Source table be specified. Do we need to be given a
+		 * start index? for now, assume no need on a start index. Perhaps we
+		 * could use the spc.bin filesize to know exactly from how far into SPC RAM is
+		 * safe to use room for Instrument, Sample, and Pattern data */
+	}
+	// INSTRUMENTS END
+
+	// PATTERNS
+	// PATTERNS END
 }
 
-/* Create a Parent makefile (or add steps to the snes driver makefile that
- * creates the driver spc file and moves that into the tracker data
- * directory (Std/bin). In order to programmatically create the SPC file,
- * we need to create a template. A reliable template can be created for
- * bsnes-plus by using its debugger to hit the entry point of our spc
- * code, and taking that SPC to becom the template. */
+/* Define the Packed Pattern Format.
+ * For this, I am electing to use the XM packing scheme, with the addition
+ * of an RLE for absences of row data > 2 rows.
+ *
+ *
+ * Import a Note LUT for APU driver
+ * Write the Song player in APU driver
+ * finish render_to_apu() function above
+ * Add a "rows" updater to SpcReport gme_m library
+ * Add a song/pattern playback keyboard shortcut that writes the
+ * appopriate (may need to be added to apu driver) command that signals
+ * playback.
+ *
+ * Add the same keyboard shortcut as a toggle(?) to stop playback or a
+ * different keyboard shortcut altogether*/

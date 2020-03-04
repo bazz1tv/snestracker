@@ -14,3 +14,5 @@ works by not including the memory map directives.
 
 .equ SPC_CODE_START (SPC_RAM_START + SPC_RAM_SIZE)
 .equ SPC_CODE_SIZE ($10000 - SPC_CODE_START)
+
+.PRINT "#define SPCDRIVER_CODESTART 0x", HEX SPC_CODE_START, "\n"
