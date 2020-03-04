@@ -8,9 +8,8 @@ WLASPC700 := $(WLAPREFIX)wla-spc700
 # We need a makefile that first builds the apu driver, does the
 # intermediary steps of importing the SPC RAM locations header file, then builds the
 # tracker.
-all: CheckNewSnesSourceFiles $(SPCDRIVER_RELPATH) snes_driver/spc.sym \
-pc/std/tracker/apuram.h pc/std/bin/snes_tracker \
- snes_driver/Makefile
+all: $(SPCDRIVER_RELPATH) snes_driver/spc.sym \
+pc/std/tracker/apuram.h pc/std/bin/snes_tracker snes_driver/Makefile
 
 # little dirty. Technically we depend on spc.bin but since the sym file
 # has the FORCE rule, we'll use that to make sure it is re-assembled if
@@ -24,7 +23,7 @@ snes_driver/spc.sym: FORCE Makefile snes_driver/Makefile
 snes_driver/Makefile: snes_driver/genmake Makefile
 	cd snes_driver ; wlaprefix=$(WLAPREFIX) ./genmake > Makefile
 
-pc/std/tracker/apuram.h: snes_driver/spc.sym Makefile \
+$(APURAM_HEADER): snes_driver/spc.sym Makefile \
 		snes_driver/conv_public_syms_to_C.sh $(SPCDRIVER_RELPATH)
 	cd snes_driver && ./conv_public_syms_to_C.sh > ../$(APURAM_HEADER)
 	echo "#define SPCDRIVER_FILENAME \"$(SPCDRIVER_FILENAME)\"" >> $(APURAM_HEADER)
@@ -41,12 +40,6 @@ pc/std/tracker/apuram.h: snes_driver/spc.sym Makefile \
 
 pc/std/bin/snes_tracker: FORCE pc/std/tracker/apuram.h
 	make -C pc/std
-
-CheckNewSnesSourceFiles: FORCE
-	find snes_driver/ -name *.s -o -name *.i | sort | uniq | sed 's#snes_driver/##' > 1
-	grep -E "(cpu|apu)/([^%]*\.s|.*\.i)" snes_driver/Makefile | sed -e 's/ \\//' -e 's/.*\.o://' -e 's/\s//' | sort | uniq > 2
-	if ! diff 1 2 > /dev/null; then cd snes_driver ; wlaprefix=$(WLAPREFIX) ./genmake > Makefile ; fi
-	rm 1 2
 
 FORCE: ;
 

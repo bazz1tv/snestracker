@@ -1,4 +1,5 @@
 ####### GRAPHICS
+
 G := gfx/ascii/ascii
 $(G).pic $(G).clr: $(G).pcx
 	cd gfx/ascii ; pcx2snes -c4 -o4 ascii

@@ -23,20 +23,22 @@ if [ -z $1 ]
 	  romtitle="$1"
 fi
 
+echo "WLAPREFIX = ${wlaprefix}"
+
 echo '# ROM TITLE'
 echo "ROMTITLE = $romtitle"
 echo "
 # Wla-65816 Compiler information (CPU SIDE)
-CPU_CC = ${CPU_CC}
-CPU_CFLAGS = -v -o
-LD = ${LD}
-LDFLAGS = -v -S
+CPU_CC = \$(WLAPREFIX)wla-65816
+CPU_CFLAGS = -o
+LD = \$(WLAPREFIX)wlalink
+LDFLAGS = -S
 #--
 
 # Wla-spc700 Compiler information (APU SIDE)
-APU_CC = ${APU_CC}
-APU_CFLAGS = -v -o
-APU_LDFLAGS = -b -v -S
+APU_CC = \$(WLAPREFIX)wla-spc700
+APU_CFLAGS = -o
+APU_LDFLAGS = -b -S
 
 "
 
@@ -81,38 +83,39 @@ echo ''
 
 #cat MakefileGenerator/MainRecipes
 echo '
+all: CheckNewSnesSourceFiles spc.bin $(ROMTITLE)
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # MAIN GOALS / RECIPES
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 $(ROMTITLE): $(CPU_OBJS) Makefile
-	echo "" > linkfile.tmp
-	echo "[objects]" >> linkfile.tmp
-	echo "$(CPU_OBJS)" >> linkfile.tmp
-	sed y/" "/"\n"/ linkfile.tmp > linkfile
-	echo "" >> linkfile
-	rm linkfile.tmp
+	@echo "" > linkfile.tmp
+	@echo "[objects]" >> linkfile.tmp
+	@echo "$(CPU_OBJS)" >> linkfile.tmp
+	@sed y/" "/"\n"/ linkfile.tmp > linkfile
+	@echo "" >> linkfile
+	@rm linkfile.tmp
 	$(LD) $(LDFLAGS) linkfile $(ROMTITLE)
-	rm linkfile
+	@rm linkfile
 
 spc.bin: $(APU_OBJS) Makefile
-	echo "" > linkfile_spc.tmp
-	echo "[objects]" >> linkfile_spc.tmp
-	echo "$(APU_OBJS)" >> linkfile_spc.tmp
-	sed y/" "/"\n"/ linkfile_spc.tmp > linkfile_spc
-	echo "" >> linkfile_spc
-	rm linkfile_spc.tmp
+	@echo "" > linkfile_spc.tmp
+	@echo "[objects]" >> linkfile_spc.tmp
+	@echo "$(APU_OBJS)" >> linkfile_spc.tmp
+	@sed y/" "/"\n"/ linkfile_spc.tmp > linkfile_spc
+	@echo "" >> linkfile_spc
+	@rm linkfile_spc.tmp
 	$(LD) $(APU_LDFLAGS) linkfile_spc $(OBJDIR)/$@
-	cp $(OBJDIR)/$@ .
-	mv $(OBJDIR)/$(basename $@).sym .
-	printf "spc.bin is 0x%x bytes\n" `ls -l $@ | awk "{print \\$$5}"`
-	rm linkfile_spc
+	@cp $(OBJDIR)/$@ .
+	@mv $(OBJDIR)/$(basename $@).sym .
+	@printf "spc.bin is 0x%x bytes\n" `ls -l $@ | awk "{print \\$$5}"`
+	@rm linkfile_spc
 
 $(OBJDIR)/cpu/%.o: cpu/%.s
-	mkdir -p $(@D)
+	@mkdir -p $(@D)
 	$(CPU_CC) $(CPU_CFLAGS) $@ $<
 
 $(OBJDIR)/apu/%.o: apu/%.s
-	mkdir -p $(@D)
+	@mkdir -p $(@D)
 	$(APU_CC) $(APU_CFLAGS) $@ $<
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 '
@@ -125,12 +128,22 @@ echo '#------------------------------'
 echo '#CPU SIDE'
 echo '#------------------------------'
 cat /tmp/cpu
-echo ''
 echo '
+include Makefile.gfx
+
 .PHONY: clean
 clean:
 	rm -rf $(OBJDIR) $(OFILES) core *~ $(ROMTITLE) *.lib obj/*.o *.sym spc.bin
 	find gfx -name "*.pic" -o -name "*.clr" -o -name "*.map" | xargs rm -f
-
-include Makefile.gfx
 '
+
+# last but not least, we should check for differences in source/include
+# file existence to see if we need to auto-regen the Makefile
+echo "CheckNewSnesSourceFiles: FORCE
+	@find . -name *.s -o -name *.i | sort | uniq | sed 's#./##' > 1
+	@grep -E '(cpu|apu)/([^%]*\.s|.*\.i)' Makefile | sed -e 's/ \\\\//' -e 's/.*\.o://' -e 's/\s//' | sort | uniq > 2
+	@if ! diff 1 2 > /dev/null; then wlaprefix=\$(WLAPREFIX) ./genmake > Makefile ; fi
+	@rm 1 2
+
+FORCE: ;
+"
