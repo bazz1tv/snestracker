@@ -62,7 +62,9 @@ Poll:
   cmp a,PrevCmd     	; same as PrevCmd?
   beq MainLoop
 
-  mov PrevCmd,a     	; Store as PrevCmd
+	nop	; need to waste a cycle to ensure the port data has been loaded. or
+	; load spc parameter port
+  mov PrevCmd,spcport1     	; Store as PrevCmd
     
   cmp a, #CmdEnd
   bpl PollExit

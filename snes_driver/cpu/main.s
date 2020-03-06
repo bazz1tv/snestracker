@@ -36,6 +36,9 @@ Start:
 	sta spx_binary_loc+2
 	jsr LoadMusic
 	jsr SPCPlaySong
+	lda #$33
+	ldx #$1000
+	jsr SPCWriteRamByte
 DERP:
 	bra DERP
 	;jmp TimerOptions

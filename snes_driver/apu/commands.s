@@ -18,10 +18,11 @@ FetchRamValue:
   ; fetch RAM value
   movw ya,spcport2  ; fetch ptr from io2/3
   movw temp,ya
-  mov x,#1        	; init index to nada
-- mov a,[temp+x]   	; fetch RAM value
-  mov spcport2+x,a  ; pass back to snes via io2/3
-	dec x
+  mov y,#1        	; init index to nada
+- mov a,[temp]+Y   	; fetch RAM value
+	mov x, a
+  mov spcport2+Y,x  ; pass back to snes via io2/3
+	dec y
   bpl -
   ret
 
@@ -29,9 +30,11 @@ FetchRamValue:
 ; Val in Port 0	
 WriteRamByte:   
   ; fetch RAM value
+	mov x, #0
+  /*movw ya, spcport2
+	movw temp, ya*/
 	mov a,spcport0
-  mov x, #0
-  mov [spcport2+x],a   ; fetch RAM value
+  mov [spcport2+x], a   ; fetch RAM value
 	ret
 
 .ends

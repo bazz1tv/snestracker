@@ -464,7 +464,19 @@ void Tracker::dec_spd()
   else spd--;
 }
 
+// SNES APU timer 0 and 1 frequency rate in seconds
 #define TIMER01_FREQS 0.000125
+// compress bits for patterns
+#define CBIT 0x80
+#define CBIT_NOTE (1<<0)
+#define CBIT_INSTR (1<<1)
+#define CBIT_VOL (1<<2)
+#define CBIT_FX (1<<3)
+#define CBIT_FXPARAM (1<<4)
+#define CBIT_RLE (1<<5) // if this bit present, the next byte specifies how many rows to skip before checking the next byte
+#define CBIT_RLE_ONLY1 (1<<6)
+//#define CBIT_TPEND (1<<6)
+
 void Tracker::render_to_apu()
 {
 	/* BPM AND SPD */
@@ -487,38 +499,184 @@ void Tracker::render_to_apu()
 	apuram->spd = spd;
 	/* END BPM AND SPD */
 
+	uint16_t freeram_i = SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE;
+
 	// what's next? How about the instrument import? (export to spc ram)
 	// INSTRUMENTS (and inadvertantly samples)
 	/* Need a way to check that an instrument is used. How about checking if
 	 * the first sample slot's BRR ptr is valid */
 	/* I will probably remove the ability for multiple samples to be
 	 * specified to one instrument */
+	uint8_t numsamples = 0;
+	uint16_t sampletable_i;
+	// as much as I hate to iterate through the instruments twice, we need
+	// to know how many samples are used to know how big to allocate for DIR
 	for (int i=0; i < NUM_INSTR; i++)
 	{
-		Sample *first_sample = &instruments[i].samples[0];
-		if (first_sample->brr == NULL)
+		Sample *firstsample = &instruments[i].samples[0];
+		if (firstsample->brr == NULL)
+			continue;
+		numsamples++;
+	}
+	sampletable_i = freeram_i + (numsamples * 0x4); // put sample_table directly after the amount of DIR entries required
+
+	uint16_t dir_i, dspdir_i;
+	dir_i = freeram_i + (freeram_i % 0x100) ? (0x100 - (freeram_i % 0x100)) : 0;
+	dspdir_i = dir_i / 0x100;
+
+	/* We have got to load these samples in first, so the DIR table knows
+	 * where the samples are */
+	/* DIR is specified in multiples of 0x100. So if we're shy of that, we
+	 * need to move it up. I think a smarter program would mark that unused
+	 * area as free for something */
+
+	/* DIR can be at max 0x400 bytes in size, but any unused space in DIR
+	 * can be used for other data */
+	// Write the sample and loop information to the DIR. Then write the DSP
+	// DIR value to DSP
+	uint16_t cursample_i = sampletable_i;
+	for (int i=0; i < NUM_INSTR; i++)
+	{
+		Sample *firstsample = &instruments[i].samples[0];
+		if (firstsample->brr == NULL)
 			continue;
 
-		//SPCDRIVER_CODEESTART + SPCDRIVER_CODESIZE
 		// has a sample. this instrument is valid for export. However, perhaps
 		// an even better exporter would also check if this instrument has
 		// been used in any (in)active pattern data.
-
+		uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
+		*dir = cursample_i;
+		*(dir+1) = cursample_i + firstsample->rel_loop;
+		int s=0;
+		for (; s < firstsample->brrsize; s++)
+		{
+			uint8_t *bytes = (uint8_t *)firstsample->brr;
+			::IAPURAM[cursample_i + s] = bytes[s];
+		}
+		cursample_i += s;
 		/* Could add a (SHA1) signature to Sample struct so that we can
 		 * identify repeat usage of the same sample and only load it once to
 		 * SPC RAM. For now, don't do this!! We're trying to get to first
 		 * working tracker status here! Plus, it's possible the user wants the
 		 * 2 identical samples to be treated individually (maybe their doing
 		 * something complicated) */
-
-		/* Where will the Source table be specified. Do we need to be given a
-		 * start index? for now, assume no need on a start index. Perhaps we
-		 * could use the spc.bin filesize to know exactly from how far into SPC RAM is
-		 * safe to use room for Instrument, Sample, and Pattern data */
 	}
+	::player->spc_write_dsp(dsp_reg::dir, dspdir_i);
 	// INSTRUMENTS END
 
 	// PATTERNS
+	// First calculate the number of used patterns in the song. This is not
+	// sequence length, but the number of unique patterns. With that length
+	// calculated, we can allocate the amount of RAM necessary for the
+	// PatternLUT (detailed below comments).
+	uint8_t num_usedpatterns = 0;
+	uint16_t patternlut_i = cursample_i, patternlut_size;
+	for (int p=0; p < MAX_PATTERNS; p++)
+	{
+		PatternMeta *pm = &patseq.patterns[p];
+		if (pm->used == 0)
+			continue;
+		num_usedpatterns++;
+	}
+	patternlut_size = num_usedpatterns * 2; // WORD sized address table
+	/* OK I'm thinking about how aside from the pattern data itself, how
+	 * that pattern data will be accessed. We can store a Pattern lookup
+	 * table that has the 16-bit addresses of each pattern in ascending
+	 * order. The pattern sequencer table can simply store the pattern
+	 * number, and that number is converted to an index into the lookup
+	 * table to get the address of the pattern. That address will be stored
+	 * into a DP address for indirect access to pattern data. There may be
+	 * another DP pointer for accessing Row data row by row.*/
+	uint16_t *patlut = (uint16_t *) &::IAPURAM[patternlut_i];
+	uint16_t pat_i = patternlut_i + patternlut_size; // index into RAM for actual pattern data
+	for (int p=0; p < MAX_PATTERNS; p++)
+	{
+		PatternMeta *pm = &patseq.patterns[p];
+		if (pm->used == 0)
+			continue;
+
+		/* Here we need to iterate through the Pattern to form the compressed
+		 * version. For now, let's try to follow the XM version without RLE
+		 * compression */
+		*(patlut++) = pat_i; // put the address of this pattern into the patlut
+		Pattern *pattern = &pm->p;
+		/* I just thought of another problem here. How do we access the
+		 * individual tracks of a pattern if they are going to be in a
+		 * compressed form (non-fixed length), other than storing the offset
+		 * of each track? Since they will be stored sequentially, We could iterate to the end of each pattern when the pattern is first loaded to be played by the driver (in snes_driver code), and store those offsets into RAM. I
+		 * suppose? that would save (8*2) bytes Per pattern! that's a lot!
+		 */
+		// BEFORE THIS LOOP IS WHERE WE CAN WRITE A PATTERN HEADER FOR SNES
+		// When we do that, make sure to update pat_i or use a new variable
+		// for the next codeblock
+		for (int t=0; t < MAX_TRACKS; t++)
+		{
+			for (int tr=0; tr < pattern->len; tr++)
+			{
+				int ttrr;
+				PatternRow *pr = &pattern->trackrows[t][tr];
+				uint8_t cbyte = 0, rlebyte;
+				/* Lookahead: how many empty rows from this one until the next
+				 * filled row? If there's only 1 empty row, use RLE_ONLY1 */
+#define PATROW_EMPTY(pr) ( pr->note == 0 && pr->instr == 0 && pr->vol == 0 && pr->fx == 0 && pr->fxparam == 0 )
+				for (ttrr=tr+1; ttrr < pattern->len; ttrr++)
+				{
+					PatternRow *row = &pattern->trackrows[t][ttrr];
+					if (!PATROW_EMPTY(row))
+					{
+						// we found a filled row.
+						ttrr--;
+						int num_empty = ttrr - tr;
+						if (num_empty == 0)
+							break;
+						else if (num_empty == 1)
+							cbyte |= CBIT_RLE_ONLY1;
+						else if (num_empty == 2)
+							cbyte |= CBIT_RLE | CBIT_RLE_ONLY1;
+						else
+						{
+							cbyte |= CBIT_RLE;
+							rlebyte = num_empty;
+						}
+					}
+				}
+				// Only if every element is filled are we NOT going to use a
+				// special compression byte. so let's check if every element is
+				// filled first.
+				if (! (
+				       pr->note != NOTE_NONE &&
+				       pr->instr != 0 &&
+				       pr->vol != 0 && pr->fx != 0 && pr->fxparam != 0) )
+				{
+					cbyte |=
+					  pr->note ? 0 : CBIT_NOTE |
+					  pr->instr ? 0 : CBIT_INSTR |
+					  pr->vol ? 0 : CBIT_VOL |
+					  pr->fx ? 0 : CBIT_FX |
+					  pr->fxparam ? 0 : CBIT_FXPARAM;
+				}
+
+				if (cbyte)
+					::IAPURAM[pat_i++] = CBIT | cbyte;
+				/* we should now write the actual byte for any data that is
+				 * present */
+				if (pr->note)
+					::IAPURAM[pat_i++] = pr->note;
+				if (pr->instr)
+					::IAPURAM[pat_i++] = pr->instr;
+				if (pr->vol)
+					::IAPURAM[pat_i++] = pr->vol;
+				if (pr->fx)
+					::IAPURAM[pat_i++] = pr->fx;
+				if (pr->fxparam)
+					::IAPURAM[pat_i++] = pr->fxparam;
+				if ( (cbyte & (CBIT_RLE | CBIT_RLE_ONLY1)) == CBIT_RLE)
+					::IAPURAM[pat_i++] = rlebyte;
+
+				tr += ttrr; // skip over empty rows
+			}
+		}
+	}
 	// PATTERNS END
 }
 

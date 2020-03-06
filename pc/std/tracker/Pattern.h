@@ -59,7 +59,9 @@
   n(B, o)
 enum Note
 {
-  NOTE_NONE=0,
+  NOTE_NONE=0, // Note that sometimes I check for 0 rather than NOTE_NONE
+	/* So if you change this, you'd have to find those checks.. but I just
+	 * don't see this changing, it's not a big deal..*/
   // SNES can go quite low (but with tremendously reduced accuracy),
   // might have to translate base octave higher. need to test if that's
   // useful. After having done some testing, it won't be useful to have a
