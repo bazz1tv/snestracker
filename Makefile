@@ -29,6 +29,8 @@ $(APURAM_HEADER): snes_driver/spc.sym Makefile \
 	echo "#define SPCDRIVER_FILENAME \"$(SPCDRIVER_FILENAME)\"" >> $(APURAM_HEADER)
 	printf "#define SPCDRIVER_CODESIZE 0x%x\n" $$(ls -l $@ | awk "{print \$$5}") >> $(APURAM_HEADER)
 	$(WLASPC700) -t snes_driver/apu/memorymap_defs.i 2>/dev/null >> $(APURAM_HEADER) ; true
+	echo >> $(APURAM_HEADER)
+	$(WLASPC700) -t snes_driver/apu/playbackengine.i 2>/dev/null >> $(APURAM_HEADER) ; true
 
 	# the 'true' at the end is because the compilation will actually fail
 	# since this is not a fully defined file for compilation.. but it's

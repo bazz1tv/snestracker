@@ -71,8 +71,8 @@ main_window(argc,argv, this)
 	::IAPURAM = player->spc_emu()->ram();
 	apuram = (TrackerApuRam *)::IAPURAM;
 #ifndef NDEBUG
-	::IAPURAM[6] = 5;
-	assert(apuram->ticks == 5);
+	//::IAPURAM[6] = 5;
+	//assert(apuram->ticks == 5);
 #endif
 	/* END APU EMU LOAD CODE */
 
@@ -581,6 +581,9 @@ void Tracker::render_to_apu()
 	// PatternLUT (detailed below comments).
 	uint8_t num_usedpatterns = 0;
 	uint16_t patternlut_i = cursample_i, patternlut_size;
+
+	apuram->patterntable_ptr = patternlut_i;
+
 	for (int p=0; p < MAX_PATTERNS; p++)
 	{
 		PatternMeta *pm = &patseq.patterns[p];
@@ -690,6 +693,15 @@ void Tracker::render_to_apu()
 		}
 	}
 	// PATTERNS END
+
+	// PATTERN SEQUENCER START
+	uint16_t patseq_i = pat_i;
+	apuram->sequencer_ptr = patseq_i;
+	for (int i=0; i < patseq.num_entries; i++)
+		::IAPURAM[patseq_i++] = patseq.sequence[i];
+	::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
+	// going to check in apu driver for a negative number to mark end
+	// PATTERN SEQUENCER END
 }
 
 /* Define the Packed Pattern Format.
@@ -707,3 +719,31 @@ void Tracker::render_to_apu()
  *
  * Add the same keyboard shortcut as a toggle(?) to stop playback or a
  * different keyboard shortcut altogether*/
+
+SpcReport::SpcReport(Tracker *tracker) : tracker(tracker)
+{
+}
+
+void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
+{
+	switch (type)
+	{
+		case Spc_Report::TrackerCmd:
+			DEBUGLOG("SPC Tracker Report: Cmd: 0x%02x Arg: 0x%02x\n", cmd, arg);
+			/* Ultimately, we'll be updating the PatternEditorPanel currow from
+			 * here. We'll need a handle on it */
+			switch (cmd)
+			{
+				case REPORT_TRACKER_SETROW:
+					tracker->main_window.pateditpanel.set_currow(arg);
+				break;
+				case REPORT_TRACKER_SETPATTERN:
+					tracker->main_window.patseqpanel.set_currow(arg);
+				break;
+				default:break;
+			}
+		break;
+		default:
+		break;
+	}
+}

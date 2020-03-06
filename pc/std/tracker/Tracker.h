@@ -1,4 +1,3 @@
-
 #pragma once
 #include "SDL.h"
 #include "globals.h"
@@ -18,6 +17,18 @@
 
 #include "shared/DrawRenderer.h"
 #include <unordered_set>
+
+#include "gme/Spc_Report.h"
+
+struct Tracker;
+class SpcReport : public Spc_Report
+{
+	SpcReport(Tracker *tracker);
+	void report(Type type, unsigned addr, unsigned opcode);
+private:
+	Tracker *tracker;
+};
+
 
 typedef Uint32 WindowID;
 struct TrackerApuRam;

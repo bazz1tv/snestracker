@@ -185,6 +185,7 @@ struct PatSeqPanel // PatternSequencerPanel
   SDL_Rect highlight_r; // the highlight rect of current select instr
   PatternSequencer *patseq;
 
+	void set_currow(int row);
   void inc_currow();
   void dec_currow();
 };
@@ -269,7 +270,8 @@ struct PatternEditorPanel
 
   void inc_addval();
   void dec_addval();
-  void inc_currow(int howmany=1, bool wrap=true);
+  void set_currow(int row);
+	void inc_currow(int howmany=1, bool wrap=true);
   void dec_currow(int howmany=1, bool wrap=true);
 private:
   void inc_curtrack();

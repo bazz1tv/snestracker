@@ -409,6 +409,14 @@ int PatSeqPanel::decpat(void *pspanel)
   patseq->patterns[patseq->sequence[psp->currow]].used++;
 }
 
+void PatSeqPanel::set_currow(int row)
+{
+	assert(row < patseq->num_entries);
+	currow = row;
+	if (currow >= (rows_scrolled + VISIBLE_ROWS))
+		rows_scrolled = currow - VISIBLE_ROWS + 1;
+}
+
 void PatSeqPanel::inc_currow()
 {
   if (currow >= (patseq->num_entries - 1))
@@ -1159,6 +1167,14 @@ void PatternEditorPanel::dec_addval()
   if (addval == 0x00)
     addval = 0x10;
   else addval--;
+}
+
+void PatternEditorPanel::set_currow(int row)
+{
+	assert(row < get_current_pattern(psp)->len);
+	currow = row;
+	if (currow >= (rows_scrolled + VISIBLE_ROWS))
+		rows_scrolled = currow - VISIBLE_ROWS + 1;
 }
 
 void PatternEditorPanel::inc_currow(int howmany/*=1*/, bool wrap/*=true*/)
