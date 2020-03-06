@@ -411,6 +411,13 @@ void Tracker::handle_events()
             if ((mod & KMOD_SHIFT) && (mod & KMOD_CTRL))
               mousecursors->next();
           break;
+					case SDLK_RETURN:
+						if (Text_Edit_Rect::cur_editing_ter != NULL)
+							break;
+						playback = !playback;
+						if (playback)
+							render_to_apu();
+					break;
         }
       } break;
       default:break;
@@ -518,11 +525,14 @@ void Tracker::render_to_apu()
 			continue;
 		numsamples++;
 	}
-	sampletable_i = freeram_i + (numsamples * 0x4); // put sample_table directly after the amount of DIR entries required
 
+	/* Another strategy would be to position the DIR at the base of the
+	 * offset rather than push it up further. Would need to check how many
+	 * DIR entries are needed if there's room or not */
 	uint16_t dir_i, dspdir_i;
-	dir_i = freeram_i + (freeram_i % 0x100) ? (0x100 - (freeram_i % 0x100)) : 0;
+	dir_i = freeram_i + ((freeram_i % 0x100) ? (0x100 - (freeram_i % 0x100)) : 0);
 	dspdir_i = dir_i / 0x100;
+	sampletable_i = dir_i + (numsamples * 0x4); // put sample_table directly after the amount of DIR entries required
 
 	/* We have got to load these samples in first, so the DIR table knows
 	 * where the samples are */
@@ -622,10 +632,10 @@ void Tracker::render_to_apu()
 				for (ttrr=tr+1; ttrr < pattern->len; ttrr++)
 				{
 					PatternRow *row = &pattern->trackrows[t][ttrr];
-					if (!PATROW_EMPTY(row))
+					if (!PATROW_EMPTY(row) || ttrr == (pattern->len - 1))
 					{
-						// we found a filled row.
-						ttrr--;
+						// we found a filled row or we made it to the end of pattern
+						ttrr -= (PATROW_EMPTY(row) ? 0 : 1);
 						int num_empty = ttrr - tr;
 						if (num_empty == 0)
 							break;
@@ -638,6 +648,8 @@ void Tracker::render_to_apu()
 							cbyte |= CBIT_RLE;
 							rlebyte = num_empty;
 						}
+
+						break;
 					}
 				}
 				// Only if every element is filled are we NOT going to use a
@@ -649,11 +661,11 @@ void Tracker::render_to_apu()
 				       pr->vol != 0 && pr->fx != 0 && pr->fxparam != 0) )
 				{
 					cbyte |=
-					  pr->note ? 0 : CBIT_NOTE |
-					  pr->instr ? 0 : CBIT_INSTR |
-					  pr->vol ? 0 : CBIT_VOL |
-					  pr->fx ? 0 : CBIT_FX |
-					  pr->fxparam ? 0 : CBIT_FXPARAM;
+					  (pr->note ? CBIT_NOTE : 0) |
+					  (pr->instr ? CBIT_INSTR : 0) |
+					  (pr->vol ? CBIT_VOL : 0) |
+					  (pr->fx ? CBIT_FX : 0) |
+					  (pr->fxparam ? CBIT_FXPARAM : 0);
 				}
 
 				if (cbyte)
@@ -673,7 +685,7 @@ void Tracker::render_to_apu()
 				if ( (cbyte & (CBIT_RLE | CBIT_RLE_ONLY1)) == CBIT_RLE)
 					::IAPURAM[pat_i++] = rlebyte;
 
-				tr += ttrr; // skip over empty rows
+				tr = ttrr; // skip over empty rows
 			}
 		}
 	}

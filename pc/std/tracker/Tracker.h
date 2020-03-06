@@ -61,6 +61,9 @@ public:
 
   static std::unordered_set<DrawRenderer *> prerenders, postrenders;
 
+	//
+	bool playback = false; // is tracker playback happening?
+
 	/* Tracker APU RAM mapping */
 	TrackerApuRam *apuram;
   /* TRACKER CORE -- Here is located the "model" data structures, not GUI
