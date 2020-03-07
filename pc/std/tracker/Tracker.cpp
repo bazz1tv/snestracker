@@ -473,16 +473,6 @@ void Tracker::dec_spd()
 
 // SNES APU timer 0 and 1 frequency rate in seconds
 #define TIMER01_FREQS 0.000125
-// compress bits for patterns
-#define CBIT 0x80
-#define CBIT_NOTE (1<<0)
-#define CBIT_INSTR (1<<1)
-#define CBIT_VOL (1<<2)
-#define CBIT_FX (1<<3)
-#define CBIT_FXPARAM (1<<4)
-#define CBIT_RLE (1<<5) // if this bit present, the next byte specifies how many rows to skip before checking the next byte
-#define CBIT_RLE_ONLY1 (1<<6)
-//#define CBIT_TPEND (1<<6)
 
 void Tracker::render_to_apu()
 {
@@ -515,7 +505,6 @@ void Tracker::render_to_apu()
 	/* I will probably remove the ability for multiple samples to be
 	 * specified to one instrument */
 	uint8_t numsamples = 0;
-	uint16_t sampletable_i;
 	// as much as I hate to iterate through the instruments twice, we need
 	// to know how many samples are used to know how big to allocate for DIR
 	for (int i=0; i < NUM_INSTR; i++)
@@ -526,13 +515,22 @@ void Tracker::render_to_apu()
 		numsamples++;
 	}
 
+	/* I am thinking of redesigning the tracker that instead of linking
+	 * Sample files to instruments, rather maintain a "global" sample table,
+	 * and have an instrument setting refer to what sample it uses. But
+	 * don't do this YET! Just get the tracker playing music first. */
+
 	/* Another strategy would be to position the DIR at the base of the
 	 * offset rather than push it up further. Would need to check how many
 	 * DIR entries are needed if there's room or not */
 	uint16_t dir_i, dspdir_i;
 	dir_i = freeram_i + ((freeram_i % 0x100) ? (0x100 - (freeram_i % 0x100)) : 0);
 	dspdir_i = dir_i / 0x100;
-	sampletable_i = dir_i + (numsamples * 0x4); // put sample_table directly after the amount of DIR entries required
+	uint16_t instrtable_i = dir_i + (numsamples * 0x4);
+	//                             {applied size of DIR}  {INSTR TABLE SIZE}
+	uint16_t sampletable_i = dir_i + (numsamples * 0x4) + (numsamples * 0x2);
+
+	apuram->instrtable_ptr = instrtable_i;
 
 	/* We have got to load these samples in first, so the DIR table knows
 	 * where the samples are */
@@ -570,6 +568,17 @@ void Tracker::render_to_apu()
 		 * working tracker status here! Plus, it's possible the user wants the
 		 * 2 identical samples to be treated individually (maybe their doing
 		 * something complicated) */
+		uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i + (i*2)];
+		*it = cursample_i;
+
+		// Time to load instrument info
+		Instrument *instr = &instruments[i];
+		::IAPURAM[cursample_i++] = instr->adsr.adsr1;
+		::IAPURAM[cursample_i++] = instr->adsr.adsr2;
+		::IAPURAM[cursample_i++] = instr->vol;
+		::IAPURAM[cursample_i++] = instr->pan;
+		::IAPURAM[cursample_i++] = instr->semitone_offset;
+		::IAPURAM[cursample_i++] = instr->finetune;
 	}
 	::player->spc_write_dsp(dsp_reg::dir, dspdir_i);
 	// INSTRUMENTS END
@@ -622,6 +631,20 @@ void Tracker::render_to_apu()
 		// BEFORE THIS LOOP IS WHERE WE CAN WRITE A PATTERN HEADER FOR SNES
 		// When we do that, make sure to update pat_i or use a new variable
 		// for the next codeblock
+		::IAPURAM[pat_i++] = pattern->len; // TODO write code that handles len of 0 == 256
+/* The format of Pattern data is as follows:
+ *
+ * Len - byte - the length of the pattern in rows (same value for each
+ * track)
+ *
+ * If every column is filled, then next bytes are the note, instr, vol,
+ * fx, and fxparam for that row. Otherwise, the CBIT is set and a new set
+ * of rules apply, based on XM file format.
+ *
+ * When the CBIT is on, see the CBITS definition for which bits indicate
+ * what the next bytes are. The new addition are the RLE bits; defined in
+ * the code path below
+ * */
 		for (int t=0; t < MAX_TRACKS; t++)
 		{
 			for (int tr=0; tr < pattern->len; tr++)
@@ -695,6 +718,9 @@ void Tracker::render_to_apu()
 	// PATTERNS END
 
 	// PATTERN SEQUENCER START
+	// set the start sequence index to the currently selected one in the
+	// tracker (eg. play from current pattern)
+	apuram->sequencer_i =  main_window.patseqpanel.currow;
 	uint16_t patseq_i = pat_i;
 	apuram->sequencer_ptr = patseq_i;
 	for (int i=0; i < patseq.num_entries; i++)
@@ -743,6 +769,7 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 				default:break;
 			}
 		break;
+
 		default:
 		break;
 	}

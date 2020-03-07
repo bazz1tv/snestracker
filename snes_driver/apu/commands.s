@@ -6,14 +6,6 @@
 .ORG 0
 .SECTION "Commands" SEMIFREE
 
-PlaySong:
-	set1 flags.bPlaySong
-	ret
-	
-StopSong:
-  clr1 flags.bPlaySong
-	ret
-
 FetchRamValue:   
   ; fetch RAM value
   movw ya,spcport2  ; fetch ptr from io2/3

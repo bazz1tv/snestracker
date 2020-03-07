@@ -21,7 +21,15 @@ struct Instrument
   /* the app-level sample data. How that gets exported into the snes
    * driver data is a different story */
   Sample samples[NUM_SAMPLES];
-  bool phaseflip=false;
+	Adsr adsr; // The volume envelope that will be used for this instrument
+	/* Aside from the ADSR hardware volume envelope, the voice stereo volume
+	 * may be adjusted real-time for additional effects.*/
+	/* Note on volume envelopes as I learned from Milky Tracker. The graph
+	 * view X-axis is specified in ticks, up to 0x100 ticks. So each point
+	 * of the envelope is also specified in ticks */
+	//VolumeEnvelope ve;
+	//PanEnvelope pe;
+	//  bool phaseflip=false;
   uint8_t vol = APU_MAXVOL;
   /* 0x80 = dead center, 0xFF = hard right, 0x00 = hard left */
   uint8_t pan = 0x80;
@@ -33,15 +41,7 @@ struct Instrument
    * software must impose retraints on the allowed range of values. Will
    * be used by SNES Driver */
   int8_t finetune = 0;
-  Adsr adsr; // The volume envelope that will be used for this instrument
-  /* Aside from the ADSR hardware volume envelope, the voice stereo volume
-   * may be adjusted real-time for additional effects.*/
-  /* Note on volume envelopes as I learned from Milky Tracker. The graph
-   * view X-axis is specified in ticks, up to 0x100 ticks. So each point
-   * of the envelope is also specified in ticks */
-  //VolumeEnvelope ve;
-  //PanEnvelope pe;
-  //
+
   static void inc_vol(Instrument *i);
   static void dec_vol(Instrument *i);
   static void inc_pan(Instrument *i);

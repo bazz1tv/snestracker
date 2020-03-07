@@ -24,6 +24,8 @@ MAIN:
 	;mov dspval, #1
 
 	CLRP ; set dp to 0
+
+
   ; We are not dealing with echo yet. so just set it so ff00 at the 
   mov dspaddr, #esa
   mov dspval, #$ff
@@ -83,14 +85,13 @@ EmptyHandler:
 
 ; ====== WRITE A BYTE TO THE S-SDSP =========
 WDSP:
-    MOV !$00F2,Y
-    MOV !$00F3,A
+    MOV $F2,Y
+    MOV $F3,A
     RET
 ; ====== WRITE A BYTE TO THE S-SDSP =========
 WDSPX:
-    MOV !$00F2,X
-    MOV !$00F3,A
+    MOV $F2,X
+    MOV $F3,A
     RET
 
 .ENDS
-;EOF

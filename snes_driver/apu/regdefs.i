@@ -1,3 +1,14 @@
+.enum 0
+  ctrlbit_t0 db
+  ctrlbit_t1 db
+  ctrlbit_t2 db
+  ctrlbit_unused db
+  ctrlbit_port01 db
+  ctrlbit_port23 db
+  ctrlbit_unused2 db
+  ctrlbit_ramrom db
+.ende
+
 .enum $f1
   control  db ; TIMER CONTROL, SNES REG CLEAR
   dspaddr	 db
@@ -10,13 +21,13 @@
 .ende
 
 .enum $fa
-  timer0   db
-  timer1   db
-  timer2   db
+  t0div   db
+  t1div   db
+  t2div   db
 
-  counter0 db
-  counter1 db
-  counter2 db
+  t0out db
+  t1out db
+  t2out db
 .ende
 
 ; =DSP=
