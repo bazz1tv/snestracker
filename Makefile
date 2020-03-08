@@ -27,7 +27,7 @@ $(APURAM_HEADER): snes_driver/spc.sym Makefile \
 		snes_driver/conv_public_syms_to_C.sh $(SPCDRIVER_RELPATH)
 	cd snes_driver && ./conv_public_syms_to_C.sh > ../$(APURAM_HEADER)
 	echo "#define SPCDRIVER_FILENAME \"$(SPCDRIVER_FILENAME)\"" >> $(APURAM_HEADER)
-	printf "#define SPCDRIVER_CODESIZE 0x%x\n" $$(ls -l $@ | awk "{print \$$5}") >> $(APURAM_HEADER)
+	printf "#define SPCDRIVER_CODESIZE 0x%x\n" $$(ls -l snes_driver/spc.bin | awk "{print \$$5}") >> $(APURAM_HEADER)
 	$(WLASPC700) -t snes_driver/apu/memorymap_defs.i 2>/dev/null >> $(APURAM_HEADER) ; true
 	echo >> $(APURAM_HEADER)
 	$(WLASPC700) -t snes_driver/apu/playbackengine.i 2>/dev/null >> $(APURAM_HEADER) ; true

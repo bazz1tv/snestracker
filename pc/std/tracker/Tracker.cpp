@@ -359,6 +359,15 @@ void Tracker::handle_events()
             void (*p) (void*) = ev.user.data1;
             p(ev.user.data2);
           break;
+					case UserEvents::report_tracker_incrow:
+						main_window.pateditpanel.inc_currow();
+					break;
+					case UserEvents::report_tracker_setrow:
+						main_window.pateditpanel.set_currow((int)ev.user.data1);
+					break;
+					case UserEvents::report_tracker_setpattern:
+						main_window.patseqpanel.set_currow((int)ev.user.data1);
+					break;
         }
       } break;
       case SDL_MOUSEMOTION:
@@ -530,7 +539,7 @@ void Tracker::render_to_apu()
 	dspdir_i = dir_i / 0x100;
 	uint16_t instrtable_i = dir_i + (numsamples * 0x4);
 	//                             {applied size of DIR}  {INSTR TABLE SIZE}
-	uint16_t sampletable_i = dir_i + (numsamples * 0x4) + (numsamples * 0x2);
+	uint16_t sampletable_i = dir_i + (numsamples * 0x4) + (numsamples * 0x7);
 
 	apuram->instrtable_ptr = instrtable_i;
 
@@ -575,10 +584,11 @@ void Tracker::render_to_apu()
 
 		// Time to load instrument info
 		Instrument *instr = &instruments[i];
-		::IAPURAM[cursample_i++] = instr->adsr.adsr1;
-		::IAPURAM[cursample_i++] = instr->adsr.adsr2;
 		::IAPURAM[cursample_i++] = instr->vol;
 		::IAPURAM[cursample_i++] = instr->pan;
+		::IAPURAM[cursample_i++] = i; // for now, hardcode SRCN to INST#
+		::IAPURAM[cursample_i++] = instr->adsr.adsr1;
+		::IAPURAM[cursample_i++] = instr->adsr.adsr2;
 		::IAPURAM[cursample_i++] = instr->semitone_offset;
 		::IAPURAM[cursample_i++] = instr->finetune;
 	}
@@ -701,9 +711,9 @@ void Tracker::render_to_apu()
 				/* we should now write the actual byte for any data that is
 				 * present */
 				if (pr->note)
-					::IAPURAM[pat_i++] = pr->note;
+					::IAPURAM[pat_i++] = pr->note - 1;
 				if (pr->instr)
-					::IAPURAM[pat_i++] = pr->instr;
+					::IAPURAM[pat_i++] = pr->instr - 1;
 				if (pr->vol)
 					::IAPURAM[pat_i++] = pr->vol;
 				if (pr->fx)
@@ -730,6 +740,58 @@ void Tracker::render_to_apu()
 	::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
 	// going to check in apu driver for a negative number to mark end
 	// PATTERN SEQUENCER END
+
+	// FOR NOW, EXPORT SPC
+	unsigned char *state = NULL;
+	state = (unsigned char *) SDL_malloc(sizeof(unsigned char) * Snes_Spc::spc_file_size);
+
+  unsigned char* out = state;
+  Snes_Spc::init_header(out);
+
+  // Copy current SPC header info to this new one
+  Spc_Emu::header_t header = ::player->spc_emu()->header();
+  Spc_Emu::header_t *new_header = (Spc_Emu::header_t *) state;
+  memcpy(new_header->song, &header.song, (size_t)((size_t)&new_header->emulator - (size_t)&new_header->song));
+
+	nfdchar_t *outPath=NULL;
+
+	nfdresult_t result = NFD_SaveDialog( "spc", NULL, &outPath );
+	if ( result == NFD_OKAY )
+	{
+		if (outPath !=NULL)
+			fprintf(stderr, "%s\n", outPath);
+
+		bool was_paused = ::player->is_paused();
+		::player->pause(1, false, false);
+		//
+
+		/* Begin writing to spc file */
+		// copy header info
+		unsigned char *out = state;
+		Spc_Emu::header_t *header = (Spc_Emu::header_t *)out;
+
+
+		::player->spc_emu()->can_has_apu()->save_spc(out);
+		::file_system->write_file( outPath, state, Snes_Spc::spc_file_size );
+		// restore player state
+		::player->pause(was_paused, false, false);
+	}
+	else if ( result == NFD_CANCEL ) 
+	{
+		puts("User pressed cancel.");
+	}
+	else
+	{
+		printf("Error: %s\n", NFD_GetError() );
+		result = NFD_ERROR;
+	}
+
+	if (outPath)
+		SDL_free(outPath);
+
+	if (state)
+		SDL_free(state);
+
 
 	// send the command to start the song
 	player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
@@ -766,12 +828,32 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 			 * here. We'll need a handle on it */
 			switch (cmd)
 			{
+				case REPORT_TRACKER_INCROW:
+				{
+					SDL_Event uev;
+					uev.type = SDL_USEREVENT;
+					uev.user.code = UserEvents::report_tracker_incrow;
+					SDL_PushEvent(&uev);
+					break;
+				}
 				case REPORT_TRACKER_SETROW:
-					tracker->main_window.pateditpanel.set_currow(arg);
-				break;
+				{
+					SDL_Event uev;
+					uev.type = SDL_USEREVENT;
+					uev.user.data1 = (void *)arg;
+					uev.user.code = UserEvents::report_tracker_setrow;
+					SDL_PushEvent(&uev);
+					break;
+				}
 				case REPORT_TRACKER_SETPATTERN:
-					tracker->main_window.patseqpanel.set_currow(arg);
-				break;
+				{
+					SDL_Event uev;
+					uev.type = SDL_USEREVENT;
+					uev.user.data1 = (void *)arg;
+					uev.user.code = UserEvents::report_tracker_setpattern;
+					SDL_PushEvent(&uev);
+					break;
+				}
 				default:break;
 			}
 		break;

@@ -12,7 +12,9 @@ endline=$(($(grep -n -m1 PUBLIC_END spc.sym | cut -f1 -d:) ))
 #echo $startline:$endline
 line=$(sed -n "$((startline)),$((startline))p" spc.sym | sed 's/00://')
 padding=$((0x${line/ */}))
-echo -e "${tabs}uint8_t padding[$padding];"
+if ! [[ $padding = 0 ]]; then
+	echo -e "${tabs}uint8_t padding[$padding];"
+fi
 
 # Aw man, I could have used the symbol file's _sizeof_* for the sizes but
 # it eluded me before writing the calculation code below. Oh well

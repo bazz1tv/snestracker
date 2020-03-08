@@ -5,6 +5,7 @@
 .equ reportTrackerArg $f9
 
 .enum 0
+  reportTrackerCmd_IncRow     db
 	reportTrackerCmd_SetRow     db
 	reportTrackerCmd_SetPattern db
 .ende
@@ -28,6 +29,7 @@
 .PRINT "#define CBIT_RLE 0x", HEX CBIT_RLE, "\n"
 .PRINT "#define CBIT_RLE_ONLY1 0x", HEX CBIT_RLE_ONLY1, "\n"
 .PRINT "\n"
+.PRINT "#define REPORT_TRACKER_INCROW 0x", HEX reportTrackerCmd_IncRow, "\n"
 .PRINT "#define REPORT_TRACKER_SETROW 0x", HEX reportTrackerCmd_SetRow, "\n"
 .PRINT "#define REPORT_TRACKER_SETPATTERN 0x", HEX reportTrackerCmd_SetPattern, "\n"
 
@@ -42,3 +44,17 @@ sequences     db
 /* sequences is described to assembler as 1 byte in size but that is just to
    make it addressable. In reality, it's the size specified by num_entries.
    Each entry is just a byte specifying the pattern number */
+
+; it turns out that due to the use of indirect addressing, I can't make
+; use of these struct definitions, but they still uphold the rules of the
+; locations of the DATA members if I export them to C structs that the C
+; code uses.
+.struct Instrument
+vol db
+pan db ; TODO
+srcn db
+adsr1 db
+adsr2 db
+semitone_offset db ; TODO
+finetune db        ; TODO
+.endst

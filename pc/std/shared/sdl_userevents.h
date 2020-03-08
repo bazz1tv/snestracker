@@ -11,6 +11,10 @@ namespace UserEvents
 
     play_pitch,
     keyoff,
-    sound_stop
+    sound_stop,
+
+		report_tracker_incrow,
+		report_tracker_setrow,
+		report_tracker_setpattern,
   };
 }

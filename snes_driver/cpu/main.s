@@ -36,9 +36,9 @@ Start:
 	sta spx_binary_loc+2
 	jsr LoadMusic
 	jsr SPCPlaySong
-	lda #$33
-	ldx #$1000
-	jsr SPCWriteRamByte
+	;lda #$33
+	;ldx #$1000
+	;jsr SPCWriteRamByte
 DERP:
 	bra DERP
 	;jmp TimerOptions
@@ -170,6 +170,7 @@ SetupVideo:
 ;============================================================================
 ; Call with Address stored in $00
 LoadMusic:
+.index 16
 	; loop until spc is ready
 scr_checkready:
 	lda #$AA
@@ -297,22 +298,16 @@ scr_check6:
 ;.incdir "apu"
 spx_binary:
 
-	.dw SPC_CODE_START, spc_end-spc_start		; start address to upload to in SPC
+	.dw 2, spc_end-spc_start		; start address to upload to in SPC
 spc_start:
-	.INCBIN "spc.bin"
+	;.INCBIN "spc.bin"
+	.INCBIN "derp2.spc" skip $00102 read $80
 spc_end:
 
-	.dw $1000, piano_end-piano_start
-piano_start:
-	.INCBIN "samples/piano.brr"
-piano_end:
-
-
-	.dw $4000, bass_end-bass_start
-bass_start:
-	.INCBIN "samples/piano.brr"
-	;.INCBIN "sound.brr"
-bass_end:
+	.dw SPC_CODE_START, a2-a1
+a1:
+.INCBIN "derp2.spc" skip $00500 read $1000
+a2:
 
 	.dw $0000, SPC_CODE_START	; 00 to finish transfer, then address to jump SPC700 too to begin code execution
 .ENDS

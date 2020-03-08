@@ -12,7 +12,7 @@
 .enum $f1
   control  db ; TIMER CONTROL, SNES REG CLEAR
   dspaddr	 db
-  dspval   db
+  dspdata  db
   ;;;;;;;;;;;;;; $f4
   spcport0 db
   spcport1 db

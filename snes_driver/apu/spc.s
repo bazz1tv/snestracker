@@ -5,14 +5,21 @@
 
 ; Zero page variables!
 .RAMSECTION "gp-dp0" BANK 0 SLOT SPC_DP0_SLOT
-temp				    dw
+l               db
+h               db
 
-PrevCmd				  db
-SnesBuffer0			db
-SnesBuffer1			db
+e               db
+d               db
 
-flags  			  db
+PrevCmd         db
+SnesBuffer0     db
+SnesBuffer1     db
+
+flags           db
 .ends
+
+.equ hl l EXPORT
+.equ de e EXPORT
 
 .BANK 0 SLOT SPC_CODE_SLOT
 .ORG 0
@@ -21,33 +28,30 @@ flags  			  db
 MAIN:
 	; Following only used to trigger an SPC dump by bsnes-plus
 	;mov dspaddr, #kon
-	;mov dspval, #1
+	;mov dspdata, #1
 
 	CLRP ; set dp to 0
-
+  mov control, #0 ; disable timers and ROM region
 
   ; We are not dealing with echo yet. so just set it so ff00 at the 
   mov dspaddr, #esa
-  mov dspval, #$ff
+  mov dspdata, #$ff
   MOV dspaddr, #edl
-  MOV dspval, #0
+  MOV dspdata, #0
   
   ; TODO - Could alter master volume by song setting here
   MOV dspaddr, #mvol_l 
-  MOV dspval, #127   ; L/R VOL 100% BOTH VOICES 
+  MOV dspdata, #127   ; L/R VOL 100% BOTH VOICES 
   MOV dspaddr, #mvol_r
-  MOV dspval, #127
+  MOV dspdata, #127
 
   ; Todo - enable echo buffer writes when bringing up echo support
   MOV dspaddr, #flg   ; TURN OFF MUTE
-  MOV dspval, #%00100000 ; disable echo buffer writes
+  MOV dspdata, #%00100000 ; disable echo buffer writes
 	
 	;===
 	; Load the timer values from their stored settings.
 
-	; START TIMER
-	MOV control, #$01	; THIS WILL DESTROY ALL OTHER TIMERS
-	
 ; Enter MAIN LOOP
 MainLoop:
 	bbc flags.bPlaySong, Poll

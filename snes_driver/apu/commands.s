@@ -6,12 +6,13 @@
 .ORG 0
 .SECTION "Commands" SEMIFREE
 
+; clobbers: Y A X
 FetchRamValue:   
   ; fetch RAM value
   movw ya,spcport2  ; fetch ptr from io2/3
-  movw temp,ya
+  movw hl,ya
   mov y,#1        	; init index to nada
-- mov a,[temp]+Y   	; fetch RAM value
+- mov a,[hl]+Y   	; fetch RAM value
 	mov x, a
   mov spcport2+Y,x  ; pass back to snes via io2/3
 	dec y
@@ -19,7 +20,8 @@ FetchRamValue:
   ret
 
 ; Addr in Port2.3
-; Val in Port 0	
+; Val in Port 0
+; Clobbers: A X
 WriteRamByte:   
   ; fetch RAM value
 	mov x, #0

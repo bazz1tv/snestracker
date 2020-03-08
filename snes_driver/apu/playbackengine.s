@@ -6,6 +6,21 @@
 .include "apu/playbackengine.i"
 ; Zero page variables!
 .RAMSECTION "gp-dp0" BANK 0 SLOT SPC_DP0_SLOT
+spddec db	; copy of spd to dec from
+
+pattern_ptr dw	; ptr to the current pattern, maybe only l ram needed)
+patternlen_rows db ; 00 == 256
+
+ptrack_ptrs dsw 8 ; pointers to each track data for a pattern
+ptrack_ptr dw
+rlecounters dsb 8
+
+konbuf db
+koffbuf db ; not sure if needed
+
+; WARNING : keep the public stuff out of address 0000 and 0001 because
+; that is the jump address stored from IPL ROM
+;curtrack db ; plenty of wasted bits that could be used as bit flags here
 /* "Public" RAM made aware to PC tracker */
 PUBLIC_START  dsb 0
 ticks         db    ; 125 uS increments to timer 0
@@ -19,23 +34,15 @@ sequencer_i db ; index into the sequencer table
 patterntable_ptr	dw ; pattern table turns pattern index into pattern address
 PUBLIC_END    dsb 0
 
-spddec db	; copy of spd to dec from
-
-pattern_ptr dw	; ptr to the current pattern, maybe only temp ram needed)
-patternlen_rows db ; 00 == 256
-
-ptrack_ptrs dsw 8 ; pointers to each track data for a pattern
-ptrack_ptr dw
-rlecounters dsb 8
-;curtrack db ; plenty of wasted bits that could be used as bit flags here
 .ENDS
 
 .BANK 0 SLOT SPC_CODE_SLOT
 .ORG 0
 .SECTION "Playback Engine Code" SEMIFREE
 
-LoadSpdDec:
+ReloadSpdDec:
 	mov a, spd
+  dec a ; so we can use a bmi on the counter to cover potential overflows
 	mov spddec, a
 	ret
 
@@ -58,67 +65,58 @@ Loadptrack_ptr:
 	ret
 
 
-.define rlecounter temp
+.define rlecounter l
 ; Expects <pattern_ptr> to be loaded and valid
 ; IN: NONE
 ; OUT: YA = address of next ptrack
 ; CLOBBERS: A,X,Y
 ;           ptrack_ptr
-;           temp (aliased as rlecounter)
+;           l (aliased as rlecounter)
 QuickReadPTrack:
   mov rlecounter, #0
 	mov x, patternlen_rows
   dec x ; subtract 1 early so we can use BPL
-	mov y, #0
   ;--- check if we are in an rlecount
 @loop:
+  mov y, #0
   mov a, rlecounter
   beq @norle
   dec rlecounter
-  bne @done_read_row_noptr_update
+  bpl @done_read_row
 @norle:
 	mov a, [ptrack_ptr] + y
+  mov l, a
 	; if negative, then we have compression on this row
 	bpl @nocomp ; iow, all "normal" rows will be read
   inc y
+
 @@test_cbnote:
-  and a, #1<<CBIT_NOTE
-  beq @@test_cbinstr
+  bbc l.CBIT_NOTE, @@test_cbinstr
   inc y
 @@test_cbinstr:
-  and a, #1<<CBIT_INSTR
-  beq @@test_cbvol
+  bbc l.CBIT_INSTR, @@test_cbvol
   inc y
 @@test_cbvol:
-  and a, #1<<CBIT_VOL
-  beq @@test_cbfx
+  bbc l.CBIT_VOL, @@test_cbfx
   inc y
 @@test_cbfx:
-  and a, #1<<CBIT_FX
-  beq @@test_cbfxparam
+  bbc l.CBIT_FX, @@test_cbfxparam
   inc y
 @@test_cbfxparam:
-  and a, #1<<CBIT_FXPARAM
-  beq @@test_rle2
+  bbc l.CBIT_FXPARAM, @@test_rle
   inc y
-@@test_rle2:
-  and a, #(1<<CBIT_RLE) | (1<<CBIT_RLE_ONLY1)
-  beq @@test_rle1
-  dec x
-  dec x
+@@test_rle:
+  bbc l.CBIT_RLE_ONLY1, @@@test_rle_g2
+  inc y
+  bbc l.CBIT_RLE, @done_read_row
+  inc y
   bra @done_read_row
-@@test_rle1:
-  and a, #1<<CBIT_RLE_ONLY1
-  beq @@test_rle_g2
-  dec x
-  bra @done_read_row
-@@test_rle_g2: ; RLE > 2
-  and a, #1<<CBIT_RLE
-  beq +
+@@@test_rle_g2: ; RLE > 2
+  bbc l.CBIT_RLE, @done_read_row
   mov a, [ptrack_ptr] + y
-  mov rlecounter, a
   inc y
-+ bra @done_read_row
+  mov rlecounter, a
+  bra @done_read_row
 @nocomp:
 	inc y
 	; read note
@@ -140,7 +138,6 @@ QuickReadPTrack:
   mov y, #0
   addw ya, ptrack_ptr
   movw ptrack_ptr, ya
-@done_read_row_noptr_update:
   dec x
   bpl @loop
 _ret:
@@ -185,10 +182,14 @@ Load_ptrack_ptrs:
 ; Clobbers A,Y
 ; OUT: A = pattern number
 GetPatternNumberFromsequencer_i:
-	mov a, sequencer_i
-	asl a
-	mov y,a
+	mov y, sequencer_i
 	mov a, [sequencer_ptr] + y
+  bpl @not_eos
+; restart sequence
+  mov y, #0
+  mov a, [sequencer_ptr] + y
+  mov sequencer_i, y
+@not_eos:
 	ret
 
 ; PREREQS: patterntable_ptr
@@ -209,13 +210,8 @@ Load_pattern_ptr:
 ; A precursor to LoadPattern (unused so far)
 NextPattern:
 	inc sequencer_i
-	mov y, sequencer_i
-	bpl LoadPattern	; a negative value (0x80-0xff) indicates end of sequence
-	; in this case, why don't we for now, start from 0
-	mov sequencer_i, #0
-
 LoadPattern:
-	call !LoadSpdDec
+	call !ReloadSpdDec
 
 	; assume sequencer_i has been loaded from Tracker
 	call !GetPatternNumberFromsequencer_i
@@ -245,6 +241,7 @@ PlaySong:
 	mov a, ticks
 	mov t0div, a
 
+  call !ReloadSpdDec
 	call !LoadPattern
 
 	set1 control.ctrlbit_t0 ; start Timer 0
@@ -253,34 +250,197 @@ PlaySong:
 
 StopSong:
 	clr1 flags.bPlaySong
-	ret
-
-ContinueSong:
-
+__ret:
   ret
 
-; IN: <ptrack_ptr>, Y
-; CLOBBERS
-; OUT: updated Y index
+ContinueSong:
+  ; We need to check the timer for a start of row. iow, first check that a
+  ; timer tick has occurred (and how many). decrement that value from the
+  ; spddec until hits zero (or negative if u want to check at top of
+  ; loop); I like the negative one because it safeguards against potential
+  ; overflows.
+  mov a, spddec
+  setc
+  sbc spddec, t0out
+  bmi @nextrow
+  ; ok, we didn't overflow, but has even 1 tick passed?
+  cmp a, spddec
+  beq __ret
+
+  ; at this point, a tick has been fired
+  ; TODO: impl fx and stuff
+  ret
+@nextrow:
+  call !ReloadSpdDec
+  ; If it's the start of a new row call the routine to read the
+  ; next row man!
+  mov konbuf, #0
+  call !ReadPTracks
+  mov a, konbuf
+  beq @no_kon
+  mov dspaddr, #koff
+  mov dspdata, #0
+  mov dspaddr, #kon
+  mov dspdata, a
+  ; TODO: KOFF
+@no_kon:
+  ret
+
+; IN: X=vnum (0-7)
+; OUT: A=vbit (1<<[0-7])
+; CLOBBERS: A
+VoiceNumToVoiceBit:
+  push x
+    mov a, #0
+    setc
+@bitshift:
+    rol a
+    dec x
+    bpl @bitshift
+  pop x
+  ret
+
+; IN: <ptrack_ptr>,
+;     Y = idx into ptrack_ptr,
+;     X = curtrack
+; OUT: updated Y index, Curtrack DSP PITCH written
+; CLOBBERS: A
 ReadNote:
+  push y
+    mov a, [ptrack_ptr] + y
+    ;dec a ; account for 0 note being "taken"
+    asl a
+    mov y, a; Y: idx into notelut
+    call !VoiceNumToVoiceBit
+    mov konbuf, a ; A has bit that this voice represents
+    mov a, x ; curtrack (voicenum)
+    .rept 4
+      asl a
+    .endr
+    clrc
+    adc a, #plo
+    push a
+      mov dspaddr, a
+      mov a, !noteLUT2 + y
+      mov dspdata, a
+    pop a
+    inc a
+    mov dspaddr, a
+    mov a, !noteLUT2+1 + y
+    mov dspdata, a
+  pop y
+  inc y
+  ret
 
-; IN: <ptrack_ptr>, Y
-; CLOBBERS
-; OUT: updated Y index
+; IN: X: curtrack
+; OUT: A = DSP base addr for this voice
+getDSPIDX:
+  mov a, x ; convert curtrack into DSP offset
+asl_a_x4:
+.rept 4
+  asl a  ; curtrack x 0x10
+.endr
+  ret
+
+; IN: <ptrack_ptr>,
+;     Y = idx into ptrack_ptr,
+;     X = curtrack
+; OUT: updated Y index, Curtrack DSP written
+; CLOBBERS: A, <de>
 ReadInstr:
-; IN: <ptrack_ptr>, Y
-; CLOBBERS
-; OUT: updated Y index
-ReadVol:
-; IN: <ptrack_ptr>, Y
-; CLOBBERS
-; OUT: updated Y index
-ReadFx:
-; IN: <ptrack_ptr>, Y
-; CLOBBERS
-; OUT: updated Y index
-ReadFxParam:
+  push x
+  push y
+    mov a, [ptrack_ptr] + y ; A instrument number == SRCN??
+    ;push a
+    asl a
+    mov y, a ; Y: idx into instrument table
+    mov a, [instrtable_ptr] + y
+    mov e, a
+    inc y
+    mov a, [instrtable_ptr] + y
+    mov d, a ; DE -> instrument
+    call !getDSPIDX 
+    ; TODO: Implement PAN around here
+    mov x,a ; NOTE X overwritten here with DSP addr (pushed tho)
+    mov y, #0 ; reset index for indexing instrument
+    mov dspaddr, x ; Vol_l
+    mov a, [de] + y ; vol
+    mov dspdata, a
 
+    inc x
+    mov dspaddr, x ; vol_r
+    mov dspdata, a ; mimic vol to vol_r (pan not yet impl'd)
+
+    inc x
+    inc x
+    inc x
+    mov dspaddr, x ; srcn
+    inc y ; pan
+    inc y ; src
+    mov a, [de] + y
+    mov dspdata, a ; srcn
+
+    inc x
+    mov dspaddr, x ;adsr1
+    inc y
+    mov a, [de] + y ; adsr1
+    mov dspdata, a
+    
+    inc x
+    mov dspaddr, x ;adsr2
+    inc y
+    mov a, [de] + y ; adsr2
+    mov dspdata, a
+    ; write to DSP hi byte
+  pop y
+  inc y
+  pop x
+  ret
+
+; IN: <ptrack_ptr>,
+;     Y = idx into ptrack_ptr,
+;     X = curtrack
+; OUT: updated Y index, Curtrack DSP Vol re-written
+; TODO: ticks vol FX
+; CLOBBERS: A
+ReadVol:
+  push x
+    call !getDSPIDX 
+    mov x,a ; NOTE X overwritten here with DSP addr (pushed tho)
+    mov a, [ptrack_ptr] + y ; A == vol byte
+    inc y
+    
+    mov dspaddr, x ; Vol_l
+    mov dspdata, a
+    inc x
+    mov dspaddr, x ; vol_r
+    mov dspdata, a ; mimic vol to vol_r (pan not yet impl'd)
+  pop x
+  ret
+
+
+
+ReadFx:
+  ; TODO
+  inc y
+  ret
+ReadFxParam:
+  ; TODO
+  inc y
+  ret
+
+/*ReadCommon:
+  push x
+  mov x,a
+  mov a, [ptrack_ptr] + y
+  pop y ; old x (curtrack) now in y
+  push y
+  pop y
+  inc y
+  jmp [!idea+X]
+idea:
+.dw ReadNote, ReadInstr, ReadVol, ReadFx, ReadFxParam
+*/
 _incyret1:
   inc y
   ret
@@ -290,19 +450,17 @@ _incyret1:
 ; OUT: YA = address of next ptrack
 ; CLOBBERS: A,X,Y
 ;           ptrack_ptr
-;           temp
+;           l
 ;           rlecounters
 ;           patternlen_rows
 ReadPTracks:
-  mov x, #8 ; put the curtrack into x
+  mov x, #7 ; put the curtrack into x
   ;--- check if we are in an rlecount
 @next_track:
-  dec x
-  bmi @row_done
   mov a, rlecounters + x
   beq @no_active_rle
   dec rlecounters + x
-  bpl @next_track
+  bpl @track_done
 @no_active_rle:
   mov a, x  ; move track# into A as arg
   push x
@@ -317,32 +475,32 @@ ReadPTracks:
   dec y ; account for lack of compression byte
 @comp:
   inc y
-  mov temp, a
-; WARNING: Don't let any of these calls tamper with "temp", otherwise
+  mov l, a
+; WARNING: Don't let any of these calls tamper with "l", otherwise
 ; rewrite all the code
 @@test_cbnote:
-  bbc temp.CBIT_NOTE, @@test_cbinstr
+  bbc l.CBIT_NOTE, @@test_cbinstr
   call !ReadNote ; TODO
 @@test_cbinstr:
-  bbc temp.CBIT_INSTR, @@test_cbvol
+  bbc l.CBIT_INSTR, @@test_cbvol
   call !ReadInstr ; TODO
 @@test_cbvol:
-  bbc temp.CBIT_VOL, @@test_cbfx
+  bbc l.CBIT_VOL, @@test_cbfx
   call !ReadVol
 @@test_cbfx:
-  bbc temp.CBIT_FX, @@test_cbfxparam
+  bbc l.CBIT_FX, @@test_cbfxparam
   call !ReadFx
 @@test_cbfxparam:
-  bbc temp.CBIT_FXPARAM, @@test_rle
+  bbc l.CBIT_FXPARAM, @@test_rle
   call !ReadFxParam
 @@test_rle:
-  bbc temp.CBIT_RLE_ONLY1, @@@test_rle_g2
+  bbc l.CBIT_RLE_ONLY1, @@@test_rle_g2
   mov a, #1
-  bbc temp.CBIT_RLE, @@@store_rle
+  bbc l.CBIT_RLE, @@@store_rle
   inc a
   bra @@@store_rle
 @@@test_rle_g2: ; RLE > 2
-  bbc temp.CBIT_RLE, @done_read_row
+  bbc l.CBIT_RLE, @done_read_row
   mov a, [ptrack_ptr] + y
   inc y
 @@@store_rle:
@@ -360,15 +518,58 @@ ReadPTracks:
     mov y, #0
     addw ya, ptrack_ptr
     mov ptrack_ptrs + x, a
-    mov ptrack_ptrs + 1 + x, a
+    mov ptrack_ptrs + 1 + x, y
   pop x
+@track_done:
+  dec x
+  bpl @next_track
 @row_done:
   dec patternlen_rows
   bne @ret
   ; time to update to next pattern! TODO
+  jmp !NextPattern
 @ret:
-  ; Once we are done it's time to copy the pointer over. That is done from
-  ; outside
+  mov reportTrackerCmd, #reportTrackerCmd_IncRow
   ret
+
+; Credz to loveemu / Real
+; I wanted to make my own Note table :'3
+noteLUT:
+.dw  $0000,
+; c-2
+.dw  $0040, $0044, $0048, $004c, $0051, $0055, $005b,
+.dw  $0060, $0066, $006c, $0072, $0079,
+; c-1
+.dw  $0080, $0088, $0090, $0098,
+.dw  $00a1, $00ab,
+.dw  $00b5, $00c0, $00cb, $00d7, $00e4, $00f2, 
+
+noteLUT2:
+; c0
+.dw  $0100, $010f, $011f, $0130,
+.dw  $0143, $0156,
+.dw  $016a, $0180, $0196, $01af, $01c8, $01e3, 
+; c1
+.dw  $0200, $021e, $023f, $0261,
+.dw  $0285, $02ab,
+.dw  $02d4, $02ff, $032d, $035d, $0390, $03c7, 
+; c2
+.dw  $0400, $043d, $047d, $04c2,
+.dw  $050a, $0557,
+.dw  $05a8, $05fe, $065a, $06ba, $0721, $078d, 
+; c3
+.dw  $0800, $087a, $08fb, $0984, 
+.dw  $0a14, $0aae,
+.dw  $0b50, $0bfd, $0cb3, $0d74, $0e41, $0f1a, 
+; "C-4"
+.dw  $1000, $10f4, $11f6, $1307,
+.dw  $1429, $155c,
+.dw  $16a1, $17f9, $1966, $1ae9, $1c82, $1e34, 
+; "C-5"
+.dw  $2000, $21e7, $23eb, $260e,
+.dw  $2851, $2ab7,
+.dw  $2d41, $2ff2, $32cc, $35d1, $3904, $3c68,
+; C-6
+.dw  $3fff
 
 .ends
