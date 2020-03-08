@@ -312,11 +312,9 @@ ReadNote:
     asl a
     mov y, a; Y: idx into notelut
     call !VoiceNumToVoiceBit
+    or a, konbuf
     mov konbuf, a ; A has bit that this voice represents
-    mov a, x ; curtrack (voicenum)
-    .rept 4
-      asl a
-    .endr
+    call !getDSPIDX
     clrc
     adc a, #plo
     push a

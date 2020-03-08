@@ -429,6 +429,7 @@ void Tracker::handle_events()
 						playback = !playback;
 						if (playback)
 							render_to_apu();
+						else ::player->pause(1);
 					break;
         }
       } break;
@@ -488,7 +489,11 @@ void Tracker::dec_spd()
 
 void Tracker::render_to_apu()
 {
+	::player->pause(0);
 	::player->start_track(0);
+	// This is absolutely crucial for the tracker to sync properly with the
+	// APU emu!!! v v v  Otherwise the emu runs too fast ahead of the audio
+	::player->ignore_silence();
 	/* BPM AND SPD */
   /* Quick thoughts on Timer : We could add a checkmark to use the high
    * frequency timer. Also could have a mode where you specify ticks and
@@ -774,7 +779,7 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 	switch (type)
 	{
 		case Spc_Report::TrackerCmd:
-			DEBUGLOG("SPC Tracker Report: Cmd: 0x%02x Arg: 0x%02x\n", cmd, arg);
+			//DEBUGLOG("SPC Tracker Report: Cmd: 0x%02x Arg: 0x%02x\n", cmd, arg);
 			/* Ultimately, we'll be updating the PatternEditorPanel currow from
 			 * here. We'll need a handle on it */
 			switch (cmd)

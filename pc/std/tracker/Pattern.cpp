@@ -415,6 +415,8 @@ void PatSeqPanel::set_currow(int row)
 	currow = row;
 	if (currow >= (rows_scrolled + VISIBLE_ROWS))
 		rows_scrolled = currow - VISIBLE_ROWS + 1;
+	else if (row == 0)
+		rows_scrolled = 0;
 }
 
 void PatSeqPanel::inc_currow()
@@ -1175,6 +1177,8 @@ void PatternEditorPanel::set_currow(int row)
 	currow = row;
 	if (currow >= (rows_scrolled + VISIBLE_ROWS))
 		rows_scrolled = currow - VISIBLE_ROWS + 1;
+	else if (row == 0)
+		rows_scrolled = 0;
 }
 
 void PatternEditorPanel::inc_currow(int howmany/*=1*/, bool wrap/*=true*/)
