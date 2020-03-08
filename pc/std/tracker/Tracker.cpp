@@ -431,6 +431,9 @@ void Tracker::handle_events()
 							render_to_apu();
 						else ::player->pause(1);
 					break;
+					case SDLK_BACKQUOTE:
+						player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
+					break;
         }
       } break;
       default:break;
@@ -677,11 +680,14 @@ void Tracker::render_to_apu()
 				for (ttrr=tr+1; ttrr < pattern->len; ttrr++)
 				{
 					PatternRow *row = &pattern->trackrows[t][ttrr];
-					if (!PATROW_EMPTY(row) || ttrr == (pattern->len - 1))
+					if ( (!(PATROW_EMPTY(row))) || ttrr == (pattern->len - 1))
 					{
 						// we found a filled row or we made it to the end of pattern
-						ttrr -= (PATROW_EMPTY(row) ? 0 : 1);
-						int num_empty = ttrr - tr;
+						ttrr -= ( (PATROW_EMPTY(row)) ? 0 : 1);
+						int num_empty = ttrr - tr; /* HACK: the +1 is actually to compensate for the way
+						apu driver code is handled, it's just to help the loop portion of the code stay clean
+						on APU side. but as an lsr value it should be disregarded. The actual
+						APU portion of code is anything using an rlecounter(s) (ReadPTRacks, QuickReadPTrack)*/
 						if (num_empty == 0)
 							break;
 						else if (num_empty == 1)
@@ -697,10 +703,18 @@ void Tracker::render_to_apu()
 						break;
 					}
 				}
+
+				if ( tr == 0 && (
+							pr->note == NOTE_NONE &&
+							pr->instr == 0 &&
+							pr->vol == 0 && pr->fx == 0 && pr->fxparam == 0) )
+				{
+					cbyte |= 1<<CBIT;
+				}
 				// Only if every element is filled are we NOT going to use a
 				// special compression byte. so let's check if every element is
 				// filled first.
-				if (! (
+				else if (! (
 				       pr->note != NOTE_NONE &&
 				       pr->instr != 0 &&
 				       pr->vol != 0 && pr->fx != 0 && pr->fxparam != 0) )
@@ -750,7 +764,7 @@ void Tracker::render_to_apu()
 
 	
 	// send the command to start the song
-	player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
+	//player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
 }
 
 /* Define the Packed Pattern Format.
@@ -779,7 +793,7 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 	switch (type)
 	{
 		case Spc_Report::TrackerCmd:
-			//DEBUGLOG("SPC Tracker Report: Cmd: 0x%02x Arg: 0x%02x\n", cmd, arg);
+			DEBUGLOG("SPC Tracker Report: Cmd: 0x%02x Arg: 0x%02x\n", cmd, arg);
 			/* Ultimately, we'll be updating the PatternEditorPanel currow from
 			 * here. We'll need a handle on it */
 			switch (cmd)

@@ -7,6 +7,7 @@
 ; Zero page variables!
 .RAMSECTION "gp-dp0" BANK 0 SLOT SPC_DP0_SLOT
 spddec db	; copy of spd to dec from
+patlen_dec db ; " patternlen_rows
 
 pattern_ptr dw	; ptr to the current pattern, maybe only l ram needed)
 patternlen_rows db ; 00 == 256
@@ -65,17 +66,17 @@ Loadptrack_ptr:
 	ret
 
 
-.define rlecounter l
+.define rlecounter rlecounters
 ; Expects <pattern_ptr> to be loaded and valid
 ; IN: NONE
 ; OUT: YA = address of next ptrack
 ; CLOBBERS: A,X,Y
 ;           ptrack_ptr
-;           l (aliased as rlecounter)
+;           l
+;           rlecounter(s)
 QuickReadPTrack:
   mov rlecounter, #0
 	mov x, patternlen_rows
-  dec x ; subtract 1 early so we can use BPL
   ;--- check if we are in an rlecount
 @loop:
   mov y, #0
@@ -107,18 +108,18 @@ QuickReadPTrack:
   inc y
 @@test_rle:
   bbc l.CBIT_RLE_ONLY1, @@@test_rle_g2
-  inc y
-  bbc l.CBIT_RLE, @done_read_row
-  inc y
-  bra @done_read_row
+  mov a, #1
+  bbc l.CBIT_RLE, @@@store_rle
+  inc a
+  bra @@@store_rle
 @@@test_rle_g2: ; RLE > 2
   bbc l.CBIT_RLE, @done_read_row
   mov a, [ptrack_ptr] + y
   inc y
+@@@store_rle:
   mov rlecounter, a
   bra @done_read_row
 @nocomp:
-	inc y
 	; read note
 	inc y
 	; read inst
@@ -139,7 +140,7 @@ QuickReadPTrack:
   addw ya, ptrack_ptr
   movw ptrack_ptr, ya
   dec x
-  bpl @loop
+  bne @loop
 _ret:
   ; Once we are done it's time to copy the pointer over. That is done from
   ; outside
@@ -157,6 +158,7 @@ Load_ptrack_ptrs:
 	;mov curtrack, #0
 	mov x, #ptrack_ptrs	; track idx MAYBE
 	mov y, #0
+  mov patlen_dec, y
 	mov a, [pattern_ptr] + y
 	mov patternlen_rows, a
 
@@ -522,12 +524,17 @@ ReadPTracks:
   dec x
   bpl @next_track
 @row_done:
-  dec patternlen_rows
-  bne @ret
+  mov a, patlen_dec
+  inc a
+  cbne patternlen_rows, @ret
   ; time to update to next pattern! TODO
   jmp !NextPattern
 @ret:
-  mov reportTrackerCmd, #reportTrackerCmd_IncRow
+  mov patlen_dec, a
+  dec a ; the tracker should highlight the row that has just been
+  ; processed, rather than the next row yet to be processed
+  mov reportTrackerArg, a
+  mov reportTrackerCmd, #reportTrackerCmd_SetRow
   ret
 
 ; Credz to loveemu / Real

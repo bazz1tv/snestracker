@@ -306,7 +306,7 @@ spc_end:
 
 	.dw SPC_CODE_START, a2-a1
 a1:
-.INCBIN "derp2.spc" skip $00500 read $1000
+.INCBIN "derp2.spc" skip $00500 read $5000
 a2:
 
 	.dw $0000, SPC_CODE_START	; 00 to finish transfer, then address to jump SPC700 too to begin code execution
