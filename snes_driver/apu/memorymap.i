@@ -4,6 +4,14 @@
 
 .include "apu/memorymap_defs.i"
 
+.enum 0
+SPC_DP0_SLOT db
+SPC_DP1_SLOT db
+SPC_RAM_SLOT db
+SPC_CODE_SLOT db
+.ende
+
+
 .MEMORYMAP
 DefaultSlot SPC_CODE_SLOT
 slot SPC_DP0_SLOT $00 $100

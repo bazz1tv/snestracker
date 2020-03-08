@@ -769,13 +769,9 @@ void Tracker::render_to_apu()
 
 /* Define the Packed Pattern Format.
  * For this, I am electing to use the XM packing scheme, with the addition
- * of an RLE for absences of row data > 2 rows.
+ * of an RLE for absences of 1 row, 2 rows, and > 2 rows up to 255, which.
+ * covers the full range given that the first row is taken by first entry
  *
- *
- * Import a Note LUT for APU driver
- * Write the Song player in APU driver
- * finish render_to_apu() function above
- * Add a "rows" updater to SpcReport gme_m library
  * Add a song/pattern playback keyboard shortcut that writes the
  * appopriate (may need to be added to apu driver) command that signals
  * playback.
@@ -793,7 +789,7 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 	switch (type)
 	{
 		case Spc_Report::TrackerCmd:
-			DEBUGLOG("SPC Tracker Report: Cmd: 0x%02x Arg: 0x%02x\n", cmd, arg);
+			//DEBUGLOG("SPC Tracker Report: Cmd: 0x%02x Arg: 0x%02x\n", cmd, arg);
 			/* Ultimately, we'll be updating the PatternEditorPanel currow from
 			 * here. We'll need a handle on it */
 			switch (cmd)

@@ -11,11 +11,15 @@ WLASPC700 := $(WLAPREFIX)wla-spc700
 all: $(SPCDRIVER_RELPATH) snes_driver/spc.sym \
 pc/std/tracker/apuram.h pc/std/bin/snes_tracker snes_driver/Makefile
 
+# optional
+env.sh: Makefile
+	echo "export PATH=\"$(WLAPREFIX):\$$PATH\"" > env.sh
+
 # little dirty. Technically we depend on spc.bin but since the sym file
 # has the FORCE rule, we'll use that to make sure it is re-assembled if
 # necessary
-$(SPCDRIVER_RELPATH): snes_driver/spc.sym snes_driver/gen_spc.sh Makefile
-	cd snes_driver && ./gen_spc.sh ../$(SPCDRIVER_RELPATH)
+$(SPCDRIVER_RELPATH): snes_driver/spc.sym snes_driver/gen_spc.sh Makefile snes_driver/template.spc
+	cd snes_driver && wlaprefix=$(WLAPREFIX) ./gen_spc.sh ../$(SPCDRIVER_RELPATH)
 
 snes_driver/spc.sym: FORCE Makefile snes_driver/Makefile
 	make -C snes_driver
