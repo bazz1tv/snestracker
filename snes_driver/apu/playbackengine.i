@@ -10,14 +10,14 @@
 .ende
 
 ; compress bits for patterns
-.define CBIT $80
-.define CBIT_NOTE (1<<0)
-.define CBIT_INSTR (1<<1)
-.define CBIT_VOL (1<<2)
-.define CBIT_FX (1<<3)
-.define CBIT_FXPARAM (1<<4)
-.define CBIT_RLE (1<<5)
-.define CBIT_RLE_ONLY1 (1<<6)
+.define CBIT 7
+.define CBIT_NOTE 0
+.define CBIT_INSTR 1
+.define CBIT_VOL 2
+.define CBIT_FX 3
+.define CBIT_FXPARAM 4
+.define CBIT_RLE 5
+.define CBIT_RLE_ONLY1 6
 
 .PRINT "#define CBIT 0x", HEX CBIT, "\n"
 .PRINT "#define CBIT_NOTE 0x", HEX CBIT_NOTE, "\n"

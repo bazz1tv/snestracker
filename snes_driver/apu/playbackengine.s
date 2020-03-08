@@ -26,6 +26,7 @@ patternlen_rows db ; 00 == 256
 
 ptrack_ptrs dsw 8 ; pointers to each track data for a pattern
 ptrack_ptr dw
+rlecounters dsb 8
 ;curtrack db ; plenty of wasted bits that could be used as bit flags here
 .ENDS
 
@@ -72,7 +73,7 @@ QuickReadPTrack:
   ;--- check if we are in an rlecount
 @loop:
   mov a, rlecounter
-  bne @norle
+  beq @norle
   dec rlecounter
   bne @done_read_row_noptr_update
 @norle:
@@ -81,38 +82,38 @@ QuickReadPTrack:
 	bpl @nocomp ; iow, all "normal" rows will be read
   inc y
 @@test_cbnote:
-  and a, #CBIT_NOTE
+  and a, #1<<CBIT_NOTE
   beq @@test_cbinstr
   inc y
 @@test_cbinstr:
-  and a, #CBIT_INSTR
+  and a, #1<<CBIT_INSTR
   beq @@test_cbvol
   inc y
 @@test_cbvol:
-  and a, #CBIT_VOL
+  and a, #1<<CBIT_VOL
   beq @@test_cbfx
   inc y
 @@test_cbfx:
-  and a, #CBIT_FX
+  and a, #1<<CBIT_FX
   beq @@test_cbfxparam
   inc y
 @@test_cbfxparam:
-  and a, #CBIT_FXPARAM
+  and a, #1<<CBIT_FXPARAM
   beq @@test_rle2
   inc y
 @@test_rle2:
-  and a, #CBIT_RLE | CBIT_RLE_ONLY1
+  and a, #(1<<CBIT_RLE) | (1<<CBIT_RLE_ONLY1)
   beq @@test_rle1
   dec x
   dec x
   bra @done_read_row
 @@test_rle1:
-  and a, #CBIT_RLE_ONLY1
+  and a, #1<<CBIT_RLE_ONLY1
   beq @@test_rle_g2
   dec x
   bra @done_read_row
 @@test_rle_g2: ; RLE > 2
-  and a, #CBIT_RLE
+  and a, #1<<CBIT_RLE
   beq +
   mov a, [ptrack_ptr] + y
   mov rlecounter, a
@@ -253,5 +254,121 @@ PlaySong:
 StopSong:
 	clr1 flags.bPlaySong
 	ret
+
+ContinueSong:
+
+  ret
+
+; IN: <ptrack_ptr>, Y
+; CLOBBERS
+; OUT: updated Y index
+ReadNote:
+
+; IN: <ptrack_ptr>, Y
+; CLOBBERS
+; OUT: updated Y index
+ReadInstr:
+; IN: <ptrack_ptr>, Y
+; CLOBBERS
+; OUT: updated Y index
+ReadVol:
+; IN: <ptrack_ptr>, Y
+; CLOBBERS
+; OUT: updated Y index
+ReadFx:
+; IN: <ptrack_ptr>, Y
+; CLOBBERS
+; OUT: updated Y index
+ReadFxParam:
+
+_incyret1:
+  inc y
+  ret
+
+; Expects <ptrack_ptrs> to be loaded and valid
+; IN: NONE
+; OUT: YA = address of next ptrack
+; CLOBBERS: A,X,Y
+;           ptrack_ptr
+;           temp
+;           rlecounters
+;           patternlen_rows
+ReadPTracks:
+  mov x, #8 ; put the curtrack into x
+  ;--- check if we are in an rlecount
+@next_track:
+  dec x
+  bmi @row_done
+  mov a, rlecounters + x
+  beq @no_active_rle
+  dec rlecounters + x
+  bpl @next_track
+@no_active_rle:
+  mov a, x  ; move track# into A as arg
+  push x
+    call !Loadptrack_ptr
+  pop x
+  mov y, #0
+  mov a, [ptrack_ptr] + y
+  ; if negative, then we have compression on this row
+  bmi @comp
+  ; These are the rules that an uncompressed row would follow.
+  mov a, #(1<<CBIT) | (1<<CBIT_NOTE) | (1<<CBIT_INSTR) | (1<<CBIT_VOL) | (1<<CBIT_FX) | (1<<CBIT_FXPARAM)
+  dec y ; account for lack of compression byte
+@comp:
+  inc y
+  mov temp, a
+; WARNING: Don't let any of these calls tamper with "temp", otherwise
+; rewrite all the code
+@@test_cbnote:
+  bbc temp.CBIT_NOTE, @@test_cbinstr
+  call !ReadNote ; TODO
+@@test_cbinstr:
+  bbc temp.CBIT_INSTR, @@test_cbvol
+  call !ReadInstr ; TODO
+@@test_cbvol:
+  bbc temp.CBIT_VOL, @@test_cbfx
+  call !ReadVol
+@@test_cbfx:
+  bbc temp.CBIT_FX, @@test_cbfxparam
+  call !ReadFx
+@@test_cbfxparam:
+  bbc temp.CBIT_FXPARAM, @@test_rle
+  call !ReadFxParam
+@@test_rle:
+  bbc temp.CBIT_RLE_ONLY1, @@@test_rle_g2
+  mov a, #1
+  bbc temp.CBIT_RLE, @@@store_rle
+  inc a
+  bra @@@store_rle
+@@@test_rle_g2: ; RLE > 2
+  bbc temp.CBIT_RLE, @done_read_row
+  mov a, [ptrack_ptr] + y
+  inc y
+@@@store_rle:
+  mov rlecounters + x, a
+@done_read_row:
+  ; to avoid Y from overflowing, rewrite the pointer. We could have
+  ; increased performance by doing this conditionally when Y approaches
+  ; overflow, but size constraint is important on this platform, so keep
+  ; instruction size to a minimum
+  push x
+    mov a, x
+    asl a
+    mov x, a
+    mov a,y
+    mov y, #0
+    addw ya, ptrack_ptr
+    mov ptrack_ptrs + x, a
+    mov ptrack_ptrs + 1 + x, a
+  pop x
+@row_done:
+  dec patternlen_rows
+  bne @ret
+  ; time to update to next pattern! TODO
+@ret:
+  ; Once we are done it's time to copy the pointer over. That is done from
+  ; outside
+  ret
 
 .ends

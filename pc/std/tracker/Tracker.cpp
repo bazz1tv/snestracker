@@ -668,12 +668,12 @@ void Tracker::render_to_apu()
 						if (num_empty == 0)
 							break;
 						else if (num_empty == 1)
-							cbyte |= CBIT_RLE_ONLY1;
+							cbyte |= ( 1<<CBIT_RLE_ONLY1 );
 						else if (num_empty == 2)
-							cbyte |= CBIT_RLE | CBIT_RLE_ONLY1;
+							cbyte |= ( (1<<CBIT_RLE) | (1<<CBIT_RLE_ONLY1) );
 						else
 						{
-							cbyte |= CBIT_RLE;
+							cbyte |= ( 1<<CBIT_RLE );
 							rlebyte = num_empty;
 						}
 
@@ -689,15 +689,15 @@ void Tracker::render_to_apu()
 				       pr->vol != 0 && pr->fx != 0 && pr->fxparam != 0) )
 				{
 					cbyte |=
-					  (pr->note ? CBIT_NOTE : 0) |
-					  (pr->instr ? CBIT_INSTR : 0) |
-					  (pr->vol ? CBIT_VOL : 0) |
-					  (pr->fx ? CBIT_FX : 0) |
-					  (pr->fxparam ? CBIT_FXPARAM : 0);
+					  (pr->note ? ( 1<<CBIT_NOTE ) : 0) |
+					  (pr->instr ? ( 1<<CBIT_INSTR ) : 0) |
+					  (pr->vol ? ( 1<<CBIT_VOL ) : 0) |
+					  (pr->fx ? ( 1<<CBIT_FX ) : 0) |
+					  (pr->fxparam ? ( 1<<CBIT_FXPARAM ) : 0);
 				}
 
 				if (cbyte)
-					::IAPURAM[pat_i++] = CBIT | cbyte;
+					::IAPURAM[pat_i++] = ( 1<<CBIT ) | cbyte;
 				/* we should now write the actual byte for any data that is
 				 * present */
 				if (pr->note)
@@ -710,7 +710,7 @@ void Tracker::render_to_apu()
 					::IAPURAM[pat_i++] = pr->fx;
 				if (pr->fxparam)
 					::IAPURAM[pat_i++] = pr->fxparam;
-				if ( (cbyte & (CBIT_RLE | CBIT_RLE_ONLY1)) == CBIT_RLE)
+				if ( (cbyte & (( 1<<CBIT_RLE ) | ( 1<<CBIT_RLE_ONLY1 )) ) == ( 1<<CBIT_RLE ) )
 					::IAPURAM[pat_i++] = rlebyte;
 
 				tr = ttrr; // skip over empty rows

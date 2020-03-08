@@ -51,7 +51,7 @@ MAIN:
 ; Enter MAIN LOOP
 MainLoop:
 	bbc flags.bPlaySong, Poll
-  ;call !PlayPattern
+  call !ContinueSong
 
 Poll:
   mov a,spcport1  		; Fetch io1
