@@ -23,6 +23,7 @@
 struct Tracker;
 class SpcReport : public Spc_Report
 {
+public:
 	SpcReport(Tracker *tracker);
 	void report(Type type, unsigned addr, unsigned opcode);
 private:
@@ -81,4 +82,6 @@ public:
    * */
   Instrument instruments[NUM_INSTR]; // also holds the samples
   PatternSequencer patseq;
+private:
+	SpcReport spcreport;
 };

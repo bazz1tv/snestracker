@@ -31,7 +31,8 @@ $(APURAM_HEADER): snes_driver/spc.sym Makefile \
 	$(WLASPC700) -t snes_driver/apu/memorymap_defs.i 2>/dev/null >> $(APURAM_HEADER) ; true
 	echo >> $(APURAM_HEADER)
 	$(WLASPC700) -t snes_driver/apu/playbackengine.i 2>/dev/null >> $(APURAM_HEADER) ; true
-
+	echo >> $(APURAM_HEADER)
+	$(WLASPC700) -t snes_driver/apu/commands.i 2>/dev/null >> $(APURAM_HEADER) ; true
 	# the 'true' at the end is because the compilation will actually fail
 	# since this is not a fully defined file for compilation.. but it's
 	# enough to print out the definition

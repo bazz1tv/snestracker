@@ -13,7 +13,8 @@ std::unordered_set<DrawRenderer *> Tracker::prerenders, Tracker::postrenders;
 Tracker::Tracker(int &argc, char **argv) :
 bpm(120),
 spd(6),
-main_window(argc,argv, this)
+main_window(argc,argv, this),
+spcreport(this)
 {
 	/* eventually I want to make sub-windows just an overlay in the one main
 	 * window, rather than having separate windows. That's my choice. But
@@ -476,6 +477,7 @@ void Tracker::dec_spd()
 
 void Tracker::render_to_apu()
 {
+	::player->start_track(0);
 	/* BPM AND SPD */
   /* Quick thoughts on Timer : We could add a checkmark to use the high
    * frequency timer. Also could have a mode where you specify ticks and
@@ -728,6 +730,9 @@ void Tracker::render_to_apu()
 	::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
 	// going to check in apu driver for a negative number to mark end
 	// PATTERN SEQUENCER END
+
+	// send the command to start the song
+	player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
 }
 
 /* Define the Packed Pattern Format.
@@ -752,6 +757,7 @@ SpcReport::SpcReport(Tracker *tracker) : tracker(tracker)
 
 void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 {
+	//DEBUGLOG("SPC Tracker Report: Type: %d\n", type);
 	switch (type)
 	{
 		case Spc_Report::TrackerCmd:
