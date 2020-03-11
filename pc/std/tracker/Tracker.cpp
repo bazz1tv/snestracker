@@ -781,13 +781,44 @@ void Tracker::render_to_apu()
  * For this, I am electing to use the XM packing scheme, with the addition
  * of an RLE for absences of 1 row, 2 rows, and > 2 rows up to 255, which.
  * covers the full range given that the first row is taken by first entry
- *
- * Add a song/pattern playback keyboard shortcut that writes the
- * appopriate (may need to be added to apu driver) command that signals
- * playback.
- *
- * Add the same keyboard shortcut as a toggle(?) to stop playback or a
- * different keyboard shortcut altogether*/
+ */
+
+/* For envelope FX, rules:
+ * ok heres something i thought up:
+ * fx name: N (noise)
+ * params:    0: off
+ *         1-fe: choose envelope (+on)
+ *           ff: envelope on
+ */
+ /* TODO:
+	* Add sample editor
+	* add color to track headers that match STD track colors
+	* add debugger window to snestracker
+  * :: add FX to set/clear sample Loop bit (can get some cool sounds)
+	* :: add FX to set/clear an inst envelope (vol, pan, pitch)
+	* :: add noise FX support
+	* noise envelope??
+	* Add song-wide Echo support
+	* Add fx echo support in some way
+	* :: add FIR presets
+	* Add  ability to mute / solo tracks from the track header.
+
+	* add render_to_apu optimization that doesn't output an instrument byte
+	* if there was a previous instrument byte in that pattern that was the
+	* same exact instrument
+
+  * Add TextEditRects to SpcExport window
+  * Undo feature in PatternEditor
+	* Save/Open Song
+	* Envelope GUI element
+	* Envelope storing / playback impl
+	* Selections in PatternEditor
+	* Instruments load/save.
+	* Sample save
+	* Change to a global sample database.
+	* Add ability to specify SRCN (or sample) from instr editor
+	* Specify sample loop point (from sample editor)
+	*/
 
 SpcReport::SpcReport(Tracker *tracker) : tracker(tracker)
 {
