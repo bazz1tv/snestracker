@@ -673,6 +673,7 @@ void Tracker::render_to_apu()
  * */
 		for (int t=0; t < MAX_TRACKS; t++)
 		{
+			uint8_t last_instr = 0;
 			for (int tr=0; tr < pattern->len; tr++)
 			{
 				int ttrr;
@@ -715,6 +716,7 @@ void Tracker::render_to_apu()
 				{
 					cbyte |= 1<<CBIT;
 				}
+#define DIFF_LAST_INSTR (last_instr == 0 || last_instr != pr->instr)
 				// Only if every element is filled are we NOT going to use a
 				// special compression byte. so let's check if every element is
 				// filled first.
@@ -725,7 +727,7 @@ void Tracker::render_to_apu()
 				{
 					cbyte |=
 					  (pr->note ? ( 1<<CBIT_NOTE ) : 0) |
-					  (pr->instr ? ( 1<<CBIT_INSTR ) : 0) |
+					  (pr->instr && DIFF_LAST_INSTR ? ( 1<<CBIT_INSTR ) : 0) |
 					  (pr->vol ? ( 1<<CBIT_VOL ) : 0) |
 					  (pr->fx ? ( 1<<CBIT_FX ) : 0) |
 					  (pr->fxparam ? ( 1<<CBIT_FXPARAM ) : 0);
@@ -737,8 +739,12 @@ void Tracker::render_to_apu()
 				 * present */
 				if (pr->note)
 					::IAPURAM[pat_i++] = pr->note - 1;
-				if (pr->instr)
-					::IAPURAM[pat_i++] = pr->instr - 1;
+				if (pr->instr && DIFF_LAST_INSTR)
+				{
+						last_instr = pr->instr;
+						// however, the "actual" instrument is 0-based
+						::IAPURAM[pat_i++] = pr->instr - 1;
+				}
 				if (pr->vol)
 					::IAPURAM[pat_i++] = pr->vol;
 				if (pr->fx)
