@@ -157,7 +157,7 @@ void Main_Window::check_quit(SDL_Event &ev)
     case SDL_KEYDOWN:
     if (ev.key.keysym.sym == SDLK_ESCAPE)
     {
-      quitting = true;
+      //quitting = true;
     }
   }
 }
