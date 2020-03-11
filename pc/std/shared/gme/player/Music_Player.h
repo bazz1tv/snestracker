@@ -30,7 +30,6 @@ public:
 	bool needs_to_fade_in=false;
 
 	void set_gain_db(gain_t new_gain_db, bool immediate=false);
-	
 
 	void inc_tempo() {tempo+=0.1; emu_->set_tempo(tempo); }
 	void dec_tempo() {tempo-=0.1; emu_->set_tempo(tempo); }
@@ -65,7 +64,6 @@ public:
 	
 	// True if track ended
 	bool track_ended() const;
-	
 	
 	// Pointer to emulator
 	Music_Emu* emu() const { return emu_; }
@@ -105,7 +103,7 @@ public:
 public:
 	Music_Player();
 	~Music_Player();
-	gain_t gain_db=0.0, linear_gain=1.0; 
+	gain_t gain_db=0.0, linear_gain=1.0, saved_linear_gain=1.0;
 	static double min_gain_db, max_gain_db;
 	bool gain_has_changed=false;
 	bool is_using_zero_crossover=false;
@@ -119,6 +117,7 @@ public:
 	{
 		strcpy(path,str);
 	}*/
+	void post_fadeout();
 	void fade_out(bool threaded=false); // public function
 	double stereo_bufs_per_sec;
 

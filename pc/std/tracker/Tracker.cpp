@@ -353,8 +353,12 @@ void Tracker::handle_events()
         switch (ev.user.code)
         {
           case UserEvents::sound_stop:
-            sound_stop();
-            break;
+						::player->post_fadeout();
+						/* This is just a hack to be able to export SPCs successfully.
+						 * But what should really be done is when the SPC Export
+						 * function is called, render_to_apu() is called from there */
+						render_to_apu();
+						break;
           case UserEvents::callback:
 					{
             void (*p) (void*) = ev.user.data1;
@@ -429,7 +433,8 @@ void Tracker::handle_events()
 						playback = !playback;
 						if (playback)
 							render_to_apu();
-						else ::player->pause(1);
+						else
+							::player->fade_out(true);
 					break;
 					case SDLK_BACKQUOTE:
 						player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
@@ -492,7 +497,6 @@ void Tracker::dec_spd()
 
 void Tracker::render_to_apu()
 {
-	::player->pause(0);
 	::player->start_track(0);
 	// This is absolutely crucial for the tracker to sync properly with the
 	// APU emu!!! v v v  Otherwise the emu runs too fast ahead of the audio
@@ -761,10 +765,10 @@ void Tracker::render_to_apu()
 	::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
 	// going to check in apu driver for a negative number to mark end
 	// PATTERN SEQUENCER END
-
 	
 	// send the command to start the song
-	//player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
+	if (playback)
+		player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
 }
 
 /* Define the Packed Pattern Format.

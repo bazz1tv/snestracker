@@ -238,6 +238,7 @@ void Music_Player::fade_out(bool threaded/*=false*/)
 
 	if (threaded)
 	{
+		DEBUGLOG("\tthreaded\n");
 		thread = SDL_CreateThread(&Music_Player::fade_out, "FadeOutThread", this);
 		SDL_DetachThread(thread); /* will go away on its own upon completion. */
 	}
@@ -246,30 +247,28 @@ void Music_Player::fade_out(bool threaded/*=false*/)
 		low_level_fade_out(false);
 	}
 }
+
+void Music_Player::post_fadeout()
+{
+	sound_stop();
+	linear_gain = saved_linear_gain;
+}
+
 void Music_Player::low_level_fade_out(bool threaded)
 {
-	gain_t linear_gain=this->linear_gain; 
-	needs_to_fade_out=true;
+	saved_linear_gain = this->linear_gain;
+	needs_to_fade_out = true;
 	while (needs_to_fade_out);
-	this->linear_gain = linear_gain;
 	
-	if (paused)
+	if (threaded)
 	{
-		if (threaded)
-		{
-			SDL_Event event2;
-		  event2.type = SDL_USEREVENT;
-		  event2.user.code = UserEvents::sound_stop;
-		  event2.user.data1 = 0;
-		  event2.user.data2 = 0;
-		  SDL_PushEvent(&event2);
-		}
-		else
-		{
-			sound_stop();
-		}
-		
+		SDL_Event event2;
+	  event2.type = SDL_USEREVENT;
+	  event2.user.code = UserEvents::sound_stop;
+	  SDL_PushEvent(&event2);
 	}
+	else
+		post_fadeout();
 }
 
 blargg_err_t Music_Player::start_track( int track, bool test/*=false*/ )
