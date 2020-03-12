@@ -86,7 +86,7 @@ else ifeq ($(uname_S), Linux)
 	CSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_gtk.c
 	gtk_cflags = $(shell pkg-config --cflags gtk+-2.0)
 	gtk_ldflags = $(shell pkg-config --libs gtk+-2.0)
-	CPPFLAGS += $(gtk_cflags)
+	#CPPFLAGS += $(gtk_cflags)
 	LDFLAGS += $(gtk_ldflags) -Wl,-rpath=$(gme_PREFIX)/lib
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
 
@@ -210,6 +210,8 @@ $(BIN)/$(UNRAR): $(PROJ_DIR)/unrar/$(UNRAR)
 	cp $(PROJ_DIR)/unrar/$(UNRAR) $(BIN)
 $(PROJ_DIR)/unrar/$(UNRAR):
 	uname_S=$(uname_S) make -C $(PROJ_DIR)/unrar
+
+$(BIN)/ext/NativeFileDialog/nfd_gtk.o: CPPFLAGS += $(gtk_cflags)
 
 $(BIN)/%.o: %.c
 	mkdir -p $(@D)
