@@ -47,11 +47,6 @@ ReloadSpdDec:
 	mov spddec, a
 	ret
 
-DoRow:
-	ret
-DoTick:
-	ret
-
 ; IN: (A) current track idx
 ; CLOBS: (X)
 Loadptrack_ptr:
