@@ -7,7 +7,7 @@
 ; Zero page variables!
 .RAMSECTION "gp-dp0" BANK 0 SLOT SPC_DP0_SLOT
 spddec db	; copy of spd to dec from
-patlen_dec db ; " patternlen_rows
+inc_to_patlen db ; " patternlen_rows
 
 pattern_ptr dw	; ptr to the current pattern, maybe only l ram needed)
 patternlen_rows db ; 00 == 256
@@ -158,7 +158,7 @@ Load_ptrack_ptrs:
 	;mov curtrack, #0
 	mov x, #ptrack_ptrs	; track idx MAYBE
 	mov y, #0
-  mov patlen_dec, y
+  mov inc_to_patlen, y
 	mov a, [pattern_ptr] + y
 	mov patternlen_rows, a
 
@@ -446,7 +446,8 @@ _incyret1:
   ret
 
 ; Expects <ptrack_ptrs> to be loaded and valid
-; IN: NONE
+; IN: inc_to_patlen: start row
+;     patternlen_rows: the length of the pattern
 ; OUT: YA = address of next ptrack
 ; CLOBBERS: A,X,Y
 ;           ptrack_ptr
@@ -524,13 +525,13 @@ ReadPTracks:
   dec x
   bpl @next_track
 @row_done:
-  mov a, patlen_dec
+  mov a, inc_to_patlen
   inc a
   cbne patternlen_rows, @ret
-  ; time to update to next pattern! TODO
+  ; time to update to next pattern!
   jmp !NextPattern
 @ret:
-  mov patlen_dec, a
+  mov inc_to_patlen, a
   dec a ; the tracker should highlight the row that has just been
   ; processed, rather than the next row yet to be processed
   mov reportTrackerArg, a
