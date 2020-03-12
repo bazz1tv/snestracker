@@ -250,10 +250,27 @@ PlaySong:
 	set1 flags.bPlaySong
 	ret
 
+.macro lda
+  mov a, \1
+.endm
+
 StopSong:
 	clr1 flags.bPlaySong
 __ret:
   ret
+
+; I like the sound of 1 tick @ 120 BPM, spd 6. So figure out how much time
+; that is and get that same amount of time across different BPM and SPD
+; settings
+calc_kofftick:
+  mov a, #0
+  ret
+  mov a,spd
+  lsr a
+;beq +
+bcs +
+  dec a
++ ret
 
 ContinueSong:
   ; We need to check the timer for a start of row. iow, first check that a
@@ -271,6 +288,17 @@ ContinueSong:
 
   ; at this point, a tick has been fired
   ; TODO: impl fx and stuff
+  mov a, koffbuf
+  beq @no_koff
+  call !calc_kofftick
+  cmp a, spddec; , kofftick
+  bne @no_koff
+@koff:
+  mov dspaddr, #koff
+  mov a, koffbuf
+  mov dspdata, a
+  mov koffbuf, #0
+@no_koff:
   ret
 @nextrow:
   call !ReloadSpdDec
@@ -445,6 +473,25 @@ _incyret1:
   inc y
   ret
 
+readahead:
+  mov y, #0
+; do a readahead to see if we need to mark KOFF
+  mov a, rlecounters + x
+  bne @@next_row_is_blank
+  mov a, [ptrack_ptr] + y
+  bpl @@comp_note ; no compression, go to same routine that has a note
+@@comp:
+  and a, #1<<CBIT_NOTE
+  beq @@next_row_is_blank ; no note, so don't mark koff
+@@comp_note:
+  ; Time to mark for KOFF
+  call !VoiceNumToVoiceBit
+  or a, koffbuf
+  mov koffbuf, a ; A has bit that this voice represents
+@@next_row_is_blank:
+  ret
+
+
 ; Expects <ptrack_ptrs> to be loaded and valid
 ; IN: inc_to_patlen: start row
 ;     patternlen_rows: the length of the pattern
@@ -458,6 +505,7 @@ ReadPTracks:
   mov x, #7 ; put the curtrack into x
   ;--- check if we are in an rlecount
 @next_track:
+  mov y, #0
   mov a, rlecounters + x
   beq @no_active_rle
   dec rlecounters + x
@@ -467,7 +515,6 @@ ReadPTracks:
   push x
     call !Loadptrack_ptr
   pop x
-  mov y, #0
   mov a, [ptrack_ptr] + y
   ; if negative, then we have compression on this row
   bmi @comp
@@ -522,6 +569,7 @@ ReadPTracks:
     mov ptrack_ptrs + 1 + x, y
   pop x
 @track_done:
+  call !readahead
   dec x
   bpl @next_track
 @row_done:
