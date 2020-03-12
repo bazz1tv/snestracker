@@ -26,6 +26,7 @@ koffbuf db ; not sure if needed
 PUBLIC_START  dsb 0
 ticks         db    ; 125 uS increments to timer 0
 spd           db
+dspdir_i      db
 
 instrtable_ptr dw
 

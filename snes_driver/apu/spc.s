@@ -38,6 +38,9 @@ MAIN:
   mov dspdata, #$ff
   MOV dspaddr, #edl
   MOV dspdata, #0
+
+  mov dspaddr, #dir
+  mov dspdata, dspdir_i
   
   ; TODO - Could alter master volume by song setting here
   MOV dspaddr, #mvol_l 

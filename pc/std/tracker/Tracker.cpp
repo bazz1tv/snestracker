@@ -606,6 +606,7 @@ void Tracker::render_to_apu()
 		::IAPURAM[cursample_i++] = instr->semitone_offset;
 		::IAPURAM[cursample_i++] = instr->finetune;
 	}
+	apuram->dspdir_i = dspdir_i;
 	::player->spc_write_dsp(dsp_reg::dir, dspdir_i);
 	// INSTRUMENTS END
 
