@@ -44,7 +44,6 @@ PUBLIC_END    dsb 0
 
 ReloadSpdDec:
 	mov a, spd
-  dec a ; so we can use a bmi on the counter to cover potential overflows
 	mov spddec, a
 	ret
 
@@ -260,18 +259,36 @@ StopSong:
 __ret:
   ret
 
+; assuming the tick setting for 120BPM, spd 6 is A7
+; truthfully I think the KOFF wait time could be less than A7, but I am
+; really not interested in using a second timer. What could be done is
+; using one timer at a tick speed that is a multiple faster than the
+; requested tick speed
+.define post_koff_wait_time ($A7 * 1)
 ; I like the sound of 1 tick @ 120 BPM, spd 6. So figure out how much time
 ; that is and get that same amount of time across different BPM and SPD
 ; settings
 calc_kofftick:
-  mov a, #0
-  ret
-  mov a,spd
+  ; divisor
+  mov x, ticks
+  ; divisor / 2 (for remainder rounding)
+  mov a, x
   lsr a
-;beq +
-bcs +
-  dec a
-+ ret
+  mov l, a ; l = divisor/2
+
+  ; dividend
+  mov y, #>post_koff_wait_time
+  mov a, #<post_koff_wait_time
+	div ya, x
+	; answer is in a, but we might want to add a tick based on rounding the
+	; remainder. do a rough check of remainder/2
+	cmp y, l ; (remainder - (ticks / 2))
+           ; (if remainder approx >= (ticks/2): inc
+           ; (approx <= : no inc
+	bcc @ret ; < : no inc
+	inc a
+@ret:
+	ret
 
 ContinueSong:
   ; We need to check the timer for a start of row. iow, first check that a
@@ -281,13 +298,18 @@ ContinueSong:
   ; overflows.
   mov a, spddec
   setc
-  sbc spddec, t0out
-  bmi @nextrow
-  ; ok, we didn't overflow, but has even 1 tick passed?
+  sbc a, t0out
+  ; has even 1 tick passed?
   cmp a, spddec
   beq __ret
 
-  ; at this point, a tick has been fired
+; 1 tick HAS passed
+  mov spddec, a
+  dec a
+  bpl +  ; this essentially gives if (a <= 0) mark next row for processing
+  set1 flags.bNextRow
+  bra @onlyfx
++ ; at this point, a tick has been fired
   ; TODO: impl fx and stuff
   mov a, koffbuf
   beq @no_koff
@@ -300,8 +322,13 @@ ContinueSong:
   mov dspdata, a
   mov koffbuf, #0
 @no_koff:
-  ret
+
+@onlyfx:
+  ; do FX processing here on every tick
+
+  bbc flags.bNextRow, @ret
 @nextrow:
+  clr1 flags.bNextRow
   call !ReloadSpdDec
   ; If it's the start of a new row call the routine to read the
   ; next row man!
@@ -315,6 +342,7 @@ ContinueSong:
   mov dspdata, a
   ; TODO: KOFF
 @no_kon:
+@ret:
   ret
 
 ; IN: X=vnum (0-7)
