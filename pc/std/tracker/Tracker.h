@@ -11,6 +11,7 @@
 #include "Menu_Bar.h"
 #include "gui/Window.h"
 
+#include "Samples.h"
 #include "Instruments.h"
 
 #include "gui/MouseCursors.h"
@@ -80,7 +81,8 @@ public:
 	TrackerApuRam *apuram;
   /* TRACKER CORE -- Here is located the "model" data structures, not GUI
    * */
-  Instrument instruments[NUM_INSTR]; // also holds the samples
+	Sample samples[NUM_SAMPLES];
+  Instrument instruments[NUM_INSTR];
   PatternSequencer patseq;
 private:
 	SpcReport spcreport;

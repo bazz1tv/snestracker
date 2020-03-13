@@ -208,6 +208,12 @@ void AdsrPanel::run()
 }
 
 InstrumentEditor::InstrumentEditor(Instrument_Panel *instrpanel) :
+	srcn_cbuf("00"),
+	srcn_title("Sample"),
+	srcn_valtext(srcn_cbuf),
+	srcn_incbtn("+", incsrcn, this, true),
+	srcn_decbtn("-", decsrcn, this, true),
+
   vol_cbuf("7f"),
   vol_title("Vol"),
   vol_valtext(vol_cbuf),
@@ -231,7 +237,11 @@ InstrumentEditor::InstrumentEditor(Instrument_Panel *instrpanel) :
   instrpanel(instrpanel)
 {
 }
+void InstrumentEditor :: update_srcn()
+{
+	sprintf(srcn_cbuf, "%02x", instrpanel->instruments[instrpanel->currow].srcn);
 
+}
 void InstrumentEditor :: update_vol()
 {
   sprintf(vol_cbuf, "%02x", instrpanel->instruments[instrpanel->currow].vol);
@@ -261,7 +271,18 @@ void InstrumentEditor :: set_coords(int x, int y)
 
   int yy = y;
 
-  vol_title.rect.x = x;
+	srcn_title.rect.x = x;
+	srcn_title.rect.y = y;
+	srcn_valtext.rect.x = x + ((sizeof("Sample...")-1) * CHAR_WIDTH);
+	srcn_valtext.rect.y = y;
+	srcn_incbtn.rect.x  = srcn_valtext.rect.x + (sizeof("00") * CHAR_WIDTH);
+	srcn_incbtn.rect.y = y;
+	srcn_decbtn.rect.x = srcn_incbtn.rect.x + CHAR_WIDTH + 5;
+	srcn_decbtn.rect.y = y;
+
+	y += CHAR_HEIGHT + 5;
+
+	vol_title.rect.x = x;
   vol_title.rect.y = y;
   vol_valtext.rect.x = x + ((sizeof("Vol......")-1) * CHAR_WIDTH);
   vol_valtext.rect.y = y;
@@ -292,12 +313,15 @@ void InstrumentEditor :: set_coords(int x, int y)
   finetune_decbtn.rect.x = finetune_incbtn.rect.x + CHAR_WIDTH + 5;
   finetune_decbtn.rect.y = y;
 
-  tabs.set_coords(vol_decbtn.rect.x + vol_decbtn.rect.w + (CHAR_WIDTH*15), yy - 3);
-  adsrpanel.set_coords(vol_decbtn.rect.x + vol_decbtn.rect.w + (CHAR_WIDTH*7), yy + (3*CHAR_HEIGHT));
+  tabs.set_coords(srcn_decbtn.rect.x + srcn_decbtn.rect.w + (CHAR_WIDTH*15), yy - 3);
+  adsrpanel.set_coords(srcn_decbtn.rect.x + srcn_decbtn.rect.w + (CHAR_WIDTH*7), yy + (3*CHAR_HEIGHT));
 }
 
 int InstrumentEditor::handle_event(const SDL_Event &ev)
 {
+	srcn_incbtn.check_event(ev);
+	srcn_decbtn.check_event(ev);
+
   vol_incbtn.check_event(ev);
   vol_decbtn.check_event(ev);
 
@@ -314,15 +338,17 @@ int InstrumentEditor::handle_event(const SDL_Event &ev)
     adsrpanel.check_event(ev);
 }
 
-//void InstrumentEditor::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
-//{
-//}
-
 void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
 {
+	update_srcn();
   update_vol();
   update_pan();
   update_finetune();
+
+	srcn_title.draw(screen);
+	srcn_valtext.draw(screen);
+	srcn_incbtn.draw(screen);
+	srcn_decbtn.draw(screen);
 
   vol_title.draw(screen);
   vol_valtext.draw(screen);
@@ -346,6 +372,34 @@ void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
   {
     adsrpanel.draw();
   }
+}
+
+int InstrumentEditor::incsrcn(void *i)
+{
+	InstrumentEditor *ie = (InstrumentEditor *)i;
+	Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
+	Instrument::inc_srcn(curinst);
+
+	// Have SamplePanel idx correspond to this srcn setting
+	Sample_Panel *sp = ie->instrpanel->samplepanel;
+	sp->currow = curinst->srcn;
+	sp->rows_scrolled = (sp->currow / Sample_Panel::NUM_ROWS) * Sample_Panel::NUM_ROWS;
+
+	ie->update_srcn();
+}
+
+int InstrumentEditor::decsrcn(void *i)
+{
+	InstrumentEditor *ie = (InstrumentEditor *)i;
+	Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
+	Instrument::dec_srcn(curinst);
+
+	// Have SamplePanel idx correspond to this srcn setting
+	Sample_Panel *sp = ie->instrpanel->samplepanel;
+	sp->currow = curinst->srcn;
+	sp->rows_scrolled = (sp->currow / Sample_Panel::NUM_ROWS) * Sample_Panel::NUM_ROWS;
+
+	ie->update_srcn();
 }
 
 int InstrumentEditor::incvol(void *i)

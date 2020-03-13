@@ -52,6 +52,13 @@ struct InstrumentEditor
   /*void one_time_draw(SDL_Surface *screen=::render->screen);*/
   void draw(SDL_Surface *screen=::render->screen);
 
+	void update_srcn();
+	char srcn_cbuf[4];
+	Text srcn_title, srcn_valtext;
+	Button srcn_incbtn, srcn_decbtn;
+	static int incsrcn(void *i);
+	static int decsrcn(void *i);
+
   void update_vol();
   char vol_cbuf[4];
   Text vol_title, vol_valtext;

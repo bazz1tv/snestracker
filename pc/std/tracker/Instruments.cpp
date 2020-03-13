@@ -6,6 +6,7 @@
 #include "shared/sdl_dblclick.h"
 #include "globals.h" // for mouse::
 #include "PanelCommon.h"
+#include "Samples.h"
 
 Instrument::Instrument()
 {
@@ -16,6 +17,18 @@ Instrument::Instrument()
 
 Instrument::~Instrument()
 {
+}
+
+void Instrument::inc_srcn(Instrument *i)
+{
+	if (i->srcn != 0xFF)
+		i->srcn++;
+}
+
+void Instrument::dec_srcn(Instrument *i)
+{
+		if (i->srcn > 0)
+			i->srcn--;
 }
 
 void Instrument::inc_vol(Instrument *i)
@@ -67,12 +80,13 @@ void Instrument::dec_finetune(Instrument *i)
 const int Instrument_Panel::NUM_ROWS;
 #define INSTR_NAME_GUI_CHAR_WIDTH 22
 
-Instrument_Panel::Instrument_Panel(Instrument *iptr) :
+Instrument_Panel::Instrument_Panel(Instrument *iptr, Sample_Panel *sp) :
     title("Instruments"),
     loadbtn("Load", Instrument_Panel::load, this),
     savebtn("Save", Instrument_Panel::save, this),
     zapbtn("Zap", Instrument_Panel::zap, this),
-    instruments(iptr)
+    instruments(iptr),
+    samplepanel(sp)
 {
 }
 
@@ -190,7 +204,7 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
                 if ((currow - rows_scrolled) != i)
                 {
                   SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
-                  currow = rows_scrolled + i;
+                  set_currow(rows_scrolled + i);
                   // Need to reset the double click code if this click was
                   // registered
                   //dblclick::reset_dblclicktimer();
@@ -237,35 +251,13 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
           case SDLK_UP:
             if (mod & KMOD_SHIFT && !(mod & KMOD_CTRL))
             {
-              //dec_currow();
-              if (currow > 0)
-              {
-                if ((currow - rows_scrolled) % NUM_ROWS == 0)
-                  rows_scrolled--;
-                currow--;
-              }
-              else
-              {
-                currow = NUM_INSTR - 1;
-                rows_scrolled = currow - (NUM_ROWS-1);
-              }
+              dec_currow();
             }
             break;
           case SDLK_DOWN:
             if (mod & KMOD_SHIFT && !(mod & KMOD_CTRL))
             {
-              //inc_currow();
-              if (currow >= (NUM_INSTR - 1))
-              {
-                currow = 0;
-                rows_scrolled = 0;
-              }
-              else
-              {
-                if ((currow - rows_scrolled) % NUM_ROWS == (NUM_ROWS - 1))
-                  rows_scrolled++;
-                currow++;
-              }
+              inc_currow();
             }
             break;
           default:break;
@@ -276,6 +268,44 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
   loadbtn.check_event(ev);
   savebtn.check_event(ev);
   zapbtn.check_event(ev);
+}
+
+void Instrument_Panel::set_currow(int c)
+{
+	currow = c;
+	samplepanel->currow = instruments[c].srcn;
+	samplepanel->rows_scrolled = (samplepanel->currow / Sample_Panel::NUM_ROWS) * Sample_Panel::NUM_ROWS;
+}
+
+void Instrument_Panel::dec_currow()
+{
+	if (currow > 0)
+	{
+		if ((currow - rows_scrolled) % NUM_ROWS == 0)
+			rows_scrolled--;
+		set_currow(currow - 1);
+	}
+	else
+	{
+		set_currow(NUM_INSTR - 1);
+		rows_scrolled = currow - (NUM_ROWS-1);
+	}
+
+}
+
+void Instrument_Panel::inc_currow()
+{
+	if (currow >= (NUM_INSTR - 1))
+	{
+		set_currow(0);
+		rows_scrolled = 0;
+	}
+	else
+	{
+		if ((currow - rows_scrolled) % NUM_ROWS == (NUM_ROWS - 1))
+			rows_scrolled++;
+		set_currow(currow + 1);
+	}
 }
 
 void Instrument_Panel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)

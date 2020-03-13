@@ -20,13 +20,15 @@ struct Menu_Bar
 
     static int new_song(void *data);
     static int open_song(void *data);
-    static int open_spc(void *data);
+    static int save_song(void *data);
+		static int save_as_song(void *data);
+		static int open_spc(void *data);
     static int export_spc(void *data);
     static int export_wav(void *data);
     static int quit(void *data) { ::quitting = true; return 0; }
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[8] = 
+    Context_Menu_Item menu_items[10] =
     {
       {"File",         true,  NULL,       NULL},
 ////////////////////////////////////////////////////////

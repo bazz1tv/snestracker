@@ -11,7 +11,7 @@
 /* This sample number is hardcoded for now until sucessful testing is
  * done. Later, it will be made so that the limit can be dynamically
  * increased */
-#define NUM_SAMPLES 0x10
+#define NUM_SAMPLES 0x100
 #define SAMPLE_NAME_MAXLEN 22
 
 struct Sample
@@ -35,33 +35,20 @@ struct Sample
    * on the range allowed */
   //int8_t semitone_offset;
   //DspPitch fine_tune; // used to pitch the sample for range of +/- one semitone
-private:
-  /* The raw stereo volume that will be calculated from the sample /
-   * instrument volume and panning settings. This might be something that
-   * is actually calculated from the SNES driver and will be removed from
-   * here*/
-  //DspVol vol_l, vol_r;
 };
-
-//include the full from the CPP file
-struct Instrument_Panel;
-
-/*struct PanelRowSpec
-{
-  int visible_rows;
-  int all_rows;
-  int offset;
-};*/
 
 struct Sample_Panel
 {
-  /* Need a handle on the instrument panel to reference to selected
-   * instrument. This access could be limited to the panel's currow member */
-  Sample_Panel(Instrument_Panel *instrpanel);
+  Sample_Panel(Sample *samples);
   ~Sample_Panel();
 
   void run();
+
+	enum {
+		ROW_UPDATED=2
+	};
   int event_handler(const SDL_Event &ev);
+
   void one_time_draw(SDL_Surface *screen=::render->screen);
   void draw(SDL_Surface *screen=::render->screen);
   void set_coords(int x, int y);
@@ -69,7 +56,6 @@ struct Sample_Panel
 
   Button loadbtn, savebtn, clearbtn;
 
-  //PanelRowSpec prs;
   static const int NUM_ROWS = 8;
   int rows_scrolled = 0; // specified in rows
 
@@ -77,6 +63,8 @@ struct Sample_Panel
   Text_Edit_Rect sample_names[NUM_ROWS];
 
   int currow = 0;
+	void dec_currow();
+	void inc_currow();
   // callback funcs for the buttons
   static int load(void *spanel);
   static int save(void *spanel);
@@ -84,14 +72,7 @@ struct Sample_Panel
 
   // 4 is for eg. "01|\0"
   char sample_index_strings[NUM_ROWS][4];
-  //const int *inst_currow;
-  Instrument_Panel *instrpanel;
 
-  ////// For SNAPBACK (which is when a different instrument is selected,
-  // the sample row is reset to 0
-  int last_instr_currow = -1; // set to impossible match
-  bool snapback;
-  //////
   Sample *samples;
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr

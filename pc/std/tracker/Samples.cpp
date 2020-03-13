@@ -26,13 +26,12 @@ Sample::~Sample()
   }
 }
 
-Sample_Panel::Sample_Panel(Instrument_Panel *ip) :
+Sample_Panel::Sample_Panel(Sample* samples) :
   title("Samples:"),
   loadbtn("Load", Sample_Panel::load, this),
   savebtn("Save", Sample_Panel::save, this),
   clearbtn("Clear", Sample_Panel::clear, this),
-  instrpanel(ip),
-  snapback(true)
+	samples(samples)
 {
 }
 
@@ -95,8 +94,7 @@ void Sample_Panel::set_coords(int x, int y)
      * instruments[selected].samples[i].str, meaning that when we load a file into the
      * tracker (core), these strings should automatically update after a
      * redraw */
-    sample_names[i].str =
-          instrpanel->instruments[instrpanel->currow].samples[i].name;
+    sample_names[i].str = samples[i].name;
     sample_names[i].strsize = SAMPLE_NAME_MAXLEN;
     sample_names[i].rect = sample_indices[i].rect; /* Base this rect off of the index rect */
     sample_names[i].rect.x += 3 * CHAR_WIDTH;
@@ -174,7 +172,7 @@ int Sample_Panel::event_handler(const SDL_Event &ev)
                   if (Text_Edit_Rect::cur_editing_ter)
                     Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
                 }
-                return 1;
+                return ROW_UPDATED;
               }
             } break;
             default:break;
@@ -199,35 +197,15 @@ int Sample_Panel::event_handler(const SDL_Event &ev)
           case SDLK_UP:
             if (mod & KMOD_SHIFT && (mod & KMOD_CTRL))
             {
-              //dec_currow();
-              if (currow > 0)
-              {
-                if ((currow - rows_scrolled) % NUM_ROWS == 0)
-                  rows_scrolled--;
-                currow--;
-              }
-              else
-              {
-                currow = NUM_SAMPLES - 1;
-                rows_scrolled = currow - (NUM_ROWS-1);
-              }
+              dec_currow();
+							return ROW_UPDATED;
             }
             break;
           case SDLK_DOWN:
             if (mod & KMOD_SHIFT && (mod & KMOD_CTRL))
             {
-              //inc_currow();
-              if (currow >= (NUM_SAMPLES - 1))
-              {
-                currow = 0;
-                rows_scrolled = 0;
-              }
-              else
-              {
-                if ((currow - rows_scrolled) % NUM_ROWS == (NUM_ROWS - 1))
-                  rows_scrolled++;
-                currow++;
-              }
+              inc_currow();
+							return ROW_UPDATED;
             }
             break;
           default:break;
@@ -238,6 +216,38 @@ int Sample_Panel::event_handler(const SDL_Event &ev)
   loadbtn.check_event(ev);
   savebtn.check_event(ev);
   clearbtn.check_event(ev);
+
+	return 0;
+}
+
+void Sample_Panel::dec_currow()
+{
+	if (currow > 0)
+	{
+		if ((currow - rows_scrolled) % NUM_ROWS == 0)
+			rows_scrolled--;
+		currow--;
+	}
+	else
+	{
+		currow = NUM_SAMPLES - 1;
+		rows_scrolled = currow - (NUM_ROWS-1);
+	}
+}
+
+void Sample_Panel::inc_currow()
+{
+	if (currow >= (NUM_SAMPLES - 1))
+	{
+		currow = 0;
+		rows_scrolled = 0;
+	}
+	else
+	{
+		if ((currow - rows_scrolled) % NUM_ROWS == (NUM_ROWS - 1))
+			rows_scrolled++;
+		currow++;
+	}
 }
 
 void Sample_Panel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
@@ -247,12 +257,6 @@ void Sample_Panel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
 
 void Sample_Panel::run()
 {
-  if (snapback && last_instr_currow != instrpanel->currow)
-  {
-    currow = 0;
-    rows_scrolled = 0;
-    last_instr_currow = instrpanel->currow;
-  }
 }
 
 void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
@@ -278,14 +282,12 @@ void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
       (sample_names[currow - rows_scrolled].rect.x - (highlight_r.x + highlight_r.w)) +
       sample_names[currow - rows_scrolled].rect.w;
 
-    /* This color should not be hardcoded, but have a new entry in the GUI
-    * Colors array for highlighted stuff. Reference MilkyTracker config */
     SDL_FillRect(screen, &highlight_r, Colors::Interface::color[Colors::Interface::Type::selections]);
   }
 
   for (i=0; i < NUM_ROWS; i++)
   {
-    // Draw the index followed by the instrname
+    // Draw the index followed by the sample name
     // But beneath this, draw the highlighted currow rect
     /* In order to draw this rect, we need to the total horizontal width
      * of the index + instr_name, + some padding maybe. That should be
@@ -294,8 +296,7 @@ void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
     sample_indices[i].draw(screen,
       Colors::Interface::color[Colors::Interface::Type::text_fg],
       false);
-    sample_names[i].str =
-      instrpanel->instruments[instrpanel->currow].samples[rows_scrolled + i].name;
+    sample_names[i].str = samples[rows_scrolled + i].name;
     sample_names[i].draw(Colors::Interface::color[Colors::Interface::Type::text_fg],
       false);
   }
@@ -310,14 +311,13 @@ int Sample_Panel::load(void *spanel)
   nfdchar_t *outpath = NULL;
 
   Sample_Panel *sp = (Sample_Panel *)spanel;
-  Sample *s = &sp->instrpanel->instruments[sp->instrpanel->currow].samples[sp->currow];
+  Sample *s = &sp->samples[sp->currow];
 
   fprintf(stderr, "Sample_Panel::LOAD\n");
 
   if (Utility::get_file_read_handle(&outpath, &file, "brr") == NFD_OKAY)
   {
     Sint64 brrsize = SDL_RWsize(file);
-
 
     DEBUGLOG("sample path:%s\n", outpath);
     if (brrsize <= 0)

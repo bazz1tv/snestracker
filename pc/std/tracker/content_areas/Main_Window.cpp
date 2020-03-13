@@ -17,8 +17,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_title_label("Song Title:"),
   song_title(22, song_title_str, sizeof(song_title_str)),
   tracker(tracker),
-  instrpanel(tracker->instruments),
-  samplepanel(&instrpanel),
+	samplepanel(tracker->samples),
+  instrpanel(tracker->instruments, &samplepanel),
   patseqpanel(&tracker->patseq),
   pateditpanel(&patseqpanel, &instrpanel),
   bsawidget(tracker, &pateditpanel),
@@ -170,7 +170,8 @@ int Main_Window::receive_event(SDL_Event &ev)
   instreditor_btn.check_event(ev);
   bsawidget.handle_event(ev);
   instrpanel.event_handler(ev);
-  samplepanel.event_handler(ev);
+  if (samplepanel.event_handler(ev) == Sample_Panel::ROW_UPDATED && instreditor_active)
+		tracker->instruments[instrpanel.currow].srcn = samplepanel.currow;
   patseqpanel.event_handler(ev);
   pateditpanel.event_handler(ev);
   if (instreditor_active)
@@ -265,7 +266,6 @@ int Main_Window::receive_event(SDL_Event &ev)
 
 void Main_Window::run()
 {
-  samplepanel.run();
 }
 
 void Main_Window::draw_voices_pitchs()

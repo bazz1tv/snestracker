@@ -14,6 +14,7 @@
 #include "gui/Tab.h"
 #include "globals.h"
 #include "shared/gui/Text_Edit_Rect.h"
+#include "Samples.h"
 #include "Instruments.h"
 #include "Pattern.h"
 #include "BpmSpdAddWidget.h"
@@ -83,8 +84,8 @@ struct Main_Window : public Experience
   /* Handle to the tracker to access core components (instrument and
    * pattern data */
   Tracker *tracker;
+	Sample_Panel samplepanel;
   Instrument_Panel instrpanel;
-  Sample_Panel samplepanel;
   PatSeqPanel patseqpanel;
   PatternEditorPanel pateditpanel;
   BpmSpdAddWidget bsawidget;

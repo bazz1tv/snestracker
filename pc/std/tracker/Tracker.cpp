@@ -523,34 +523,21 @@ void Tracker::render_to_apu()
 
 	uint16_t freeram_i = SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE;
 
-	// what's next? How about the instrument import? (export to spc ram)
-	// INSTRUMENTS (and inadvertantly samples)
-	/* Need a way to check that an instrument is used. How about checking if
-	 * the first sample slot's BRR ptr is valid */
-	/* I will probably remove the ability for multiple samples to be
-	 * specified to one instrument */
-	uint8_t numsamples = 0;
-	// as much as I hate to iterate through the instruments twice, we need
-	// to know how many samples are used to know how big to allocate for DIR
-	for (int i=0; i < NUM_INSTR; i++)
-	{
-		Sample *firstsample = &instruments[i].samples[0];
-		if (firstsample->brr == NULL)
-			continue;
-		numsamples++;
-	}
-
-	/* I am thinking of redesigning the tracker that instead of linking
-	 * Sample files to instruments, rather maintain a "global" sample table,
-	 * and have an instrument setting refer to what sample it uses. But
-	 * don't do this YET! Just get the tracker playing music first. */
-
 	/* Another strategy would be to position the DIR at the base of the
 	 * offset rather than push it up further. Would need to check how many
 	 * DIR entries are needed if there's room or not */
 	uint16_t dir_i, dspdir_i;
 	dir_i = freeram_i + ((freeram_i % 0x100) ? (0x100 - (freeram_i % 0x100)) : 0);
 	dspdir_i = dir_i / 0x100;
+
+	uint8_t numsamples = 0;
+	for (int i=0; i < NUM_SAMPLES; i++)
+	{
+		if (samples[i].brr == NULL)
+			continue;
+		numsamples++;
+	}
+
 	uint16_t instrtable_i = dir_i + (numsamples * 0x4);
 	//                             {applied size of DIR}  {INSTR TABLE SIZE}
 	uint16_t sampletable_i = dir_i + (numsamples * 0x4) + (numsamples * 0x7);
@@ -568,25 +555,32 @@ void Tracker::render_to_apu()
 	// Write the sample and loop information to the DIR. Then write the DSP
 	// DIR value to DSP
 	uint16_t cursample_i = sampletable_i;
-	for (int i=0; i < NUM_INSTR; i++)
-	{
-		Sample *firstsample = &instruments[i].samples[0];
-		if (firstsample->brr == NULL)
-			continue;
 
+	for (int i=0; i < NUM_SAMPLES; i++)
+	{
+		if (samples[i].brr == NULL)
+			continue;
+		uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
+		*dir = cursample_i;
+		*(dir+1) = cursample_i + samples[i].rel_loop;
 		// has a sample. this instrument is valid for export. However, perhaps
 		// an even better exporter would also check if this instrument has
 		// been used in any (in)active pattern data.
-		uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
-		*dir = cursample_i;
-		*(dir+1) = cursample_i + firstsample->rel_loop;
 		int s=0;
-		for (; s < firstsample->brrsize; s++)
+		for (; s < samples[i].brrsize; s++)
 		{
-			uint8_t *bytes = (uint8_t *)firstsample->brr;
+			uint8_t *bytes = (uint8_t *)samples[i].brr;
 			::IAPURAM[cursample_i + s] = bytes[s];
 		}
 		cursample_i += s;
+	}
+
+	for (int i=0; i < NUM_INSTR; i++)
+	{
+		Instrument *instr = &instruments[i];
+		if (instr->used == 0)
+			continue;
+
 		/* Could add a (SHA1) signature to Sample struct so that we can
 		 * identify repeat usage of the same sample and only load it once to
 		 * SPC RAM. For now, don't do this!! We're trying to get to first
@@ -597,10 +591,9 @@ void Tracker::render_to_apu()
 		*it = cursample_i;
 
 		// Time to load instrument info
-		Instrument *instr = &instruments[i];
 		::IAPURAM[cursample_i++] = instr->vol;
 		::IAPURAM[cursample_i++] = instr->pan;
-		::IAPURAM[cursample_i++] = i; // for now, hardcode SRCN to INST#
+		::IAPURAM[cursample_i++] = instr->srcn;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr1;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr2;
 		::IAPURAM[cursample_i++] = instr->semitone_offset;

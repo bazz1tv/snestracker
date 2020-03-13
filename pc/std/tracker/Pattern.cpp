@@ -789,6 +789,7 @@ void PatternEditorPanel::notehelper(int ndex)
       // get current instrument
       pw->note = (Note)n;
       pw->instr = ip->currow + 1;
+			ip->instruments[ip->currow].used++;
       inc_currow(addval);
       //note2ascii(pw->note, guitrackrow[cur_track].note_strings[currow]);
     }
@@ -1074,15 +1075,18 @@ static int gethexkb(const int scancode, const int mod)
 }
 #undef q
 
-static void moveback(Pattern *pattern, int track, int pos)
+static void moveback(Pattern *pattern, int track, int pos, Instrument_Panel *ip)
 {
   if (pos == 0)
     return;
   PatternRow *patrow = pattern->trackrows[track];
-  for (; pos < pattern->len; pos++)
-  {
+	// decrement the row that will be erased's instr used if existent
+	PatternRow *prm1 = &patrow[pos - 1];
+	if (prm1->instr)
+		ip->instruments[prm1->instr - 1].used--;
+
+	for (; pos < pattern->len; pos++)
     patrow[pos - 1] = patrow[pos];
-  }
 }
 
 static void moveforward(Pattern *pattern, int track, int pos)
@@ -1125,13 +1129,19 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
   switch (scancode)
   {
     case SDLK_DELETE:
-      get_current_pattern(psp)->trackrows[cur_track][currow] = PatternRow();
+		{
+			Pattern *p = get_current_pattern(psp);
+			uint8_t instr = p->trackrows[cur_track][currow].instr;
+			if (instr)
+				ip->instruments[instr - 1].used--;
+			p->trackrows[cur_track][currow] = PatternRow();
+		}
     break;
     case SDLK_BACKSPACE:
       if (MODONLY(mod, KMOD_SHIFT))
         for (int t=0; t < MAX_TRACKS; t++)
-          moveback(get_current_pattern(psp), t, currow);
-      else moveback(get_current_pattern(psp), cur_track, currow);
+          moveback(get_current_pattern(psp), t, currow, ip);
+      else moveback(get_current_pattern(psp), cur_track, currow, ip);
       dec_currow();
     break;
     case SDLK_INSERT:

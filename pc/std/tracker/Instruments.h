@@ -5,22 +5,25 @@
 #include "gui/Button.h"
 #include "shared/Render.h"
 #include "shared/dsptypes.h"
-#include "Samples.h"
-/* This sample number is hardcoded for now until sucessful testing is
+/* This number is hardcoded for now until sucessful testing is
  * done. Later, it will be made so that the limit can be dynamically
  * increased */
 #define NUM_INSTR 0x40
 #define INSTR_NAME_MAXLEN 22
 #define APU_MAXVOL 0x7f
 
+// TODO : take out meta info from Instrument into a InstrumentMeta
+// datatype that inherits from Instrument. that should allow simplifying
+// render_to_apu into memcpy on Instrument type into APU RAM
 struct Instrument
 {
   Instrument();
   ~Instrument();
   char name[INSTR_NAME_MAXLEN]; // the name of the instrument
+	uint32_t used = 0;
   /* the app-level sample data. How that gets exported into the snes
    * driver data is a different story */
-  Sample samples[NUM_SAMPLES];
+	uint8_t srcn; // like a DIR offset
 	Adsr adsr; // The volume envelope that will be used for this instrument
 	/* Aside from the ADSR hardware volume envelope, the voice stereo volume
 	 * may be adjusted real-time for additional effects.*/
@@ -42,6 +45,8 @@ struct Instrument
    * be used by SNES Driver */
   int8_t finetune = 0;
 
+	static void inc_srcn(Instrument *i);
+	static void dec_srcn(Instrument *i);
   static void inc_vol(Instrument *i);
   static void dec_vol(Instrument *i);
   static void inc_pan(Instrument *i);
@@ -50,18 +55,23 @@ struct Instrument
   static void dec_finetune(Instrument *i);
 };
 
+struct Sample_Panel;
 /* That defined the Data model above. Now time to get that into a view */
 struct Instrument_Panel
 {
   /* Initialize the panel view from an X/Y coordinate. Additionally, we
    * need a reference to the instruments */
-  Instrument_Panel(Instrument *instruments);
+  Instrument_Panel(Instrument *instruments, Sample_Panel *sp);
   ~Instrument_Panel();
 
   int event_handler(const SDL_Event &ev);
   void one_time_draw(SDL_Surface *screen=::render->screen);
   void draw(SDL_Surface *screen=::render->screen);
   void set_coords(int x, int y);
+
+	void set_currow(int c);
+	void inc_currow();
+	void dec_currow();
 
   // callback funcs for the buttons
   static int load(void *ipanel);
@@ -83,6 +93,9 @@ struct Instrument_Panel
   Text_Edit_Rect instr_names[NUM_ROWS];
   /* a direct handle on the data, rather than accessing through an API */
   Instrument *instruments;
+	// handle on the sample panel to update its currow when selecting an
+	// instr
+	Sample_Panel *samplepanel;
   /* Todo, calculate the panel rect */
   SDL_Rect rect; // define the boundaries of the entire panel
   SDL_Rect highlight_r; // the highlight rect of current select instr
