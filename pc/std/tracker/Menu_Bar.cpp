@@ -108,6 +108,16 @@ int Menu_Bar::File_Context::open_spc(void *data)
   return 0;
 }
 
+int Menu_Bar::File_Context::save_song(void *data)
+{
+	return 0;
+}
+
+int Menu_Bar::File_Context::save_as_song(void *data)
+{
+	return 0;
+}
+
 int Menu_Bar::File_Context::export_spc(void *data)
 {
   // Do not show the window if the player has nothing loaded

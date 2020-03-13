@@ -28,14 +28,16 @@ struct Menu_Bar
     Expanding_List menu;
     Context_Menu_Item menu_items[8] = 
     {
-      {"file",         true,  NULL,       NULL},
+      {"File",         true,  NULL,       NULL},
 ////////////////////////////////////////////////////////
       {"New Song",     true,  new_song,   NULL},
       {"Open ST-Song", true,  open_song,  NULL},
-      {"open SPC",     true,  open_spc,   NULL},
-      {"export SPC",   true,  export_spc, NULL},
-      {"export WAV",   true,  export_wav, NULL},
-      {"quit",         true,  quit,       NULL},
+			{"Open ST-SPC",  true,  open_spc,   NULL},
+			{"Save",         true,  save_song,  NULL},
+			{"Save as...",   true,  save_as_song,  NULL},
+      {"Export SPC",   true,  export_spc, NULL},
+      {"Export WAV",   true,  export_wav, NULL},
+      {"Quit",         true,  quit,       NULL},
 ////////////////////////////////////////////////////////
       {"",             false, NULL,      NULL}
     };
