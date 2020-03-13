@@ -8,7 +8,8 @@
 #include "PanelCommon.h"
 #include "Samples.h"
 
-Instrument::Instrument()
+Instrument::Instrument() : used(0), srcn(0), vol(APU_MAXVOL), pan(0x80),
+   semitone_offset(0), finetune(0)
 {
   name[0] = 0;
   adsr.adsr1 = 0xff;
