@@ -107,7 +107,7 @@ void AdsrPanel::check_event(const SDL_Event &ev)
         break;
       default:break;
     }
-    return 0;
+    return;
   }
 
   switch (ev.type)
@@ -116,7 +116,7 @@ void AdsrPanel::check_event(const SDL_Event &ev)
       {
         if (adsr_context_menus.check_left_click_activate(ev.button.x, ev.button.y))
         {
-          return 0;
+          return;
         }
       }
     break;
