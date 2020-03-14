@@ -14,6 +14,9 @@ extern uint8_t *IAPURAM;
 extern track_info_t tag;
 extern MouseCursors *mousecursors;
 
+struct Tracker;
+extern Tracker *tracker;
+
 void handle_error( const char* );
 
 // 5 minutes default

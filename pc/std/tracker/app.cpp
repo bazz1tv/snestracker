@@ -20,6 +20,7 @@ App::App(int &argc, char **argv, int samplerate/*=44100*/)
   handle_error(player->init(samplerate, app_settings->vars.audio_out_dev) );
   
   tracker = new Tracker(argc, argv);
+	::tracker = tracker;
 
   SDL_Thread *thread = SDL_CreateThread(create_midi, "create_midi", this);
   SDL_DetachThread(thread);

@@ -566,7 +566,7 @@ void Tracker::render_to_apu()
 		// has a sample. this instrument is valid for export. However, perhaps
 		// an even better exporter would also check if this instrument has
 		// been used in any (in)active pattern data.
-		int s=0;
+		size_t s=0;
 		for (; s < samples[i].brrsize; s++)
 		{
 			uint8_t *bytes = (uint8_t *)samples[i].brr;
@@ -771,6 +771,197 @@ void Tracker::render_to_apu()
 		player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
 }
 
+void Tracker::save_to_file(SDL_RWops *file)
+{
+	SDL_RWwrite(file, "STSONG", strlen("STSONG"), 1);
+	// write song title
+	const char *songtitle = main_window.song_title.str;
+	size_t len = strlen(songtitle);
+	SDL_RWwrite(file, songtitle, len + 1, 1); // also write null byte
+
+	uint16_t bpmspd = ((uint16_t)bpm << 6) | spd;
+	SDL_RWwrite(file, &bpmspd, 2, 1);
+
+	// number of samples
+	uint8_t numsamples = 0;
+	for (int i=0; i < NUM_SAMPLES; i++)
+	{
+		if (samples[i].brr == NULL)
+			continue;
+		numsamples++;
+	}
+	SDL_RWwrite(file, &numsamples, 1, 1);
+	// for each sample, write number of bytes as uint16_t followed by the
+	// bytes
+	for (int i=0; i < NUM_SAMPLES; i++)
+	{
+		if (samples[i].brr == NULL)
+			continue;
+
+		uint16_t size = (uint16_t) samples[i].brrsize;
+		SDL_RWwrite(file, &size, 2, 1);
+		SDL_RWwrite(file, samples[i].brr, size, 1);
+	}
+
+	uint8_t numinstr = 0;
+	for (int i=0; i < NUM_INSTR; i++)
+	{
+		Instrument *instr = &instruments[i];
+		if (instr->used == 0)
+			continue;
+
+		numinstr++;
+	}
+	SDL_RWwrite(file, &numinstr, 1, 1);
+
+	for (int i=0; i < NUM_INSTR; i++)
+	{
+		Instrument *instr = &instruments[i];
+		if (instr->used == 0)
+			continue;
+
+		// Time to load instrument info
+		SDL_RWwrite(file, &instr->vol, 1, 1);
+		SDL_RWwrite(file, &instr->pan, 1, 1);
+		SDL_RWwrite(file, &instr->srcn, 1, 1);
+		SDL_RWwrite(file, &instr->adsr.adsr1, 1, 1);
+		SDL_RWwrite(file, &instr->adsr.adsr2, 1, 1);
+		SDL_RWwrite(file, &instr->semitone_offset, 1, 1);
+		SDL_RWwrite(file, &instr->finetune, 1, 1);
+	}
+	// INSTRUMENTS END
+
+	// PATTERNS
+	// First calculate the number of used patterns in the song. This is not
+	// sequence length, but the number of unique patterns. With that length
+	// calculated, we can allocate the amount of RAM necessary for the
+	// PatternLUT (detailed below comments).
+	uint8_t num_usedpatterns = 0;
+
+	for (int p=0; p < MAX_PATTERNS; p++)
+	{
+		PatternMeta *pm = &patseq.patterns[p];
+		if (pm->used == 0)
+			continue;
+		num_usedpatterns++;
+	}
+	SDL_RWwrite(file, &num_usedpatterns, 1, 1);
+	for (int p=0; p < MAX_PATTERNS; p++)
+	{
+		PatternMeta *pm = &patseq.patterns[p];
+		if (pm->used == 0)
+			continue;
+
+		/*pm->used only says whether this pattern is in the pattern sequencer
+		 * or not. It does not check whether the pattern has any data or not.
+		 * That could be done the long-processing way by checking all rows
+		 * manually for any note, instr, vol, fx, or fxparam entries -- or a
+		 * quick processing map could be used, an array where each bit
+		 * represents any of the above fields being present on a row (8 rows
+		 * represented in a byte. it would quicken the check. TODO: For now,
+		 * patterns that are not present in the sequencer will BE LOST!!! In
+		 * the spirit of rapid prototyping, I don't care. Fix it later */
+
+		Pattern *pattern = &pm->p;
+
+		SDL_RWwrite(file, &pattern->len, 1, 1); // TODO write code that handles len of 0 == 256
+
+		for (int t=0; t < MAX_TRACKS; t++)
+		{
+			uint8_t last_instr = 0;
+			for (int tr=0; tr < pattern->len; tr++)
+			{
+				int ttrr;
+				PatternRow *pr = &pattern->trackrows[t][tr];
+				uint8_t cbyte = 0, rlebyte;
+				/* Lookahead: how many empty rows from this one until the next
+				 * filled row? If there's only 1 empty row, use RLE_ONLY1 */
+//#define PATROW_EMPTY(pr) ( pr->note == 0 && pr->instr == 0 && pr->vol == 0 && pr->fx == 0 && pr->fxparam == 0 )
+				for (ttrr=tr+1; ttrr < pattern->len; ttrr++)
+				{
+					PatternRow *row = &pattern->trackrows[t][ttrr];
+					if ( (!(PATROW_EMPTY(row))) || ttrr == (pattern->len - 1))
+					{
+						// we found a filled row or we made it to the end of pattern
+						ttrr -= ( (PATROW_EMPTY(row)) ? 0 : 1);
+						int num_empty = ttrr - tr; /* HACK: the +1 is actually to compensate for the way
+																					apu driver code is handled, it's just to help the loop portion of the code stay clean
+																					on APU side. but as an lsr value it should be disregarded. The actual
+																					APU portion of code is anything using an rlecounter(s) (ReadPTRacks, QuickReadPTrack)*/
+						if (num_empty == 0)
+							break;
+						else if (num_empty == 1)
+							cbyte |= ( 1<<CBIT_RLE_ONLY1 );
+						else if (num_empty == 2)
+							cbyte |= ( (1<<CBIT_RLE) | (1<<CBIT_RLE_ONLY1) );
+						else
+						{
+							cbyte |= ( 1<<CBIT_RLE );
+							rlebyte = num_empty;
+						}
+
+						break;
+					}
+				}
+
+				if ( tr == 0 && (
+							pr->note == NOTE_NONE &&
+							pr->instr == 0 &&
+							pr->vol == 0 && pr->fx == 0 && pr->fxparam == 0) )
+				{
+					cbyte |= 1<<CBIT;
+				}
+//#define DIFF_LAST_INSTR (last_instr == 0 || last_instr != pr->instr)
+				// Only if every element is filled are we NOT going to use a
+				// special compression byte. so let's check if every element is
+				// filled first.
+				else if (! (
+							pr->note != NOTE_NONE &&
+							pr->instr != 0 &&
+							pr->vol != 0 && pr->fx != 0 && pr->fxparam != 0) )
+				{
+					cbyte |=
+						(pr->note ? ( 1<<CBIT_NOTE ) : 0) |
+						(pr->instr && DIFF_LAST_INSTR ? ( 1<<CBIT_INSTR ) : 0) |
+						(pr->vol ? ( 1<<CBIT_VOL ) : 0) |
+						(pr->fx ? ( 1<<CBIT_FX ) : 0) |
+						(pr->fxparam ? ( 1<<CBIT_FXPARAM ) : 0);
+				}
+
+				if (cbyte)
+				{
+					cbyte |= ( 1<<CBIT );
+					SDL_RWwrite(file, &cbyte, 1, 1);
+				}
+				/* we should now write the actual byte for any data that is
+				 * present */
+				if (pr->note)
+					SDL_RWwrite(file, &pr->note, 1, 1);
+				if (pr->instr && DIFF_LAST_INSTR)
+				{
+					last_instr = pr->instr;
+					// however, the "actual" instrument is 0-based
+					SDL_RWwrite(file, &pr->instr, 1, 1);
+				}
+				if (pr->vol)
+					SDL_RWwrite(file, &pr->vol, 1, 1);
+				if (pr->fx)
+					SDL_RWwrite(file, &pr->fx, 1, 1);
+				if (pr->fxparam)
+					SDL_RWwrite(file, &pr->fxparam, 1, 1);
+				if ( (cbyte & (( 1<<CBIT_RLE ) | ( 1<<CBIT_RLE_ONLY1 )) ) == ( 1<<CBIT_RLE ) )
+					SDL_RWwrite(file, &rlebyte, 1, 1);
+
+				tr = ttrr; // skip over empty rows
+			}
+		}
+	}
+	// PATTERNS END
+
+	// PATTERN SEQUENCER START
+	for (int i=0; i < patseq.num_entries; i++)
+		SDL_RWwrite(file, &patseq.sequence[i], 1, 1);
+}
 /* Define the Packed Pattern Format.
  * For this, I am electing to use the XM packing scheme, with the addition
  * of an RLE for absences of 1 row, 2 rows, and > 2 rows up to 255, which.

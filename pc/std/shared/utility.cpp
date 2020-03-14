@@ -142,40 +142,36 @@ nfdresult_t get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file, const c
   char tmpbuf[200];
   *outPath=NULL;
   nfdresult_t result = NFD_SaveDialog( filter_list, NULL, outPath );
-  //SDL_RaiseWindow(BaseD::sdlWindow);
-    if ( result == NFD_OKAY )
+
+	if ( result == NFD_OKAY )
+  {
+    *file = SDL_RWFromFile(*outPath, "wb");
+
+    if (*file == NULL)
     {
-      //puts("Success!");
-      //puts(outPath);
-      //SDL_RWops* SDL_RWFromFile(const char* file,
-        //                const char* mode)
-      *file = SDL_RWFromFile(*outPath, "wb");
-      
-      if (*file == NULL)
-      {
-        sprintf(tmpbuf, "Warning: Unable to open file!\n %s", SDL_GetError() );
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-                       "Could not open FILE!",
-                       tmpbuf,
-                       NULL);
-        return NFD_ERROR;
-      }
-      return result;
-    }
-    else if ( result == NFD_CANCEL ) 
-    {
-      if (*outPath)
-        free(*outPath);
-      puts("User pressed cancel.");
-      return result;
-    }
-    else
-    {
-      if (*outPath)
-      free(*outPath);
-      printf("Error: %s\n", NFD_GetError() );
+      sprintf(tmpbuf, "Warning: Unable to open file!\n %s", SDL_GetError() );
+      SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                     "Could not open FILE!",
+                     tmpbuf,
+                     NULL);
       return NFD_ERROR;
     }
+    return result;
+  }
+  else if ( result == NFD_CANCEL )
+  {
+    if (*outPath)
+      free(*outPath);
+    puts("User pressed cancel.");
+    return result;
+  }
+  else
+  {
+    if (*outPath)
+    free(*outPath);
+    printf("Error: %s\n", NFD_GetError() );
+    return NFD_ERROR;
+  }
 }
 
 nfdresult_t get_file_read_path(nfdchar_t **outPath, const char *filter_list/*=NULL*/)

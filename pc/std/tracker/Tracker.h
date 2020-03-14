@@ -52,6 +52,7 @@ public:
   void inc_spd();
   void dec_spd();
   void render_to_apu();
+	void save_to_file(SDL_RWops *file);
 
   Menu_Bar menu_bar;
   Main_Window main_window;

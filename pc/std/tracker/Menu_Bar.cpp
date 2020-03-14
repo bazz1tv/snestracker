@@ -5,39 +5,17 @@
 #include "gui/Spc_Export_Window.h"
 
 #include "gme/Wave_Writer.h"
+#include "Tracker.h"
 
-/*void Menu_Bar::Tabs::draw()
+extern Tracker *tracker;
+
+Menu_Bar::Menu_Bar()
 {
-  // tmpfix
-  if (BaseD::grand_mode != logged_grand_mode)
-  {
-    logged_grand_mode = BaseD::grand_mode;
+}
 
-    if (BaseD::grand_mode == BaseD::GrandMode::MAIN)
-    {
-      mem.active = true;
-      dsp.active = false;
-      instr.active = false;
-    }
-    else if (BaseD::grand_mode == BaseD::GrandMode::DSP_MAP)
-    {
-      mem.active = false;
-      dsp.active = true;
-      instr.active = false;
-    }
-    else if (BaseD::grand_mode == BaseD::GrandMode::INSTRUMENT)
-    {
-      mem.active = false;
-      dsp.active = false;
-      instr.active = true;
-    }    
-  }
-
-
-  mem.draw();
-  dsp.draw();
-  instr.draw();
-}*/
+Menu_Bar::~Menu_Bar()
+{
+}
 
 int Menu_Bar::Edit_Context::copy(void *data)
 {
@@ -49,7 +27,6 @@ int Menu_Bar::Edit_Context::paste(void *data)
   // STUB
 }
 
-// Same exact function as in Debugger Menu_Bar
 int Menu_Bar::Edit_Context::open_options_window(void *data)
 {
   ::options_window->show();
@@ -62,11 +39,9 @@ void Menu_Bar::draw(SDL_Surface *screen)
   if (is_first_run)
   {
     context_menus.preload(10, 10);
-    //tabs.preload(context_menus.x, context_menus.y + context_menus.h + CHAR_HEIGHT*2);
     is_first_run = false;
   }
 
-  //tabs.draw();
   context_menus.draw(screen);
 }
 
@@ -93,7 +68,9 @@ int Menu_Bar::File_Context::new_song(void *data)
 
 int Menu_Bar::File_Context::open_song(void *data)
 {
-  // STUB
+  /* Open the file */
+
+	/*Successful*/
 }
 
 int Menu_Bar::File_Context::open_spc(void *data)
@@ -110,6 +87,47 @@ int Menu_Bar::File_Context::open_spc(void *data)
 
 int Menu_Bar::File_Context::save_song(void *data)
 {
+	nfdchar_t *filepath = (nfdchar_t *)data;
+	if (filepath == NULL)
+	{
+		// Open a dialog to query the user for a file to save to
+		nfdresult_t result = NFD_SaveDialog( "stp", NULL, &filepath );
+		if ( result == NFD_OKAY )
+		{
+		}
+		else if ( result == NFD_CANCEL )
+		{
+			if (filepath)
+				free(filepath);
+			return result;
+		}
+		else
+		{
+			if (filepath)
+				free(filepath);
+			printf("Error: %s\n", NFD_GetError() );
+			return NFD_ERROR;
+		}
+	}
+
+	// now we have filepath: Open a Write RWOps handle on it
+	SDL_RWops *file;
+	file = SDL_RWFromFile(filepath, "wb");
+
+	if (file == NULL)
+	{
+		char tmpbuf[250];
+		sprintf(tmpbuf, "Warning: Unable to open file!\n %s", SDL_GetError() );
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+				"Could not open FILE!",
+				tmpbuf,
+				NULL);
+		return NFD_ERROR;
+	}
+
+	::tracker->save_to_file(file);
+
+	SDL_RWclose(file);
 	return 0;
 }
 
@@ -166,7 +184,7 @@ int Menu_Bar::File_Context::export_wav(void *data)
     ::player->exporting = false;
     return result;
   }
-  else if ( result == NFD_CANCEL ) 
+  else if ( result == NFD_CANCEL )
   {
     if (outPath)
       free(outPath);

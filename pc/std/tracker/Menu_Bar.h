@@ -8,15 +8,23 @@
 
 struct Menu_Bar
 {
+	Menu_Bar();
+	~Menu_Bar();
+	Tracker *tracker;
+
   bool is_first_run=true;
   void draw(SDL_Surface *screen);
   int receive_event(SDL_Event &ev);
   
   struct File_Context
   {
-    File_Context() : menu(menu_items, true)
+    File_Context() : menu(menu_items, true), 	filepath(NULL)
     {
     }
+		~File_Context() {
+			if (filepath)
+				free(filepath);
+		}
 
     static int new_song(void *data);
     static int open_song(void *data);
@@ -27,6 +35,8 @@ struct Menu_Bar
     static int export_wav(void *data);
     static int quit(void *data) { ::quitting = true; return 0; }
 
+		nfdchar_t *filepath;
+
     Expanding_List menu;
     Context_Menu_Item menu_items[10] =
     {
@@ -35,8 +45,8 @@ struct Menu_Bar
       {"New Song",     true,  new_song,   NULL},
       {"Open ST-Song", true,  open_song,  NULL},
 			{"Open ST-SPC",  true,  open_spc,   NULL},
-			{"Save",         true,  save_song,  NULL},
-			{"Save as...",   true,  save_as_song,  NULL},
+			{"Save",         true,  save_song,  filepath},
+			{"Save as...",   true,  save_as_song,  filepath},
       {"Export SPC",   true,  export_spc, NULL},
       {"Export WAV",   true,  export_wav, NULL},
       {"Quit",         true,  quit,       NULL},
