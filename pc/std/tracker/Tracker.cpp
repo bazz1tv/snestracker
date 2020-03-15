@@ -984,7 +984,7 @@ int Tracker::read_from_file(SDL_RWops *file)
 				SDL_RWread(file, &a, 1, 1);
 				if (a <= 0x7f) // positive
 				{
-					SDL_RWread(file, &pr->note, 1, 1);
+					pr->note = a;
 					SDL_RWread(file, &pr->instr, 1, 1);
 					instruments[pr->instr - 1].used++; // update instrument metadata
 					SDL_RWread(file, &pr->vol, 1, 1);
