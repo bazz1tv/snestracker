@@ -837,8 +837,10 @@ int Tracker::read_from_file(SDL_RWops *file)
 	SDL_RWread(file, &numsamples, 1, 1);
 	for (int i=0; i < numsamples; i++)
 	{
-		Sample *s = &samples[i];
-		/* TODO: I really should store/read the sample# */
+		uint8_t idx;
+		SDL_RWread(file, &idx, 1, 1);
+
+		Sample *s = &samples[idx];
 		read_str_from_file(file, s->name);
 
 		uint16_t brrsize;
@@ -865,17 +867,15 @@ int Tracker::read_from_file(SDL_RWops *file)
 
 		s->brr = brr;
 		s->brrsize = brrsize;
-
-		/* TODO: store/read the sample name! */
-		//strncpy(s->name, Utility::getFileName(outpath), SAMPLE_NAME_MAXLEN - 1);
-		//s->name[SAMPLE_NAME_MAXLEN-1] = 0;
 	}
 
 	uint8_t numinstr = 0;
 	SDL_RWread(file, &numinstr, 1, 1);
 	for (int i=0; i < numinstr; i++)
 	{
-		Instrument *instr = &instruments[i];
+		uint8_t idx;
+		SDL_RWread(file, &idx, 1, 1);
+		Instrument *instr = &instruments[idx];
 		/* TODO: store/read the instr # */
 
 		read_str_from_file(file, instr->name);
@@ -900,7 +900,10 @@ int Tracker::read_from_file(SDL_RWops *file)
 	SDL_RWread(file, &numpatterns, 1, 1);
 	for (int p=0; p < numpatterns; p++)
 	{
-		PatternMeta *pm = &patseq.patterns[p];
+		uint8_t idx;
+		SDL_RWread(file, &idx, 1, 1);
+		PatternMeta *pm = &patseq.patterns[idx];
+
 		Pattern *pattern = &pm->p;
 		SDL_RWread(file, &pattern->len, 1, 1);
 		for (int t=0; t < MAX_TRACKS; t++)
@@ -1020,19 +1023,20 @@ void Tracker::save_to_file(SDL_RWops *file)
 	SDL_RWwrite(file, &numsamples, 1, 1);
 	// for each sample, write number of bytes as uint16_t followed by the
 	// bytes
-	for (int i=0; i < NUM_SAMPLES; i++)
+	for (uint16_t i=0; i < NUM_SAMPLES; i++)
 	{
 		if (samples[i].brr == NULL)
 			continue;
 
-		uint16_t size = (uint16_t) samples[i].brrsize;
+		uint16_t size = samples[i].brrsize;
+		SDL_RWwrite(file, &i, 1, 1); // write sample index (only 1 byte)
 		SDL_RWwrite(file, samples[i].name, strlen(samples[i].name) + 1, 1);
 		SDL_RWwrite(file, &size, 2, 1);
 		SDL_RWwrite(file, samples[i].brr, size, 1);
 	}
 
 	uint8_t numinstr = 0;
-	for (int i=0; i < NUM_INSTR; i++)
+	for (uint16_t i=0; i < NUM_INSTR; i++)
 	{
 		Instrument *instr = &instruments[i];
 		if (instr->used == 0)
@@ -1042,12 +1046,13 @@ void Tracker::save_to_file(SDL_RWops *file)
 	}
 	SDL_RWwrite(file, &numinstr, 1, 1);
 
-	for (int i=0; i < NUM_INSTR; i++)
+	for (uint16_t i=0; i < NUM_INSTR; i++)
 	{
 		Instrument *instr = &instruments[i];
 		if (instr->used == 0)
 			continue;
 
+		SDL_RWwrite(file, &i, 1, 1); // write instr index (only 1 byte)
 		SDL_RWwrite(file, instr->name, strlen(instr->name) + 1, 1);
 		// Time to load instrument info
 		SDL_RWwrite(file, &instr->vol, 1, 1);
@@ -1067,7 +1072,7 @@ void Tracker::save_to_file(SDL_RWops *file)
 	// PatternLUT (detailed below comments).
 	uint8_t num_usedpatterns = 0;
 
-	for (int p=0; p < MAX_PATTERNS; p++)
+	for (uint8_t p=0; p < MAX_PATTERNS; p++)
 	{
 		PatternMeta *pm = &patseq.patterns[p];
 		if (pm->used == 0)
@@ -1075,11 +1080,13 @@ void Tracker::save_to_file(SDL_RWops *file)
 		num_usedpatterns++;
 	}
 	SDL_RWwrite(file, &num_usedpatterns, 1, 1);
-	for (int p=0; p < MAX_PATTERNS; p++)
+	for (uint8_t p=0; p < MAX_PATTERNS; p++)
 	{
 		PatternMeta *pm = &patseq.patterns[p];
 		if (pm->used == 0)
 			continue;
+
+		SDL_RWwrite(file, &p, 1, 1); // write pattern index
 
 		/*pm->used only says whether this pattern is in the pattern sequencer
 		 * or not. It does not check whether the pattern has any data or not.

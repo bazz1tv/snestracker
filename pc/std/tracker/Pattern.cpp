@@ -382,7 +382,7 @@ int PatSeqPanel::incpat(void *pspanel)
   PatternSequencer *patseq = psp->patseq;
   fprintf(stderr, "PatSeqPanel::incpat()\n");
 
-  int *derp = &patseq->sequence[psp->currow];
+  uint8_t *derp = &patseq->sequence[psp->currow];
   /* Increment the currow pattern */
   patseq->patterns[patseq->sequence[psp->currow]].used--;
   *derp += 1;
@@ -398,7 +398,7 @@ int PatSeqPanel::decpat(void *pspanel)
   PatSeqPanel *psp = (PatSeqPanel *)pspanel;
   PatternSequencer *patseq = psp->patseq;
   fprintf(stderr, "PatSeqPanel::decpat()\n");
-  int *derp = &patseq->sequence[psp->currow];
+  uint8_t *derp = &patseq->sequence[psp->currow];
 
   patseq->patterns[patseq->sequence[psp->currow]].used--;
   *derp -= 1;

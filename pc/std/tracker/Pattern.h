@@ -127,7 +127,7 @@ struct PatternSequencer
 {
   PatternSequencer();
   int num_entries = 1; // how many entries are in the sequencer
-  std::vector<int> sequence; // sequence of patterns defining the song
+  std::vector<uint8_t> sequence; // sequence of patterns defining the song
 
   PatternMeta patterns[MAX_PATTERNS];
   // track-pattern rows. Like many other data types I have conjured, they
