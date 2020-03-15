@@ -901,47 +901,70 @@ int Tracker::read_from_file(SDL_RWops *file)
 	for (int p=0; p < numpatterns; p++)
 	{
 		PatternMeta *pm = &patseq.patterns[p];
-		/* TODO: After loading patterns, write their "used" value by checking
-		 * with the pattern sequencer */
 		Pattern *pattern = &pm->p;
 		SDL_RWread(file, &pattern->len, 1, 1);
 		for (int t=0; t < MAX_TRACKS; t++)
 		{
 			uint8_t rlecounter = 0;
 			uint8_t a;
+			/* Note: We save a slightly optimized song that doesn't have
+			 * instrument line written redudantly. I have elected that when we
+			 * load the file we also will not load that instrument entry
+			 * redudantly. So, a saved file will look a little different from
+			 * its original version. */
 			//uint8_t last_instr = 0;
 			for (int tr=0; tr < pattern->len; tr++)
 			{
 				PatternRow *pr = &pattern->trackrows[t][tr];
 				if (rlecounter)
 					if (--rlecounter >= 0)
+					{
+						/* TODO: Once I get a proper reset() written, we won't need to
+						 * rewrite 0 values here */
+						pr->note = NOTE_NONE;
+						pr->instr = 0;
+						pr->vol = 0;
+						pr->fx = 0;
+						pr->fxparam = 0;
 						continue;
+					}
 
 				SDL_RWread(file, &a, 1, 1);
 				if (a <= 0x7f) // positive
 				{
 					SDL_RWread(file, &pr->note, 1, 1);
 					SDL_RWread(file, &pr->instr, 1, 1);
-					instruments[pr->instr - 1].used++;
+					instruments[pr->instr - 1].used++; // update instrument metadata
 					SDL_RWread(file, &pr->vol, 1, 1);
 					SDL_RWread(file, &pr->fx, 1, 1);
 					SDL_RWread(file, &pr->fxparam, 1, 1);
 				}
 				else
 				{
+					/* TODO: Once I get a proper reset() written, we won't need to
+					 * rewrite 0 values here ( the else statements will be removed )*/
 					if ( a & ( 1 << CBIT_NOTE ) )
 						SDL_RWread(file, &pr->note, 1, 1);
+					else pr->note = NOTE_NONE;
+
 					if ( a & ( 1 << CBIT_INSTR ) )
 					{
 						SDL_RWread(file, &pr->instr, 1, 1);
 						instruments[pr->instr - 1].used++;
 					}
+					else pr->instr = 0;
+
 					if ( a & ( 1 << CBIT_VOL ) )
 						SDL_RWread(file, &pr->vol, 1, 1);
+					else pr->vol = 0;
+
 					if ( a & ( 1 << CBIT_FX ) )
 						SDL_RWread(file, &pr->fx, 1, 1);
+					else pr->fx = 0;
+
 					if ( a & ( 1 << CBIT_FXPARAM ) )
 						SDL_RWread(file, &pr->fxparam, 1, 1);
+					else pr->fxparam = 0;
 
 					if ( a & ( 1 << CBIT_RLE_ONLY1 ) )
 					{
