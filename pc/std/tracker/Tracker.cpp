@@ -732,10 +732,8 @@ void Tracker::render_to_apu()
 					{
 						// we found a filled row or we made it to the end of pattern
 						ttrr -= ( (PATROW_EMPTY(row)) ? 0 : 1);
-						int num_empty = ttrr - tr; /* HACK: the +1 is actually to compensate for the way
-						apu driver code is handled, it's just to help the loop portion of the code stay clean
-						on APU side. but as an lsr value it should be disregarded. The actual
-						APU portion of code is anything using an rlecounter(s) (ReadPTRacks, QuickReadPTrack)*/
+						int num_empty = ttrr - tr;
+
 						if (num_empty == 0)
 							break;
 						else if (num_empty == 1)
@@ -1264,6 +1262,8 @@ void Tracker::save_to_file(SDL_RWops *file)
  *           ff: envelope on
  */
  /* TODO:
+	* Document Prototype Song File Format
+	* Reset tracker state ( eg. for File->New and before loading song )
 	* Add sample editor
 	* add color to track headers that match STD track colors
 	* add debugger window to snestracker
@@ -1282,16 +1282,30 @@ void Tracker::save_to_file(SDL_RWops *file)
 
   * Add TextEditRects to SpcExport window
   * Undo feature in PatternEditor
-	* Save/Open Song
 	* Envelope GUI element
 	* Envelope storing / playback impl
 	* Selections in PatternEditor
 	* Instruments load/save.
 	* Sample save
-	* Change to a global sample database.
-	* Add ability to specify SRCN (or sample) from instr editor
 	* Specify sample loop point (from sample editor)
 	*/
+
+ /*
+		Ideas
+		~~~~~
+
+		Global vol/pan/etc envelope banks, just like sample bank is global now.
+		Envelope Load/Save/Zap buttons like for inst/samples.
+
+		SMRPG changes the envelope settings during a KON, typically to migrate
+		from an infinite sustain release to a sudden one that is slower than an
+		actual KOFF.
+		--> Have KOFF optionally (checkbox) trigger a "KOFF envelope"
+
+		Panning envelope can be retriggered at KON or constant. (checkbox)
+
+		Instrument Detune setting. (seperate from sample fine-tune)
+*/
 
 SpcReport::SpcReport(Tracker *tracker) : tracker(tracker)
 {
