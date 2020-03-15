@@ -647,6 +647,7 @@ void Tracker::render_to_apu()
 	// calculated, we can allocate the amount of RAM necessary for the
 	// PatternLUT (detailed below comments).
 	uint8_t num_usedpatterns = 0;
+	uint16_t highest_pattern = 0;
 	uint16_t patternlut_i = cursample_i, patternlut_size;
 
 	apuram->patterntable_ptr = patternlut_i;
@@ -657,8 +658,9 @@ void Tracker::render_to_apu()
 		if (pm->used == 0)
 			continue;
 		num_usedpatterns++;
+		highest_pattern = p;
 	}
-	patternlut_size = num_usedpatterns * 2; // WORD sized address table
+	patternlut_size = (highest_pattern + 1) * 2; // WORD sized address table
 	/* OK I'm thinking about how aside from the pattern data itself, how
 	 * that pattern data will be accessed. We can store a Pattern lookup
 	 * table that has the 16-bit addresses of each pattern in ascending
@@ -673,7 +675,11 @@ void Tracker::render_to_apu()
 	{
 		PatternMeta *pm = &patseq.patterns[p];
 		if (pm->used == 0)
+		{
+			if (p <= highest_pattern)
+				*(patlut++) = 0xd00d;
 			continue;
+		}
 
 		/* Here we need to iterate through the Pattern to form the compressed
 		 * version. For now, let's try to follow the XM version without RLE
