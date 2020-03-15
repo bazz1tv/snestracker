@@ -72,7 +72,7 @@ int Menu_Bar::File_Context::open_song(void *data)
 	nfdchar_t *filepath;
 	/* Open the file */
 	SDL_RWops *file;
-	nfdresult_t rc = Utility::get_file_read_handle(&fc->filepath, &file, "stp");
+	nfdresult_t rc = Utility::get_file_read_handle(&filepath, &file, "stp");
 	if (rc != NFD_OKAY)
 		return rc;
 

@@ -774,6 +774,14 @@ void Tracker::render_to_apu()
 /* TODO: Add sanitization where necessary */
 int Tracker::read_from_file(SDL_RWops *file)
 {
+	/* Before I forget, reset specific GUI elements */
+	main_window.patseqpanel.set_currow(0);
+	main_window.instrpanel.set_currow(0);
+	main_window.samplepanel.currow = 0;
+	main_window.samplepanel.rows_scrolled = 0;
+	/* TODO deactivate active TER */
+
+
 	uint8_t buf[512];
 	size_t rc;
 	rc = SDL_RWread(file, buf, sizeof("STSONG") - 1, 1);
@@ -936,6 +944,7 @@ int Tracker::read_from_file(SDL_RWops *file)
 		}
 	}
 	// PAttern Sequencer
+	patseq.num_entries = 0; // WARNING: could be dangerous
 	for (int i=0; 1; i++)
 	{
 		rc = SDL_RWread(file, &patseq.sequence[i], 1, 1);
@@ -943,6 +952,7 @@ int Tracker::read_from_file(SDL_RWops *file)
 			break;
 
 		patseq.patterns[patseq.sequence[i]].used++;
+		patseq.num_entries++;
 	}
 
 	return 0;

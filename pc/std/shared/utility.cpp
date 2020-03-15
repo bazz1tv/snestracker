@@ -161,14 +161,21 @@ nfdresult_t get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file, const c
   else if ( result == NFD_CANCEL )
   {
     if (*outPath)
+		{
       free(*outPath);
+			*outPath = NULL;
+		}
+
     puts("User pressed cancel.");
     return result;
   }
   else
   {
     if (*outPath)
-    free(*outPath);
+		{
+			free(*outPath);
+			*outPath = NULL;
+		}
     printf("Error: %s\n", NFD_GetError() );
     return NFD_ERROR;
   }
@@ -191,14 +198,21 @@ nfdresult_t get_file_read_path(nfdchar_t **outPath, const char *filter_list/*=NU
     else if ( result == NFD_CANCEL ) 
     {
       if (*outPath)
+			{
         free(*outPath);
+				*outPath = NULL;
+			}
+
       puts("User pressed cancel.");
       return result;
     }
     else
     {
       if (*outPath)
-      free(*outPath);
+			{
+				free(*outPath);
+				*outPath = NULL;
+			}
       printf("Error: %s\n", NFD_GetError() );
       return NFD_ERROR;
     }
@@ -231,14 +245,20 @@ nfdresult_t get_file_read_handle(nfdchar_t **outPath, SDL_RWops **file, const ch
     else if ( result == NFD_CANCEL ) 
     {
       if (*outPath)
+			{
         free(*outPath);
+				*outPath = NULL;
+			}
       puts("User pressed cancel.");
       return result;
     }
     else
     {
       if (*outPath)
-      free(*outPath);
+			{
+				free(*outPath);
+				*outPath = NULL;
+			}
       printf("Error: %s\n", NFD_GetError() );
       return NFD_ERROR;
     }
