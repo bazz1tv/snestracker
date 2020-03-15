@@ -102,55 +102,87 @@ int Menu_Bar::File_Context::open_spc(void *data)
   return 0;
 }
 
-int Menu_Bar::File_Context::save_song(void *data)
+static int save_common(Menu_Bar::File_Context *fc, nfdchar_t *filepath)
 {
-	File_Context *fc = (File_Context *)data;
-	if (fc->filepath == NULL)
-	{
-		// Open a dialog to query the user for a file to save to
-		nfdresult_t result = NFD_SaveDialog( "stp", NULL, &fc->filepath );
-		if ( result == NFD_OKAY )
-		{
-		}
-		else if ( result == NFD_CANCEL )
-		{
-			if (fc->filepath)
-				free(fc->filepath);
-			return result;
-		}
-		else
-		{
-			if (fc->filepath)
-				free(fc->filepath);
-			printf("Error: %s\n", NFD_GetError() );
-			return NFD_ERROR;
-		}
-	}
-
 	// now we have filepath: Open a Write RWOps handle on it
 	SDL_RWops *file;
-	file = SDL_RWFromFile(fc->filepath, "wb");
+
+	file = SDL_RWFromFile(filepath, "wb");
 
 	if (file == NULL)
 	{
 		char tmpbuf[250];
-		sprintf(tmpbuf, "Warning: Unable to open file!\n %s", SDL_GetError() );
+		sprintf(tmpbuf, "Warning: Unable to open file %s!\n %s", filepath, SDL_GetError() );
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
 				"Could not open FILE!",
 				tmpbuf,
 				NULL);
-		return NFD_ERROR;
+		if (filepath)
+			free(filepath);
+		return -1;
 	}
 
 	::tracker->save_to_file(file);
 
 	SDL_RWclose(file);
+
+	fc->filepath = filepath;
 	return 0;
+}
+
+static nfdresult_t query_user_save_filepath(nfdchar_t **filepath)
+{
+	// Open a dialog to query the user for a file to save to
+	nfdresult_t result = NFD_SaveDialog( "stp", NULL, filepath );
+	if ( result == NFD_OKAY )
+	{
+	}
+	else if ( result == NFD_CANCEL )
+	{
+		if (*filepath)
+		{
+			free(*filepath);
+			filepath = NULL;
+		}
+	}
+	else
+	{
+		printf("Error opening %s for writing: %s\n", filepath, NFD_GetError() );
+		if (*filepath)
+		{
+			free(*filepath);
+			*filepath = NULL;
+		}
+	}
+
+	return result;
+}
+
+int Menu_Bar::File_Context::save_song(void *data)
+{
+	File_Context *fc = (File_Context *)data;
+	nfdchar_t *filepath = NULL;
+
+	if (fc->filepath == NULL)
+	{
+		if (query_user_save_filepath(&filepath) != NFD_OKAY)
+			return -1;
+	}
+	else
+		filepath = fc->filepath;
+
+	return save_common(fc, filepath);
 }
 
 int Menu_Bar::File_Context::save_as_song(void *data)
 {
-	return 0;
+	File_Context *fc = (File_Context *)data;
+	nfdchar_t *filepath = NULL;
+
+	if (query_user_save_filepath(&filepath) != NFD_OKAY)
+		return -1;
+
+	return save_common(fc, filepath);
 }
 
 int Menu_Bar::File_Context::export_spc(void *data)
