@@ -498,6 +498,11 @@ void Tracker::dec_spd()
 void Tracker::render_to_apu()
 {
 	::player->start_track(0);
+	// SPC player fade to virtually never end (24 hours -> ms)
+	::player->emu()->set_fade(24 * 60 * 60 * 1000);
+	// note, this does indeed fit into 32-bit even with the samplerate calcs
+	// done from set_fade()
+
 	// This is absolutely crucial for the tracker to sync properly with the
 	// APU emu!!! v v v  Otherwise the emu runs too fast ahead of the audio
 	::player->ignore_silence();
