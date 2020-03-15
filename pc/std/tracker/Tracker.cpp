@@ -530,17 +530,31 @@ void Tracker::render_to_apu()
 	dir_i = freeram_i + ((freeram_i % 0x100) ? (0x100 - (freeram_i % 0x100)) : 0);
 	dspdir_i = dir_i / 0x100;
 
-	uint8_t numsamples = 0;
+	uint16_t numsamples = 0;
+	uint8_t highest_sample = 0;
 	for (int i=0; i < NUM_SAMPLES; i++)
 	{
 		if (samples[i].brr == NULL)
 			continue;
 		numsamples++;
+		highest_sample = i;
 	}
 
-	uint16_t instrtable_i = dir_i + (numsamples * 0x4);
+	uint16_t numinstr = 0;
+	uint8_t highest_instr = 0;
+	for (int i=0; i < NUM_INSTR; i++)
+	{
+		Instrument *instr = &instruments[i];
+		if (instr->used == 0)
+			continue;
+
+		numinstr++;
+		highest_instr = i;
+	}
+
+	uint16_t instrtable_i = dir_i + ( (highest_sample + 1) * 0x4);
 	//                             {applied size of DIR}  {INSTR TABLE SIZE}
-	uint16_t sampletable_i = dir_i + (numsamples * 0x4) + (numsamples * 0x7);
+	uint16_t sampletable_i = dir_i + ( (highest_sample + 1) * 0x4) + ( (highest_instr + 1) * 0x7);
 
 	apuram->instrtable_ptr = instrtable_i;
 
@@ -556,10 +570,25 @@ void Tracker::render_to_apu()
 	// DIR value to DSP
 	uint16_t cursample_i = sampletable_i;
 
+	/* TODO: Currently, the samples are half-assed optimized. A cool idea I
+	 * have to remap and optimize from blank sample entries is to, as these
+	 * entries are encountered, add to some sort of mapping data structure
+	 * so that instruments can be updated. The same could be done for
+	 * instrument mappings, now that I think of it. but for now, let's not
+	 * optimize  */
 	for (int i=0; i < NUM_SAMPLES; i++)
 	{
 		if (samples[i].brr == NULL)
+		{
+			if (i <= highest_sample)
+			{
+				// be neat and mark the unused unoptimized entries
+				uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
+				*dir = 0xdead;
+				*(dir+1) = 0xbeef;
+			}
 			continue;
+		}
 		uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
 		*dir = cursample_i;
 		*(dir+1) = cursample_i + samples[i].rel_loop;
@@ -579,7 +608,16 @@ void Tracker::render_to_apu()
 	{
 		Instrument *instr = &instruments[i];
 		if (instr->used == 0)
+		{
+			if (i <= highest_instr)
+			{
+				// be neat and mark the unused unoptimized entries
+				uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i + (i*2)];
+				*it = 0xf00d; /* I'm feeding the $BANANA register. Anyone remember
+				that one from the Yoshi Register doc? :D */
+			}
 			continue;
+		}
 
 		/* Could add a (SHA1) signature to Sample struct so that we can
 		 * identify repeat usage of the same sample and only load it once to
