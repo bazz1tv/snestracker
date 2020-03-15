@@ -816,8 +816,11 @@ void Tracker::render_to_apu()
 	// PATTERN SEQUENCER END
 	
 	// send the command to start the song
-	if (playback)
-		player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
+	player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
+	/* This way for SPC Export. Won't have to send the play command to
+	 * the APU port manually anymore */
+	if (!playback)
+		sound_stop();
 }
 
 /* WARNING: no bounds checking!? */
