@@ -11,8 +11,8 @@
 std::unordered_set<DrawRenderer *> Tracker::prerenders, Tracker::postrenders;
 
 Tracker::Tracker(int &argc, char **argv) :
-bpm(120),
-spd(6),
+bpm(DEFAULT_BPM),
+spd(DEFAULT_SPD),
 main_window(argc,argv, this),
 spcreport(this)
 {
@@ -466,29 +466,29 @@ next_event:
 
 void Tracker::inc_bpm()
 {
-  if (bpm >= 300)
-    bpm = 300;
+  if (bpm >= MAX_BPM)
+    bpm = MAX_BPM;
   else bpm++;
 }
 
 void Tracker::dec_bpm()
 {
-  if (bpm <= 32)
-    bpm = 32;
+  if (bpm <= MIN_BPM)
+    bpm = MIN_BPM;
   else bpm--;
 }
 
 void Tracker::inc_spd()
 {
-  if (spd >= 31)
-    spd = 31;
+  if (spd >= MAX_SPD)
+    spd = MAX_SPD;
   else spd++;
 }
 
 void Tracker::dec_spd()
 {
-  if (spd <= 1)
-    spd = 1;
+  if (spd <= MIN_SPD)
+    spd = MIN_SPD;
   else spd--;
 }
 
@@ -771,6 +771,7 @@ void Tracker::render_to_apu()
 		player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
 }
 
+/* TODO: Add sanitization where necessary */
 int Tracker::read_from_file(SDL_RWops *file)
 {
 	uint8_t buf[512];
@@ -803,20 +804,13 @@ int Tracker::read_from_file(SDL_RWops *file)
 	}
 	// Check for valid BPM/SPD
 	bpm = bpmspd >> 6;
-#define MINBPM 32
-#define MAXBPM 300
-#define DEFAULT_BPM 120
-#define MINSPD 1
-#define MAXSPD 32
-#define DEFAULT_SPD 6
-
-	if (bpm < MINBPM || bpm > MAXBPM)
+	if (bpm < MIN_BPM || bpm > MAX_BPM)
 	{
 		DEBUGLOG("Invalid BPM: %d. Setting to default %d\n", bpm, DEFAULT_BPM);
 		bpm = DEFAULT_BPM;
 	}
 	spd = (uint8_t)(bpmspd & 0b111111);
-	if (spd < MINSPD || spd > MAXSPD)
+	if (spd < MIN_SPD || spd > MAX_SPD)
 	{
 		DEBUGLOG("Invalid SPD: %d. Setting to default %d\n", spd, DEFAULT_SPD);
 		bpm = DEFAULT_BPM;
