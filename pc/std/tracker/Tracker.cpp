@@ -782,6 +782,9 @@ static void read_str_from_file(SDL_RWops *file, char *str_ptr)
 /* TODO: Add sanitization where necessary */
 int Tracker::read_from_file(SDL_RWops *file)
 {
+	/* TODO: I believe what would be better than resetting specific elements
+	 * would be a reset() that brings all elements to a known starting state
+	 * */
 	/* Before I forget, reset specific GUI elements */
 	main_window.patseqpanel.set_currow(0);
 	main_window.instrpanel.set_currow(0);
@@ -961,6 +964,13 @@ int Tracker::read_from_file(SDL_RWops *file)
 		patseq.patterns[patseq.sequence[i]].used++;
 		patseq.num_entries++;
 	}
+
+	/* HACKS */
+	/* Since the BPM and SPD widgets do not constantly poll (they normally
+	 * only update graphically when manually altered via +/- buttons, we
+	 * need to manually update it */
+	main_window.bsawidget.updatebpm();
+	main_window.bsawidget.updatespd();
 
 	return 0;
 }
