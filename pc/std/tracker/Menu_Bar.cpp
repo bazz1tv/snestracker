@@ -68,9 +68,26 @@ int Menu_Bar::File_Context::new_song(void *data)
 
 int Menu_Bar::File_Context::open_song(void *data)
 {
-  /* Open the file */
+	File_Context *fc = (File_Context *)data;
+	nfdchar_t *filepath;
+	/* Open the file */
+	SDL_RWops *file;
+	nfdresult_t rc = Utility::get_file_read_handle(&fc->filepath, &file, "stp");
+	if (rc != NFD_OKAY)
+		return rc;
 
-	/*Successful*/
+	rc = ::tracker->read_from_file(file);
+	SDL_RWclose(file);
+
+	if (rc == 0)
+	{
+		/*Successful. Update the filepath */
+		if (fc->filepath)
+			free(fc->filepath);
+
+		fc->filepath = filepath;
+	}
+	return rc;
 }
 
 int Menu_Bar::File_Context::open_spc(void *data)
@@ -87,24 +104,24 @@ int Menu_Bar::File_Context::open_spc(void *data)
 
 int Menu_Bar::File_Context::save_song(void *data)
 {
-	nfdchar_t *filepath = (nfdchar_t *)data;
-	if (filepath == NULL)
+	File_Context *fc = (File_Context *)data;
+	if (fc->filepath == NULL)
 	{
 		// Open a dialog to query the user for a file to save to
-		nfdresult_t result = NFD_SaveDialog( "stp", NULL, &filepath );
+		nfdresult_t result = NFD_SaveDialog( "stp", NULL, &fc->filepath );
 		if ( result == NFD_OKAY )
 		{
 		}
 		else if ( result == NFD_CANCEL )
 		{
-			if (filepath)
-				free(filepath);
+			if (fc->filepath)
+				free(fc->filepath);
 			return result;
 		}
 		else
 		{
-			if (filepath)
-				free(filepath);
+			if (fc->filepath)
+				free(fc->filepath);
 			printf("Error: %s\n", NFD_GetError() );
 			return NFD_ERROR;
 		}
@@ -112,7 +129,7 @@ int Menu_Bar::File_Context::save_song(void *data)
 
 	// now we have filepath: Open a Write RWOps handle on it
 	SDL_RWops *file;
-	file = SDL_RWFromFile(filepath, "wb");
+	file = SDL_RWFromFile(fc->filepath, "wb");
 
 	if (file == NULL)
 	{
