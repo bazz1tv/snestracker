@@ -771,6 +771,14 @@ void Tracker::render_to_apu()
 		player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
 }
 
+/* WARNING: no bounds checking!? */
+static void read_str_from_file(SDL_RWops *file, char *str_ptr)
+{
+	do {
+		SDL_RWread(file, str_ptr, 1, 1);
+	} while (*(str_ptr++) != 0);
+}
+
 /* TODO: Add sanitization where necessary */
 int Tracker::read_from_file(SDL_RWops *file)
 {
@@ -798,10 +806,7 @@ int Tracker::read_from_file(SDL_RWops *file)
 
 	// Read Song title until NULL is read in
 	// corner case: no title == 0
-	char *st = main_window.song_title_str;
-	do {
-		SDL_RWread(file, st, 1, 1);
-	} while (*(st++) != 0);
+	read_str_from_file(file, main_window.song_title_str);
 
 	uint16_t bpmspd;
 	rc = SDL_RWread(file, &bpmspd, 2, 1);
@@ -829,7 +834,10 @@ int Tracker::read_from_file(SDL_RWops *file)
 	SDL_RWread(file, &numsamples, 1, 1);
 	for (int i=0; i < numsamples; i++)
 	{
+		Sample *s = &samples[i];
 		/* TODO: I really should store/read the sample# */
+		read_str_from_file(file, s->name);
+
 		uint16_t brrsize;
 		SDL_RWread(file, &brrsize, 2, 1);
 		Brr *brr = (Brr *) malloc(brrsize);
@@ -849,7 +857,6 @@ int Tracker::read_from_file(SDL_RWops *file)
 			return -1;
 		}
 
-		Sample *s = &samples[i];
 		if (s->brr != NULL)
 			free(s->brr);
 
@@ -865,10 +872,10 @@ int Tracker::read_from_file(SDL_RWops *file)
 	SDL_RWread(file, &numinstr, 1, 1);
 	for (int i=0; i < numinstr; i++)
 	{
+		Instrument *instr = &instruments[i];
 		/* TODO: store/read the instr # */
 
-		/* TODO: Store/read the instr name */
-		Instrument *instr = &instruments[i];
+		read_str_from_file(file, instr->name);
 
 		/* TODO: Store/Read the instr used. Better yet, calculate it after the
 		 * patterns have been loaded */
@@ -986,6 +993,7 @@ void Tracker::save_to_file(SDL_RWops *file)
 			continue;
 
 		uint16_t size = (uint16_t) samples[i].brrsize;
+		SDL_RWwrite(file, samples[i].name, strlen(samples[i].name) + 1, 1);
 		SDL_RWwrite(file, &size, 2, 1);
 		SDL_RWwrite(file, samples[i].brr, size, 1);
 	}
@@ -1007,6 +1015,7 @@ void Tracker::save_to_file(SDL_RWops *file)
 		if (instr->used == 0)
 			continue;
 
+		SDL_RWwrite(file, instr->name, strlen(instr->name) + 1, 1);
 		// Time to load instrument info
 		SDL_RWwrite(file, &instr->vol, 1, 1);
 		SDL_RWwrite(file, &instr->pan, 1, 1);
