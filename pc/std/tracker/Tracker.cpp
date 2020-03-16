@@ -1272,11 +1272,34 @@ void Tracker::save_to_file(SDL_RWops *file)
 	// PatternLUT (detailed below comments).
 	uint8_t num_usedpatterns = 0;
 
+	/* NOTE: Unlike the render_to_apu, which only exports patterns that are
+	 * present in the sequencer, we will check here for ANY patterns that
+	 * are not fully blank, whether or not they are present in the sequencer
+	 * */
 	for (uint8_t p=0; p < MAX_PATTERNS; p++)
 	{
 		PatternMeta *pm = &patseq.patterns[p];
+		// NOTE: This logic chunk is duplicated in the next for loop. Wish I
+		// would take time to optimize it BUT shouldn't prematurely do this.
+		// So many more important factors to the tracker that need coding!
 		if (pm->used == 0)
-			continue;
+		{
+			bool hasdata = false;
+			// not in sequencer, but is there data?
+			Pattern *pmp = &pm->p;
+			for (int t=0; t < MAX_TRACKS; t++)
+				for (int tr=0; tr < pmp->len; tr++)
+				{
+					PatternRow *pr = &pmp->trackrows[t][tr];
+					if (pr->note || pr->instr || pr->vol || pr->fx || pr->fxparam)
+					{
+						hasdata = true;
+						break;
+					}
+				}
+			if (!hasdata)
+				continue;
+		}
 		num_usedpatterns++;
 	}
 	SDL_RWwrite(file, &num_usedpatterns, 1, 1);
@@ -1284,7 +1307,23 @@ void Tracker::save_to_file(SDL_RWops *file)
 	{
 		PatternMeta *pm = &patseq.patterns[p];
 		if (pm->used == 0)
-			continue;
+		{
+			bool hasdata = false;
+			// not in sequencer, but is there data?
+			Pattern *pmp = &pm->p;
+			for (int t=0; t < MAX_TRACKS; t++)
+				for (int tr=0; tr < pmp->len; tr++)
+				{
+					PatternRow *pr = &pmp->trackrows[t][tr];
+					if (pr->note || pr->instr || pr->vol || pr->fx || pr->fxparam)
+					{
+						hasdata = true;
+						break;
+					}
+				}
+			if (!hasdata)
+				continue;
+		}
 
 		SDL_RWwrite(file, &p, 1, 1); // write pattern index
 
