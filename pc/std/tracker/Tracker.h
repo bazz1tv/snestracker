@@ -43,11 +43,11 @@ public:
   void run();
   void handle_events();
 
-	static const constexpr unsigned int MIN_BPM = 32, MAX_BPM = 300, DEFAULT_BPM = 120;
+	static const constexpr unsigned int MIN_BPM = 32, MAX_BPM = 999, DEFAULT_BPM = 120;
 	static const constexpr unsigned int MIN_SPD = 1, MAX_SPD = 31, DEFAULT_SPD = 6;
   /* This is stuff that will go into a Song struct, but for now just put
    * it here */
-  unsigned int bpm :9;
+  unsigned int bpm :11;
   unsigned int spd :5;
   void inc_bpm();
   void dec_bpm();
