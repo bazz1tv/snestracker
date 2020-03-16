@@ -40,7 +40,10 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   y = yy = 50;
 
   patseqpanel.set_coords(x, y);
-  x = 150;
+
+	plwidget.set_coords(x, y + patseqpanel.rect.h + 20);
+
+	x = 150;
 
   song_title_label.rect.x = x;
   song_title_label.rect.y = y;
@@ -131,11 +134,12 @@ void Main_Window::draw()
   i = 32 + SCREEN_Y_OFFSET;  
   //fprintf(stderr, "HERE!\n");
   song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
-  bsawidget.draw(::render->screen);
+	bsawidget.draw(::render->screen);
   instreditor_btn.draw(::render->screen);
   instrpanel.draw(::render->screen);
   samplepanel.draw(::render->screen);
   patseqpanel.draw(::render->screen);
+	plwidget.draw(::render->screen);
   pateditpanel.draw(::render->screen);
   if (instreditor_active)
     instreditor.draw(::render->screen);
@@ -168,6 +172,7 @@ int Main_Window::receive_event(SDL_Event &ev)
 
   handle_text_edit_rect_event(ev, &song_title);
   instreditor_btn.check_event(ev);
+	plwidget.handle_event(ev);
   bsawidget.handle_event(ev);
   instrpanel.event_handler(ev);
   if (samplepanel.event_handler(ev) == Sample_Panel::ROW_UPDATED && instreditor_active)

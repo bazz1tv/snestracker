@@ -17,6 +17,7 @@
 #include "Samples.h"
 #include "Instruments.h"
 #include "Pattern.h"
+#include "PatLenWidget.h"
 #include "BpmSpdAddWidget.h"
 #include "InstrumentEditor.h"
 
@@ -87,6 +88,7 @@ struct Main_Window : public Experience
 	Sample_Panel samplepanel;
   Instrument_Panel instrpanel;
   PatSeqPanel patseqpanel;
+	PatLenWidget plwidget;
   PatternEditorPanel pateditpanel;
   BpmSpdAddWidget bsawidget;
   InstrumentEditor instreditor;

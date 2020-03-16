@@ -162,4 +162,3 @@ int BpmSpdAddWidget::decadd(void *bsaw)
   BpmSpdAddWidget *b = (BpmSpdAddWidget *)bsaw;
   b->pep->dec_addval();
 }
-

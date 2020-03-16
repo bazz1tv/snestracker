@@ -98,7 +98,8 @@ struct PatternRow // defines one row of Pattern Data
 
 #define MAX_TRACKS 8
 #define MAX_PATTERNS 0x80
-#define MAX_PATTERN_LEN 0x40
+#define MIN_PATTERN_LEN 1
+#define MAX_PATTERN_LEN 0x80
 #define DEFAULT_PATTERN_LEN 0x40
 
 struct Pattern
@@ -126,6 +127,7 @@ struct PatternMeta
 struct PatternSequencer
 {
   PatternSequencer();
+
   int num_entries = 1; // how many entries are in the sequencer
   std::vector<uint8_t> sequence; // sequence of patterns defining the song
 
@@ -173,6 +175,9 @@ struct PatSeqPanel // PatternSequencerPanel
   static int clear(void *pspanel);
   static int incpat(void *pspanel);
   static int decpat(void *pspanel);
+	// current pattern funcs
+	void inc_patlen();
+	void dec_patlen();
 
   Text index_text[VISIBLE_ROWS];
   char index_strings[VISIBLE_ROWS][4];

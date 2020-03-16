@@ -1374,8 +1374,8 @@ void Tracker::save_to_file(SDL_RWops *file)
  *           ff: envelope on
  */
  /* TODO:
-	* Document Prototype Song File Format
-	* Reset tracker state ( eg. for File->New and before loading song )
+	* Add Pattern len control panel
+	* Add KOFF keyboard button. Add KOFF characters design sdlfont.cpp
 	* Add sample editor
 	* add color to track headers that match STD track colors
 	* add debugger window to snestracker
