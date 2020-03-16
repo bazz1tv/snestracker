@@ -237,19 +237,19 @@ struct PatternEditorPanel
 
   struct GUITrackRow {
     Clickable_Text note_ctext[MAX_VISIBLE_ROWS];
-    char note_strings[MAX_PATTERN_LEN][sizeof("C-4")];
+    char note_strings[MAX_VISIBLE_ROWS][sizeof("C-4")];
 
     Clickable_Text instr_ctext[MAX_VISIBLE_ROWS];
-    char instr_strings[MAX_PATTERN_LEN][sizeof("0f")];
+    char instr_strings[MAX_VISIBLE_ROWS][sizeof("0f")];
 
     Clickable_Text vol_ctext[MAX_VISIBLE_ROWS];
-    char vol_strings[MAX_PATTERN_LEN][sizeof("0f")];
+    char vol_strings[MAX_VISIBLE_ROWS][sizeof("0f")];
 
     Clickable_Text fx_ctext[MAX_VISIBLE_ROWS];
-    char fx_strings[MAX_PATTERN_LEN][sizeof("0")];
+    char fx_strings[MAX_VISIBLE_ROWS][sizeof("0")];
 
     Clickable_Text fxparam_ctext[MAX_VISIBLE_ROWS];
-    char fxparam_strings[MAX_PATTERN_LEN][sizeof("00")];
+    char fxparam_strings[MAX_VISIBLE_ROWS][sizeof("00")];
   } guitrackrow[MAX_TRACKS];
 
   unsigned int cur_track :3;
