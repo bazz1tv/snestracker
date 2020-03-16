@@ -8,7 +8,12 @@ PatLenWidget::PatLenWidget() :
 	patlen_title("Plen"),
 	patlen_valtext(patlen_cbuf),
 	patlen_incbtn("+", inc_patlen, this, true),
-	patlen_decbtn("-", dec_patlen, this, true)
+	patlen_decbtn("-", dec_patlen, this, true),
+
+	seqlen_cbuf("$00"),
+	seqlen_title("Slen"),
+	seqlen_valtext(seqlen_cbuf)
+
 {
 }
 
@@ -19,6 +24,11 @@ void PatLenWidget :: update_patlen()
 	    ::tracker->patseq.sequence[
 			    ::tracker->main_window.patseqpanel.currow]].p.len;
 	sprintf(patlen_cbuf, "$%03x", *len);
+}
+
+void PatLenWidget :: update_seqlen()
+{
+	sprintf(seqlen_cbuf, "$%02x", ::tracker->patseq.num_entries);
 }
 
 void PatLenWidget :: set_coords(int x, int y)
@@ -39,8 +49,15 @@ void PatLenWidget :: set_coords(int x, int y)
 	patlen_decbtn.rect.x = patlen_incbtn.rect.x + CHAR_WIDTH + 5;
 	patlen_decbtn.rect.y = y;
 
+	y += CHAR_HEIGHT + 2;
+
+	seqlen_title.rect.x = x;
+	seqlen_title.rect.y = y;
+	seqlen_valtext.rect.x = x + ((4 + 1) * CHAR_WIDTH);
+	seqlen_valtext.rect.y = y;
+
 	rect.w = patlen_decbtn.rect.x + patlen_decbtn.rect.w - rect.x + 2;
-	rect.h = patlen_decbtn.rect.y + patlen_decbtn.rect.h - rect.y + 2;
+	rect.h = seqlen_valtext.rect.y + seqlen_valtext.rect.h - rect.y + 2;
 }
 
 int PatLenWidget::handle_event(const SDL_Event &ev)
@@ -56,6 +73,10 @@ void PatLenWidget::draw(SDL_Surface *screen/*=::render->screen*/)
 	patlen_valtext.draw(screen);
 	patlen_incbtn.draw(screen);
 	patlen_decbtn.draw(screen);
+
+	update_seqlen();
+	seqlen_title.draw(screen);
+	seqlen_valtext.draw(screen);
 }
 
 int PatLenWidget::inc_patlen(void *bsaw)
