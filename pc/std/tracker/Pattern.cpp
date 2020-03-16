@@ -1105,7 +1105,7 @@ static void moveback(Pattern *pattern, int track, int pos, Instrument_Panel *ip)
 
 static void moveforward(Pattern *pattern, int track, int pos)
 {
-  if (pos == 0)
+  if (pos == (pattern->len - 1))
     return;
   PatternRow *patrow = pattern->trackrows[track];
   for (int p = pattern->len - 1; p > pos; p--)
