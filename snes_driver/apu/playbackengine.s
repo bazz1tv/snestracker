@@ -219,13 +219,6 @@ LoadPattern:
 	; addresses
 	call !Load_ptrack_ptrs
 
-	; send a setpattern and setrow command to tracker
-	mov a, sequencer_i
-	mov reportTrackerArg, a
-	mov reportTrackerCmd, #reportTrackerCmd_SetPattern
-	mov reportTrackerArg, #0
-	mov reportTrackerCmd, #reportTrackerCmd_SetRow
-
 	ret
 
 PlaySong:
@@ -240,6 +233,15 @@ PlaySong:
 
   call !ReloadSpdDec
 	call !LoadPattern
+
+  ; although the pattern player will eventually update the tracker, this
+  ; immediate update gives the impression of a snappy tracker response.
+  ; send a setpattern and setrow command to tracker
+  mov a, sequencer_i
+  mov reportTrackerArg, a
+  mov reportTrackerCmd, #reportTrackerCmd_SetPattern
+  mov reportTrackerArg, #0
+  mov reportTrackerCmd, #reportTrackerCmd_SetRow
 
 	set1 control.ctrlbit_t0 ; start Timer 0
 	set1 flags.bPlaySong
@@ -600,14 +602,18 @@ ReadPTracks:
   mov a, inc_to_patlen
   inc a
   cbne patternlen_rows, @ret
-  ; time to update to next pattern!
+  call !@report ; report the last row of this pattern
   jmp !NextPattern
 @ret:
   mov inc_to_patlen, a
+@report:
   dec a ; the tracker should highlight the row that has just been
   ; processed, rather than the next row yet to be processed
   mov reportTrackerArg, a
   mov reportTrackerCmd, #reportTrackerCmd_SetRow
+  mov a, sequencer_i
+  mov reportTrackerArg, a
+  mov reportTrackerCmd, #reportTrackerCmd_SetPattern
   ret
 
 ; Credz to loveemu / Real
