@@ -156,7 +156,7 @@ static nfdresult_t query_user_save_filepath(nfdchar_t **filepath)
 	}
 	else
 	{
-		printf("Error opening %s for writing: %s\n", filepath, NFD_GetError() );
+		printf("Error opening %s for writing: %s\n", *filepath, NFD_GetError() );
 		if (*filepath)
 		{
 			free(*filepath);
