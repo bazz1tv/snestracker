@@ -22,6 +22,8 @@ dd if="template.spc" bs=1 skip=$((start_to_pc+2)) seek=$((start_to_pc+2)) \
   count=${startsize} of="$1"
 cat spc.bin >> "$1"
 binsize=$(ls -l spc.bin | awk '{print $5}')
-dd if="template.spc" skip=$((startsize + binsize)) \
-	 seek=$((startsize + binsize)) bs=1 count=$((total - startsize - binsize)) \
+
+skip=$((startsize + binsize + start_to_pc + 2))
+dd if="template.spc" skip=$skip \
+	 seek=$skip bs=1 count=$((total - skip)) \
 	 of="$1" oflag=append
