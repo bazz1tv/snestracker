@@ -42,7 +42,7 @@ struct Menu_Bar
     {
       {"File",         true,  NULL,       NULL},
 ////////////////////////////////////////////////////////
-      {"New Song",     true,  new_song,   NULL},
+      {"New Song",     true,  new_song,   this},
       {"Open ST-Song", true,  open_song,  this},
 			{"Open ST-SPC",  true,  open_spc,   NULL},
 			{"Save",         true,  save_song,  this},

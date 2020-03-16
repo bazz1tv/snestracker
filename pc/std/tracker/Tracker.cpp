@@ -829,22 +829,69 @@ static void read_str_from_file(SDL_RWops *file, char *str_ptr)
 	} while (*(str_ptr++) != 0);
 }
 
-/* TODO: Add sanitization where necessary */
-int Tracker::read_from_file(SDL_RWops *file)
+void Tracker::reset()
 {
-	/* TODO: I believe what would be better than resetting specific elements
-	 * would be a reset() that brings all elements to a known starting state
-	 * */
-	/* Before I forget, reset specific GUI elements */
+	// Reset Important GUI Elements
+	if (Text_Edit_Rect::cur_editing_ter)
+		Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
+
+	// Reset Panel currows
 	main_window.patseqpanel.set_currow(0);
 	main_window.instrpanel.set_currow(0);
 	main_window.samplepanel.currow = 0;
 	main_window.samplepanel.rows_scrolled = 0;
-	/* TODO deactivate active TER */
 
+	// Reset Song Title
+	main_window.song_title_str[0] = 0;
 
+	// Reset BPM/SPD
+	bpm = DEFAULT_BPM;
+	spd = DEFAULT_SPD;
+
+	// Reset all Samples (and free memory!)
+	for (int i=0; i < NUM_SAMPLES; i++)
+	{
+		Sample *s = &samples[i];
+		if (s->brr)
+			free(s->brr);
+		*s = Sample();
+	}
+
+	// Reset all instruments
+	for (int i=0; i < NUM_INSTR; i++)
+	{
+		Instrument *instr = &instruments[i];
+		*instr = Instrument();
+	}
+
+	// Reset all patterns
+	memset(patseq.patterns, 0, sizeof(patseq.patterns));
+	for (int i=0; i < MAX_PATTERNS; i++)
+	{
+		patseq.patterns[i].p.len = DEFAULT_PATTERN_LEN;
+	}
+	// Reset Pat Sequencer
+	// NOTE: This is done from the caller. new_file will properly load for
+	// pattern 00, while load_file will.. load from file :)
+
+	// Reset Other GUI elements
+
+	/* HACKS */
+	/* Since the BPM and SPD widgets do not constantly poll (they normally
+	 * only update graphically when manually altered via +/- buttons, we
+	 * need to manually update it */
+	main_window.bsawidget.updatebpm();
+	main_window.bsawidget.updatespd();
+}
+
+/* TODO: Add sanitization where necessary */
+int Tracker::read_from_file(SDL_RWops *file)
+{
 	uint8_t buf[512];
 	size_t rc;
+
+	reset();
+
 	rc = SDL_RWread(file, buf, sizeof("STSONG") - 1, 1);
 	if (rc == 0)
 	{
@@ -960,25 +1007,20 @@ int Tracker::read_from_file(SDL_RWops *file)
 		{
 			uint8_t rlecounter = 0;
 			uint8_t a;
-			/* Note: We save a slightly optimized song that doesn't have
-			 * instrument line written redudantly. I have elected that when we
-			 * load the file we also will not load that instrument entry
-			 * redudantly. So, a saved file will look a little different from
-			 * its original version. */
-			//uint8_t last_instr = 0;
+
 			for (int tr=0; tr < pattern->len; tr++)
 			{
 				PatternRow *pr = &pattern->trackrows[t][tr];
 				if (rlecounter)
 					if (--rlecounter >= 0)
 					{
-						/* TODO: Once I get a proper reset() written, we won't need to
+						/* with the proper reset() written, we won't need to
 						 * rewrite 0 values here */
-						pr->note = NOTE_NONE;
+						/*pr->note = NOTE_NONE;
 						pr->instr = 0;
 						pr->vol = 0;
 						pr->fx = 0;
-						pr->fxparam = 0;
+						pr->fxparam = 0;*/
 						continue;
 					}
 
@@ -994,30 +1036,30 @@ int Tracker::read_from_file(SDL_RWops *file)
 				}
 				else
 				{
-					/* TODO: Once I get a proper reset() written, we won't need to
+					/* TODO: since reset() written, we won't need to
 					 * rewrite 0 values here ( the else statements will be removed )*/
 					if ( a & ( 1 << CBIT_NOTE ) )
 						SDL_RWread(file, &pr->note, 1, 1);
-					else pr->note = NOTE_NONE;
+					//else pr->note = NOTE_NONE;
 
 					if ( a & ( 1 << CBIT_INSTR ) )
 					{
 						SDL_RWread(file, &pr->instr, 1, 1);
 						instruments[pr->instr - 1].used++;
 					}
-					else pr->instr = 0;
+					//else pr->instr = 0;
 
 					if ( a & ( 1 << CBIT_VOL ) )
 						SDL_RWread(file, &pr->vol, 1, 1);
-					else pr->vol = 0;
+					//else pr->vol = 0;
 
 					if ( a & ( 1 << CBIT_FX ) )
 						SDL_RWread(file, &pr->fx, 1, 1);
-					else pr->fx = 0;
+					//else pr->fx = 0;
 
 					if ( a & ( 1 << CBIT_FXPARAM ) )
 						SDL_RWread(file, &pr->fxparam, 1, 1);
-					else pr->fxparam = 0;
+					//else pr->fxparam = 0;
 
 					if ( a & ( 1 << CBIT_RLE_ONLY1 ) )
 					{

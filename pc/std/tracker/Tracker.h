@@ -54,6 +54,7 @@ public:
   void inc_spd();
   void dec_spd();
   void render_to_apu();
+	void reset();
 	int read_from_file(SDL_RWops *file);
 	void save_to_file(SDL_RWops *file);
 

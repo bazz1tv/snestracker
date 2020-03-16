@@ -63,7 +63,16 @@ void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
 
 int Menu_Bar::File_Context::new_song(void *data)
 {
-  // STUB
+	File_Context *fc = (File_Context *)data;
+	if (fc->filepath)
+	{
+		free(fc->filepath);
+		fc->filepath = NULL;
+	}
+	::tracker->reset();
+	::tracker->patseq.num_entries = 1;
+	::tracker->patseq.sequence[0] = 0;
+	::tracker->patseq.patterns[0].used = 1;
 }
 
 int Menu_Bar::File_Context::open_song(void *data)
