@@ -407,10 +407,10 @@ void Music_Player::set_tempo( double tempo )
 
 void Music_Player::mute_voices( int mask )
 {
-	suspend();
+	//suspend();
 	emu_->mute_voices( mask );
 	//emu_->ignore_silence( mask != 0 );
-	resume();
+	//resume();
 }
 
 #define round(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
