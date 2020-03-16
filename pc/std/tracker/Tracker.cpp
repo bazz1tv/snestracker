@@ -1196,7 +1196,6 @@ void Tracker::save_to_file(SDL_RWops *file)
 
 		for (int t=0; t < MAX_TRACKS; t++)
 		{
-			uint8_t last_instr = 0;
 			for (int tr=0; tr < pattern->len; tr++)
 			{
 				int ttrr;
@@ -1239,7 +1238,6 @@ void Tracker::save_to_file(SDL_RWops *file)
 				{
 					cbyte |= 1<<CBIT;
 				}
-//#define DIFF_LAST_INSTR (last_instr == 0 || last_instr != pr->instr)
 				// Only if every element is filled are we NOT going to use a
 				// special compression byte. so let's check if every element is
 				// filled first.
@@ -1250,7 +1248,7 @@ void Tracker::save_to_file(SDL_RWops *file)
 				{
 					cbyte |=
 						(pr->note ? ( 1<<CBIT_NOTE ) : 0) |
-						(pr->instr && DIFF_LAST_INSTR ? ( 1<<CBIT_INSTR ) : 0) |
+						(pr->instr ? ( 1<<CBIT_INSTR ) : 0) |
 						(pr->vol ? ( 1<<CBIT_VOL ) : 0) |
 						(pr->fx ? ( 1<<CBIT_FX ) : 0) |
 						(pr->fxparam ? ( 1<<CBIT_FXPARAM ) : 0);
@@ -1265,12 +1263,8 @@ void Tracker::save_to_file(SDL_RWops *file)
 				 * present */
 				if (pr->note)
 					SDL_RWwrite(file, &pr->note, 1, 1);
-				if (pr->instr && DIFF_LAST_INSTR)
-				{
-					last_instr = pr->instr;
-					// however, the "actual" instrument is 0-based
+				if (pr->instr)
 					SDL_RWwrite(file, &pr->instr, 1, 1);
-				}
 				if (pr->vol)
 					SDL_RWwrite(file, &pr->vol, 1, 1);
 				if (pr->fx)
