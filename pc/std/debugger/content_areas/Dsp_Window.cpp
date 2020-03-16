@@ -489,16 +489,9 @@ void Dsp_Window::run()
       voice_title[voice].data = (void*)voice;
       voice_title[voice].action = &Voice_Control::mute_solo_voice;
     }
-    Uint32 *color; 
+    Uint32 *color = voice_control.is_muted(voice) ? &Colors::nearblack : &Colors::voice[voice];
     //Uint32 darker_color = Colors::subtract(&Colors::voice[voice], 0xc0);
     // this needs to be expanded to cover mute
-    if (voice_control.is_muted(voice))
-    {
-      color = &Colors::nearblack ;
-    }
-    else 
-      color = &Colors::voice[voice];
-
     
     print_then_inc_row_voice(voice_label_x, *color) // poor man's center on voices
     inc_row
