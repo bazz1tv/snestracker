@@ -83,13 +83,13 @@ int PatLenWidget::inc_patlen(void *bsaw)
 {
 	PatLenWidget *b = (PatLenWidget *)bsaw;
 	//DEBUGLOG("inc_patlen; ");
-	::tracker->main_window.patseqpanel.inc_patlen();
+	::tracker->inc_patlen();
 	b->update_patlen();
 }
 
 int PatLenWidget::dec_patlen(void *bsaw)
 {
 	PatLenWidget *b = (PatLenWidget *)bsaw;
-	::tracker->main_window.patseqpanel.dec_patlen();
+	::tracker->dec_patlen();
 	b->update_patlen();
 }

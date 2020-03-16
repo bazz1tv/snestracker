@@ -492,6 +492,35 @@ void Tracker::dec_spd()
   else spd--;
 }
 
+void Tracker::inc_patlen()
+{
+	uint8_t *len = &patseq.patterns[
+	    patseq.sequence[ main_window.patseqpanel.currow ] ].p.len;
+
+	if (*len < MAX_PATTERN_LEN)
+		*len += 1;
+}
+
+void Tracker::dec_patlen()
+{
+	uint8_t *len = &patseq.patterns[
+	    patseq.sequence[ main_window.patseqpanel.currow ] ].p.len;
+
+	if (*len > MIN_PATTERN_LEN)
+	{
+		*len -= 1;
+		auto *currow = &main_window.pateditpanel.currow;
+		/* If we've decremented past the currow, keep the currow on the last
+		 * row */
+		*currow = *currow >= *len ? *len - 1 : *currow;
+		/* Also, if we have rows_scrolled, and
+		 * (rows_scrolled + VISIBLE_ROWS) > *len, decrement rows_scrolled */
+		auto *rows_scrolled = &main_window.pateditpanel.rows_scrolled;
+		if (*rows_scrolled && (*rows_scrolled + main_window.pateditpanel.VISIBLE_ROWS) > *len)
+			*rows_scrolled -= 1;
+	}
+}
+
 // SNES APU timer 0 and 1 frequency rate in seconds
 #define TIMER01_FREQS 0.000125
 

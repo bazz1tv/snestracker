@@ -376,20 +376,6 @@ int PatSeqPanel::clear(void *pspanel)
   return 0;
 }
 
-void PatSeqPanel::inc_patlen()
-{
-	uint8_t *len = &patseq->patterns[patseq->sequence[currow]].p.len;
-	if (*len < MAX_PATTERN_LEN)
-		*len += 1;
-}
-
-void PatSeqPanel::dec_patlen()
-{
-	uint8_t *len = &patseq->patterns[patseq->sequence[currow]].p.len;
-	if (*len > MIN_PATTERN_LEN)
-		*len -= 1;
-}
-
 int PatSeqPanel::incpat(void *pspanel)
 {
   PatSeqPanel *psp = (PatSeqPanel *)pspanel;

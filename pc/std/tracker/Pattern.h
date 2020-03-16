@@ -175,9 +175,6 @@ struct PatSeqPanel // PatternSequencerPanel
   static int clear(void *pspanel);
   static int incpat(void *pspanel);
   static int decpat(void *pspanel);
-	// current pattern funcs
-	void inc_patlen();
-	void dec_patlen();
 
   Text index_text[VISIBLE_ROWS];
   char index_strings[VISIBLE_ROWS][4];

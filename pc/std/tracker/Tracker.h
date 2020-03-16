@@ -53,6 +53,10 @@ public:
   void dec_bpm();
   void inc_spd();
   void dec_spd();
+	// current pattern funcs
+	void inc_patlen();
+	void dec_patlen();
+
   void render_to_apu();
 	void reset();
 	int read_from_file(SDL_RWops *file);
