@@ -1445,10 +1445,20 @@ void Tracker::save_to_file(SDL_RWops *file)
  *           ff: envelope on
  */
  /* TODO:
-	* Add Pattern len control panel
+	* Note: when adding 3xy portamento command, make special 3FF mean legato
+	*       Or maybe we need an SNES exclusive no KON effects, aside from
+	*       the tracker envelopes...?? (no envelope KON retrigger)
+	* Pan interpolation
+	* Fine tune interpolation
+	*
+	* SUPER EXPERIMENTAL: Wavetable synthesizer that works by checking ENDX
+	* at fast rate, and adjusting the loop addresses of samples after BRR
+	* end blocks are detected.
 	* Add KOFF keyboard button. Add KOFF characters design sdlfont.cpp
 	* Add sample editor
 	* add color to track headers that match STD track colors
+	* Click and mute tracks from the track header
+	*  -> includes darkening the entire track
 	* add debugger window to snestracker
   * :: add FX to set/clear sample Loop bit (can get some cool sounds)
 	* :: add FX to set/clear an inst envelope (vol, pan, pitch)
