@@ -47,19 +47,21 @@ ReloadSpdDec:
 	mov spddec, a
 	ret
 
-; IN: (A) current track idx
-; CLOBS: (X)
+; IN: (X) current track idx
+; CLOBS: (A)
 Loadptrack_ptr:
-	asl a
-	clrc
-	adc a, #ptrack_ptrs
-	mov x,a
-	mov a,(X)+
-	mov ptrack_ptr, a
-	mov a,(X)+
-	mov ptrack_ptr+1, a
+	push x
+		mov a, x  ; move track# into A as arg
+		asl a
+		clrc
+		adc a, #ptrack_ptrs
+		mov x,a
+		mov a,(X)+
+		mov ptrack_ptr, a
+		mov a,(X)+
+		mov ptrack_ptr+1, a
+	pop x
 	ret
-
 
 .define rlecounter rlecounters
 ; Expects <pattern_ptr> to be loaded and valid
@@ -218,6 +220,13 @@ LoadPattern:
   ; Now we read through the pattern data to load up the Track pattern
 	; addresses
 	call !Load_ptrack_ptrs
+
+  ; Readahead-check when crossing between patterns
+  mov x, #7
+- call !Loadptrack_ptr
+  call !readahead ; will "plant" a future tick KOFF if note encountered
+  dec x
+  bpl -
 
 	ret
 
@@ -499,7 +508,12 @@ _incyret1:
   inc y
   ret
 
+; CLOBBERS: A, Y
 readahead:
+  mov a, inc_to_patlen
+  inc a
+  cbne patternlen_rows, @ret
+
   mov y, #0
 ; do a readahead to see if we need to mark KOFF
   mov a, rlecounters + x
@@ -515,6 +529,7 @@ readahead:
   or a, koffbuf
   mov koffbuf, a ; A has bit that this voice represents
 @@next_row_is_blank:
+@ret
   ret
 
 
@@ -532,15 +547,12 @@ ReadPTracks:
   ;--- check if we are in an rlecount
 @next_track:
   mov y, #0
+  call !Loadptrack_ptr
   mov a, rlecounters + x
   beq @no_active_rle
   dec rlecounters + x
   bpl @track_done
 @no_active_rle:
-  mov a, x  ; move track# into A as arg
-  push x
-    call !Loadptrack_ptr
-  pop x
   mov a, [ptrack_ptr] + y
   ; if negative, then we have compression on this row
   bmi @comp
@@ -595,6 +607,8 @@ ReadPTracks:
     mov ptrack_ptrs + 1 + x, y
   pop x
 @track_done:
+  ; if this is the last row, do not do a readahead (it will be done when
+  ; the next pattern is loaded)
   call !readahead
   dec x
   bpl @next_track
