@@ -37,7 +37,6 @@ Dsp_Window * BaseD::dsp_window=NULL;
 Menu_Bar * BaseD::menu_bar=NULL;
 
 const char * BaseD::path=NULL;
-Voice_Control &BaseD::voice_control = ::voice_control;
 
 uint16_t BaseD::Hack_Spc::pc_backup;
 uint16_t *BaseD::Hack_Spc::pc_ptr=NULL;

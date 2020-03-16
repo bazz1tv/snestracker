@@ -1458,6 +1458,13 @@ void Tracker::save_to_file(SDL_RWops *file)
 	* Add sample editor
 	* add color to track headers that match STD track colors
 	* Click and mute tracks from the track header
+	* -> This will involve abstracting out the VoiceControl struct in
+	*  shared/Voice_Control module. Move the common vars into static
+	*  definitions. Take the debugger specific code into a
+	*  debugger/DVoice_Control module. Create a tracker/TVoice_Control
+	*  module. Make the tracker/Pattern.h TrackHeader rect a Clickable_Rect
+	*  with a callback that takes the track number as argument. To solo when
+	*  right clicked, see mute_solo_voice() for reference.
 	*  -> includes darkening the entire track
 	* add debugger window to snestracker
   * :: add FX to set/clear sample Loop bit (can get some cool sounds)

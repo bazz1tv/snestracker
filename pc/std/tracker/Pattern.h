@@ -229,9 +229,10 @@ struct PatternEditorPanel
   SDL_Rect row_rects[MAX_VISIBLE_ROWS];
 
   struct TrackHeader {
+		TrackHeader() : outline(Clickable_Rect(NULL, NULL)) { }
     Clickable_Text ctext;
     char strings[sizeof("1")];
-    SDL_Rect outline;
+    Clickable_Rect outline;
   } trackheader[MAX_TRACKS];
 
   Text index_text[MAX_VISIBLE_ROWS];

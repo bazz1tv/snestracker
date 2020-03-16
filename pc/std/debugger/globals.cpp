@@ -3,5 +3,5 @@
 #include "globals.h"
 
 uint8_t *IAPURAM = NULL;
-Voice_Control voice_control;
+DVoiceControl voice_control;
 track_info_t tag;

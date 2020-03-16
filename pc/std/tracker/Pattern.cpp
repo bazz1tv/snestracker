@@ -7,6 +7,7 @@
 #include "shared/font.h"
 #include "Instruments.h" // for Instrument_Panel
 #include "shared/gui/MouseCursors.h"
+#include "shared/Voice_Control.h"
 
 static int clone_seq_common(PatSeqPanel *psp);
 static Pattern * get_current_pattern(PatSeqPanel *psp);
@@ -633,12 +634,16 @@ void PatternEditorPanel::set_coords(int x, int y)
         CHAR_HEIGHT
       };
       // do the bounding rect later here
-      th->outline = {
+      th->outline.rect = {
         th->ctext.rect.x - (CHAR_WIDTH*6) + (CHAR_WIDTH/2),
         th->ctext.rect.y - 2,
         (CHAR_WIDTH*12) - (CHAR_WIDTH/2),
         th->ctext.rect.h + 2,
       };
+			// store the track# and callback function for muting and soling the
+			// voice via the track header
+			th->outline.data = (void*) t;
+			th->outline.action = Voice_Control::mute_solo_voice;
     }
   }
 
@@ -748,7 +753,7 @@ void PatternEditorPanel::set_coords(int x, int y)
     }
   }
 
-  const SDL_Rect *maxx = &trackheader[MAX_TRACKS - 1].outline;
+  const SDL_Rect *maxx = &trackheader[MAX_TRACKS - 1].outline.rect;
 
 
   rect.w = (maxx->x - rect.x) + maxx->w; // (3 * CHAR_WIDTH) + ((3 + 2 + 2 + 1 + 2 * CHAR_WIDTH) * MAX_TRACKS) + 2;
@@ -925,6 +930,15 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
   {
     case SDL_MOUSEBUTTONDOWN:
       {
+
+				for (int i=0; i < MAX_TRACKS; i++)
+				{
+					uintptr_t newdata = (uintptr_t)trackheader[i].outline.data; // originally the voice number itself
+					if (ev.button.button == SDL_BUTTON_RIGHT)
+						newdata |= 0x08;
+					trackheader[i].outline.check_mouse_and_execute(ev.button.x, ev.button.y, (void*)newdata);
+				}
+
         switch (ev.button.button)
         {
           case SDL_BUTTON_LEFT:
@@ -1571,7 +1585,7 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
     GUITrackRow *gtr = &guitrackrow[t];
 
     trackheader[t].ctext.draw(Colors::voice[t], false);
-    Utility::DrawRect(&trackheader[t].outline, 1);
+    Utility::DrawRect(&trackheader[t].outline.rect, 1);
 
     for (int r=0; r < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); r++)
     {

@@ -2,6 +2,7 @@
 #include "utility.h"
 #include "platform.h"
 #include "Menu_Bar.h"
+#include "shared/Voice_Control.h"
 
 uint16_t Dsp_Window::dir_ram_addr;
 uint16_t *Dsp_Window::dir;
@@ -81,31 +82,6 @@ void Dsp_Window::reset_screw()
   BaseD::Hack_Spc::restore_spc();
 }
 
-int mute_solo_voice(void *data)
-{
-  uintptr_t voicenum_plus_click = (uintptr_t)data;
-  bool is_right_click = (voicenum_plus_click & 0x08);
-  uintptr_t voicenum = voicenum_plus_click & 0x07;
-  //fprintf(stderr, "Voice#: %d,", voicenum);
-  if (is_right_click)
-  {
-    BaseD::voice_control.toggle_solo(voicenum+1);
-    //fprintf(stderr, "solo\n");
-  }
-  else 
-  {
-    BaseD::voice_control.toggle_mute(voicenum+1);
-    //fprintf(stderr, "mute\n");
-  }
-
-
-
-
-  // voice control
-  return 0;
-}
-
-
 void print_binary(SDL_Surface *screen, int x, int y, uint8_t v, bool use_colors=true)
 {
   int tmpx = x+(9*TILE_WIDTH);
@@ -115,7 +91,7 @@ void print_binary(SDL_Surface *screen, int x, int y, uint8_t v, bool use_colors=
     Uint32 *col;
     if (use_colors)
     {
-      if (BaseD::voice_control.is_muted(z))
+      if (::voice_control.is_muted(z))
         col = &Colors::nearblack;
       else 
         col = &Colors::voice[z];
@@ -511,7 +487,7 @@ void Dsp_Window::run()
       //fprintf(stderr, "voice label %d: (%d,%d,%d,%d)\n", voice, voice_title[voice].rect.x, voice_title[voice].rect.y,
         //voice_title[voice].rect.w,voice_title[voice].rect.h);
       voice_title[voice].data = (void*)voice;
-      voice_title[voice].action = &mute_solo_voice;
+      voice_title[voice].action = &Voice_Control::mute_solo_voice;
     }
     Uint32 *color; 
     //Uint32 darker_color = Colors::subtract(&Colors::voice[voice], 0xc0);

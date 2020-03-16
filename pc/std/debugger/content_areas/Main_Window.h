@@ -4,7 +4,6 @@
 #include "globals.h"
 
 #include "report.h"
-#include "Voice_Control.h"
 #include <math.h>
 #include "sdl_dblclick.h"
 #include "Port_Tool.h"

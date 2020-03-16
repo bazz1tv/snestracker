@@ -2,6 +2,8 @@
 #include "utility.h"
 #include <assert.h>
 
+//Clickable_Rect::Clickable_Rect() {}
+
 Clickable_Rect::Clickable_Rect(int (*action)(void *data)/*=NULL*/,
 	void *data/*=NULL*/) : action(action), data(data)
 {
