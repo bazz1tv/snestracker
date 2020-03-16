@@ -821,6 +821,82 @@ void Tracker::render_to_apu()
 		sound_stop();
 }
 
+/* Song File Format
+~~~~~~~~~~~~~~~~~~~
+All integers spanning more than 1 byte are stored little-endian unless
+otherwise noted.
+
+"STSONG"   -- file magic header string. not null terminated
+Song Title -- null terminated string
+bpm/spd    -- 16-bit: (BPM << 6) | Spd
+                (0-300)   (1-32?)
+              ----BPM---- ==SPD==
+              0 0000 0000 0000 00
+
+#samples   -- 1 byte
+
+What follows is sequential sample data of the follow format:
+index      -- 1 byte
+name       -- null-terminated string
+TODO: Add rel_loop, finetune settings here
+brrsize    -- size in bytes of following brr sample
+brrsample
+
+#instruments -- 1 byte
+What follows are sequential instrument data of the following nature:
+index      -- 1 byte
+Name       -- null terminated string
+vol        -- 1 byte
+pan        -- "
+srcn       -- "
+adsr1      -- "
+adsr2      -- "
+semitone_offset -- "
+finetune   -- "
+
+#Patterns  -- 1 byte
+What follows are sequential pattern data of the following format:
+index      -- 1 byte
+len        -- 1 byte: number of rows
+Compressed Pattern Data for 8 tracks
+
+Pattern Sequencer Entries -- an arbitrary number of byte sized pattern indices
+that will make up the pattern sequencer. End is signaled by EOF
+*/
+
+/*
+Other ideas:
+
+Project -- a project can consist of 1 or more songs. Songs glean from a
+global bank of samples, instruments, and (if desired) patterns.
+
+Mixer panel -- button like "Inst. Ed.", has slider gui elements to control
+track volumes for the song, along with Main and Echo Volumes.
+
+Interpolate parameter -- with tracker on a certain pattern/row, being able
+to perform a special mouse click on allowed elements that will activate
+interpolation, then -- moving to a forward pattern/row, FX elements will
+be inserted that interpolate the start and end values of the selected
+paramter (eg. echo volume)
+
+FX Tracks -- there may be cases where this is not enough room for
+inserting desired FX. In this case, why not have ability to add FX tracks?
+Could do it like Renoise and just add fx columns under the desired track.
+
+Support video game SFX - some games will want to play songs on tracks (eg.
+7-8) and when sending the command to play a certain sound effect, that
+track (if it has music) should mute the music for the time of the sfx
+being played until it's finished.
+
+Meta Instruments (SFX?) -
+  can take up 1 or more tracks,
+  selectable ability to run on a special global meta instrument timer.
+	has priority over the physical tracks.
+*/
+
+
+
+
 /* WARNING: no bounds checking!? */
 static void read_str_from_file(SDL_RWops *file, char *str_ptr)
 {
