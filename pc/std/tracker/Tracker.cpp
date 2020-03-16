@@ -1045,6 +1045,8 @@ int Tracker::read_from_file(SDL_RWops *file)
 		Sample *s = &samples[idx];
 		read_str_from_file(file, s->name);
 
+		SDL_RWread(file, &samples[idx].rel_loop, 2, 1);
+
 		uint16_t brrsize;
 		SDL_RWread(file, &brrsize, 2, 1);
 		Brr *brr = (Brr *) malloc(brrsize);
@@ -1228,6 +1230,7 @@ void Tracker::save_to_file(SDL_RWops *file)
 		uint16_t size = samples[i].brrsize;
 		SDL_RWwrite(file, &i, 1, 1); // write sample index (only 1 byte)
 		SDL_RWwrite(file, samples[i].name, strlen(samples[i].name) + 1, 1);
+		SDL_RWwrite(file, &samples[i].rel_loop, 2, 1);
 		SDL_RWwrite(file, &size, 2, 1);
 		SDL_RWwrite(file, samples[i].brr, size, 1);
 	}
