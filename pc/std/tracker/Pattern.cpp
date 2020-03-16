@@ -1254,7 +1254,7 @@ void PatternEditorPanel::dec_currow(int howmany/*=1*/, bool wrap/*=true*/)
     {
       int len = get_current_pattern(psp)->len;
       currow = len - (howmany - currow);
-      rows_scrolled = currow - (VISIBLE_ROWS - 1);
+      rows_scrolled = VISIBLE_ROWS > len ? 0 : currow - (VISIBLE_ROWS - 1);
 
       if (!pattern_wrap)
         psp->dec_currow();
