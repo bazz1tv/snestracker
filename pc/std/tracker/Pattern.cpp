@@ -1570,8 +1570,7 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
   {
     GUITrackRow *gtr = &guitrackrow[t];
 
-    trackheader[t].ctext.draw(
-        Colors::Interface::color[Colors::Interface::Type::text_fg], false);
+    trackheader[t].ctext.draw(Colors::voice[t], false);
     Utility::DrawRect(&trackheader[t].outline, 1);
 
     for (int r=0; r < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); r++)
