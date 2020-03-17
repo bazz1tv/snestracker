@@ -44,9 +44,9 @@ MAIN:
   
   ; TODO - Could alter master volume by song setting here
   MOV dspaddr, #mvol_l 
-  MOV dspdata, #127   ; L/R VOL 100% BOTH VOICES 
-  MOV dspaddr, #mvol_r
-  MOV dspdata, #127
+  MOV dspdata, #$40   ; Rather than put on FULL BLAST, try this value
+  MOV dspaddr, #mvol_r; used globally in SMRPG
+  MOV dspdata, #$40
 
   ; Todo - enable echo buffer writes when bringing up echo support
   MOV dspaddr, #flg   ; TURN OFF MUTE
