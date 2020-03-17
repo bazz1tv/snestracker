@@ -11,7 +11,8 @@
 const int Sample_Panel::NUM_ROWS;
 #define SAMPLE_NAME_GUI_CHAR_WIDTH 22
 
-Sample::Sample() : brr(NULL), brrsize(0), rel_loop(0)
+Sample::Sample() : brr(NULL), brrsize(0), rel_loop(0), semitone_offset(0),
+  finetune(0)
 {
   name[0] = 0;
 }
@@ -24,6 +25,30 @@ Sample::~Sample()
     brr = NULL;
     brrsize = 0;
   }
+}
+
+void Sample::inc_loop()
+{
+	if (brr != NULL)
+		rel_loop = rel_loop >= (brrsize - BRR_LEN) ? brrsize - BRR_LEN : rel_loop + BRR_LEN;
+}
+
+void Sample::dec_loop()
+{
+	if (brr != NULL)
+		rel_loop = rel_loop >= BRR_LEN ? rel_loop - BRR_LEN : 0;
+}
+
+void Sample::inc_finetune()
+{
+	if (brr != NULL && finetune < 127)
+		finetune++;
+}
+
+void Sample::dec_finetune()
+{
+	if (brr != NULL && finetune > -128)
+		finetune--;
 }
 
 Sample_Panel::Sample_Panel(Sample* samples) :

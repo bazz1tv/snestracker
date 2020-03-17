@@ -223,9 +223,10 @@ struct PatternEditorPanel
   /*Highlight*/int highlighted_subsection=NOTE;
 
   int rows_scrolled = 0;
-  SDL_Rect rect;
-  SDL_Rect highlight_r; // the highlight rect of current select instr
-  SDL_Rect subhighlight_r;
+	SDL_Rect rect;
+	SDL_Rect fullsize_r; // copy of rect that represents MAX_VISIBLE_ROWS dimensions
+  SDL_Rect highlight_r; // the highlight rect of the row
+  SDL_Rect subhighlight_r; // the highlight rect of which column (note, instr, vol etc.)
   SDL_Rect row_rects[MAX_VISIBLE_ROWS];
 
   struct TrackHeader {

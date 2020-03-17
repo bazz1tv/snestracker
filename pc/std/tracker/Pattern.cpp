@@ -764,6 +764,10 @@ void PatternEditorPanel::set_coords(int x, int y)
     row_rects[i].x -= 1;
     row_rects[i].w += rect.w - (3*CHAR_WIDTH) - 1;
   }
+
+	// store of a copy of the rect representing all visible rows
+	fullsize_r = rect;
+	fullsize_r.h = (CHAR_HEIGHT * (1 + VISIBLE_ROWS)) + 6;
 }
 
 void PatternEditorPanel::set_visible_rows(int rows)

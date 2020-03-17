@@ -1,3 +1,4 @@
+#pragma once
 #include "SDL.h"
 #include "Render.h"
 #include "Colors.h"

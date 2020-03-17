@@ -20,6 +20,7 @@
 #include "PatLenWidget.h"
 #include "BpmSpdAddWidget.h"
 #include "InstrumentEditor.h"
+#include "SampleEditor.h"
 
 struct Tracker;
 
@@ -91,8 +92,14 @@ struct Main_Window : public Experience
 	PatLenWidget plwidget;
   PatternEditorPanel pateditpanel;
   BpmSpdAddWidget bsawidget;
+	// INSTRUMENT EDITOR STUFF
   InstrumentEditor instreditor;
   bool instreditor_active = false;
   Button instreditor_btn;
   static int toggle_instreditor(void *m);
+	// SAMPLE EDITOR STUFF
+	SampleEditor sample_editor;
+	bool sample_editor_active = false;
+	Button sample_editor_btn;
+	static int toggle_sample_editor(void *m);
 };

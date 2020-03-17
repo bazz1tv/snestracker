@@ -23,7 +23,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   pateditpanel(&patseqpanel, &instrpanel),
   bsawidget(tracker, &pateditpanel),
   instreditor(&instrpanel),
-  instreditor_btn("Inst. Ed.", toggle_instreditor, this)
+  instreditor_btn("Inst. Ed.", toggle_instreditor, this),
+	sample_editor_btn("Samp. Ed.", toggle_sample_editor, this)
 {
   int x,y,xx,yy;
   song_title.dblclick = false; // do not require dblclick to edit. single
@@ -56,6 +57,9 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   instreditor_btn.rect.x = 150;
   instreditor_btn.rect.y = bsawidget.rect.y + bsawidget.rect.h + 4;
+	// sample editor button directly beneath instr editor button
+	sample_editor_btn.rect.x = 150;
+	sample_editor_btn.rect.y = instreditor_btn.rect.y + instreditor_btn.rect.h + 5;
 
   x += song_title.rect.w + (CHAR_WIDTH * 2);
   instrpanel.set_coords(x, yy);
@@ -67,7 +71,20 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   pateditpanel.set_visible_rows(0x08); // called to update rect.h
   y = pateditpanel.rect.y + pateditpanel.rect.h + (CHAR_HEIGHT*2);
   pateditpanel.set_visible_rows(PatternEditorPanel::MAX_VISIBLE_ROWS); // called to update rect.h
-  instreditor.set_coords(xx, y);
+
+	instreditor.set_coords(xx, y);
+	sample_editor.set_coords(xx, y);
+}
+
+static void deactivate_instreditor(Main_Window *m)
+{
+	m->instreditor_active = false;
+	Tracker::prerenders.erase((DrawRenderer *)&m->instreditor.adsrpanel);
+}
+
+static void deactivate_sample_editor(Main_Window *m)
+{
+	m->sample_editor_active = false;
 }
 
 int Main_Window::toggle_instreditor(void *m)
@@ -75,7 +92,7 @@ int Main_Window::toggle_instreditor(void *m)
   Main_Window *mw = (Main_Window *)m;
   mw->instreditor_active = !mw->instreditor_active;
 
-  SDL_Rect r = mw->pateditpanel.rect;
+  SDL_Rect r = mw->pateditpanel.fullsize_r;
   r.x +=1;
   r.w -=1;
   r.h -=1;
@@ -83,6 +100,7 @@ int Main_Window::toggle_instreditor(void *m)
 
   if (mw->instreditor_active)
   {
+		deactivate_sample_editor(mw);
     mw->pateditpanel.set_visible_rows(0x08); //mw->pateditpanel.MAX_VISIBLE_ROWS / 2);
     if (mw->instreditor.tabs.adsr.active)
       Tracker::prerenders.insert((DrawRenderer *)&mw->instreditor.adsrpanel);
@@ -93,6 +111,28 @@ int Main_Window::toggle_instreditor(void *m)
     if (mw->instreditor.tabs.adsr.active)
       Tracker::prerenders.erase((DrawRenderer *)&mw->instreditor.adsrpanel);
   }
+}
+
+/* By and large a copy of toggle_instreditor. Maybe we can reduce code
+ * size by putting the common into one function. TODO*/
+int Main_Window::toggle_sample_editor(void *m)
+{
+	Main_Window *mw = (Main_Window *)m;
+	mw->sample_editor_active = !mw->sample_editor_active;
+
+	SDL_Rect r = mw->pateditpanel.fullsize_r;
+	r.x +=1;
+	r.w -=1;
+	r.h -=1;
+	SDL_FillRect(::render->screen, &r, Colors::transparent);
+
+	if (mw->sample_editor_active)
+	{
+		deactivate_instreditor(mw);
+		mw->pateditpanel.set_visible_rows(0x08); //mw->pateditpanel.MAX_VISIBLE_ROWS / 2);
+	}
+	else
+		mw->pateditpanel.set_visible_rows(mw->pateditpanel.MAX_VISIBLE_ROWS);
 }
 
 int Main_Window::Gain::change(void *dblnewgain)
@@ -136,6 +176,7 @@ void Main_Window::draw()
   song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
 	bsawidget.draw(::render->screen);
   instreditor_btn.draw(::render->screen);
+	sample_editor_btn.draw(::render->screen);
   instrpanel.draw(::render->screen);
   samplepanel.draw(::render->screen);
   patseqpanel.draw(::render->screen);
@@ -143,7 +184,8 @@ void Main_Window::draw()
   pateditpanel.draw(::render->screen);
   if (instreditor_active)
     instreditor.draw(::render->screen);
-  //draw_memory_outline();
+	else if (sample_editor_active)
+		sample_editor.draw(::render->screen);
 
   time_last = time_cur;
   
@@ -172,6 +214,7 @@ int Main_Window::receive_event(SDL_Event &ev)
 
   handle_text_edit_rect_event(ev, &song_title);
   instreditor_btn.check_event(ev);
+	sample_editor_btn.check_event(ev);
 	plwidget.handle_event(ev);
   bsawidget.handle_event(ev);
   instrpanel.event_handler(ev);
@@ -181,6 +224,8 @@ int Main_Window::receive_event(SDL_Event &ev)
   pateditpanel.event_handler(ev);
   if (instreditor_active)
     instreditor.handle_event(ev);
+	else if (sample_editor_active)
+		sample_editor.handle_event(ev);
   // DIRTY :( ITS IMPORTANT THAT WE CHECK THE DBLCLICK EVENTS AFTER THE ABOVE
   dblclick::check_event(&ev);
   /*if (gain.slider)

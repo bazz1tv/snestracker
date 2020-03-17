@@ -33,8 +33,13 @@ struct Sample
   /* signed offset in semitones to pitch the sample. This will be used
    * directly by the SNES driver. The tracker must impose the restraints
    * on the range allowed */
-  //int8_t semitone_offset;
-  //DspPitch fine_tune; // used to pitch the sample for range of +/- one semitone
+  int8_t semitone_offset; // TODO
+	int8_t finetune;
+
+	void inc_loop();
+	void dec_loop();
+	void inc_finetune();
+	void dec_finetune();
 };
 
 struct Sample_Panel
