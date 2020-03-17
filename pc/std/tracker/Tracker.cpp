@@ -354,10 +354,6 @@ void Tracker::handle_events()
         {
           case UserEvents::sound_stop:
 						::player->post_fadeout();
-						/* This is just a hack to be able to export SPCs successfully.
-						 * But what should really be done is when the SPC Export
-						 * function is called, render_to_apu() is called from there */
-						render_to_apu();
 						break;
           case UserEvents::callback:
 					{
@@ -847,7 +843,11 @@ void Tracker::render_to_apu()
 	/* This way for SPC Export. Won't have to send the play command to
 	 * the APU port manually anymore */
 	if (!playback)
+	{
+		apuram->sequencer_i = 0; // since this will probably be for SPC Export
+		// play from beginning of sequence
 		sound_stop();
+	}
 }
 
 /* Song File Format
