@@ -104,11 +104,10 @@ void Main_Window::draw()
       }
     }
 
-    if (main_memory_area.context.menu.is_active)
-    {
-      main_memory_area.context.menu.draw(::render->screen);
-    }
-    draw_menu_bar();
+    if (::brrcontext.menu.is_active)
+      ::brrcontext.menu.draw(::render->screen);
+
+		draw_menu_bar();
     
     SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
     SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
@@ -165,7 +164,11 @@ int Main_Window::receive_event(SDL_Event &ev)
 {
   /* menu bar */
   int r;
-  if ((r=BaseD::menu_bar_events(ev)))
+
+	if (Context_Menu::currently_active_context_menu)
+		return Context_Menu::currently_active_context_menu->receive_event(ev);
+
+	if ((r=BaseD::menu_bar_events(ev)))
   {
     switch (r)
     {
@@ -185,59 +188,6 @@ int Main_Window::receive_event(SDL_Event &ev)
   }
   
   dblclick::check_event(&ev);
-
-  if (main_memory_area.context.menu.is_active)
-  {
-    switch (ev.type)
-    {
-      case SDL_QUIT:
-      printf ("penis4\n");
-      quitting = true;
-      break;
-
-      case SDL_MOUSEMOTION:
-      {
-        mouse::x = ev.motion.x; mouse::y = ev.motion.y;
-      } break;
-
-      case SDL_KEYDOWN:
-      {
-        int scancode = ev.key.keysym.sym;
-        switch (scancode)
-        {
-          case SDLK_RETURN:
-          // act same as left mouse button click use a goto lol
-          main_memory_area.context.menu.do_thing();
-          break;
-
-          case SDLK_ESCAPE:
-          main_memory_area.context.menu.is_active = false;
-          break;
-        }
-      } break;
-
-      case SDL_MOUSEBUTTONDOWN:
-      {
-        switch (ev.button.button)
-        {
-          case SDL_BUTTON_LEFT:
-          {
-            main_memory_area.context.menu.do_thing();
-          }
-          break;
-
-          case SDL_BUTTON_RIGHT:
-          break;
-
-          default:break;
-        }
-      }
-      break;
-      default:break;
-    }
-    return 0;
-  }
-
 
   switch (ev.type)
   {
@@ -847,46 +797,7 @@ int Main_Window::receive_event(SDL_Event &ev)
         {
           if (ev.button.button == SDL_BUTTON_RIGHT)
           {
-            // prototype 
-            main_memory_area.log_the_fucking_address_for_the_fucking_context_window();
-            main_memory_area.context.menu.is_active = true;
-            
-            switch (main_memory_area.brr.check_brr(&main_memory_area.context.addr_when_user_right_clicked))
-            {
-              case BRR::NOT_A_SAMPLE:
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::SOLOSAMPLE].is_visible = false;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = false;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = false;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = false;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRI].is_visible = false;
-                main_memory_area.context.menu.is_active = false;
-              break;
-
-              case BRR::PLAIN_SAMPLE:
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::SOLOSAMPLE].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = false;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRI].is_visible = true;
-              break;
-              case BRR::LOOP_SAMPLE:
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::SOLOSAMPLE].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRI].is_visible = true;
-              break;
-              case BRR::CLICKED_ON_LOOP_ONLY:
-                // notify user
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::SOLOSAMPLE].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::PLAYSAMPLE].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRR].is_visible = true;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRP].is_visible = false;
-                main_memory_area.context.menu_items[Main_Memory_Area::Context::RIPBRRI].is_visible = true;
-              break;
-            }
-
-            main_memory_area.context.menu.preload(ev.button.x, ev.button.y);
+            main_memory_area.spawnbrrcontextmenu(ev.button.x, ev.button.y);
           }
         } 
 
@@ -990,13 +901,6 @@ void Main_Window::run()
   {
     tmp_profile->process();
   }
-
-  for (uint8_t voice=0; voice < MAX_VOICES; voice++)
-  {
-    dir = player->spc_read_dsp(dsp_reg::dir) * 0x100;
-    uint16_t *p = (uint16_t*)&IAPURAM[dir+(player->spc_read_dsp(0x10*voice+4)*4)];
-    main_memory_area.brr.srcn[voice] = *p;
-  } 
 
   pack_mask(packed_mask);
   

@@ -19,8 +19,6 @@
 #include "gui/Tab.h"
 #include "shared/Scroll_Tag.h"
 
-
-
 struct Main_Window : public BaseD, public Experience
 {
   void scroll_track_tags();

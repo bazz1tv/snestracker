@@ -3,10 +3,12 @@
 #include "report.h"
 #include "gme/player/Music_Player.h"
 #include "DVoiceControl.h"
+#include "BrrContextMenu.h"
 
 extern uint8_t *IAPURAM;
 extern DVoiceControl voice_control;
 extern track_info_t tag;
+extern BrrContextMenu brrcontext;
 
 void handle_error( const char* );
 

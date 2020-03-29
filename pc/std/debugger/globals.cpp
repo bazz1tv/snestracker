@@ -5,3 +5,4 @@
 uint8_t *IAPURAM = NULL;
 DVoiceControl voice_control;
 track_info_t tag;
+BrrContextMenu brrcontext;

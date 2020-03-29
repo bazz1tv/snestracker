@@ -4,10 +4,14 @@
 #include "Menu_Bar.h"
 #include "shared/Voice_Control.h"
 
-uint16_t Dsp_Window::dir_ram_addr;
 #define DIR_ENTRIES_PER_COLUMN 0x20
+
+// These were made static only so that the DIR entries right-click
+// callback could access it while using its datafield to keep track of the
+// index
 uint16_t *Dsp_Window::dir;
 uint16_t Dsp_Window::dir_index;
+uint8_t Dsp_Window::dir_offset = 0;
 
 #define print_then_inc_row(x) sdlfont_drawString(screen, x,i, tmpbuf, Colors::white); i+=CHAR_HEIGHT;
 #define print_then_inc_row_voice(x,col) sdlfont_drawString(screen, x,i, tmpbuf, col); i+=CHAR_HEIGHT;
@@ -28,9 +32,9 @@ static Uint8* get_brr_end_block(Uint8 *brr_sample)
     brr_sample+=9;
   return brr_sample;
 }
+
 int Dsp_Window::Loop_Clickable::toggle_loop(void *index)
 {
-  //Dsp_Window *dsp_window = BaseD::dsp_window;
   Uint8 *iindex = (Uint8*)index;
   Uint8 *brr_sample = &IAPURAM[dir[dir_index + (*iindex * 2)]];
   brr_sample = get_brr_end_block(brr_sample);
@@ -41,12 +45,10 @@ int Dsp_Window::Loop_Clickable::toggle_loop(void *index)
   if (*brr_sample & 2)
   {
     *brr_sample &= ~2;
-    
   }
   else
   {
     *brr_sample |= 2;
-    //dsp_window->loop_clickable[*iindex].clickable_text.color = Colors::white;
   }
   return 0;
 }
@@ -55,10 +57,6 @@ Dsp_Window::Dsp_Window() :
 screw_clickable("Screw Around", toggle_screw, this, Colors::nearblack)
 {
   clear_used_srcn();
-  /*for (int i=0; i < NUM_DIR_ENTRIES_DISPLAYED; i++)
-  {
-    loop_clickable[i].index = i;
-  }*/
 }
 
 int Dsp_Window::toggle_screw(void *dsp_win)
@@ -534,8 +532,6 @@ void Dsp_Window::run()
   i=TILE_HEIGHT*7 + o_i;
 
   #define TEMPLATE_DIR_ENTRY_STR "$%02X: $%04X,$%04X"
-  #define TEMPLATE_DIR_ENTRY_1 "$%02X: $%04X,"
-  #define TEMPLATE_DIR_ENTRY_2 "$%04X"
   #define TEMPLATE_DIR_STR "DIRECTORY ($%04X)"
 
   int PIXEL_START_X = (x-TILE_WIDTH)-((MAX_VOICES-1)*5);
@@ -619,6 +615,17 @@ void Dsp_Window::run()
     if (is_first_run)
     {
       int xx = x + strlen(tmpbuf)*CHAR_WIDTH;
+
+			// init clickable dir-rects for context menu download
+			Clickable_Rect *cr = &dir_rects[fakerow];
+			SDL_Rect *r = &cr->rect;
+			r->x = x;
+			r->y = i;
+			r->w = (sizeof(TEMPLATE_DIR_ENTRY_STR) - 1) * CHAR_WIDTH;
+			r->h = CHAR_HEIGHT;
+			cr->action = dir_rect_clicked;
+			cr->data = (void*)fakerow;
+
       loop_clickable[fakerow].index = fakerow;
       loop_clickable[fakerow].clickable_text.rect.x = xx;
       loop_clickable[fakerow].clickable_text.rect.y = i;
@@ -732,6 +739,9 @@ outx.: $FF    outx.: $FF    outx.: $FF    outx.: $FF
     cursor.draw(::render->screen, Colors::green);
   }
 
+	if (::brrcontext.menu.is_active)
+		::brrcontext.menu.draw(::render->screen);
+
   // Display all DSP registers
   //sprintf(tmpbuf, "%s")
   SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels,
@@ -744,7 +754,11 @@ int Dsp_Window::receive_event(SDL_Event &ev)
 {
   /* menu bar */
   int r;
-  if ((r=BaseD::menu_bar_events(ev)))
+
+	if (Context_Menu::currently_active_context_menu)
+		return Context_Menu::currently_active_context_menu->receive_event(ev);
+
+	if ((r=BaseD::menu_bar_events(ev)))
   {
     switch (r)
     {
@@ -1269,9 +1283,14 @@ int Dsp_Window::receive_event(SDL_Event &ev)
           if (timers.label[i].check_mouse_and_execute(ev.button.x, ev.button.y))
             return;
         }
+				/* NOTE: Add code here to check for clicks over DIR entries */
         for (int i=0; i < NUM_DIR_ENTRIES_DISPLAYED; i++)
         {
-          if (loop_clickable[i].clickable_text.check_mouse_and_execute(ev.button.x, ev.button.y))
+					// hooray for super unreadable code :(
+					if ( ( ev.button.button == SDL_BUTTON_RIGHT &&
+					      dir_rects[i].check_mouse_and_execute(ev.button.x, ev.button.y) ) ||
+					     ( ev.button.button == SDL_BUTTON_LEFT &&
+					      loop_clickable[i].clickable_text.check_mouse_and_execute(ev.button.x, ev.button.y)) )
             return;
         }
         for (int i=0; i < MAX_VOICES; i++)
@@ -1281,11 +1300,48 @@ int Dsp_Window::receive_event(SDL_Event &ev)
             newdata = (uintptr_t)voice_title[i].data | 0x08;
           voice_title[i].check_mouse_and_execute(ev.button.x, ev.button.y, (void*)newdata);
         }
-
-        //BaseD::menu_bar_events(ev);
       }
       break;
       default:
       break;
   }
+}
+
+int Dsp_Window::dir_rect_clicked(void *idx)
+{
+	uintptr_t index = (uintptr_t) idx;
+
+	// spawn a brr context here
+	// supply the context action data
+	// get the DIR address
+
+	DEBUGLOG("index: 0x%x ; ", index);
+
+	dir_index = 0 + (dir_offset * 2);
+	if (index + dir_offset >= 0x100)
+			dir_index = 0 - (DIR_ENTRIES_PER_COLUMN * 2);
+
+	uint16_t cur_dir_index = dir_index + (index * 2);
+	DEBUGLOG("BRR addr: %04x, %04x\n", dir[cur_dir_index], dir[cur_dir_index + 1]);
+	// update the addresses of those BRR fields
+	::brrcontext.menu_items[BrrContextMenu::RIPBRR].clickable_text.data = (void*) dir[cur_dir_index];
+
+	// If this DIR entry is actively loaded to a voice, we can enable the
+	// BRRI download
+	::brrcontext.menu_items[BrrContextMenu::RIPBRRI].is_visible = false;
+	for (int v=0; v < MAX_VOICES; v++)
+	{
+		if (get_voice_srcn_addr(v) == dir[cur_dir_index])
+		{
+			::brrcontext.menu_items[BrrContextMenu::RIPBRRI].is_visible = true;
+			::brrcontext.menu_items[BrrContextMenu::RIPBRRI].clickable_text.data = (void*) ( (v << 16) | dir[cur_dir_index] );
+
+			break;
+		}
+	}
+
+	::brrcontext.menu_items[BrrContextMenu::SOLOSAMPLE].is_visible = false;
+	::brrcontext.menu_items[BrrContextMenu::PLAYSAMPLE].is_visible = false;
+	::brrcontext.menu.preload(mouse::x, mouse::y);
+	::brrcontext.menu.activate();
 }

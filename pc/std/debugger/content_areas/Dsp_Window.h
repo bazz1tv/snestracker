@@ -58,10 +58,14 @@ struct Dsp_Window : public BaseD, public Experience
   } timers;
 
   static const int NUM_DIR_ENTRIES_DISPLAYED = 8*4*2;
-  static uint16_t dir_ram_addr;
+  uint16_t dir_ram_addr;
   static uint16_t *dir;
   static uint16_t dir_index;
-  struct Loop_Clickable
+
+	static int dir_rect_clicked(void *idx);
+	Clickable_Rect dir_rects[NUM_DIR_ENTRIES_DISPLAYED];
+
+	struct Loop_Clickable
   {
     Loop_Clickable() : clickable_text("L", toggle_loop, &index) {}
     static int toggle_loop(void *index);
@@ -219,7 +223,7 @@ struct Dsp_Window : public BaseD, public Experience
   //unsigned char gen_dsp_vals[MAX_GEN_DSP_REGS]; // num of DSP regs
   //unsigned char voice_dsp_vals[10*(MAX_VOICES)]; 
   //
-  uint8_t dir_offset=0; // allows scrolling directory
+  static uint8_t dir_offset; // allows scrolling directory
   uint8_t used_srcn[MAX_SRCN_ENTRIES/8]; // = 0x20
   uint8_t used_srcn_voice[MAX_SRCN_ENTRIES];
   //
