@@ -74,3 +74,14 @@ struct Brr
 #define BRR_HDR_LOOP 0x02
 #define BRR_HDR_FILTER 0x0c
 #define BRR_HDR_RANGE 0xf0
+
+int write_brr_to_file(const Brr *brr);
+uint16_t get_brr_size(const Brr *brr);
+// SORT OF SEPARATE SNES TRACKER BRR RELATED STUFF
+#define BRRP_MAGIC_STR "ST-BRRP"  // the S has the low 2 bits set,
+//an unlikely situation for any BRR Sample
+// 8-byte aligned
+#define BRR_FILE_EXTENSION "brr"
+#define BRRP_FILE_EXTENSION "brrp"
+#define BRRI_MAGIC_STR "ST-BRRI"  // 8 byte aligned
+#define BRRI_FILE_EXTENSION "brri"
