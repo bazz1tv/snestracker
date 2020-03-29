@@ -171,8 +171,8 @@ void Context_Menu::draw(SDL_Surface *screen)
   }
 }
 
-Context_Menu::Context_Menu(Context_Menu_Item *array, bool isActive/*=false*/, bool isStatic/*=false*/) :
-is_active(isActive), is_static(isStatic)
+Context_Menu::Context_Menu(Context_Menu_Item *array, bool isActive/*=false*/) :
+is_active(isActive)
 {
   items = array;
 }

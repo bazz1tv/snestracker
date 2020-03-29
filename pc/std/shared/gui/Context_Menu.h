@@ -26,14 +26,13 @@ struct Context_Menu
   bool receive_event(const SDL_Event &ev);
 
   SDL_Rect created_at;  // the mouse coordinate when context menu was created
-  Context_Menu(Context_Menu_Item *array,  bool isActive=false, bool isStatic=false);
+  Context_Menu(Context_Menu_Item *array,  bool isActive=false);
   void preload(int &x, int &y, bool use_cache=false);
   void draw(SDL_Surface *screen);
   bool do_thing(void *data=NULL);
   Context_Menu_Item *items=NULL;
   
   bool is_active=false;
-  bool is_static=false;
   int greatest_length=0, visible_items=0;
   Context_Menu_Item *highlighted_item=NULL;
 
