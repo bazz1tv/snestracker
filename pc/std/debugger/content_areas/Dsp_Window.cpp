@@ -5,6 +5,7 @@
 #include "shared/Voice_Control.h"
 
 uint16_t Dsp_Window::dir_ram_addr;
+#define DIR_ENTRIES_PER_COLUMN 0x20
 uint16_t *Dsp_Window::dir;
 uint16_t Dsp_Window::dir_index;
 
@@ -802,10 +803,10 @@ int Dsp_Window::receive_event(SDL_Event &ev)
         switch (scancode)
         {
           case SDLK_LEFT:
-          dir_offset-=0x20;
+          dir_offset -= DIR_ENTRIES_PER_COLUMN;
           break;
         case SDLK_RIGHT:
-          dir_offset+= 0x20;
+          dir_offset += DIR_ENTRIES_PER_COLUMN;
           break;
           default:break;
         } 
