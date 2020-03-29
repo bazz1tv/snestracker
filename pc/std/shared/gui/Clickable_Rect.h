@@ -4,7 +4,6 @@
 struct Clickable_Rect
 {
   // Constructors
-  Clickable_Rect();
   Clickable_Rect(int (*action)(void *data)=NULL, void *data=NULL);
   Clickable_Rect(int x, int y, int w, int h,
                  int (*action)(void *data)=NULL, void *data=NULL);
