@@ -4,6 +4,7 @@
 
 #include "mouse.h"
 
+Context_Menu * Context_Menu::currently_active_context_menu = NULL;
 bool Context_Menu::is_activated()
 {
   return is_active;
@@ -11,13 +12,16 @@ bool Context_Menu::is_activated()
 
 bool Context_Menu::toggle_activate()
 {
-  is_active = !is_active;
-  if (!is_active) SDL_FillRect(::render->screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
+  if (is_active)
+		deactivate();
+	else activate();
   return is_active;
 }
+
 void Context_Menu::activate()
 {
   is_active = true;
+	currently_active_context_menu = this;
 }
 
 void Context_Menu::deactivate()
@@ -25,6 +29,7 @@ void Context_Menu::deactivate()
   SDL_FillRect(::render->screen, &created_at,
                Colors::Interface::color[Colors::Interface::Type::bg]);
   is_active=false;
+	currently_active_context_menu = NULL;
 }
 
 Context_Menu_Item::Context_Menu_Item(const char *str, bool is_visible, 
@@ -66,8 +71,11 @@ bool Context_Menu::receive_event(const SDL_Event &ev)
           return do_thing();
         }
         break;
-
+/* possible todo: turn this function to return ints, so we can specify
+ * when a right-click happened, the event handler can proceed to process
+ * the right click in the rest of its handlers rather than returning */
         case SDL_BUTTON_RIGHT:
+					deactivate();
         break;
 
         default:break;
@@ -100,18 +108,16 @@ bool Context_Menu::do_thing(void *data/*=NULL*/)
     if (p->clickable_text.action)
     {
       p->clickable_text.do_thing(data);
-      is_active = false;
+      deactivate();
       return 1;
     }
   }
-  is_active = false;
-  return 0;
+  deactivate();
+	return 0;
 }
 void Context_Menu::draw(SDL_Surface *screen)
 {
   int i=0, drawn=0;
-  //visible_items=0;
-  //greatest_length=0;
 
   // draw background panel
   SDL_FillRect(screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
@@ -192,13 +198,4 @@ void Context_Menu::preload(int &x, int &y, bool use_cache)
 
   created_at.w = greatest_length+TILE_WIDTH*3;
   created_at.h = visible_items*TILE_HEIGHT + TILE_HEIGHT/2;
-}
-
-void Context_Menu::push(char *str)
-{
-  //Clickable_Text item(str, created_at.x, created_at.y);
-}
-void Context_Menu::push(Clickable_Text &ref)
-{
-  //items.push_back(ref);
 }
