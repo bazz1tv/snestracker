@@ -1,11 +1,7 @@
 #pragma once
-#include "SDL.h"
-#include "gme/player/Music_Player.h"
 #include "memory.h" 
 #include "gui/Mem_Cursor.h"
 #include "memory/Mouse_Hexdump_Area.h"
-#include "gui/Context_Menu.h"
-#include "gme/Spc_Dsp_Register_Map_Interface.h"
 
 int write_brri_to_file(void *data);
 int write_brrp_to_file(void *data);

@@ -1,12 +1,6 @@
 #pragma once
 
-#include "SDL.h"
-#include "gme/player/Music_Player.h"
-#include "sdl_userevents.h"
-#include "gui/Cursor.h"
-#include "report.h"
 #include "memory.h"
-#include "Screen.h"
 
 struct Mouse_Hexdump_Area : Memory
 {
