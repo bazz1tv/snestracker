@@ -1323,25 +1323,8 @@ int Dsp_Window::dir_rect_clicked(void *idx)
 
 	uint16_t cur_dir_index = dir_index + (index * 2);
 	DEBUGLOG("BRR addr: %04x, %04x\n", dir[cur_dir_index], dir[cur_dir_index + 1]);
-	// update the addresses of those BRR fields
-	::brrcontext.menu_items[BrrContextMenu::RIPBRR].clickable_text.data = (void*) dir[cur_dir_index];
+  ::brrcontext.update(dir[cur_dir_index]);
 
-	// If this DIR entry is actively loaded to a voice, we can enable the
-	// BRRI download
-	::brrcontext.menu_items[BrrContextMenu::RIPBRRI].is_visible = false;
-	for (int v=0; v < MAX_VOICES; v++)
-	{
-		if (get_voice_srcn_addr(v) == dir[cur_dir_index])
-		{
-			::brrcontext.menu_items[BrrContextMenu::RIPBRRI].is_visible = true;
-			::brrcontext.menu_items[BrrContextMenu::RIPBRRI].clickable_text.data = (void*) ( (v << 16) | dir[cur_dir_index] );
-
-			break;
-		}
-	}
-
-	::brrcontext.menu_items[BrrContextMenu::SOLOSAMPLE].is_visible = false;
-	::brrcontext.menu_items[BrrContextMenu::PLAYSAMPLE].is_visible = false;
 	::brrcontext.menu.preload(mouse::x, mouse::y);
 	::brrcontext.menu.activate();
 }

@@ -36,10 +36,6 @@ public:
 	Uint16 brr_start,brr_end; // for downloading BRR samples
 	Uint16 brr_loop_start,brr_loop_end;
 	Uint8 corresponding_voice=0x0;
-	Uint8 one_solo=0x0;
-	Uint8 srcn_solo=0x0;
-	static int solo_sample(void *data);
-	static int play_sample(void *data);
 ///////////// END BRR COLLECTION ///////////////
 
   Mem_Cursor memcursor;

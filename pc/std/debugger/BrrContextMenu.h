@@ -1,3 +1,4 @@
+#pragma once
 #include "gui/Context_Menu.h"
 
 struct BrrContextMenu
@@ -22,14 +23,15 @@ struct BrrContextMenu
 
 	int receive_event(const SDL_Event &ev);
 
+  void update( uint16_t brr_addr );
 
 	Context_Menu menu;
 	Context_Menu_Item menu_items[SIZEOF_MENU+1] = 
 	{
 		// Solo and play are null by default. Debugger Main_Memory_Area
 		// construct will load it itself (let's escape this dirtiness!!!)
-		{"Solo Sample",false, NULL, NULL},
-		{"Play Sample",false, NULL, NULL},
+		{"Solo Sample", true, &solo_sample, NULL},
+		{"Play Sample", true, &play_sample, NULL},
 		/* How can the callback of this part, which will be common between
 		 * "users" work across all of them? I've got it. When the user calls
 		 * to display this context menu, have them overwrite the data field
@@ -52,6 +54,9 @@ struct BrrContextMenu
 		{"Rip STI",true, &write_sti_to_file_callback, NULL},
 		{"",false, NULL,NULL}
 	};
+
+  static int solo_sample(void *data);
+  static int play_sample(void *data);
 
 	static int write_brr_to_file_callback(void *data);
 	static int write_sti_to_file_callback(void *data);

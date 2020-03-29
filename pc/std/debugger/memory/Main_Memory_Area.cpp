@@ -46,6 +46,8 @@ void Main_Memory_Area::spawnbrrcontextmenu(int x, int y)
 			::brrcontext.menu_items[BrrContextMenu::RIPBRRI].is_visible = true;
 			break;
 	}
+
+  ::brrcontext.update(brr_start);
 	::brrcontext.menu.preload(x, y);
 	::brrcontext.menu.activate();
 }
@@ -151,31 +153,10 @@ int write_plain_brr_to_file(void *data)
   return 0;
 }
 
-int Main_Memory_Area::play_sample(void *data)
-{
-  Main_Memory_Area *mma = (Main_Memory_Area*)data;
-  fprintf(stderr, "one_solo = %d\n", mma->one_solo);
-  BaseD::play_sample(mma->one_solo);
-  return 0;
-}
-
-int Main_Memory_Area::solo_sample(void *data)
-{
-  Main_Memory_Area *mma = (Main_Memory_Area*)data;
-	::voice_control.solo_bits(mma->srcn_solo);
-  return 0;
-}
-
 Main_Memory_Area::Main_Memory_Area(Mouse_Hexdump_Area *mouse_hexdump_area, uint16_t *dir) :
 mouse_hexdump_area(mouse_hexdump_area), dir(dir)
 {
-	::brrcontext.menu_items[BrrContextMenu::SOLOSAMPLE].clickable_text.action = solo_sample;
-	::brrcontext.menu_items[BrrContextMenu::SOLOSAMPLE].clickable_text.data = this;
-	::brrcontext.menu_items[BrrContextMenu::PLAYSAMPLE].clickable_text.action = play_sample;
-	::brrcontext.menu_items[BrrContextMenu::PLAYSAMPLE].clickable_text.data = this;
 }
-
-
 
 void Main_Memory_Area::set_addr(int i)
 {
@@ -265,9 +246,6 @@ int Main_Memory_Area::check_brr(uint16_t *address)
 	assert (address != 0);
 	Uint8 lowest_srcn_index=0x0;
 	Uint8 lowest_loop_index=0x0;
-	srcn_solo=0x0;
-	fprintf(stderr, "one_solo = %d", 0);
-	one_solo=0x0;
 
 	// get closest SRCN address before clicked address
 	uint16_t lowest_closest_srcn_address=0xffff, lowest_offset=0xffff;
@@ -315,8 +293,6 @@ int Main_Memory_Area::check_brr(uint16_t *address)
 	{
 		if (get_voice_srcn_addr(x) == lowest_closest_srcn_address)
 		{
-			srcn_solo |= 1<<x;
-			one_solo = x;
 			corresponding_voice = x;
 		}
 	}
@@ -385,10 +361,9 @@ int Main_Memory_Area::check_brr(uint16_t *address)
 	else
 	{
 		Spc_Report::src[lowest_srcn_index].brr_end = lowest_closest_brrend_address_from_srcn;
-		fprintf(stderr, "BRR @ 0x%04X-0x%04X; one_solo=%d\n",
+		fprintf(stderr, "BRR @ 0x%04X-0x%04X; ",
 				lowest_closest_srcn_address,
-				lowest_closest_brrend_address_from_srcn,
-				one_solo);
+				lowest_closest_brrend_address_from_srcn);
 		brr_start = lowest_closest_srcn_address;
 		brr_end = lowest_closest_brrend_address_from_srcn; //inclusive
 		if (is_looped_sample == true)
