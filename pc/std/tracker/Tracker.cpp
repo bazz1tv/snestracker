@@ -1437,6 +1437,13 @@ void Tracker::save_to_file(SDL_RWops *file)
  * covers the full range given that the first row is taken by first entry
  */
 
+/* Notes:
+ * When encoding WAV samples to BRR, you may want to Low pass filter
+ * around 10-16 KHz. SNES is capable of max 16 KHz tones (based on 32KHz
+ * sample rate), and even those are going to be worst quality of all tones
+ * capable. So, to reduce noise in signal, consider trying that low pass
+ * filter! */
+
 /* For envelope FX, rules:
  * ok heres something i thought up:
  * fx name: N (noise)
@@ -1445,6 +1452,9 @@ void Tracker::save_to_file(SDL_RWops *file)
  *           ff: envelope on
  */
  /* TODO:
+	* Rip BRR from the DIR table
+	* Muted track shadow
+	* Retrigger Effect : It is SOOO ICONIC to SNES soundtracks
 	* Note: when adding 3xy portamento command, make special 3FF mean legato
 	*       Or maybe we need an SNES exclusive no KON effects, aside from
 	*       the tracker envelopes...?? (no envelope KON retrigger)
