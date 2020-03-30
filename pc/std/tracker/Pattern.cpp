@@ -8,13 +8,11 @@
 #include "Instruments.h" // for Instrument_Panel
 #include "shared/gui/MouseCursors.h"
 #include "shared/Voice_Control.h"
+#include "shared/kbd.h"
 
 static int clone_seq_common(PatSeqPanel *psp);
 static Pattern * get_current_pattern(PatSeqPanel *psp);
 static PatternMeta * get_current_pattern_meta(PatSeqPanel *psp);
-
-#define MODONLY(mod, k) ( (mod) & (k) && !( (mod) & ~(k) ) )
-#define MOD_ANY(mod) (mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI))
 
 extern MouseCursors *mousecursors;
 
