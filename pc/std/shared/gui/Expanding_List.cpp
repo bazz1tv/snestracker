@@ -115,7 +115,8 @@ int Expanding_List::receive_event(const SDL_Event &ev)
 }
 
 Expanding_List::Expanding_List(Context_Menu_Item *array, bool isStatic, bool isActive/*=false*/) :
-Context_Menu(array, isActive)
+Context_Menu(array, isActive),
+is_static(isStatic)
 {
   highlighted_item = &items[0];
   currently_selected_item = &items[0];
