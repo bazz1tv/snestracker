@@ -8,14 +8,11 @@ void Slider<T>::draw()
 {
 	const char *final_format_str=format_str[precision];
 	SetAdjusterXOffset(getPixelValueFromTargetValue(*target_value));
-	// Get Graphics going
-	// void FillRect(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
-	// void FillRectAlpha(SDL_Surface *surface, int x, int y, int w, int h, Uint32 color);
 	
 	SDL_Rect value_rect = {panel_rect.x, panel_rect.y, adjuster_rect.x - panel_rect.x, panel_rect.h };
-	FillRectAlpha(::render->sdlRenderer, &panel_rect,&colors.panel); // 50,50,50));
+	FillRectAlpha(::render->sdlRenderer, &panel_rect,&colors.panel);
 	FillRectAlpha(::render->sdlRenderer, &value_rect,&colors.value);
-	FillRectAlpha(::render->sdlRenderer, &adjuster_rect, &colors.adjuster); // SDL_MapRGB(Screen->format,0,255,0));
+	FillRectAlpha(::render->sdlRenderer, &adjuster_rect, &colors.adjuster);
 	SDL_FillRect(::render->screen, &txt_rect, 0);
 	if (is_sliding)
 	{
@@ -54,7 +51,6 @@ void Slider<T>::draw()
 	}
 }
 
-// This is obvious
 template <class T>
 void Slider<T>::SetAdjusterPos(int x)
 {
@@ -213,9 +209,6 @@ action(action),
 colors({panel_color, value_color, adjuster_color}),
 precision(precision),
 target_valueRange(range_min, range_max)
-
-//panel_x(x),panel_y(y),
-//width(width), height(height)
 {
 	if (target_value == NULL)
 	{
@@ -262,12 +255,9 @@ target_valueRange(range_min, range_max)
 	target_numValuesInRange = (target_valueRange.max - target_valueRange.min);
 	slider_pixelRange = (panel_width - adjuster_rect.w);
 
-	//adjuster_rect = SetRect(adjuster_rect.x,adjuster_rect.y, 11, 16);
-
 	// calculate ratio
 	DoRatio();
 
-	// 
 	setTargetValue(default_value);
 	str_buf_size = snprintf(NULL, 0, format_str[precision], default_value);
 	str_buf_size += 1; // space
@@ -374,23 +364,7 @@ bool Slider<T>::receive_event(SDL_Event &ev)
 template <class T>
 T Slider<T>::round(T n)//round up a float type and show one decimal place
 {
-
 	return floor(n*pow(10,precision)+0.5)/pow(10,precision);
-  /*T t;
-  t=n-floor(n);
-  if (t>=0.5)    
-  {
-    n*=10;//where n is the multi-decimal float
-    ceil(n);
-    n/=10;
-   }
-  else 
-  {
-    n*=10;//where n is the multi-decimal float
-    floor(n);
-    n/=10;
-  }*/
-  //return n;
 }  
 
 template <class T>

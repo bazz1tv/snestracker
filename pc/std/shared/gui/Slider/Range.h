@@ -15,8 +15,6 @@ public:
 	Range(T min, T max) { this->min = min; this->max = max; }
 	~Range()
 	{
-		//min = (T)0.0;
-		//max = (T)0.0;
 	}
 	void setMin(T min)
 	{
@@ -26,7 +24,6 @@ public:
 	{
 		this->max = max;
 	}
-	
 	
 	T max, min;
 };

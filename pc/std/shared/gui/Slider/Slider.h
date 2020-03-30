@@ -21,7 +21,6 @@
  
  */
 
-//#include "OS.h"
 #include <SDL.h>
 #include "Range.h"
 #include "utility.h"
@@ -59,6 +58,7 @@ public:
 		colors.adjuster = {static_cast<Uint8>(color&0xff), static_cast<Uint8>(color&0xff00>>8), 
 			static_cast<Uint8>(color&0xff0000>>16), static_cast<Uint8>(color&0xff000000 >> 24)};
 	}
+
 	T *target_value;
 	bool owns_value;
 	bool receive_event(SDL_Event &ev);
@@ -87,18 +87,9 @@ public:
 	{
 		SDL_Color panel, value, adjuster;
 	} colors;
-	//SDL_Color panel_color, value_color, adjuster_color;
 	
 	void SetAdjusterPos(int x);
 	T impose_boundary(T &tmp);
-
-	/*int width, height;
-	int panel_x,panel_y;*/
-	//SDL_Rect panel_rect
-
-	
-	
-	
 
 	T target_numValuesInRange;
 	T slider_pixelRange;
@@ -110,7 +101,6 @@ public:
 	Uint8 precision;
 	int adjuster_x, adjuster_y;
 	Range<T> target_valueRange;
-	
 };
 
 #include "Slider.tpp"
