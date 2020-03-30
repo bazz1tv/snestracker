@@ -23,6 +23,7 @@
 ; extflags (defined in .s)
 .enum 0
 	REPEATPATTERN db
+	SKIP_ECHOBUF_CLEAR db
 .ende
 
 ; Generate C printouts for the Tracker app
@@ -40,6 +41,7 @@
 .PRINT "#define REPORT_TRACKER_SETPATTERN 0x", HEX reportTrackerCmd_SetPattern, "\n"
 .PRINT "\n"
 .PRINT "#define EXTFLAGS_REPEATPATTERN 0x", HEX REPEATPATTERN, "\n"
+.PRINT "#define EXTFLAGS_SKIP_ECHOBUF_CLEAR 0x", HEX SKIP_ECHOBUF_CLEAR, "\n"
 ; We can make struct definitions that don't need to be defined in RAM,
 ; used purely by their definition as a way to informatically load offsets
 ; from RAM pointers

@@ -34,7 +34,25 @@ sequencer_ptr dw	; points to sequencer table
 sequencer_i db ; index into the sequencer table
 
 patterntable_ptr	dw ; pattern table turns pattern index into pattern address
+
 extflags db
+
+; SongSettings vals
+mvol_val db
+evol_val db
+esa_val db
+edl_val db
+
+efb_val db
+; keep these 8 together (iterated)
+c0_val db
+c1_val db
+c2_val db
+c3_val db
+c4_val db
+c5_val db
+c6_val db
+c7_val db
 PUBLIC_END    dsb 0
 
 .ENDS
@@ -233,14 +251,58 @@ LoadPattern:
 	ret
 
 PlaySong:
+	; Song Settings
+	; load fir filter coefficients
+	mov y, #8
+	mov a, #c7
+-	mov x, c0_val - 1 + y
+	mov dspaddr, a
+	mov dspdata, x
+	setc
+	sbc a, #$10
+	dbnz y, -
+
+	mov dspaddr, #dir
+	mov dspdata, dspdir_i
+
+	mov dspaddr, #esa
+	mov dspdata, esa_val
+	MOV dspaddr, #efb
+	MOV dspdata, efb_val
+
+	MOV dspaddr, #edl
+	mov y, dspdata ; old EDL
+	MOV dspdata, edl_val ; update edl value
+
+	; wouldn't hurt to wait an extra 16ms
+	inc y
+
+	; We should wait EDL * 16ms here to avoid sound glitch from activating EDL
+	clr1 control.ctrlbit_t0
+	mov t0div, #128
+	set1 control.ctrlbit_t0
+-	mov a, t0out
+	beq -
+	dbnz y, -
+
+	mov dspaddr, #mvol_l
+	mov dspdata, mvol_val
+	mov dspaddr, #mvol_r
+	mov dspdata, mvol_val
+
+; it is now safe to set echo volume
+	mov dspaddr, #evol_l
+	mov dspdata, evol_val
+	mov dspaddr, #evol_r
+	mov dspdata, evol_val
+
 	; Timer setting code
 	; clear any running timers (or at least timer0)
 	;
 	; if more bit setting and clearing on other timers is needed, use a
 	; RamBuffer that reflects the Control register to reduce code size
 	clr1 control.ctrlbit_t0 ; stop Timer 0
-	mov a, ticks
-	mov t0div, a
+	mov t0div, ticks
 
   call !ReloadSpdDec
 	call !LoadPattern
@@ -256,6 +318,10 @@ PlaySong:
 
 	set1 control.ctrlbit_t0 ; start Timer 0
 	set1 flags.bPlaySong
+
+	MOV dspaddr, #flg   ; TURN OFF MUTE, enable echo
+	MOV dspdata, #%00000000
+
 	ret
 
 .macro lda
@@ -315,7 +381,7 @@ ContinueSong:
   mov spddec, a
   dec a
   bpl +  ; this essentially gives if (a <= 0) mark next row for processing
-  set1 flags.bNextRow
+  set1 flags.bNextRow ; set the flag indicating we will process the next row
   bra @onlyfx
 + ; at this point, a tick has been fired
   ; TODO: impl fx and stuff

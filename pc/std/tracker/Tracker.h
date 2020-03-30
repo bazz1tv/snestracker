@@ -21,6 +21,8 @@
 
 #include "gme/Spc_Report.h"
 
+#include "SongSettings.h"
+
 struct Tracker;
 class SpcReport : public Spc_Report
 {
@@ -93,6 +95,7 @@ public:
 	Sample samples[NUM_SAMPLES];
   Instrument instruments[NUM_INSTR];
   PatternSequencer patseq;
+  SongSettings songsettings;
 private:
 	SpcReport spcreport;
 };

@@ -2,6 +2,7 @@
 .INCLUDE "apu/regdefs.i"
 .INCLUDE "apu/enums.i"
 .INCLUDE "apu/commands.i"
+.INCLUDE "apu/playbackengine.i"
 
 ; Zero page variables!
 .RAMSECTION "gp-dp0" BANK 0 SLOT SPC_DP0_SLOT
@@ -31,30 +32,56 @@ MAIN:
 	;mov dspdata, #1
 
 	CLRP ; set dp to 0
-  mov control, #0 ; disable timers and ROM region
+	mov dspaddr, #flg
+	mov dspdata, #$e0 ; reset, no echo writes, mute amp
+	mov a, #0
+  mov control, a ; disable timers and ROM region
+	mov dspaddr, #mvol_l
+	mov dspdata, a
+	mov dspaddr, #mvol_r
+	mov dspdata, a
+	mov dspaddr, #evol_l
+	mov dspdata, a
+	mov dspaddr, #evol_r
+	mov dspdata, a
 
-  ; We are not dealing with echo yet. so just set it so ff00 at the 
-  mov dspaddr, #esa
-  mov dspdata, #$ff
-  MOV dspaddr, #edl
-  MOV dspdata, #0
+	mov dspaddr, #koff
+	mov dspdata, a
+	mov dspaddr, #pmon
+	mov dspdata, a
+	mov dspaddr, #non
+	mov dspdata, a
+	mov dspaddr, #eon
+	mov dspdata, a
 
-  mov dspaddr, #dir
-  mov dspdata, dspdir_i
-  
-  ; TODO - Could alter master volume by song setting here
-  MOV dspaddr, #mvol_l 
-  MOV dspdata, #$40   ; Rather than put on FULL BLAST, try this value
-  MOV dspaddr, #mvol_r; used globally in SMRPG
-  MOV dspdata, #$40
+	/* When being run from the tracker, to avoid wait times, the RAM is
+	 * pre-cleared to 0 by the spc template. But when we run this in the wild,
+	 * if the echo buffer has values in it when echo is enabled by FLG, there
+	 * will be noise. We can either delay 0.5s to ensure the echo buffer has
+	 * cleared itself, or run a RAM clear routine that is quicker for lower
+	 * EDL settings, but for max EDL, it will take just about as long.
+	 * NOTE: This wait is different from the typical EDL wait.
+	 * This is an additional wait for echo buffer to clear. */
 
-  ; Todo - enable echo buffer writes when bringing up echo support
-  MOV dspaddr, #flg   ; TURN OFF MUTE
-  MOV dspdata, #%00100000 ; disable echo buffer writes
-	
-	;===
-	; Load the timer values from their stored settings.
-
+	; IPL ROM cleared the zero page, so this bit will be clear on real run.
+	bbs extflags.SKIP_ECHOBUF_CLEAR, @skip_echobuf_clear
+	; clear echo buffer from (ESA * $100) ranging through (EDL * 0x800)( max $7800 bytes )
+	mov a, #$0f ;max edl_val
+	asl a
+	asl a
+	asl a	; * 8 (will represent $800 increments)
+	mov x, a
+	mov a, y ; #0
+	inc y ; #1
+	mov y, #$88; min esa_val
+	movw hl, ya
+	mov y, a
+-	mov [hl] + y, a
+	dbnz y, -
+	inc h
+	dec x
+	bne -
+@skip_echobuf_clear:
 ; Enter MAIN LOOP
 MainLoop:
 	bbc flags.bPlaySong, Poll

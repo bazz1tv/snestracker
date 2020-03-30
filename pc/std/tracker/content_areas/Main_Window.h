@@ -21,6 +21,7 @@
 #include "BpmSpdAddWidget.h"
 #include "InstrumentEditor.h"
 #include "SampleEditor.h"
+#include "SongSettings.h"
 
 struct Tracker;
 
@@ -92,14 +93,25 @@ struct Main_Window : public Experience
 	PatLenWidget plwidget;
   PatternEditorPanel pateditpanel;
   BpmSpdAddWidget bsawidget;
+
+////////////// AUX PANELS //////////////////////////
+  enum AuxPanels {
+    INSTREDITOR = 0,
+    SAMPLEDITOR,
+    SONGSETTINGS,
+  };
+  uint8_t active_aux_panel = 0;
 	// INSTRUMENT EDITOR STUFF
   InstrumentEditor instreditor;
-  bool instreditor_active = false;
   Button instreditor_btn;
   static int toggle_instreditor(void *m);
 	// SAMPLE EDITOR STUFF
 	SampleEditor sample_editor;
-	bool sample_editor_active = false;
 	Button sample_editor_btn;
 	static int toggle_sample_editor(void *m);
+  // Song Settings STUFF
+  SongSettingsPanel songsettings_panel;
+  Button songsettings_btn;
+  static int toggle_songsettings(void *m);
+///////////// END AUX PANELS /////////////////////
 };

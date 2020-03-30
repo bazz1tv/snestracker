@@ -24,7 +24,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   bsawidget(tracker, &pateditpanel),
   instreditor(&instrpanel),
   instreditor_btn("Inst. Ed.", toggle_instreditor, this),
-	sample_editor_btn("Samp. Ed.", toggle_sample_editor, this)
+	sample_editor_btn("Samp. Ed.", toggle_sample_editor, this),
+  songsettings_btn("Sng Sett.", toggle_songsettings, this)
 {
   int x,y,xx,yy;
   song_title.dblclick = false; // do not require dblclick to edit. single
@@ -61,6 +62,10 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 	sample_editor_btn.rect.x = 150;
 	sample_editor_btn.rect.y = instreditor_btn.rect.y + instreditor_btn.rect.h + 5;
 
+  // song settings button directly beneath sample editor button
+  songsettings_btn.rect.x = 150;
+  songsettings_btn.rect.y = sample_editor_btn.rect.y + sample_editor_btn.rect.h + 5;
+
   x += song_title.rect.w + (CHAR_WIDTH * 2);
   instrpanel.set_coords(x, yy);
   x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH);
@@ -72,25 +77,66 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   y = pateditpanel.rect.y + pateditpanel.rect.h + (CHAR_HEIGHT*2);
   pateditpanel.set_visible_rows(PatternEditorPanel::MAX_VISIBLE_ROWS); // called to update rect.h
 
+  // These panels appear at the same coords when activated
 	instreditor.set_coords(xx, y);
 	sample_editor.set_coords(xx, y);
+  songsettings_panel.set_coords(xx, y);
 }
+
+/*static inline void reset_byte_bit(uint8_t *byte, uint8_t bit)
+{
+  *byte &= ~(1 << bit);
+}*/
 
 static void deactivate_instreditor(Main_Window *m)
 {
-	m->instreditor_active = false;
-	Tracker::prerenders.erase((DrawRenderer *)&m->instreditor.adsrpanel);
+  // reset bit
+	m->active_aux_panel &= ~(1 << Main_Window::INSTREDITOR);
+  Tracker::prerenders.erase((DrawRenderer *)&m->instreditor.adsrpanel);
 }
 
 static void deactivate_sample_editor(Main_Window *m)
 {
-	m->sample_editor_active = false;
+  // reset bit
+  m->active_aux_panel &= ~(1 << Main_Window::SAMPLEDITOR);
+}
+
+static void deactivate_songsettings(Main_Window *m)
+{
+  // reset bit
+  m->active_aux_panel &= ~(1 << Main_Window::SONGSETTINGS);
+}
+
+// consider adding to Utility class (utility.h)
+static bool toggle_byte_bit(uint8_t &byte, uint8_t bit)
+{
+  byte ^= (1 << bit);
+  return byte & (1 << bit);
+}
+
+/*static void deactivate_all_aux_panels(Main_Window *mw)
+{
+  deactivate_sample_editor(mw);
+  deactivate_instreditor(mw);
+  deactivate_songsettings(mw);
+}*/
+
+static void deactivate_all_other_aux_panels(Main_Window *mw, uint8_t active)
+{
+  if (active != Main_Window::INSTREDITOR)
+    deactivate_instreditor(mw);
+  if (active != Main_Window::SAMPLEDITOR)
+    deactivate_sample_editor(mw);
+  if (active != Main_Window::SONGSETTINGS)
+    deactivate_songsettings(mw);
 }
 
 int Main_Window::toggle_instreditor(void *m)
 {
   Main_Window *mw = (Main_Window *)m;
-  mw->instreditor_active = !mw->instreditor_active;
+  bool active = toggle_byte_bit(mw->active_aux_panel, INSTREDITOR);
+
+  deactivate_all_other_aux_panels(mw, INSTREDITOR);
 
   SDL_Rect r = mw->pateditpanel.fullsize_r;
   r.x +=1;
@@ -98,10 +144,9 @@ int Main_Window::toggle_instreditor(void *m)
   r.h -=1;
   SDL_FillRect(::render->screen, &r, Colors::transparent);
 
-  if (mw->instreditor_active)
+  if ( active )
   {
-		deactivate_sample_editor(mw);
-    mw->pateditpanel.set_visible_rows(0x08); //mw->pateditpanel.MAX_VISIBLE_ROWS / 2);
+    mw->pateditpanel.set_visible_rows(0x08);
     if (mw->instreditor.tabs.adsr.active)
       Tracker::prerenders.insert((DrawRenderer *)&mw->instreditor.adsrpanel);
   }
@@ -118,7 +163,9 @@ int Main_Window::toggle_instreditor(void *m)
 int Main_Window::toggle_sample_editor(void *m)
 {
 	Main_Window *mw = (Main_Window *)m;
-	mw->sample_editor_active = !mw->sample_editor_active;
+  bool active = toggle_byte_bit(mw->active_aux_panel, SAMPLEDITOR);
+
+  deactivate_all_other_aux_panels(mw, SAMPLEDITOR);
 
 	SDL_Rect r = mw->pateditpanel.fullsize_r;
 	r.x +=1;
@@ -126,13 +173,31 @@ int Main_Window::toggle_sample_editor(void *m)
 	r.h -=1;
 	SDL_FillRect(::render->screen, &r, Colors::transparent);
 
-	if (mw->sample_editor_active)
-	{
-		deactivate_instreditor(mw);
-		mw->pateditpanel.set_visible_rows(0x08); //mw->pateditpanel.MAX_VISIBLE_ROWS / 2);
-	}
+	if ( active )
+		mw->pateditpanel.set_visible_rows(0x08);
 	else
 		mw->pateditpanel.set_visible_rows(mw->pateditpanel.MAX_VISIBLE_ROWS);
+}
+
+/* By and large a copy of toggle_instreditor. Maybe we can reduce code
+ * size by putting the common into one function. TODO*/
+int Main_Window::toggle_songsettings(void *m)
+{
+  Main_Window *mw = (Main_Window *)m;
+  bool active = toggle_byte_bit(mw->active_aux_panel, SONGSETTINGS);
+
+  deactivate_all_other_aux_panels(mw, SONGSETTINGS);
+
+  SDL_Rect r = mw->pateditpanel.fullsize_r;
+  r.x +=1;
+  r.w -=1;
+  r.h -=1;
+  SDL_FillRect(::render->screen, &r, Colors::transparent);
+
+  if ( active )
+    mw->pateditpanel.set_visible_rows(0x08);
+  else
+    mw->pateditpanel.set_visible_rows(mw->pateditpanel.MAX_VISIBLE_ROWS);
 }
 
 int Main_Window::Gain::change(void *dblnewgain)
@@ -177,15 +242,18 @@ void Main_Window::draw()
 	bsawidget.draw(::render->screen);
   instreditor_btn.draw(::render->screen);
 	sample_editor_btn.draw(::render->screen);
+  songsettings_btn.draw(::render->screen);
   instrpanel.draw(::render->screen);
   samplepanel.draw(::render->screen);
   patseqpanel.draw(::render->screen);
 	plwidget.draw(::render->screen);
   pateditpanel.draw(::render->screen);
-  if (instreditor_active)
+  if (active_aux_panel & (1 << INSTREDITOR))
     instreditor.draw(::render->screen);
-	else if (sample_editor_active)
+	else if (active_aux_panel & (1 << SAMPLEDITOR) )
 		sample_editor.draw(::render->screen);
+  else if (active_aux_panel & (1 << SONGSETTINGS) )
+    songsettings_panel.draw(::render->screen);
 
   time_last = time_cur;
   
@@ -215,17 +283,19 @@ int Main_Window::receive_event(SDL_Event &ev)
   handle_text_edit_rect_event(ev, &song_title);
   instreditor_btn.check_event(ev);
 	sample_editor_btn.check_event(ev);
+  songsettings_btn.check_event(ev);
 	plwidget.handle_event(ev);
   bsawidget.handle_event(ev);
   instrpanel.event_handler(ev);
-  if (samplepanel.event_handler(ev) == Sample_Panel::ROW_UPDATED && instreditor_active)
-		tracker->instruments[instrpanel.currow].srcn = samplepanel.currow;
+  samplepanel.event_handler(ev);
   patseqpanel.event_handler(ev);
   pateditpanel.event_handler(ev);
-  if (instreditor_active)
+  if (active_aux_panel & (1 << INSTREDITOR))
     instreditor.handle_event(ev);
-	else if (sample_editor_active)
+  else if (active_aux_panel & (1 << SAMPLEDITOR) )
 		sample_editor.handle_event(ev);
+  else if (active_aux_panel & (1 << SONGSETTINGS) )
+    songsettings_panel.handle_event(ev);
   // DIRTY :( ITS IMPORTANT THAT WE CHECK THE DBLCLICK EVENTS AFTER THE ABOVE
   dblclick::check_event(&ev);
   /*if (gain.slider)

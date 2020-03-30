@@ -530,6 +530,7 @@ void Tracker::dec_patlen()
 
 void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 {
+  DEBUGLOG("render_to_apu(); playback: %d\n", playback);
 	::player->start_track(0);
 	// SPC player fade to virtually never end (24 hours -> ms)
 	::player->emu()->set_fade(24 * 60 * 60 * 1000);
@@ -845,9 +846,27 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
 	// going to check in apu driver for a negative number to mark end
 
-  // set flag whether to repeat the pattern
-  apuram->extflags |= repeat_pattern << EXTFLAGS_REPEATPATTERN;
+  // set flag whether to repeat the pattern, and also set the bit to skip
+  // the echobuf clear
+  apuram->extflags |= (repeat_pattern << EXTFLAGS_REPEATPATTERN) | (1 << EXTFLAGS_SKIP_ECHOBUF_CLEAR);
 	// PATTERN SEQUENCER END
+
+  // SONG SETTINGS
+  apuram->mvol_val = songsettings.mvol;
+  apuram->evol_val = songsettings.evol;
+  /* calculate ESA */
+  /* The ESA will be, based on EDL, pushed all the way to the end of RAM,
+   * so control bit 7 ($F1) must be reset to enable the RAM region of IPL
+   * ROM. Note that the asm RAM clear routine can be executed even with
+   * IPL active (write-only)*/
+  // if EDL is 0, just stick the 4 bytes of echo buffer at $FF00
+  apuram->esa_val = songsettings.edl ? ( 0x10000 - (songsettings.edl * 0x800) ) >> 8 : 0xff;
+  apuram->edl_val = songsettings.edl;
+  apuram->efb_val = songsettings.efb;
+  uint8_t *coeff = &apuram->c0_val;
+  for (int i=0; i < 8; i++)
+    coeff[i] = songsettings.fir[i];
+  // SONG SETTINGS END
 	
 	// send the command to start the song
 	player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
@@ -1463,7 +1482,15 @@ void Tracker::save_to_file(SDL_RWops *file)
  *           ff: envelope on
  */
  /* TODO:
-	* Rip BRR from the DIR table
+  * Instrument setting to enable echo
+  *
+  * SongSettings to saved file.
+  * SongSettings in reset().
+  * FIR presets in SongSettings (Expanding Lists)
+  *
+  * Play instrument from pc keyboard (when not recording and when recording)
+  * Instrument file format
+  *
 	* Muted track shadow
 	* Retrigger Effect : It is SOOO ICONIC to SNES soundtracks
 	* Note: when adding 3xy portamento command, make special 3FF mean legato
