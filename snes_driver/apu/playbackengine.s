@@ -34,6 +34,7 @@ sequencer_ptr dw	; points to sequencer table
 sequencer_i db ; index into the sequencer table
 
 patterntable_ptr	dw ; pattern table turns pattern index into pattern address
+extflags db
 PUBLIC_END    dsb 0
 
 .ENDS
@@ -208,6 +209,7 @@ Load_pattern_ptr:
 
 ; A precursor to LoadPattern (unused so far)
 NextPattern:
+	bbs extflags.REPEATPATTERN, LoadPattern
 	inc sequencer_i
 LoadPattern:
 	call !ReloadSpdDec

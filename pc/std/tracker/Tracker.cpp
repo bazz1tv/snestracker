@@ -3,6 +3,7 @@
 #include "utility.h"
 #include "Screen.h"
 #include "sdl_userevents.h"
+#include "kbd.h"
 #include "apuram.h"
 
 #define L_FLAG 0
@@ -424,13 +425,20 @@ void Tracker::handle_events()
               mousecursors->next();
           break;
 					case SDLK_RETURN:
+          {
+            bool repeat_pattern = false;
 						if (Text_Edit_Rect::cur_editing_ter != NULL)
 							break;
+
+            if (MODONLY(mod, KMOD_SHIFT))
+              repeat_pattern = true;
+
 						playback = !playback;
 						if (playback)
-							render_to_apu();
+							render_to_apu(repeat_pattern);
 						else
 							::player->fade_out(true);
+          }
 					break;
 					case SDLK_BACKQUOTE:
 						player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
@@ -520,7 +528,7 @@ void Tracker::dec_patlen()
 // SNES APU timer 0 and 1 frequency rate in seconds
 #define TIMER01_FREQS 0.000125
 
-void Tracker::render_to_apu()
+void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 {
 	::player->start_track(0);
 	// SPC player fade to virtually never end (24 hours -> ms)
@@ -836,6 +844,9 @@ void Tracker::render_to_apu()
 		::IAPURAM[patseq_i++] = patseq.sequence[i];
 	::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
 	// going to check in apu driver for a negative number to mark end
+
+  // set flag whether to repeat the pattern
+  apuram->extflags |= repeat_pattern << EXTFLAGS_REPEATPATTERN;
 	// PATTERN SEQUENCER END
 	
 	// send the command to start the song

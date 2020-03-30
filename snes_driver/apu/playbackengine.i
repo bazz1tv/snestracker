@@ -20,6 +20,12 @@
 .define CBIT_RLE 5
 .define CBIT_RLE_ONLY1 6
 
+; extflags (defined in .s)
+.enum 0
+	REPEATPATTERN db
+.ende
+
+; Generate C printouts for the Tracker app
 .PRINT "#define CBIT 0x", HEX CBIT, "\n"
 .PRINT "#define CBIT_NOTE 0x", HEX CBIT_NOTE, "\n"
 .PRINT "#define CBIT_INSTR 0x", HEX CBIT_INSTR, "\n"
@@ -32,7 +38,8 @@
 .PRINT "#define REPORT_TRACKER_INCROW 0x", HEX reportTrackerCmd_IncRow, "\n"
 .PRINT "#define REPORT_TRACKER_SETROW 0x", HEX reportTrackerCmd_SetRow, "\n"
 .PRINT "#define REPORT_TRACKER_SETPATTERN 0x", HEX reportTrackerCmd_SetPattern, "\n"
-
+.PRINT "\n"
+.PRINT "#define EXTFLAGS_REPEATPATTERN 0x", HEX REPEATPATTERN, "\n"
 ; We can make struct definitions that don't need to be defined in RAM,
 ; used purely by their definition as a way to informatically load offsets
 ; from RAM pointers

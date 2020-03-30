@@ -57,7 +57,7 @@ public:
 	void inc_patlen();
 	void dec_patlen();
 
-  void render_to_apu();
+  void render_to_apu(bool repeat_pattern = false);
 	void reset();
 	int read_from_file(SDL_RWops *file);
 	void save_to_file(SDL_RWops *file);
