@@ -1481,7 +1481,20 @@ void Tracker::save_to_file(SDL_RWops *file)
  *         1-fe: choose envelope (+on)
  *           ff: envelope on
  */
+
+/* Inspired from RIFF headers, but simpler; To maintain an extendable file
+ * format, different structures / elements need an ID byte to preclude the
+ * data. There was some concern of whether the 255 ID constraint of 1 byte
+ * would be exceeded, but Expansion Bytes can be set aside to extend the
+ * available IDS. for Example, let's pretend the EXPANSION byte is 255.
+ * Then when that byte is identified, code will understand the following
+ * byte is an EXPANSION ID byte, which will enable another 255 IDS to be
+ * utilized. AND, as if that isn't enough, more than 1 EXPANSION byte
+ * could be present (eg. EXPANSION1, EXPANSION2, ...) */
+
  /* TODO:
+  * Command line arg to open STP file
+  *
   * Instrument setting to enable echo
   *
   * SongSettings to saved file.
