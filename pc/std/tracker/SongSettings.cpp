@@ -1,6 +1,67 @@
 #include "SongSettings.h"
 #include "Tracker.h"
 
+SongSettings::SongSettings() : bpm(DEFAULT_BPM), spd(DEFAULT_SPD)
+{
+  song_title_str[0] = 0;
+}
+
+void SongSettings::inc_bpm()
+{
+  if (bpm >= MAX_BPM)
+    bpm = MAX_BPM;
+  else bpm++;
+}
+
+void SongSettings::dec_bpm()
+{
+  if (bpm <= MIN_BPM)
+    bpm = MIN_BPM;
+  else bpm--;
+}
+
+void SongSettings::inc_spd()
+{
+  if (spd >= MAX_SPD)
+    spd = MAX_SPD;
+  else spd++;
+}
+
+void SongSettings::dec_spd()
+{
+  if (spd <= MIN_SPD)
+    spd = MIN_SPD;
+  else spd--;
+}
+
+void SongSettings::inc_vol(uint8_t *vol)
+{
+  *vol += (*vol < 0x7F) ? 1 : 0;
+}
+void SongSettings::dec_vol(uint8_t *vol)
+{
+  *vol -= (*vol > 0) ? 1 : 0;
+}
+
+void SongSettings::inc_edl()
+{
+  edl += (edl < 0x0F) ? 1 : 0;
+}
+void SongSettings::dec_edl()
+{
+  edl -= (edl > 0) ? 1 : 0;
+}
+
+// Allow wrapping for EFB
+void SongSettings::inc_efb()
+{
+  efb++;
+}
+void SongSettings::dec_efb()
+{
+  efb--;
+}
+
 /* OF course I am aware of the repetitive nature of this code impl. But
  * let's get this thing off the ground first and maybe some day we can
  * consider how it could be refactored into something more elegant */

@@ -14,7 +14,7 @@
 
 struct Text_Edit_Rect : public Clickable_Text
 {
-  Text_Edit_Rect(int txtwidth=0, const char *str="", int strsize=0,
+  Text_Edit_Rect(int visible_width=0, const char *str="", int strsize=0,
     bool border=true);
 
   void one_time_draw(SDL_Surface *screen);

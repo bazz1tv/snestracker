@@ -32,12 +32,12 @@ BpmSpdAddWidget::BpmSpdAddWidget(Tracker *tracker, PatternEditorPanel *pep) :
 /* these functions query the proper handles on that real data. */
 void BpmSpdAddWidget :: updatebpm()
 {
-  sprintf(bpm_cbuf, "%03d", tracker->bpm);
+  sprintf(bpm_cbuf, "%03d", tracker->songsettings.bpm);
 }
 
 void BpmSpdAddWidget :: updatespd()
 {
-  sprintf(spd_cbuf, "%02d", tracker->spd);
+  sprintf(spd_cbuf, "%02d", tracker->songsettings.spd);
 }
 
 void BpmSpdAddWidget :: updateadd()
@@ -126,28 +126,28 @@ void BpmSpdAddWidget::draw(SDL_Surface *screen/*=::render->screen*/)
 int BpmSpdAddWidget::incbpm(void *bsaw)
 {
   BpmSpdAddWidget *b = (BpmSpdAddWidget *)bsaw;
-  b->tracker->inc_bpm();
+  b->tracker->songsettings.inc_bpm();
   b->updatebpm();
 }
 
 int BpmSpdAddWidget::decbpm(void *bsaw)
 {
   BpmSpdAddWidget *b = (BpmSpdAddWidget *)bsaw;
-  b->tracker->dec_bpm();
+  b->tracker->songsettings.dec_bpm();
   b->updatebpm();
 }
 
 int BpmSpdAddWidget::incspd(void *bsaw)
 {
   BpmSpdAddWidget *b = (BpmSpdAddWidget *)bsaw;
-  b->tracker->inc_spd();
+  b->tracker->songsettings.inc_spd();
   b->updatespd();
 }
 
 int BpmSpdAddWidget::decspd(void *bsaw)
 {
   BpmSpdAddWidget *b = (BpmSpdAddWidget *)bsaw;
-  b->tracker->dec_spd();
+  b->tracker->songsettings.dec_spd();
   b->updatespd();
 }
 

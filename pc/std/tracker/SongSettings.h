@@ -36,38 +36,34 @@
 
 struct SongSettings
 {
+  SongSettings();
   uint8_t mvol = 0x40, evol = 0x06;
-  uint8_t esa = 0x88, edl = 0x05, efb = 0x40;
+  uint8_t edl = 0x05, efb = 0x40;
   uint8_t fir[8] = { 0x7f, 0, 0, 0, 0, 0, 0, 0 };
 
-  /* One function for both evol and mvol */
-  static void inc_vol(uint8_t *vol)
-  {
-    *vol += (*vol < 0x7F) ? 1 : 0;
-  }
-  static void dec_vol(uint8_t *vol)
-  {
-    *vol -= (*vol > 0) ? 1 : 0;
-  }
+  static const constexpr unsigned int SONGTITLE_SIZE = 22;
+  char song_title_str[SONGTITLE_SIZE];
 
-  void inc_edl()
-  {
-    edl += (edl < 0x0F) ? 1 : 0;
-  }
-  void dec_edl()
-  {
-    edl -= (edl > 0) ? 1 : 0;
-  }
- 
+  static const constexpr unsigned int MIN_BPM = 32, MAX_BPM = 999, DEFAULT_BPM = 120;
+  static const constexpr unsigned int MIN_SPD = 1, MAX_SPD = 31, DEFAULT_SPD = 6;
+
+  unsigned int bpm :11;
+  unsigned int spd :5;
+  void inc_bpm();
+  void dec_bpm();
+  void inc_spd();
+  void dec_spd();
+
+
+
+  /* One function for both evol and mvol */
+  static void inc_vol(uint8_t *vol);
+  static void dec_vol(uint8_t *vol);
+  void inc_edl();
+  void dec_edl();
   // Allow wrapping for EFB
-  void inc_efb()
-  {
-    efb++;
-  }
-  void dec_efb()
-  {
-    efb--;
-  }
+  void inc_efb();
+  void dec_efb();
 };
 
 struct SongSettingsPanel

@@ -45,17 +45,6 @@ public:
   void run();
   void handle_events();
 
-	static const constexpr unsigned int MIN_BPM = 32, MAX_BPM = 999, DEFAULT_BPM = 120;
-	static const constexpr unsigned int MIN_SPD = 1, MAX_SPD = 31, DEFAULT_SPD = 6;
-  /* This is stuff that will go into a Song struct, but for now just put
-   * it here */
-  unsigned int bpm :11;
-  unsigned int spd :5;
-  void inc_bpm();
-  void dec_bpm();
-  void inc_spd();
-  void dec_spd();
-	// current pattern funcs
 	void inc_patlen();
 	void dec_patlen();
 
@@ -64,13 +53,28 @@ public:
 	int read_from_file(SDL_RWops *file);
 	void save_to_file(SDL_RWops *file);
 
+	/* Tracker APU RAM mapping */
+	TrackerApuRam *apuram;
+  /* TRACKER CORE -- Here is located the "model" data structures, not GUI
+   * */
+	Sample samples[NUM_SAMPLES];
+  Instrument instruments[NUM_INSTR];
+  PatternSequencer patseq;
+  SongSettings songsettings;
+
+/* The Main_Window, particularly, uses Tracker Core components to
+ * initialize certain GUI elements, so we need to ensure that the
+ * Main_Window declaration comes after the above Tracker Core */
+
+//////////////////////////////////////
+
   Menu_Bar menu_bar;
   Main_Window main_window;
 
   SDL_DisplayMode monitor_display_mode;
 
   Experience *sub_window_experience = NULL;
-  
+
   Options_Window options_window;
   Spc_Export_Window spc_export_window;
   static const int NUM_WINDOWS = 2;
@@ -85,17 +89,12 @@ public:
 
   static std::unordered_set<DrawRenderer *> prerenders, postrenders;
 
-	//
-	bool playback = false; // is tracker playback happening?
+  //
+  bool playback = false; // is tracker playback happening?
 
-	/* Tracker APU RAM mapping */
-	TrackerApuRam *apuram;
-  /* TRACKER CORE -- Here is located the "model" data structures, not GUI
-   * */
-	Sample samples[NUM_SAMPLES];
-  Instrument instruments[NUM_INSTR];
-  PatternSequencer patseq;
-  SongSettings songsettings;
+
+
+
 private:
 	SpcReport spcreport;
 };

@@ -8,16 +8,16 @@ int Text_Edit_Rect::comp_start_point = 0;
 SDL_Rect Text_Edit_Rect::markedRect;
 Text_Edit_Rect * Text_Edit_Rect::cur_editing_ter = NULL;
 
-Text_Edit_Rect::Text_Edit_Rect(int txtwidth/*=0*/, const char *str/*=""*/,
+Text_Edit_Rect::Text_Edit_Rect(int visible_width/*=0*/, const char *str/*=""*/,
   int strsize/*=0*/, bool border/*=true*/) :
         Clickable_Text(str, clicked_callback, this),
         strsize(strsize), border(border)
 {
   //if (width % CHAR_HEIGHT)
     //width += CHAR_HEIGHT - (width % CHAR_HEIGHT);
-  rect.w = txtwidth * CHAR_WIDTH;
+  rect.w = visible_width * CHAR_WIDTH;
   rect.h = CHAR_HEIGHT;
-  max_visible_chars = txtwidth;
+  max_visible_chars = visible_width;
 }
 
 

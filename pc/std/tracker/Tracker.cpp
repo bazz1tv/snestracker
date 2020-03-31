@@ -5,6 +5,7 @@
 #include "sdl_userevents.h"
 #include "kbd.h"
 #include "apuram.h"
+#include "FileLoader.h"
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -12,8 +13,6 @@
 std::unordered_set<DrawRenderer *> Tracker::prerenders, Tracker::postrenders;
 
 Tracker::Tracker(int &argc, char **argv) :
-bpm(DEFAULT_BPM),
-spd(DEFAULT_SPD),
 main_window(argc,argv, this),
 spcreport(this)
 {
@@ -468,34 +467,6 @@ next_event:
     SDL_PushEvent(&mbu_postpone_ev);
 }
 
-void Tracker::inc_bpm()
-{
-  if (bpm >= MAX_BPM)
-    bpm = MAX_BPM;
-  else bpm++;
-}
-
-void Tracker::dec_bpm()
-{
-  if (bpm <= MIN_BPM)
-    bpm = MIN_BPM;
-  else bpm--;
-}
-
-void Tracker::inc_spd()
-{
-  if (spd >= MAX_SPD)
-    spd = MAX_SPD;
-  else spd++;
-}
-
-void Tracker::dec_spd()
-{
-  if (spd <= MIN_SPD)
-    spd = MIN_SPD;
-  else spd--;
-}
-
 void Tracker::inc_patlen()
 {
 	uint8_t *len = &patseq.patterns[
@@ -546,7 +517,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
    * see the actual BPM */
   /* Convert BPM to ticks */
   // Ticks = 60 / ( BPM * 4 * Spd * freqS )
-  double ticks = 60.0 / ( (double)bpm * 4.0 * (double)spd * TIMER01_FREQS );
+  double ticks = 60.0 / ( (double)songsettings.bpm * 4.0 * (double)songsettings.spd * TIMER01_FREQS );
   int ticksi = (int) floor(ticks + 0.5);
 	if (ticksi == 256)
 		ticksi = 0; // max timer setting is 0
@@ -557,7 +528,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	}
 	// Forcing using timer0 for ticks, but that's fine for now (or forever)
 	apuram->ticks = ticksi;
-	apuram->spd = spd;
+	apuram->spd = songsettings.spd;
 	/* END BPM AND SPD */
 
 	uint16_t freeram_i = SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE;
@@ -880,10 +851,76 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	}
 }
 
+/* The benefit of adding a chunksize after the ID, is that one ID can be
+ * extended. If the the app processing the file does not recognize
+ * additional length of a known chunk, it can ignore the new data and
+ * hopefully still have a successful process. Likewise, new version of the
+ * app can process the old files and use default values where
+ * new-version-data is missing.
+ *
+ * This could all be implemented without chunksizes metadata, but I fear
+ * the outcome might be that a great many IDs get created, even for rather
+ * trivial additions (1 byte). On the other hand, the word-size chunksize
+ * metadata would triple the size of every chunk header. However, if 3 IDS
+ * need to be made to suit data that could have gone into one ID with
+ * chunksize specifier, then it would be worth it.
+ *
+ * Since it's difficult to forecast the amount of IDS and new data that
+ * will be added to the fileformat, It's just a toss up, it could go either way.
+ *
+ * I need to just make a choice and stick with it, and fight the urge to
+ * optimize (prematurely). Well, I've elected to add just ID, no size
+ * metadata. */
+
+/* one way to do it would be to make the classes self-loading from a RWops
+ * pointer. they would basically extend a class such as:
+ *
+ * class FileLoader
+ * {
+ *    FileLoader(uint8_t mcid, size_t sc) : master_chunkid(mcid), supported_chunksize(sc) {}
+ *    virtual int load(SDL_RWops *file, size_t chunksize);
+ *    size_t supported_chunksize;
+ *    uint8_t master_chunkid;
+ * };
+ *
+ * int FileLoader::load(SDL_RWops *file, size_t chunksize, uint8_t chunkid)
+ * {
+ *   // include some generic top level debugging code here.
+ *   assert(chunkid == master_chunkid);
+ *   if (chunksize > supported_chunksize)
+ *    DEBUGLOG(
+ *     "ChunkID: %s, chunksize $%04X > supported_chunksize $%04X!
+ *      Perhaps your tracker software could use an update?\n",
+ *      getidstr(chunkid), chunksize, supported_chunksize);
+ *   else if (chunksize < supported_chunksize)
+ *    DEBUGLOG(
+ *     "ChunkID: %s, chunksize $%04X < supported_chunksize $%04X!
+ *      Perhaps this track was created by an older version of the tracker
+ *      software; This song was created by v%s, this tracker is v%s \n",
+ *      getidstr(chunkid), chunksize, supported_chunksize, filever,
+ *      TRACKER_VER);
+ *   return 0;
+ * }
+ *
+ * externally (in the Tracker) would be a map structure from
+ * ChunkID to (FileLoader *), so that the tracker's read_from_file()
+ * routine could have ~3 lines
+ * of code to check for master-level chunkIDs and just call the
+ * compile-time-mapped FileLoader->load() with the file handle and chunk
+ * size. Then that object just loads itself up
+ *
+ * */
+
 /* Song File Format
 ~~~~~~~~~~~~~~~~~~~
+
+The goal is to have a fileformat that continues to be within reason back/forward compatible,
+easily extendable when new features and components are added.
+
 All integers spanning more than 1 byte are stored little-endian unless
 otherwise noted.
+
+The following fields start the file, with no ChunkID
 
 "STSONG"   -- file magic header string. not null terminated
 Song Title -- null terminated string
@@ -892,35 +929,53 @@ bpm/spd    -- 16-bit: (BPM << 6) | Spd
               ----BPM---- ==SPD==
               0 0000 0000 0000 00
 
-#samples   -- 1 byte
 
-What follows is sequential sample data of the follow format:
-index      -- 1 byte
-name       -- null-terminated string
-TODO: Add rel_loop, finetune settings here
-brrsize    -- size in bytes of following brr sample
-brrsample
+SongSettingsID
+  COREID:
+    mvol       -- 1 byte
+    evol       -- 1 byte
+    edl        -- 1 byte
+    efb        -- 1 byte
 
-#instruments -- 1 byte
-What follows are sequential instrument data of the following nature:
-index      -- 1 byte
-Name       -- null terminated string
-vol        -- 1 byte
-pan        -- "
-srcn       -- "
-adsr1      -- "
-adsr2      -- "
-semitone_offset -- "
-finetune   -- "
+SamplesID
+  #samples   -- 1 byte
+  What follows is sequential sample data of the follow format:
+  SampleID
+    COREID
+      index      -- 1 byte
+      name       -- null-terminated string
+      brrsize    -- size in bytes of following brr sample
+      brrsample
+    LOOP_FINETUNE_ID
+      TODO: Add rel_loop, finetune settings here
 
-#Patterns  -- 1 byte
-What follows are sequential pattern data of the following format:
-index      -- 1 byte
-len        -- 1 byte: number of rows
-Compressed Pattern Data for 8 tracks
+InstrumentsID
+  #instruments -- 1 byte
+  What follows are sequential instrument data of the following nature:
+  InstrumentID
+    COREID
+      index      -- 1 byte
+      Name       -- null terminated string
+      vol        -- 1 byte
+      pan        -- "
+      srcn       -- "
+      adsr1      -- "
+      adsr2      -- "
+      semitone_offset -- "
+      finetune   -- "
 
-Pattern Sequencer Entries -- an arbitrary number of byte sized pattern indices
-that will make up the pattern sequencer. End is signaled by EOF
+PatternsID
+  #Patterns  -- 1 byte
+  What follows are sequential pattern data of the following format:
+  PatternID
+    COREID
+      index      -- 1 byte
+      len        -- 1 byte: number of rows
+      Compressed Pattern Data for 8 tracks
+
+PatSeqID
+  Pattern Sequencer Entries -- an arbitrary number of byte sized pattern indices
+  that will make up the pattern sequencer. End is signaled by EOF (TODO: end signal by negative value, or $FF)
 */
 
 /*
@@ -953,17 +1008,6 @@ Meta Instruments (SFX?) -
 	has priority over the physical tracks.
 */
 
-
-
-
-/* WARNING: no bounds checking!? */
-static void read_str_from_file(SDL_RWops *file, char *str_ptr)
-{
-	do {
-		SDL_RWread(file, str_ptr, 1, 1);
-	} while (*(str_ptr++) != 0);
-}
-
 void Tracker::reset()
 {
 	// Reset Important GUI Elements
@@ -977,11 +1021,10 @@ void Tracker::reset()
 	main_window.samplepanel.rows_scrolled = 0;
 
 	// Reset Song Title
-	main_window.song_title_str[0] = 0;
+	songsettings.song_title_str[0] = 0;
 
-	// Reset BPM/SPD
-	bpm = DEFAULT_BPM;
-	spd = DEFAULT_SPD;
+	songsettings.bpm = SongSettings::DEFAULT_BPM;
+	songsettings.spd = SongSettings::DEFAULT_SPD;
 
 	// Reset all Samples (and free memory!)
 	for (int i=0; i < NUM_SAMPLES; i++)
@@ -1041,7 +1084,7 @@ int Tracker::read_from_file(SDL_RWops *file)
 
 	// Read Song title until NULL is read in
 	// corner case: no title == 0
-	read_str_from_file(file, main_window.song_title_str);
+	FileLoader::read_str_from_file(file, songsettings.song_title_str, SongSettings::SONGTITLE_SIZE);
 
 	uint16_t bpmspd;
 	rc = SDL_RWread(file, &bpmspd, 2, 1);
@@ -1051,17 +1094,17 @@ int Tracker::read_from_file(SDL_RWops *file)
 		return -1;
 	}
 	// Check for valid BPM/SPD
-	bpm = bpmspd >> 6;
-	if (bpm < MIN_BPM || bpm > MAX_BPM)
+	songsettings.bpm = bpmspd >> 6;
+	if (songsettings.bpm < SongSettings::MIN_BPM || songsettings.bpm > SongSettings::MAX_BPM)
 	{
-		DEBUGLOG("Invalid BPM: %d. Setting to default %d\n", bpm, DEFAULT_BPM);
-		bpm = DEFAULT_BPM;
+		DEBUGLOG("Invalid BPM: %d. Setting to default %d\n", songsettings.bpm, SongSettings::DEFAULT_BPM);
+		songsettings.bpm = SongSettings::DEFAULT_BPM;
 	}
-	spd = (uint8_t)(bpmspd & 0b111111);
-	if (spd < MIN_SPD || spd > MAX_SPD)
+	songsettings.spd = (uint8_t)(bpmspd & 0b111111);
+	if (songsettings.spd < SongSettings::MIN_SPD || songsettings.spd > SongSettings::MAX_SPD)
 	{
-		DEBUGLOG("Invalid SPD: %d. Setting to default %d\n", spd, DEFAULT_SPD);
-		bpm = DEFAULT_BPM;
+		DEBUGLOG("Invalid SPD: %d. Setting to default %d\n", songsettings.spd, SongSettings::DEFAULT_SPD);
+		songsettings.spd = SongSettings::DEFAULT_SPD;
 	}
 
 	// number of samples
@@ -1073,7 +1116,7 @@ int Tracker::read_from_file(SDL_RWops *file)
 		SDL_RWread(file, &idx, 1, 1);
 
 		Sample *s = &samples[idx];
-		read_str_from_file(file, s->name);
+		FileLoader::read_str_from_file(file, s->name, sizeof(Sample::name));
 
 		SDL_RWread(file, &samples[idx].rel_loop, 2, 1);
 
@@ -1112,7 +1155,7 @@ int Tracker::read_from_file(SDL_RWops *file)
 		Instrument *instr = &instruments[idx];
 		/* TODO: store/read the instr # */
 
-		read_str_from_file(file, instr->name);
+		FileLoader::read_str_from_file(file, instr->name, sizeof(Instrument::name));
 
 		/* TODO: Store/Read the instr used. Better yet, calculate it after the
 		 * patterns have been loaded */
@@ -1238,7 +1281,7 @@ void Tracker::save_to_file(SDL_RWops *file)
 	size_t len = strlen(songtitle);
 	SDL_RWwrite(file, songtitle, len + 1, 1); // also write null byte
 
-	uint16_t bpmspd = ((uint16_t)bpm << 6) | spd;
+	uint16_t bpmspd = ((uint16_t)songsettings.bpm << 6) | songsettings.spd;
 	SDL_RWwrite(file, &bpmspd, 2, 1);
 
 	// number of samples
@@ -1491,6 +1534,26 @@ void Tracker::save_to_file(SDL_RWops *file)
  * byte is an EXPANSION ID byte, which will enable another 255 IDS to be
  * utilized. AND, as if that isn't enough, more than 1 EXPANSION byte
  * could be present (eg. EXPANSION1, EXPANSION2, ...) */
+
+/* Another cool idea; Sidechaining a voice from another voice. By using
+ * some form of VxENVX or VxOUTX. Basically, the intensity of envelope or
+ * sample amplitude, affects another specified voice or instrument's
+ * volume value! But, sidechaining to volume is not the only possibility,
+ * you could sidechain pitch or some other parameter. In fact, you could
+ * sidechain not only from volume either, but from pitch or some other
+ * parameter. I wonder what sonically attractive sidechaining
+ * possibilities come to me?
+ *
+ * Sidechain
+ * ~~~~~~~~~
+ *
+ * Intensity: 65%
+ *
+ * From:                         To:
+ *   Voice: 0                      Voice: 1
+ *   Instrument: Any               Instrument: Any
+ *   Parameter: ADSR Envelope      Parameter: Volume
+ * */
 
  /* TODO:
   * Command line arg to open STP file

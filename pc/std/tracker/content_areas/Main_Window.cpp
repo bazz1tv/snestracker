@@ -15,7 +15,7 @@
 
 Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_title_label("Song Title:"),
-  song_title(22, song_title_str, sizeof(song_title_str)),
+  song_title(SongSettings::SONGTITLE_SIZE, tracker->songsettings.song_title_str, sizeof(tracker->songsettings.song_title_str)),
   tracker(tracker),
 	samplepanel(tracker->samples),
   instrpanel(tracker->instruments, &samplepanel),
@@ -36,8 +36,6 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
     exit(1);
   }
   
-  song_title_str[0] = 0;
-
   x = xx = 10; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
   y = yy = 50;
 
