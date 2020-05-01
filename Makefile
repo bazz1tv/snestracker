@@ -1,13 +1,36 @@
+# Top-level Makefile
+#
+# Copyright 2020 Michael Bazzinotti (Bazz)
+# https://bazz1.com
+#
+# The top-level Makefile first builds the snes apu driver, does the
+# intermediary steps of importing the SPC RAM locations to C/C++, and then builds
+# the Tracker.
+#
+#
+#     1. Top-level Makefile
+#           /           \
+#          /             \
+#         /               \
+#        /                 \
+#  2. snesdriver      3. pc/std
+
+# Regarding WLAPREFIX, you must include a trailing slash
+# This is done so that this variable may also be used blank (for example
+# when using binaries that are already in your PATH)
+WLAPREFIX :=
+WLASPC700 := $(WLAPREFIX)wla-spc700
+
+# INTERNAL FROM THIS POINT ON
 SPCDRIVER_FILENAME := tracker.spc
 SPCDRIVER_RELPATH := pc/std/bin/$(SPCDRIVER_FILENAME)
 APURAM_HEADER := pc/std/tracker/apuram.h
-# trailing slash so that unsetting this variable makes no problem
-# using binaries that are in $PATH
-WLAPREFIX := ~/Code/git-repos/wla-dx/build/binaries/
-WLASPC700 := $(WLAPREFIX)wla-spc700
-# We need a makefile that first builds the apu driver, does the
-# intermediary steps of importing the SPC RAM locations header file, then builds the
-# tracker.
+
+ifeq (,$(WLAPREFIX))
+$(warning WARNING: WLAPREFIX left blank. If wla-dx binaries are not in PATH, \
+	you will face fatal errors. Consider specifying WLAPREFIX in the top-level Makefile)
+endif
+
 all: $(SPCDRIVER_RELPATH) snes_driver/spc.sym \
 pc/std/tracker/apuram.h pc/std/bin/snes_tracker snes_driver/Makefile
 
