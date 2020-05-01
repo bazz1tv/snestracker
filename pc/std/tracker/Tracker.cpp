@@ -357,7 +357,8 @@ void Tracker::handle_events()
 						break;
           case UserEvents::callback:
 					{
-            void (*p) (void*) = ev.user.data1;
+            typedef void (*FuncPtr_t)(void *);
+            FuncPtr_t p = FuncPtr_t(ev.user.data1);
             p(ev.user.data2);
 					}
           break;
@@ -365,10 +366,10 @@ void Tracker::handle_events()
 						main_window.pateditpanel.inc_currow();
 					break;
 					case UserEvents::report_tracker_setrow:
-						main_window.pateditpanel.set_currow((int)ev.user.data1);
+						main_window.pateditpanel.set_currow((intptr_t)ev.user.data1);
 					break;
 					case UserEvents::report_tracker_setpattern:
-						main_window.patseqpanel.set_currow((int)ev.user.data1);
+						main_window.patseqpanel.set_currow((intptr_t)ev.user.data1);
 					break;
         }
       } break;
@@ -1077,7 +1078,7 @@ int Tracker::read_from_file(SDL_RWops *file)
 		return -1;
 	}
 	buf[sizeof("STSONG") - 1] = 0;
-	if (strcmp(buf, "STSONG") != 0)
+	if (strcmp((const char *)buf, "STSONG") != 0)
 	{
 		DEBUGLOG("STSONG Magic not found in File header!\n");
 	}

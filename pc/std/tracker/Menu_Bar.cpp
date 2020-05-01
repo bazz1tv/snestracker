@@ -85,7 +85,7 @@ int Menu_Bar::File_Context::open_song(void *data)
 	if (rc != NFD_OKAY)
 		return rc;
 
-	rc = ::tracker->read_from_file(file);
+	rc = (nfdresult_t) ::tracker->read_from_file(file);
 	SDL_RWclose(file);
 
 	if (rc == 0)

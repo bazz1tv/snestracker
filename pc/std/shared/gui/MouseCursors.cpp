@@ -89,7 +89,7 @@ int BmpCursorAni::handle_event(const SDL_Event &ev)
       switch (ev.user.code)
       {
         case UserEvents::mouse_ani:
-          set_frame((int)ev.user.data1);
+          set_frame((int)(intptr_t)ev.user.data1);
           return 1;
       }
     } break;

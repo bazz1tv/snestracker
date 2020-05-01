@@ -14,6 +14,9 @@ static int clone_seq_common(PatSeqPanel *psp);
 static Pattern * get_current_pattern(PatSeqPanel *psp);
 static PatternMeta * get_current_pattern_meta(PatSeqPanel *psp);
 
+static void note2ascii(uint8_t note, char *c);
+static void moveback(Pattern *pattern, int track, int pos, const Instrument_Panel *ip);
+
 extern MouseCursors *mousecursors;
 
 PatternSequencer::PatternSequencer() : sequence(MAX_PATTERNS)
@@ -527,7 +530,7 @@ inline static void instr2ascii(int instr, char *c)
     *(c++) = Utility::nibble_to_ascii(lo);
 }
 
-static void note2ascii(Note note, char *c)
+void note2ascii(uint8_t note, char *c)
 {
   if (note == NOTE_NONE)
   {
@@ -1091,7 +1094,7 @@ static int gethexkb(const int scancode, const int mod)
 }
 #undef q
 
-static void moveback(Pattern *pattern, int track, int pos, Instrument_Panel *ip)
+void moveback(Pattern *pattern, int track, int pos, const Instrument_Panel *ip)
 {
   if (pos == 0)
     return;

@@ -68,7 +68,7 @@ namespace dblclick
       }
       else if (ev->user.code == UserEvents::mouse_reset)
       {
-        dblclick::numclicks = ev->user.data1;
+        dblclick::numclicks = (Uint8)(uintptr_t) ev->user.data1;
       }
     }
   }

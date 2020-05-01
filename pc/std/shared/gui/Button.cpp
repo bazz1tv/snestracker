@@ -39,7 +39,7 @@ Uint32 Button::held_callback(Uint32 interval, void *b)
 
     userevent.type = SDL_USEREVENT;
     userevent.code = UserEvents::callback;
-    userevent.data1 = &trigger_callback;
+    userevent.data1 = (void *)&trigger_callback;
     userevent.data2 = b;
 
     event.type = SDL_USEREVENT;

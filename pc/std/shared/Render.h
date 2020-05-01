@@ -8,20 +8,21 @@ public:
   Render();
   ~Render();
 
-  void sdl_draw(SDL_Surface *screen=screen, 
-    SDL_Texture *sdlTexture=sdlTexture,
-    SDL_Renderer *sdlRenderer=sdlRenderer);
-  void clear_screen(SDL_Surface *screen=screen, 
-    SDL_Texture *sdlTexture=sdlTexture, 
-    SDL_Renderer *sdlRenderer=sdlRenderer);
+  void sdl_draw(SDL_Surface *screen=Render::screen,
+    SDL_Texture *sdlTexture=Render::sdlTexture,
+    SDL_Renderer *sdlRenderer=Render::sdlRenderer);
+  void clear_screen(SDL_Surface *screen=Render::screen,
+    SDL_Texture *sdlTexture=Render::sdlTexture,
+    SDL_Renderer *sdlRenderer=Render::sdlRenderer);
 
   void load_from_window(Window *win);
 
-  SDL_Window *sdlWindow;
-  Uint32 windowID;
   static SDL_Renderer *sdlRenderer;
   static SDL_Texture *sdlTexture;
   static SDL_Surface *screen;
+
+  SDL_Window *sdlWindow;
+  Uint32 windowID;
 
   int w,h;
 };

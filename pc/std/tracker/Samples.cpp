@@ -190,8 +190,8 @@ int Sample_Panel::event_handler(const SDL_Event &ev)
 
                   event2.type = SDL_USEREVENT;
                   event2.user.code = UserEvents::mouse_reset;
-                  event2.user.data1 = 1;
-                  event2.user.data2 = 0;
+                  event2.user.data1 = (void *) 1;
+                  event2.user.data2 = (void *) 0;
                   SDL_PushEvent(&event2);
 
                   if (Text_Edit_Rect::cur_editing_ter)
