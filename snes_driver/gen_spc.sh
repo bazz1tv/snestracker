@@ -26,4 +26,4 @@ binsize=$(ls -l spc.bin | awk '{print $5}')
 skip=$((startsize + binsize + start_to_pc + 2))
 dd if="template.spc" skip=$skip \
 	 seek=$skip bs=1 count=$((total - skip)) \
-	 of="$1" oflag=append
+	 of="$1"

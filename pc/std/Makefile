@@ -59,11 +59,15 @@ ifeq ($(uname_S), Darwin)
 	LDFLAGS += -framework AppKit
 	CPP_DEFS += -DHAVE_STDINT_H # gme
 	MSOURCES = $(PROJ_DIR)/NativeFileDialog/nfd_cocoa.m
-	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
+	BOOST_LDFLAGS := -L /usr/local/lib -lboost_system-mt -lboost_filesystem-mt
+	# It would be nice to automatically detect the Boost include path
+	# (installed in seperate locations on HomeBrew vs. Macports)
+	# for now, hardcode the Boost lib and include path installed from Homebrew
+	CPPFLAGS += -I/usr/local/include
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
-	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)include
-	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m -Xlinker -rpath -Xlinker $(gme_PREFIX)/lib
+	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)/include
+	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m
 
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
@@ -91,8 +95,8 @@ else ifeq ($(uname_S), Linux)
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
-	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)include
-	gme_LDFLAGS := -L$(gme_PREFIX)lib -lgme_m
+	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)/include
+	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m
 
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
@@ -118,7 +122,7 @@ else ifeq ($(uname_S), Cross_Windows)
 	# quick notes: /usr/lib/gcc/i686-pc-mingw32/4.9.3
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
-	gme_CPPFLAGS := $(debug) -c -I$(gme_PREFIX)/include
+	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)/include
 	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m
 
 	sdl2_cflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags)
@@ -176,20 +180,24 @@ all: $(global_requirements)
 $(DEP_DEBUGGER) $(OBJECTS_DEBUGGER2): CPPFLAGS += $(debugger_CPPFLAGS)
 $(DEP_TRACKER) $(OBJECTS_TRACKER2): CPPFLAGS += $(tracker_CPPFLAGS)
 
-$(BIN)/$(EXECUTABLE_DEBUGGER).app: $(EXECUTABLE_DEBUGGER) unrar 7zDec
+$(BIN)/$(EXECUTABLE_DEBUGGER).app: $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
 	mkdir -p $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
-	cp std $@/Contents/MacOS
+	cp $(BIN)/$(EXECUTABLE_DEBUGGER) $@/Contents/MacOS
 	cp Info.plist $@/Contents
-	cp unrar $@/Contents/Resources
-	cp 7zDec $@/Contents/Resources
+	cp $(BIN)/$(UNRAR) $@/Contents/Resources
+	cp $(BIN)/$(DEC7Z) $@/Contents/Resources
 	touch $@
 
-$(BIN)/$(EXECUTABLE_TRACKER).app: $(EXECUTABLE_TRACKER) unrar 7zDec
-	mkdir -p $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
-	cp std $@/Contents/MacOS
+$(BIN)/$(EXECUTABLE_TRACKER).app: $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
+	mkdir -p $@ $@/Contents/lib $@/Contents/Resources $@/Contents/MacOS
+	cp $(BIN)/$(EXECUTABLE_TRACKER) $@/Contents/MacOS
 	cp Info.plist $@/Contents
-	cp unrar $@/Contents/Resources
-	cp 7zDec $@/Contents/Resources
+	cp $(BIN)/$(UNRAR) $@/Contents/Resources
+	cp $(BIN)/$(DEC7Z) $@/Contents/Resources
+	cp $(BIN)/*.bmp $@/Contents/Resources # Copy mouse icons
+	cp $(BIN)/tracker.spc $@/Contents/Resources # copy SPC driver
+	bash ./osx_ship.sh $@ $(EXECUTABLE_TRACKER) $@/Contents/lib
+	#$@/Contents/MacOS/$(EXECUTABLE_TRACKER)
 	touch $@
 
 
