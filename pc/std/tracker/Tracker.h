@@ -19,7 +19,7 @@
 #include "shared/DrawRenderer.h"
 #include <unordered_set>
 
-#include "gme/Spc_Report.h"
+#include "gme_m/Spc_Report.h"
 
 #include "SongSettings.h"
 

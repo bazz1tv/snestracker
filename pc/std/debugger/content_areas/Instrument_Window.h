@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseD.h"
-#include "gme/Spc_Dsp_Register_Map_Interface.h"
+#include "gme_m/Spc_Dsp_Register_Map_Interface.h"
 #include "sdl_dblclick.h"
 #include "Colors.h"
 #include "sdlfont.h"

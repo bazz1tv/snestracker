@@ -1,7 +1,7 @@
 #include "Main_Memory_Area.h"
 #include "gme/player/Music_Player.h"
 #include "report.h"
-#include "gme/Spc_Dsp_Register_Map_Interface.h"
+#include "gme_m/Spc_Dsp_Register_Map_Interface.h"
 #include <nfd.h>
 #include "DEBUGLOG.h"
 #include "utility.h"

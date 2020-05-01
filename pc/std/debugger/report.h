@@ -3,8 +3,8 @@
 
 #include "SDL.h"
 #include "Screen.h"
-#include "gme/Spc_Report.h"
-#include "gme/Spc_Dsp_Register_Map_Interface.h"
+#include "gme_m/Spc_Report.h"
+#include "gme_m/Spc_Dsp_Register_Map_Interface.h"
 
 /* 
 I cannot encapsulate this because the DSP needs to be able to access it

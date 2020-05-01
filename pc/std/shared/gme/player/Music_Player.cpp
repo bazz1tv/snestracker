@@ -2,7 +2,7 @@
 
 #include "Music_Player.h"
 
-#include "gme/Music_Emu.h"
+#include "gme_m/Music_Emu.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -24,7 +24,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
 
-#include "gme/blargg_source.h"
+#include "gme_m/blargg_source.h"
 
 #include "debugger/globals.h"
 #include "DEBUGLOG.h"

@@ -4,13 +4,13 @@
 #ifndef MUSIC_PLAYER_H
 #define MUSIC_PLAYER_H
 
-#include "gme/Music_Emu.h"
-#include "gme/Spc_Emu.h"
+#include "App_Settings.h"
+#include "gme_m/Music_Emu.h"
+#include "gme_m/Spc_Emu.h"
 #include <vector>
 #include <iostream>
-#include "gme/Spc_Filter.h"
+#include "gme_m/Spc_Filter.h"
 #include "Audio.h"
-#include "App_Settings.h"
 
 typedef double gain_t;
 

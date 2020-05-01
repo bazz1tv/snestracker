@@ -2,7 +2,7 @@
 #include "sdlfont.h"
 #include "utility.h"
 #include "report.h"
-#include "gme/Spc_Dsp_Register_Map_Interface.h"
+#include "gme_m/Spc_Dsp_Register_Map_Interface.h"
 #include "Notes.h"
 #include "platform.h"
 #include "Menu_Bar.h"

@@ -1,6 +1,6 @@
 #include "BrrContextMenu.h"
 #include "shared/mouse.h"
-#include "gme/Spc_Dsp_Register_Map_Interface.h" // MAX_VOICES
+#include "gme_m/Spc_Dsp_Register_Map_Interface.h" // MAX_VOICES
 
 int BrrContextMenu::receive_event(const SDL_Event &ev)
 {
