@@ -11,6 +11,13 @@ else ifeq ($(uname_S), Cross_Windows)
 	CXXFLAGS += -Wall -fpermissive -g -gstabs -ggdb
 endif
 
+ifeq ($(uname_S), Darwin)
+	OSX_BACKSUPPORT = -arch x86_64 -mmacosx-version-min=10.9 \
+	-DMAC_OS_X_VERSION_MIN_REQUIRED=1090
+	CXXFLAGS += $(OSX_BACKSUPPORT)
+	LDFLAGS += $(OSX_BACKSUPPORT)
+endif
+
 # Linux using GCC
 CXX=$(CROSS_COMPILE)g++
 CXXFLAGS += -O0

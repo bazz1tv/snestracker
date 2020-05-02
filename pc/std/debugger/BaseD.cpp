@@ -192,9 +192,9 @@ namespace bfs = ::boost::filesystem;
 // in the specified directory and all subdirectories
 void get_file_list_ext(const bfs::path& root, const std::string& ext, std::vector<bfs::path>& ret)
 {
-    if(!bfs::exists(root) || !bfs::is_directory(root)) return;
-
-    DEBUGLOG("!@#!@# ");
+  DEBUGLOG("get_file_list_ext(); ");
+  if(bfs::exists(root) && bfs::is_directory(root))
+  {
     bfs::recursive_directory_iterator it(root);
     bfs::recursive_directory_iterator endit;
 
@@ -207,6 +207,7 @@ void get_file_list_ext(const bfs::path& root, const std::string& ext, std::vecto
         }
         ++it;
     }
+  }
 }
 
 void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/, 
@@ -214,11 +215,11 @@ void BaseD::check_paths_and_reload(char **paths/*=g_cfg.playlist*/,
 {
   struct
   {
-    std::string cmd[2] = { UNRAR_TOOLNAME "\" e -y \"",
+    const char * cmd[2] = { UNRAR_TOOLNAME "\" e -y \"",
                            DEC7Z_TOOLNAME "\" e \"" };
 
     unsigned index=0;
-    const char * str() { return cmd[index].c_str(); }
+    const char * str() { return cmd[index]; }
   } extract_cmd;
   
   // Check here if path is RSN
@@ -606,7 +607,7 @@ void BaseD::prev_track25()
 {
   g_cur_entry-=25;
   int tmp = abs(g_cur_entry);
-  if (g_cur_entry>=g_cfg.num_files)
+  if (g_cur_entry < 0)
   { 
     if ((g_cfg.num_files-tmp) < g_cfg.num_files)
       g_cur_entry=g_cfg.num_files-tmp;  

@@ -25,7 +25,7 @@ PROJECT_VERSION?=$(shell date +%Y%m%d)
 BINARY_TARBALL_NAME?=$(PROJECT_NAME)-$(PROJECT_VERSION).tar.bz2
 
 # We put our build dir in $(PWD) by default
-BUILD_DIR?=$(PWD)
+BUILD_DIR=$(PWD)
 
 NATIVE_BUILD_DIR=$(PWD)
 
