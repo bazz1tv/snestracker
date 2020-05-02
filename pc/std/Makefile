@@ -65,6 +65,11 @@ ifeq ($(uname_S), Darwin)
 	# for now, hardcode the Boost lib and include path installed from Homebrew
 	CPPFLAGS += -I/usr/local/include
 
+	OSX_CPPFLAGS = -arch x86_64 -mmacosx-version-min=10.6 \
+	-DMAC_OS_X_VERSION_MIN_REQUIRED=1060 -I/usr/local/include
+	CPPFLAGS += $(OSX_CPPFLAGS)
+	LDFLAGS += $(OSX_CPPFLAGS)
+
 	#gme_PREFIX ?= $(gme_default_PREFIX)
 	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)/include
 	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m
