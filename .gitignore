@@ -1,3 +1,4 @@
+env.conf
 *.o
 *.sym
 .DS_Store

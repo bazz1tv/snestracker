@@ -15,21 +15,19 @@
 #        /                 \
 #  2. snesdriver/      3. pc/
 
-# Regarding WLAPREFIX, you must include a trailing slash
-# This is done so that this variable may also be used blank (for example
-# when using binaries that are already in your PATH)
-WLAPREFIX :=
+include env.conf
+
+ifeq (,$(WLAPREFIX))
+$(warning WARNING: WLAPREFIX left blank. If wla-dx binaries are not in PATH, \
+you will face fatal errors. Consider specifying WLAPREFIX in env.conf)
+endif
+
 WLASPC700 := $(WLAPREFIX)wla-spc700
 
 # INTERNAL FROM THIS POINT ON
 SPCDRIVER_FILENAME := tracker.spc
 SPCDRIVER_RELPATH := pc/bin/$(SPCDRIVER_FILENAME)
 APURAM_HEADER := pc/tracker/apuram.h
-
-ifeq (,$(WLAPREFIX))
-$(warning WARNING: WLAPREFIX left blank. If wla-dx binaries are not in PATH, \
-	you will face fatal errors. Consider specifying WLAPREFIX in the top-level Makefile)
-endif
 
 all: $(SPCDRIVER_RELPATH) snes_driver/spc.sym \
 pc/tracker/apuram.h pc/bin/snestracker snes_driver/Makefile
