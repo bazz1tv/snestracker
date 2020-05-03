@@ -141,7 +141,7 @@ clean:
 # file existence to see if we need to auto-regen the Makefile
 echo "CheckNewSnesSourceFiles: FORCE
 	@find . -name *.s -o -name *.i | sort | uniq | sed 's#./##' > 1
-	@grep -E '(cpu|apu)/([^%]*\.s|.*\.i)' Makefile | sed -e 's/ \\\\//' -e 's/.*\.o://' -e 's/\s//' | sort | uniq > 2
+	@grep -E '(cpu|apu)/([^%]*\.s|.*\.i)' Makefile | sed -e 's/ \\\\//' -e 's/.*\.o://' | tr -d '	 ' | sort | uniq > 2
 	@if ! diff 1 2 > /dev/null; then wlaprefix=\$(WLAPREFIX) ./genmake > Makefile ; fi
 	@rm 1 2
 
