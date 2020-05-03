@@ -40,6 +40,9 @@ for path in $paths; do
 	install_name_tool -change ${path} @rpath/${path##*/} ${EXE}
 done
 
-# add the library rpath to the exe
-install_name_tool -add_rpath @executable_path/../lib ${EXE}
+# add the library rpath to the exe.
+install_name_tool -add_rpath @executable_path/../${3##*/} ${EXE}
 # reminder: @executable_path equates to where the exe is, eg. .app/Contents/MacOS
+# ${3##*/} -> Gets the last path component of the lib location.
+# IE. snestracker.app/Contents/Lib -> Lib
+# @rpath becomes snestracker.app/Contents/MacOS/../Lib

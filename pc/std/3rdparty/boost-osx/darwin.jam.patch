@@ -1,0 +1,11 @@
+--- boost_1_73_0/tools/build/src/tools/darwin.jam	2020-04-22 09:36:26.000000000 -0400
++++ boost_1_73_0-mod/tools/build/src/tools/darwin.jam	2020-05-02 02:46:31.000000000 -0400
+@@ -29,7 +29,7 @@ feature macosx-version : : propagated li
+ 
+ ## The minimal MacOSX version to target.
+ feature macosx-version-min : : propagated optional ;
+-
++feature.extend macosx-version-min : 10.6 ;
+ ## A dependency, that is forced to be included in the link.
+ feature force-load : : free dependency incidental ;
+ 

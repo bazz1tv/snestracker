@@ -7,6 +7,13 @@ else ifeq ($(uname_S), Cross_Windows)
 	CFLAGS += -fpermissive -g -gstabs -ggdb
 endif
 
+ifeq ($(uname_S), Darwin)
+	OSX_BACKSUPPORT = -arch x86_64 -mmacosx-version-min=10.9 \
+	-DMAC_OS_X_VERSION_MIN_REQUIRED=1090
+	CFLAGS += $(OSX_BACKSUPPORT)
+	LDFLAGS += $(OSX_BACKSUPPORT)
+endif
+
 CXX = $(CROSS_COMPILE)g++
 RM = rm -f
 CFLAGS += -c -O0 -Wall

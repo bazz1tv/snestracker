@@ -49,7 +49,8 @@ gme_PREFIX ?= $(prefix)
 # sudo -E make install-dev
 ifeq ($(uname_S), Darwin)
 	global_requirements += $(BIN)/$(EXECUTABLE_DEBUGGER).app $(BIN)/$(EXECUTABLE_TRACKER).app 
- 
+
+	#CPPFLAGS += -stdlib=libc++
 	CPPFLAGS += -Wno-int-to-void-pointer-cast -Wno-c++11-narrowing
 	MIDI_DEFS     =   -D__MACOSX_CORE__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAudio -ljdkmidi
@@ -59,11 +60,21 @@ ifeq ($(uname_S), Darwin)
 	LDFLAGS += -framework AppKit
 	CPP_DEFS += -DHAVE_STDINT_H # gme
 	MSOURCES = $(PROJ_DIR)/NativeFileDialog/nfd_cocoa.m
-	BOOST_LDFLAGS := -L /usr/local/lib -lboost_system-mt -lboost_filesystem-mt
+	BOOST_LDFLAGS := -L /opt/local/lib -lboost_system -lboost_filesystem
 	# It would be nice to automatically detect the Boost include path
 	# (installed in seperate locations on HomeBrew vs. Macports)
 	# for now, hardcode the Boost lib and include path installed from Homebrew
-	CPPFLAGS += -I/usr/local/include
+	CPPFLAGS += -I/opt/local/include
+
+	# Due to use of C++11, with stdc++ I can only back support back to 10.9, but
+	# if libc++ was used I could go back to 10.7. However, this would require
+	# also configuring external/3rd party libraries to also compile with libc++.
+	# It seems too much a hassle for the current set of priorities.
+	OSX_BACKSUPPORT = -arch x86_64 -mmacosx-version-min=10.9 \
+	-DMAC_OS_X_VERSION_MIN_REQUIRED=1090
+	OBJCFLAGS += $(OSX_BACKSUPPORT)
+	CPPFLAGS += $(OSX_BACKSUPPORT)
+	LDFLAGS += $(OSX_BACKSUPPORT)
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
 	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)/include
@@ -158,7 +169,7 @@ CPPFLAGS 	+= $(sdl2_cflags) -Wno-return-type -std=c++11 $(MIDI_CPPFLAGS) \
 $(gme_CPPFLAGS) -MMD -MP -MT '$@'
 
 # currently, only because of Native File Dialog Implementation on OS X
-OBJCFLAGS = $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
+OBJCFLAGS += $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
 #### CPPSOURCES
 CPPSOURCES_SHARED = $(wildcard $(SHARED_DIR)*.cpp) $(wildcard $(SHARED_DIR)*/*.cpp)\
 										$(wildcard $(SHARED_DIR)*/*/*.cpp)\
@@ -188,22 +199,23 @@ $(DEP_DEBUGGER) $(OBJECTS_DEBUGGER2): CPPFLAGS += $(debugger_CPPFLAGS)
 $(DEP_TRACKER) $(OBJECTS_TRACKER2): CPPFLAGS += $(tracker_CPPFLAGS)
 
 $(BIN)/$(EXECUTABLE_DEBUGGER).app: $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
-	mkdir -p $@ $@/Contents $@/Contents/Resources $@/Contents/MacOS
+	mkdir -p $@ $@/Contents/Lib $@/Contents/Resources $@/Contents/MacOS
 	cp $(BIN)/$(EXECUTABLE_DEBUGGER) $@/Contents/MacOS
 	cp Info.plist $@/Contents
 	cp $(BIN)/$(UNRAR) $@/Contents/Resources
 	cp $(BIN)/$(DEC7Z) $@/Contents/Resources
+	bash ./osx_ship.sh $@ $(EXECUTABLE_DEBUGGER) $@/Contents/Lib
 	touch $@
 
 $(BIN)/$(EXECUTABLE_TRACKER).app: $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
-	mkdir -p $@ $@/Contents/lib $@/Contents/Resources $@/Contents/MacOS
+	mkdir -p $@ $@/Contents/Lib $@/Contents/Resources $@/Contents/MacOS
 	cp $(BIN)/$(EXECUTABLE_TRACKER) $@/Contents/MacOS
 	cp Info.plist $@/Contents
 	cp $(BIN)/$(UNRAR) $@/Contents/Resources
 	cp $(BIN)/$(DEC7Z) $@/Contents/Resources
 	cp $(BIN)/*.bmp $@/Contents/Resources # Copy mouse icons
 	cp $(BIN)/tracker.spc $@/Contents/Resources # copy SPC driver
-	bash ./osx_ship.sh $@ $(EXECUTABLE_TRACKER) $@/Contents/lib
+	bash ./osx_ship.sh $@ $(EXECUTABLE_TRACKER) $@/Contents/Lib
 	#$@/Contents/MacOS/$(EXECUTABLE_TRACKER)
 	touch $@
 

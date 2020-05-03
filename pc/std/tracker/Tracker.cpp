@@ -356,11 +356,12 @@ void Tracker::handle_events()
 						::player->post_fadeout();
 						break;
           case UserEvents::callback:
-					{
+          {
+            //DEBUGLOG("CALLBACK; ");
             typedef void (*FuncPtr_t)(void *);
             FuncPtr_t p = FuncPtr_t(ev.user.data1);
             p(ev.user.data2);
-					}
+          }
           break;
 					case UserEvents::report_tracker_incrow:
 						main_window.pateditpanel.inc_currow();
@@ -380,6 +381,7 @@ void Tracker::handle_events()
       } break;
       case SDL_MOUSEBUTTONDOWN:
       {
+        //DEBUGLOG("MOUSEBUTTONDOWN; ");
         /* In the case of touchpad soft clicking, it is expected that the
          * MOUSEBUTTONUP is sent as the immediate next event after the
          * mousebuttondown. In this case, it does not allow for the
@@ -392,6 +394,7 @@ void Tracker::handle_events()
       } break;
       case SDL_MOUSEBUTTONUP:
       {
+        //DEBUGLOG("MOUSEBUTTONUP; ");
         /* If the last frame was the mbd, we know we have found the soft
          * click event pair. copy this mbu event to be postponed after
          * this event loop exits. Also don't process this event */

@@ -24,9 +24,28 @@ void Button::trigger_callback(void *b)
 
 Uint32 Button::held_callback(Uint32 interval, void *b)
 {
+  //DEBUGLOG("held_callback; interval=%d, holdtime=%d, triggerfreq=%d; ", interval, holdtime, triggerfreq);
   if (interval == holdtime)
   {
-    // nothing needs to be done ?
+    /* According to https://wiki.libsdl.org/SDL_AddTimer, an active timer's
+    interval can be adjusted from the timer callback function's return value.
+    This was confirmed on Linux and Windows 7, but on OSX 10.11 El Capitan,
+    the timer appears to ignore the return value from the callback, and runs at
+    a fixed interval - the one specified in the call to SDL_AddTimer().
+
+    Since, in the case of the Button implementation, after the holdtime timer
+    expires, the rate becomes fixed to triggerfreq, we can just remove the holdtime
+    timer and then spawn a new timer with the triggerfreq interval set.
+
+    However, as it stands, if a timer needs to be truly dynamically adjustable,
+    it seems a bug report and fix is in order for Mac OSX El Capitan. This bug
+    may apply to other OSX versions.
+
+    UPDATE: this bug was only present in SDL 2.0.3, fixed likely by 2.0.4,
+    and definitely fixed in the current 2.0.12.
+    */
+    //SDL_RemoveTimer(hold_tid);
+    //hold_tid = SDL_AddTimer(triggerfreq, held_callback, b);
   }
   else if (interval == triggerfreq)
   {
@@ -64,7 +83,10 @@ void Button::check_event(const SDL_Event &ev)
     state = LEFTMOUSEBUTTON_HELD_IN_RECT;
     // start the timer
     if (holdrepeat)
+    {
+      //DEBUGLOG("holdrepeat; ");
       hold_tid = SDL_AddTimer(holdtime, held_callback, (void *)this);
+    }
   }
   else if (state == LEFTMOUSEBUTTON_HELD_IN_RECT)
   {
