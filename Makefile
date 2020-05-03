@@ -13,7 +13,7 @@
 #          /             \
 #         /               \
 #        /                 \
-#  2. snesdriver      3. pc/std
+#  2. snesdriver/      3. pc/
 
 # Regarding WLAPREFIX, you must include a trailing slash
 # This is done so that this variable may also be used blank (for example
@@ -23,8 +23,8 @@ WLASPC700 := $(WLAPREFIX)wla-spc700
 
 # INTERNAL FROM THIS POINT ON
 SPCDRIVER_FILENAME := tracker.spc
-SPCDRIVER_RELPATH := pc/std/bin/$(SPCDRIVER_FILENAME)
-APURAM_HEADER := pc/std/tracker/apuram.h
+SPCDRIVER_RELPATH := pc/bin/$(SPCDRIVER_FILENAME)
+APURAM_HEADER := pc/tracker/apuram.h
 
 ifeq (,$(WLAPREFIX))
 $(warning WARNING: WLAPREFIX left blank. If wla-dx binaries are not in PATH, \
@@ -32,7 +32,7 @@ $(warning WARNING: WLAPREFIX left blank. If wla-dx binaries are not in PATH, \
 endif
 
 all: $(SPCDRIVER_RELPATH) snes_driver/spc.sym \
-pc/std/tracker/apuram.h pc/std/bin/snes_tracker snes_driver/Makefile
+pc/tracker/apuram.h pc/bin/snestracker snes_driver/Makefile
 
 # optional
 env.sh: Makefile
@@ -68,14 +68,14 @@ $(APURAM_HEADER): snes_driver/spc.sym Makefile \
 	# printf "#define SPCDRIVER_CODESTART 0x%x\n" $((0x$(grep -m1 "SPC_CODE_START" spc.sym | cut -f1 -d' ')))
 	# but I guess I'll keep it non-global..?
 
-pc/std/bin/snes_tracker: FORCE pc/std/tracker/apuram.h
-	make -C pc/std
+pc/bin/snestracker: FORCE pc/tracker/apuram.h
+	make -C pc
 
 FORCE: ;
 
 clean:
 	# remove generated files
-	rm $(APURAM_HEADER)
-	rm $(SPCDRIVER_RELPATH)
-	make -C pc/std clean
+	rm -f $(APURAM_HEADER)
+	rm -f $(SPCDRIVER_RELPATH)
+	make -C pc clean
 	make -C snes_driver clean
