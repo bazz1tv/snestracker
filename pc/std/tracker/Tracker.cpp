@@ -1014,6 +1014,15 @@ Meta Instruments (SFX?) -
 
 void Tracker::reset()
 {
+  // stop the player incase it's playing
+  playback = false;
+  ::player->fade_out(false); // immediate fade-out (no thread)
+  /* It was shown that the program would crash if a file was opened while
+   * the tracker was playing; It was because there were remnant
+   * User Events pertaining to the Tracker reporting mechanism from the
+   * SPC driver. To bypass this issue, drain all UserEvents when we
+   * perform a tracker reset (eg. when opening a file). */
+  SDL_FlushEvent(SDL_USEREVENT);
 	// Reset Important GUI Elements
 	if (Text_Edit_Rect::cur_editing_ter)
 		Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
