@@ -64,7 +64,7 @@ void BrrContextMenu::update( uint16_t brr_addr )
   // BRRI download
   menu_items[SOLOSAMPLE].is_visible = false;
   menu_items[PLAYSAMPLE].is_visible = false;
-  menu_items[RIPBRRI].is_visible = false;
+  menu_items[RIPSTI].is_visible = false;
 
   uint8_t solo = 0; // also update the solo bits to correspond to this frame
 
@@ -75,12 +75,13 @@ void BrrContextMenu::update( uint16_t brr_addr )
       uint8_t adsr1 = player->spc_read_dsp(v * 0x10 + dsp_reg::adsr1);
       uint8_t adsr2 = player->spc_read_dsp(v * 0x10 + dsp_reg::adsr2);
 
-      menu_items[SOLOSAMPLE].is_visible = true;
+      /* The solo sample implementation is not good. Let's just disable it for now */
+      /*menu_items[SOLOSAMPLE].is_visible = true;
       menu_items[SOLOSAMPLE].clickable_text.data = (void *) ( (solo << 16) | brr_addr );
       menu_items[PLAYSAMPLE].is_visible = true;
-      menu_items[PLAYSAMPLE].clickable_text.data = (void *) ( (solo << 16) | brr_addr );
-      menu_items[RIPBRRI].is_visible = true;
-      menu_items[RIPBRRI].clickable_text.data = (void *) ( (adsr2 << 24) | (adsr1 << 16) | brr_addr );
+      menu_items[PLAYSAMPLE].clickable_text.data = (void *) ( (solo << 16) | brr_addr );*/
+      menu_items[RIPSTI].is_visible = true;
+      menu_items[RIPSTI].clickable_text.data = (void *) ( (adsr2 << 24) | (adsr1 << 16) | brr_addr );
     }
 }
 

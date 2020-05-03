@@ -18,8 +18,7 @@ void Main_Memory_Area::spawnbrrcontextmenu(int x, int y)
 			::brrcontext.menu_items[BrrContextMenu::SOLOSAMPLE].is_visible = false;
 			::brrcontext.menu_items[BrrContextMenu::PLAYSAMPLE].is_visible = false;
 			::brrcontext.menu_items[BrrContextMenu::RIPBRR].is_visible = false;
-			::brrcontext.menu_items[BrrContextMenu::RIPBRRP].is_visible = false;
-			::brrcontext.menu_items[BrrContextMenu::RIPBRRI].is_visible = false;
+			::brrcontext.menu_items[BrrContextMenu::RIPSTI].is_visible = false;
 			::brrcontext.menu.is_active = false;
 			break;
 
@@ -27,23 +26,20 @@ void Main_Memory_Area::spawnbrrcontextmenu(int x, int y)
 			::brrcontext.menu_items[BrrContextMenu::SOLOSAMPLE].is_visible = true;
 			::brrcontext.menu_items[BrrContextMenu::PLAYSAMPLE].is_visible = true;
 			::brrcontext.menu_items[BrrContextMenu::RIPBRR].is_visible = true;
-			::brrcontext.menu_items[BrrContextMenu::RIPBRRP].is_visible = false;
-			::brrcontext.menu_items[BrrContextMenu::RIPBRRI].is_visible = true;
+			::brrcontext.menu_items[BrrContextMenu::RIPSTI].is_visible = true;
 			break;
 		case LOOP_SAMPLE:
 			::brrcontext.menu_items[BrrContextMenu::SOLOSAMPLE].is_visible = true;
 			::brrcontext.menu_items[BrrContextMenu::PLAYSAMPLE].is_visible = true;
 			::brrcontext.menu_items[BrrContextMenu::RIPBRR].is_visible = true;
-			::brrcontext.menu_items[BrrContextMenu::RIPBRRP].is_visible = true;
-			::brrcontext.menu_items[BrrContextMenu::RIPBRRI].is_visible = true;
+			::brrcontext.menu_items[BrrContextMenu::RIPSTI].is_visible = true;
 			break;
 		case CLICKED_ON_LOOP_ONLY:
 			// notify user
 			::brrcontext.menu_items[BrrContextMenu::SOLOSAMPLE].is_visible = true;
 			::brrcontext.menu_items[BrrContextMenu::PLAYSAMPLE].is_visible = true;
 			::brrcontext.menu_items[BrrContextMenu::RIPBRR].is_visible = true;
-			::brrcontext.menu_items[BrrContextMenu::RIPBRRP].is_visible = false;
-			::brrcontext.menu_items[BrrContextMenu::RIPBRRI].is_visible = true;
+			::brrcontext.menu_items[BrrContextMenu::RIPSTI].is_visible = true;
 			break;
 	}
 
