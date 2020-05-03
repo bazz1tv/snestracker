@@ -1,4 +1,3 @@
-env.conf
 *.o
 *.sym
 .DS_Store
@@ -18,6 +17,11 @@ pc/tracker/apuram.h
 *.map
 snes_driver/obj/
 pc/bin/
+pc/ext/libjdkmidi/c++/out.*/Makefile*
+pc/ext/libjdkmidi/c++/out.*/reconfigure-old
+pc/ext/libjdkmidi/c++/out.*/vars.sh
+pc/ext/libjdkmidi/c++/out.*/build/
+
 pc/ext/lzma1505/C/Util/7z/7zDec
 pc/ext/unrar/unrar
 snes_driver/spc.bin
