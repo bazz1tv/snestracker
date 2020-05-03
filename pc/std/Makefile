@@ -107,6 +107,8 @@ else ifeq ($(uname_S), Linux)
 	UNRAR = unrar
 	DEC7Z = 7zDec
 else ifeq ($(uname_S), Cross_Windows)
+# debugging symbols are only visible from winedbg by -gstabs
+	debug = -gstabs
 	MIDI_DEFS     =   -D__WINDOWS_MM__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -ljdkmidi -lwinmm
 	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
@@ -119,14 +121,19 @@ else ifeq ($(uname_S), Cross_Windows)
 	CPPSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_win.cpp
 	LDFLAGS += -mwindows -lole32 #-static-libgcc #-lcomctl32 -lcomdlg32
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
+	# Example of static library inclusion:
+	#BOOST_LDFLAGS := $(prefix)/lib/libboost_system.a $(prefix)/lib/libboost_filesystem.a
 	# quick notes: /usr/lib/gcc/i686-pc-mingw32/4.9.3
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
 	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)/include
 	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m
 
-	sdl2_cflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags)
-	sdl2_ldflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs)
+# sdl2 pkg-config uses absolute path (eg /usr/lib), which is meant to be
+# from the cross chroot. The following command will ensure it adds the
+# path to that cross root location to the path given by pkg-config
+	sdl2_cflags = $(subst /usr, $(prefix), $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags))
+	sdl2_ldflags = $(subst /usr, $(prefix), $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs))
 
 	EXECUTABLE_DEBUGGER = std.exe
 	EXECUTABLE_TRACKER = snes_tracker.exe
