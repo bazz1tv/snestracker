@@ -1028,6 +1028,7 @@ void Tracker::reset()
 		Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
 
 	// Reset Panel currows
+  main_window.pateditpanel.set_currow(0);
 	main_window.patseqpanel.set_currow(0);
 	main_window.instrpanel.set_currow(0);
 	main_window.samplepanel.currow = 0;
