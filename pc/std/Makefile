@@ -1,4 +1,6 @@
-# the bin directory name, where all o and d files go as well
+# The object directory name, where all o and d files go as well
+OBJ = obj
+# the bin directory name
 BIN = bin
 # tells make to use this shell: 
 SHELL := /bin/bash
@@ -86,7 +88,7 @@ ifeq ($(uname_S), Darwin)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
 	EXECUTABLE_DEBUGGER = std
-	EXECUTABLE_TRACKER = snes_tracker
+	EXECUTABLE_TRACKER = snestracker
 	
 	UNRAR = unrar
 	DEC7Z = 7zDec
@@ -117,7 +119,7 @@ else ifeq ($(uname_S), Linux)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
 	EXECUTABLE_DEBUGGER = std
-	EXECUTABLE_TRACKER = snes_tracker
+	EXECUTABLE_TRACKER = snestracker
 	
 	UNRAR = unrar
 	DEC7Z = 7zDec
@@ -152,7 +154,7 @@ else ifeq ($(uname_S), Cross_Windows)
 	sdl2_ldflags = $(subst /usr, $(prefix), $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs))
 
 	EXECUTABLE_DEBUGGER = std.exe
-	EXECUTABLE_TRACKER = snes_tracker.exe
+	EXECUTABLE_TRACKER = snestracker.exe
 	UNRAR = unrar.exe
 	DEC7Z = 7zDec.exe
 else ifeq ($(uname_S), Windows)
@@ -195,8 +197,8 @@ $(wildcard tracker/*/*/*.cpp)
 OBJECTS_DEBUGGER = $(CPPSOURCES_DEBUGGER:.cpp=.o) $(MSOURCES:.m=.o) $(CSOURCES:.c=.o)
 OBJECTS_TRACKER = $(CPPSOURCES_TRACKER:.cpp=.o) $(MSOURCES:.m=.o) $(CSOURCES:.c=.o)
 
-OBJECTS_DEBUGGER2 = $(addprefix bin/, $(OBJECTS_DEBUGGER))
-OBJECTS_TRACKER2 = $(addprefix bin/, $(OBJECTS_TRACKER))
+OBJECTS_DEBUGGER2 = $(addprefix $(OBJ)/, $(OBJECTS_DEBUGGER))
+OBJECTS_TRACKER2 = $(addprefix $(OBJ)/, $(OBJECTS_TRACKER))
 
 DEP_DEBUGGER = $(OBJECTS_DEBUGGER2:.o=.d)
 DEP_TRACKER = $(OBJECTS_TRACKER2:.o=.d)
@@ -221,7 +223,7 @@ $(BIN)/$(EXECUTABLE_TRACKER).app: $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $
 	cp Info.plist $@/Contents
 	cp $(BIN)/$(UNRAR) $@/Contents/Resources
 	cp $(BIN)/$(DEC7Z) $@/Contents/Resources
-	cp $(BIN)/*.bmp $@/Contents/Resources # Copy mouse icons
+	cp -r $(BIN)/cursors $@/Contents/Resources # Copy mouse icons
 	cp $(BIN)/tracker.spc $@/Contents/Resources # copy SPC driver
 	bash ./osx_ship.sh $@ $(EXECUTABLE_TRACKER) $@/Contents/Lib
 	#$@/Contents/MacOS/$(EXECUTABLE_TRACKER)
@@ -236,7 +238,7 @@ $(BIN)/$(EXECUTABLE_TRACKER): $(OBJECTS_TRACKER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z
 
 
 $(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/7zDec $(PROJ_DIR)/lzma1505/C/Util/7z/7zMain.c
-	cp $(PROJ_DIR)/lzma1505/C/Util/7z/7zDec* $(BIN)
+	cp $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(BIN)
 
 $(PROJ_DIR)/lzma1505/C/Util/7z/7zDec:
 	uname_S=$(uname_S) make -C $(PROJ_DIR)/lzma1505/C/Util/7z -f makefile.gcc
@@ -252,17 +254,17 @@ $(LIBJDKMIDI_LIB): $(LIBJDKMIDI_OSDIR)/Makefile
 $(LIBJDKMIDI_OSDIR)/Makefile:
 	cd $(LIBJDKMIDI_OSDIR) && ./reconfigure
 
-$(BIN)/ext/NativeFileDialog/nfd_gtk.o: CPPFLAGS += $(gtk_cflags)
+$(OBJ)/ext/NativeFileDialog/nfd_gtk.o: CPPFLAGS += $(gtk_cflags)
 
-$(BIN)/%.o: %.c
+$(OBJ)/%.o: %.c
 	mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
-$(BIN)/%.o: %.cpp
+$(OBJ)/%.o: %.cpp
 	mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
-$(BIN)/%.o: %.m
+$(OBJ)/%.o: %.m
 	mkdir -p $(@D)
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
 	
@@ -272,6 +274,7 @@ clean:
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 	rm -f {$(PROJ_DIR)/lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
 	rm -f {$(PROJ_DIR)/unrar/,}{unrar,unrar.exe}
+	cd $(LIBJDKMIDI_OSDIR) && make clean
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 -include $(DEP_DEBUGGER) $(DEP_TRACKER)

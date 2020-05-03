@@ -208,9 +208,9 @@ MouseCursors::MouseCursors()
   mcaap = &mcaa[0];
   mcaap->num_textures = 3;
   mcaap->texture = new Texture[mcaap->num_textures] {
-    { {0x00ff00}, "sparkle-big",    5, 5},
-    { {0x00ff00}, "sparkle-med",    3, 3},
-    { {0x00ff00}, "sparkle-small",  1, 1},
+    { {0x00ff00}, "cursors/sparkle-big",    5, 5},
+    { {0x00ff00}, "cursors/sparkle-med",    3, 3},
+    { {0x00ff00}, "cursors/sparkle-small",  1, 1},
   };
   Texture::load_bmp(mcaap->texture, mcaap->texture->filename, ::render->sdlRenderer);
   Texture::load_bmp(mcaap->texture+1, mcaap->texture->filename, ::render->sdlRenderer);
@@ -322,6 +322,7 @@ void BmpCursorAni::load_bmps(BmpCursorAni *a)
   assert(::file_system);
   // quoted data path does not play nice here
   strcpy(tb, ::file_system->data_path);
+  strcat(tb, "cursors/");
   len = strlen(tb);
 
     for (int j=0; j < a->num_frames; j++)
@@ -370,6 +371,7 @@ void BmpCursor::load_bmp(BmpCursor *b)
   assert(::file_system);
   // quoted data path does not play nice here
   strcpy(tb, ::file_system->data_path);
+  strcat(tb, "cursors/");
   len = strlen(tb);
 
     tb[len] = 0;
