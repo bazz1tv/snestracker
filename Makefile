@@ -29,8 +29,14 @@ SPCDRIVER_FILENAME := tracker.spc
 SPCDRIVER_RELPATH := pc/bin/$(SPCDRIVER_FILENAME)
 APURAM_HEADER := pc/tracker/apuram.h
 
+ifdef CROSS_COMPILE
+	EXE_TRACKER = st.exe
+else
+	EXE_TRACKER = st
+endif
+
 all: $(SPCDRIVER_RELPATH) snes_driver/spc.sym \
-pc/tracker/apuram.h pc/bin/snestracker snes_driver/Makefile
+pc/tracker/apuram.h pc/bin/$(EXE_TRACKER) snes_driver/Makefile
 
 # optional
 env.sh: Makefile
@@ -66,7 +72,7 @@ $(APURAM_HEADER): snes_driver/spc.sym Makefile \
 	# printf "#define SPCDRIVER_CODESTART 0x%x\n" $((0x$(grep -m1 "SPC_CODE_START" spc.sym | cut -f1 -d' ')))
 	# but I guess I'll keep it non-global..?
 
-pc/bin/snestracker: FORCE pc/tracker/apuram.h
+pc/bin/$(EXE_TRACKER): FORCE pc/tracker/apuram.h
 	make -C pc
 
 FORCE: ;

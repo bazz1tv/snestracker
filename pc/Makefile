@@ -88,7 +88,7 @@ ifeq ($(uname_S), Darwin)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
 	EXECUTABLE_DEBUGGER = std
-	EXECUTABLE_TRACKER = snestracker
+	EXECUTABLE_TRACKER = st
 	
 	UNRAR = unrar
 	DEC7Z = 7zDec
@@ -119,7 +119,7 @@ else ifeq ($(uname_S), Linux)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
 	EXECUTABLE_DEBUGGER = std
-	EXECUTABLE_TRACKER = snestracker
+	EXECUTABLE_TRACKER = st
 	
 	UNRAR = unrar
 	DEC7Z = 7zDec
@@ -154,7 +154,7 @@ else ifeq ($(uname_S), Cross_Windows)
 	sdl2_ldflags = $(subst /usr, $(prefix), $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs))
 
 	EXECUTABLE_DEBUGGER = std.exe
-	EXECUTABLE_TRACKER = snestracker.exe
+	EXECUTABLE_TRACKER = st.exe
 	UNRAR = unrar.exe
 	DEC7Z = 7zDec.exe
 else ifeq ($(uname_S), Windows)
