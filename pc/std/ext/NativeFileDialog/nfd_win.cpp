@@ -380,7 +380,7 @@ nfdresult_t NFD_OpenDialog( const char *filterList,
     ofn.Flags = OFN_OVERWRITEPROMPT;
  
     // Show the dialog.
-    bresult = GetSaveFileName( &ofn );
+    bresult = GetOpenFileName( &ofn );
     if ( bresult )
     {
         CopyWCharToNFDChar( ofn.lpstrFile, outPath );
@@ -490,7 +490,7 @@ nfdresult_t NFD_SaveDialog( const nfdchar_t *filterList,
                             nfdchar_t **outPath )
 {
     nfdresult_t nfdResult = NFD_ERROR;
-    
+    BOOL bresult;
     // Init COM library.
     HRESULT result = ::CoInitializeEx(NULL,
                                       ::COINIT_APARTMENTTHREADED |
@@ -501,5 +501,57 @@ nfdresult_t NFD_SaveDialog( const nfdchar_t *filterList,
         return NFD_ERROR;
     }
 
-    
+    wchar_t buf[5000];
+    // Step 0 - Create the OPENFILENAME thing
+    // open a file name
+    OPENFILENAME ofn ;
+    NFD_init_ofn(&ofn, buf, 5000);
+
+    // Step 1 -- rewrite the AddFiltersToDialog!!
+    // Build the filter list
+    if ( !AddFiltersToDialog( &ofn, filterList ) )
+    {
+      goto end;
+    }
+
+    // Set the default path
+    if ( !SetDefaultPath( &ofn, defaultPath ) )
+    {
+      goto end;
+    }
+
+    // Set a flag for multiple options
+    ofn.Flags = OFN_OVERWRITEPROMPT;
+
+    // Show the dialog.
+    bresult = GetSaveFileName( &ofn );
+    if ( bresult )
+    {
+      CopyWCharToNFDChar( ofn.lpstrFile, outPath );
+      if ( !*outPath )
+      {
+        /* error is malloc-based, error message would be redundant */
+        goto end;
+      }
+      nfdResult = NFD_OKAY;
+    }
+    else
+    {
+      // Check if cancel or ERROR
+      DWORD err = CommDlgExtendedError();
+
+      if (err)
+      {
+        NFDi_SetError("File dialog box show failed.");
+        nfdResult = NFD_ERROR;
+      }
+      else
+        nfdResult = NFD_CANCEL;
+    }
+
+end:
+    NFD_ofn_free(&ofn);
+    ::CoUninitialize();
+
+    return nfdResult;
 }
