@@ -1,31 +1,50 @@
 #define SYMLINK_FLAG_RELATIVE 1
 
-/*typedef struct _REPARSE_DATA_BUFFER {
+#ifndef HAVE_REPARSE_DATA_BUFFER
+/*
+ * REPARSE_DATA_BUFFER is defined in <winnt.h> on mingw.org w32api
+ * instead as is documented in <ntifs.h>. The mingw-w64 API define
+ * it in <ddk/ntifs.h> but we can not include as header like
+ * <ntddk.h> is required instead <ddk/ntddk.h>, i.e. to use mingw-w64
+ * headers user must specify explicitly path to ddk :(.
+ * So lest check at configure time and use MSC hack if not found.
+ */
+
+typedef struct _REPARSE_DATA_BUFFER {
   ULONG  ReparseTag;
   USHORT ReparseDataLength;
   USHORT Reserved;
   union {
-    struct {
-      USHORT SubstituteNameOffset;
-      USHORT SubstituteNameLength;
-      USHORT PrintNameOffset;
-      USHORT PrintNameLength;
-      ULONG  Flags;
-      WCHAR  PathBuffer[1];
-    } SymbolicLinkReparseBuffer;
-    struct {
-      USHORT SubstituteNameOffset;
-      USHORT SubstituteNameLength;
-      USHORT PrintNameOffset;
-      USHORT PrintNameLength;
-      WCHAR  PathBuffer[1];
-    } MountPointReparseBuffer;
-    struct {
-      UCHAR DataBuffer[1];
-    } GenericReparseBuffer;
+  struct {
+  USHORT SubstituteNameOffset;
+  USHORT SubstituteNameLength;
+  USHORT PrintNameOffset;
+  USHORT PrintNameLength;
+  ULONG  Flags;
+  WCHAR  PathBuffer[1];
+  } SymbolicLinkReparseBuffer;
+  struct {
+  USHORT SubstituteNameOffset;
+  USHORT SubstituteNameLength;
+  USHORT PrintNameOffset;
+  USHORT PrintNameLength;
+  WCHAR  PathBuffer[1];
+  } MountPointReparseBuffer;
+  struct {
+  UCHAR DataBuffer[1];
+  } GenericReparseBuffer;
   };
-} REPARSE_DATA_BUFFER, *PREPARSE_DATA_BUFFER;
-*/
+  } REPARSE_DATA_BUFFER, *PREPARSE_DATA_BUFFER;
+
+#define REPARSE_DATA_BUFFER_HEADER_SIZE  FIELD_OFFSET(REPARSE_DATA_BUFFER,\
+                                                       GenericReparseBuffer)
+#ifndef MAXIMUM_REPARSE_DATA_BUFFER_SIZE
+#define MAXIMUM_REPARSE_DATA_BUFFER_SIZE  ( 16 * 1024 )
+#endif
+
+#endif /*ndef HAVE_REPARSE_DATA_BUFFER*/
+
+
 
 
 
