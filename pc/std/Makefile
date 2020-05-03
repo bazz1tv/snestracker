@@ -48,12 +48,14 @@ gme_PREFIX ?= $(prefix)
 #../configure --native-platform-linux=1 --cross-compiling=1 --compiler-prefix=i686-pc-mingw32- --target-platform-mingw32=1 --prefix=/usr/i686-pc-mingw32/usr/
 # sudo -E make install-dev
 ifeq ($(uname_S), Darwin)
-	global_requirements += $(BIN)/$(EXECUTABLE_DEBUGGER).app $(BIN)/$(EXECUTABLE_TRACKER).app 
+	global_requirements += $(BIN)/$(EXECUTABLE_DEBUGGER).app $(BIN)/$(EXECUTABLE_TRACKER).app
+
+	LIBJDKMIDI_OSDIR = $(PROJ_DIR)/libjdkmidi/c++/out.Mac
 
 	#CPPFLAGS += -stdlib=libc++
 	CPPFLAGS += -Wno-int-to-void-pointer-cast -Wno-c++11-narrowing
 	MIDI_DEFS     =   -D__MACOSX_CORE__ -DRTMIDI_DEBUG
-	MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAudio -ljdkmidi
+	MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAudio
 	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
 	MIDI_LDFLAGS  = -L$(prefix)/lib
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
@@ -89,8 +91,10 @@ ifeq ($(uname_S), Darwin)
 	UNRAR = unrar
 	DEC7Z = 7zDec
 else ifeq ($(uname_S), Linux)
+	LIBJDKMIDI_OSDIR = $(PROJ_DIR)/libjdkmidi/c++/out.Linux
+
 	MIDI_DEFS     =   -D__LINUX_ALSA__ -DRTMIDI_DEBUG
-	MIDI_LIBRARY  = -ljdkmidi -lasound
+	MIDI_LIBRARY  = -lasound
 	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
 	MIDI_LDFLAGS  = -L$(prefix)/lib -lpthread
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
@@ -118,10 +122,11 @@ else ifeq ($(uname_S), Linux)
 	UNRAR = unrar
 	DEC7Z = 7zDec
 else ifeq ($(uname_S), Cross_Windows)
+	LIBJDKMIDI_OSDIR = $(PROJ_DIR)/libjdkmidi/c++/out.Windows
 # debugging symbols are only visible from winedbg by -gstabs
 	debug = -gstabs
 	MIDI_DEFS     =   -D__WINDOWS_MM__ -DRTMIDI_DEBUG
-	MIDI_LIBRARY  = -ljdkmidi -lwinmm
+	MIDI_LIBRARY  = -lwinmm
 	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
 	MIDI_LDFLAGS  = -L$(prefix)/lib
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
@@ -155,6 +160,9 @@ else ifeq ($(uname_S), Windows)
 else
 	
 endif
+
+LIBJDKMIDI_LIB = $(LIBJDKMIDI_OSDIR)/build/lib/libjdkmidi.a
+MIDI_LIBRARY += $(LIBJDKMIDI_LIB)
 
 ## Native File Directory
 CPPSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_common.cpp
@@ -220,10 +228,10 @@ $(BIN)/$(EXECUTABLE_TRACKER).app: $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $
 	touch $@
 
 
-$(BIN)/$(EXECUTABLE_DEBUGGER): $(OBJECTS_DEBUGGER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
+$(BIN)/$(EXECUTABLE_DEBUGGER): $(OBJECTS_DEBUGGER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_DEBUGGER2) $(LDFLAGS) -o $@
 
-$(BIN)/$(EXECUTABLE_TRACKER): $(OBJECTS_TRACKER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
+$(BIN)/$(EXECUTABLE_TRACKER): $(OBJECTS_TRACKER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_TRACKER2) $(LDFLAGS) -o $@
 
 
@@ -237,6 +245,12 @@ $(BIN)/$(UNRAR): $(PROJ_DIR)/unrar/$(UNRAR)
 	cp $(PROJ_DIR)/unrar/$(UNRAR) $(BIN)
 $(PROJ_DIR)/unrar/$(UNRAR):
 	uname_S=$(uname_S) make -C $(PROJ_DIR)/unrar
+
+$(LIBJDKMIDI_LIB): $(LIBJDKMIDI_OSDIR)/Makefile
+	cd $(LIBJDKMIDI_OSDIR) && make
+
+$(LIBJDKMIDI_OSDIR)/Makefile:
+	cd $(LIBJDKMIDI_OSDIR) && ./reconfigure
 
 $(BIN)/ext/NativeFileDialog/nfd_gtk.o: CPPFLAGS += $(gtk_cflags)
 
