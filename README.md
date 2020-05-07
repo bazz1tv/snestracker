@@ -1,92 +1,80 @@
-SNES Tracker (ST)
-============
-Congratulations, you have stumbled upon a rare item. This is a program being written that is currently in its embryonic stages. It will become a tracker software for the Super Nintendo Entertainment System, AKA the Super Famicom.
+snestracker
+===========
 
-A tracker is a program used to sequence music using audio samples. This particular tracker will take advantage of the hardware Digital Signal Processing (DSP) features of the SNES, including noise, echo, pitch modulation, ADSR, stereo panning, and inverse phasing (surround sound). It uses a SNES Audio Processing Unit (APU) emulator to produce cycle-accurate emulation, allowing you to create accurate SNES music, but in the comfort of your PC workstation.
+Congratulations, you have stumbled upon a rare item. Currently in its embryonic stages, snestracker aims to become a full-featured cross platform music production software for the Super Nintendo Entertainment System  (SNES), AKA the Super Famicom.
 
-The music that you create with SNES Tracker can be played on the real Super Nintendo, or an SNES emulator. 
+snestracker uses a custom SPC700 Audio Processing Unit (APU) emulator to produce cycle-accurate emulation, allowing you to create accurate SNES music in the comfort of your PC workstation.
 
-SNES Tracker can produce compilations that can be played in a playlist on the real hardware, or as Music/SFX sets for your real video game!
+snestracker will take advantage of the most important hardware Digital Signal Processing (DSP) features of the SNES, including noise, echo customization, pitch modulation, ADSR envelopes, stereo panning, and inverse phasing (surround sound).
 
-This code has no real license at the moment, so please contact me if
-you want to distribute it in any form.
+The music that you create with SNES Tracker exports to various formats. It will export standalone music files in the form of a demo ROM, SPC, WAV. You will eventually be able to incorporate your new music and sound effects into your own custom programs / video games!
 
-**Main Website**: http://snestracker.club
+Here is an image of the current early prototype!
 
-SNES Tracker Debugger (STD)
-===========================
+![snestracker early prototype preview](./pics/snestracker.png)
 
-``SNES Tracker Debugger`` is designed as a perfect SPC debugger. This program is also a work in progress, and may or may not be merged directly into SNES Tracker.
+Building
+--------
+See [Building.md](./Building.md)
 
-## Features
+Road Map
+--------
+see [Roadmap.md](./Roadmap.md)
 
+
+Debugger
+========
+
+In addition to the tracker, there is a debugger program that allows you to hone in on SPC files in various ways. Here is a preview of the main pane, based on raph's vspcplay.
+![debugger photo](./pics/std-mem.png)
+
+Features
+--------
 - Memory Tab
- - Full view of RAM identifying read/write/execute points, including echo region and BRR sample/loop data regions.
- - Sample donload / upload (todo)
- - Real-time inspection and modification of SPC RAM and DSP registers
- - Global tempo and volume adjustments
- - Real-time channel activity indicators, including pitch, volume, and gain.
- - Channel solo/mute
- - APU port interaction tool. Interact with the SPC as if you are the SNES. This is great to find new sounds, or reverse engineer the SPC engine
+  - Full view of RAM identifying read/write/execute points, including echo region and BRR sample/loop data regions.
+  - Sample download
+  - Real-time inspection and modification of SPC RAM and DSP registers
+  - Global tempo and volume adjustments
+  - Real-time channel activity indicators. pitch, volume, and gain.
+  - Channel solo/mute
+  - APU port interaction tool.
+    - Interact with the SPC as if you are the SNES. This is great to find new sounds, or reverse engineer the SPC engine
 - DSP Tab
- - Full access to all global and voice DSP registers in "break-out" format.
- - DIRectory tool - see what sample entries have been used/unused, and change their values!
+  - Full access to all global and voice DSP registers in "break-out" format.
+  - DIRectory tool - see what sample entries are active, download samples, change dir location!
 - Instrument Tab
- - Play any voice at any octave, with ability to customize ADSR
-
+  - Play any voice at any octave, with ability to customize ADSR. Can even play through MIDI keyboard
 - SPC Export
 
-## How to Compile
-
-Currently, the following compilation strategies can be taken:
-
-- compile native on OS X
-- compile native on Linux
-- cross-compile for Windows from Linux
-
-In order to compile, certain library dependencies must be installed on your system first. It is preferred to install these libraries through your package manager if available.
-
-### Dependencies
-
-- [SDL2](https://www.libsdl.org/download-2.0.php) - 2.0.3-r200 - newer versions may be compatible
-- [Boost](http://www.boost.org/users/history/ "Boost") 1.56.0-r1 - a newer version of Boost is likely compatible - need only compile the following: 
- - boost\_system-mt
- - boost\_filesystem-mt
 
 
-### Linux-only deps
 
-- gtk+ (2.0 or 3.0 will work)
-- alsa-lib (rtmidi dep)
+Other Recommendations
+=====================
 
-### Internal Dependencies
-
-- libjdkmidi (packaged internally -- WIP getting build scripts to automate building this)
-- rtmidi (packaged internally)
-- NativeFileDialog (packaged internally, and modified for cross-platform compilation)
-- 7zDec (packaged internally, and modified for cross-platform compilation)
-- unrar (packaged internally, and modified for cross-platform compilation)
-
-### Building
-STD is currently found at the following path:
-*PC\_Tracker/APU.SDL.OLD.DONT.TOUCH/gme\_vspc/std*
-
-From that directory, the makefile can be found.
-
-Currently, undocumented, the libjdkmidi must be properly manually compiled and the Makefile properly configured. This will be left undocumented until further notice, simply so I can get some sleep, and until the build system becomes more user friendly.
-
-Recommendations
-===============
-Here are some recommended emulators:
+Emulators
+---------
 
 - [mednafen](http://mednafen.fobby.net/ "Mednafen")
-- [retroarch](http://www.libretro.com/) - a bit difficult to setup
-- [zsnes](http://www.zsnes.com/)
+- [retroarch](http://www.libretro.com/)
+- [zsnes](http://www.zsnes.com/) old but beloved
 - [snes9x](http://www.snes9x.com/)
-- for debugging, I prefer my fork of [bsnes-classic](https://github.com/bazzinotti/bsnes-classic)
+- for debugging, I prefer my fork of [bsnes-classic](https://github.com/bazzinotti/bsnes-classic).
 
+
+Flash Carts
+-----------
 To play on the real Super Nintendo, you will need help of additional hardware, typically known as a flash cart:
 
 - [SD2SNES](https://sd2snes.de)
-- Super Everdrive (google it)
+- Super Everdrive
 - [Tototek Superflash](http://www.tototek.com/store/index.php?main_page=product_info&cPath=1_8_11&products_id=39) (outdated)
+
+![By Bazz](./pics/bazz.png)
+
+Developed by Bazz, <bazz@bazz1.com>
+
+Special thanks to Blargg.
+
+Shoutout to byuu, Neviksti, mukunda (eKid), Oli (Vilxdryad) and the snesdev community!
+
