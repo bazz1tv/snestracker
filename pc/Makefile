@@ -74,8 +74,11 @@ ifeq ($(uname_S), Darwin)
 	# if libc++ was used I could go back to 10.7. However, this would require
 	# also configuring external/3rd party libraries to also compile with libc++.
 	# It seems too much a hassle for the current set of priorities.
-	OSX_BACKSUPPORT = -arch x86_64 -mmacosx-version-min=10.9 \
-	-DMAC_OS_X_VERSION_MIN_REQUIRED=1090
+	ifeq ($(OSX_BACKSUPPORT), 1)
+		OSX_BACKSUPPORT = -arch x86_64 -mmacosx-version-min=10.9 \
+		-DMAC_OS_X_VERSION_MIN_REQUIRED=1090
+	endif
+
 	OBJCFLAGS += $(OSX_BACKSUPPORT)
 	CPPFLAGS += $(OSX_BACKSUPPORT)
 	LDFLAGS += $(OSX_BACKSUPPORT)
