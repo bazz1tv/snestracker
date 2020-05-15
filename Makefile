@@ -52,7 +52,7 @@ snes_driver/spc.sym: FORCE Makefile snes_driver/Makefile
 	make -C snes_driver
 
 snes_driver/Makefile: snes_driver/genmake Makefile
-	cd snes_driver ; wlaprefix=$(WLAPREFIX) ./genmake > Makefile
+	cd snes_driver ; wlaprefix=$(WLAPREFIX) pcx2snes_prefix=$(PCX2SNES_PREFIX) ./genmake > Makefile
 
 $(APURAM_HEADER): snes_driver/spc.sym Makefile \
 		snes_driver/conv_public_syms_to_C.sh $(SPCDRIVER_RELPATH)

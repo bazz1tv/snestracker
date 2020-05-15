@@ -24,6 +24,7 @@ if [ -z $1 ]
 fi
 
 echo "WLAPREFIX = ${wlaprefix}"
+echo "PCX2SNES_PREFIX = ${pcx2snes_prefix}"
 
 echo '# ROM TITLE'
 echo "ROMTITLE = $romtitle"
