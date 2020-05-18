@@ -111,8 +111,11 @@ else ifeq ($(uname_S), Linux)
 	gtk_cflags = $(shell pkg-config --cflags gtk+-2.0)
 	gtk_ldflags = $(shell pkg-config --libs gtk+-2.0)
 	#CPPFLAGS += $(gtk_cflags)
-	LDFLAGS += $(gtk_ldflags) -Wl,-rpath=$(gme_PREFIX)
+	LDFLAGS += $(gtk_ldflags)
 	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
+
+	# Allow Linux binary to source DLLs from same directory binary is located
+	LDFLAGS += '-Wl,-rpath=$$ORIGIN'
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
 	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)
