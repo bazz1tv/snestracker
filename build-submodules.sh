@@ -15,6 +15,7 @@ echo
 echo Building pcx2snes
 echo -----------------
 make -C submodules/pcx2snes
+echo
 
 echo Building libgme_m
 echo -----------------
