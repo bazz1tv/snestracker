@@ -7,7 +7,7 @@ echo
 echo Building custom wla-dx
 echo ----------------------
 pushd submodules/wla-dx
-	mkdir build-wla && cd build-wla &&
+	mkdir -p build-wla && cd build-wla &&
 	cmake .. && cmake --build . --config Debug
 popd
 
