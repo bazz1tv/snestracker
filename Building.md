@@ -18,48 +18,36 @@ Dependencies
 - Linux-only deps
   - gtk 2 or 3
   - alsa-lib (rtmidi dep)
+- wla-dx deps
+  - cmake
 
 For example, on Linux systems with apt, try the following:
 
 ```
-apt install libasound2-dev libsdl2-dev libboost-filesystem-dev libgtk2.0-dev
+apt install libasound2-dev libsdl2-dev libboost-filesystem-dev libgtk2.0-dev cmake
 ```
 
-[libgme_m](https://github.com/bazzinotti/libgme_m) is also required.
+Submodules
+----------
 
-```
-git clone https://github.com/bazzinotti/libgme_m.git
-cd libgme_m
-make
-sudo make install
-```
-
-Bazz's custom [wla-dx](https://github.com/bazzinotti/wla-dx) is also required.
-
-```
-git clone https://github.com/bazzinotti/wla-dx.git
-cd wla-dx
-git checkout bazz #switch to bazz branch
-mkdir build-wla && cd build-wla
-cmake ..
-cmake --build . --config Debug
-```
-
-Finally prepare snestracker
+Snestracker relies on several internal projects that are all conveniently packaged into the snestracker repo. Provided you have installed the necessary system depencies listed in the previous section, execute the following.
 
 ```
 git clone https://github.com/bazzinotti/snestracker.git
 cd snestracker
-# Change WLAPREFIX to point to to the bazz wla-dx build-wla/binaries path
-$EDITOR env.conf
-# finally build the APU driver and the tracker and debugger in one fell swoop!
+./build-submodules.sh
+```
+
+Now that the dependent submodules have been built, you only need to run the following command to build snestracker.
+
+```
 make
 ```
 
 Cross-Building for Windows
 --------------------------
 
-To establish a 64-bit cross build environment on Gentoo Linux:
+Here's a rough guide to establish a 64-bit cross build environment on Gentoo Linux:
 
 ```
 emerge -av sys-devel/crossdev
@@ -67,13 +55,20 @@ crossdev --target x86_64-w64-mingw32
 x86_64-w64-mingw32-emerge -av media-libs/libsdl2 dev-libs/boost
 ```
 
-Finally, from snestracker directory, Here are the necessary settings to specify when cross building.
+First, manually build libgme_m as follows:
+
+```
+make -C submodules/libgme_m clean
+prefix=/usr/x86_64-w64-mingw32/usr CROSS_COMPILE=x86_64-w64-mingw32- make -C submodules/libgme_m
+```
+
+Finally snestracker can be built in similar fashion
 
 ```
 prefix=/usr/x86_64-w64-mingw32/usr CROSS_COMPILE=x86_64-w64-mingw32- make
 ```
 
-The DLLs need to be copied into the directory where the EXE will be located.
+Provided that compilation was successful, the following DLLs need to be copied into the directory where the EXE will be located.
 
 ```
 cp /usr/x86_64-w64-mingw32/usr/bin/{libgme_m.dll,libSDL2-2-0-0.dll} .
