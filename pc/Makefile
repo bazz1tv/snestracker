@@ -218,6 +218,7 @@ $(BIN)/$(EXECUTABLE_DEBUGGER).app: $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(UNRAR)
 	cp Info.plist $@/Contents
 	cp $(BIN)/$(UNRAR) $@/Contents/Resources
 	cp $(BIN)/$(DEC7Z) $@/Contents/Resources
+	cp -r $(BIN)/cursors $@/Contents/Resources # Copy mouse icons
 	bash ./osx_ship.sh $@ $(EXECUTABLE_DEBUGGER) $@/Contents/Lib
 	touch $@
 
