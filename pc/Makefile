@@ -112,7 +112,7 @@ else ifeq ($(uname_S), Linux)
 	gtk_ldflags = $(shell pkg-config --libs gtk+-2.0)
 	#CPPFLAGS += $(gtk_cflags)
 	LDFLAGS += $(gtk_ldflags)
-	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
+	BOOST_LDFLAGS := -lboost_system -lboost_filesystem
 
 	# Allow Linux binary to source DLLs from same directory binary is located
 	LDFLAGS += '-Wl,-rpath=$$ORIGIN'
@@ -144,7 +144,7 @@ else ifeq ($(uname_S), Cross_Windows)
 	# NFD
 	CPPSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_win.cpp
 	LDFLAGS += -mwindows -lole32 #-static-libgcc #-lcomctl32 -lcomdlg32
-	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
+	BOOST_LDFLAGS := -lboost_system -lboost_filesystem
 	# Example of static library inclusion:
 	#BOOST_LDFLAGS := $(prefix)/lib/libboost_system.a $(prefix)/lib/libboost_filesystem.a
 	# quick notes: /usr/lib/gcc/i686-pc-mingw32/4.9.3
