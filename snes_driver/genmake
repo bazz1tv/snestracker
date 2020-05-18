@@ -143,7 +143,8 @@ clean:
 echo "CheckNewSnesSourceFiles: FORCE
 	@find . -name *.s -o -name *.i | sort | uniq | sed 's#./##' > 1
 	@grep -E '(cpu|apu)/([^%]*\.s|.*\.i)' Makefile | sed -e 's/ \\\\//' -e 's/.*\.o://' | tr -d '	 ' | sort | uniq > 2
-	@if ! diff 1 2 > /dev/null; then wlaprefix=\$(WLAPREFIX) ./genmake > Makefile ; fi
+	@if ! diff 1 2 > /dev/null; then \
+		wlaprefix=\$(WLAPREFIX) pcx2snes_prefix=\$(PCX2SNES_PREFIX) ./genmake > Makefile ; fi
 	@rm 1 2
 
 FORCE: ;
