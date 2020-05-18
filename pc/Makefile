@@ -256,7 +256,7 @@ $(LIBJDKMIDI_LIB): $(LIBJDKMIDI_OSDIR)/Makefile
 	cd $(LIBJDKMIDI_OSDIR) && make
 
 $(LIBJDKMIDI_OSDIR)/Makefile:
-	cd $(LIBJDKMIDI_OSDIR) && ./reconfigure
+	cd $(LIBJDKMIDI_OSDIR) && ./configure
 
 $(OBJ)/ext/NativeFileDialog/nfd_gtk.o: CPPFLAGS += $(gtk_cflags)
 
