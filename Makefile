@@ -15,12 +15,12 @@
 #        /                 \
 #  2. snesdriver/      3. pc/
 
-include env.conf
+WLAPREFIX = $(CURDIR)/submodules/wla-dx/build-wla/binaries/
+PCX2SNES_PREFIX = $(CURDIR)/submodules/pcx2snes/
 
-ifeq (,$(WLAPREFIX))
-$(warning WARNING: WLAPREFIX left blank. If wla-dx binaries are not in PATH, \
-you will face fatal errors. Consider specifying WLAPREFIX in env.conf)
-endif
+# Build submodule dependencies
+#WLA_BINARIES = $(WLAPREFIX)wla-65816 $(WLAPREFIX)wlalink $(WLAPREFIX)wla-spc700
+#$(WLA_BINARIES):
 
 WLASPC700 := $(WLAPREFIX)wla-spc700
 
