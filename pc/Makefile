@@ -15,7 +15,7 @@ ifdef CROSS_COMPILE
 	uname_S = Cross_Windows
 endif
 
-global_requirements = $(CPPSOURCES) $(CSOURCES) $(MSOURCES) \
+global_requirements = $(LIBJDKMIDI_LIB) $(CPPSOURCES) $(CSOURCES) $(MSOURCES) \
 $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(EXECUTABLE_TRACKER)
 
 # This is where source that both tracker and STD will use. NOTE THE inclusion of the forward slash ;)
@@ -167,7 +167,7 @@ else
 endif
 
 LIBJDKMIDI_LIB = $(LIBJDKMIDI_OSDIR)/build/lib/libjdkmidi.a
-MIDI_CPPFLAGS += -I$(LIBJDKMIDI_OSDIR)/build/include
+MIDI_CPPFLAGS += -I$(PROJ_DIR)/libjdkmidi/c++/include
 MIDI_LIBRARY += $(LIBJDKMIDI_LIB)
 
 ## Native File Directory
