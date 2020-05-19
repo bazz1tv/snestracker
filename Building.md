@@ -58,7 +58,7 @@ emerge --ask --depclean
 Submodules
 ----------
 
-Snestracker relies on several internal projects that are all conveniently packaged into the snestracker repo. Provided you have installed the necessary system depencies listed in the previous section, execute the following.
+Snestracker relies on several internal projects that are all conveniently packaged into the snestracker repo. Provided you have installed the necessary system dependencies listed in the previous section, execute the following.
 
 ```
 git clone https://github.com/bazzinotti/snestracker.git
