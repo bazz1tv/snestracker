@@ -13,10 +13,10 @@ Dependencies
 
 - [SDL2](https://www.libsdl.org/download-2.0.php) - >=2.0.3-r200 - newer versions may be compatible
 - [Boost](http://www.boost.org/users/history/ "Boost") >=1.56.0-r1 - a newer version of Boost is likely compatible - need only compile the following: 
-  - boost\_system-mt
-  - boost\_filesystem-mt
+  - boost\_system
+  - boost\_filesystem
 - Linux-only deps
-  - gtk 2 or 3
+  - gtk 2 or 3 (`pc/Makefile` refers to gtk2 by default)
   - alsa-lib (rtmidi dep)
 - wla-dx deps
   - cmake
@@ -26,6 +26,32 @@ For example, on Linux systems with apt, try the following:
 ```
 apt install libasound2-dev libsdl2-dev libboost-filesystem-dev libgtk2.0-dev cmake
 ```
+
+On Gentoo, I would put the following packages into a set
+
+**/etc/portage/sets/snestracker**
+
+```
+media-libs/libsdl2
+dev-libs/boost
+x11-libs/gtk+:2
+media-libs/alsa-lib
+dev-util/cmake
+```
+
+```
+emerge --ask --verbose @snestracker
+```
+
+Should the time come to release the dependencies associated with snes
+tracker, simply:
+
+```
+emerge --deselect @snestracker
+# depclean as usual when you are ready to cleanup your system of unused dependencies
+emerge --ask --depclean
+```
+
 
 Submodules
 ----------
@@ -55,11 +81,12 @@ crossdev --target x86_64-w64-mingw32
 x86_64-w64-mingw32-emerge -av media-libs/libsdl2 dev-libs/boost
 ```
 
-First, manually build libgme_m as follows:
+First, run the following commands from the snestracker top-level directory
+which will manually build libgme_m for cross development:
 
 ```
-make -C submodules/libgme_m clean
-prefix=/usr/x86_64-w64-mingw32/usr CROSS_COMPILE=x86_64-w64-mingw32- make -C submodules/libgme_m
+prefix=$PWD/pc/bin CROSS_COMPILE=x86_64-w64-mingw32- make -C submodules/libgme_m clean
+prefix=$PWD/pc/bin CROSS_COMPILE=x86_64-w64-mingw32- make -C submodules/libgme_m install-lib-direct
 ```
 
 Finally snestracker can be built in similar fashion
@@ -71,10 +98,13 @@ prefix=/usr/x86_64-w64-mingw32/usr CROSS_COMPILE=x86_64-w64-mingw32- make
 Provided that compilation was successful, the following DLLs need to be copied into the directory where the EXE will be located.
 
 ```
-cp /usr/x86_64-w64-mingw32/usr/bin/{libgme_m.dll,libSDL2-2-0-0.dll} .
-cp /usr/x86_64-w64-mingw32/usr/lib/libboost_filesystem.dll .
-cp /usr/lib/gcc/x86_64-w64-mingw32/9.2.0/{libgcc_s_seh-1.dll,libstdc++-6.dll} .
+cp /usr/x86_64-w64-mingw32/usr/bin/{libgme_m.dll,libSDL2-2-0-0.dll} \
+/usr/x86_64-w64-mingw32/usr/lib/libboost_filesystem.dll \
+/usr/lib/gcc/x86_64-w64-mingw32/9.2.0/{libgcc_s_seh-1.dll,libstdc++-6.dll} pc/bin
 ```
+
+Some of these library files are version dependent (eg. 9.2.0), so until an
+automation strategy is discovered (static build?), be careful.
 
 
 Internal Dependencies
