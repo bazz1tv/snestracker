@@ -45,16 +45,31 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
 
   *sdlWindow = SDL_CreateWindow("snes tracker", SDL_WINDOWPOS_CENTERED,
                 SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE);
-  *sdlRenderer = SDL_CreateRenderer(*sdlWindow, -1, SDL_RENDERER_ACCELERATED);// | SDL_RENDERER_PRESENTVSYNC);
-
   if (*sdlWindow == NULL)
   {
-    fprintf(stderr, "FCK\n");
+    fprintf(stderr, "Couldn't create the main window! %s\n", SDL_GetError());
     return -1;
   }
+
+  *sdlRenderer = SDL_CreateRenderer(*sdlWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
   if (*sdlRenderer == NULL)
   {
-    *sdlRenderer = SDL_CreateRenderer(*sdlWindow, -1, 0);
+    DEBUGLOG("No Renderer: %s\n", SDL_GetError());
+    *sdlRenderer = SDL_CreateRenderer(*sdlWindow, -1, SDL_RENDERER_ACCELERATED);
+    if (*sdlRenderer == NULL)
+    {
+      DEBUGLOG("No Renderer: %s\n", SDL_GetError());
+      *sdlRenderer = SDL_CreateRenderer(*sdlWindow, -1, 0);
+      if (*sdlRenderer == NULL)
+      {
+        fprintf(stderr,
+            "\nUnable to initialize SDL:  %s\n",
+            SDL_GetError()
+            );
+        return -1;
+      }
+    }
   }
 
   // make the scaled rendering look smoother.
@@ -78,7 +93,7 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
 
   if (*screen == NULL || *sdlTexture == NULL)
   {
-    fprintf(stderr, "MAn we have SDL init problems :\\. I couldn't allocate a screen or Texture :\\\n");
+    fprintf(stderr, "MAn we have SDL init problems :\\. I couldn't allocate a screen or Texture : %s\n", SDL_GetError());
     return -1;
   }
 
