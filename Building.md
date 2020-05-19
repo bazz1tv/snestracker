@@ -21,13 +21,15 @@ Dependencies
 - wla-dx deps
   - cmake
 
-For example, on Linux systems with apt, try the following:
+### Linux systems with apt (Debian, Ubuntu, etc)
 
 ```
 apt install libasound2-dev libsdl2-dev libboost-filesystem-dev libgtk2.0-dev cmake
 ```
 
-On Gentoo, I would put the following packages into a set
+### Gentoo Linux
+
+On Gentoo, I recommend putting the following packages into a set
 
 **/etc/portage/sets/snestracker**
 
