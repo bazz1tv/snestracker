@@ -15,7 +15,7 @@ ifdef CROSS_COMPILE
 	uname_S = Cross_Windows
 endif
 
-global_requirements = $(CPPSOURCES) $(CSOURCES) $(MSOURCES) \
+global_requirements = $(LIBJDKMIDI_LIB) $(CPPSOURCES) $(CSOURCES) $(MSOURCES) \
 $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(EXECUTABLE_TRACKER)
 
 # This is where source that both tracker and STD will use. NOTE THE inclusion of the forward slash ;)
@@ -40,7 +40,7 @@ tracker_CPPFLAGS=$(debug) -I. -I$(SHARED_DIR) -I$(PROJ_DIR)/rtmidi -I$(PROJ_DIR)
 
 
 prefix ?= /opt/local
-gme_PREFIX ?= $(prefix)
+gme_PREFIX ?= ../submodules/libgme_m
 
 # TODO - add rule for libjdkmidi
 ## mkdir -p out.$(uname_S)
@@ -58,8 +58,8 @@ ifeq ($(uname_S), Darwin)
 	CPPFLAGS += -Wno-int-to-void-pointer-cast -Wno-c++11-narrowing
 	MIDI_DEFS     =   -D__MACOSX_CORE__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -framework CoreMIDI -framework CoreFoundation -framework CoreAudio
-	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
-	MIDI_LDFLAGS  = -L$(prefix)/lib
+	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi
+	MIDI_LDFLAGS  =
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
 	LDFLAGS += -framework AppKit
 	CPP_DEFS += -DHAVE_STDINT_H # gme
@@ -84,8 +84,8 @@ ifeq ($(uname_S), Darwin)
 	LDFLAGS += $(OSX_BACKSUPPORT)
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
-	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)/include
-	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m
+	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)
+	gme_LDFLAGS := -L$(gme_PREFIX) -lgme_m
 
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
@@ -100,8 +100,8 @@ else ifeq ($(uname_S), Linux)
 
 	MIDI_DEFS     =   -D__LINUX_ALSA__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -lasound
-	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
-	MIDI_LDFLAGS  = -L$(prefix)/lib -lpthread
+	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi
+	MIDI_LDFLAGS  = -lpthread
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
 	#
 	CPP_DEFS += -DHAVE_STDINT_H
@@ -111,12 +111,15 @@ else ifeq ($(uname_S), Linux)
 	gtk_cflags = $(shell pkg-config --cflags gtk+-2.0)
 	gtk_ldflags = $(shell pkg-config --libs gtk+-2.0)
 	#CPPFLAGS += $(gtk_cflags)
-	LDFLAGS += $(gtk_ldflags) -Wl,-rpath=$(gme_PREFIX)/lib
-	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
+	LDFLAGS += $(gtk_ldflags)
+	BOOST_LDFLAGS := -lboost_system -lboost_filesystem
+
+	# Allow Linux binary to source DLLs from same directory binary is located
+	LDFLAGS += '-Wl,-rpath=$$ORIGIN'
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
-	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)/include
-	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m
+	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)
+	gme_LDFLAGS := -L$(gme_PREFIX) -lgme_m
 
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
@@ -132,8 +135,8 @@ else ifeq ($(uname_S), Cross_Windows)
 	debug = -gstabs
 	MIDI_DEFS     =   -D__WINDOWS_MM__ -DRTMIDI_DEBUG
 	MIDI_LIBRARY  = -lwinmm
-	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi -I$(prefix)/include
-	MIDI_LDFLAGS  = -L$(prefix)/lib
+	MIDI_CPPFLAGS = -I$(PROJ_DIR)/rtmidi
+	MIDI_LDFLAGS  =
 	CPPSOURCES += $(PROJ_DIR)/rtmidi/RtMidi.cpp
 	#
 	CPP_DEFS += -DHAVE_STDINT_H
@@ -141,14 +144,14 @@ else ifeq ($(uname_S), Cross_Windows)
 	# NFD
 	CPPSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_win.cpp
 	LDFLAGS += -mwindows -lole32 #-static-libgcc #-lcomctl32 -lcomdlg32
-	BOOST_LDFLAGS := -lboost_system-mt -lboost_filesystem-mt
+	BOOST_LDFLAGS := -lboost_system -lboost_filesystem
 	# Example of static library inclusion:
 	#BOOST_LDFLAGS := $(prefix)/lib/libboost_system.a $(prefix)/lib/libboost_filesystem.a
 	# quick notes: /usr/lib/gcc/i686-pc-mingw32/4.9.3
 
 	#gme_PREFIX ?= $(gme_default_PREFIX)
-	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)/include
-	gme_LDFLAGS := -L$(gme_PREFIX)/lib -lgme_m
+	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)
+	gme_LDFLAGS := -L$(gme_PREFIX) -lgme_m
 
 # sdl2 pkg-config uses absolute path (eg /usr/lib), which is meant to be
 # from the cross chroot. The following command will ensure it adds the
@@ -167,6 +170,7 @@ else
 endif
 
 LIBJDKMIDI_LIB = $(LIBJDKMIDI_OSDIR)/build/lib/libjdkmidi.a
+MIDI_CPPFLAGS += -I$(PROJ_DIR)/libjdkmidi/c++/include
 MIDI_LIBRARY += $(LIBJDKMIDI_LIB)
 
 ## Native File Directory
@@ -217,6 +221,7 @@ $(BIN)/$(EXECUTABLE_DEBUGGER).app: $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(UNRAR)
 	cp Info.plist $@/Contents
 	cp $(BIN)/$(UNRAR) $@/Contents/Resources
 	cp $(BIN)/$(DEC7Z) $@/Contents/Resources
+	cp -r $(BIN)/cursors $@/Contents/Resources # Copy mouse icons
 	bash ./osx_ship.sh $@ $(EXECUTABLE_DEBUGGER) $@/Contents/Lib
 	touch $@
 
@@ -255,7 +260,7 @@ $(LIBJDKMIDI_LIB): $(LIBJDKMIDI_OSDIR)/Makefile
 	cd $(LIBJDKMIDI_OSDIR) && make
 
 $(LIBJDKMIDI_OSDIR)/Makefile:
-	cd $(LIBJDKMIDI_OSDIR) && ./reconfigure
+	cd $(LIBJDKMIDI_OSDIR) && ./configure
 
 $(OBJ)/ext/NativeFileDialog/nfd_gtk.o: CPPFLAGS += $(gtk_cflags)
 

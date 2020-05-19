@@ -15,12 +15,12 @@
 #        /                 \
 #  2. snesdriver/      3. pc/
 
-include env.conf
+WLAPREFIX = $(CURDIR)/submodules/wla-dx/build-wla/binaries/
+PCX2SNES_PREFIX = $(CURDIR)/submodules/pcx2snes/
 
-ifeq (,$(WLAPREFIX))
-$(warning WARNING: WLAPREFIX left blank. If wla-dx binaries are not in PATH, \
-you will face fatal errors. Consider specifying WLAPREFIX in env.conf)
-endif
+# Build submodule dependencies
+#WLA_BINARIES = $(WLAPREFIX)wla-65816 $(WLAPREFIX)wlalink $(WLAPREFIX)wla-spc700
+#$(WLA_BINARIES):
 
 WLASPC700 := $(WLAPREFIX)wla-spc700
 
@@ -52,7 +52,7 @@ snes_driver/spc.sym: FORCE Makefile snes_driver/Makefile
 	make -C snes_driver
 
 snes_driver/Makefile: snes_driver/genmake Makefile
-	cd snes_driver ; wlaprefix=$(WLAPREFIX) ./genmake > Makefile
+	cd snes_driver ; wlaprefix=$(WLAPREFIX) pcx2snes_prefix=$(PCX2SNES_PREFIX) ./genmake > Makefile
 
 $(APURAM_HEADER): snes_driver/spc.sym Makefile \
 		snes_driver/conv_public_syms_to_C.sh $(SPCDRIVER_RELPATH)

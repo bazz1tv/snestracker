@@ -29,7 +29,7 @@ EXE=$1/Contents/MacOS/$2
 #
 # So, use awk to work only with the path, and not the 2nd column version data
 # Finally, only work with paths that have "local" string.
-paths=$(otool -L ${EXE} | awk '{print $1}' | grep "local")
+paths=$(otool -L ${EXE} | awk '{print $1}' | grep "libboost\|libSDL2\|libgme_m")
 
 # Now, let's re-instruct the exe to use libs that are about to be placed into
 # the app bundle

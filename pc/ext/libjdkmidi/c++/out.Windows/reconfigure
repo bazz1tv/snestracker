@@ -1,1 +1,0 @@
-../configure  "--native-platform-linux=1"  "--cross-compiling=1"  "--compiler-prefix=x86_64-w64-mingw32-"  "--target-platform-mingw32=1"  "--prefix=/usr/x86_64-w64-mingw32/usr/" "$@"

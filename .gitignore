@@ -18,6 +18,7 @@ pc/tracker/apuram.h
 snes_driver/obj/
 pc/bin/
 pc/ext/libjdkmidi/c++/out.*/Makefile*
+pc/ext/libjdkmidi/c++/out.*/reconfigure
 pc/ext/libjdkmidi/c++/out.*/reconfigure-old
 pc/ext/libjdkmidi/c++/out.*/vars.sh
 pc/ext/libjdkmidi/c++/out.*/build/

@@ -1,0 +1,10 @@
+[submodule "submodules/libgme_m"]
+	path = submodules/libgme_m
+	url = https://github.com/bazzinotti/libgme_m.git
+[submodule "submodules/wla-dx"]
+	path = submodules/wla-dx
+	url = https://github.com/bazzinotti/wla-dx.git
+	branch = bazz
+[submodule "submodules/pcx2snes"]
+	path = submodules/pcx2snes
+	url = https://github.com/bazzinotti/pcx2snes
