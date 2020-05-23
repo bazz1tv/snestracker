@@ -51,12 +51,6 @@ namespace Utility
 
   Uint8 scancode_to_hex(int &scancode);
 
-  nfdresult_t get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file,
-																		const char *filter_list=NULL);
-  nfdresult_t get_file_read_handle(nfdchar_t **outPath, SDL_RWops **file,
-  																	const char *filter_list=NULL);
-  nfdresult_t get_file_read_path(nfdchar_t **outPath,
-                                    const char *filter_list=NULL);
   SDL_bool file_is_valid( std::string filename );
 
   void clearsstream(std::stringstream &s);

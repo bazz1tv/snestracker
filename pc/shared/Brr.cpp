@@ -1,5 +1,5 @@
 #include "Brr.h"
-#include "utility.h"
+#include "SdlNfd.h"
 
 const BrrFilter brrfilter[4] =
 {
@@ -25,7 +25,7 @@ int write_brr_to_file(const Brr *brr)
 	SDL_RWops *file;
 	nfdchar_t *outPath=NULL;
 
-	if (Utility::get_file_write_handle(&outPath, &file, BRR_FILE_EXTENSION) == NFD_OKAY)
+	if (SdlNfd::get_file_write_handle(&outPath, &file, BRR_FILE_EXTENSION) == NFD_OKAY)
 	{
 		if (outPath != NULL)
 			fprintf(stderr, "outPath: %s\n", outPath);

@@ -7,6 +7,8 @@
 #include "gme/Wave_Writer.h"
 #include "Tracker.h"
 
+#include "shared/SdlNfd.h"
+
 extern Tracker *tracker;
 
 Menu_Bar::Menu_Bar()
@@ -81,12 +83,13 @@ int Menu_Bar::File_Context::open_song(void *data)
 	nfdchar_t *filepath;
 	/* Open the file */
 	SDL_RWops *file;
-	nfdresult_t rc = Utility::get_file_read_handle(&filepath, &file, "stp");
+	nfdresult_t rc = SdlNfd::get_file_read_handle(&filepath, &file, "stp");
 	if (rc != NFD_OKAY)
 		return rc;
 
 	rc = (nfdresult_t) ::tracker->read_from_file(file);
 	SDL_RWclose(file);
+  SdlNfd::done();
 
 	if (rc == 0)
 	{
@@ -96,6 +99,7 @@ int Menu_Bar::File_Context::open_song(void *data)
 
 		fc->filepath = filepath;
 	}
+
 	return rc;
 }
 
@@ -111,13 +115,8 @@ int Menu_Bar::File_Context::open_spc(void *data)
   return 0;
 }
 
-static int save_common(Menu_Bar::File_Context *fc, nfdchar_t *filepath)
+static int save_common(Menu_Bar::File_Context *fc, nfdchar_t *filepath, SDL_RWops *file)
 {
-	// now we have filepath: Open a Write RWOps handle on it
-	SDL_RWops *file;
-
-	file = SDL_RWFromFile(filepath, "wb");
-
 	if (file == NULL)
 	{
 		char tmpbuf[250];
@@ -134,64 +133,39 @@ static int save_common(Menu_Bar::File_Context *fc, nfdchar_t *filepath)
 	::tracker->save_to_file(file);
 
 	SDL_RWclose(file);
+  SdlNfd::done();
 
 	fc->filepath = filepath;
 	return 0;
-}
-
-static nfdresult_t query_user_save_filepath(nfdchar_t **filepath)
-{
-	// Open a dialog to query the user for a file to save to
-	nfdresult_t result = NFD_SaveDialog( "stp", NULL, filepath );
-	if ( result == NFD_OKAY )
-	{
-	}
-	else if ( result == NFD_CANCEL )
-	{
-		if (*filepath)
-		{
-			free(*filepath);
-			filepath = NULL;
-		}
-	}
-	else
-	{
-		printf("Error opening %s for writing: %s\n", *filepath, NFD_GetError() );
-		if (*filepath)
-		{
-			free(*filepath);
-			*filepath = NULL;
-		}
-	}
-
-	return result;
 }
 
 int Menu_Bar::File_Context::save_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
 	nfdchar_t *filepath = NULL;
+  SDL_RWops *file;
 
 	if (fc->filepath == NULL)
 	{
-		if (query_user_save_filepath(&filepath) != NFD_OKAY)
+		if (SdlNfd::get_file_write_handle(&filepath, &file, "stp") != NFD_OKAY)
 			return -1;
 	}
 	else
 		filepath = fc->filepath;
 
-	return save_common(fc, filepath);
+	return save_common(fc, filepath, file);
 }
 
 int Menu_Bar::File_Context::save_as_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
 	nfdchar_t *filepath = NULL;
+  SDL_RWops *file;
 
-	if (query_user_save_filepath(&filepath) != NFD_OKAY)
-		return -1;
+	if (SdlNfd::get_file_write_handle(&filepath, &file, "stp") != NFD_OKAY)
+    return -1;
 
-	return save_common(fc, filepath);
+	return save_common(fc, filepath, file);
 }
 
 int Menu_Bar::File_Context::export_spc(void *data)

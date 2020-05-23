@@ -1,9 +1,12 @@
 #include "My_Nfd.h"
 #include "SDL.h"
-My_Nfd::My_Nfd()
+// Hack
+#include "Render.h"
+
+/*My_Nfd::My_Nfd(SDL_Window *win) : sdlWindow(win)
 {
 
-}
+}*/
 
 void My_Nfd::free_pathset()
 {
@@ -25,7 +28,7 @@ nfdresult_t My_Nfd::get_multifile_read_path(const char *filter_list/*=NULL*/)
 {
   nfdpathset_t tpathSet;
   nfdresult_t result = NFD_OpenDialogMultiple( filter_list, NULL, &tpathSet );
-  //SDL_RaiseWindow(BaseD::sdlWindow);
+  SDL_RaiseWindow(::render->sdlWindow);
   if ( result == NFD_OKAY )
   {
     puts("DERP!");

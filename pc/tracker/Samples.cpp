@@ -4,6 +4,7 @@
 #include "shared/sdl_userevents.h"
 #include <assert.h>
 #include "utility.h"
+#include "shared/SdlNfd.h"
 #include "shared/sdl_dblclick.h"
 #include "globals.h" // for ::mouse
 #include "PanelCommon.h"
@@ -340,7 +341,7 @@ int Sample_Panel::load(void *spanel)
 
   fprintf(stderr, "Sample_Panel::LOAD\n");
 
-  if (Utility::get_file_read_handle(&outpath, &file, "brr") == NFD_OKAY)
+  if (SdlNfd::get_file_read_handle(&outpath, &file, "brr") == NFD_OKAY)
   {
     Sint64 brrsize = SDL_RWsize(file);
 

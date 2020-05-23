@@ -6,6 +6,7 @@
 #include "kbd.h"
 #include "apuram.h"
 #include "FileLoader.h"
+#include "shared/SdlNfd.h"
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -204,6 +205,10 @@ void Tracker::handle_events()
   while (!SDL_TICKS_PASSED(SDL_GetTicks(), frame_tick_timeout)
           && SDL_PollEvent(&ev))
   {
+    /* bugfix #12 */
+    if (SdlNfd::active())
+      continue;
+
     switch(ev.type)
     {
       case SDL_QUIT:

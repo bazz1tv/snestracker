@@ -4,7 +4,7 @@
 #include "gme_m/Spc_Dsp_Register_Map_Interface.h"
 #include <nfd.h>
 #include "DEBUGLOG.h"
-#include "utility.h"
+#include "SdlNfd.h"
 #include "shared/Brr.h" // for brr header strings and file extensions
 #include "shared/Voice_Control.h"
 
@@ -73,7 +73,7 @@ int write_brri_to_file(void *data)
 	SDL_RWops *file;
 	nfdchar_t *outPath = NULL;
 
-	if (Utility::get_file_write_handle(&outPath, &file, BRRI_FILE_EXTENSION) == NFD_OKAY)
+	if (SdlNfd::get_file_write_handle(&outPath, &file, BRRI_FILE_EXTENSION) == NFD_OKAY)
 	{
 		if (outPath !=NULL)
 			fprintf(stderr, "%s\n", outPath);
@@ -107,7 +107,7 @@ int write_brrp_to_file(void *data)
 	SDL_RWops *file;
 	nfdchar_t *outPath = NULL;
 
-	if (Utility::get_file_write_handle(&outPath, &file, BRRP_FILE_EXTENSION) == NFD_OKAY)
+	if (SdlNfd::get_file_write_handle(&outPath, &file, BRRP_FILE_EXTENSION) == NFD_OKAY)
 	{
 		if (outPath !=NULL)
 			fprintf(stderr, "%s\n", outPath);
@@ -138,7 +138,7 @@ int write_plain_brr_to_file(void *data)
 
 	SDL_RWops *file;
 	nfdchar_t *outPath=NULL;
-	if (Utility::get_file_write_handle(&outPath, &file, BRR_FILE_EXTENSION) == NFD_OKAY)
+	if (SdlNfd::get_file_write_handle(&outPath, &file, BRR_FILE_EXTENSION) == NFD_OKAY)
 	{
 		if (outPath !=NULL)
 			fprintf(stderr, "%s\n", outPath);
