@@ -23,16 +23,12 @@
 
 #include "SongSettings.h"
 
-struct Tracker;
 #include "shared/fps.h"
 
 class SpcReport : public Spc_Report
 {
 public:
-	SpcReport(Tracker *tracker);
 	void report(Type type, unsigned addr, unsigned opcode);
-private:
-	Tracker *tracker;
 };
 
 

@@ -15,8 +15,7 @@
 std::unordered_set<DrawRenderer *> Tracker::prerenders, Tracker::postrenders;
 
 Tracker::Tracker(int &argc, char **argv) :
-main_window(argc,argv, this),
-spcreport(this)
+main_window(argc,argv, this)
 {
 	/* eventually I want to make sub-windows just an overlay in the one main
 	 * window, rather than having separate windows. That's my choice. But
@@ -1634,10 +1633,6 @@ void Tracker::save_to_file(SDL_RWops *file)
 
 		Instrument Detune setting. (seperate from sample fine-tune)
 */
-
-SpcReport::SpcReport(Tracker *tracker) : tracker(tracker)
-{
-}
 
 void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 {
