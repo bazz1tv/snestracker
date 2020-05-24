@@ -343,6 +343,7 @@ void Tracker::handle_events()
         {
           case UserEvents::sound_stop:
 						::player->post_fadeout();
+            ::player->pause(true, false, false);
 						break;
           case UserEvents::callback:
           {
@@ -429,7 +430,10 @@ void Tracker::handle_events()
 						if (playback)
 							render_to_apu(repeat_pattern);
 						else
+            {
 							::player->fade_out(true);
+              // pause taken care of in sound_stop userevent called from fadeout thread
+            }
           }
 					break;
 					case SDLK_BACKQUOTE:
@@ -495,6 +499,7 @@ void Tracker::dec_patlen()
 void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 {
   DEBUGLOG("render_to_apu(); playback: %d\n", playback);
+  ::player->pause(0, false, false);
 	::player->start_track(0);
 	// SPC player fade to virtually never end (24 hours -> ms)
 	::player->emu()->set_fade(24 * 60 * 60 * 1000);
@@ -839,7 +844,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	if (!playback)
 	{
 		apuram->sequencer_i = 0; // since this will probably be for SPC Export
-		// play from beginning of sequence
+    // play from beginning of sequence
 		sound_stop();
 	}
 }
@@ -1006,6 +1011,7 @@ void Tracker::reset()
   // stop the player incase it's playing
   playback = false;
   ::player->fade_out(false); // immediate fade-out (no thread)
+  ::player->pause(true, false, false);
   /* It was shown that the program would crash if a file was opened while
    * the tracker was playing; It was because there were remnant
    * User Events pertaining to the Tracker reporting mechanism from the

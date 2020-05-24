@@ -3,6 +3,7 @@
 #include "My_Nfd.h"
 #include "File_System.h"
 #include "globals.h"
+#include "SdlNfd.h"
 
 #define WIDTH 500
 #define HEIGHT 125
@@ -97,16 +98,19 @@ void Spc_Export_Window::destroy_state()
 int Spc_Export_Window::save_file(void *data)
 {
   Spc_Export_Window *sew = (Spc_Export_Window *)data;
-  nfdchar_t *outPath=NULL;
 
+  nfdresult_t result = SdlNfd::get_file_handle("w", "spc");
+  /* We don't actually need the file handle so release it */
 
-  nfdresult_t result = NFD_SaveDialog( "spc", NULL, &outPath );
+  if (SdlNfd::file)
+  {
+    SDL_RWclose(SdlNfd::file);
+    SdlNfd::file = NULL;
+  }
   if ( result == NFD_OKAY )
   {
-    if (outPath !=NULL)
-      fprintf(stderr, "%s\n", outPath);
+    fprintf(stderr, "Exporting SPC to: %s\n", SdlNfd::outPath);
 
-    bool was_paused = ::player->is_paused();
     ::player->pause(1, false, false);
     //
 
@@ -118,23 +122,12 @@ int Spc_Export_Window::save_file(void *data)
 
 
     ::player->spc_emu()->can_has_apu()->save_spc(out);
-    ::file_system->write_file( outPath, sew->state, Snes_Spc::spc_file_size );
+    ::file_system->write_file( SdlNfd::outPath, sew->state, Snes_Spc::spc_file_size );
     // restore player state
-    ::player->pause(was_paused, false, false);
+    ::player->pause(1, false, false);
     sew->hide();
   }
-  else if ( result == NFD_CANCEL ) 
-  {
-    puts("User pressed cancel.");
-  }
-  else
-  {
-    printf("Error: %s\n", NFD_GetError() );
-    result = NFD_ERROR;
-  }
-  
-  if (outPath)
-    SDL_free(outPath);
+
   return result;
 }
 

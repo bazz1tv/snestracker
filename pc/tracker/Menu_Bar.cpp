@@ -167,6 +167,7 @@ int Menu_Bar::File_Context::export_spc(void *data)
 {
   // Do not show the window if the player has nothing loaded
   ::tracker->playback = false;
+  ::player->fade_out(false); // immediate fade-out (no thread)
 	::tracker->render_to_apu();
 	::spc_export_window->show();
 

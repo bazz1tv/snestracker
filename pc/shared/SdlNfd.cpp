@@ -86,12 +86,12 @@ nfdresult_t SdlNfd::get_file_handle(const char *rw, const char *filter_list/*=NU
   }
   else
   {
+    printf("Error: %s, %s\n", outPath, NFD_GetError() );
     if (outPath)
     {
       free(outPath);
       outPath = NULL;
     }
-    printf("Error: %s\n", NFD_GetError() );
     return NFD_ERROR;
   }
 }
