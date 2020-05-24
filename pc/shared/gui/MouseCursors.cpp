@@ -212,9 +212,8 @@ MouseCursors::MouseCursors()
     { {0x00ff00}, "cursors/sparkle-med",    3, 3},
     { {0x00ff00}, "cursors/sparkle-small",  1, 1},
   };
-  Texture::load_bmp(mcaap->texture, mcaap->texture->filename, ::render->sdlRenderer);
-  Texture::load_bmp(mcaap->texture+1, mcaap->texture->filename, ::render->sdlRenderer);
-  Texture::load_bmp(mcaap->texture+2, mcaap->texture->filename, ::render->sdlRenderer);
+  for (int i=0; i < 3; i++)
+    Texture::load_bmp(&mcaap->texture[i], mcaap->texture[i].filename, ::render->sdlRenderer);
 
   mcaap->num_frames = 15;
   mcaap->num_sprites = 4;

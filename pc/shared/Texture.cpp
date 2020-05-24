@@ -30,10 +30,13 @@ void Texture::load_bmp(Texture *t, const char *filename, SDL_Renderer *r)
   strcat(path, filename);
   strcat(path, ".bmp");
 
+  DEBUGLOG("loading texture: %s\n", path);
+
   t->surface = SDL_LoadBMP(path);
   if (t->surface == NULL)
   {
-    printf("couldn't load %s: %s\n", path, SDL_GetError());
+    DEBUGLOG("\tcouldn't load, '%s'\n", SDL_GetError());
+    /* TODO: Fail gracefully */
   }
 
   SDL_SetColorKey(t->surface, SDL_TRUE, SDL_MapRGB(t->surface->format,
@@ -42,8 +45,8 @@ void Texture::load_bmp(Texture *t, const char *filename, SDL_Renderer *r)
   t->sdltexture = SDL_CreateTextureFromSurface( r, t->surface);
   if (t->sdltexture == NULL)
   {
-    printf("Unabled to create texture from %s: %s\n",
-        path, SDL_GetError());
+    DEBUGLOG("\tUnable to create texture, '%s'\n", SDL_GetError());
+    /* TODO: Fail gracefully */
   }
 }
 
