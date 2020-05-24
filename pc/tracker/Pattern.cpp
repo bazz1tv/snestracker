@@ -1228,6 +1228,9 @@ void PatternEditorPanel::inc_currow(int howmany/*=1*/, bool wrap/*=true*/)
     {
       currow = len - 1;
       rows_scrolled = currow - (VISIBLE_ROWS-1);
+      // bugfix #14 - avoid garbage for patterns < full screen length
+      if (rows_scrolled < 0)
+        rows_scrolled = 0;
     }
     else
     {
@@ -1288,6 +1291,8 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
     case SDLK_END:
       currow = get_current_pattern(psp)->len - 1;
       rows_scrolled = currow - (VISIBLE_ROWS-1);
+      // bugfix #14 - avoid garbage for patterns < full screen length
+      if (rows_scrolled < 0) rows_scrolled = 0;
     break;
     case SDLK_UP:
       if (MOD_ANY(mod))
