@@ -205,7 +205,7 @@ void Tracker::handle_events()
   while (!SDL_TICKS_PASSED(SDL_GetTicks(), frame_tick_timeout)
           && SDL_PollEvent(&ev))
   {
-    /* bugfix #12 */
+    /* ignore events immediately after NFD dialog (#12) */
     if (SdlNfd::active())
       continue;
 

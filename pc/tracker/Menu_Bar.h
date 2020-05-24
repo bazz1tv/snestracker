@@ -17,13 +17,10 @@ struct Menu_Bar
   
   struct File_Context
   {
-    File_Context() : menu(menu_items, true), 	filepath(NULL)
+    File_Context() : menu(menu_items, true)
     {
+      memset(filepath, 0, 500);
     }
-		~File_Context() {
-			if (filepath)
-				free(filepath);
-		}
 
     static int new_song(void *data);
     static int open_song(void *data);
@@ -34,7 +31,7 @@ struct Menu_Bar
     static int export_wav(void *data);
     static int quit(void *data) { ::quitting = true; return 0; }
 
-		nfdchar_t *filepath;
+		nfdchar_t filepath[500];
 
     Expanding_List menu;
     Context_Menu_Item menu_items[10] =

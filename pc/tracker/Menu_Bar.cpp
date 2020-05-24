@@ -67,10 +67,8 @@ int Menu_Bar::File_Context::new_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
 	if (fc->filepath)
-	{
-		free(fc->filepath);
-		fc->filepath = NULL;
-	}
+		fc->filepath[0] = 0;
+
 	::tracker->reset();
 	::tracker->patseq.num_entries = 1;
 	::tracker->patseq.sequence[0] = 0;
@@ -80,24 +78,18 @@ int Menu_Bar::File_Context::new_song(void *data)
 int Menu_Bar::File_Context::open_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
-	nfdchar_t *filepath;
 	/* Open the file */
-	SDL_RWops *file;
-	nfdresult_t rc = SdlNfd::get_file_read_handle(&filepath, &file, "stp");
+	nfdresult_t rc = SdlNfd::get_file_handle("r", "stp");
 	if (rc != NFD_OKAY)
 		return rc;
 
-	rc = (nfdresult_t) ::tracker->read_from_file(file);
-	SDL_RWclose(file);
-  SdlNfd::done();
+	rc = (nfdresult_t) ::tracker->read_from_file(SdlNfd::file);
 
 	if (rc == 0)
 	{
-		/*Successful. Update the filepath */
-		if (fc->filepath)
-			free(fc->filepath);
+		/*Successful. Update the current song's filepath */
 
-		fc->filepath = filepath;
+		strncpy(fc->filepath, SdlNfd::outPath, 500);
 	}
 
 	return rc;
@@ -115,57 +107,60 @@ int Menu_Bar::File_Context::open_spc(void *data)
   return 0;
 }
 
-static int save_common(Menu_Bar::File_Context *fc, nfdchar_t *filepath, SDL_RWops *file)
+static int save_common(Menu_Bar::File_Context *fc, SDL_RWops *file, nfdchar_t *filepath)
 {
-	if (file == NULL)
-	{
-		char tmpbuf[250];
-		sprintf(tmpbuf, "Warning: Unable to open file %s!\n %s", filepath, SDL_GetError() );
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-				"Could not open FILE!",
-				tmpbuf,
-				NULL);
-		if (filepath)
-			free(filepath);
-		return -1;
-	}
-
 	::tracker->save_to_file(file);
 
-	SDL_RWclose(file);
-  SdlNfd::done();
-
-	fc->filepath = filepath;
+	strncpy(fc->filepath, filepath, 500);
 	return 0;
 }
 
 int Menu_Bar::File_Context::save_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
-	nfdchar_t *filepath = NULL;
-  SDL_RWops *file;
+  int rc = 0;
 
-	if (fc->filepath == NULL)
+	if (fc->filepath[0] == 0)
 	{
-		if (SdlNfd::get_file_write_handle(&filepath, &file, "stp") != NFD_OKAY)
+		if (SdlNfd::get_file_handle("w", "stp") != NFD_OKAY)
 			return -1;
+
+    DEBUGLOG("attempting to save to new file: %s\n", SdlNfd::outPath);
+    rc = save_common(fc, SdlNfd::file, SdlNfd::outPath);
 	}
 	else
-		filepath = fc->filepath;
+  {
+    DEBUGLOG("attempting to save to current file: %s\n", fc->filepath);
+    SDL_RWops *file = SDL_RWFromFile(fc->filepath, "w");
+    if (file == NULL)
+    {
+      char tmpbuf[250];
+      sprintf(tmpbuf, "Warning: Unable to open file %s!\n %s", fc->filepath, SDL_GetError() );
+      SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+          "Could not open FILE!",
+         tmpbuf,
+          NULL);
+      return -1;
+    }
 
-	return save_common(fc, filepath, file);
+    rc = save_common(fc, file, fc->filepath);
+
+    // Manually close the file handle since it was manually created in one case (save_song else path)
+    SDL_RWclose(file);
+  }
+
+  return rc;
 }
 
 int Menu_Bar::File_Context::save_as_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
-	nfdchar_t *filepath = NULL;
-  SDL_RWops *file;
 
-	if (SdlNfd::get_file_write_handle(&filepath, &file, "stp") != NFD_OKAY)
+	if (SdlNfd::get_file_handle("w", "stp") != NFD_OKAY)
     return -1;
 
-	return save_common(fc, filepath, file);
+  DEBUGLOG("attempting to save to new file: %s\n", SdlNfd::outPath);
+	return save_common(fc, SdlNfd::file, SdlNfd::outPath);
 }
 
 int Menu_Bar::File_Context::export_spc(void *data)

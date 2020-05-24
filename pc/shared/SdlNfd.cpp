@@ -1,15 +1,11 @@
 #include "SdlNfd.h"
 
-bool SdlNfd::_active = false;
-SDL_Window *SdlNfd::_sdlWindow = NULL;
+nfdchar_t *SdlNfd::outPath = NULL;
+SDL_RWops *SdlNfd::file = NULL;
 
-#define PREREQ_CHECK \
-  if (_sdlWindow == NULL) \
-  { \
-    fprintf(stderr, "You haven't called SdlNfd::init()! file %s:%d (function %s)\n", \
-            __FILE__, __LINE__, __func__); \
-    return NFD_ERROR; \
-  }
+bool SdlNfd::_active = false;
+Uint32 SdlNfd::_drain = 0;
+SDL_Window *SdlNfd::_sdlWindow = NULL;
 
 int SdlNfd::init(SDL_Window *win)
 {
@@ -21,91 +17,68 @@ int SdlNfd::init(SDL_Window *win)
   _sdlWindow = win;
 }
 
-nfdresult_t SdlNfd::get_file_read_handle(nfdchar_t **outPath, SDL_RWops **file, const char *filter_list/*=NULL*/)
+
+nfdresult_t SdlNfd::get_file_handle(const char *rw, const char *filter_list/*=NULL*/)
 {
-  PREREQ_CHECK
+  if (_sdlWindow == NULL)
+  {
+    fprintf(stderr, "You haven't called SdlNfd::init()! file %s:%d (function %s)\n",
+            __FILE__, __LINE__, __func__);
+    return NFD_ERROR;
+  }
+
+  _release(); // release any previous allocated material that was accidently left over
 
   char tmpbuf[200];
-  *outPath=NULL;
-  nfdresult_t result = NFD_OpenDialog( filter_list, NULL, outPath );
-  
-  /* bugfix #12 */
-  SDL_RaiseWindow(_sdlWindow);
-  _active = true;
+  outPath=NULL;
+  nfdresult_t result;
 
-    if ( result == NFD_OKAY )
-    {
-      //puts("Success!");
-      //puts(outPath);
-      //SDL_RWops* SDL_RWFromFile(const char* file,
-        //                const char* mode)
-      *file = SDL_RWFromFile(*outPath, "rb");
-      if (*file == NULL)
-      {
-        sprintf(tmpbuf, "Warning: Unable to open file!\n %s", SDL_GetError() );
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-                       "Could not open FILE!",
-                       tmpbuf,
-                       NULL);
-        return NFD_ERROR;
-      }
-      return result;
-    }
-    else if ( result == NFD_CANCEL ) 
-    {
-      if (*outPath)
-      {
-        free(*outPath);
-        *outPath = NULL;
-      }
-      puts("User pressed cancel.");
-      return result;
-    }
-    else
-    {
-      if (*outPath)
-      {
-        free(*outPath);
-        *outPath = NULL;
-      }
-      printf("Error: %s\n", NFD_GetError() );
-      return NFD_ERROR;
-    }
-}
+  if (!strcmp(rw, "r") || !strcmp(rw, "rb"))
+    result = NFD_OpenDialog( filter_list, NULL, &outPath );
+  else if (!strcmp(rw, "w") || !strcmp(rw, "wb"))
+    result = NFD_SaveDialog( filter_list, NULL, &outPath );
+  else
+  {
+    fprintf(stderr, "Unsupported file mode '%s', ignoring...\n", rw);
+    return NFD_ERROR;
+  }
 
-nfdresult_t SdlNfd::get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file, const char *filter_list/*=NULL*/)
-{
-  PREREQ_CHECK
-
-  char tmpbuf[200];
-  *outPath=NULL;
-  nfdresult_t result = NFD_SaveDialog( filter_list, NULL, outPath );
-
-  /* bugfix #12 */
+  /* bugfix #12
+  Focusing the main window from the NFD call has caused the SDL event loop to react
+  to certain NFD actions such as pressing enter to confirm the selected file also
+  causing the tracker to begin playback. To remedy this, a 200ms bypassing of events
+  is imposed after NFD has returned */
+  _drain = SDL_GetTicks() + 200; // 200ms ignore events after nfd dialog
   _active = true;
   SDL_RaiseWindow(_sdlWindow);
 
   if ( result == NFD_OKAY )
   {
-    *file = SDL_RWFromFile(*outPath, "wb");
+    file = SDL_RWFromFile(outPath, rw);
 
-    if (*file == NULL)
+    if (file == NULL)
     {
-      sprintf(tmpbuf, "Warning: Unable to open file!\n %s", SDL_GetError() );
+      sprintf(tmpbuf, "Warning: Unable to open file %s!\n %s", outPath,
+              SDL_GetError() );
       SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                      "Could not open FILE!",
                      tmpbuf,
                      NULL);
+      if (outPath)
+      {
+        free(outPath);
+        outPath = NULL;
+      }
       return NFD_ERROR;
     }
     return result;
   }
   else if ( result == NFD_CANCEL )
   {
-    if (*outPath)
+    if (outPath)
     {
-      free(*outPath);
-      *outPath = NULL;
+      free(outPath);
+      outPath = NULL;
     }
 
     puts("User pressed cancel.");
@@ -113,15 +86,39 @@ nfdresult_t SdlNfd::get_file_write_handle(nfdchar_t **outPath, SDL_RWops **file,
   }
   else
   {
-    if (*outPath)
+    if (outPath)
     {
-      free(*outPath);
-      *outPath = NULL;
+      free(outPath);
+      outPath = NULL;
     }
     printf("Error: %s\n", NFD_GetError() );
     return NFD_ERROR;
   }
 }
 
-void SdlNfd::done() { _active = false; }
-bool SdlNfd::active() { return _active; }
+void SdlNfd::_release()
+{
+  if (outPath)
+  {
+    free(outPath);
+    outPath = NULL;
+  }
+  if (file)
+  {
+    SDL_RWclose(file);
+    file = NULL;
+  }
+}
+
+bool SdlNfd::active(bool autorelease)
+{
+  if ( _active && (SDL_GetTicks() < _drain) ) // value won't wrap for 49 days ;)
+    return true;
+
+  // The wait is over. Auto-release materials and reset internal vars
+  if (autorelease)
+    _release();
+
+  _drain = 0;
+  return _active = false;
+}

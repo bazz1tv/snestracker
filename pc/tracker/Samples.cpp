@@ -328,24 +328,22 @@ void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   }
 }
 
+using namespace SdlNfd;
 /* In these following functions, we need an core instruments handle, and
  * the index into that table. Can get that through the Sample_Panel.
  * This is still GUI centric.*/
 int Sample_Panel::load(void *spanel)
 {
-  SDL_RWops *file;
-  nfdchar_t *outpath = NULL;
-
   Sample_Panel *sp = (Sample_Panel *)spanel;
   Sample *s = &sp->samples[sp->currow];
 
   fprintf(stderr, "Sample_Panel::LOAD\n");
 
-  if (SdlNfd::get_file_read_handle(&outpath, &file, "brr") == NFD_OKAY)
+  if (SdlNfd::get_file_handle("r", "brr") == NFD_OKAY)
   {
     Sint64 brrsize = SDL_RWsize(file);
 
-    DEBUGLOG("sample path:%s\n", outpath);
+    DEBUGLOG("sample path:%s\n", outPath);
     if (brrsize <= 0)
     {
       DEBUGLOG("Could not detect filesize :( aborting loading sample\n");
@@ -361,7 +359,6 @@ int Sample_Panel::load(void *spanel)
             nb_read_total += nb_read;
             buf += nb_read;
     }
-    SDL_RWclose(file);
 
     if (nb_read_total != brrsize)
     {
@@ -375,7 +372,7 @@ int Sample_Panel::load(void *spanel)
     s->brr = brr;
     s->brrsize = brrsize;
 
-    strncpy(s->name, Utility::getFileName(outpath), SAMPLE_NAME_MAXLEN - 1);
+    strncpy(s->name, Utility::getFileName(outPath), SAMPLE_NAME_MAXLEN - 1);
     s->name[SAMPLE_NAME_MAXLEN-1] = 0;
   }
 

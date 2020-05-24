@@ -8,6 +8,9 @@
 #include "shared/Brr.h" // for brr header strings and file extensions
 #include "shared/Voice_Control.h"
 
+using namespace SdlNfd;
+
+
 void Main_Memory_Area::spawnbrrcontextmenu(int x, int y)
 {
 	addr_when_user_right_clicked = mouse_addr;
@@ -69,16 +72,12 @@ static int write_loop_info_to_file(Main_Memory_Area *mma, SDL_RWops *file)
 int write_brri_to_file(void *data)
 {
   Main_Memory_Area *mma = (Main_Memory_Area*)data; 
-  
-	SDL_RWops *file;
-	nfdchar_t *outPath = NULL;
 
-	if (SdlNfd::get_file_write_handle(&outPath, &file, BRRI_FILE_EXTENSION) == NFD_OKAY)
+	if (SdlNfd::get_file_handle("w", BRRI_FILE_EXTENSION) == NFD_OKAY)
 	{
 		if (outPath !=NULL)
 			fprintf(stderr, "%s\n", outPath);
 
-		//MAGIC "penis breath"
 		SDL_RWwrite(file, BRRI_MAGIC_STR, strlen(BRRI_MAGIC_STR), 1);
 		//
 		write_loop_info_to_file(mma, file);
@@ -93,9 +92,6 @@ int write_brri_to_file(void *data)
 		//
 		if (mma->is_looped_sample && mma->is_loop_external) // write the external loop sample
 			SDL_RWwrite(file, &::IAPURAM[mma->brr_loop_start], mma->brr_loop_end - mma->brr_loop_start + 1, 1);
-
-		SDL_RWclose(file);
-		free(outPath);
 	}
   return 0;
 }
@@ -103,11 +99,8 @@ int write_brri_to_file(void *data)
 int write_brrp_to_file(void *data)
 {
   Main_Memory_Area *mma = (Main_Memory_Area*)data; 
-  
-	SDL_RWops *file;
-	nfdchar_t *outPath = NULL;
 
-	if (SdlNfd::get_file_write_handle(&outPath, &file, BRRP_FILE_EXTENSION) == NFD_OKAY)
+	if (SdlNfd::get_file_handle("w", BRRP_FILE_EXTENSION) == NFD_OKAY)
 	{
 		if (outPath !=NULL)
 			fprintf(stderr, "%s\n", outPath);
@@ -123,10 +116,6 @@ int write_brrp_to_file(void *data)
 
 		if (mma->is_looped_sample && mma->is_loop_external) // write the external loop sample
 			SDL_RWwrite(file, &::IAPURAM[mma->brr_loop_start], mma->brr_loop_end - mma->brr_loop_start + 1, 1);
-
-
-		SDL_RWclose(file);
-		free(outPath);
 	}
 
   return 0;
@@ -136,15 +125,11 @@ int write_plain_brr_to_file(void *data)
 {
   Main_Memory_Area *mma = (Main_Memory_Area*)data;
 
-	SDL_RWops *file;
-	nfdchar_t *outPath=NULL;
-	if (SdlNfd::get_file_write_handle(&outPath, &file, BRR_FILE_EXTENSION) == NFD_OKAY)
+	if (SdlNfd::get_file_handle("w", BRR_FILE_EXTENSION) == NFD_OKAY)
 	{
 		if (outPath !=NULL)
 			fprintf(stderr, "%s\n", outPath);
 		SDL_RWwrite(file, &::IAPURAM[mma->brr_start], mma->brr_end - mma->brr_start + 1, 1);
-		SDL_RWclose(file);
-		free(outPath);
 	}
   return 0;
 }

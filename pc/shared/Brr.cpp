@@ -22,18 +22,14 @@ uint16_t get_brr_size(const Brr *brr)
 int write_brr_to_file(const Brr *brr)
 {
 	uint16_t brrsize = get_brr_size(brr);
-	SDL_RWops *file;
-	nfdchar_t *outPath=NULL;
 
-	if (SdlNfd::get_file_write_handle(&outPath, &file, BRR_FILE_EXTENSION) == NFD_OKAY)
+	if (SdlNfd::get_file_handle("w", BRR_FILE_EXTENSION) == NFD_OKAY)
 	{
-		if (outPath != NULL)
-			fprintf(stderr, "outPath: %s\n", outPath);
+		if (SdlNfd::outPath != NULL)
+			fprintf(stderr, "outPath: %s\n", SdlNfd::outPath);
 		/* TODO: should probaby have code that checks return and recalls
 		 * appropriately .. ? */
-		SDL_RWwrite(file, brr, brrsize, 1);
-		SDL_RWclose(file);
-		free(outPath);
+		SDL_RWwrite(SdlNfd::file, brr, brrsize, 1);
 	}
 	return 0;
 }
