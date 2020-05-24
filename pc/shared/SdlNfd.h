@@ -47,7 +47,11 @@ namespace SdlNfd
   extern nfdchar_t *outPath;
   extern SDL_RWops *file;
 
-  /* call this from your SDL event handler, and when true, ignore incoming events.
+  /* call this from your SDL event handler, like:
+  if (SdlNfd::active)
+    continue;
+
+  when true, ignores incoming events.
   This is to bypass a bug I noticed on Mac that if I confirmed a file entry from
   Cocoa menu with "Enter" key, my app would immediately process that key as an 
   in-app event, which was bad! This approach fixes that. */
