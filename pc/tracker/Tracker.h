@@ -24,6 +24,8 @@
 #include "SongSettings.h"
 
 struct Tracker;
+#include "shared/fps.h"
+
 class SpcReport : public Spc_Report
 {
 public:
@@ -82,17 +84,11 @@ public:
 
   MouseCursors *mousecursors;
 
-  void update_fps(int fps);
-  int fps;
-  Uint32 frame_tick_timeout, frame_tick_duration;
-  ///Uint32 gframe = 0; // should worry about overflow
-
   static std::unordered_set<DrawRenderer *> prerenders, postrenders;
 
-  //
   bool playback = false; // is tracker playback happening?
 
-
+  FPS frame;  // framerate control
 
 
 private:

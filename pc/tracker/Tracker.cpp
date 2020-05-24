@@ -7,6 +7,7 @@
 #include "apuram.h"
 #include "FileLoader.h"
 #include "shared/SdlNfd.h"
+#include "shared/fps.h"
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -78,7 +79,7 @@ spcreport(this)
 #endif
 	/* END APU EMU LOAD CODE */
 
-  update_fps(30);
+  frame.set(30);
 }
 
 Tracker::~Tracker()
@@ -86,13 +87,6 @@ Tracker::~Tracker()
   DEBUGLOG("~Tracker");
   delete mousecursors;
   mousecursors = NULL;
-}
-
-void Tracker::update_fps(int fps)
-{
-  this->fps = fps;
-  // calc from framerate. could put this into dynamic function later
-  frame_tick_duration = 1000 / fps; // how many ms per frame
 }
 
 void Tracker::run()
@@ -106,7 +100,7 @@ void Tracker::run()
   // exp is changed from BaseD
   while (!::quitting)
   {
-    frame_tick_timeout = SDL_GetTicks() + frame_tick_duration;
+    frame.start();
 
     cur_exp->run();
     cur_exp->draw();
@@ -148,15 +142,7 @@ void Tracker::run()
      * imagine. but this works.. */
     handle_events();
 
-    // If we finished the frame early, sleep until the next frame start
-    Uint32 curticks = SDL_GetTicks();
-    if (!SDL_TICKS_PASSED(curticks, frame_tick_timeout))
-    {
-      SDL_Delay(frame_tick_timeout - curticks);
-      //DEBUGLOG("duration: %d, remaining: %d\n", frame_tick_duration,
-                 //frame_tick_timeout - curticks);
-    }
-    //else DEBUGLOG("no time to wait :(\n");
+    frame.end();
   }
 
   sub_window_experience = NULL;
@@ -202,8 +188,7 @@ void Tracker::handle_events()
 
   // Poll events for the remainder of this graphical frame time while the queue
   // has events.
-  while (!SDL_TICKS_PASSED(SDL_GetTicks(), frame_tick_timeout)
-          && SDL_PollEvent(&ev))
+  while (frame.time() && SDL_PollEvent(&ev))
   {
     /* ignore events immediately after NFD dialog (#12) */
     if (SdlNfd::active())
