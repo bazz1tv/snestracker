@@ -83,15 +83,13 @@ crossdev --target x86_64-w64-mingw32
 x86_64-w64-mingw32-emerge -av media-libs/libsdl2 dev-libs/boost
 ```
 
-First, run the following commands from the snestracker top-level directory
-which will manually build libgme_m for cross development:
+If you had previously built for Linux, clean that up before building the Windows version.
 
 ```
-prefix=$PWD/pc/bin CROSS_COMPILE=x86_64-w64-mingw32- make -C submodules/libgme_m clean
-prefix=$PWD/pc/bin CROSS_COMPILE=x86_64-w64-mingw32- make -C submodules/libgme_m install-lib-direct
+make clean
 ```
 
-Finally snestracker can be built in similar fashion
+Run the following command from the snestracker top-level directory
 
 ```
 prefix=/usr/x86_64-w64-mingw32/usr CROSS_COMPILE=x86_64-w64-mingw32- make
@@ -100,7 +98,7 @@ prefix=/usr/x86_64-w64-mingw32/usr CROSS_COMPILE=x86_64-w64-mingw32- make
 Provided that compilation was successful, the following DLLs need to be copied into the directory where the EXE will be located.
 
 ```
-cp /usr/x86_64-w64-mingw32/usr/bin/{libgme_m.dll,libSDL2-2-0-0.dll} \
+cp /usr/x86_64-w64-mingw32/usr/bin/libSDL2-2-0-0.dll \
 /usr/x86_64-w64-mingw32/usr/lib/libboost_filesystem.dll \
 /usr/lib/gcc/x86_64-w64-mingw32/9.2.0/{libgcc_s_seh-1.dll,libstdc++-6.dll} pc/bin
 ```

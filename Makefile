@@ -31,16 +31,29 @@ APURAM_HEADER := pc/tracker/apuram.h
 
 ifdef CROSS_COMPILE
 	EXE_TRACKER = st.exe
+	LIBGME_M = libgme_m.dll
 else
 	EXE_TRACKER = st
+	LIBGME_M = libgme_m.so
 endif
 
+EXE_TRACKER_RELPATH = $(addprefix pc/bin/, $(EXE_TRACKER))
+LIBGME_M_RELPATH = $(addprefix pc/bin/, $(LIBGME_M))
+
 all: $(SPCDRIVER_RELPATH) snes_driver/spc.sym \
-pc/tracker/apuram.h pc/bin/$(EXE_TRACKER) snes_driver/Makefile
+pc/tracker/apuram.h pc/bin/$(EXE_TRACKER) snes_driver/Makefile \
+$(LIBGME_M_RELPATH)
 
 # optional
 env.sh: Makefile
 	echo "export PATH=\"$(WLAPREFIX):\$$PATH\"" > env.sh
+
+# automate compilation and installation of LibGme_m dependency
+$(LIBGME_M_RELPATH):
+	prefix=$(CURDIR)/pc/bin CROSS_COMPILE=$(CROSS_COMPILE) \
+	make -C submodules/libgme_m install-lib-direct
+clean-gme_m:
+	rm -f $(LIBGME_M_RELPATH)*
 
 # little dirty. Technically we depend on spc.bin but since the sym file
 # has the FORCE rule, we'll use that to make sure it is re-assembled if
@@ -72,14 +85,16 @@ $(APURAM_HEADER): snes_driver/spc.sym Makefile \
 	# printf "#define SPCDRIVER_CODESTART 0x%x\n" $((0x$(grep -m1 "SPC_CODE_START" spc.sym | cut -f1 -d' ')))
 	# but I guess I'll keep it non-global..?
 
-pc/bin/$(EXE_TRACKER): FORCE pc/tracker/apuram.h
+$(EXE_TRACKER_RELPATH): FORCE pc/tracker/apuram.h $(LIBGME_M_RELPATH)
 	make -C pc
 
 FORCE: ;
 
-clean:
+clean: clean-gme_m
 	# remove generated files
 	rm -f $(APURAM_HEADER)
 	rm -f $(SPCDRIVER_RELPATH)
 	make -C pc clean
 	make -C snes_driver clean
+	make -C submodules/libgme_m clean
+	rm -f pc/bin/*.dll

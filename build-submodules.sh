@@ -16,11 +16,3 @@ echo Building pcx2snes
 echo -----------------
 make -C submodules/pcx2snes || (echo "CRITICAL ERROR" && exit 1)
 echo
-
-echo Building libgme_m
-echo -----------------
-make -C submodules/libgme_m || (echo "CRITICAL ERROR" && exit 1)
-echo
-echo Installing libgme_m dll into snestracker bin directory
-echo ------------------------------------------------------
-prefix=$PWD/pc/bin make -C submodules/libgme_m/ install-lib-direct || (echo "CRITICAL ERROR" && exit 1)
