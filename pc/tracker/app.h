@@ -1,11 +1,12 @@
 #include "SDL.h"
-#include "gme/player/Music_Player.h"
-#include "Tracker.h"
-#include "Midi.h"
-#include "File_System.h"
-#include "App_Settings.h"
-#include "Audio.h"
-#include "Render.h"
+
+class App_Settings;
+struct Tracker;
+class Music_Player;
+struct File_System;
+struct Midi;
+struct Audio;
+
 
 class App
 {
@@ -22,5 +23,7 @@ public:
   Midi *midi;
   Audio *audio;
 
+  SDL_sem *sem;
 private:
+	SDL_Thread *midithread;
 };

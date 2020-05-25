@@ -125,7 +125,8 @@ void Midi::PrintMsg( FILE *f, jdkmidi::MIDIMessage *m )
 
 Midi::~Midi()
 {
-  in.closePort();
+  if (is_available && in.isPortOpen())
+    in.closePort();
 }
 Midi::Midi() : parser(32*1024)
 {

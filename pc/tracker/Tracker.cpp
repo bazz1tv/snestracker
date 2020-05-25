@@ -196,6 +196,7 @@ void Tracker::handle_events()
     switch(ev.type)
     {
       case SDL_QUIT:
+        SDL_HideWindow(::render->sdlWindow);
         ::quitting = true;
         break;
       case SDL_WINDOWEVENT:

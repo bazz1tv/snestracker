@@ -6,6 +6,9 @@
 #include "Render.h"
 #include <time.h>
 #include "shared/SdlNfd.h"
+#include "DEBUGLOG.h"
+#include "sdl_dblclick.h"
+#include "globals.h"
 
 int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
              SDL_Texture **sdlTexture, SDL_Surface **screen,
