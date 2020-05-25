@@ -25,5 +25,7 @@ pc/ext/libjdkmidi/c++/out.*/build/
 
 pc/ext/lzma1505/C/Util/7z/7zDec
 pc/ext/unrar/unrar
+pc/ext/lzma1505/C/Util/7z/7zDec.exe
+pc/ext/unrar/unrar.exe
 snes_driver/spc.bin
 snes_driver/unused/

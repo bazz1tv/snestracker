@@ -245,10 +245,10 @@ $(BIN)/$(EXECUTABLE_TRACKER): $(OBJECTS_TRACKER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z
 	$(CC) $(OBJECTS_TRACKER2) $(LDFLAGS) -o $@
 
 
-$(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/7zDec $(PROJ_DIR)/lzma1505/C/Util/7z/7zMain.c
+$(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(PROJ_DIR)/lzma1505/C/Util/7z/7zMain.c
 	cp $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(BIN)
 
-$(PROJ_DIR)/lzma1505/C/Util/7z/7zDec:
+$(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z):
 	uname_S=$(uname_S) make -C $(PROJ_DIR)/lzma1505/C/Util/7z -f makefile.gcc
 
 $(BIN)/$(UNRAR): $(PROJ_DIR)/unrar/$(UNRAR)
@@ -277,6 +277,9 @@ $(OBJ)/%.o: %.m
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
 	
 clean:
+	@# Remove both Linux and Windows versions of unrar and 7zdec
+	rm -f $(BIN)/{unrar,unrar.exe}
+	rm -f $(BIN)/{7zDec,7zDec.exe}
 	rm -f $(BIN)/$(EXECUTABLE_DEBUGGER);
 	rm -f $(BIN)/$(EXECUTABLE_TRACKER);
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
