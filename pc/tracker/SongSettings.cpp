@@ -3,7 +3,22 @@
 
 SongSettings::SongSettings() : bpm(DEFAULT_BPM), spd(DEFAULT_SPD)
 {
-  song_title_str[0] = 0;
+  setdefault_songtitle();
+  setdefault_volandecho();
+  setdefault_fir();
+}
+
+void SongSettings::setdefault_songtitle() { song_title_str[0] = 0; }
+void SongSettings::setdefault_volandecho() {
+  mvol = 0x40;
+  evol = 0x06;
+  edl = 0x05;
+  efb = 0x40;
+}
+void SongSettings::setdefault_fir() {
+  fir[0] = 0x7f;
+  for (int i=1; i < 8; i++)
+    fir[i] = 0;
 }
 
 void SongSettings::inc_bpm()
@@ -60,6 +75,178 @@ void SongSettings::inc_efb()
 void SongSettings::dec_efb()
 {
   efb--;
+}
+
+SongSettingsChunkLoader::SongSettingsChunkLoader(struct SongSettings *ss) :
+  songsettings(ss), ChunkLoader(ChunkID::SongSettings)
+{}
+
+size_t SongSettingsChunkLoader::load(SDL_RWops *file, size_t chunksize)
+{
+  size_t maxread = 0;
+
+  DEBUGLOG("Loading SongSettings; ");
+
+  while (maxread < chunksize)
+  {
+    uint8_t subchunkid;
+    uint16_t subchunksize;
+    read(file, &subchunkid, 1, 1, &maxread);
+    read(file, &subchunksize, 2, 1, &maxread);
+
+    switch (subchunkid)
+    {
+      case SubChunkID::songtitle:
+      {
+        DEBUGLOG("\tSubChunkID::songtitle");
+        size_t bytesread = ChunkLoader::read_str_from_file2(file, songsettings->song_title_str, subchunksize, SongSettings::SONGTITLE_SIZE);
+        subchunksize -= bytesread;
+        maxread += bytesread;
+      }
+      break;
+      case SubChunkID::bpmspd:
+      {
+        DEBUGLOG("\tSubChunkID::bpmspd\n");
+        size_t minimum_chunksize = 2;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. Setting to default\n", subchunkid);
+          songsettings->bpm = SongSettings::DEFAULT_BPM;
+          songsettings->spd = SongSettings::DEFAULT_SPD;
+          break;
+        }
+
+        uint16_t bpmspd;
+        size_t rc = read(file, &bpmspd, 2, 1, &maxread);
+        if (rc == 0)
+        {
+          DEBUGLOG("\t\tCould not read from file: %s\n", SDL_GetError());
+          return -1;
+        }
+        subchunksize -= 2;
+
+        // Check for valid BPM/SPD
+        songsettings->bpm = bpmspd >> 6;
+        if (songsettings->bpm < SongSettings::MIN_BPM || songsettings->bpm > SongSettings::MAX_BPM)
+        {
+          DEBUGLOG("\t\tInvalid BPM: %d. Setting to default %d\n", songsettings->bpm, SongSettings::DEFAULT_BPM);
+          songsettings->bpm = SongSettings::DEFAULT_BPM;
+        }
+
+        songsettings->spd = (uint8_t)(bpmspd & 0b111111);
+        if (songsettings->spd < SongSettings::MIN_SPD || songsettings->spd > SongSettings::MAX_SPD)
+        {
+          DEBUGLOG("\t\tInvalid SPD: %d. Setting to default %d\n", songsettings->spd, SongSettings::DEFAULT_SPD);
+          songsettings->spd = SongSettings::DEFAULT_SPD;
+        }
+      }
+      break;
+      case SubChunkID::volandecho:
+      {
+        DEBUGLOG("\tSubChunkID::volandecho");
+        size_t minimum_chunksize = 4;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. Setting to default\n", subchunkid);
+          songsettings->setdefault_volandecho();
+          break;
+        }
+        uint8_t byte;
+        /* mvol */
+        read(file, &byte, 1, 1, &maxread);
+        songsettings->mvol = byte;
+        /* evol */
+        read(file, &byte, 1, 1, &maxread);
+        songsettings->evol = byte;
+        /* edl */
+        read(file, &byte, 1, 1, &maxread);
+        songsettings->edl = byte;
+        /* efb */
+        read(file, &byte, 1, 1, &maxread);
+        songsettings->efb = byte;
+
+        subchunksize -= 4;
+      }
+      break;
+      /* TODO: fir */
+      default:
+        DEBUGLOG("\tUnknown SubChunkID: %d. skipping over..\n", subchunkid);
+      break;
+    }
+
+    /* Skip the unrecognized part of the chunk */
+    if (subchunksize)
+    {
+      DEBUGLOG("\tskipping past %d unknown bytes of chunk\n", subchunksize);
+      SDL_RWseek(file, subchunksize, RW_SEEK_CUR);
+      maxread += subchunksize;
+    }
+  }
+}
+
+size_t SongSettingsChunkLoader::save(SDL_RWops *file)
+{
+  uint8_t byte;
+  uint16_t word;
+  uint16_t chunklen = 0;
+  Sint64 chunksize_location, chunkend_location;
+
+  byte = chunkid;
+  SDL_RWwrite(file, &byte, 1, 1);
+  chunksize_location = SDL_RWtell(file);
+  SDL_RWwrite(file, &chunklen, 2, 1);
+  // write song title
+  const char *songtitle = songsettings->song_title_str;
+
+  byte = SubChunkID::songtitle;
+  word = strlen(songtitle);
+  // don't even write a songtitle chunk if there's no string
+  if (word > 0)
+  {
+    write(file, &byte, 1, 1, &chunklen);
+    write(file, &word, 2, 1, &chunklen);
+    write(file, songtitle, word, 1, &chunklen); // also write null byte
+  }
+
+  byte = SubChunkID::bpmspd;
+  word = 2;
+  write(file, &byte, 1, 1, &chunklen);
+  write(file, &word, 2, 1, &chunklen);
+
+  uint16_t bpmspd = ((uint16_t)songsettings->bpm << 6) | songsettings->spd;
+  write(file, &bpmspd, 2, 1, &chunklen);
+
+  byte = SubChunkID::volandecho;
+  word = 4;
+  write(file, &byte, 1, 1, &chunklen);
+  write(file, &word, 2, 1, &chunklen);
+
+  /* mvol */
+  byte = songsettings->mvol;
+  write(file, &byte, 1, 1, &chunklen);
+  /* evol */
+  byte = songsettings->evol;
+  write(file, &byte, 1, 1, &chunklen);
+  /* edl */
+  byte = songsettings->edl;
+  write(file, &byte, 1, 1, &chunklen);
+  /* efb */
+  byte = songsettings->efb;
+  write(file, &byte, 1, 1, &chunklen);
+
+  chunkend_location = SDL_RWtell(file);
+  SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
+  SDL_RWwrite(file, &chunklen, 2, 1);
+
+  SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
 }
 
 /* OF course I am aware of the repetitive nature of this code impl. But

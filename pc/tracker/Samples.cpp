@@ -52,6 +52,161 @@ void Sample::dec_finetune()
 		finetune--;
 }
 
+
+SampleChunkLoader::SampleChunkLoader(struct Sample *s) :
+  ChunkLoader(ChunkID::Sample), samples(s)
+{}
+
+size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
+{
+  size_t maxread = 0;
+  uint8_t idx = 0;
+  bool idx_loaded = false;
+
+  DEBUGLOG("Loading Sample; ");
+
+  while (maxread < chunksize)
+  {
+    uint8_t subchunkid;
+    uint16_t subchunksize;
+
+    DEBUGLOG("maxread = %llu\n", maxread);
+
+    if (read(file, &subchunkid, 1, 1, &maxread) == 0)
+      break;
+    if (read(file, &subchunksize, 2, 1, &maxread) == 0)
+      break;
+
+    DEBUGLOG("subchunksize = %llu\n", subchunksize);
+
+    switch (subchunkid)
+    {
+      case SubChunkID::coreinfo:
+      {
+        DEBUGLOG("\tSubChunkID::coreinfo\n");
+        size_t minimum_chunksize = 3;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        read(file, &idx, 1, 1, &maxread);
+        read(file, &samples[idx].rel_loop, 2, 1, &maxread);
+
+        subchunksize -= 3;
+        idx_loaded = true;
+      }
+      break;
+      case SubChunkID::name:
+      {
+        DEBUGLOG("\tSubChunkID::name\n");
+        assert(idx_loaded);
+        size_t bytesread = ChunkLoader::read_str_from_file2(file, samples[idx].name, subchunksize, SAMPLE_NAME_MAXLEN);
+        subchunksize -= bytesread;
+        maxread += bytesread;
+      }
+      break;
+
+      case SubChunkID::brr:
+      {
+        DEBUGLOG("\tSubChunkID::brr\n");
+        assert(idx_loaded);
+        Brr *brr = (Brr *) malloc(subchunksize);
+
+        Sint64 nb_read_total = 0, nb_read = 1;
+        char* buf = (char *)brr;
+        while (nb_read_total < subchunksize) {
+          nb_read = SDL_RWread(file, buf, 1, (subchunksize - nb_read_total));
+          nb_read_total += nb_read;
+          buf += nb_read;
+        }
+        maxread += nb_read_total;
+
+        if (nb_read_total != subchunksize)
+        {
+          DEBUGLOG("\t\tError Reading Sample %d!?\n", idx);
+          DEBUGLOG("\t\tnb_read_total = %llu, subchunksize = %llu\n", nb_read_total, subchunksize);
+          free(brr);
+          break;
+        }
+
+        struct Sample *s = &samples[idx];
+        if (s->brr != NULL)
+          free(s->brr);
+
+        s->brr = brr;
+        s->brrsize = subchunksize;
+        subchunksize -= nb_read_total;
+      }
+      break;
+      default:
+        DEBUGLOG("\tUnknown SubChunkID: %d. skipping over..\n", subchunkid);
+      break;
+    }
+
+    /* Skip the unrecognized part of the chunk */
+    if (subchunksize)
+    {
+      DEBUGLOG("\tskipping past %d unknown bytes of chunk\n", subchunksize);
+      SDL_RWseek(file, subchunksize, RW_SEEK_CUR);
+      maxread += subchunksize;
+    }
+  }
+}
+
+size_t SampleChunkLoader::save(SDL_RWops *file)
+{
+  for (uint16_t i=0; i < NUM_SAMPLES; i++)
+  {
+    if (samples[i].brr == NULL)
+      continue;
+
+    uint8_t byte;
+    uint16_t word;
+    uint16_t chunklen = 0;
+    Sint64 chunksize_location, chunkend_location;
+
+    byte = chunkid;
+    SDL_RWwrite(file, &byte, 1, 1);
+    chunksize_location = SDL_RWtell(file);
+    SDL_RWwrite(file, &chunklen, 2, 1);
+
+    byte = SubChunkID::coreinfo;
+    write(file, &byte, 1, 1, &chunklen);
+    word = 3; // we know the length in advance
+    write(file, &word, 2, 1, &chunklen);
+    write(file, &i, 1, 1, &chunklen); // write sample index (only 1 byt, &chunklene)
+    write(file, &samples[i].rel_loop, 2, 1, &chunklen);
+
+    byte = SubChunkID::name;
+    write(file, &byte, 1, 1, &chunklen);
+    word = strlen(samples[i].name);
+    if (word > 0)
+    {
+      write(file, &word, 2, 1, &chunklen);
+      write(file, samples[i].name,  word, 1, &chunklen);
+    }
+
+    byte = SubChunkID::brr;
+    write(file, &byte, 1, 1, &chunklen);
+    word = samples[i].brrsize;
+    write(file, &word, 2, 1, &chunklen);
+    write(file, samples[i].brr, word, 1, &chunklen);
+
+    chunkend_location = SDL_RWtell(file);
+    SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
+    SDL_RWwrite(file, &chunklen, 2, 1);
+
+    SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
+  }
+}
+
+
 Sample_Panel::Sample_Panel(Sample* samples) :
   title("Samples:"),
   loadbtn("Load", Sample_Panel::load, this),

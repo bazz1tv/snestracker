@@ -8,6 +8,7 @@
 #include "shared/gui/Button.h"
 #include "shared/Render.h"
 #include "shared/utility.h"
+#include "ChunkLoader.h"
 /* This sample number is hardcoded for now until sucessful testing is
  * done. Later, it will be made so that the limit can be dynamically
  * increased */
@@ -40,6 +41,24 @@ struct Sample
 	void dec_loop();
 	void inc_finetune();
 	void dec_finetune();
+};
+
+/* Used for loading / storing sample data and metadata as chunks from/to a file. */
+class SampleChunkLoader : public ChunkLoader
+{
+public:
+  SampleChunkLoader(struct Sample *samples);
+  size_t load(SDL_RWops *file, size_t chunksize);
+  size_t save(SDL_RWops *file);
+
+  enum SubChunkID {
+    coreinfo=0,
+    name,
+    brr,
+    NUM_SUBCHUNKIDS
+  };
+private:
+  struct Sample *samples;
 };
 
 struct Sample_Panel

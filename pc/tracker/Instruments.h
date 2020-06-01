@@ -5,6 +5,7 @@
 #include "gui/Button.h"
 #include "shared/Render.h"
 #include "shared/dsptypes.h"
+#include "ChunkLoader.h"
 /* This number is hardcoded for now until sucessful testing is
  * done. Later, it will be made so that the limit can be dynamically
  * increased */
@@ -19,8 +20,8 @@ struct Instrument
 {
   Instrument();
   ~Instrument();
+  /* TODO: Move this metadata outside of the core instrument */
   char name[INSTR_NAME_MAXLEN]; // the name of the instrument
-	uint32_t used;
   /* the app-level sample data. How that gets exported into the snes
    * driver data is a different story */
 	uint8_t srcn; // like a DIR offset
@@ -45,6 +46,9 @@ struct Instrument
    * be used by SNES Driver */
   int8_t finetune;
 
+  bool operator==(const Instrument& rhs);
+  inline bool operator!=(const Instrument& rhs) { return !(*this == rhs); }
+
 	static void inc_srcn(Instrument *i);
 	static void dec_srcn(Instrument *i);
   static void inc_vol(Instrument *i);
@@ -54,6 +58,26 @@ struct Instrument
   static void inc_finetune(Instrument *i);
   static void dec_finetune(Instrument *i);
 };
+
+class InstrumentChunkLoader : public ChunkLoader
+{
+public:
+  InstrumentChunkLoader(struct Instrument *instruments);
+  size_t load(SDL_RWops *file, size_t chunksize);
+  // save specific instrument to file handle. This does not include a File Header
+  size_t save(SDL_RWops *file, int instNumber);
+  size_t save(SDL_RWops *file); // Save all instruments to file handle
+
+
+  enum SubChunkID {
+    coreinfo=0,
+    name,
+    NUM_SUBCHUNKIDS
+  };
+private:
+  struct Instrument *instruments;
+};
+
 
 struct Sample_Panel;
 /* That defined the Data model above. Now time to get that into a view */

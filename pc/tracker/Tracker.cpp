@@ -5,9 +5,9 @@
 #include "sdl_userevents.h"
 #include "kbd.h"
 #include "apuram.h"
-#include "FileLoader.h"
 #include "shared/SdlNfd.h"
 #include "shared/fps.h"
+#include "Song.h"
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -572,36 +572,222 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	apuram->spd = songsettings.spd;
 	/* END BPM AND SPD */
 
+  // Find the position in SPC RAM after driver code
 	uint16_t freeram_i = SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE;
 
-	/* Another strategy would be to position the DIR at the base of the
-	 * offset rather than push it up further. Would need to check how many
-	 * DIR entries are needed if there's room or not */
-	uint16_t dir_i, dspdir_i;
-	dir_i = freeram_i + ((freeram_i % 0x100) ? (0x100 - (freeram_i % 0x100)) : 0);
-	dspdir_i = dir_i / 0x100;
+  uint16_t numinstr = 0;
+  uint8_t highest_instr = 0;
+  /* TODO: Could optimize this into bitflags */
+	uint8_t used_instr[NUM_INSTR];
+  memset(used_instr, 0, sizeof(used_instr));
 
-	uint16_t numsamples = 0;
-	uint8_t highest_sample = 0;
-	for (int i=0; i < NUM_SAMPLES; i++)
-	{
-		if (samples[i].brr == NULL)
-			continue;
-		numsamples++;
-		highest_sample = i;
-	}
+  // PATTERNS
+  // First calculate the number of used patterns in the song. This is not
+  // sequence length, but the number of unique patterns. With that length
+  // calculated, we can allocate the amount of RAM necessary for the
+  // PatternLUT (detailed below comments).
+  uint8_t num_usedpatterns = 0;
+  uint16_t highest_pattern = 0;
+  uint16_t patternlut_i = freeram_i; // position pattern data at start of free ram
+  uint16_t patternlut_size;
 
-	uint16_t numinstr = 0;
-	uint8_t highest_instr = 0;
-	for (int i=0; i < NUM_INSTR; i++)
-	{
-		Instrument *instr = &instruments[i];
-		if (instr->used == 0)
-			continue;
+  apuram->patterntable_ptr = patternlut_i;
 
-		numinstr++;
-		highest_instr = i;
-	}
+  /* Track the number of used patterns and the highest pattern number */
+  for (int p=0; p < MAX_PATTERNS; p++)
+  {
+    PatternMeta *pm = &patseq.patterns[p];
+    if (pm->used == 0)
+      continue;
+    num_usedpatterns++;
+    highest_pattern = p;
+  }
+  // Note we don't optimize the pattern LUT by consolidating unused
+  // patterns. This was chosen for debugging purposes for Version 1
+  patternlut_size = (highest_pattern + 1) * 2; // WORD sized address table
+  /* OK I'm thinking about how aside from the pattern data itself, how
+   * that pattern data will be accessed. We can store a Pattern lookup
+   * table that has the 16-bit addresses of each pattern in ascending
+   * order. The pattern sequencer table can simply store the pattern
+   * number, and that number is converted to an index into the lookup
+   * table to get the address of the pattern. That address will be stored
+   * into a DP address for indirect access to pattern data. There may be
+   * another DP pointer for accessing Row data row by row.*/
+  uint16_t *patlut = (uint16_t *) &::IAPURAM[patternlut_i];
+  uint16_t pat_i = patternlut_i + patternlut_size; // index into RAM for actual pattern data
+  for (int p=0; p < MAX_PATTERNS; p++)
+  {
+    PatternMeta *pm = &patseq.patterns[p];
+    if (pm->used == 0)
+    {
+      if (p <= highest_pattern)
+        *(patlut++) = 0xd00d;
+      continue;
+    }
+
+    /* Here we need to iterate through the Pattern to form the compressed
+     * version. For now, let's try to follow the XM version without RLE
+     * compression */
+    *(patlut++) = pat_i; // put the address of this pattern into the patlut
+    Pattern *pattern = &pm->p;
+    /* I just thought of another problem here. How do we access the
+     * individual tracks of a pattern if they are going to be in a
+     * compressed form (non-fixed length), other than storing the offset
+     * of each track? Since they will be stored sequentially, We could iterate to the end of each pattern when the pattern is first loaded to be played by the driver (in snes_driver code), and store those offsets into RAM. I
+     * suppose? that would save (8*2) bytes Per pattern! that's a lot!
+     */
+    // BEFORE THIS LOOP IS WHERE WE CAN WRITE A PATTERN HEADER FOR SNES
+    // When we do that, make sure to update pat_i or use a new variable
+    // for the next codeblock
+    ::IAPURAM[pat_i++] = pattern->len; // TODO write code that handles len of 0 == 256
+    /* The format of Pattern data is as follows:
+     *
+     * Len - byte - the length of the pattern in rows (same value for each
+     * track)
+     *
+     * If every column is filled, then next bytes are the note, instr, vol,
+     * fx, and fxparam for that row. Otherwise, the CBIT is set and a new set
+     * of rules apply, based on XM file format.
+     *
+     * When the CBIT is on, see the CBITS definition for which bits indicate
+     * what the next bytes are. The new addition are the RLE bits; defined in
+     * the code path below
+     * */
+    for (int t=0; t < MAX_TRACKS; t++)
+    {
+      uint8_t last_instr = 0;
+      for (int tr=0; tr < pattern->len; tr++)
+      {
+        int ttrr;
+        PatternRow *pr = &pattern->trackrows[t][tr];
+        uint8_t cbyte = 0, rlebyte;
+        /* Lookahead: how many empty rows from this one until the next
+         * filled row? If there's only 1 empty row, use RLE_ONLY1 */
+#define PATROW_EMPTY(pr) ( pr->note == 0 && pr->instr == 0 && pr->vol == 0 && pr->fx == 0 && pr->fxparam == 0 )
+        for (ttrr=tr+1; ttrr < pattern->len; ttrr++)
+        {
+          PatternRow *row = &pattern->trackrows[t][ttrr];
+          if ( (!(PATROW_EMPTY(row))) || ttrr == (pattern->len - 1))
+          {
+            // we found a filled row or we made it to the end of pattern
+            ttrr -= ( (PATROW_EMPTY(row)) ? 0 : 1);
+            int num_empty = ttrr - tr;
+
+            if (num_empty == 0)
+              break;
+            else if (num_empty == 1)
+              cbyte |= ( 1<<CBIT_RLE_ONLY1 );
+            else if (num_empty == 2)
+              cbyte |= ( (1<<CBIT_RLE) | (1<<CBIT_RLE_ONLY1) );
+            else
+            {
+              cbyte |= ( 1<<CBIT_RLE );
+              rlebyte = num_empty;
+            }
+
+            break;
+          }
+        }
+
+        // The very first row of a track has nothing? Then set the compression
+        // bit
+        if ( tr == 0 && (
+              pr->note == NOTE_NONE &&
+              pr->instr == 0 &&
+              pr->vol == 0 && pr->fx == 0 && pr->fxparam == 0) )
+        {
+          cbyte |= 1<<CBIT;
+        }
+#define DIFF_LAST_INSTR (last_instr == 0 || last_instr != pr->instr)
+        // Only if every element is filled are we NOT going to use a
+        // special compression byte. so let's check if every element is
+        // filled first.
+        // Lit. "If not every element is filled"
+        else if (! (
+              pr->note != NOTE_NONE &&
+              pr->instr != 0 &&
+              pr->vol != 0 && pr->fx != 0 && pr->fxparam != 0) )
+        {
+          cbyte |=
+            (pr->note ? ( 1<<CBIT_NOTE ) : 0) |
+            (pr->instr && DIFF_LAST_INSTR ? ( 1<<CBIT_INSTR ) : 0) |
+            (pr->vol ? ( 1<<CBIT_VOL ) : 0) |
+            (pr->fx ? ( 1<<CBIT_FX ) : 0) |
+            (pr->fxparam ? ( 1<<CBIT_FXPARAM ) : 0);
+        }
+
+        if (cbyte)
+          ::IAPURAM[pat_i++] = ( 1<<CBIT ) | cbyte;
+        /* we should now write the actual byte for any data that is
+         * present */
+        if (pr->note)
+          ::IAPURAM[pat_i++] = pr->note - 1;
+        if (pr->instr && DIFF_LAST_INSTR)
+        {
+          last_instr = pr->instr;
+          // however, the "actual" instrument is 0-based in the driver
+          ::IAPURAM[pat_i++] = pr->instr - 1;
+
+          /* V2: Also update the running list of used instruments */
+          //DEBUGLOG("SET USED INSTR: %d\n", pr->instr);
+          if (used_instr[pr->instr - 1] == 0)
+          {
+            used_instr[pr->instr - 1] = 1;
+            numinstr++;
+            if (highest_instr < (pr->instr - 1)) highest_instr = pr->instr - 1;
+          }
+        }
+        if (pr->vol)
+          ::IAPURAM[pat_i++] = pr->vol;
+        if (pr->fx)
+          ::IAPURAM[pat_i++] = pr->fx;
+        if (pr->fxparam)
+          ::IAPURAM[pat_i++] = pr->fxparam;
+        if ( (cbyte & (( 1<<CBIT_RLE ) | ( 1<<CBIT_RLE_ONLY1 )) ) == ( 1<<CBIT_RLE ) )
+          ::IAPURAM[pat_i++] = rlebyte;
+
+        tr = ttrr; // skip over empty rows
+      }
+    }
+  }
+  // PATTERNS END
+
+  // PATTERN SEQUENCER START
+  // set the start sequence index to the currently selected one in the
+  // tracker (eg. play from current pattern)
+  apuram->sequencer_i =  main_window.patseqpanel.currow;
+  uint16_t patseq_i = pat_i;
+  apuram->sequencer_ptr = patseq_i;
+  for (int i=0; i < patseq.num_entries; i++)
+    ::IAPURAM[patseq_i++] = patseq.sequence[i];
+  ::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
+  // going to check in apu driver for a negative number to mark end
+
+
+  /* Now that we know what instruments are used, let's check the samples
+   * they reference to calculate the used_samples */
+  /* TODO: Could optimize this into bitflags */
+  uint16_t numsamples = 0;
+  uint8_t highest_sample = 0;
+  uint8_t used_samples[NUM_SAMPLES];
+  memset(used_samples, 0, sizeof(used_samples));
+  for (int i=0; i < NUM_INSTR; i++)
+  {
+    if (used_instr[i])
+    {
+      auto srcn = instruments[i].srcn;
+      numsamples++;
+      if (highest_sample < srcn) highest_sample = srcn;
+      used_samples[srcn] = 1;
+    }
+  }
+
+  /* Another strategy would be to position the DIR at the base of the
+   * offset rather than push it up further. Would need to check how many
+   * DIR entries are needed if there's room or not */
+  uint16_t dir_i, dspdir_i;
+  dir_i = patseq_i + ((patseq_i % 0x100) ? (0x100 - (patseq_i % 0x100)) : 0);
+  dspdir_i = dir_i / 0x100;
 
 	uint16_t instrtable_i = dir_i + ( (highest_sample + 1) * 0x4);
 	//                             {applied size of DIR}  {INSTR TABLE SIZE}
@@ -629,7 +815,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	 * optimize  */
 	for (int i=0; i < NUM_SAMPLES; i++)
 	{
-		if (samples[i].brr == NULL)
+		if (used_samples[i] == 0)
 		{
 			if (i <= highest_sample)
 			{
@@ -658,7 +844,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	for (int i=0; i < NUM_INSTR; i++)
 	{
 		Instrument *instr = &instruments[i];
-		if (instr->used == 0)
+		if (used_instr[i] == 0)
 		{
 			if (i <= highest_instr)
 			{
@@ -691,172 +877,6 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	apuram->dspdir_i = dspdir_i;
 	::player->spc_write_dsp(dsp_reg::dir, dspdir_i);
 	// INSTRUMENTS END
-
-	// PATTERNS
-	// First calculate the number of used patterns in the song. This is not
-	// sequence length, but the number of unique patterns. With that length
-	// calculated, we can allocate the amount of RAM necessary for the
-	// PatternLUT (detailed below comments).
-	uint8_t num_usedpatterns = 0;
-	uint16_t highest_pattern = 0;
-	uint16_t patternlut_i = cursample_i, patternlut_size;
-
-	apuram->patterntable_ptr = patternlut_i;
-
-	for (int p=0; p < MAX_PATTERNS; p++)
-	{
-		PatternMeta *pm = &patseq.patterns[p];
-		if (pm->used == 0)
-			continue;
-		num_usedpatterns++;
-		highest_pattern = p;
-	}
-	patternlut_size = (highest_pattern + 1) * 2; // WORD sized address table
-	/* OK I'm thinking about how aside from the pattern data itself, how
-	 * that pattern data will be accessed. We can store a Pattern lookup
-	 * table that has the 16-bit addresses of each pattern in ascending
-	 * order. The pattern sequencer table can simply store the pattern
-	 * number, and that number is converted to an index into the lookup
-	 * table to get the address of the pattern. That address will be stored
-	 * into a DP address for indirect access to pattern data. There may be
-	 * another DP pointer for accessing Row data row by row.*/
-	uint16_t *patlut = (uint16_t *) &::IAPURAM[patternlut_i];
-	uint16_t pat_i = patternlut_i + patternlut_size; // index into RAM for actual pattern data
-	for (int p=0; p < MAX_PATTERNS; p++)
-	{
-		PatternMeta *pm = &patseq.patterns[p];
-		if (pm->used == 0)
-		{
-			if (p <= highest_pattern)
-				*(patlut++) = 0xd00d;
-			continue;
-		}
-
-		/* Here we need to iterate through the Pattern to form the compressed
-		 * version. For now, let's try to follow the XM version without RLE
-		 * compression */
-		*(patlut++) = pat_i; // put the address of this pattern into the patlut
-		Pattern *pattern = &pm->p;
-		/* I just thought of another problem here. How do we access the
-		 * individual tracks of a pattern if they are going to be in a
-		 * compressed form (non-fixed length), other than storing the offset
-		 * of each track? Since they will be stored sequentially, We could iterate to the end of each pattern when the pattern is first loaded to be played by the driver (in snes_driver code), and store those offsets into RAM. I
-		 * suppose? that would save (8*2) bytes Per pattern! that's a lot!
-		 */
-		// BEFORE THIS LOOP IS WHERE WE CAN WRITE A PATTERN HEADER FOR SNES
-		// When we do that, make sure to update pat_i or use a new variable
-		// for the next codeblock
-		::IAPURAM[pat_i++] = pattern->len; // TODO write code that handles len of 0 == 256
-/* The format of Pattern data is as follows:
- *
- * Len - byte - the length of the pattern in rows (same value for each
- * track)
- *
- * If every column is filled, then next bytes are the note, instr, vol,
- * fx, and fxparam for that row. Otherwise, the CBIT is set and a new set
- * of rules apply, based on XM file format.
- *
- * When the CBIT is on, see the CBITS definition for which bits indicate
- * what the next bytes are. The new addition are the RLE bits; defined in
- * the code path below
- * */
-		for (int t=0; t < MAX_TRACKS; t++)
-		{
-			uint8_t last_instr = 0;
-			for (int tr=0; tr < pattern->len; tr++)
-			{
-				int ttrr;
-				PatternRow *pr = &pattern->trackrows[t][tr];
-				uint8_t cbyte = 0, rlebyte;
-				/* Lookahead: how many empty rows from this one until the next
-				 * filled row? If there's only 1 empty row, use RLE_ONLY1 */
-#define PATROW_EMPTY(pr) ( pr->note == 0 && pr->instr == 0 && pr->vol == 0 && pr->fx == 0 && pr->fxparam == 0 )
-				for (ttrr=tr+1; ttrr < pattern->len; ttrr++)
-				{
-					PatternRow *row = &pattern->trackrows[t][ttrr];
-					if ( (!(PATROW_EMPTY(row))) || ttrr == (pattern->len - 1))
-					{
-						// we found a filled row or we made it to the end of pattern
-						ttrr -= ( (PATROW_EMPTY(row)) ? 0 : 1);
-						int num_empty = ttrr - tr;
-
-						if (num_empty == 0)
-							break;
-						else if (num_empty == 1)
-							cbyte |= ( 1<<CBIT_RLE_ONLY1 );
-						else if (num_empty == 2)
-							cbyte |= ( (1<<CBIT_RLE) | (1<<CBIT_RLE_ONLY1) );
-						else
-						{
-							cbyte |= ( 1<<CBIT_RLE );
-							rlebyte = num_empty;
-						}
-
-						break;
-					}
-				}
-
-				if ( tr == 0 && (
-							pr->note == NOTE_NONE &&
-							pr->instr == 0 &&
-							pr->vol == 0 && pr->fx == 0 && pr->fxparam == 0) )
-				{
-					cbyte |= 1<<CBIT;
-				}
-#define DIFF_LAST_INSTR (last_instr == 0 || last_instr != pr->instr)
-				// Only if every element is filled are we NOT going to use a
-				// special compression byte. so let's check if every element is
-				// filled first.
-				else if (! (
-				       pr->note != NOTE_NONE &&
-				       pr->instr != 0 &&
-				       pr->vol != 0 && pr->fx != 0 && pr->fxparam != 0) )
-				{
-					cbyte |=
-					  (pr->note ? ( 1<<CBIT_NOTE ) : 0) |
-					  (pr->instr && DIFF_LAST_INSTR ? ( 1<<CBIT_INSTR ) : 0) |
-					  (pr->vol ? ( 1<<CBIT_VOL ) : 0) |
-					  (pr->fx ? ( 1<<CBIT_FX ) : 0) |
-					  (pr->fxparam ? ( 1<<CBIT_FXPARAM ) : 0);
-				}
-
-				if (cbyte)
-					::IAPURAM[pat_i++] = ( 1<<CBIT ) | cbyte;
-				/* we should now write the actual byte for any data that is
-				 * present */
-				if (pr->note)
-					::IAPURAM[pat_i++] = pr->note - 1;
-				if (pr->instr && DIFF_LAST_INSTR)
-				{
-						last_instr = pr->instr;
-						// however, the "actual" instrument is 0-based
-						::IAPURAM[pat_i++] = pr->instr - 1;
-				}
-				if (pr->vol)
-					::IAPURAM[pat_i++] = pr->vol;
-				if (pr->fx)
-					::IAPURAM[pat_i++] = pr->fx;
-				if (pr->fxparam)
-					::IAPURAM[pat_i++] = pr->fxparam;
-				if ( (cbyte & (( 1<<CBIT_RLE ) | ( 1<<CBIT_RLE_ONLY1 )) ) == ( 1<<CBIT_RLE ) )
-					::IAPURAM[pat_i++] = rlebyte;
-
-				tr = ttrr; // skip over empty rows
-			}
-		}
-	}
-	// PATTERNS END
-
-	// PATTERN SEQUENCER START
-	// set the start sequence index to the currently selected one in the
-	// tracker (eg. play from current pattern)
-	apuram->sequencer_i =  main_window.patseqpanel.currow;
-	uint16_t patseq_i = pat_i;
-	apuram->sequencer_ptr = patseq_i;
-	for (int i=0; i < patseq.num_entries; i++)
-		::IAPURAM[patseq_i++] = patseq.sequence[i];
-	::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
-	// going to check in apu driver for a negative number to mark end
 
   // set flag whether to repeat the pattern, and also set the bit to skip
   // the echobuf clear
@@ -961,42 +981,53 @@ easily extendable when new features and components are added.
 All integers spanning more than 1 byte are stored little-endian unless
 otherwise noted.
 
-The following fields start the file, with no ChunkID
+The following field starts the file with no ChunkID
 
 "STSONG"   -- file magic header string. not null terminated
-Song Title -- null terminated string
-bpm/spd    -- 16-bit: (BPM << 6) | Spd
-                (0-300)   (1-32?)
-              ----BPM---- ==SPD==
-              0 0000 0000 0000 00
 
+Then each section of data is comprised of a 1-byte ID, an ID-specific length field, followed
+by the actual data corresponding to that ID.
+
+GlobalID
+  Song Title -- null terminated string (Software may impose length limit)
+  bpm/spd    -- 16-bit: (BPM << 6) | Spd
+                  (0-300)   (1-32?)
+                ----BPM---- ==SPD==
+                0 0000 0000 0000 00
+  [EXTENDABLE]
 
 SongSettingsID
-  COREID:
+  CoreID:
     mvol       -- 1 byte
     evol       -- 1 byte
     edl        -- 1 byte
     efb        -- 1 byte
+    [EXTENDABLE]
+  [EXTENDABLE]
 
 SamplesID
-  #samples   -- 1 byte
+  num_samples   -- 1 byte
   What follows is sequential sample data of the follow format:
   SampleID
-    COREID
+    CoreID
       index      -- 1 byte
-      name       -- null-terminated string
+      name       -- null-terminated string (Software may impose length limit)
       brrsize    -- size in bytes of following brr sample
       brrsample
+      [EXTENDABLE]
     LOOP_FINETUNE_ID
       TODO: Add rel_loop, finetune settings here
+      [EXTENDABLE]
+    [EXTENDABLE]
+  [EXTENDABLE]
 
 InstrumentsID
-  #instruments -- 1 byte
+  num_instruments -- 1 byte
   What follows are sequential instrument data of the following nature:
   InstrumentID
-    COREID
+    CoreID
       index      -- 1 byte
-      Name       -- null terminated string
+      Name       -- null terminated string (Software may impose length limit)
       vol        -- 1 byte
       pan        -- "
       srcn       -- "
@@ -1004,19 +1035,27 @@ InstrumentsID
       adsr2      -- "
       semitone_offset -- "
       finetune   -- "
+      [EXTENDABLE]
+    [EXTENDABLE]
+  [EXTENDABLE]
 
 PatternsID
-  #Patterns  -- 1 byte
+  num_Patterns  -- 1 byte
   What follows are sequential pattern data of the following format:
   PatternID
-    COREID
+    CoreID
       index      -- 1 byte
       len        -- 1 byte: number of rows
       Compressed Pattern Data for 8 tracks
+      [EXTENDABLE]
+    [EXTENDABLE]
+  [EXTENDABLE]
 
 PatSeqID
   Pattern Sequencer Entries -- an arbitrary number of byte sized pattern indices
-  that will make up the pattern sequencer. End is signaled by EOF (TODO: end signal by negative value, or $FF)
+  that will make up the pattern sequencer. End is signaled by EOF (or $FF)
+
+[EXTENDABLE]
 */
 
 /*
@@ -1101,8 +1140,12 @@ void Tracker::reset()
 		patseq.patterns[i].p.len = DEFAULT_PATTERN_LEN;
 	}
 	// Reset Pat Sequencer
-	// NOTE: This is done from the caller. new_file will properly load for
-	// pattern 00, while load_file will.. load from file :)
+  patseq.num_entries = 1;
+  patseq.sequence[0] = 0;
+  /* TODO: Don't have a "used" metadata for patterns, but just have a used()
+   * that checks whether the index of that pattern is in the pattern sequencer.
+   */
+  patseq.patterns[0].used = 1;
 
 	// Reset Other GUI elements
 
@@ -1117,203 +1160,10 @@ void Tracker::reset()
 /* TODO: Add sanitization where necessary */
 int Tracker::read_from_file(SDL_RWops *file)
 {
-	uint8_t buf[512];
-	size_t rc;
+  reset(); // reset tracker
 
-	reset();
-
-	rc = SDL_RWread(file, buf, sizeof("STSONG") - 1, 1);
-	if (rc == 0)
-	{
-		DEBUGLOG("Could not read from file: %s\n", SDL_GetError());
-		return -1;
-	}
-	buf[sizeof("STSONG") - 1] = 0;
-	if (strcmp((const char *)buf, "STSONG") != 0)
-	{
-		DEBUGLOG("STSONG Magic not found in File header!\n");
-	}
-
-	// Read Song title until NULL is read in
-	// corner case: no title == 0
-	FileLoader::read_str_from_file(file, songsettings.song_title_str, SongSettings::SONGTITLE_SIZE);
-
-	uint16_t bpmspd;
-	rc = SDL_RWread(file, &bpmspd, 2, 1);
-	if (rc == 0)
-	{
-		DEBUGLOG("Could not read from file: %s\n", SDL_GetError());
-		return -1;
-	}
-	// Check for valid BPM/SPD
-	songsettings.bpm = bpmspd >> 6;
-	if (songsettings.bpm < SongSettings::MIN_BPM || songsettings.bpm > SongSettings::MAX_BPM)
-	{
-		DEBUGLOG("Invalid BPM: %d. Setting to default %d\n", songsettings.bpm, SongSettings::DEFAULT_BPM);
-		songsettings.bpm = SongSettings::DEFAULT_BPM;
-	}
-	songsettings.spd = (uint8_t)(bpmspd & 0b111111);
-	if (songsettings.spd < SongSettings::MIN_SPD || songsettings.spd > SongSettings::MAX_SPD)
-	{
-		DEBUGLOG("Invalid SPD: %d. Setting to default %d\n", songsettings.spd, SongSettings::DEFAULT_SPD);
-		songsettings.spd = SongSettings::DEFAULT_SPD;
-	}
-
-	// number of samples
-	uint8_t numsamples;
-	SDL_RWread(file, &numsamples, 1, 1);
-	for (int i=0; i < numsamples; i++)
-	{
-		uint8_t idx;
-		SDL_RWread(file, &idx, 1, 1);
-
-		Sample *s = &samples[idx];
-		FileLoader::read_str_from_file(file, s->name, sizeof(Sample::name));
-
-		SDL_RWread(file, &samples[idx].rel_loop, 2, 1);
-
-		uint16_t brrsize;
-		SDL_RWread(file, &brrsize, 2, 1);
-		Brr *brr = (Brr *) malloc(brrsize);
-
-		Sint64 nb_read_total = 0, nb_read = 1;
-		char* buf = (char *)brr;
-		while (nb_read_total < brrsize && nb_read != 0) {
-			nb_read = SDL_RWread(file, buf, 1, (brrsize - nb_read_total));
-			nb_read_total += nb_read;
-			buf += nb_read;
-		}
-
-		if (nb_read_total != brrsize)
-		{
-			DEBUGLOG("Error Reading Sample %d!?\n", i);
-			free(brr);
-			return -1;
-		}
-
-		if (s->brr != NULL)
-			free(s->brr);
-
-		s->brr = brr;
-		s->brrsize = brrsize;
-	}
-
-	uint8_t numinstr = 0;
-	SDL_RWread(file, &numinstr, 1, 1);
-	for (int i=0; i < numinstr; i++)
-	{
-		uint8_t idx;
-		SDL_RWread(file, &idx, 1, 1);
-		Instrument *instr = &instruments[idx];
-		/* TODO: store/read the instr # */
-
-		FileLoader::read_str_from_file(file, instr->name, sizeof(Instrument::name));
-
-		/* TODO: Store/Read the instr used. Better yet, calculate it after the
-		 * patterns have been loaded */
-
-		// Time to load instrument info
-		SDL_RWread(file, &instr->vol, 1, 1);
-		SDL_RWread(file, &instr->pan, 1, 1);
-		SDL_RWread(file, &instr->srcn, 1, 1);
-		SDL_RWread(file, &instr->adsr.adsr1, 1, 1);
-		SDL_RWread(file, &instr->adsr.adsr2, 1, 1);
-		SDL_RWread(file, &instr->semitone_offset, 1, 1);
-		SDL_RWread(file, &instr->finetune, 1, 1);
-	}
-	
-	// PATTERNS
-	//
-	uint8_t numpatterns = 0;
-
-	SDL_RWread(file, &numpatterns, 1, 1);
-	for (int p=0; p < numpatterns; p++)
-	{
-		uint8_t idx;
-		SDL_RWread(file, &idx, 1, 1);
-		PatternMeta *pm = &patseq.patterns[idx];
-
-		Pattern *pattern = &pm->p;
-		SDL_RWread(file, &pattern->len, 1, 1);
-		for (int t=0; t < MAX_TRACKS; t++)
-		{
-			uint8_t rlecounter = 0;
-			uint8_t a;
-
-			for (int tr=0; tr < pattern->len; tr++)
-			{
-				PatternRow *pr = &pattern->trackrows[t][tr];
-				if (rlecounter)
-					if (--rlecounter >= 0)
-					{
-						/* with the proper reset() written, we won't need to
-						 * rewrite 0 values here */
-						/*pr->note = NOTE_NONE;
-						pr->instr = 0;
-						pr->vol = 0;
-						pr->fx = 0;
-						pr->fxparam = 0;*/
-						continue;
-					}
-
-				SDL_RWread(file, &a, 1, 1);
-				if (a <= 0x7f) // positive
-				{
-					pr->note = a;
-					SDL_RWread(file, &pr->instr, 1, 1);
-					instruments[pr->instr - 1].used++; // update instrument metadata
-					SDL_RWread(file, &pr->vol, 1, 1);
-					SDL_RWread(file, &pr->fx, 1, 1);
-					SDL_RWread(file, &pr->fxparam, 1, 1);
-				}
-				else
-				{
-					/* TODO: since reset() written, we won't need to
-					 * rewrite 0 values here ( the else statements will be removed )*/
-					if ( a & ( 1 << CBIT_NOTE ) )
-						SDL_RWread(file, &pr->note, 1, 1);
-					//else pr->note = NOTE_NONE;
-
-					if ( a & ( 1 << CBIT_INSTR ) )
-					{
-						SDL_RWread(file, &pr->instr, 1, 1);
-						instruments[pr->instr - 1].used++;
-					}
-					//else pr->instr = 0;
-
-					if ( a & ( 1 << CBIT_VOL ) )
-						SDL_RWread(file, &pr->vol, 1, 1);
-					//else pr->vol = 0;
-
-					if ( a & ( 1 << CBIT_FX ) )
-						SDL_RWread(file, &pr->fx, 1, 1);
-					//else pr->fx = 0;
-
-					if ( a & ( 1 << CBIT_FXPARAM ) )
-						SDL_RWread(file, &pr->fxparam, 1, 1);
-					//else pr->fxparam = 0;
-
-					if ( a & ( 1 << CBIT_RLE_ONLY1 ) )
-					{
-						rlecounter = ( a & ( 1 << CBIT_RLE ) ) ? 2 : 1;
-					}
-					else if ( a & ( 1 << CBIT_RLE ) )
-						SDL_RWread(file, &rlecounter, 1, 1);
-				}
-			}
-		}
-	}
-	// PAttern Sequencer
-	patseq.num_entries = 0; // WARNING: could be dangerous
-	for (int i=0; 1; i++)
-	{
-		rc = SDL_RWread(file, &patseq.sequence[i], 1, 1);
-		if (rc == 0) // EOF
-			break;
-
-		patseq.patterns[patseq.sequence[i]].used++;
-		patseq.num_entries++;
-	}
+  SongFileLoader sfl(&songsettings, samples, instruments, patseq.patterns, &patseq);
+  sfl.load(file);
 
 	/* HACKS */
 	/* Since the BPM and SPD widgets do not constantly poll (they normally
@@ -1327,234 +1177,8 @@ int Tracker::read_from_file(SDL_RWops *file)
 
 void Tracker::save_to_file(SDL_RWops *file)
 {
-	SDL_RWwrite(file, "STSONG", sizeof("STSONG") - 1, 1);
-	// write song title
-	const char *songtitle = main_window.song_title.str;
-	size_t len = strlen(songtitle);
-	SDL_RWwrite(file, songtitle, len + 1, 1); // also write null byte
-
-	uint16_t bpmspd = ((uint16_t)songsettings.bpm << 6) | songsettings.spd;
-	SDL_RWwrite(file, &bpmspd, 2, 1);
-
-	// number of samples
-	uint8_t numsamples = 0;
-	for (int i=0; i < NUM_SAMPLES; i++)
-	{
-		if (samples[i].brr == NULL)
-			continue;
-		numsamples++;
-	}
-	SDL_RWwrite(file, &numsamples, 1, 1);
-	// for each sample, write number of bytes as uint16_t followed by the
-	// bytes
-	for (uint16_t i=0; i < NUM_SAMPLES; i++)
-	{
-		if (samples[i].brr == NULL)
-			continue;
-
-		uint16_t size = samples[i].brrsize;
-		SDL_RWwrite(file, &i, 1, 1); // write sample index (only 1 byte)
-		SDL_RWwrite(file, samples[i].name, strlen(samples[i].name) + 1, 1);
-		SDL_RWwrite(file, &samples[i].rel_loop, 2, 1);
-		SDL_RWwrite(file, &size, 2, 1);
-		SDL_RWwrite(file, samples[i].brr, size, 1);
-	}
-
-	uint8_t numinstr = 0;
-	for (uint16_t i=0; i < NUM_INSTR; i++)
-	{
-		Instrument *instr = &instruments[i];
-		if (instr->used == 0)
-			continue;
-
-		numinstr++;
-	}
-	SDL_RWwrite(file, &numinstr, 1, 1);
-
-	for (uint16_t i=0; i < NUM_INSTR; i++)
-	{
-		Instrument *instr = &instruments[i];
-		if (instr->used == 0)
-			continue;
-
-		SDL_RWwrite(file, &i, 1, 1); // write instr index (only 1 byte)
-		SDL_RWwrite(file, instr->name, strlen(instr->name) + 1, 1);
-		// Time to load instrument info
-		SDL_RWwrite(file, &instr->vol, 1, 1);
-		SDL_RWwrite(file, &instr->pan, 1, 1);
-		SDL_RWwrite(file, &instr->srcn, 1, 1);
-		SDL_RWwrite(file, &instr->adsr.adsr1, 1, 1);
-		SDL_RWwrite(file, &instr->adsr.adsr2, 1, 1);
-		SDL_RWwrite(file, &instr->semitone_offset, 1, 1);
-		SDL_RWwrite(file, &instr->finetune, 1, 1);
-	}
-	// INSTRUMENTS END
-
-	// PATTERNS
-	// First calculate the number of used patterns in the song. This is not
-	// sequence length, but the number of unique patterns. With that length
-	// calculated, we can allocate the amount of RAM necessary for the
-	// PatternLUT (detailed below comments).
-	uint8_t num_usedpatterns = 0;
-
-	/* NOTE: Unlike the render_to_apu, which only exports patterns that are
-	 * present in the sequencer, we will check here for ANY patterns that
-	 * are not fully blank, whether or not they are present in the sequencer
-	 * */
-	for (uint8_t p=0; p < MAX_PATTERNS; p++)
-	{
-		PatternMeta *pm = &patseq.patterns[p];
-		// NOTE: This logic chunk is duplicated in the next for loop. Wish I
-		// would take time to optimize it BUT shouldn't prematurely do this.
-		// So many more important factors to the tracker that need coding!
-		if (pm->used == 0)
-		{
-			bool hasdata = false;
-			// not in sequencer, but is there data?
-			Pattern *pmp = &pm->p;
-			for (int t=0; t < MAX_TRACKS; t++)
-				for (int tr=0; tr < pmp->len; tr++)
-				{
-					PatternRow *pr = &pmp->trackrows[t][tr];
-					if (pr->note || pr->instr || pr->vol || pr->fx || pr->fxparam)
-					{
-						hasdata = true;
-						break;
-					}
-				}
-			if (!hasdata)
-				continue;
-		}
-		num_usedpatterns++;
-	}
-	SDL_RWwrite(file, &num_usedpatterns, 1, 1);
-	for (uint8_t p=0; p < MAX_PATTERNS; p++)
-	{
-		PatternMeta *pm = &patseq.patterns[p];
-		if (pm->used == 0)
-		{
-			bool hasdata = false;
-			// not in sequencer, but is there data?
-			Pattern *pmp = &pm->p;
-			for (int t=0; t < MAX_TRACKS; t++)
-				for (int tr=0; tr < pmp->len; tr++)
-				{
-					PatternRow *pr = &pmp->trackrows[t][tr];
-					if (pr->note || pr->instr || pr->vol || pr->fx || pr->fxparam)
-					{
-						hasdata = true;
-						break;
-					}
-				}
-			if (!hasdata)
-				continue;
-		}
-
-		SDL_RWwrite(file, &p, 1, 1); // write pattern index
-
-		/*pm->used only says whether this pattern is in the pattern sequencer
-		 * or not. It does not check whether the pattern has any data or not.
-		 * That could be done the long-processing way by checking all rows
-		 * manually for any note, instr, vol, fx, or fxparam entries -- or a
-		 * quick processing map could be used, an array where each bit
-		 * represents any of the above fields being present on a row (8 rows
-		 * represented in a byte. it would quicken the check. TODO: For now,
-		 * patterns that are not present in the sequencer will BE LOST!!! In
-		 * the spirit of rapid prototyping, I don't care. Fix it later */
-
-		Pattern *pattern = &pm->p;
-
-		SDL_RWwrite(file, &pattern->len, 1, 1); // TODO write code that handles len of 0 == 256
-
-		for (int t=0; t < MAX_TRACKS; t++)
-		{
-			for (int tr=0; tr < pattern->len; tr++)
-			{
-				int ttrr;
-				PatternRow *pr = &pattern->trackrows[t][tr];
-				uint8_t cbyte = 0, rlebyte;
-				/* Lookahead: how many empty rows from this one until the next
-				 * filled row? If there's only 1 empty row, use RLE_ONLY1 */
-//#define PATROW_EMPTY(pr) ( pr->note == 0 && pr->instr == 0 && pr->vol == 0 && pr->fx == 0 && pr->fxparam == 0 )
-				for (ttrr=tr+1; ttrr < pattern->len; ttrr++)
-				{
-					PatternRow *row = &pattern->trackrows[t][ttrr];
-					if ( (!(PATROW_EMPTY(row))) || ttrr == (pattern->len - 1))
-					{
-						// we found a filled row or we made it to the end of pattern
-						ttrr -= ( (PATROW_EMPTY(row)) ? 0 : 1);
-						int num_empty = ttrr - tr; /* HACK: the +1 is actually to compensate for the way
-																					apu driver code is handled, it's just to help the loop portion of the code stay clean
-																					on APU side. but as an lsr value it should be disregarded. The actual
-																					APU portion of code is anything using an rlecounter(s) (ReadPTRacks, QuickReadPTrack)*/
-						if (num_empty == 0)
-							break;
-						else if (num_empty == 1)
-							cbyte |= ( 1<<CBIT_RLE_ONLY1 );
-						else if (num_empty == 2)
-							cbyte |= ( (1<<CBIT_RLE) | (1<<CBIT_RLE_ONLY1) );
-						else
-						{
-							cbyte |= ( 1<<CBIT_RLE );
-							rlebyte = num_empty;
-						}
-
-						break;
-					}
-				}
-
-				if ( tr == 0 && (
-							pr->note == NOTE_NONE &&
-							pr->instr == 0 &&
-							pr->vol == 0 && pr->fx == 0 && pr->fxparam == 0) )
-				{
-					cbyte |= 1<<CBIT;
-				}
-				// Only if every element is filled are we NOT going to use a
-				// special compression byte. so let's check if every element is
-				// filled first.
-				else if (! (
-							pr->note != NOTE_NONE &&
-							pr->instr != 0 &&
-							pr->vol != 0 && pr->fx != 0 && pr->fxparam != 0) )
-				{
-					cbyte |=
-						(pr->note ? ( 1<<CBIT_NOTE ) : 0) |
-						(pr->instr ? ( 1<<CBIT_INSTR ) : 0) |
-						(pr->vol ? ( 1<<CBIT_VOL ) : 0) |
-						(pr->fx ? ( 1<<CBIT_FX ) : 0) |
-						(pr->fxparam ? ( 1<<CBIT_FXPARAM ) : 0);
-				}
-
-				if (cbyte)
-				{
-					cbyte |= ( 1<<CBIT );
-					SDL_RWwrite(file, &cbyte, 1, 1);
-				}
-				/* we should now write the actual byte for any data that is
-				 * present */
-				if (pr->note)
-					SDL_RWwrite(file, &pr->note, 1, 1);
-				if (pr->instr)
-					SDL_RWwrite(file, &pr->instr, 1, 1);
-				if (pr->vol)
-					SDL_RWwrite(file, &pr->vol, 1, 1);
-				if (pr->fx)
-					SDL_RWwrite(file, &pr->fx, 1, 1);
-				if (pr->fxparam)
-					SDL_RWwrite(file, &pr->fxparam, 1, 1);
-				if ( (cbyte & (( 1<<CBIT_RLE ) | ( 1<<CBIT_RLE_ONLY1 )) ) == ( 1<<CBIT_RLE ) )
-					SDL_RWwrite(file, &rlebyte, 1, 1);
-
-				tr = ttrr; // skip over empty rows
-			}
-		}
-	}
-	// PATTERNS END
-
-	// PATTERN SEQUENCER START
-	for (int i=0; i < patseq.num_entries; i++)
-		SDL_RWwrite(file, &patseq.sequence[i], 1, 1);
+  SongFileLoader sfl(&songsettings, samples, instruments, patseq.patterns, &patseq);
+  sfl.save(file);
 }
 /* Define the Packed Pattern Format.
  * For this, I am electing to use the XM packing scheme, with the addition
