@@ -287,7 +287,7 @@ MouseCursors::MouseCursors()
 
   for (int i=0; i < (mcaap->num_sprites * mcaap->num_frames); i++)
   {
-    mcaap->frames[i].coord.x += -162 - (bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.x - 2);
+    mcaap->frames[i].coord.x += -162 - (bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.x - 2) + 1;
     mcaap->frames[i].coord.y += -67 - bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.y + 2;
   }
 
