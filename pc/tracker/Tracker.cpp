@@ -205,42 +205,15 @@ void Tracker::handle_events()
         {
           case SDL_WINDOWEVENT_RESIZED:
           {
-            break;
             int w = ev.window.data1;
             int h = ev.window.data2;
 
             DEBUGLOG("window resize: w = %d, h = %d\n", w, h);
-
-            int wd, hd;
-            wd = w - ::render->w;
-            hd = h - ::render->h;
-
-            if (abs(wd) < abs(hd)) wd = hd;
-            else if (abs(wd) > abs(hd)) hd = wd;
-
-            ::render->w += wd;
-            ::render->h += hd;
-
-            DEBUGLOG("\twindow resize: w = %d, h = %d\n", ::render->w, ::render->h);
-
-            if (::render->w > monitor_display_mode.w)
+            if (::render->logical == false)
             {
-              int tmp_wd = ::render->w - monitor_display_mode.w;
-              ::render->w -= tmp_wd;
-              ::render->h -= tmp_wd;
-              DEBUGLOG("\t\twindow resize: tmp_wd = %d, w = %d, h = %d\n", tmp_wd, ::render->w, ::render->h);
+              ::render->sx = (float)(w) / (float)(::render->w);
+              ::render->sy = (float)(h) / (float)(::render->h);
             }
-            if (::render->h > monitor_display_mode.h)
-            {
-              int tmp_hd = ::render->h - monitor_display_mode.h;
-              ::render->w -= tmp_hd;
-              ::render->h -= tmp_hd;
-              DEBUGLOG("\t\twindow resize: tmp_hd = %d, w = %d, h = %d\n", tmp_hd, ::render->w, ::render->h);
-
-            }
-
-            SDL_SetWindowSize(::render->sdlWindow, ::render->w, ::render->h);
-            DEBUGLOG("\t\t\twindow resize: w = %d, h = %d\n", ::render->w, ::render->h);
           } break;
           case SDL_WINDOWEVENT_FOCUS_LOST:
           {
@@ -367,11 +340,17 @@ void Tracker::handle_events()
       } break;
       case SDL_MOUSEMOTION:
       {
+        mouse::prescaled_x = ev.motion.x;
+        mouse::prescaled_y = ev.motion.y;
+        ev.motion.x = static_cast<int> ((float)(ev.motion.x) / ::render->sx);
+        ev.motion.y = static_cast<int> ((float)(ev.motion.y) / ::render->sy);
         mouse::x = ev.motion.x;
         mouse::y = ev.motion.y;
       } break;
       case SDL_MOUSEBUTTONDOWN:
       {
+        ev.button.x = static_cast<int> ((float)(ev.button.x) / ::render->sx);
+        ev.button.y = static_cast<int> ((float)(ev.button.y) / ::render->sy);
         //DEBUGLOG("MOUSEBUTTONDOWN; ");
         /* In the case of touchpad soft clicking, it is expected that the
          * MOUSEBUTTONUP is sent as the immediate next event after the
@@ -385,6 +364,8 @@ void Tracker::handle_events()
       } break;
       case SDL_MOUSEBUTTONUP:
       {
+        ev.button.x = static_cast<int> ((float)(ev.button.x) / ::render->sx);
+        ev.button.y = static_cast<int> ((float)(ev.button.y) / ::render->sy);
         //DEBUGLOG("MOUSEBUTTONUP; ");
         /* If the last frame was the mbd, we know we have found the soft
          * click event pair. copy this mbu event to be postponed after
@@ -438,7 +419,68 @@ void Tracker::handle_events()
           }
 					break;
 					case SDLK_BACKQUOTE:
-						player->spc_emu()->write_port(1, SPCCMD_PLAYSONG);
+          {
+            if (mod & KMOD_SHIFT) /* Switch between logical scaling and "raw" scaling */
+            {
+              ::render->logical = !::render->logical;
+              if (::render->logical)
+              {
+                SDL_RenderSetLogicalSize(::render->sdlRenderer, ::render->w, ::render->h);
+                /* No need to use raw scaling factors because the app is fed pre-scaled
+                coordinates (eg. mouse coords) */
+                ::render->sx = ::render->sy = 1.0;
+              }
+              else
+              {
+                int w,h;
+                // Remove Logical Scaling
+                SDL_RenderSetLogicalSize(::render->sdlRenderer, 0, 0);
+                // Restore "raw" scaling factors
+                SDL_GetWindowSize(::render->sdlWindow, &w, &h);
+                ::render->sx = (float)(w) / (float)(::render->w);
+                ::render->sy = (float)(h) / (float)(::render->h);
+              }
+            }
+            else /* Toggle between SDL stock Scaling filters */
+            {
+              static uint8_t filter_type = 0;
+              char filter_str[2];
+
+              // update the filter index
+              filter_type = filter_type == 2 ? 0 : filter_type + 1;
+              // create the proper string from the index
+              filter_str[0] = '0' + filter_type;
+              filter_str[1] = 0;
+              // set the filter
+              SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, filter_str);
+            }
+
+            /* The new scaling filter will only apply to textures created after the filter was set,
+            so we must destroy the current main screen texture and screen surface and recreate them.
+            The code below was copied and adjusted from main.cpp */
+            SDL_DestroyTexture(::render->sdlTexture);
+            SDL_FreeSurface(::render->screen);
+            ::render->screen = SDL_CreateRGBSurface(0, ::render->w, ::render->h, 32,
+                                      0x00FF0000,
+                                      0x0000FF00,
+                                      0x000000FF,
+                                      0xFF000000);
+            SDL_SetColorKey(::render->screen, SDL_TRUE, 0);
+            SDL_SetSurfaceBlendMode(::render->screen, SDL_BLENDMODE_BLEND);
+
+            ::render->sdlTexture = SDL_CreateTexture(::render->sdlRenderer,
+                                                    SDL_PIXELFORMAT_ARGB8888,
+                                                    SDL_TEXTUREACCESS_STREAMING,
+                                                    ::render->w, ::render->h);
+
+            SDL_SetTextureBlendMode(::render->sdlTexture, SDL_BLENDMODE_BLEND);
+
+            if (::render->screen == NULL || render->sdlTexture == NULL)
+            {
+              DEBUGLOG("I couldn't allocate a screen or Texture : %s\n", SDL_GetError());
+              return -1;
+            }
+          }
 					break;
         }
       } break;

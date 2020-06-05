@@ -591,8 +591,8 @@ void MouseTextureAni::draw()
     Texture *t = tf->texture;
     if (!t) continue;
     SDL_Rect dr {
-      mouse::x + tf->coord.x,
-      mouse::y + tf->coord.y,
+      mouse::prescaled_x + static_cast<int> ( (float) ( tf->coord.x * 1) ),
+      mouse::prescaled_y + static_cast<int> ( (float) ( tf->coord.y * 1) ),
       t->w, t->h
     };
     SDL_RenderCopy(::render->sdlRenderer, t->sdltexture, NULL, &dr);
