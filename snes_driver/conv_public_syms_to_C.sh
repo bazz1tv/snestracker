@@ -1,3 +1,4 @@
+#!/bin/bash
 echo '#pragma once
 
 struct TrackerApuRam

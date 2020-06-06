@@ -12,7 +12,7 @@ pool:
 
 steps:
 - script: |
-    sudo apt-get install -y libasound2-dev libsdl2-dev libboost-filesystem-dev libgtk2.0-dev cmake
+    sudo apt-get update && sudo apt-get install -y libasound2-dev libsdl2-dev libboost-filesystem-dev libgtk2.0-dev cmake
     ./build-submodules.sh
     make
   displayName: 'make'
