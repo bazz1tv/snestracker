@@ -287,7 +287,7 @@ MouseCursors::MouseCursors()
 
   for (int i=0; i < (mcaap->num_sprites * mcaap->num_frames); i++)
   {
-    mcaap->frames[i].coord.x += -162 - (bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.x - 2);
+    mcaap->frames[i].coord.x += -162 - (bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.x - 2) + 1;
     mcaap->frames[i].coord.y += -67 - bca[GET_ANI_IDX(CURSOR_SMRPG_COIN)].hotspot.y + 2;
   }
 
@@ -591,8 +591,8 @@ void MouseTextureAni::draw()
     Texture *t = tf->texture;
     if (!t) continue;
     SDL_Rect dr {
-      mouse::x + tf->coord.x,
-      mouse::y + tf->coord.y,
+      mouse::prescaled_x + static_cast<int> ( (float) ( tf->coord.x * 1) ),
+      mouse::prescaled_y + static_cast<int> ( (float) ( tf->coord.y * 1) ),
       t->w, t->h
     };
     SDL_RenderCopy(::render->sdlRenderer, t->sdltexture, NULL, &dr);

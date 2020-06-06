@@ -17,6 +17,9 @@ Render::Render()
 
   w=SCREEN_WIDTH;
   h=SCREEN_HEIGHT;
+
+  sx = sy = 1.0;
+  logical = false;
 }
 
 Render::~Render()

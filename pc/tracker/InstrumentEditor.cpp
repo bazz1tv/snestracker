@@ -174,7 +174,7 @@ void AdsrPanel::run()
 
   if (release_ms == ADSR::INFINITE)
   {
-    adsrgraph.points[3].x = (adsrgraph.bounds.x + adsrgraph.bounds.w);
+    adsrgraph.points[3].x = (adsrgraph.bounds.x + adsrgraph.bounds.w) - 1;
     adsrgraph.points[3].y = adsrgraph.points[2].y;
   }
 

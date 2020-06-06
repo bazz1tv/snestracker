@@ -25,6 +25,8 @@ public:
   Uint32 windowID;
 
   int w,h;
+  float sx, sy; // raw scaling factors when not using SDL's logical scaling
+  bool logical; // using SDL's logical scaling?
 };
 
 extern Render *render;
