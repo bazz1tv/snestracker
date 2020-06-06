@@ -50,7 +50,7 @@ jobs:
       wget https://sourceforge.net/projects/boost/files/boost/1.72.0/boost_1_72_0.tar.bz2
       tar -jxf boost_1_72_0.tar.bz2
       cd boost_1_72_0/
-      echo "using gcc : : i686-w64-mingw32-g++ ;" > user-config.jam
+      echo "using gcc : : x86_64-w64-mingw32-g++ ;" > user-config.jam
       ./bootstrap.sh
       sudo ./b2 --prefix=/usr/x86_64-w64-mingw32 --with-system --with-filesystem \
         --user-config=user-config.jam toolset=gcc target-os=windows \
