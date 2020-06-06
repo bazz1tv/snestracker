@@ -48,12 +48,12 @@ jobs:
     displayName: 'sdl2'
   - script: |
       wget https://sourceforge.net/projects/boost/files/boost/1.72.0/boost_1_72_0.tar.bz2
-      tar -jxvf boost_1_72_0.tar.bz2
+      tar -jxf boost_1_72_0.tar.bz2
       cd boost_1_72_0/
       echo "using gcc : : i686-w64-mingw32-g++ ;" > user-config.jam
       ./bootstrap.sh
       sudo ./b2 --prefix=/usr/x86_64-w64-mingw32 --with-system --with-filesystem \
-        --user-config=/home/bazz/user-config.jam toolset=gcc target-os=windows \
+        --user-config=user-config.jam toolset=gcc target-os=windows \
         variant=debug link=shared threading=multi address-model=64 install
     displayName: 'boost'
   - script: ./build-submodules.sh
