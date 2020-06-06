@@ -1,6 +1,8 @@
 snestracker
 ===========
 
+[![Build Status](https://dev.azure.com/bazzinotti/snestracker/_apis/build/status/bazzinotti.snestracker?branchName=master)](https://dev.azure.com/bazzinotti/snestracker/_build/latest?definitionId=1&branchName=master)
+
 Congratulations, you have stumbled upon a rare item. Currently in its embryonic stages, snestracker aims to become a full-featured cross platform music production software for the Super Nintendo Entertainment System  (SNES), AKA the Super Famicom.
 
 snestracker uses a custom SPC700 Audio Processing Unit (APU) emulator to produce cycle-accurate emulation, allowing you to create accurate SNES music in the comfort of your PC workstation.
