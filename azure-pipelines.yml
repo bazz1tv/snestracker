@@ -1,4 +1,4 @@
-# Snestracker Azure pipelines test on Linux
+# Snestracker Azure-Pipelines Build-test
 # C/C++ with GCC
 # Build your C/C++ project with GCC using make.
 # Add steps that publish test results, save build artifacts, deploy, and more:
@@ -8,11 +8,14 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-16.04'
 
 steps:
 - script: |
-    sudo apt-get update && sudo apt-get install -y libasound2-dev libsdl2-dev libboost-filesystem-dev libgtk2.0-dev cmake
-    ./build-submodules.sh
-    make
+    sudo apt-get update && sudo apt-get install -y libasound2-dev libsdl2-dev \
+    libboost-filesystem-dev libgtk2.0-dev cmake
+  displayName: 'deps'
+- script: ./build-submodules.sh
+  displayName: 'submodules'
+- script: make
   displayName: 'make'
