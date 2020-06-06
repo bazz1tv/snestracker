@@ -1,6 +1,0 @@
-make
-cp Tracker.fig ../../../SnesCartFlasher/
-pushd ~/Desktop/current/SnesCartFlasher
-./trim8000 Tracker.fig
-./pc -m 7 -s 0x8000 -n 0x8000 derp.smc
-popd

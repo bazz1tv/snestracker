@@ -1,3 +1,0 @@
-clean:
-	rm -rf $(OBJDIR) $(OFILES) core *~ tracker.smc *.lib obj/*.o *.sym apu/spc.bin
-	cd apu; make clean

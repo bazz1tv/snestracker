@@ -1,4 +1,0 @@
-#!/bin/bash
-
-
-bash --init-file /Users/bazz/Desktop/spc/spc_tracker/shell_ini 
