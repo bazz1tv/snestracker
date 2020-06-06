@@ -4,7 +4,7 @@
 
 namespace Utility
 {
-char * getFileName(const char *s)
+const char * getFileName(const char *s)
 {
   if (s == NULL)
     return ("");
@@ -14,8 +14,8 @@ char * getFileName(const char *s)
 #ifdef _WIN32
   sep = '\\';
 #endif
-  char *whoami;
-  (whoami = strrchr(s, sep)) ? ++whoami : (whoami = "???");
+  const char *whoami;
+  (whoami = strrchr(s, sep)) ? ++whoami : (whoami = NULL);
   return whoami;
 }
   extern int random(int min, int max);
