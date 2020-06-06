@@ -42,14 +42,14 @@ tracker_CPPFLAGS=$(debug) -I. -I$(SHARED_DIR) -I$(PROJ_DIR)/rtmidi -I$(PROJ_DIR)
 prefix ?= /opt/local
 gme_PREFIX ?= ../submodules/libgme_m
 
-# TODO - add rule for libjdkmidi
-## mkdir -p out.$(uname_S)
-## cd out.$(uname_S)
-## ../configure --native-platform-linux=1
-# for MIDI
-#../configure --native-platform-linux=1 --cross-compiling=1 --compiler-prefix=i686-pc-mingw32- --target-platform-mingw32=1 --prefix=/usr/i686-pc-mingw32/usr/
-# sudo -E make install-dev
 ifeq ($(uname_S), Darwin)
+	# Potentially useful code to check Mac OS Version
+	#MAC_VER_MAJOR := $(shell sw_vers -productVersion | cut -f1 -d.)
+	#MAC_VER_MINOR := $(shell sw_vers -productVersion | cut -f2 -d.)
+	#MAC_VER_GT_10_14 := $(shell [ $(MAC_VER_MAJOR) -ge 10 -a $(MAC_VER_MINOR) -ge 14 ] && echo true)
+	#ifeq ($(MAC_VER_GT_10_14),true)
+		#CPPFLAGS += -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+	#endif
 	global_requirements += $(BIN)/$(EXECUTABLE_DEBUGGER).app $(BIN)/$(EXECUTABLE_TRACKER).app
 
 	LIBJDKMIDI_OSDIR = $(PROJ_DIR)/libjdkmidi/c++/out.Mac
@@ -266,15 +266,15 @@ $(LIBJDKMIDI_OSDIR)/Makefile:
 $(OBJ)/ext/NativeFileDialog/nfd_gtk.o: CPPFLAGS += $(gtk_cflags)
 
 $(OBJ)/%.o: %.c
-	mkdir -p $(@D)
+	@mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
 $(OBJ)/%.o: %.cpp
-	mkdir -p $(@D)
+	@mkdir -p $(@D)
 	$(CPP) $(CPP_DEFS) $(CPPFLAGS) -c $< -o $@
 
 $(OBJ)/%.o: %.m
-	mkdir -p $(@D)
+	@mkdir -p $(@D)
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
 	
 clean:
