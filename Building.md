@@ -21,6 +21,14 @@ Dependencies
 - wla-dx deps
   - cmake
 
+### Mac OS
+
+I recommend using [homebrew](https://brew.sh/) to install the system dependencies. Once homebrew is installed, simply run the following command from the terminal.
+
+```
+brew install sdl2 boost cmake
+```
+
 ### Linux systems with apt (Debian, Ubuntu, etc)
 
 ```

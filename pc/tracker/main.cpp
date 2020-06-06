@@ -78,7 +78,7 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
     }
   }
 
-  // make the scaled rendering look smoother.
+  // nearest neighbor
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
   //SDL_RenderSetLogicalSize(*sdlRenderer, width, height);
   /* pretty hackish to set this here but whatever */
