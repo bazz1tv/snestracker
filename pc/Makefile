@@ -153,11 +153,17 @@ else ifeq ($(uname_S), Cross_Windows)
 	gme_CPPFLAGS := $(debug) -I$(gme_PREFIX)
 	gme_LDFLAGS := -L$(gme_PREFIX) -lgme_m
 
-# sdl2 pkg-config uses absolute path (eg /usr/lib), which is meant to be
+# on Gentoo, sdl2 pkg-config uses absolute path (eg /usr/lib), which is meant to be
 # from the cross chroot. The following command will ensure it adds the
 # path to that cross root location to the path given by pkg-config
-	sdl2_cflags = $(subst /usr, $(prefix), $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags))
-	sdl2_ldflags = $(subst /usr, $(prefix), $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs))
+	ifneq (,$(wildcard /etc/gentoo-release))
+		sdl2_cflags = $(subst /usr, $(prefix), $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags))
+		sdl2_ldflags = $(subst /usr, $(prefix), $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs))
+	else
+		# On Ubuntu, the path is already correct, so just use the raw output of pkg-config
+		sdl2_cflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags)
+		sdl2_ldflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs)
+	endif
 
 	EXECUTABLE_DEBUGGER = std.exe
 	EXECUTABLE_TRACKER = st.exe

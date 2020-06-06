@@ -31,3 +31,32 @@ jobs:
     displayName: 'submodules'
   - script: make
     displayName: 'make'
+- job: CrossWindows
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - script: |
+      sudo apt-get update && sudo apt-get install -y cmake mingw-w64 pkg-config
+    displayName: 'deps'
+  - script: |
+      wget http://libsdl.org/release/SDL2-2.0.12.tar.gz
+      tar -zxf SDL2-2.0.12.tar.gz
+      cd SDL2-2.0.12
+      ./configure --prefix=/usr/x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --enable-sdl2-config=no
+      make
+      sudo make install
+    displayName: 'sdl2'
+  - script: |
+      wget https://sourceforge.net/projects/boost/files/boost/1.72.0/boost_1_72_0.tar.bz2
+      tar -jxf boost_1_72_0.tar.bz2
+      cd boost_1_72_0/
+      echo "using gcc : : x86_64-w64-mingw32-g++ ;" > user-config.jam
+      ./bootstrap.sh
+      sudo ./b2 --prefix=/usr/x86_64-w64-mingw32 --with-system --with-filesystem \
+        --user-config=user-config.jam toolset=gcc target-os=windows \
+        variant=debug link=shared threading=multi address-model=64 install
+    displayName: 'boost'
+  - script: ./build-submodules.sh
+    displayName: 'submodules'
+  - script: prefix=/usr/x86_64-w64-mingw32 CROSS_COMPILE=x86_64-w64-mingw32- make
+    displayName: 'make'
