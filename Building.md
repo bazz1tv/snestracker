@@ -83,6 +83,10 @@ make
 Cross-Building for Windows
 --------------------------
 
+Here are 64-bit cross build instructions for Gentoo or Ubuntu Linux.
+
+### Gentoo
+
 Here's a rough guide to establish a 64-bit cross build environment on Gentoo Linux:
 
 ```
@@ -91,13 +95,7 @@ crossdev --target x86_64-w64-mingw32
 x86_64-w64-mingw32-emerge -av media-libs/libsdl2 dev-libs/boost
 ```
 
-If you had previously built for Linux, clean that up before building the Windows version.
-
-```
-make clean
-```
-
-Run the following command from the snestracker top-level directory
+Then, from snestracker folder:
 
 ```
 prefix=/usr/x86_64-w64-mingw32/usr CROSS_COMPILE=x86_64-w64-mingw32- make
@@ -114,6 +112,48 @@ cp /usr/x86_64-w64-mingw32/usr/bin/libSDL2-2-0-0.dll \
 Some of these library files are version dependent (eg. 9.2.0), so until an
 automation strategy is discovered (static build?), be careful.
 
+### Ubuntu
+
+(tested on 16.04), You can use the following commands to setup the build environment.
+
+```
+# System deps
+sudo apt-get update && sudo apt-get install mingw-w64 pkg-config
+
+# SDL2
+wget http://libsdl.org/release/SDL2-2.0.12.tar.gz
+tar -zxf SDL2-2.0.12.tar.gz
+cd SDL2-2.0.12
+./configure --prefix=/usr/x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --enable-sdl2-config=no
+make
+sudo make install
+
+# Boost
+wget https://sourceforge.net/projects/boost/files/boost/1.72.0/boost_1_72_0.tar.bz2
+tar -jxf boost_1_72_0.tar.bz2
+cd boost_1_72_0/
+echo "using gcc : : x86_64-w64-mingw32-g++ ;" > user-config.jam
+./bootstrap.sh
+sudo ./b2 --prefix=/usr/x86_64-w64-mingw32 --with-system --with-filesystem \
+  --user-config=user-config.jam toolset=gcc target-os=windows \
+  variant=debug link=shared threading=multi address-model=64 install
+```
+
+Then, from the snestracker folder:
+
+```
+prefix=/usr/x86_64-w64-mingw32 CROSS_COMPILE=x86_64-w64-mingw32- make
+```
+
+Provided that compilation was successful, the following DLLs need to be copied into the directory where the EXE will be located.
+
+```
+cp /usr/x86_64-w64-mingw32/{bin/SDL2.dll,lib/libboost_filesystem.dll} \
+/usr/lib/gcc/x86_64-w64-mingw32/5.3-posix/{libgcc_s_seh-1.dll,libstdc++-6.dll} pc/bin
+```
+
+Some of these library files are version dependent (eg. 5.3-posix), so until an
+automation strategy is discovered (static build?), be careful.
 
 Internal Dependencies
 ---------------------
