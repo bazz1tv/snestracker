@@ -48,8 +48,12 @@ Features
   - Play any voice at any octave, with ability to customize ADSR. Can even play through MIDI keyboard
 - SPC Export
 
+Community
+=========
 
+Feel free to join the new snestracker [Discord Server](https://discord.gg/ZckDaN). You may also join via IRC. **Server**: irc.esper.net **Channel**:#snestracker
 
+The Discord and IRC are bridged by snesbot :)
 
 Other Recommendations
 =====================
