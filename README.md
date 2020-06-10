@@ -15,15 +15,6 @@ Here is an image of the current early prototype!
 
 ![snestracker early prototype preview](./pics/snestracker.png)
 
-Building
---------
-See [Building.md](./Building.md)
-
-Road Map
---------
-see [Roadmap.md](./Roadmap.md)
-
-
 Debugger
 ========
 
@@ -48,12 +39,25 @@ Features
   - Play any voice at any octave, with ability to customize ADSR. Can even play through MIDI keyboard
 - SPC Export
 
+Building
+--------
+See [Building.md](./Building.md)
+
+Road Map
+--------
+Coming soon, [Roadmap.md](./Roadmap.md)
+
 Community
 =========
 
 Feel free to join the new snestracker [Discord Server](https://discord.gg/ZckDaN). You may also join via IRC. **Server**: irc.esper.net **Channel**:#snestracker
 
 The Discord and IRC are bridged by snesbot :)
+
+Contributing
+============
+
+Contributions from the community are valid and welcome! For those curious about getting involved, have a look at [Good First Issues](https://github.com/bazzinotti/snestracker/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). If you see an issue that appeals to you, post a comment demonstrating your interest. You are also encouraged to join the Discord or IRC. Be interactive! Together we will learn, grow, and make snestracker the best it can be.
 
 Other Recommendations
 =====================
