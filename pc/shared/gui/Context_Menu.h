@@ -3,9 +3,14 @@
 
 struct Context_Menu_Item
 {
-  Context_Menu_Item(const char *str="", bool is_visible=false, int (*action)(void *)=NULL, void *data=NULL);
+  Context_Menu_Item(const char *str="", bool is_visible=false,
+                    int (*action)(void *)=NULL, void *data=NULL,
+                    bool enabled=true);
   Clickable_Text clickable_text;
   bool is_visible;
+
+  // V2
+  bool enabled;
 };
 
 struct Context_Menu

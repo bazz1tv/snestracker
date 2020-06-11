@@ -33,8 +33,8 @@ void Context_Menu::deactivate()
 }
 
 Context_Menu_Item::Context_Menu_Item(const char *str, bool is_visible, 
-  int (*action)(void *)/*=NULL*/, void* data/*=NULL*/) : 
-clickable_text(str, action, data), is_visible(is_visible)
+  int (*action)(void *)/*=NULL*/, void* data/*=NULL*/, bool enabled/*=true*/) : 
+clickable_text(str, action, data), is_visible(is_visible), enabled(enabled)
 {
 
 }
@@ -102,7 +102,7 @@ bool Context_Menu::do_thing(void *data/*=NULL*/)
 {
   fprintf(stderr, "MEEP");
   Context_Menu_Item *p = highlighted_item;
-  if (p != NULL)
+  if (p != NULL && p->enabled)
   {
     currently_selected_item = p;
     if (p->clickable_text.action)
@@ -112,7 +112,8 @@ bool Context_Menu::do_thing(void *data/*=NULL*/)
       return 1;
     }
   }
-  deactivate();
+  
+  //deactivate();
 	return 0;
 }
 void Context_Menu::draw(SDL_Surface *screen)
@@ -133,38 +134,47 @@ void Context_Menu::draw(SDL_Surface *screen)
   {
     if (items[i].is_visible)
     {
-      
-      if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
+      if (items[i].enabled == false)
       {
-        if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) &&
-            mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
+        sdlfont_drawString(screen, created_at.x+1,
+                         created_at.y + 1 + (drawn*TILE_HEIGHT),
+                         items[i].clickable_text.str,
+                         Colors::nearblack, bg_color, false);
+      }
+      else
+      {
+        if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
         {
-          // draw the highlighter
-          if (should_highlight_hover)
+          if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) &&
+              mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
+          {
+            // draw the highlighter
+            if (should_highlight_hover)
+            {
+              SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT),
+                            created_at.w, TILE_HEIGHT};
+              SDL_FillRect(screen, &r, Colors::magenta);
+              bg_color = Colors::magenta;
+            }
+            highlighted_item = &items[i];
+          }
+        }
+        if (should_highlight_currently_selected_item)
+        {
+          if (&items[i] == currently_selected_item )
           {
             SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT),
                           created_at.w, TILE_HEIGHT};
             SDL_FillRect(screen, &r, Colors::magenta);
             bg_color = Colors::magenta;
           }
-          highlighted_item = &items[i];
         }
+        // draw this nigga
+        sdlfont_drawString(screen, created_at.x+1,
+                           created_at.y + 1 + (drawn*TILE_HEIGHT),
+                           items[i].clickable_text.str,
+                           Colors::white, bg_color, false);
       }
-      if (should_highlight_currently_selected_item)
-      {
-        if (&items[i] == currently_selected_item )
-        {
-          SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT),
-                        created_at.w, TILE_HEIGHT};
-          SDL_FillRect(screen, &r, Colors::magenta);
-          bg_color = Colors::magenta;
-        }
-      }
-      // draw this nigga
-      sdlfont_drawString(screen, created_at.x+1,
-                         created_at.y + 1 + (drawn*TILE_HEIGHT),
-                         items[i].clickable_text.str,
-                         Colors::white, bg_color, false);
       drawn++;
     }
     i++;
