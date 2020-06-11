@@ -56,10 +56,13 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
     currently_selected_item = highlighted_item;
     currently_selected_item_index = highlighted_item_index;
   }
-  SDL_FillRect(::render->screen, &created_at, Colors::transparent);
-  currently_selected_item = &items[0];
-  highlighted_item = &items[0];
-  highlighted_item_index=0;
+  if (currently_selected_item->enabled)
+  {
+    SDL_FillRect(::render->screen, &created_at, Colors::transparent);
+    currently_selected_item = &items[0];
+    highlighted_item = &items[0];
+    highlighted_item_index=0;
+  }
   //SDL_FillRect(::render->screen, &single_item_rect, Colors::black);
 }
 
@@ -166,27 +169,37 @@ void Expanding_List::draw(SDL_Surface *screen)
     {
       if (items[i].is_visible)
       {
-        if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
+        if (items[i].enabled == false)
         {
-          //fprintf(stderr,"DERP1");
-          if ( (items[i].clickable_text.str && items[i].clickable_text.str[0] != '-') && ((is_static && i !=0) || !is_static) && mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
-          {
-            //fprintf(stderr,"DERP2");
-            // draw the highlighter
-            SDL_Rect r = {created_at.x, created_at.y + (drawn)*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
-            SDL_FillRect(screen, &r, Colors::magenta);
-            highlighted_item = &items[i];
-            highlighted_item_index = i;
-          }
-        }
-        // draw this nigga
-        //if (currently_selected_item != &items[i])
-        //{
-          sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + ((drawn)*TILE_HEIGHT) /*+ (i > 0 ? TILE_HEIGHT:0)*/, 
-            items[i].clickable_text.str, Colors::Interface::color[Colors::Interface::Type::text_fg],
+          sdlfont_drawString(screen, created_at.x+1,
+            created_at.y + 1 + (drawn*TILE_HEIGHT),
+            items[i].clickable_text.str,
+            Colors::nearblack,
             Colors::Interface::color[Colors::Interface::Type::text_bg], false);
-          drawn++;
-        //}
+        }
+        else
+        {
+          if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
+          {
+            //fprintf(stderr,"DERP1");
+            if ( (items[i].clickable_text.str && items[i].clickable_text.str[0] != '-') && ((is_static && i !=0) || !is_static) && mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
+            {
+              //fprintf(stderr,"DERP2");
+              // draw the highlighter
+              SDL_Rect r = {created_at.x, created_at.y + (drawn)*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
+              SDL_FillRect(screen, &r, Colors::magenta);
+              highlighted_item = &items[i];
+              highlighted_item_index = i;
+            }
+          }
+          // draw this nigga
+          //if (currently_selected_item != &items[i])
+          //{
+            sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + ((drawn)*TILE_HEIGHT) /*+ (i > 0 ? TILE_HEIGHT:0)*/, 
+              items[i].clickable_text.str, Colors::Interface::color[Colors::Interface::Type::text_fg],
+              Colors::Interface::color[Colors::Interface::Type::text_bg], false);
+        }
+        drawn++;
       }
       i++;
     }
