@@ -40,11 +40,11 @@ struct Menu_Bar
 ////////////////////////////////////////////////////////
       {"New Song",     true,  new_song,   this},
       {"Open ST-Song", true,  open_song,  this},
-			{"Open ST-SPC",  true,  open_spc,   NULL},
+			{"Open ST-SPC",  true,  open_spc,   NULL, false},
 			{"Save",         true,  save_song,  this},
 			{"Save as...",   true,  save_as_song,  this},
       {"Export SPC",   true,  export_spc, NULL},
-      {"Export WAV",   true,  export_wav, NULL},
+      {"Export WAV",   true,  export_wav, NULL, false},
       {"Quit",         true,  quit,       NULL},
 ////////////////////////////////////////////////////////
       {"",             false, NULL,      NULL}
