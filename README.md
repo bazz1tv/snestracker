@@ -50,7 +50,7 @@ Coming soon, [Roadmap.md](./Roadmap.md)
 Community
 =========
 
-Feel free to join the new snestracker [Discord Server](https://discord.gg/ZckDaN). You may also join via IRC. **Server**: irc.esper.net **Channel**:#snestracker
+Feel free to join the new snestracker [Discord Server](https://discord.gg/2WXEJU9). You may also join via IRC. **Server**: irc.esper.net **Channel**:#snestracker
 
 The Discord and IRC are bridged by snesbot :)
 
