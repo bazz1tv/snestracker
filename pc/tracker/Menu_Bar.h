@@ -73,27 +73,6 @@ struct Menu_Bar
     };
   };
 
-  struct Track_Context
-  {
-    Track_Context() : menu(menu_items, true)
-    {
-    }
-
-    void draw(SDL_Surface *screen);
-
-    static int toggle_pause (void *data);         
-    static int restart_current_track (void *data);
-
-    Expanding_List menu;
-    Context_Menu_Item menu_items[8] = 
-    {
-      {"track",           true,   NULL,                   NULL},
-      {"pause",           true,   toggle_pause,           &menu_items[1].clickable_text},
-      {"restart",         true,   restart_current_track,  NULL},
-      {"",                false,  NULL,                   NULL}
-    };
-  };
-
   struct Window_Context
   {
     Window_Context() : menu(menu_items, true)
@@ -138,13 +117,11 @@ struct Menu_Bar
     void deactivate_all() {
       file_context.menu.deactivate();
       edit_context.menu.deactivate();
-      track_context.menu.deactivate();
       window_context.menu.deactivate();
     }
 
     File_Context          file_context;
     Edit_Context          edit_context;
-    Track_Context         track_context;
     Window_Context        window_context;
   } context_menus;
 };

@@ -48,21 +48,6 @@ void Menu_Bar::draw(SDL_Surface *screen)
 }
 
 
-
-void Menu_Bar::Track_Context::draw(SDL_Surface *screen)
-{
-  Clickable_Text *ct = (Clickable_Text*) &menu_items[1].clickable_text;
-  if (::player->is_paused() )
-  {
-    ct->str = "play";
-  }
-  else 
-  {
-    ct->str = "pause";
-  }
-  menu.draw(screen);
-}
-
 int Menu_Bar::File_Context::new_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
@@ -229,15 +214,6 @@ int Menu_Bar::File_Context::export_wav(void *data)
   }
 }
 
-int Menu_Bar::Track_Context::toggle_pause (void *data)
-{
-  return 0;
-}         
-
-int Menu_Bar::Track_Context::restart_current_track (void *data)
-{
-  return 0;
-}
 
 void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 {
@@ -248,10 +224,6 @@ void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 
   edit_context.menu.preload(x, y);
   x +=  ( strlen(file_context.menu_items[0].clickable_text.str)
-          * CHAR_WIDTH ) + CHAR_WIDTH*2;
-
-  track_context.menu.preload(x, y);
-  x +=  ( strlen(track_context.menu_items[0].clickable_text.str)
           * CHAR_WIDTH ) + CHAR_WIDTH*2;
 
   window_context.menu.preload(x,y);
@@ -265,7 +237,6 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y,
   if (file_context.menu.check_left_click_activate(x, y, button, ev))
   {
     edit_context.menu.deactivate();
-    track_context.menu.deactivate();
     window_context.menu.deactivate();
     return true;
   }
@@ -273,7 +244,6 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y,
   if (edit_context.menu.check_left_click_activate(x, y, button, ev))
   {
     file_context.menu.deactivate();
-    track_context.menu.deactivate();
     window_context.menu.deactivate();
     return true;
   }
@@ -281,18 +251,10 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y,
   if (::player->has_no_song)
     return false;
 
-  if (track_context.menu.check_left_click_activate(x, y, button, ev))
-  {
-    file_context.menu.deactivate();
-    edit_context.menu.deactivate();
-    window_context.menu.deactivate();
-    return true;
-  }
   if (window_context.menu.check_left_click_activate(x, y, button, ev))
   {
     file_context.menu.deactivate();
     edit_context.menu.deactivate();
-    track_context.menu.deactivate();
     return true;
   }
 
@@ -322,7 +284,6 @@ bool Menu_Bar::Context_Menus::is_anything_active()
 {
   return (file_context.menu.is_active || 
       edit_context.menu.is_active || 
-      track_context.menu.is_active || 
       window_context.menu.is_active);
 }
 int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
@@ -350,12 +311,6 @@ int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
   }
   if (!::player->has_no_song)
   {
-    if ((r=track_context.menu.receive_event(ev)))
-    {
-      if (r == Expanding_List::EVENT_MENU)
-        return EVENT_TRACK;
-      return EVENT_ACTIVE;
-    }
     if ((r=window_context.menu.receive_event(ev)))
     {
       if (r == Expanding_List::EVENT_MENU)
@@ -370,9 +325,7 @@ void Menu_Bar::Context_Menus::update(Uint8 adsr1, Uint8 adsr2)
 {
   // Don't need this because there is no currently selected item, just actions
   /*file_context.menu.update_current_item(Menu_Bar::get_attack_index(adsr1));
-    window_context.menu.update_current_item(Menu_Bar::get_sustain_level_index(adsr2));
-    track_context.menu.update_current_item(Menu_Bar::get_decay_index(adsr1));*/
-  //track_context.update();
+    window_context.menu.update_current_item(Menu_Bar::get_sustain_level_index(adsr2));*/
 }
 
 void Menu_Bar::Context_Menus::draw(SDL_Surface *screen)
@@ -381,7 +334,6 @@ void Menu_Bar::Context_Menus::draw(SDL_Surface *screen)
   edit_context.menu.draw(screen);
   if (!::player->has_no_song)
   {
-    track_context.draw(screen);
     window_context.menu.draw(screen);
   }
 }
