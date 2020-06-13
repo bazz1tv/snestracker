@@ -1,12 +1,29 @@
 #include "gui/Expanding_List.h"
 #include "mouse.h"
 #include "utility.h"
-//Expanding_List_Item::Expanding_List_Item(const char *str, 
-//  int (*action)(void *)/*=NULL*/, void* data/*=NULL*/) : 
-/*clickable_text(str, action, data)
-{
+#include "DEBUGLOG.h"
 
-}*/
+/* Helper func to check if a coordinate is inside the Nth element of the Expanding List
+ * idx = Nth element */
+static bool coord_is_in_el(const Expanding_List *el, const int &x, const int &y, const int idx)
+{
+  bool b1, b2, b3, b4;
+
+  b1 = x >= el->created_at.x;
+  // if (b1)
+  //   DEBUGLOG("PASS 1; ");
+  b2 = x < (el->created_at.x + el->greatest_length);
+  // if (b2)
+  //   DEBUGLOG("PASS 2; ");
+  b3 = y >= ( el->created_at.y + (idx * TILE_HEIGHT) );
+  // if (b3)
+  //   DEBUGLOG("PASS 3; ");
+  b4 = y <  ( el->created_at.y + (idx * TILE_HEIGHT) + TILE_HEIGHT );
+  // if (b4)
+  //   DEBUGLOG("PASS 4; ");
+
+  return b1 && b2 && b3 && b4;
+}
 
 void Expanding_List::update_current_item(int index)
 {
@@ -100,7 +117,17 @@ int Expanding_List::receive_event(const SDL_Event &ev)
         {
           fprintf(stderr, "highlighted_item_index = %d\n", highlighted_item_index);
           if (highlighted_item_index == 0 && ev.type == SDL_MOUSEBUTTONUP) break;
-          do_thing();
+          /* Only call the row's callback if we were in its coord area */
+          if (coord_is_in_el(this, ev.button.x, ev.button.y, highlighted_item_index))
+          {
+            //DEBUGLOG("did a thing!\n");
+            do_thing();
+          }
+          else // we clicked outside, close down the list
+          {
+            //DEBUGLOG("deactivating!\n");
+            deactivate();
+          }
           return EVENT_MENU;
         }
         break;
@@ -169,6 +196,20 @@ void Expanding_List::draw(SDL_Surface *screen)
     {
       if (items[i].is_visible)
       {
+        /* Update the highlighted_item_index no matter if the row is disabled or enabled */
+        if (coord_is_in_el(this, mouse::x, mouse::y, drawn))
+        {
+          highlighted_item = &items[i];
+          highlighted_item_index = i;
+
+          // draw the highlighter if enabled
+          if (items[i].enabled && (items[i].clickable_text.str && items[i].clickable_text.str[0] != '-') && ((is_static && i !=0) || !is_static))
+          {
+            SDL_Rect r = {created_at.x, created_at.y + (drawn)*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
+            SDL_FillRect(screen, &r, Colors::magenta);
+          }
+        }
+        // Draw "locked out" color text if this row is disabled
         if (items[i].enabled == false)
         {
           sdlfont_drawString(screen, created_at.x+1,
@@ -179,22 +220,6 @@ void Expanding_List::draw(SDL_Surface *screen)
         }
         else
         {
-          if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
-          {
-            //fprintf(stderr,"DERP1");
-            if ( (items[i].clickable_text.str && items[i].clickable_text.str[0] != '-') && ((is_static && i !=0) || !is_static) && mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) && mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
-            {
-              //fprintf(stderr,"DERP2");
-              // draw the highlighter
-              SDL_Rect r = {created_at.x, created_at.y + (drawn)*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
-              SDL_FillRect(screen, &r, Colors::magenta);
-              highlighted_item = &items[i];
-              highlighted_item_index = i;
-            }
-          }
-          // draw this nigga
-          //if (currently_selected_item != &items[i])
-          //{
             sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + ((drawn)*TILE_HEIGHT) /*+ (i > 0 ? TILE_HEIGHT:0)*/, 
               items[i].clickable_text.str, Colors::Interface::color[Colors::Interface::Type::text_fg],
               Colors::Interface::color[Colors::Interface::Type::text_bg], false);
