@@ -460,6 +460,9 @@ InstrumentEditor::Tabs::Tabs(InstrumentEditor *ie) :
   vol(3,3, "Vol", switchto_vol, ie),
   pan(3,3, "Pan", switchto_pan, ie)
 {
+  /* Disabled not-yet-supported tabs */
+  vol.enabled = false;
+  pan.enabled = false;
 }
 
 void InstrumentEditor::Tabs::set_coords(int x, int y)
