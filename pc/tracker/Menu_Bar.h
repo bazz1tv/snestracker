@@ -66,8 +66,8 @@ struct Menu_Bar
     {
       {"Edit",        true,  NULL,                 NULL},
       {"------",      true,  NULL,                 NULL},
-      {"Copy",        true,  copy,                 NULL},
-      {"Paste",       true,  paste,                NULL},
+      {"Copy",        true,  copy,                 NULL, false},
+      {"Paste",       true,  paste,                NULL, false},
       {"Options",     true,  open_options_window,  NULL},
       {"",            false, NULL,                 NULL}
     };
