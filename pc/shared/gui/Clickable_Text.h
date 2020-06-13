@@ -6,7 +6,7 @@
 #include "Clickable_Rect.h"
 #include "Colors.h"
 
-
+/* TODO: Strip out Colors.h and friends from this class */
 struct Clickable_Text : public Clickable_Rect
 {
   Clickable_Text(const char * str="", int (*action)(void *data)=NULL, void *data=NULL,
@@ -21,4 +21,6 @@ struct Clickable_Text : public Clickable_Rect
   
   const char *str;
   Uint32 color=Colors::Interface::color[Colors::Interface::text_fg];
+  // V2
+  bool enabled = true;
 };

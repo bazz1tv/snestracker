@@ -131,17 +131,25 @@ void Button::draw(SDL_Surface *screen)
   // redudant calculating outer rect every frame :(
   outer = {rect.x - 2, rect.y - 2, rect.w + 4, rect.h + 4};
   SDL_FillRect(screen, &outer,
-      Colors::Interface::color[Colors::Interface::button_bg + state]);
+      enabled ? Colors::Interface::color[Colors::Interface::button_bg + state] : Colors::nearblack);
 
-  sdlfont_drawString(screen, state ? rect.x : rect.x + 1,
-      state ? rect.y : rect.y + 2, str,
-      Colors::transparent,
-      Colors::Interface::color[Colors::Interface::button_bg + state],
-      false);
+  if (enabled)
+    sdlfont_drawString(screen, state ? rect.x : rect.x + 1,
+        state ? rect.y : rect.y + 2, str,
+        Colors::transparent,
+        Colors::Interface::color[Colors::Interface::button_bg + state],
+        false);
 
-  sdlfont_drawString(screen, state ? rect.x + 1 : rect.x,
+  if (enabled)
+    sdlfont_drawString(screen, state ? rect.x + 1 : rect.x,
       state ? rect.y + 2 : rect.y, str,
       Colors::Interface::color[Colors::Interface::button_fg + state],
+      Colors::Interface::color[Colors::Interface::button_bg + state],
+      false);
+  else
+    sdlfont_drawString(screen, rect.x,
+      rect.y, str,
+      Colors::gray,
       Colors::Interface::color[Colors::Interface::button_bg + state],
       false);
 }
