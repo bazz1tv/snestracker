@@ -44,7 +44,8 @@ void Clickable_Text::draw(Uint32 color, bool prefill/*=true*/,
   bool Vflip/*=false*/, bool Hflip/*=false*/, SDL_Surface *screen/*=RenderContext::screen*/)
 {
   sdlfont_drawString(screen, rect.x, rect.y, str, color, 
-    Colors::Interface::color[Colors::Interface::Type::text_bg], prefill, Vflip, Hflip);
+    enabled ? Colors::Interface::color[Colors::Interface::Type::text_bg] : Colors::nearblack,
+    prefill, Vflip, Hflip);
 }
 
 void Clickable_Text::draw(bool prefill/*=true*/, 

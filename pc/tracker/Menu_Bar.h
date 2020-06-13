@@ -40,11 +40,11 @@ struct Menu_Bar
 ////////////////////////////////////////////////////////
       {"New Song",     true,  new_song,   this},
       {"Open ST-Song", true,  open_song,  this},
-			{"Open ST-SPC",  true,  open_spc,   NULL},
+			{"Open ST-SPC",  true,  open_spc,   NULL, false},
 			{"Save",         true,  save_song,  this},
 			{"Save as...",   true,  save_as_song,  this},
       {"Export SPC",   true,  export_spc, NULL},
-      {"Export WAV",   true,  export_wav, NULL},
+      {"Export WAV",   true,  export_wav, NULL, false},
       {"Quit",         true,  quit,       NULL},
 ////////////////////////////////////////////////////////
       {"",             false, NULL,      NULL}
@@ -66,31 +66,10 @@ struct Menu_Bar
     {
       {"Edit",        true,  NULL,                 NULL},
       {"------",      true,  NULL,                 NULL},
-      {"Copy",        true,  copy,                 NULL},
-      {"Paste",       true,  paste,                NULL},
+      {"Copy",        true,  copy,                 NULL, false},
+      {"Paste",       true,  paste,                NULL, false},
       {"Options",     true,  open_options_window,  NULL},
       {"",            false, NULL,                 NULL}
-    };
-  };
-
-  struct Track_Context
-  {
-    Track_Context() : menu(menu_items, true)
-    {
-    }
-
-    void draw(SDL_Surface *screen);
-
-    static int toggle_pause (void *data);         
-    static int restart_current_track (void *data);
-
-    Expanding_List menu;
-    Context_Menu_Item menu_items[8] = 
-    {
-      {"track",           true,   NULL,                   NULL},
-      {"pause",           true,   toggle_pause,           &menu_items[1].clickable_text},
-      {"restart",         true,   restart_current_track,  NULL},
-      {"",                false,  NULL,                   NULL}
     };
   };
 
@@ -138,13 +117,11 @@ struct Menu_Bar
     void deactivate_all() {
       file_context.menu.deactivate();
       edit_context.menu.deactivate();
-      track_context.menu.deactivate();
       window_context.menu.deactivate();
     }
 
     File_Context          file_context;
     Edit_Context          edit_context;
-    Track_Context         track_context;
     Window_Context        window_context;
   } context_menus;
 };

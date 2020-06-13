@@ -5,7 +5,8 @@
 
 bool Tab::check_mouse_and_execute(int x, int y, void *newdata/*=NULL*/)
 {
-  return Clickable_Rect::check_mouse_and_execute(x,y,newdata);
+  if (enabled)
+    return Clickable_Rect::check_mouse_and_execute(x,y,newdata);
 }
 
 int Tab::horiz_pixel_length()
@@ -17,15 +18,23 @@ void Tab::draw(SDL_Surface *screen/*=Render_Context::screen*/)
 {
   Uint32 *bg_color, *fg_color;
 
-  if (active) 
+  if (enabled)
   {
-    bg_color = &Colors::Interface::color[Colors::Interface::active_tab_bg];
-    fg_color = &Colors::Interface::color[Colors::Interface::active_tab_fg];
+    if (active)
+    {
+      bg_color = &Colors::Interface::color[Colors::Interface::active_tab_bg];
+      fg_color = &Colors::Interface::color[Colors::Interface::active_tab_fg];
+    }
+    else
+    {
+      bg_color = &Colors::Interface::color[Colors::Interface::inactive_tab_bg];
+      fg_color = &Colors::Interface::color[Colors::Interface::inactive_tab_fg];
+    }
   }
   else
   {
-    bg_color = &Colors::Interface::color[Colors::Interface::inactive_tab_bg];
-    fg_color = &Colors::Interface::color[Colors::Interface::inactive_tab_fg];
+    bg_color = &Colors::nearblack;
+    fg_color = &Colors::gray;
   }
 
   SDL_FillRect(screen, &rect, *bg_color);

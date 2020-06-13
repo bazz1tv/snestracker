@@ -89,6 +89,9 @@ Instrument_Panel::Instrument_Panel(Instrument *iptr, Sample_Panel *sp) :
     instruments(iptr),
     samplepanel(sp)
 {
+  loadbtn.enabled = false;
+  savebtn.enabled = false;
+  zapbtn.enabled = false;
 }
 
 Instrument_Panel::~Instrument_Panel()

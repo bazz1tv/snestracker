@@ -17,4 +17,7 @@ struct Clickable_Rect
   SDL_Rect rect;
   int (*action)(void* data);
   void *data;
+
+  // V2
+  bool enabled = true;
 };

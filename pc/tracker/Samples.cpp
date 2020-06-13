@@ -59,6 +59,9 @@ Sample_Panel::Sample_Panel(Sample* samples) :
   clearbtn("Clear", Sample_Panel::clear, this),
 	samples(samples)
 {
+  /* Disable unimpl'd buttons */
+  savebtn.enabled = false;
+  clearbtn.enabled = false;
 }
 
 Sample_Panel::~Sample_Panel()

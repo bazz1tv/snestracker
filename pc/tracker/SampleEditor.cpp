@@ -16,6 +16,11 @@ SampleEditor::SampleEditor() :
   finetune_incbtn("+", incfinetune, this, true),
   finetune_decbtn("-", decfinetune, this, true)
 {
+  /* Disable not-yet-supported features */
+  loop_incbtn.enabled = false;
+  loop_decbtn.enabled = false;
+  finetune_incbtn.enabled = false;
+  finetune_decbtn.enabled = false;
 }
 
 void SampleEditor :: update_loop()
@@ -80,13 +85,13 @@ void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
 	update_loop();
   update_finetune();
 
-	loop_title.draw(screen);
-	loop_valtext.draw(screen);
+	loop_title.draw(screen, Colors::nearblack);
+	loop_valtext.draw(screen, Colors::nearblack);
 	loop_incbtn.draw(screen);
 	loop_decbtn.draw(screen);
 
-  finetune_title.draw(screen);
-  finetune_valtext.draw(screen);
+  finetune_title.draw(screen, Colors::nearblack);
+  finetune_valtext.draw(screen, Colors::nearblack);
   finetune_incbtn.draw(screen);
   finetune_decbtn.draw(screen);
 }

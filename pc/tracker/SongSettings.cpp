@@ -93,6 +93,13 @@ SongSettingsPanel::SongSettingsPanel() :
   efb_incbtn("+", inc_efb, this, true),
   efb_decbtn("-", dec_efb, this, true)
 {
+  // disable not-fully-supported features
+  evol_incbtn.enabled = false;
+  evol_decbtn.enabled = false;
+  edl_incbtn.enabled = false;
+  edl_decbtn.enabled = false;
+  efb_incbtn.enabled = false;
+  efb_decbtn.enabled = false;
 }
 
 void SongSettingsPanel::update_mvol()
@@ -196,18 +203,18 @@ void SongSettingsPanel::draw(SDL_Surface *screen/*=::render->screen*/)
 	mvol_incbtn.draw(screen);
 	mvol_decbtn.draw(screen);
 
-  evol_title.draw(screen);
-  evol_valtext.draw(screen);
+  evol_title.draw(screen, Colors::nearblack);
+  evol_valtext.draw(screen, Colors::nearblack);
   evol_incbtn.draw(screen);
   evol_decbtn.draw(screen);
 
-  edl_title.draw(screen);
-  edl_valtext.draw(screen);
+  edl_title.draw(screen, Colors::nearblack);
+  edl_valtext.draw(screen, Colors::nearblack);
   edl_incbtn.draw(screen);
   edl_decbtn.draw(screen);
   
-  efb_title.draw(screen);
-  efb_valtext.draw(screen);
+  efb_title.draw(screen, Colors::nearblack);
+  efb_valtext.draw(screen, Colors::nearblack);
   efb_incbtn.draw(screen);
   efb_decbtn.draw(screen);
 }
