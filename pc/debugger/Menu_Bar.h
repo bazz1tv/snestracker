@@ -82,7 +82,7 @@ struct Menu_Bar
       {"prev",            true,   prev_track,             NULL},
       {"next",            true,   next_track,             NULL},
       {"-------",         true,   NULL,                   NULL},
-      {"Create Profile",  true,   create_profile,         NULL},
+      {"Create Profile",  true,   create_profile,         NULL, false},
       {"",                false,  NULL,                   NULL}
     };
   };

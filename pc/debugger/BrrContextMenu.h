@@ -49,7 +49,7 @@ struct BrrContextMenu
 		 * this, BRR+ may seem a waste but it is a way to more simply
 		 * communicate BRR detail that is not only SNES Tracker data. */
 		{"RIP BRR",true, &write_brr_to_file_callback, NULL},
-		{"Rip STI",true, &write_sti_to_file_callback, NULL},
+		{"Rip STI",true, &write_sti_to_file_callback, NULL, false},
 		{"",false, NULL,NULL}
 	};
 

@@ -4,6 +4,7 @@
 #include "Organization.h"
 
 #include "Render.h"
+#include "shared/SdlNfd.h"
 
 int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
              SDL_Texture **sdlTexture, SDL_Surface **screen,
@@ -18,6 +19,7 @@ int main(int argc, char **argv)
     &render.sdlTexture, &render.screen, SCREEN_WIDTH, SCREEN_HEIGHT);
 
   render.windowID = SDL_GetWindowID(render.sdlWindow);
+  SdlNfd::init(render.sdlWindow);
 
   App app(argc, argv, 32000);
   app.run();

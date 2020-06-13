@@ -404,7 +404,7 @@ int PatSeqPanel::decpat(void *pspanel)
 
   patseq->patterns[patseq->sequence[psp->currow]].used--;
   *derp -= 1;
-  if (*derp < 0)
+  if (*derp == 0xff) // wrapped around?
     *derp = 0;
 
   patseq->patterns[patseq->sequence[psp->currow]].used++;
