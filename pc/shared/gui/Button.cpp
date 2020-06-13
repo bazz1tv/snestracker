@@ -75,6 +75,8 @@ Uint32 Button::held_callback(Uint32 interval, void *b)
 
 void Button::check_event(const SDL_Event &ev)
 {
+  if (!enabled)
+    return;
   if (ev.type == SDL_MOUSEBUTTONDOWN &&
       (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &outer)) &&
       ev.button.button == SDL_BUTTON_LEFT)
