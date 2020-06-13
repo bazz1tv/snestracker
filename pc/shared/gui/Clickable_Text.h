@@ -21,6 +21,4 @@ struct Clickable_Text : public Clickable_Rect
   
   const char *str;
   Uint32 color=Colors::Interface::color[Colors::Interface::text_fg];
-  // V2
-  bool enabled = true;
 };
