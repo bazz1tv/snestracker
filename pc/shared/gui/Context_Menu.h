@@ -20,6 +20,7 @@ struct Context_Menu
 	 * react appropriately in external event handler code */
 	static Context_Menu *currently_active_context_menu;
 
+  bool coord_is_in_menu(const int &x, const int &y, const int idx);
   bool is_activated();
   bool toggle_activate();
   void activate();
@@ -46,4 +47,5 @@ struct Context_Menu
   bool should_highlight_currently_selected_item=false;
   Context_Menu_Item *currently_selected_item=NULL;
   int currently_selected_item_index=0;
+  int highlighted_item_index=0, highlighted_item_draw_index=0;
 };

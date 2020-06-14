@@ -18,8 +18,6 @@ struct Expanding_List : public Context_Menu
   bool check_left_click_activate(const int &x, const int &y, const Uint8 &button=0, const SDL_Event *ev=NULL);
   void draw(SDL_Surface *screen);
   int receive_event(const SDL_Event &ev);
-  Context_Menu_Item *currently_selected_item=NULL;
-  int currently_selected_item_index=0, highlighted_item_index=0;
   SDL_Rect single_item_rect;
 	bool is_static;
 };

@@ -58,6 +58,7 @@ void Main_Window::draw()
     {
       draw_menu_bar();
       SDL_UpdateTexture(::render->sdlTexture, NULL, ::render->screen->pixels, ::render->screen->pitch);
+      SDL_SetRenderDrawColor(::render->sdlRenderer, 0, 0, 0, 0);
       SDL_RenderClear(::render->sdlRenderer);
       SDL_RenderCopy(::render->sdlRenderer, ::render->sdlTexture, NULL, NULL);
       draw_memory_outline();

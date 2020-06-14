@@ -3,28 +3,6 @@
 #include "utility.h"
 #include "DEBUGLOG.h"
 
-/* Helper func to check if a coordinate is inside the Nth element of the Expanding List
- * idx = Nth element */
-static bool coord_is_in_el(const Expanding_List *el, const int &x, const int &y, const int idx)
-{
-  bool b1, b2, b3, b4;
-
-  b1 = x >= el->created_at.x;
-  // if (b1)
-  //   DEBUGLOG("PASS 1; ");
-  b2 = x < (el->created_at.x + el->greatest_length);
-  // if (b2)
-  //   DEBUGLOG("PASS 2; ");
-  b3 = y >= ( el->created_at.y + (idx * TILE_HEIGHT) );
-  // if (b3)
-  //   DEBUGLOG("PASS 3; ");
-  b4 = y <  ( el->created_at.y + (idx * TILE_HEIGHT) + TILE_HEIGHT );
-  // if (b4)
-  //   DEBUGLOG("PASS 4; ");
-
-  return b1 && b2 && b3 && b4;
-}
-
 void Expanding_List::update_current_item(int index)
 {
   currently_selected_item = &items[index];
@@ -73,14 +51,10 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
     currently_selected_item = highlighted_item;
     currently_selected_item_index = highlighted_item_index;
   }
-  if (currently_selected_item->enabled)
-  {
     SDL_FillRect(::render->screen, &created_at, Colors::transparent);
     currently_selected_item = &items[0];
     highlighted_item = &items[0];
     highlighted_item_index=0;
-  }
-  //SDL_FillRect(::render->screen, &single_item_rect, Colors::black);
 }
 
 int Expanding_List::receive_event(const SDL_Event &ev)
@@ -96,9 +70,7 @@ int Expanding_List::receive_event(const SDL_Event &ev)
       switch (scancode)
       {
         case SDLK_RETURN:
-        // act same as left mouse button click use a goto lol
-          do_thing();
-          return EVENT_MENU;
+          goto leftclick;
         break;
 
         case SDLK_ESCAPE:
@@ -115,10 +87,11 @@ int Expanding_List::receive_event(const SDL_Event &ev)
       {
         case SDL_BUTTON_LEFT:
         {
+leftclick:
           fprintf(stderr, "highlighted_item_index = %d\n", highlighted_item_index);
           if (highlighted_item_index == 0 && ev.type == SDL_MOUSEBUTTONUP) break;
           /* Only call the row's callback if we were in its coord area */
-          if (coord_is_in_el(this, ev.button.x, ev.button.y, highlighted_item_index))
+          if (coord_is_in_menu(ev.button.x, ev.button.y, highlighted_item_index))
           {
             //DEBUGLOG("did a thing!\n");
             do_thing();
@@ -197,7 +170,7 @@ void Expanding_List::draw(SDL_Surface *screen)
       if (items[i].is_visible)
       {
         /* Update the highlighted_item_index no matter if the row is disabled or enabled */
-        if (coord_is_in_el(this, mouse::x, mouse::y, drawn))
+        if (coord_is_in_menu(mouse::x, mouse::y, drawn))
         {
           highlighted_item = &items[i];
           highlighted_item_index = i;

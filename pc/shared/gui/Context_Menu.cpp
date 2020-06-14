@@ -1,10 +1,35 @@
 #include "gui/Context_Menu.h"
 #include "Colors.h"
 #include "sdlfont.h"
-
+#include "DEBUGLOG.h"
 #include "mouse.h"
 
 Context_Menu * Context_Menu::currently_active_context_menu = NULL;
+
+/* Helper func to check if a coordinate is inside the Nth element of the menu
+ * idx = Nth element */
+bool Context_Menu::coord_is_in_menu(const int &x, const int &y, const int idx)
+{
+  bool b1, b2, b3, b4;
+
+  b1 = x >= created_at.x;
+  b2 = x < (created_at.x + greatest_length);
+  b3 = y >= ( created_at.y + (idx * TILE_HEIGHT) );
+  b4 = y <  ( created_at.y + (idx * TILE_HEIGHT) + TILE_HEIGHT );
+
+  /*DEBUGLOG("idx = %d\n", idx);
+  if (b1)
+    DEBUGLOG("PASS 1; ");
+  if (b2)
+    DEBUGLOG("PASS 2; ");
+  if (b3)
+    DEBUGLOG("PASS 3; ");
+  if (b4)
+    DEBUGLOG("PASS 4; ");*/
+
+  return b1 && b2 && b3 && b4;
+}
+
 bool Context_Menu::is_activated()
 {
   return is_active;
@@ -22,12 +47,13 @@ void Context_Menu::activate()
 {
   is_active = true;
 	currently_active_context_menu = this;
+  highlighted_item_index = 0;
 }
 
 void Context_Menu::deactivate()
 {
   SDL_FillRect(::render->screen, &created_at,
-               Colors::Interface::color[Colors::Interface::Type::bg]);
+               Colors::transparent); //Interface::color[Colors::Interface::Type::bg]);
   is_active=false;
 	currently_active_context_menu = NULL;
 }
@@ -52,8 +78,7 @@ bool Context_Menu::receive_event(const SDL_Event &ev)
       switch (scancode)
       {
         case SDLK_RETURN:
-        // act same as left mouse button click use a goto lol
-          return do_thing();
+          goto leftclick_functionality;
         break;
 
         case SDLK_ESCAPE:
@@ -68,7 +93,12 @@ bool Context_Menu::receive_event(const SDL_Event &ev)
       {
         case SDL_BUTTON_LEFT:
         {
-          return do_thing();
+leftclick_functionality:
+          DEBUGLOG("idx = %d\n", highlighted_item_draw_index);
+          if (coord_is_in_menu(ev.button.x, ev.button.y, highlighted_item_draw_index))
+            return do_thing();
+          else
+            deactivate();
         }
         break;
 /* possible todo: turn this function to return ints, so we can specify
@@ -111,6 +141,7 @@ bool Context_Menu::do_thing(void *data/*=NULL*/)
       deactivate();
       return 1;
     }
+    deactivate();
   }
   
   //deactivate();
@@ -121,7 +152,7 @@ void Context_Menu::draw(SDL_Surface *screen)
   int i=0, drawn=0;
 
   // draw background panel
-  SDL_FillRect(screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);
+  SDL_FillRect(screen, &created_at, Colors::transparent);
 
   // find highlighted strip
   // this hsould go in its own function called from SDL_MOUSEMOTION event
@@ -134,6 +165,15 @@ void Context_Menu::draw(SDL_Surface *screen)
   {
     if (items[i].is_visible)
     {
+      bool mouse_in = coord_is_in_menu(mouse::x, mouse::y, drawn);
+
+      if (mouse_in)
+      {
+        highlighted_item = &items[i];
+        highlighted_item_index = i;
+        highlighted_item_draw_index = drawn;
+      }
+
       if (items[i].enabled == false)
       {
         sdlfont_drawString(screen, created_at.x+1,
@@ -143,11 +183,8 @@ void Context_Menu::draw(SDL_Surface *screen)
       }
       else
       {
-        if (mouse::x >= created_at.x && mouse::x < (created_at.x+greatest_length))
+        if (mouse_in)
         {
-          if (mouse::y >= (created_at.y + drawn*(TILE_HEIGHT)) &&
-              mouse::y < (created_at.y + drawn*TILE_HEIGHT + TILE_HEIGHT))
-          {
             // draw the highlighter
             if (should_highlight_hover)
             {
@@ -156,8 +193,6 @@ void Context_Menu::draw(SDL_Surface *screen)
               SDL_FillRect(screen, &r, Colors::magenta);
               bg_color = Colors::magenta;
             }
-            highlighted_item = &items[i];
-          }
         }
         if (should_highlight_currently_selected_item)
         {
