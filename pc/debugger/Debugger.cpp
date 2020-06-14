@@ -315,6 +315,8 @@ void Debugger::handle_events()
       } break;
       case SDL_MOUSEMOTION:
       {
+        mouse::prescaled_x = ev.motion.x;
+        mouse::prescaled_y = ev.motion.y;
         mouse::x = ev.motion.x;
         mouse::y = ev.motion.y;
       } break;

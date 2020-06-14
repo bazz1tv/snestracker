@@ -58,6 +58,7 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer, SDL_Texture **s
   // make the scaled rendering look smoother.
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
   SDL_RenderSetLogicalSize(*sdlRenderer, width, height);
+  ::render->logical = true;
 
   *screen = SDL_CreateRGBSurface(0, width, height, 32,
                                       0x00FF0000,
