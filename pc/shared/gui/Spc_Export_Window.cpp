@@ -4,6 +4,7 @@
 #include "File_System.h"
 #include "globals.h"
 #include "SdlNfd.h"
+#include "mouse.h"
 
 #define WIDTH 500
 #define HEIGHT 125
@@ -149,7 +150,7 @@ int Spc_Export_Window::receive_event(SDL_Event &ev)
   {
     case SDL_MOUSEBUTTONDOWN:
     {
-      if (export_button.check_mouse_and_execute(ev.button.x, ev.button.y))
+      if (export_button.check_mouse_and_execute(mouse::prescaled_x, mouse::prescaled_y))
         return;
       //if (r) return r;
     } break;
