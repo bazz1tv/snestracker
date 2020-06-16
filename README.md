@@ -59,6 +59,13 @@ Contributing
 
 Contributions from the community are valid and welcome! For those curious about getting involved, have a look at [Good First Issues](https://github.com/bazzinotti/snestracker/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). If you see an issue that appeals to you, post a comment demonstrating your interest. You are also encouraged to join the Discord or IRC. Be interactive! Together we will learn, grow, and make snestracker the best it can be.
 
+Supporting
+==========
+
+If you love what I'm doing with snestracker, please join me on my new [Patreon](http://patreon.bazz1.com). I also am selling the brand new [Bazz branded T-Shirt.](https://bazz1.com/shop/t-shirts/bazz-short-sleeve-unisex-t-shirt/) It looks awesome and is very comfy.
+
+![T-Shirt Preview](https://bazz1.com/wp-content/uploads/2020/05/mockup-22a5493f-160x160.png)
+
 Other Recommendations
 =====================
 
