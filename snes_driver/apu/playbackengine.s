@@ -634,10 +634,10 @@ ReadPTracks:
 ; rewrite all the code
 @@test_cbnote:
   bbc l.CBIT_NOTE, @@test_cbinstr
-  call !ReadNote ; TODO
+  call !ReadNote
 @@test_cbinstr:
   bbc l.CBIT_INSTR, @@test_cbvol
-  call !ReadInstr ; TODO
+  call !ReadInstr
 @@test_cbvol:
   bbc l.CBIT_VOL, @@test_cbfx
   call !ReadVol
