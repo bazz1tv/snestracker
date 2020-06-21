@@ -41,6 +41,8 @@ class SongFileLoader
 {
 public:
   static const char constexpr HeaderStr[] = "SONGST";
+  STATIC_HEADER_CHECK(HeaderStr, FILE_HEADER_LEN);
+
   /* TODO: define outside class Song, and use that instead of all of these structures as dependency */
   SongFileLoader(struct SongSettings *songsettings, struct Sample *samples,
                  struct Instrument *instruments, PatternMeta *patterns,

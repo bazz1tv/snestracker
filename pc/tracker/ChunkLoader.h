@@ -25,9 +25,24 @@ The top-level ChunkLoader loadchunks() will read the ID, and use it to call the
 subclassed (ChunkLoader *) associated with that chunk id.
 */
 
-/* I've just low-key defined a fixed file header length of 6 bytes for any formats
-of SNES Tracker (STP, STI) */
+/////// File Format Restrictions /////////
+/* There is a fixed file header string length of 6 bytes, eg STSONG. This does
+not include the NULL byte needed for buffers holding this string */
 #define FILE_HEADER_LEN 6
+
+/* static safety check to put in FileLoader classes (Song, Instrument). Ensures
+that the file header string is the appropriate size */
+#define STATIC_HEADER_CHECK_PRIVATE(HeaderStr, len)\
+  static_assert(sizeof(HeaderStr) == (len + 1),\
+  "File Header String must be " #len " bytes in length. (" #len "+1 for the NULL BYTE)" );\
+  static_assert(HeaderStr[0] != '\0' && HeaderStr[1] != '\0' && HeaderStr[2] != '\0' &&\
+                HeaderStr[3] != '\0' && HeaderStr[4] != '\0' && HeaderStr[5] != '\0',\
+  "File Header String must use all " #len " bytes. Use spaces for unused characters")
+/* The private macro is layered underneath the actual CHECK_HEADER macro, so that
+macro arguments can be used */
+#define STATIC_HEADER_CHECK(HeaderStr, len) STATIC_HEADER_CHECK_PRIVATE(HeaderStr, len)
+//////////////////////////////////////////
+
 
 class ChunkLoader
 {

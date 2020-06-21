@@ -73,10 +73,6 @@ SongFileLoader::ret_t SongFileLoader::load(SDL_RWops *file)
 
 SongFileLoader::ret_t SongFileLoader::readHeader(SDL_RWops *file)
 {
-  /* The current impl banks on the size of HeaderStr being the same length or
-  bigger than the old header string "STSONG". I ensure that is true here */
-  assert( sizeof(HeaderStr) >= sizeof("STSONG") );
-
   uint8_t *buf = (uint8_t *) malloc( sizeof(uint8_t) * sizeof(HeaderStr) );
   size_t rc;
 
