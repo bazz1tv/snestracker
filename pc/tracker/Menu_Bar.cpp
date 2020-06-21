@@ -54,9 +54,9 @@ int Menu_Bar::File_Context::new_song(void *data)
 	fc->filepath[0] = 0;
 
 	::tracker->reset();
-	::tracker->patseq.num_entries = 1;
-	::tracker->patseq.sequence[0] = 0;
-	::tracker->patseq.patterns[0].used = 1;
+	::tracker->song.patseq.num_entries = 1;
+	::tracker->song.patseq.sequence[0] = 0;
+	::tracker->song.patseq.patterns[0].used = 1;
 }
 
 int Menu_Bar::File_Context::open_song(void *data)

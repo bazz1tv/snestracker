@@ -1,24 +1,68 @@
 #include "Song.h"
 
+void Song::reset()
+{
+  // Reset Song Title
+  settings.song_title_str[0] = 0;
+
+  settings.bpm = SongSettings::DEFAULT_BPM;
+  settings.spd = SongSettings::DEFAULT_SPD;
+
+  // Reset all Samples (and free memory!)
+  for (int i=0; i < NUM_SAMPLES; i++)
+  {
+    Sample *s = &samples[i];
+    if (s->brr)
+      free(s->brr);
+    *s = Sample();
+  }
+
+  // Reset all instruments
+  for (int i=0; i < NUM_INSTR; i++)
+  {
+    Instrument *instr = &instruments[i];
+    *instr = Instrument();
+  }
+
+  // Reset all patterns
+  memset(patseq.patterns, 0, sizeof(patseq.patterns));
+  for (int i=0; i < MAX_PATTERNS; i++)
+  {
+    patseq.patterns[i].p.len = DEFAULT_PATTERN_LEN;
+  }
+  // Reset Pat Sequencer
+  patseq.num_entries = 1;
+  patseq.sequence[0] = 0;
+  /* TODO: Don't have a "used" metadata for patterns, but just have a used()
+   * that checks whether the index of that pattern is in the pattern sequencer.
+   */
+  patseq.patterns[0].used = 1;
+}
+
+void Song::load(SDL_RWops *file)
+{
+  SongFileLoader sfl(this);
+  sfl.load(file);
+}
+
+void Song::save(SDL_RWops *file)
+{
+  SongFileLoader sfl(this);
+  sfl.save(file);
+}
+
 const char SongFileLoader::HeaderStr[];
 
-SongFileLoader::SongFileLoader(struct SongSettings *songsettings,
-                               struct Sample *samples,
-                               struct Instrument *instruments,
-                               PatternMeta *patterns,
-                               struct PatternSequencer *patseq) :
+SongFileLoader::SongFileLoader(Song *song) :
 
   vcl  ( new VersionChunkLoader(SONGFILE_VER_MAJOR, SONGFILE_VER_MINOR, SONGFILE_VER_MICRO) ),
-  sscl ( new SongSettingsChunkLoader(songsettings) ),
-  scl  ( new SampleChunkLoader(samples) ),
-  icl  ( new InstrumentChunkLoader(instruments) ),
-  pcl  ( new PatternChunkLoader(patterns) ),
-  pscl ( new PatternSequencerChunkLoader(patseq) ),
+  sscl ( new SongSettingsChunkLoader(&song->settings) ),
+  scl  ( new SampleChunkLoader(song->samples) ),
+  icl  ( new InstrumentChunkLoader(song->instruments) ),
+  pcl  ( new PatternChunkLoader(song->patseq.patterns) ),
+  pscl ( new PatternSequencerChunkLoader(&song->patseq) ),
 
-  songsettings(*songsettings),
-  samples(samples),
-  instruments(instruments),
-  patseq(*patseq)
+  song(song)
 {}
 
 SongFileLoader::~SongFileLoader()
@@ -116,6 +160,11 @@ static size_t read_str_from_file(SDL_RWops *file, char *str_ptr, int size);
 
 int SongFileLoader::loadOld(SDL_RWops *file)
 {
+  struct SongSettings &songsettings(song->settings);
+  struct Sample *samples(song->samples);
+  struct Instrument *instruments(song->instruments);
+  struct PatternSequencer &patseq(song->patseq);
+
   size_t rc;
   // Read Song title until NULL is read in
   // corner case: no title == 0

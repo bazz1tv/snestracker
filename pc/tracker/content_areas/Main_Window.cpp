@@ -15,11 +15,11 @@
 
 Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_title_label("Song Title:"),
-  song_title(SongSettings::SONGTITLE_SIZE, tracker->songsettings.song_title_str, sizeof(tracker->songsettings.song_title_str)),
+  song_title(SongSettings::SONGTITLE_SIZE, tracker->song.settings.song_title_str, sizeof(tracker->song.settings.song_title_str)),
   tracker(tracker),
-	samplepanel(tracker->samples),
-  instrpanel(tracker->instruments, &samplepanel),
-  patseqpanel(&tracker->patseq),
+	samplepanel(tracker->song.samples),
+  instrpanel(tracker->song.instruments, &samplepanel),
+  patseqpanel(&tracker->song.patseq),
   pateditpanel(&patseqpanel, &instrpanel),
   bsawidget(tracker, &pateditpanel),
   instreditor(&instrpanel),

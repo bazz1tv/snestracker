@@ -20,22 +20,17 @@
 #define SONGFILE_VERSION SONGFILE_VER_STRING2(SONGFILE_VER_MAJOR, SONGFILE_VER_MINOR, SONGFILE_VER_MICRO)
 //////////////////////////////////////////////////////////////////
 
-/* Forward declare all the data types, it's faster to compile and since we're using all
-pointers this works */
-// Song-related classes; TODO: put into its own Song class
-/*
-struct SongSettings;
-struct Sample;
-struct Instrument;
-struct PatternMeta;
-struct PatternSequencer;
-// FileLoader subclasses
-class SongSettingsFileLoader;
-class SampleFileLoader;
-class InstrumentFileLoader;
-class PatternFileLoader;
-class PatternSequencerFileLoader;
-*/
+struct Song
+{
+  void reset();
+  void load(SDL_RWops *file);
+  void save(SDL_RWops *file);
+
+  Sample samples[NUM_SAMPLES];
+  Instrument instruments[NUM_INSTR];
+  PatternSequencer patseq;
+  SongSettings settings;
+};
 
 class SongFileLoader
 {
@@ -44,9 +39,7 @@ public:
   STATIC_HEADER_CHECK(HeaderStr, FILE_HEADER_LEN);
 
   /* TODO: define outside class Song, and use that instead of all of these structures as dependency */
-  SongFileLoader(struct SongSettings *songsettings, struct Sample *samples,
-                 struct Instrument *instruments, PatternMeta *patterns,
-                 struct PatternSequencer *patseq);
+  SongFileLoader(Song *song);
 
   ~SongFileLoader();
 
@@ -78,8 +71,5 @@ handling a particular filetype. In this case, Song. */
 
   int loadOld(SDL_RWops *file); // load the oldest file format
 /* Need a handle on these guys for loadOld() */
-  struct SongSettings &songsettings;
-  struct Sample *samples;
-  struct Instrument *instruments;
-  struct PatternSequencer &patseq;
+  Song *song;
 };

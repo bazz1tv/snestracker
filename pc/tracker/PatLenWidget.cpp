@@ -20,15 +20,15 @@ PatLenWidget::PatLenWidget() :
 /* these functions query the proper handles on that real data. */
 void PatLenWidget :: update_patlen()
 {
-	uint8_t *len = &::tracker->patseq.patterns[
-	    ::tracker->patseq.sequence[
+	uint8_t *len = &::tracker->song.patseq.patterns[
+	    ::tracker->song.patseq.sequence[
 			    ::tracker->main_window.patseqpanel.currow]].p.len;
 	sprintf(patlen_cbuf, "$%03x", *len);
 }
 
 void PatLenWidget :: update_seqlen()
 {
-	sprintf(seqlen_cbuf, "$%02x", ::tracker->patseq.num_entries);
+	sprintf(seqlen_cbuf, "$%02x", ::tracker->song.patseq.num_entries);
 }
 
 void PatLenWidget :: set_coords(int x, int y)

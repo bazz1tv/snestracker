@@ -509,8 +509,8 @@ next_event:
 
 void Tracker::inc_patlen()
 {
-	uint8_t *len = &patseq.patterns[
-	    patseq.sequence[ main_window.patseqpanel.currow ] ].p.len;
+	uint8_t *len = &song.patseq.patterns[
+	    song.patseq.sequence[ main_window.patseqpanel.currow ] ].p.len;
 
 	if (*len < MAX_PATTERN_LEN)
 		*len += 1;
@@ -518,8 +518,8 @@ void Tracker::inc_patlen()
 
 void Tracker::dec_patlen()
 {
-	uint8_t *len = &patseq.patterns[
-	    patseq.sequence[ main_window.patseqpanel.currow ] ].p.len;
+	uint8_t *len = &song.patseq.patterns[
+	    song.patseq.sequence[ main_window.patseqpanel.currow ] ].p.len;
 
 	if (*len > MIN_PATTERN_LEN)
 	{
@@ -558,7 +558,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
    * see the actual BPM */
   /* Convert BPM to ticks */
   // Ticks = 60 / ( BPM * 4 * Spd * freqS )
-  double ticks = 60.0 / ( (double)songsettings.bpm * 4.0 * (double)songsettings.spd * TIMER01_FREQS );
+  double ticks = 60.0 / ( (double)song.settings.bpm * 4.0 * (double)song.settings.spd * TIMER01_FREQS );
   int ticksi = (int) floor(ticks + 0.5);
 	if (ticksi == 256)
 		ticksi = 0; // max timer setting is 0
@@ -569,7 +569,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	}
 	// Forcing using timer0 for ticks, but that's fine for now (or forever)
 	apuram->ticks = ticksi;
-	apuram->spd = songsettings.spd;
+	apuram->spd = song.settings.spd;
 	/* END BPM AND SPD */
 
   // Find the position in SPC RAM after driver code
@@ -596,7 +596,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
   /* Track the number of used patterns and the highest pattern number */
   for (int p=0; p < MAX_PATTERNS; p++)
   {
-    PatternMeta *pm = &patseq.patterns[p];
+    PatternMeta *pm = &song.patseq.patterns[p];
     if (pm->used == 0)
       continue;
     num_usedpatterns++;
@@ -617,7 +617,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
   uint16_t pat_i = patternlut_i + patternlut_size; // index into RAM for actual pattern data
   for (int p=0; p < MAX_PATTERNS; p++)
   {
-    PatternMeta *pm = &patseq.patterns[p];
+    PatternMeta *pm = &song.patseq.patterns[p];
     if (pm->used == 0)
     {
       if (p <= highest_pattern)
@@ -758,8 +758,8 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
   apuram->sequencer_i =  main_window.patseqpanel.currow;
   uint16_t patseq_i = pat_i;
   apuram->sequencer_ptr = patseq_i;
-  for (int i=0; i < patseq.num_entries; i++)
-    ::IAPURAM[patseq_i++] = patseq.sequence[i];
+  for (int i=0; i < song.patseq.num_entries; i++)
+    ::IAPURAM[patseq_i++] = song.patseq.sequence[i];
   ::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
   // going to check in apu driver for a negative number to mark end
 
@@ -775,7 +775,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
   {
     if (used_instr[i])
     {
-      auto srcn = instruments[i].srcn;
+      auto srcn = song.instruments[i].srcn;
       numsamples++;
       if (highest_sample < srcn) highest_sample = srcn;
       used_samples[srcn] = 1;
@@ -828,14 +828,14 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 		}
 		uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
 		*dir = cursample_i;
-		*(dir+1) = cursample_i + samples[i].rel_loop;
+		*(dir+1) = cursample_i + song.samples[i].rel_loop;
 		// has a sample. this instrument is valid for export. However, perhaps
 		// an even better exporter would also check if this instrument has
 		// been used in any (in)active pattern data.
 		size_t s=0;
-		for (; s < samples[i].brrsize; s++)
+		for (; s < song.samples[i].brrsize; s++)
 		{
-			uint8_t *bytes = (uint8_t *)samples[i].brr;
+			uint8_t *bytes = (uint8_t *)song.samples[i].brr;
 			::IAPURAM[cursample_i + s] = bytes[s];
 		}
 		cursample_i += s;
@@ -843,7 +843,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 
 	for (int i=0; i < NUM_INSTR; i++)
 	{
-		Instrument *instr = &instruments[i];
+		Instrument *instr = &song.instruments[i];
 		if (used_instr[i] == 0)
 		{
 			if (i <= highest_instr)
@@ -884,20 +884,20 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	// PATTERN SEQUENCER END
 
   // SONG SETTINGS
-  apuram->mvol_val = songsettings.mvol;
-  apuram->evol_val = songsettings.evol;
+  apuram->mvol_val = song.settings.mvol;
+  apuram->evol_val = song.settings.evol;
   /* calculate ESA */
   /* The ESA will be, based on EDL, pushed all the way to the end of RAM,
    * so control bit 7 ($F1) must be reset to enable the RAM region of IPL
    * ROM. Note that the asm RAM clear routine can be executed even with
    * IPL active (write-only)*/
   // if EDL is 0, just stick the 4 bytes of echo buffer at $FF00
-  apuram->esa_val = songsettings.edl ? ( 0x10000 - (songsettings.edl * 0x800) ) >> 8 : 0xff;
-  apuram->edl_val = songsettings.edl;
-  apuram->efb_val = songsettings.efb;
+  apuram->esa_val = song.settings.edl ? ( 0x10000 - (song.settings.edl * 0x800) ) >> 8 : 0xff;
+  apuram->edl_val = song.settings.edl;
+  apuram->efb_val = song.settings.efb;
   uint8_t *coeff = &apuram->c0_val;
   for (int i=0; i < 8; i++)
-    coeff[i] = songsettings.fir[i];
+    coeff[i] = song.settings.fir[i];
   // SONG SETTINGS END
 	
 	// send the command to start the song
@@ -996,7 +996,7 @@ GlobalID
                 0 0000 0000 0000 00
   [EXTENDABLE]
 
-SongSettingsID
+song.settingsID
   CoreID:
     mvol       -- 1 byte
     evol       -- 1 byte
@@ -1111,41 +1111,7 @@ void Tracker::reset()
 	main_window.samplepanel.currow = 0;
 	main_window.samplepanel.rows_scrolled = 0;
 
-	// Reset Song Title
-	songsettings.song_title_str[0] = 0;
-
-	songsettings.bpm = SongSettings::DEFAULT_BPM;
-	songsettings.spd = SongSettings::DEFAULT_SPD;
-
-	// Reset all Samples (and free memory!)
-	for (int i=0; i < NUM_SAMPLES; i++)
-	{
-		Sample *s = &samples[i];
-		if (s->brr)
-			free(s->brr);
-		*s = Sample();
-	}
-
-	// Reset all instruments
-	for (int i=0; i < NUM_INSTR; i++)
-	{
-		Instrument *instr = &instruments[i];
-		*instr = Instrument();
-	}
-
-	// Reset all patterns
-	memset(patseq.patterns, 0, sizeof(patseq.patterns));
-	for (int i=0; i < MAX_PATTERNS; i++)
-	{
-		patseq.patterns[i].p.len = DEFAULT_PATTERN_LEN;
-	}
-	// Reset Pat Sequencer
-  patseq.num_entries = 1;
-  patseq.sequence[0] = 0;
-  /* TODO: Don't have a "used" metadata for patterns, but just have a used()
-   * that checks whether the index of that pattern is in the pattern sequencer.
-   */
-  patseq.patterns[0].used = 1;
+  song.reset();
 
 	// Reset Other GUI elements
 
@@ -1162,8 +1128,7 @@ int Tracker::read_from_file(SDL_RWops *file)
 {
   reset(); // reset tracker
 
-  SongFileLoader sfl(&songsettings, samples, instruments, patseq.patterns, &patseq);
-  sfl.load(file);
+  song.load(file);
 
 	/* HACKS */
 	/* Since the BPM and SPD widgets do not constantly poll (they normally
@@ -1177,8 +1142,7 @@ int Tracker::read_from_file(SDL_RWops *file)
 
 void Tracker::save_to_file(SDL_RWops *file)
 {
-  SongFileLoader sfl(&songsettings, samples, instruments, patseq.patterns, &patseq);
-  sfl.save(file);
+  song.save(file);
 }
 /* Define the Packed Pattern Format.
  * For this, I am electing to use the XM packing scheme, with the addition
@@ -1236,9 +1200,9 @@ void Tracker::save_to_file(SDL_RWops *file)
   *
   * Instrument setting to enable echo
   *
-  * SongSettings to saved file.
-  * SongSettings in reset().
-  * FIR presets in SongSettings (Expanding Lists)
+  * song.settings to saved file.
+  * song.settings in reset().
+  * FIR presets in song.settings (Expanding Lists)
   *
   * Play instrument from pc keyboard (when not recording and when recording)
   * Instrument file format

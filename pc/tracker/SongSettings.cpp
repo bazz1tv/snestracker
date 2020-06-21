@@ -291,22 +291,22 @@ SongSettingsPanel::SongSettingsPanel() :
 
 void SongSettingsPanel::update_mvol()
 {
-	sprintf(mvol_cbuf, "$%02x", ::tracker->songsettings.mvol);
+	sprintf(mvol_cbuf, "$%02x", ::tracker->song.settings.mvol);
 }
 
 void SongSettingsPanel::update_evol()
 {
-  sprintf(evol_cbuf, "$%02x", ::tracker->songsettings.evol);
+  sprintf(evol_cbuf, "$%02x", ::tracker->song.settings.evol);
 }
 
 void SongSettingsPanel::update_edl()
 {
-  sprintf(edl_cbuf, "$%02x", ::tracker->songsettings.edl);
+  sprintf(edl_cbuf, "$%02x", ::tracker->song.settings.edl);
 }
 
 void SongSettingsPanel::update_efb()
 {
-  sprintf(efb_cbuf, "$%02x", ::tracker->songsettings.efb);
+  sprintf(efb_cbuf, "$%02x", ::tracker->song.settings.efb);
 }
 
 /* TODO: FIR */
@@ -409,55 +409,55 @@ void SongSettingsPanel::draw(SDL_Surface *screen/*=::render->screen*/)
 int SongSettingsPanel::inc_mvol(void *i)
 {
 	SongSettingsPanel *ie = (SongSettingsPanel *)i;
-	SongSettings::inc_vol(&::tracker->songsettings.mvol);
+	SongSettings::inc_vol(&::tracker->song.settings.mvol);
 	ie->update_mvol();
 }
 
 int SongSettingsPanel::dec_mvol(void *i)
 {
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
-  SongSettings::dec_vol(&::tracker->songsettings.mvol);
+  SongSettings::dec_vol(&::tracker->song.settings.mvol);
   ie->update_mvol();
 }
 
 int SongSettingsPanel::inc_evol(void *i)
 {
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
-  SongSettings::inc_vol(&::tracker->songsettings.evol);
+  SongSettings::inc_vol(&::tracker->song.settings.evol);
   ie->update_evol();
 }
 
 int SongSettingsPanel::dec_evol(void *i)
 {
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
-  SongSettings::dec_vol(&::tracker->songsettings.evol);
+  SongSettings::dec_vol(&::tracker->song.settings.evol);
   ie->update_evol();
 }
 
 int SongSettingsPanel::inc_edl(void *i)
 {
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
-  ::tracker->songsettings.inc_edl();
+  ::tracker->song.settings.inc_edl();
   ie->update_edl();
 }
 
 int SongSettingsPanel::dec_edl(void *i)
 {
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
-  ::tracker->songsettings.dec_edl();
+  ::tracker->song.settings.dec_edl();
   ie->update_edl();
 }
 
 int SongSettingsPanel::inc_efb(void *i)
 {
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
-  ::tracker->songsettings.inc_efb();
+  ::tracker->song.settings.inc_efb();
   ie->update_efb();
 }
 
 int SongSettingsPanel::dec_efb(void *i)
 {
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
-  ::tracker->songsettings.dec_efb();
+  ::tracker->song.settings.dec_efb();
   ie->update_efb();
 }

@@ -26,14 +26,14 @@ SampleEditor::SampleEditor() :
 void SampleEditor :: update_loop()
 {
 	sprintf(loop_cbuf, "$%04x",
-	  ::tracker->samples[ ::tracker->main_window.samplepanel.currow ].rel_loop);
+	  ::tracker->song.samples[ ::tracker->main_window.samplepanel.currow ].rel_loop);
 }
 
 /* Same code as Instrument editor fine tune (detune). Maybe we can
  * abstract the function out to reduce code size?? TODO*/
 void SampleEditor :: update_finetune()
 {
-  int8_t ft = ::tracker->samples[ ::tracker->main_window.samplepanel.currow ].finetune;
+  int8_t ft = ::tracker->song.samples[ ::tracker->main_window.samplepanel.currow ].finetune;
   char sign = '+';
   if (ft < 0)
     sprintf(finetune_cbuf, "%04d", ft);
@@ -99,7 +99,7 @@ void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
 int SampleEditor::incloop(void *i)
 {
 	SampleEditor *ie = (SampleEditor *)i;
-	Sample *s = &::tracker->samples[::tracker->main_window.samplepanel.currow];
+	Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
 	s->inc_loop();
 
 	ie->update_loop();
@@ -108,7 +108,7 @@ int SampleEditor::incloop(void *i)
 int SampleEditor::decloop(void *i)
 {
 	SampleEditor *ie = (SampleEditor *)i;
-	Sample *s = &::tracker->samples[::tracker->main_window.samplepanel.currow];
+	Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
 	s->dec_loop();
 
 	ie->update_loop();
@@ -119,7 +119,7 @@ int SampleEditor::decloop(void *i)
 int SampleEditor::incfinetune(void *i)
 {
   SampleEditor *ie = (SampleEditor *)i;
-  Sample *s = &::tracker->samples[::tracker->main_window.samplepanel.currow];
+  Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
   s->inc_finetune();
   ie->update_finetune();
 }
@@ -127,7 +127,7 @@ int SampleEditor::incfinetune(void *i)
 int SampleEditor::decfinetune(void *i)
 {
   SampleEditor *ie = (SampleEditor *)i;
-	Sample *s = &::tracker->samples[::tracker->main_window.samplepanel.currow];
+	Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
 	s->dec_finetune();
   ie->update_finetune();
 }
