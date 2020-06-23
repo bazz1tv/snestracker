@@ -82,6 +82,7 @@ size_t SongFileLoader::save(SDL_RWops *file)
   of an older file format version - inform that we are saving in the new format.
   Or, if the file loaded was too new, inform that file is being saved in the
   older format of current software */
+  DEBUGLOG("Writing File HeaderString: %s\n", HeaderStr);
   SDL_RWwrite(file, HeaderStr, sizeof(HeaderStr) - 1, 1);
   vcl->save(file);  // version
   sscl->save(file); // song settings
@@ -93,6 +94,7 @@ size_t SongFileLoader::save(SDL_RWops *file)
 
 SongFileLoader::ret_t SongFileLoader::load(SDL_RWops *file)
 {
+  DEBUGLOG("Reading File's HeaderString\n");
   auto rc = readHeader(file);
   if (rc == HEADER_OLD)
   {
@@ -124,7 +126,7 @@ SongFileLoader::ret_t SongFileLoader::readHeader(SDL_RWops *file)
 
   if (rc == 0)
   {
-    DEBUGLOG("Could not read from file: %s\n", SDL_GetError());
+    DEBUGLOG("\tCould not read from file: %s\n", SDL_GetError());
     return HEADER_BAD;
   }
 
@@ -132,20 +134,20 @@ SongFileLoader::ret_t SongFileLoader::readHeader(SDL_RWops *file)
   /* The older format used header string "STSONG" */
   if (strcmp((const char *)buf, "STSONG") == 0)
   {
-    DEBUGLOG("Found older (pre-version) song file\n");
+    DEBUGLOG("\tFound older (pre-version) song file\n");
     return HEADER_OLD;
   }
   // The newer header is "SONGST"
   else if (strcmp( (const char *)buf, HeaderStr) == 0)
   {
-    DEBUGLOG("Header is of 'Current' chunk format.\n");
+    DEBUGLOG("\tHeader is of 'Current' chunk format.\n");
     return HEADER_OK;
   }
   // bad file header
   else
   {
-    DEBUGLOG("Unrecognized header! This song file is incompatible or corrupted.\n");
-    DEBUGLOG("While it may be possible to save this file, SNES Tracker is not yet"
+    DEBUGLOG("\tUnrecognized header! This song file is incompatible or corrupted.\n");
+    DEBUGLOG("\tWhile it may be possible to save this file, SNES Tracker is not yet"
       "sophisticated enough to make the attempt!\n");
     return HEADER_BAD;
   }

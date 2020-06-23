@@ -93,21 +93,21 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
   uint8_t idx = 0;
   bool idx_loaded = false;
 
-  DEBUGLOG("Loading Instrument; ");
+  DEBUGLOG("InstrumentChunkLoader::load()\n");
 
   while (maxread < chunksize)
   {
     uint8_t subchunkid;
     uint16_t subchunksize;
 
-    DEBUGLOG("maxread = %zu\n", maxread);
+    //DEBUGLOG("maxread = %zu\n", maxread);
 
     if (read(file, &subchunkid, 1, 1, &maxread) == 0)
       break;
     if (read(file, &subchunksize, 2, 1, &maxread) == 0)
       break;
 
-    DEBUGLOG("subchunksize = %hu\n", subchunksize);
+    //DEBUGLOG("subchunksize = %hu\n", subchunksize);
 
     switch (subchunkid)
     {
@@ -134,6 +134,8 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
         read(file, &instr->adsr.adsr2, 1, 1, &maxread);
         read(file, &instr->semitone_offset, 1, 1, &maxread);
         read(file, &instr->finetune, 1, 1, &maxread);
+
+        DEBUGLOG("\t\tidx: %d\n", idx);
 
         subchunksize -= INST_COREINFO_SIZE;
         idx_loaded = true;
@@ -173,6 +175,9 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file, int i)
   uint16_t chunklen = 0;
   Sint64 chunksize_location, chunkend_location;
 
+  DEBUGLOG("InstrumentChunkLoader::save()\n");
+
+  DEBUGLOG("\tInstrument #%d, Writing top-level chunkid: %d\n", i, chunkid);
   // write this master chunk id
   byte = chunkid;
   SDL_RWwrite(file, &byte, 1, 1);
@@ -180,6 +185,7 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file, int i)
   chunksize_location = SDL_RWtell(file);
   SDL_RWwrite(file, &chunklen, 2, 1);
 
+  DEBUGLOG("\t\tSubChunkID::coreinfo\n");
   byte = SubChunkID::coreinfo;
   write(file, &byte, 1, 1, &chunklen);
   word = INST_COREINFO_SIZE; // we know the length in advance
@@ -197,12 +203,14 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file, int i)
   word = strlen(instruments[i].name);
   if (word > 0)
   {
+    DEBUGLOG("\t\tSubChunkID::name\n");
     byte = SubChunkID::name;
     write(file, &byte, 1, 1, &chunklen);
     write(file, &word, 2, 1, &chunklen);
     write(file, instruments[i].name,  word, 1, &chunklen);
   }
 
+  DEBUGLOG("\tWriting chunksize\n");
   chunkend_location = SDL_RWtell(file);
   SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
   SDL_RWwrite(file, &chunklen, 2, 1);
@@ -215,6 +223,7 @@ they clear the chunklen when calculating a new chunklen */
 
 size_t InstrumentChunkLoader::save(SDL_RWops *file)
 {
+  DEBUGLOG("InstrumentChunkLoader::save() (all)\n");
   for (uint16_t i=0; i < NUM_INSTR; i++)
   {
     if (instruments[i] != ::Instrument()) // empty instrument

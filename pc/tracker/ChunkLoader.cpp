@@ -31,7 +31,7 @@ size_t ChunkLoader::loadchunks(SDL_RWops *file)
 
   while (!StopLoading)
   {
-    DEBUGLOG("Top-Level LoadChunk\n");
+    //DEBUGLOG("Top-Level LoadChunk\n");
     if (SDL_RWread(file, &chunkid, 1, 1) == 0)
     {
       DEBUGLOG("EOF\n");
@@ -50,10 +50,10 @@ size_t ChunkLoader::loadchunks(SDL_RWops *file)
       continue;
     }
 
-    DEBUGLOG("Chunk: %d, size: %d; ", chunkid, chunksize);
+    //DEBUGLOG("Chunk: %d, size: %d\n", chunkid, chunksize);
     if (ChunkIdMap[chunkid] == NULL)
     {
-      DEBUGLOG("UNRECOGNIZED CHUNK: %d, skipping\n", chunkid);
+      DEBUGLOG("UNMAPPED CHUNK: %d, skipping\n", chunkid);
       SDL_RWseek(file, chunksize, RW_SEEK_CUR);
     }
     else
@@ -194,7 +194,10 @@ size_t VersionChunkLoader::save(SDL_RWops *file)
   uint16_t chunklen = 0;
   Sint64 chunksize_location, chunkend_location;
 
+  DEBUGLOG("VersionChunkLoader::save()\n");
+
 ///////////// 1 //////////////////////
+  DEBUGLOG("\tWriting top-level chunkid: %d\n", chunkid);
   // write this master chunk id
   byte = chunkid;
   SDL_RWwrite(file, &byte, 1, 1);
@@ -205,6 +208,7 @@ size_t VersionChunkLoader::save(SDL_RWops *file)
 ///////////// 1 //////////////////////
 
 ///////////// 2.1 ////////////////////
+  DEBUGLOG("\t\tSubChunkID::coreinfo\n");
   // write the ID
   byte = SubChunkID::coreinfo;
   write(file, &byte, 1, 1, &chunklen);
@@ -223,7 +227,7 @@ size_t VersionChunkLoader::save(SDL_RWops *file)
   word = APP_VER_MICRO;
   write(file, &word, 2, 1, &chunklen);
 ///////////// 2.1 ////////////////////
-
+  DEBUGLOG("\tWriting chunksize\n");
   chunkend_location = SDL_RWtell(file);
   SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
   SDL_RWwrite(file, &chunklen, 2, 1);
@@ -241,14 +245,14 @@ size_t VersionChunkLoader::load(SDL_RWops *file, size_t chunksize)
     uint8_t subchunkid;
     uint16_t subchunksize;
 
-    DEBUGLOG("maxread = %zu\n", maxread);
+    //DEBUGLOG("maxread = %zu\n", maxread);
 
     if (read(file, &subchunkid, 1, 1, &maxread) == 0)
       break;
     if (read(file, &subchunksize, 2, 1, &maxread) == 0)
       break;
 
-    DEBUGLOG("subchunksize = %hu\n", subchunksize);
+    //DEBUGLOG("subchunksize = %hu\n", subchunksize);
 
     switch (subchunkid)
     {

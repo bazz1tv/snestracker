@@ -85,7 +85,7 @@ size_t SongSettingsChunkLoader::load(SDL_RWops *file, size_t chunksize)
 {
   size_t maxread = 0;
 
-  DEBUGLOG("Loading SongSettings; ");
+  DEBUGLOG("SongSettingsChunkLoader::load()\n");
 
   while (maxread < chunksize)
   {
@@ -147,7 +147,7 @@ size_t SongSettingsChunkLoader::load(SDL_RWops *file, size_t chunksize)
       break;
       case SubChunkID::volandecho:
       {
-        DEBUGLOG("\tSubChunkID::volandecho");
+        DEBUGLOG("\tSubChunkID::volandecho\n");
         size_t minimum_chunksize = 4;
         if (subchunksize > minimum_chunksize)
         {
@@ -199,6 +199,9 @@ size_t SongSettingsChunkLoader::save(SDL_RWops *file)
   uint16_t chunklen = 0;
   Sint64 chunksize_location, chunkend_location;
 
+  DEBUGLOG("SongSettingsChunkLoader::save()\n");
+
+  DEBUGLOG("\tWriting top-level chunkid: %d\n", chunkid);
   byte = chunkid;
   SDL_RWwrite(file, &byte, 1, 1);
   chunksize_location = SDL_RWtell(file);
@@ -211,11 +214,13 @@ size_t SongSettingsChunkLoader::save(SDL_RWops *file)
   // don't even write a songtitle chunk if there's no string
   if (word > 0)
   {
+    DEBUGLOG("\t\tSubChunkID::songtitle\n");
     write(file, &byte, 1, 1, &chunklen);
     write(file, &word, 2, 1, &chunklen);
     write(file, songtitle, word, 1, &chunklen); // also write null byte
   }
 
+  DEBUGLOG("\t\tSubChunkID::bpmspd\n");
   byte = SubChunkID::bpmspd;
   word = 2;
   write(file, &byte, 1, 1, &chunklen);
@@ -224,6 +229,7 @@ size_t SongSettingsChunkLoader::save(SDL_RWops *file)
   uint16_t bpmspd = ((uint16_t)songsettings->bpm << 6) | songsettings->spd;
   write(file, &bpmspd, 2, 1, &chunklen);
 
+  DEBUGLOG("\t\tSubChunkID::volandecho\n");
   byte = SubChunkID::volandecho;
   word = 4;
   write(file, &byte, 1, 1, &chunklen);
@@ -242,6 +248,7 @@ size_t SongSettingsChunkLoader::save(SDL_RWops *file)
   byte = songsettings->efb;
   write(file, &byte, 1, 1, &chunklen);
 
+  DEBUGLOG("\tWriting chunksize\n");
   chunkend_location = SDL_RWtell(file);
   SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
   SDL_RWwrite(file, &chunklen, 2, 1);

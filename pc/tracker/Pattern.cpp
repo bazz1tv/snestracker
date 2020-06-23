@@ -63,36 +63,37 @@ size_t TrackChunkLoader::load(SDL_RWops *file, size_t chunksize)
   uint8_t tracktype = 0xFF;
   bool idx_loaded = false;
 
-  DEBUGLOG("\tLoading Track; chunksize: %d\n", chunksize);
+  //DEBUGLOG("\tLoading Track; chunksize: %d\n", chunksize);
+  DEBUGLOG("\t\tTrackChunkLoader::load()\n");
 
   while (maxread < chunksize)
   {
     uint8_t subchunkid;
     uint16_t subchunksize;
 
-    DEBUGLOG("\t\tmaxread = %zu\n", maxread);
+    //DEBUGLOG("\t\tmaxread = %zu\n", maxread);
 
     if (read(file, &subchunkid, 1, 1, &maxread) == 0)
       break;
     if (read(file, &subchunksize, 2, 1, &maxread) == 0)
       break;
 
-    DEBUGLOG("\t\tsubchunksize = %hu\n", subchunksize);
+    //DEBUGLOG("\t\tsubchunksize = %hu\n", subchunksize);
 
     switch (subchunkid)
     {
       case SubChunkID::coreinfo:
       {
-        DEBUGLOG("\t\tSubChunkID::coreinfo\n");
+        DEBUGLOG("\t\t\tSubChunkID::coreinfo\n");
         size_t minimum_chunksize = 2, maximum_chunksize = 2;
         if (subchunksize < minimum_chunksize)
         {
-          DEBUGLOG("\t\t\tSubChunk %d is smaller than expected. Fail load chunk\n", subchunkid);
+          DEBUGLOG("\t\t\t\tSubChunk %d is smaller than expected. Fail load chunk\n", subchunkid);
           return -1;
         }
         else if (subchunksize > maximum_chunksize)
         {
-          DEBUGLOG("\t\t\tSubChunk %d is bigger than expected by %d bytes.\n",
+          DEBUGLOG("\t\t\t\tSubChunk %d is bigger than expected by %d bytes.\n",
             subchunkid, subchunksize - maximum_chunksize);
         }
 
@@ -105,7 +106,7 @@ size_t TrackChunkLoader::load(SDL_RWops *file, size_t chunksize)
       case SubChunkID::Data:
       {
         assert(idx_loaded);
-        DEBUGLOG("\t\tSubChunkID::Data\n");
+        DEBUGLOG("\t\t\tSubChunkID::Data\n");
 
         uint8_t rlecounter = 0;
         uint8_t a;
@@ -157,20 +158,20 @@ size_t TrackChunkLoader::load(SDL_RWops *file, size_t chunksize)
           }
         }
 
-        DEBUGLOG("\t\tbytesread = %d\n", (uint16_t) bytesread);
+        //DEBUGLOG("\t\tbytesread = %d\n", (uint16_t) bytesread);
         subchunksize -= bytesread;
         maxread += bytesread;
       }
       break;
       default:
-        DEBUGLOG("\t\tUnknown SubChunkID: %d. skipping over..\n", subchunkid);
+        DEBUGLOG("\t\t\tUnknown SubChunkID: %d. skipping over..\n", subchunkid);
       break;
     }
 
     /* Skip the unrecognized part of the chunk */
     if (subchunksize)
     {
-      DEBUGLOG("\t\tskipping past %d unknown bytes of chunk\n", subchunksize);
+      DEBUGLOG("\t\t\tskipping past %d unknown bytes of chunk\n", subchunksize);
       SDL_RWseek(file, subchunksize, RW_SEEK_CUR);
       maxread += subchunksize;
     }
@@ -190,6 +191,9 @@ size_t TrackChunkLoader::save(SDL_RWops *file)
   uint16_t headerlen = 0;
   Sint64 chunksize_location, chunkend_location;
 
+  DEBUGLOG("\t\tTrackChunkLoader::save()\n");
+
+  DEBUGLOG("\t\t\tSubChunkID::coreinfo\n");
   byte = SubChunkID::coreinfo;
   word = 2;
   write(file, &byte, 1, 1, &chunklen);
@@ -198,6 +202,7 @@ size_t TrackChunkLoader::save(SDL_RWops *file)
   write(file, &byte, 1, 1, &chunklen);
   write(file, &t, 1, 1, &chunklen);
 
+  DEBUGLOG("\t\t\tSubChunkID::Data\n");
   uint16_t datachunklen = 0;
   byte = SubChunkID::Data;
   write(file, &byte, 1, 1, &headerlen);
@@ -281,6 +286,7 @@ size_t TrackChunkLoader::save(SDL_RWops *file)
     tr = ttrr; // skip over empty rows
   }
 
+  DEBUGLOG("\t\t\tWriting chunksize\n");
   chunkend_location = SDL_RWtell(file);
   SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
   SDL_RWwrite(file, &datachunklen, 2, 1);
@@ -299,21 +305,21 @@ size_t PatternChunkLoader::load(SDL_RWops *file, size_t chunksize)
   uint8_t idx = 0;
   bool idx_loaded = false;
 
-  DEBUGLOG("Loading Pattern; ");
+  DEBUGLOG("PatternChunkLoader::load()\n");
 
   while (maxread < chunksize)
   {
     uint8_t subchunkid;
     uint16_t subchunksize;
 
-    DEBUGLOG("\tmaxread = %zu\n", maxread);
+    //DEBUGLOG("\tmaxread = %zu\n", maxread);
 
     if (read(file, &subchunkid, 1, 1, &maxread) == 0)
       break;
     if (read(file, &subchunksize, 2, 1, &maxread) == 0)
       break;
 
-    DEBUGLOG("\tsubchunksize = %hu\n", subchunksize);
+    //DEBUGLOG("\tsubchunksize = %hu\n", subchunksize);
 
     switch (subchunkid)
     {
@@ -346,7 +352,7 @@ size_t PatternChunkLoader::load(SDL_RWops *file, size_t chunksize)
 
         TrackChunkLoader tfl(&patterns[idx].p, 0);
         size_t bytesread = tfl.load(file, subchunksize);
-        DEBUGLOG("\tsubchunksize = %d, bytesread = %d\n", subchunksize, bytesread);
+        //DEBUGLOG("\tsubchunksize = %d, bytesread = %d\n", subchunksize, bytesread);
         if (bytesread <= 0)
         {
           // ERROR
@@ -375,6 +381,7 @@ size_t PatternChunkLoader::load(SDL_RWops *file, size_t chunksize)
 
 size_t PatternChunkLoader::save(SDL_RWops *file)
 {
+  DEBUGLOG("PatternChunkLoader::save()\n");
   // PATTERNS
   // First calculate the number of used patterns in the song. This is not
   // sequence length, but the number of unique patterns. With that length
@@ -413,6 +420,8 @@ size_t PatternChunkLoader::save(SDL_RWops *file)
     uint16_t chunklen = 0;
     Sint64 chunksize_location, chunkend_location;
 
+    DEBUGLOG("\tPattern #%d, Writing top-level chunkid: %d\n", p, chunkid);
+
     // write this master chunk id
     byte = chunkid;
     SDL_RWwrite(file, &byte, 1, 1);
@@ -421,6 +430,7 @@ size_t PatternChunkLoader::save(SDL_RWops *file)
     SDL_RWwrite(file, &chunklen, 2, 1);
 
     // Store CoreInfo
+    DEBUGLOG("\t\tSubChunkID::coreinfo\n");
     byte = SubChunkID::coreinfo;
     write(file, &byte, 1, 1, &chunklen);
     word = sizeof(p) + sizeof(Pattern::len); // we only have the pattern idx so far
@@ -451,6 +461,7 @@ size_t PatternChunkLoader::save(SDL_RWops *file)
       Sint64 chunksize_location_track, chunkend_location_track;
 
       // Write the Track subchunkID
+      DEBUGLOG("\t\tSubChunkID::Track (%d)\n", t);
       byte = SubChunkID::Track;
       write(file, &byte, 1, 1, &chunklen);
       chunksize_location_track = SDL_RWtell(file);
@@ -459,6 +470,7 @@ size_t PatternChunkLoader::save(SDL_RWops *file)
       TrackChunkLoader tfl(pattern, t);
       uint16_t chunklen_track = tfl.save(file);
 
+      DEBUGLOG("\t\tWriting Track chunksize\n");
       chunkend_location_track = SDL_RWtell(file);
       SDL_RWseek(file, chunksize_location_track, RW_SEEK_SET);
       SDL_RWwrite(file, &chunklen_track, 2, 1);
@@ -468,6 +480,7 @@ size_t PatternChunkLoader::save(SDL_RWops *file)
     }
 
     // END PATTERN
+    DEBUGLOG("\tWriting chunksize\n");
     chunkend_location = SDL_RWtell(file);
     SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
     SDL_RWwrite(file, &chunklen, 2, 1);
@@ -485,21 +498,21 @@ size_t PatternSequencerChunkLoader::load(SDL_RWops *file, size_t chunksize)
   uint8_t idx = 0;
   bool idx_loaded = false;
 
-  DEBUGLOG("Loading PatternSequencer; ");
+  DEBUGLOG("PatternSequencerChunkLoader::load()\n");
 
   while (maxread < chunksize)
   {
     uint8_t subchunkid;
     uint16_t subchunksize;
 
-    DEBUGLOG("\tmaxread = %llu\n", maxread);
+    //DEBUGLOG("\tmaxread = %llu\n", maxread);
 
     if (read(file, &subchunkid, 1, 1, &maxread) == 0)
       break;
     if (read(file, &subchunksize, 2, 1, &maxread) == 0)
       break;
 
-    DEBUGLOG("\tsubchunksize = %llu\n", subchunksize);
+    //DEBUGLOG("\tsubchunksize = %llu\n", subchunksize);
 
     switch (subchunkid)
     {
@@ -564,6 +577,9 @@ size_t PatternSequencerChunkLoader::save(SDL_RWops *file)
   uint16_t chunklen = 0;
   Sint64 chunksize_location, chunkend_location;
 
+  DEBUGLOG("PatternSequencerChunkLoader::save()\n");
+  DEBUGLOG("\tWriting top-level chunkid: %d\n", chunkid);
+
   // write this master chunk id
   byte = chunkid;
   SDL_RWwrite(file, &byte, 1, 1);
@@ -571,6 +587,7 @@ size_t PatternSequencerChunkLoader::save(SDL_RWops *file)
   chunksize_location = SDL_RWtell(file);
   SDL_RWwrite(file, &chunklen, 2, 1);
 
+  DEBUGLOG("\t\tSubChunkID::Entries\n");
   byte = SubChunkID::Entries;
   write(file, &byte, 1, 1, &chunklen);
   word = patseq->num_entries; // we know the length in advance
@@ -579,6 +596,7 @@ size_t PatternSequencerChunkLoader::save(SDL_RWops *file)
   for (int i=0; i < patseq->num_entries; i++)
     write(file, &patseq->sequence[i], 1, 1, &chunklen);
 
+  DEBUGLOG("\tWriting chunksize\n");
   chunkend_location = SDL_RWtell(file);
   SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
   SDL_RWwrite(file, &chunklen, 2, 1);
