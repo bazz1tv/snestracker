@@ -63,7 +63,7 @@ int Menu_Bar::File_Context::open_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
 	/* Open the file */
-	nfdresult_t rc = SdlNfd::get_file_handle("r", "stp");
+	nfdresult_t rc = SdlNfd::get_file_handle("r", SONGFILE_EXT);
 	if (rc != NFD_OKAY)
 		return rc;
 
@@ -106,7 +106,7 @@ int Menu_Bar::File_Context::save_song(void *data)
 
 	if (fc->filepath[0] == 0)
 	{
-		if (SdlNfd::get_file_handle("w", "stp") != NFD_OKAY)
+		if (SdlNfd::get_file_handle("w", SONGFILE_EXT) != NFD_OKAY)
 			return -1;
 
     DEBUGLOG("attempting to save to new file: %s\n", SdlNfd::outPath);
@@ -140,7 +140,7 @@ int Menu_Bar::File_Context::save_as_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
 
-	if (SdlNfd::get_file_handle("w", "stp") != NFD_OKAY)
+	if (SdlNfd::get_file_handle("w", SONGFILE_EXT) != NFD_OKAY)
     return -1;
 
   DEBUGLOG("attempting to save to new file: %s\n", SdlNfd::outPath);

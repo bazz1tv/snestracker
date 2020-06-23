@@ -1,5 +1,5 @@
 #include "Song.h"
-
+#include "gui/DialogBox.h"
 void Song::reset()
 {
   // Reset Song Title
@@ -113,13 +113,23 @@ SongFileLoader::ret_t SongFileLoader::load(SDL_RWops *file)
   else
   {
     assert(rc == HEADER_BAD);
-    return HEADER_BAD;
+    auto drc = DialogBox::SimpleYesNo("Unrecognized header",
+      "This file might be incompatible or corrupted. Load anyways?");
+    switch (drc)
+    {
+      case DialogBox::YES:
+        fprintf(stderr, "USER SAID YES\n");
+        ChunkLoader::loadchunks(file);
+        return FILE_LOADED;
+      default:
+        return HEADER_BAD;
+    }
   }
 }
 
 SongFileLoader::ret_t SongFileLoader::readHeader(SDL_RWops *file)
 {
-  uint8_t *buf = (uint8_t *) malloc( sizeof(uint8_t) * sizeof(HeaderStr) );
+  uint8_t buf[sizeof(HeaderStr)];
   size_t rc;
 
   rc = SDL_RWread(file, buf, sizeof(HeaderStr) - 1, 1);
@@ -131,26 +141,28 @@ SongFileLoader::ret_t SongFileLoader::readHeader(SDL_RWops *file)
   }
 
   buf[sizeof(HeaderStr) - 1] = 0;
+
+  ret_t ret;
   /* The older format used header string "STSONG" */
   if (strcmp((const char *)buf, "STSONG") == 0)
   {
     DEBUGLOG("\tFound older (pre-version) song file\n");
-    return HEADER_OLD;
+    ret = HEADER_OLD;
   }
   // The newer header is "SONGST"
   else if (strcmp( (const char *)buf, HeaderStr) == 0)
   {
     DEBUGLOG("\tHeader is of 'Current' chunk format.\n");
-    return HEADER_OK;
+    ret = HEADER_OK;
   }
   // bad file header
   else
   {
-    DEBUGLOG("\tUnrecognized header! This song file is incompatible or corrupted.\n");
-    DEBUGLOG("\tWhile it may be possible to save this file, SNES Tracker is not yet"
-      "sophisticated enough to make the attempt!\n");
-    return HEADER_BAD;
+    DEBUGLOG("\tUnrecognized header! This file might be incompatible or corrupted. Load anyways?\n");
+    ret = HEADER_BAD;
   }
+
+  return ret;
 }
 
 #include "apuram.h"

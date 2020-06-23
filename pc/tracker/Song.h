@@ -113,8 +113,10 @@ Pattern Sequencer Chunk
 */
 
 
-// Song File Version info
+// Song File info
 //////////////////////////////////////////////////////////////////
+#define SONGFILE_EXT "stp"
+
 #define SONGFILE_VER_MAJOR 0
 #define SONGFILE_VER_MINOR 1
 #define SONGFILE_VER_MICRO 0
@@ -141,7 +143,7 @@ struct Song
 class SongFileLoader
 {
 public:
-  static const char constexpr HeaderStr[] = "SONGST";
+  static const char constexpr HeaderStr[] = "STSong";
   STATIC_HEADER_CHECK(HeaderStr, FILE_HEADER_LEN);
 
   /* TODO: define outside class Song, and use that instead of all of these structures as dependency */
