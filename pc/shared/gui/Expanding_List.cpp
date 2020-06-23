@@ -47,7 +47,7 @@ void Expanding_List::do_thing(void *data/*=NULL*/)
   Context_Menu::do_thing(data);
   if (highlighted_item)
   {
-    fprintf(stderr, "DERP?!");
+    //fprintf(stderr, "DERP?!");
     currently_selected_item = highlighted_item;
     currently_selected_item_index = highlighted_item_index;
   }

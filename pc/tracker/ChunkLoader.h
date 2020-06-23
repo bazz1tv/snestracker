@@ -23,6 +23,17 @@ loading or storing. This is not a problem for the supported platforms.
 
 The top-level ChunkLoader loadchunks() will read the ID, and use it to call the
 subclassed (ChunkLoader *) associated with that chunk id.
+
+////////////////////
+Food For Thought
+///////////////////
+Without strings, this fileformat is quite difficult to parse by human eye or troubleshoot
+directly. For next version, consider adding a short chunkid string to every chunk header.
+
+The hard assumption on the chunksize being 16-bits was convenient for coding the
+first iteration, but why not allow per-chunk type specification for the next version?
+This would save bytes for types only requiring a byte, and allow expansion for
+chunks that may become >16-bit width.
 */
 
 /////// File Format Restrictions /////////
