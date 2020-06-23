@@ -112,7 +112,7 @@ size_t TrackChunkLoader::load(SDL_RWops *file, size_t chunksize)
         uint8_t a;
         size_t bytesread = 0;
 
-        for (int tr=0; tr < pattern->len; tr++)
+        for (int tr=0; tr < MAX_PATTERN_LEN; tr++)
         {
           PatternRow *pr = &pattern->trackrows[t][tr];
           if (rlecounter)
@@ -209,17 +209,17 @@ size_t TrackChunkLoader::save(SDL_RWops *file)
   chunksize_location = SDL_RWtell(file);
   write(file, &chunklen, 2, 1, &headerlen);
 
-  for (int tr=0; tr < pattern->len; tr++)
+  for (int tr=0; tr < MAX_PATTERN_LEN; tr++)
   {
     int ttrr;
     PatternRow *pr = &pattern->trackrows[t][tr];
     uint8_t cbyte = 0, rlebyte;
     // Lookahead: how many empty rows from this one until the next
     // filled row? If there's only 1 empty row, use RLE_ONLY1
-    for (ttrr=tr+1; ttrr < pattern->len; ttrr++)
+    for (ttrr=tr+1; ttrr < MAX_PATTERN_LEN; ttrr++)
     {
       PatternRow *row = &pattern->trackrows[t][ttrr];
-      if ( (!(PATROW_EMPTY(row))) || ttrr == (pattern->len - 1))
+      if ( (!(PATROW_EMPTY(row))) || ttrr == (MAX_PATTERN_LEN - 1))
       {
         // we found a filled row or we made it to the end of pattern
         ttrr -= ( (PATROW_EMPTY(row)) ? 0 : 1);
