@@ -62,20 +62,28 @@ struct Instrument
 class InstrumentChunkLoader : public ChunkLoader
 {
 public:
-  InstrumentChunkLoader(struct Instrument *instruments);
+  InstrumentChunkLoader(struct Instrument *instruments, bool ignoreSongMeta=false);
   size_t load(SDL_RWops *file, size_t chunksize);
   // save specific instrument to file handle. This does not include a File Header
   size_t save(SDL_RWops *file, int instNumber);
   size_t save(SDL_RWops *file); // Save all instruments to file handle
+  // Helper for non-Song loading
+  size_t save(SDL_RWops *file, struct Instrument *instr);
 
+  inline void setIdx(uint8_t idx) { this->idx = idx; idx_loaded = true; }
 
   enum SubChunkID {
     coreinfo=0,
+    songmeta,
     name,
+    tune,
     NUM_SUBCHUNKIDS
   };
 private:
   struct Instrument *instruments;
+  bool ignoreSongMeta;
+  uint8_t idx = 0; //instrument index
+  bool idx_loaded = false;
 };
 
 

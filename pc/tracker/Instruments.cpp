@@ -79,21 +79,23 @@ bool Instrument::operator==(const Instrument& rhs)
           this->finetune == rhs.finetune);
 }
 
-#define INST_COREINFO_SIZE 1 + sizeof(Instrument::vol) + sizeof(Instrument::pan) + \
-sizeof(Instrument::srcn) + sizeof(Instrument::adsr) + \
-sizeof(Instrument::semitone_offset) + sizeof(Instrument::finetune)
+#define INST_COREINFO_SIZE sizeof(Instrument::vol) + sizeof(Instrument::pan) + sizeof(Instrument::adsr)
+#define INST_SONGMETA_SIZE sizeof(InstrumentChunkLoader::idx) + sizeof(Instrument::srcn)
+#define INST_TUNE_SIZE sizeof(Instrument::finetune)
 
-InstrumentChunkLoader::InstrumentChunkLoader(struct Instrument *i) :
-  ChunkLoader(ChunkID::Instrument), instruments(i)
+InstrumentChunkLoader::InstrumentChunkLoader(struct Instrument *i, bool ignoreSongMeta/*=false*/) :
+  ChunkLoader(ChunkID::Instrument), instruments(i), ignoreSongMeta(ignoreSongMeta)
 {}
 
 size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
 {
   size_t maxread = 0;
-  uint8_t idx = 0;
-  bool idx_loaded = false;
 
   DEBUGLOG("InstrumentChunkLoader::load()\n");
+
+  /* Every time we encounter an instrument in a song, we need to reload the idx */
+  if (!ignoreSongMeta)
+    idx_loaded = false;
 
   while (maxread < chunksize)
   {
@@ -111,6 +113,33 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
 
     switch (subchunkid)
     {
+      case SubChunkID::songmeta:
+      {
+        DEBUGLOG("\tSubChunkID::songmeta\n");
+        size_t minimum_chunksize = INST_SONGMETA_SIZE;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        if (ignoreSongMeta)
+        {
+          DEBUGLOG("\t\tignoring...\n");
+          break;
+        }
+        read(file, &idx, 1, 1, &maxread);
+        read(file, &instruments[idx].srcn, 1, 1, &maxread);
+        DEBUGLOG("\t\tidx: %d\n", idx);
+
+        subchunksize -= INST_SONGMETA_SIZE;
+        idx_loaded = true;
+      }
+      break;
       case SubChunkID::coreinfo:
       {
         DEBUGLOG("\tSubChunkID::coreinfo\n");
@@ -125,20 +154,12 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
           break;
         }
 
-        read(file, &idx, 1, 1, &maxread);
-        struct Instrument *instr = &instruments[idx];
-        read(file, &instr->vol, 1, 1, &maxread);
-        read(file, &instr->pan, 1, 1, &maxread);
-        read(file, &instr->srcn, 1, 1, &maxread);
-        read(file, &instr->adsr.adsr1, 1, 1, &maxread);
-        read(file, &instr->adsr.adsr2, 1, 1, &maxread);
-        read(file, &instr->semitone_offset, 1, 1, &maxread);
-        read(file, &instr->finetune, 1, 1, &maxread);
-
-        DEBUGLOG("\t\tidx: %d\n", idx);
+        read(file, &instruments[idx].vol, 1, 1, &maxread);
+        read(file, &instruments[idx].pan, 1, 1, &maxread);
+        read(file, &instruments[idx].adsr.adsr1, 1, 1, &maxread);
+        read(file, &instruments[idx].adsr.adsr2, 1, 1, &maxread);
 
         subchunksize -= INST_COREINFO_SIZE;
-        idx_loaded = true;
       }
       break;
       case SubChunkID::name:
@@ -150,6 +171,25 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
         maxread += bytesread;
       }
       break;
+      case SubChunkID::tune:
+      {
+        DEBUGLOG("\tSubChunkID::tune\n");
+        size_t minimum_chunksize = INST_TUNE_SIZE;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        read(file, &instruments[idx].finetune, 1, 1, &maxread);
+
+        subchunksize -= INST_TUNE_SIZE;
+      }
+      break;
       default:
         DEBUGLOG("\tUnknown SubChunkID: %d. skipping over..\n", subchunkid);
       break;
@@ -158,7 +198,7 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
     /* Skip the unrecognized part of the chunk */
     if (subchunksize)
     {
-      DEBUGLOG("\tskipping past %d unknown bytes of chunk\n", subchunksize);
+      DEBUGLOG("\tskipping past %d unread bytes of chunk\n", subchunksize);
       SDL_RWseek(file, subchunksize, RW_SEEK_CUR);
       maxread += subchunksize;
     }
@@ -185,20 +225,26 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file, int i)
   chunksize_location = SDL_RWtell(file);
   SDL_RWwrite(file, &chunklen, 2, 1);
 
+  if (ignoreSongMeta == false)
+  {
+    DEBUGLOG("\t\tSubChunkID::songmeta\n");
+    byte = SubChunkID::songmeta;
+    write(file, &byte, 1, 1, &chunklen);
+    word = INST_SONGMETA_SIZE; // we know the length in advance
+    write(file, &word, 2, 1, &chunklen);
+    write(file, &i, 1, 1, &chunklen); // write Instrument index (only 1 byt, &chunklene)
+    write(file, &instr->srcn, 1, 1, &chunklen);
+  }
+
   DEBUGLOG("\t\tSubChunkID::coreinfo\n");
   byte = SubChunkID::coreinfo;
   write(file, &byte, 1, 1, &chunklen);
   word = INST_COREINFO_SIZE; // we know the length in advance
-  assert(word == 8);
   write(file, &word, 2, 1, &chunklen);
-  write(file, &i, 1, 1, &chunklen); // write Instrument index (only 1 byt, &chunklene)
   write(file, &instr->vol, 1, 1, &chunklen);
   write(file, &instr->pan, 1, 1, &chunklen);
-  write(file, &instr->srcn, 1, 1, &chunklen);
   write(file, &instr->adsr.adsr1, 1, 1, &chunklen);
   write(file, &instr->adsr.adsr2, 1, 1, &chunklen);
-  write(file, &instr->semitone_offset, 1, 1, &chunklen);
-  write(file, &instr->finetune, 1, 1, &chunklen);
 
   word = strlen(instruments[i].name);
   if (word > 0)
@@ -209,6 +255,14 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file, int i)
     write(file, &word, 2, 1, &chunklen);
     write(file, instruments[i].name,  word, 1, &chunklen);
   }
+
+
+  DEBUGLOG("\t\tSubChunkID::tune\n");
+  byte = SubChunkID::tune;
+  write(file, &byte, 1, 1, &chunklen);
+  word = INST_TUNE_SIZE; // we know the length in advance
+  write(file, &word, 2, 1, &chunklen);
+  write(file, &instr->finetune, 1, 1, &chunklen);
 
   DEBUGLOG("\tWriting chunksize\n");
   chunkend_location = SDL_RWtell(file);
@@ -229,6 +283,14 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file)
     if (instruments[i] != ::Instrument()) // empty instrument
       save(file, i);
   }
+}
+
+size_t InstrumentChunkLoader::save(SDL_RWops *file, struct Instrument *instr)
+{
+  struct Instrument *backup = instruments;
+  instruments = instr;
+  save(file, 0);
+  instruments = backup;
 }
 
 

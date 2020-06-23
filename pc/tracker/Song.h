@@ -23,6 +23,11 @@ The rest of the data is organized into chunks. Each chunk of data is comprised o
 a 1-byte ID, a 16-bit length field, followed by the actual data corresponding to
 that ID. The length field describes the length of data that comes immediately after it.
 
+There are times when the ordering of chunks is important.
+Currently the Version chunk must come immediately after the file header string.
+The order presented below is the only supported ordering, although it might work
+out of order (besides the version chunk).
+
 Version Chunk
   coreinfo
     Song file version. 3 16-bit unsigned integers (Form into major.minor.micro)
@@ -51,28 +56,37 @@ SongSettings Chunk
   [EXTENDABLE]
 
 Sample Chunk
+  songmeta
+    index       -- 1 byte, the index this sample belongs to (songs only, will ignore for STI)
+    [EXTENDABLE]
   coreinfo
-    index       -- 1 byte, the index this sample belongs (songs only, will ignore for STI)
     rel_loop    -- 2 bytes, the relative offset of loop start
     [EXTENDABLE]
   name
     non-null terminated string of sample name
   brr
     raw sample data
+  tune
+    finetune        -- 1 byte (impl TODO)
+    semitone_offset -- 1 byte (impl TODO) (REMOVABLE)
+    [EXTENDABLE]
   [EXTENDABLE]
 
 Instrument Chunk
-  coreinfo
+  songmeta
     index       -- 1 byte, the index this instrument belongs (songs only, will ignore for STI)
+    srcn        -- 1 byte, the sample number connected to this instrument (songs only, will ignore for STI)
+    [EXTENDABLE]
+  coreinfo
     vol         -- 1 byte, volume
     pan         -- 1 byte (impl TODO)
-    srcn        -- 1 byte, the sample number connected to this instrument (songs only, will ignore for STI)
     adsr        -- 2 bytes, hardware ADSR envelope setting
-    semitone_offset -- 1 byte (impl TODO)
-    finetune    -- 1 byte (impl TODO)
     [EXTENDABLE]
   name
     non-null terminated string of instrument name
+  tune
+    finetune        -- 1 byte (impl TODO)
+    [EXTENDABLE]
   [EXTENDABLE]
 
 Pattern Chunk

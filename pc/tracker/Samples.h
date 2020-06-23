@@ -36,6 +36,7 @@ struct Sample
    * on the range allowed */
   int8_t semitone_offset; // TODO
 	int8_t finetune;
+  bool loop;
 
 	void inc_loop();
 	void dec_loop();
@@ -47,18 +48,28 @@ struct Sample
 class SampleChunkLoader : public ChunkLoader
 {
 public:
-  SampleChunkLoader(struct Sample *samples);
+  SampleChunkLoader(struct Sample *samples, bool ignoreSongMeta=false);
   size_t load(SDL_RWops *file, size_t chunksize);
   size_t save(SDL_RWops *file);
+  size_t save(SDL_RWops *file, int sampIdx);
+  // Helper for non-Song loading
+  size_t save(SDL_RWops *file, struct Sample *s);
+
+  inline void setIdx(uint8_t idx) { this->idx = idx; idx_loaded = true; }
 
   enum SubChunkID {
     coreinfo=0,
+    songmeta,
     name,
     brr,
+    tune,
     NUM_SUBCHUNKIDS
   };
 private:
   struct Sample *samples;
+  bool ignoreSongMeta;
+  uint8_t idx = 0; //sample index
+  bool idx_loaded = false;
 };
 
 struct Sample_Panel

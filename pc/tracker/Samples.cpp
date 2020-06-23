@@ -13,7 +13,7 @@ const int Sample_Panel::NUM_ROWS;
 #define SAMPLE_NAME_GUI_CHAR_WIDTH 22
 
 Sample::Sample() : brr(NULL), brrsize(0), rel_loop(0), semitone_offset(0),
-  finetune(0)
+  finetune(0), loop(0)
 {
   name[0] = 0;
 }
@@ -53,17 +53,23 @@ void Sample::dec_finetune()
 }
 
 
-SampleChunkLoader::SampleChunkLoader(struct Sample *s) :
-  ChunkLoader(ChunkID::Sample), samples(s)
+SampleChunkLoader::SampleChunkLoader(struct Sample *s, bool ignoreSongMeta/*=false*/) :
+  ChunkLoader(ChunkID::Sample), samples(s), ignoreSongMeta(ignoreSongMeta)
 {}
+
+#define SAMPLE_SONGMETA_SIZE sizeof(SampleChunkLoader::idx)
+#define SAMPLE_COREINFO_SIZE sizeof(Sample::rel_loop)
+#define SAMPLE_TUNE_SIZE sizeof(Sample::finetune) + sizeof(Sample::semitone_offset)
 
 size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
 {
   size_t maxread = 0;
-  uint8_t idx = 0;
-  bool idx_loaded = false;
 
   DEBUGLOG("SampleChunkLoader::load()\n");
+
+  /* Every time we encounter a sample in a song, we need to reload the idx */
+  if (!ignoreSongMeta)
+    idx_loaded = false;
 
   while (maxread < chunksize)
   {
@@ -81,10 +87,10 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
 
     switch (subchunkid)
     {
-      case SubChunkID::coreinfo:
+      case SubChunkID::songmeta:
       {
-        DEBUGLOG("\tSubChunkID::coreinfo\n");
-        size_t minimum_chunksize = 3;
+        DEBUGLOG("\tSubChunkID::songmeta\n");
+        size_t minimum_chunksize = SAMPLE_SONGMETA_SIZE;
         if (subchunksize > minimum_chunksize)
         {
           DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
@@ -95,13 +101,35 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
           break;
         }
 
+        if (ignoreSongMeta)
+        {
+          DEBUGLOG("\t\tignoring...\n");
+          break;
+        }
         read(file, &idx, 1, 1, &maxread);
-        read(file, &samples[idx].rel_loop, 2, 1, &maxread);
 
         DEBUGLOG("\t\tidx: %d\n", idx);
 
-        subchunksize -= 3;
+        subchunksize -= SAMPLE_SONGMETA_SIZE;
         idx_loaded = true;
+      }
+      break;
+      case SubChunkID::coreinfo:
+      {
+        DEBUGLOG("\tSubChunkID::coreinfo\n");
+        size_t minimum_chunksize = SAMPLE_COREINFO_SIZE;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        read(file, &samples[idx].rel_loop, 2, 1, &maxread);
+        subchunksize -= SAMPLE_COREINFO_SIZE;
       }
       break;
       case SubChunkID::name:
@@ -144,6 +172,29 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
         s->brr = brr;
         s->brrsize = subchunksize;
         subchunksize -= nb_read_total;
+
+        Brr *lastblock = (Brr *) &(((uint8_t *)(brr))[s->brrsize - sizeof(Brr)]);
+        s->loop = lastblock->loop ? true : false;
+      }
+      break;
+      case SubChunkID::tune:
+      {
+        DEBUGLOG("\tSubChunkID::tune\n");
+        size_t minimum_chunksize = SAMPLE_TUNE_SIZE;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        read(file, &samples[idx].finetune, 1, 1, &maxread);
+        read(file, &samples[idx].semitone_offset, 1, 1, &maxread);
+
+        subchunksize -= SAMPLE_TUNE_SIZE;
       }
       break;
       default:
@@ -161,58 +212,87 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
   }
 }
 
-size_t SampleChunkLoader::save(SDL_RWops *file)
+size_t SampleChunkLoader::save(SDL_RWops *file, int i)
 {
+  uint8_t byte;
+  uint16_t word;
+  uint16_t chunklen = 0;
+  Sint64 chunksize_location, chunkend_location;
   DEBUGLOG("SampleChunkLoader::save()\n");
-  for (uint16_t i=0; i < NUM_SAMPLES; i++)
+
+  DEBUGLOG("\tsample #%d, Writing top-level chunkid: %d\n", i, chunkid);
+
+  byte = chunkid;
+  SDL_RWwrite(file, &byte, 1, 1);
+  chunksize_location = SDL_RWtell(file);
+  SDL_RWwrite(file, &chunklen, 2, 1);
+
+  if (ignoreSongMeta == false)
   {
-    if (samples[i].brr == NULL)
-      continue;
-
-    uint8_t byte;
-    uint16_t word;
-    uint16_t chunklen = 0;
-    Sint64 chunksize_location, chunkend_location;
-
-    DEBUGLOG("\tsample #%d, Writing top-level chunkid: %d\n", i, chunkid);
-
-    byte = chunkid;
-    SDL_RWwrite(file, &byte, 1, 1);
-    chunksize_location = SDL_RWtell(file);
-    SDL_RWwrite(file, &chunklen, 2, 1);
-
-    DEBUGLOG("\t\tSubChunkID::coreinfo\n");
-    byte = SubChunkID::coreinfo;
+    DEBUGLOG("\t\tSubChunkID::songmeta\n");
+    byte = SubChunkID::songmeta;
     write(file, &byte, 1, 1, &chunklen);
-    word = 3; // we know the length in advance
+    word = SAMPLE_SONGMETA_SIZE; // we know the length in advance
     write(file, &word, 2, 1, &chunklen);
     write(file, &i, 1, 1, &chunklen); // write sample index (only 1 byt, &chunklene)
-    write(file, &samples[i].rel_loop, 2, 1, &chunklen);
-
-    byte = SubChunkID::name;
-    write(file, &byte, 1, 1, &chunklen);
-    word = strlen(samples[i].name);
-    if (word > 0)
-    {
-      DEBUGLOG("\t\tSubChunkID::name\n");
-      write(file, &word, 2, 1, &chunklen);
-      write(file, samples[i].name,  word, 1, &chunklen);
-    }
-
-    DEBUGLOG("\t\tSubChunkID::brr\n");
-    byte = SubChunkID::brr;
-    write(file, &byte, 1, 1, &chunklen);
-    word = samples[i].brrsize;
-    write(file, &word, 2, 1, &chunklen);
-    write(file, samples[i].brr, word, 1, &chunklen);
-
-    DEBUGLOG("\tWriting chunksize\n");
-    chunkend_location = SDL_RWtell(file);
-    SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
-    SDL_RWwrite(file, &chunklen, 2, 1);
-
-    SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
   }
+
+  DEBUGLOG("\t\tSubChunkID::coreinfo\n");
+  byte = SubChunkID::coreinfo;
+  write(file, &byte, 1, 1, &chunklen);
+  word = SAMPLE_COREINFO_SIZE; // we know the length in advance
+  write(file, &word, 2, 1, &chunklen);
+  write(file, &samples[i].rel_loop, 2, 1, &chunklen);
+
+  byte = SubChunkID::name;
+  write(file, &byte, 1, 1, &chunklen);
+  word = strlen(samples[i].name);
+  if (word > 0)
+  {
+    DEBUGLOG("\t\tSubChunkID::name\n");
+    write(file, &word, 2, 1, &chunklen);
+    write(file, samples[i].name,  word, 1, &chunklen);
+  }
+
+  DEBUGLOG("\t\tSubChunkID::brr\n");
+  byte = SubChunkID::brr;
+  write(file, &byte, 1, 1, &chunklen);
+  word = samples[i].brrsize;
+  write(file, &word, 2, 1, &chunklen);
+  write(file, samples[i].brr, word, 1, &chunklen);
+
+  DEBUGLOG("\t\tSubChunkID::tune\n");
+  byte = SubChunkID::tune;
+  write(file, &byte, 1, 1, &chunklen);
+  word = SAMPLE_TUNE_SIZE; // we know the length in advance
+  write(file, &word, 2, 1, &chunklen);
+  write(file, &samples[i].finetune, sizeof(Sample::finetune), 1, &chunklen);
+  write(file, &samples[i].semitone_offset, sizeof(Sample::semitone_offset), 1, &chunklen);
+
+  DEBUGLOG("\tWriting chunksize\n");
+  chunkend_location = SDL_RWtell(file);
+  SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
+  SDL_RWwrite(file, &chunklen, 2, 1);
+
+  SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
+}
+
+size_t SampleChunkLoader::save(SDL_RWops *file)
+{
+  DEBUGLOG("SampleChunkLoader::save() (all)\n");
+  for (uint16_t i=0; i < NUM_SAMPLES; i++)
+  {
+    if (samples[i].brr != NULL)
+      save(file, i);
+  }
+}
+
+size_t SampleChunkLoader::save(SDL_RWops *file, struct Sample *s)
+{
+  struct Sample *backup = samples;
+  samples = s;
+  save(file, 0);
+  samples = backup;
 }
 
 
