@@ -52,6 +52,44 @@ void Sample::dec_finetune()
 		finetune--;
 }
 
+bool Sample::identical(const Brr *brr)
+{
+  bool match = false;
+  auto brrsize = get_brr_size(brr);
+  if (this->brrsize == brrsize)
+  {
+    match = true;
+
+    for (int i=0; this->brr[i].end == 0 && match == true; i++)
+    {
+      if (brr[i].end)
+        DEBUGLOG("Checking END BLock\n");
+
+      // Let's ignore the header because that data can change depending on whether
+      // looping is enabled
+
+      for (int y=0; y < 8; y++)
+      {
+        if (this->brr[i].samples[y] != brr[i].samples[y])
+        {
+          match = false;
+          break;
+        }
+      }
+    }
+  }
+
+  return match;
+}
+
+void Sample::clear()
+{
+  if (brr != NULL)
+    free(brr);
+
+  *this = Sample();
+}
+
 
 SampleChunkLoader::SampleChunkLoader(struct Sample *s, bool ignoreSongMeta/*=false*/) :
   ChunkLoader(ChunkID::Sample), samples(s), ignoreSongMeta(ignoreSongMeta)
@@ -165,6 +203,43 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
           break;
         }
 
+        if (ignoreSongMeta)
+        {
+          /* When we load an instrument up, we need to check if this sample is already in a slot. */
+          // findIdentical()
+          for (int i=0; i < NUM_SAMPLES; i++)
+          {
+            if (samples[i].identical(brr))
+            {
+              // found a matching brr already in the sample table. free this copy
+              free(brr);
+              instr_srcn = i; // mark for the instrument file loader :O
+              // skip the rest of thos whole chunk and return
+              SDL_RWseek(file, chunksize - maxread, RW_SEEK_CUR);
+              return;
+            }
+          }
+
+          // not a match. Find the earliest blank slot
+          // findEmpty()
+          instr_srcn = -1;
+          for (int i=0; i < NUM_SAMPLES; i++)
+          {
+            if (samples[i].brr == NULL)
+            {
+              instr_srcn = i;
+              idx = i;
+              break;
+            }
+          }
+          if (instr_srcn == -1)
+          {
+            // skip the rest of thos whole chunk and return
+            SDL_RWseek(file, chunksize - maxread, RW_SEEK_CUR);
+            return;
+          }
+        }
+
         struct Sample *s = &samples[idx];
         if (s->brr != NULL)
           free(s->brr);
@@ -237,6 +312,13 @@ size_t SampleChunkLoader::save(SDL_RWops *file, int i)
     write(file, &i, 1, 1, &chunklen); // write sample index (only 1 byt, &chunklene)
   }
 
+  DEBUGLOG("\t\tSubChunkID::brr\n");
+  byte = SubChunkID::brr;
+  write(file, &byte, 1, 1, &chunklen);
+  word = samples[i].brrsize;
+  write(file, &word, 2, 1, &chunklen);
+  write(file, samples[i].brr, word, 1, &chunklen);
+
   DEBUGLOG("\t\tSubChunkID::coreinfo\n");
   byte = SubChunkID::coreinfo;
   write(file, &byte, 1, 1, &chunklen);
@@ -253,13 +335,6 @@ size_t SampleChunkLoader::save(SDL_RWops *file, int i)
     write(file, &word, 2, 1, &chunklen);
     write(file, samples[i].name,  word, 1, &chunklen);
   }
-
-  DEBUGLOG("\t\tSubChunkID::brr\n");
-  byte = SubChunkID::brr;
-  write(file, &byte, 1, 1, &chunklen);
-  word = samples[i].brrsize;
-  write(file, &word, 2, 1, &chunklen);
-  write(file, samples[i].brr, word, 1, &chunklen);
 
   DEBUGLOG("\t\tSubChunkID::tune\n");
   byte = SubChunkID::tune;
@@ -304,8 +379,7 @@ Sample_Panel::Sample_Panel(Sample* samples) :
 	samples(samples)
 {
   /* Disable unimpl'd buttons */
-  savebtn.enabled = false;
-  clearbtn.enabled = false;
+  //clearbtn.enabled = false;
 }
 
 Sample_Panel::~Sample_Panel()
@@ -575,6 +649,8 @@ void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   }
 }
 
+#include "gui/DialogBox.h"
+#define OVERWRITE_STR "Do you really want to %s this sample?\n\n sample #%02d, \"%s\""
 using namespace SdlNfd;
 /* In these following functions, we need an core instruments handle, and
  * the index into that table. Can get that through the Sample_Panel.
@@ -585,6 +661,21 @@ int Sample_Panel::load(void *spanel)
   Sample *s = &sp->samples[sp->currow];
 
   fprintf(stderr, "Sample_Panel::LOAD\n");
+
+  if (s->brr != NULL)
+  {
+    char strbuf[100];
+    sprintf(strbuf, OVERWRITE_STR, "overwrite", sp->currow, s->name);
+    auto drc = DialogBox::SimpleYesNo("Overwrite Sample?", strbuf);
+    switch (drc)
+    {
+      case DialogBox::YES:
+      break;
+      case DialogBox::NO:
+      default:
+        return -1;
+    }
+  }
 
   if (SdlNfd::get_file_handle("r", "brr") == NFD_OKAY)
   {
@@ -626,10 +717,35 @@ int Sample_Panel::load(void *spanel)
   return 0;
 }
 
+#include "gui/DialogBox.h"
+
 int Sample_Panel::save(void *spanel)
 {
   Sample_Panel *sp = (Sample_Panel *)spanel;
   fprintf(stderr, "Sample_Panel::SAVE\n");
+
+  Sample *s = &sp->samples[sp->currow];
+
+  if (s->brr == NULL/* || sample->brrsize == 0*/)
+  {
+    DialogBox::SimpleOK("No Sample data", "Please load a sample first");
+    return -1;
+  }
+
+  if (SdlNfd::get_file_handle("w", "brr") == NFD_OKAY)
+  {
+    DEBUGLOG("\tsample path:%s\n", outPath);
+
+    Sint64 nb = 0;
+    nb = SDL_RWwrite(file, (char *)s->brr, 1, s->brrsize);
+
+    if (nb != s->brrsize)
+    {
+      DEBUGLOG("\tCould not fully write BRR Data!\n");
+      return -1;
+    }
+  }
+
   return 0;
 }
 
@@ -637,5 +753,25 @@ int Sample_Panel::clear(void *spanel)
 {
   Sample_Panel *sp = (Sample_Panel *)spanel;
   fprintf(stderr, "Sample_Panel::CLEAR\n");
+
+  Sample *s = &sp->samples[sp->currow];
+
+  if (s->brr != NULL)
+  {
+    char strbuf[100];
+    sprintf(strbuf, OVERWRITE_STR, "clear", sp->currow, s->name);
+    auto drc = DialogBox::SimpleYesNo("Clear Sample?", strbuf);
+    switch (drc)
+    {
+      case DialogBox::YES:
+      break;
+      case DialogBox::NO:
+      default:
+        return -1;
+    }
+  }
+
+  s->clear();
+
   return 0;
 }

@@ -293,6 +293,109 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file, struct Instrument *instr)
   instruments = backup;
 }
 
+/////////////////// INSTRUMENT FILE LOADER //////////////////
+
+#include "gui/DialogBox.h"
+const char InstrumentFileLoader::HeaderStr[];
+
+InstrumentFileLoader::InstrumentFileLoader(Instrument *instrument, Sample *sample) :
+
+  vcl  ( new VersionChunkLoader(INSTRFILE_VER_MAJOR, INSTRFILE_VER_MINOR, INSTRFILE_VER_MICRO) ),
+  scl  ( new SampleChunkLoader(sample, true) ),
+  icl  ( new InstrumentChunkLoader(instrument, true) ),
+
+  instrument(instrument)
+{}
+
+InstrumentFileLoader::~InstrumentFileLoader()
+{
+  delete icl;
+  delete scl;
+  delete vcl;
+}
+
+// convenience function
+size_t InstrumentFileLoader::save(SDL_RWops *file)
+{
+  /* TODO: Here (or on higher level) inform user if the data came from a file
+  of an older file format version - inform that we are saving in the new format.
+  Or, if the file loaded was too new, inform that file is being saved in the
+  older format of current software */
+  DEBUGLOG("Writing File HeaderString: %s\n", HeaderStr);
+  SDL_RWwrite(file, HeaderStr, sizeof(HeaderStr) - 1, 1);
+  vcl->save(file);  // version
+  scl->save(file, 0);  // samples
+  icl->save(file, 0);  // instruments
+}
+
+InstrumentFileLoader::ret_t InstrumentFileLoader::load(SDL_RWops *file)
+{
+  DEBUGLOG("Reading File's HeaderString\n");
+  auto rc = readHeader(file);
+  if (rc == HEADER_OK)
+  {
+    icl->setIdx(0);
+    scl->setIdx(0);
+    ChunkLoader::loadchunks(file);
+    if (scl->instr_srcn == -1)
+    {
+      DEBUGLOG("Sample limit reached you crazy mofo!\n");
+    }
+    else
+    {
+      instrument->srcn = scl->instr_srcn;
+    }
+    return FILE_LOADED;
+  }
+  else
+  {
+    assert(rc == HEADER_BAD);
+    auto drc = DialogBox::SimpleYesNo("Unrecognized header",
+      "This file might be incompatible or corrupted. Load anyways?");
+    switch (drc)
+    {
+      case DialogBox::YES:
+        fprintf(stderr, "USER SAID YES\n");
+        ChunkLoader::loadchunks(file);
+        return FILE_LOADED;
+      default:
+        return HEADER_BAD;
+    }
+  }
+}
+
+InstrumentFileLoader::ret_t InstrumentFileLoader::readHeader(SDL_RWops *file)
+{
+  uint8_t buf[sizeof(HeaderStr)];
+  size_t rc;
+
+  rc = SDL_RWread(file, buf, sizeof(HeaderStr) - 1, 1);
+
+  if (rc == 0)
+  {
+    DEBUGLOG("\tCould not read from file: %s\n", SDL_GetError());
+    return HEADER_BAD;
+  }
+
+  buf[sizeof(HeaderStr) - 1] = 0;
+
+  ret_t ret;
+  // The newer header is "InstrumentST"
+  if (strcmp( (const char *)buf, HeaderStr) == 0)
+  {
+    DEBUGLOG("\tHeader is of 'Current' chunk format.\n");
+    ret = HEADER_OK;
+  }
+  // bad file header
+  else
+  {
+    DEBUGLOG("\tUnrecognized header! This file might be incompatible or corrupted. Load anyways?\n");
+    ret = HEADER_BAD;
+  }
+
+  return ret;
+}
+
 
 /* The instrument panel is something like
  * Instruments  (Load) (Save) (Zap)
@@ -315,9 +418,6 @@ Instrument_Panel::Instrument_Panel(Instrument *iptr, Sample_Panel *sp) :
     instruments(iptr),
     samplepanel(sp)
 {
-  loadbtn.enabled = false;
-  savebtn.enabled = false;
-  zapbtn.enabled = false;
 }
 
 Instrument_Panel::~Instrument_Panel()
@@ -585,6 +685,28 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   }
 }
 
+static void AskDeleteSample(Instrument_Panel *ip)
+{
+  Instrument *instr = &ip->instruments[ip->currow];
+  Sample *sample = &ip->samplepanel->samples[instr->srcn];
+  char strbuf[100];
+  sprintf(strbuf, "Do you wish to delete the sample for this instrument as well?\n\n"
+    "sample #%02d, \"%s\"", instr->srcn, sample->name);
+  auto rc = DialogBox::SimpleYesNo("Delete sample?", strbuf, false);
+
+  switch (rc)
+  {
+    case DialogBox::YES:
+      sample->clear();
+    break;
+    case DialogBox::NO:
+    default:
+      return;
+  }
+}
+
+#include "SdlNfd.h"
+#define OVERWRITE_STR "Do you really want to %s this instrument?\n\n instrument #%02d, \"%s\""
 /* In these following functions, we need an core instruments handle, and
  * the index into that table. Can get that through the Instrument_Panel.
  * This is still GUI centric.*/
@@ -592,9 +714,39 @@ int Instrument_Panel::load(void *ipanel)
 {
   Instrument_Panel *ip = (Instrument_Panel *)ipanel;
   Instrument *instruments = ip->instruments;
-  int currow = ip->currow;
 
   fprintf(stderr, "LOAD\n");
+
+  /* First, check if the current instrument slot is non-default data, and warn
+  the user you would be overwriting the old data */
+  Instrument *instr = &ip->instruments[ip->currow];
+  Sample *samples = ip->samplepanel->samples;
+  Sample *sample = &samples[instr->srcn];
+
+  if (*instr != Instrument())
+  {
+    char strbuf[100];
+    sprintf(strbuf, OVERWRITE_STR, "overwrite", ip->currow + 1, instr->name);
+    auto drc = DialogBox::SimpleYesNo("Overwrite Instrument?", strbuf);
+    switch (drc)
+    {
+      case DialogBox::YES:
+        AskDeleteSample(ip);
+      break;
+      case DialogBox::NO:
+      default:
+        return -1;
+    }
+  }
+
+  if (SdlNfd::get_file_handle("r", INSTRFILE_EXT) == NFD_OKAY)
+  {
+    InstrumentFileLoader ifl(instr, samples);
+    ifl.load(SdlNfd::file);
+  }
+
+  /* Update the sample panel highlighted row to cover the srcn connected to this instrument */
+  ip->samplepanel->currow = instr->srcn;
   return 0;
 }
 
@@ -602,6 +754,25 @@ int Instrument_Panel::save(void *ipanel)
 {
   Instrument_Panel *ip = (Instrument_Panel *)ipanel;
   fprintf(stderr, "SAVE\n");
+
+  /* First make sure this instrument actually references a real BRR sample */
+  Instrument *instr = &ip->instruments[ip->currow];
+  Sample *sample = &ip->samplepanel->samples[instr->srcn];
+
+  if (sample->brr == NULL/* || sample->brrsize == 0*/)
+  {
+    DialogBox::SimpleOK("No Sample data",
+      "This instrument references a blank sample.\n\n"
+      "Please load and connect a valid sample to this instrument first.");
+    return -1;
+  }
+
+  if (SdlNfd::get_file_handle("w", INSTRFILE_EXT) == NFD_OKAY)
+  {
+    DEBUGLOG("\tinstrument path:%s\n", SdlNfd::outPath);
+    InstrumentFileLoader ifl(instr, sample);
+    ifl.save(SdlNfd::file);
+  }
   return 0;
 }
 
@@ -609,5 +780,27 @@ int Instrument_Panel::zap(void *ipanel)
 {
   Instrument_Panel *ip = (Instrument_Panel *)ipanel;
   fprintf(stderr, "ZAP\n");
+
+  Instrument *instr = &ip->instruments[ip->currow];
+  Sample *samples = ip->samplepanel->samples;
+  Sample *sample = &samples[instr->srcn];
+
+  if (*instr != Instrument())
+  {
+    char strbuf[100];
+    sprintf(strbuf, OVERWRITE_STR, "zap", ip->currow + 1, instr->name);
+    auto drc = DialogBox::SimpleYesNo("Zap Instrument?", strbuf);
+    switch (drc)
+    {
+      case DialogBox::YES:
+        AskDeleteSample(ip);
+      break;
+      case DialogBox::NO:
+      default:
+        return -1;
+    }
+  }
+
+  *instr = Instrument();
   return 0;
 }

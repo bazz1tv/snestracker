@@ -17,8 +17,6 @@ SampleEditor::SampleEditor() :
   finetune_decbtn("-", decfinetune, this, true)
 {
   /* Disable not-yet-supported features */
-  loop_incbtn.enabled = false;
-  loop_decbtn.enabled = false;
   finetune_incbtn.enabled = false;
   finetune_decbtn.enabled = false;
 }
@@ -49,6 +47,11 @@ void SampleEditor :: set_coords(int x, int y)
    * F.Tune +000 +-*/
 
   int yy = y;
+
+  this->x = x;
+  this->y = y;
+
+  y += CHAR_HEIGHT * 2;
 
 	loop_title.rect.x = x;
 	loop_title.rect.y = y;
@@ -85,8 +88,29 @@ void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
 	update_loop();
   update_finetune();
 
-	loop_title.draw(screen, Colors::nearblack);
-	loop_valtext.draw(screen, Colors::nearblack);
+  Uint32 present_color;
+  {
+    char tmpbuf[128];
+    Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
+    if (s->brr)
+    {
+      sprintf(tmpbuf, "BRR Size: $%04x  ", s->brrsize);
+      sdlfont_drawString(screen, x, y, tmpbuf);
+      present_color = Colors::white;
+      loop_incbtn.enabled = true;
+      loop_decbtn.enabled = true;
+    }
+    else
+    {
+      sdlfont_drawString(screen, x, y, "No Sample Loaded!");
+      present_color = Colors::nearblack;
+      loop_incbtn.enabled = false;
+      loop_decbtn.enabled = false;
+    }
+  }
+
+	loop_title.draw(screen, present_color);
+	loop_valtext.draw(screen, present_color);
 	loop_incbtn.draw(screen);
 	loop_decbtn.draw(screen);
 

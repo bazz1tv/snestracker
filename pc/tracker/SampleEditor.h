@@ -24,4 +24,6 @@ struct SampleEditor
 	Button finetune_incbtn, finetune_decbtn;
 	static int incfinetune(void *i);
 	static int decfinetune(void *i);
+private:
+	int x,y; // save coords of set_coords() for internal resizing
 };

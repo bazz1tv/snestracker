@@ -86,6 +86,57 @@ private:
   bool idx_loaded = false;
 };
 
+////////// STI INSTRUMENTS //////////////////////////////////////
+
+// Instrument File info
+//////////////////////////////////////////////////////////////////
+#define INSTRFILE_EXT "sti"
+
+#define INSTRFILE_VER_MAJOR 0
+#define INSTRFILE_VER_MINOR 0
+#define INSTRFILE_VER_MICRO 1
+// concats the 3 version values into a string
+#define INSTRFILE_VER_STRING(maj, min, mic) #maj "." #min "." #mic
+// allows calling the above macro with macro arguments
+#define INSTRFILE_VER_STRING2(maj, min, mic) INSTRFILE_VER_STRING(maj, min, mic)
+// The final actual "public" macro for a version string
+#define INSTRFILE_VERSION INSTRFILE_VER_STRING2(INSTRFILE_VER_MAJOR, INSTRFILE_VER_MINOR, INSTRFILE_VER_MICRO)
+//////////////////////////////////////////////////////////////////
+
+struct Sample;
+class SampleChunkLoader;
+class InstrumentFileLoader
+{
+public:
+  static const char constexpr HeaderStr[] = "STInst";
+  STATIC_HEADER_CHECK(HeaderStr, FILE_HEADER_LEN);
+
+  InstrumentFileLoader(Instrument *instrument, Sample *sample);
+  ~InstrumentFileLoader();
+
+  enum ret_t {
+    HEADER_OK=0,
+//    HEADER_OLD,
+    HEADER_BAD,
+    FILE_LOADED,
+    FILE_NOT_LOADED,
+  };
+
+  size_t save(SDL_RWops *file);
+  ret_t load(SDL_RWops *file);
+
+private:
+  ret_t readHeader(SDL_RWops *file);
+
+/* Here lies a collection of subclassed FileLoaders that are associated with
+ * this file type. */
+  VersionChunkLoader *vcl;
+  SampleChunkLoader *scl;
+  InstrumentChunkLoader *icl;
+
+  Instrument *instrument;
+};
+
 
 struct Sample_Panel;
 /* That defined the Data model above. Now time to get that into a view */

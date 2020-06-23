@@ -42,6 +42,9 @@ struct Sample
 	void dec_loop();
 	void inc_finetune();
 	void dec_finetune();
+
+  bool identical(const Brr *brr);
+  void clear();
 };
 
 /* Used for loading / storing sample data and metadata as chunks from/to a file. */
@@ -65,6 +68,8 @@ public:
     tune,
     NUM_SUBCHUNKIDS
   };
+
+  int instr_srcn;
 private:
   struct Sample *samples;
   bool ignoreSongMeta;
