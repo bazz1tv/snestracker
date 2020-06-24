@@ -24,7 +24,6 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
   - script: |
-      sudo apt -o Acquire::https::No-Cache=True -o Acquire::http::No-Cache=True update && \
       sudo apt-get install -y libasound2-dev libsdl2-dev \
       libboost-filesystem-dev libgtk2.0-dev cmake
     displayName: 'deps'
@@ -37,7 +36,6 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
   - script: |
-      sudo apt -o Acquire::https::No-Cache=True -o Acquire::http::No-Cache=True update && \
       sudo apt-get install -y cmake mingw-w64 pkg-config
     displayName: 'deps'
   - script: |
