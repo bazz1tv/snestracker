@@ -24,7 +24,8 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
   - script: |
-      sudo apt-get update && sudo apt-get install -y libasound2-dev libsdl2-dev \
+      sudo apt -o Acquire::https::No-Cache=True -o Acquire::http::No-Cache=True update && \
+      sudo apt-get install -y libasound2-dev libsdl2-dev \
       libboost-filesystem-dev libgtk2.0-dev cmake
     displayName: 'deps'
   - script: ./build-submodules.sh
@@ -36,7 +37,8 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:
   - script: |
-      sudo apt-get update && sudo apt-get install -y cmake mingw-w64 pkg-config
+      sudo apt -o Acquire::https::No-Cache=True -o Acquire::http::No-Cache=True update && \
+      sudo apt-get install -y cmake mingw-w64 pkg-config
     displayName: 'deps'
   - script: |
       wget http://libsdl.org/release/SDL2-2.0.12.tar.gz
