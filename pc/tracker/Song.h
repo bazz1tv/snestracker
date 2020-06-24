@@ -17,7 +17,7 @@ otherwise noted.
 
 The following field starts the file
 
-"STSONG"   -- file magic header string. 6 bytes. not null terminated
+"STSong"   -- file magic header string. 6 bytes. not null terminated
 
 The rest of the data is organized into chunks. Each chunk of data is comprised of
 a 1-byte ID, a 16-bit length field, followed by the actual data corresponding to
@@ -57,15 +57,15 @@ SongSettings Chunk
 
 Sample Chunk
   songmeta
-    index       -- 1 byte, the index this sample belongs to (songs only, will ignore for STI)
+    index       -- 1 byte, the index this sample belongs to
     [EXTENDABLE]
+  brr
+    raw sample data
   coreinfo
     rel_loop    -- 2 bytes, the relative offset of loop start
     [EXTENDABLE]
   name
     non-null terminated string of sample name
-  brr
-    raw sample data
   tune
     finetune        -- 1 byte (impl TODO)
     semitone_offset -- 1 byte (impl TODO) (REMOVABLE)
@@ -74,8 +74,8 @@ Sample Chunk
 
 Instrument Chunk
   songmeta
-    index       -- 1 byte, the index this instrument belongs (songs only, will ignore for STI)
-    srcn        -- 1 byte, the sample number connected to this instrument (songs only, will ignore for STI)
+    index       -- 1 byte, the index this instrument belongs
+    srcn        -- 1 byte, the sample number connected to this instrument
     [EXTENDABLE]
   coreinfo
     vol         -- 1 byte, volume
@@ -98,7 +98,7 @@ Pattern Chunk
       track type  -- allows to specify different kinds of tracks. Currently only "voice" is valid (0)
       index       -- track index (0-7)
     Data
-      Compressed PatternRow data (This should be versioned! TODO)
+      Compressed PatternRow data (when this data format is updated, update the Song version number)
     [EXTENDABLE]
   [EXTENDABLE]
 

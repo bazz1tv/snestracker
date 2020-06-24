@@ -87,6 +87,66 @@ private:
 };
 
 ////////// STI INSTRUMENTS //////////////////////////////////////
+/* Instrument File Format
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It uses the same structures and routines invented for the Song File Format (Song.h)
+Basically it is the same format, just with the removal of unneeded chunks and
+songmeta subchunks.
+
+All integers spanning more than 1 byte are stored little-endian unless
+otherwise noted.
+
+The following field starts the file
+
+"STInst"   -- file magic header string. 6 bytes. not null terminated
+
+The rest of the data is organized into chunks. Each chunk of data is comprised of
+a 1-byte ID, a 16-bit length field, followed by the actual data corresponding to
+that ID. The length field describes the length of data that comes immediately after it.
+
+There are times when the ordering of chunks is important.
+Currently the Version chunk must come immediately after the file header string.
+And, the Sample brr subchunk must be first.
+The order presented below is the only supported ordering.
+
+Version Chunk
+  coreinfo
+    Song file version. 3 16-bit unsigned integers (Form into major.minor.micro)
+    App version. The version of snestracker that saved this file. Same format as previous.
+    [EXTENDABLE]
+  commithash
+    TODO
+    [EXTENDABLE]
+  [EXTENDABLE]
+
+Sample Chunk
+  brr
+    raw sample data
+  coreinfo
+    rel_loop    -- 2 bytes, the relative offset of loop start
+    [EXTENDABLE]
+  name
+    non-null terminated string of sample name
+  tune
+    finetune        -- 1 byte (impl TODO)
+    semitone_offset -- 1 byte (impl TODO) (REMOVABLE)
+    [EXTENDABLE]
+  [EXTENDABLE]
+
+Instrument Chunk
+  coreinfo
+    vol         -- 1 byte, volume
+    pan         -- 1 byte (impl TODO)
+    adsr        -- 2 bytes, hardware ADSR envelope setting
+    [EXTENDABLE]
+  name
+    non-null terminated string of instrument name
+  tune
+    finetune        -- 1 byte (impl TODO)
+    [EXTENDABLE]
+  [EXTENDABLE]
+*/
 
 // Instrument File info
 //////////////////////////////////////////////////////////////////

@@ -197,6 +197,7 @@ OBJCFLAGS += $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
 CPPSOURCES_SHARED = $(wildcard $(SHARED_DIR)*.cpp) $(wildcard $(SHARED_DIR)*/*.cpp)\
 										$(wildcard $(SHARED_DIR)*/*/*.cpp)\
 
+# The Tracker cpp files here are so std can rip to STI file format
 CPPSOURCES_DEBUGGER = $(CPPSOURCES) $(CPPSOURCES_SHARED) \
 $(wildcard debugger/*.cpp) $(wildcard debugger/*/*.cpp) \
 $(wildcard debugger/*/*/*.cpp) tracker/Instruments.cpp tracker/Samples.cpp tracker/ChunkLoader.cpp \
