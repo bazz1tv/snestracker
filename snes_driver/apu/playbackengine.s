@@ -333,12 +333,8 @@ StopSong:
 __ret:
   ret
 
-; assuming the tick setting for 120BPM, spd 6 is A7
-; truthfully I think the KOFF wait time could be less than A7, but I am
-; really not interested in using a second timer. What could be done is
-; using one timer at a tick speed that is a multiple faster than the
-; requested tick speed
-.define post_koff_wait_time ($A7 * 1)
+; KOF time is ~8ms, which is $40 ticks of main timers.
+.define post_koff_wait_time ($40 * 1)
 ; I like the sound of 1 tick @ 120 BPM, spd 6. So figure out how much time
 ; that is and get that same amount of time across different BPM and SPD
 ; settings
@@ -354,6 +350,9 @@ calc_kofftick:
   mov y, #>post_koff_wait_time
   mov a, #<post_koff_wait_time
 	div ya, x
+  bne @notzero
+  inc a    ; necessary pad since lowest spd value "processed" is 1
+@notzero:
 	; answer is in a, but we might want to add a tick based on rounding the
 	; remainder. do a rough check of remainder/2
 	cmp y, l ; (remainder - (ticks / 2))
@@ -580,8 +579,9 @@ _incyret1:
 readahead:
   mov a, inc_to_patlen
   inc a
-  cbne patternlen_rows, @ret
-
+  cbne patternlen_rows, +
+  ret
++
   mov y, #0
 ; do a readahead to see if we need to mark KOFF
   mov a, rlecounters + x
