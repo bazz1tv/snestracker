@@ -1043,7 +1043,7 @@ int PatternEditorPanel::VISIBLE_ROWS = PatternEditorPanel::MAX_VISIBLE_ROWS;
 PatternEditorPanel::PatternEditorPanel(PatSeqPanel *psp,
   Instrument_Panel *ip) :
     //VISIBLE_ROWS(MAX_VISIBLE_ROWS),
-    cur_track(0), cur_octave(4), recording(0), addval(0),
+    cur_track(0), cur_octave(4), recording(0), addval(1),
     move_like_addval(0), pattern_wrap(1),
     psp(psp), ip(ip)
 {
