@@ -312,6 +312,11 @@ size_t SampleChunkLoader::save(SDL_RWops *file, int i)
     write(file, &i, 1, 1, &chunklen); // write sample index (only 1 byt, &chunklene)
   }
 
+  /* It is very important that the BRR chunk be the very first chunk after the
+  optional first songmeta chunk. This is because when there is no songmeta chunk
+  (STI instruments), the idx will not be retrieved from a songmeta chunk. Instead,
+  the idx is calculated from the brr-chunk handling code. Although it would be
+  easy to not have this order requirement, it's easier to have it xD. */
   DEBUGLOG("\t\tSubChunkID::brr\n");
   byte = SubChunkID::brr;
   write(file, &byte, 1, 1, &chunklen);
