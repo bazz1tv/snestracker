@@ -199,7 +199,8 @@ CPPSOURCES_SHARED = $(wildcard $(SHARED_DIR)*.cpp) $(wildcard $(SHARED_DIR)*/*.c
 
 CPPSOURCES_DEBUGGER = $(CPPSOURCES) $(CPPSOURCES_SHARED) \
 $(wildcard debugger/*.cpp) $(wildcard debugger/*/*.cpp) \
-$(wildcard debugger/*/*/*.cpp)
+$(wildcard debugger/*/*/*.cpp) tracker/Instruments.cpp tracker/Samples.cpp tracker/ChunkLoader.cpp \
+tracker/PanelCommon.cpp
 											 
 CPPSOURCES_TRACKER = $(CPPSOURCES) $(CPPSOURCES_SHARED) \
 $(wildcard tracker/*.cpp) $(wildcard tracker/*/*.cpp) \

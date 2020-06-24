@@ -54,8 +54,17 @@ int BrrContextMenu::receive_event(const SDL_Event &ev)
 }
 
 #include "gme/player/Music_Player.h"
-void BrrContextMenu::update( uint16_t brr_addr )
+#include "tracker/Samples.h"
+#include "tracker/Instruments.h"
+#include "SdlNfd.h"
+struct STIContainer
 {
+	uint16_t brr_addr, brr_loop_addr;
+	uint8_t adsr1, adsr2;
+};
+void BrrContextMenu::update( uint16_t brr_addr, uint16_t brr_loop_addr )
+{
+  static STIContainer stic; // a container for some data for STI
   // update the addresses of those BRR fields
   for (int i = 0; i < SIZEOF_MENU; i++)
     menu_items[i].clickable_text.data = (void *) brr_addr;
@@ -81,7 +90,11 @@ void BrrContextMenu::update( uint16_t brr_addr )
       menu_items[PLAYSAMPLE].is_visible = true;
       menu_items[PLAYSAMPLE].clickable_text.data = (void *) ( (solo << 16) | brr_addr );*/
       menu_items[RIPSTI].is_visible = true;
-      menu_items[RIPSTI].clickable_text.data = (void *) ( (adsr2 << 24) | (adsr1 << 16) | brr_addr );
+      stic.brr_addr = brr_addr;
+      stic.brr_loop_addr = brr_loop_addr;
+      stic.adsr1 = adsr1;
+      stic.adsr2 = adsr2;
+      menu_items[RIPSTI].clickable_text.data = (void *) &stic;
     }
 }
 
@@ -108,12 +121,31 @@ int BrrContextMenu::write_brr_to_file_callback(void *data)
 
 int BrrContextMenu::write_sti_to_file_callback(void *data)
 {
-	uintptr_t voice_addr = (uintptr_t) data;
-	uint8_t adsr1 = voice_addr >> 16;
-  uint8_t adsr2 = voice_addr >> 24;
-	uint16_t addr = voice_addr & 0xffff;
+	STIContainer *stic = (STIContainer *) data;
 
-	DEBUGLOG("adsr1: $%02x, adsr2: $%02x, addr: %04x\n", adsr1, adsr2, addr);
+	DEBUGLOG("adsr1: $%02x, adsr2: $%02x, brr_addr: %04x, brr_loop_addr: %04X\n",
+		stic->adsr1, stic->adsr2, stic->brr_addr, stic->brr_loop_addr);
+
+	Instrument instr;
+	Sample sample;
+
+	strncpy(instr.name, "STD Rip", INSTR_NAME_MAXLEN);
+	instr.adsr.adsr1 = stic->adsr1;
+	instr.adsr.adsr2 = stic->adsr2;
+
+	strncpy(sample.name, "STD Rip", INSTR_NAME_MAXLEN);
+	sample.brr = (Brr *) &::IAPURAM[stic->brr_addr];
+	sample.brrsize = get_brr_size(sample.brr);
+	sample.rel_loop = stic->brr_loop_addr - stic->brr_addr;
+
+	if (SdlNfd::get_file_handle("w", INSTRFILE_EXT) == NFD_OKAY)
+	{
+		DEBUGLOG("\tinstrument path:%s\n", SdlNfd::outPath);
+		InstrumentFileLoader ifl(&instr, &sample);
+		ifl.save(SdlNfd::file);
+	}
+
+	sample.brr = NULL; // stop destructor from freeing that mem
 }
 
 #include "BaseD.h"

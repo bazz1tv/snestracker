@@ -46,7 +46,7 @@ void Main_Memory_Area::spawnbrrcontextmenu(int x, int y)
 			break;
 	}
 
-  ::brrcontext.update(brr_start);
+  ::brrcontext.update(brr_start, brr_loop_start);
 	::brrcontext.menu.preload(x, y);
 	::brrcontext.menu.activate();
 }
