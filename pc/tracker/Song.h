@@ -115,7 +115,7 @@ Pattern Sequencer Chunk
 
 // Song File info
 //////////////////////////////////////////////////////////////////
-#define SONGFILE_EXT "stp"
+#define SONGFILE_EXT "sts,stp"
 
 #define SONGFILE_VER_MAJOR 0
 #define SONGFILE_VER_MINOR 1
