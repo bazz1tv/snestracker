@@ -65,11 +65,17 @@ void Audio::Devices::query()
     DEBUGLOG("no audio out devices found: %s\n", SDL_GetError());
     exit(1);
   }
+  Devices::how_many++; // Add "System Default", which is virtual
   DEBUGLOG("num audio devices: %d\n", Devices::how_many);
   device_strings = (char**) SDL_malloc(sizeof(char*) * Devices::how_many);
-  for (int i = 0; i < Devices::how_many; ++i)
+
+  device_strings[0] = (char*) SDL_malloc(sizeof(char) * (sizeof("System Default")+1));
+  strcpy(device_strings[0], "System Default");
+  printf("Audio device %d: %s\n", 0, device_strings[0]);
+
+  for (int i = 1; i < Devices::how_many; ++i)
   {
-    const char *audio_device_name = SDL_GetAudioDeviceName(i, Devices::Type::playback);
+    const char *audio_device_name = SDL_GetAudioDeviceName(i - 1, Devices::Type::playback);
     printf("Audio device %d: %s\n", i, audio_device_name);
     device_strings[i] = (char*) SDL_malloc(sizeof(char) * (strlen(audio_device_name)+1));
     strcpy(device_strings[i], audio_device_name);
