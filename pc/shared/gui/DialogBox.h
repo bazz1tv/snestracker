@@ -8,11 +8,13 @@ the tracker to start playing. Similar issue as experienced in SdlNfd. FIX IT! */
 namespace DialogBox
 {
   enum ret_t {
+    ERROR=-1,
     YES=0,
     NO,
-    ERROR,
   };
 
+  int Custom(const char *title, const char *msg, int numButtons,
+                    const char **buttonText, int defaultButton=0);
   ret_t SimpleYesNo(const char *title, const char *msg, bool defaultYes=true);
 
   enum Simple {
