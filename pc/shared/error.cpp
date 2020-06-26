@@ -1,6 +1,7 @@
 #include "SDL.h"
 #include "Render.h"
-//extern SDL_Window *sdlWindow;
+#include "gui/DialogBox.h"
+
 void handle_error( const char* error )
 {
   if ( error )
@@ -9,16 +10,8 @@ void handle_error( const char* error )
     char str [256];
     sprintf( str, "Error: %s", error );
     fprintf( stderr, "Error: %s", error );
-    SDL_SetWindowTitle(::render->sdlWindow, str);
     
-    // wait for keyboard or mouse activity
-    SDL_Event e;
-    do
-    {
-      while ( !SDL_PollEvent( &e ) ) { }
-    }
-    while ( e.type != SDL_QUIT && e.type != SDL_KEYDOWN && e.type != SDL_MOUSEBUTTONDOWN );
-
+    DialogBox::SimpleOK("Critical Error", str, DialogBox::Simple::ERR);
     exit( EXIT_FAILURE );
   }
 }
