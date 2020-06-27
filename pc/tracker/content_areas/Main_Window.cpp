@@ -217,7 +217,7 @@ void Main_Window::draw_memory_outline()
 void Main_Window::one_time_draw()
 {
   // draw one-time stuff
-  SDL_FillRect(::render->screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
+  //SDL_FillRect(::render->screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
   song_title_label.draw(::render->screen);
 
   instrpanel.one_time_draw();
@@ -229,7 +229,7 @@ void Main_Window::one_time_draw()
 void Main_Window::draw()
 {
   time_cur = SDL_GetTicks();
-
+  one_time_draw(); // Draw these regularly so they don't disappear when refreshing shaders
   //sdlfont_drawString(::render->screen, MEMORY_VIEW_X, MEMORY_VIEW_Y-10, "spc memory:");
 
   // The following are correlated from i and tmp. DO NOT MESS WITH THAT
