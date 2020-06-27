@@ -42,7 +42,8 @@ jobs:
       wget http://libsdl.org/release/SDL2-2.0.12.tar.gz
       tar -zxf SDL2-2.0.12.tar.gz
       cd SDL2-2.0.12
-      ./configure --prefix=/usr/x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --enable-sdl2-config=no
+      ./configure --prefix=/usr/x86_64-w64-mingw32 --host=x86_64-w64-mingw32 \
+      --enable-sdl2-config=no --with-sysroot=/usr/x86_64-w64-mingw32/include
       make
       sudo make install
     displayName: 'sdl2'
