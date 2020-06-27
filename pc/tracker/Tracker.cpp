@@ -292,7 +292,7 @@ void Tracker::handle_events()
                   //  have a history of displayed windows.. and the last one should be raised.
 
                   sub_window_experience = NULL;
-                  //SDL_RaiseWindow(::render->::render->sdlWindow);
+                  SDL_RaiseWindow(::render->sdlWindow);
                   break;
                 }
               }
