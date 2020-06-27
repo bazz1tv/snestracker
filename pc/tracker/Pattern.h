@@ -5,6 +5,7 @@
 #include "gui/Clickable_Text.h"
 #include "gui/Button.h"
 #include <vector>
+#include "ChunkLoader.h"
 /* When a new Song is created. we need to perform a minimal SPC emulator
  * init and load the driver into SPC RAM. Then the user must be able to
  * get their BRR samples into the song. Then edit pattern data. Then play
@@ -115,6 +116,8 @@ struct Pattern
   } mem[MAX_TRACKS];*/
 };
 
+/* TODO: have PatternMeta inherit Pattern rather than own */
+
 // Pattern with sequencer meta data
 struct PatternMeta
 {
@@ -135,6 +138,38 @@ struct PatternSequencer
   // track-pattern rows. Like many other data types I have conjured, they
   // will need to later be converted to types that dynamically allocate
   // space. Or allocate max'es every time like is done now.
+};
+
+class PatternSequencerChunkLoader : public ChunkLoader
+{
+public:
+  PatternSequencerChunkLoader(struct PatternSequencer *patseq);
+  size_t load(SDL_RWops *file, size_t chunksize);
+  size_t save(SDL_RWops *file);
+
+  enum SubChunkID {
+    coreinfo=0,
+    Entries,
+    NUM_SUBCHUNKIDS
+  };
+//private:
+  struct PatternSequencer *patseq;
+};
+
+class PatternChunkLoader : public ChunkLoader
+{
+public:
+  PatternChunkLoader(struct PatternMeta *patterns);
+  size_t load(SDL_RWops *file, size_t chunksize);
+  size_t save(SDL_RWops *file);
+
+  enum SubChunkID {
+    coreinfo=0,
+    Track,
+    NUM_SUBCHUNKIDS
+  };
+private:
+  struct PatternMeta *patterns;
 };
 
 // GUI

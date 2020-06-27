@@ -1323,7 +1323,7 @@ int Dsp_Window::dir_rect_clicked(void *idx)
 
 	uint16_t cur_dir_index = dir_index + (index * 2);
 	DEBUGLOG("BRR addr: %04x, %04x\n", dir[cur_dir_index], dir[cur_dir_index + 1]);
-  ::brrcontext.update(dir[cur_dir_index]);
+  ::brrcontext.update(dir[cur_dir_index], dir[cur_dir_index + 1]);
 
 	::brrcontext.menu.preload(mouse::x, mouse::y);
 	::brrcontext.menu.activate();

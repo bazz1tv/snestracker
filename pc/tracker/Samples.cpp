@@ -13,7 +13,7 @@ const int Sample_Panel::NUM_ROWS;
 #define SAMPLE_NAME_GUI_CHAR_WIDTH 22
 
 Sample::Sample() : brr(NULL), brrsize(0), rel_loop(0), semitone_offset(0),
-  finetune(0)
+  finetune(0), loop(0)
 {
   name[0] = 0;
 }
@@ -52,6 +52,330 @@ void Sample::dec_finetune()
 		finetune--;
 }
 
+bool Sample::identical(const Brr *brr)
+{
+  bool match = false;
+  auto brrsize = get_brr_size(brr);
+  if (this->brrsize == brrsize)
+  {
+    match = true;
+
+    for (int i=0; this->brr[i].end == 0 && match == true; i++)
+    {
+      if (brr[i].end)
+        DEBUGLOG("Checking END BLock\n");
+
+      // Let's ignore the header because that data can change depending on whether
+      // looping is enabled
+
+      for (int y=0; y < 8; y++)
+      {
+        if (this->brr[i].samples[y] != brr[i].samples[y])
+        {
+          match = false;
+          break;
+        }
+      }
+    }
+  }
+
+  return match;
+}
+
+void Sample::clear()
+{
+  if (brr != NULL)
+    free(brr);
+
+  *this = Sample();
+}
+
+
+SampleChunkLoader::SampleChunkLoader(struct Sample *s, bool ignoreSongMeta/*=false*/) :
+  ChunkLoader(ChunkID::Sample), samples(s), ignoreSongMeta(ignoreSongMeta)
+{}
+
+#define SAMPLE_SONGMETA_SIZE sizeof(SampleChunkLoader::idx)
+#define SAMPLE_COREINFO_SIZE sizeof(Sample::rel_loop)
+#define SAMPLE_TUNE_SIZE sizeof(Sample::finetune) + sizeof(Sample::semitone_offset)
+
+size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
+{
+  size_t maxread = 0;
+
+  DEBUGLOG("SampleChunkLoader::load()\n");
+
+  /* Every time we encounter a sample in a song, we need to reload the idx */
+  if (!ignoreSongMeta)
+    idx_loaded = false;
+
+  while (maxread < chunksize)
+  {
+    uint8_t subchunkid;
+    uint16_t subchunksize;
+
+    //DEBUGLOG("maxread = %llu\n", maxread);
+
+    if (read(file, &subchunkid, 1, 1, &maxread) == 0)
+      break;
+    if (read(file, &subchunksize, 2, 1, &maxread) == 0)
+      break;
+
+    //DEBUGLOG("subchunksize = %llu\n", subchunksize);
+
+    switch (subchunkid)
+    {
+      case SubChunkID::songmeta:
+      {
+        DEBUGLOG("\tSubChunkID::songmeta\n");
+        size_t minimum_chunksize = SAMPLE_SONGMETA_SIZE;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        if (ignoreSongMeta)
+        {
+          DEBUGLOG("\t\tignoring...\n");
+          break;
+        }
+        read(file, &idx, 1, 1, &maxread);
+
+        DEBUGLOG("\t\tidx: %d\n", idx);
+
+        subchunksize -= SAMPLE_SONGMETA_SIZE;
+        idx_loaded = true;
+      }
+      break;
+      case SubChunkID::coreinfo:
+      {
+        DEBUGLOG("\tSubChunkID::coreinfo\n");
+        size_t minimum_chunksize = SAMPLE_COREINFO_SIZE;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        read(file, &samples[idx].rel_loop, 2, 1, &maxread);
+        subchunksize -= SAMPLE_COREINFO_SIZE;
+      }
+      break;
+      case SubChunkID::name:
+      {
+        DEBUGLOG("\tSubChunkID::name\n");
+        assert(idx_loaded);
+        size_t bytesread = ChunkLoader::read_str_from_file2(file, samples[idx].name, subchunksize, SAMPLE_NAME_MAXLEN);
+        subchunksize -= bytesread;
+        maxread += bytesread;
+      }
+      break;
+
+      case SubChunkID::brr:
+      {
+        DEBUGLOG("\tSubChunkID::brr\n");
+        assert(idx_loaded);
+        Brr *brr = (Brr *) malloc(subchunksize);
+
+        Sint64 nb_read_total = 0, nb_read = 1;
+        char* buf = (char *)brr;
+        while (nb_read_total < subchunksize) {
+          nb_read = SDL_RWread(file, buf, 1, (subchunksize - nb_read_total));
+          nb_read_total += nb_read;
+          buf += nb_read;
+        }
+        maxread += nb_read_total;
+
+        if (nb_read_total != subchunksize)
+        {
+          DEBUGLOG("\t\tError Reading Sample %d!?\n", idx);
+          DEBUGLOG("\t\tnb_read_total = %llu, subchunksize = %llu\n", nb_read_total, subchunksize);
+          free(brr);
+          break;
+        }
+
+        if (ignoreSongMeta)
+        {
+          /* When we load an instrument up, we need to check if this sample is already in a slot. */
+          // findIdentical()
+          for (int i=0; i < NUM_SAMPLES; i++)
+          {
+            if (samples[i].identical(brr))
+            {
+              // found a matching brr already in the sample table. free this copy
+              free(brr);
+              instr_srcn = i; // mark for the instrument file loader :O
+              // skip the rest of thos whole chunk and return
+              SDL_RWseek(file, chunksize - maxread, RW_SEEK_CUR);
+              return;
+            }
+          }
+
+          // not a match. Find the earliest blank slot
+          // findEmpty()
+          instr_srcn = -1;
+          for (int i=0; i < NUM_SAMPLES; i++)
+          {
+            if (samples[i].brr == NULL)
+            {
+              instr_srcn = i;
+              idx = i;
+              break;
+            }
+          }
+          if (instr_srcn == -1)
+          {
+            // skip the rest of thos whole chunk and return
+            SDL_RWseek(file, chunksize - maxread, RW_SEEK_CUR);
+            return;
+          }
+        }
+
+        struct Sample *s = &samples[idx];
+        if (s->brr != NULL)
+          free(s->brr);
+
+        s->brr = brr;
+        s->brrsize = subchunksize;
+        subchunksize -= nb_read_total;
+
+        Brr *lastblock = (Brr *) &(((uint8_t *)(brr))[s->brrsize - sizeof(Brr)]);
+        s->loop = lastblock->loop ? true : false;
+      }
+      break;
+      case SubChunkID::tune:
+      {
+        DEBUGLOG("\tSubChunkID::tune\n");
+        size_t minimum_chunksize = SAMPLE_TUNE_SIZE;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        read(file, &samples[idx].finetune, 1, 1, &maxread);
+        read(file, &samples[idx].semitone_offset, 1, 1, &maxread);
+
+        subchunksize -= SAMPLE_TUNE_SIZE;
+      }
+      break;
+      default:
+        DEBUGLOG("\tUnknown SubChunkID: %d. skipping over..\n", subchunkid);
+      break;
+    }
+
+    /* Skip the unrecognized part of the chunk */
+    if (subchunksize)
+    {
+      DEBUGLOG("\tskipping past %d unknown bytes of chunk\n", subchunksize);
+      SDL_RWseek(file, subchunksize, RW_SEEK_CUR);
+      maxread += subchunksize;
+    }
+  }
+}
+
+size_t SampleChunkLoader::save(SDL_RWops *file, int i)
+{
+  uint8_t byte;
+  uint16_t word;
+  uint16_t chunklen = 0;
+  Sint64 chunksize_location, chunkend_location;
+  DEBUGLOG("SampleChunkLoader::save()\n");
+
+  DEBUGLOG("\tsample #%d, Writing top-level chunkid: %d\n", i, chunkid);
+
+  byte = chunkid;
+  SDL_RWwrite(file, &byte, 1, 1);
+  chunksize_location = SDL_RWtell(file);
+  SDL_RWwrite(file, &chunklen, 2, 1);
+
+  if (ignoreSongMeta == false)
+  {
+    DEBUGLOG("\t\tSubChunkID::songmeta\n");
+    byte = SubChunkID::songmeta;
+    write(file, &byte, 1, 1, &chunklen);
+    word = SAMPLE_SONGMETA_SIZE; // we know the length in advance
+    write(file, &word, 2, 1, &chunklen);
+    write(file, &i, 1, 1, &chunklen); // write sample index (only 1 byt, &chunklene)
+  }
+
+  /* It is very important that the BRR chunk be the very first chunk after the
+  optional first songmeta chunk. This is because when there is no songmeta chunk
+  (STI instruments), the idx will not be retrieved from a songmeta chunk. Instead,
+  the idx is calculated from the brr-chunk handling code. Although it would be
+  easy to not have this order requirement, it's easier to have it xD. */
+  DEBUGLOG("\t\tSubChunkID::brr\n");
+  byte = SubChunkID::brr;
+  write(file, &byte, 1, 1, &chunklen);
+  word = samples[i].brrsize;
+  write(file, &word, 2, 1, &chunklen);
+  write(file, samples[i].brr, word, 1, &chunklen);
+
+  DEBUGLOG("\t\tSubChunkID::coreinfo\n");
+  byte = SubChunkID::coreinfo;
+  write(file, &byte, 1, 1, &chunklen);
+  word = SAMPLE_COREINFO_SIZE; // we know the length in advance
+  write(file, &word, 2, 1, &chunklen);
+  write(file, &samples[i].rel_loop, 2, 1, &chunklen);
+
+  byte = SubChunkID::name;
+  write(file, &byte, 1, 1, &chunklen);
+  word = strlen(samples[i].name);
+  if (word > 0)
+  {
+    DEBUGLOG("\t\tSubChunkID::name\n");
+    write(file, &word, 2, 1, &chunklen);
+    write(file, samples[i].name,  word, 1, &chunklen);
+  }
+
+  DEBUGLOG("\t\tSubChunkID::tune\n");
+  byte = SubChunkID::tune;
+  write(file, &byte, 1, 1, &chunklen);
+  word = SAMPLE_TUNE_SIZE; // we know the length in advance
+  write(file, &word, 2, 1, &chunklen);
+  write(file, &samples[i].finetune, sizeof(Sample::finetune), 1, &chunklen);
+  write(file, &samples[i].semitone_offset, sizeof(Sample::semitone_offset), 1, &chunklen);
+
+  DEBUGLOG("\tWriting chunksize\n");
+  chunkend_location = SDL_RWtell(file);
+  SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
+  SDL_RWwrite(file, &chunklen, 2, 1);
+
+  SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
+}
+
+size_t SampleChunkLoader::save(SDL_RWops *file)
+{
+  DEBUGLOG("SampleChunkLoader::save() (all)\n");
+  for (uint16_t i=0; i < NUM_SAMPLES; i++)
+  {
+    if (samples[i].brr != NULL)
+      save(file, i);
+  }
+}
+
+size_t SampleChunkLoader::save(SDL_RWops *file, struct Sample *s)
+{
+  struct Sample *backup = samples;
+  samples = s;
+  save(file, 0);
+  samples = backup;
+}
+
+
 Sample_Panel::Sample_Panel(Sample* samples) :
   title("Samples:"),
   loadbtn("Load", Sample_Panel::load, this),
@@ -60,8 +384,7 @@ Sample_Panel::Sample_Panel(Sample* samples) :
 	samples(samples)
 {
   /* Disable unimpl'd buttons */
-  savebtn.enabled = false;
-  clearbtn.enabled = false;
+  //clearbtn.enabled = false;
 }
 
 Sample_Panel::~Sample_Panel()
@@ -331,6 +654,8 @@ void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   }
 }
 
+#include "gui/DialogBox.h"
+#define OVERWRITE_STR "Do you really want to %s this sample?\n\n sample #%02d, \"%s\""
 using namespace SdlNfd;
 /* In these following functions, we need an core instruments handle, and
  * the index into that table. Can get that through the Sample_Panel.
@@ -341,6 +666,21 @@ int Sample_Panel::load(void *spanel)
   Sample *s = &sp->samples[sp->currow];
 
   fprintf(stderr, "Sample_Panel::LOAD\n");
+
+  if (s->brr != NULL)
+  {
+    char strbuf[100];
+    sprintf(strbuf, OVERWRITE_STR, "overwrite", sp->currow, s->name);
+    auto drc = DialogBox::SimpleYesNo("Overwrite Sample?", strbuf);
+    switch (drc)
+    {
+      case DialogBox::YES:
+      break;
+      case DialogBox::NO:
+      default:
+        return -1;
+    }
+  }
 
   if (SdlNfd::get_file_handle("r", "brr") == NFD_OKAY)
   {
@@ -382,10 +722,35 @@ int Sample_Panel::load(void *spanel)
   return 0;
 }
 
+#include "gui/DialogBox.h"
+
 int Sample_Panel::save(void *spanel)
 {
   Sample_Panel *sp = (Sample_Panel *)spanel;
   fprintf(stderr, "Sample_Panel::SAVE\n");
+
+  Sample *s = &sp->samples[sp->currow];
+
+  if (s->brr == NULL/* || sample->brrsize == 0*/)
+  {
+    DialogBox::SimpleOK("No Sample data", "Please load a sample first");
+    return -1;
+  }
+
+  if (SdlNfd::get_file_handle("w", "brr") == NFD_OKAY)
+  {
+    DEBUGLOG("\tsample path:%s\n", outPath);
+
+    Sint64 nb = 0;
+    nb = SDL_RWwrite(file, (char *)s->brr, 1, s->brrsize);
+
+    if (nb != s->brrsize)
+    {
+      DEBUGLOG("\tCould not fully write BRR Data!\n");
+      return -1;
+    }
+  }
+
   return 0;
 }
 
@@ -393,5 +758,25 @@ int Sample_Panel::clear(void *spanel)
 {
   Sample_Panel *sp = (Sample_Panel *)spanel;
   fprintf(stderr, "Sample_Panel::CLEAR\n");
+
+  Sample *s = &sp->samples[sp->currow];
+
+  if (s->brr != NULL)
+  {
+    char strbuf[100];
+    sprintf(strbuf, OVERWRITE_STR, "clear", sp->currow, s->name);
+    auto drc = DialogBox::SimpleYesNo("Clear Sample?", strbuf);
+    switch (drc)
+    {
+      case DialogBox::YES:
+      break;
+      case DialogBox::NO:
+      default:
+        return -1;
+    }
+  }
+
+  s->clear();
+
   return 0;
 }

@@ -2,6 +2,7 @@
 
 #include "shared/gui/Text.h"
 #include "shared/gui/Button.h"
+#include "ChunkLoader.h"
 
 /* This is a graphical panel to set song-wide volume settings, and who
  * knows what might get thrown in here along the way */
@@ -37,9 +38,12 @@
 struct SongSettings
 {
   SongSettings();
-  uint8_t mvol = 0x40, evol = 0x06;
-  uint8_t edl = 0x05, efb = 0x40;
-  uint8_t fir[8] = { 0x7f, 0, 0, 0, 0, 0, 0, 0 };
+  void setdefault_songtitle();
+  void setdefault_volandecho();
+  void setdefault_fir();
+  uint8_t mvol, evol;
+  uint8_t edl, efb;
+  uint8_t fir[8];
 
   static const constexpr unsigned int SONGTITLE_SIZE = 22;
   char song_title_str[SONGTITLE_SIZE];
@@ -64,6 +68,23 @@ struct SongSettings
   // Allow wrapping for EFB
   void inc_efb();
   void dec_efb();
+};
+
+class SongSettingsChunkLoader : public ChunkLoader
+{
+public:
+  SongSettingsChunkLoader(struct SongSettings *ss);
+  size_t load(SDL_RWops *file, size_t chunksize);
+  size_t save(SDL_RWops *file);
+
+  enum SubChunkID {
+    songtitle=0,
+    bpmspd,
+    volandecho,
+    NUM_SUBCHUNKIDS
+  };
+private:
+  struct SongSettings *songsettings;
 };
 
 struct SongSettingsPanel

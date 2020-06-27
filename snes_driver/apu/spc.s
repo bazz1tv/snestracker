@@ -72,10 +72,9 @@ MAIN:
 	asl a	; * 8 (will represent $800 increments)
 	mov x, a
 	mov a, y ; #0
-	inc y ; #1
 	mov y, #$88; min esa_val
 	movw hl, ya
-	mov y, a
+	mov y, a ; y = 0
 -	mov [hl] + y, a
 	dbnz y, -
 	inc h

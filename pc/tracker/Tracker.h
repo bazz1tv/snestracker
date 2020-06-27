@@ -25,6 +25,8 @@
 
 #include "shared/fps.h"
 
+#include "Song.h"
+
 class SpcReport : public Spc_Report
 {
 public:
@@ -55,10 +57,7 @@ public:
 	TrackerApuRam *apuram;
   /* TRACKER CORE -- Here is located the "model" data structures, not GUI
    * */
-	Sample samples[NUM_SAMPLES];
-  Instrument instruments[NUM_INSTR];
-  PatternSequencer patseq;
-  SongSettings songsettings;
+	Song song;
 
 /* The Main_Window, particularly, uses Tracker Core components to
  * initialize certain GUI elements, so we need to ensure that the

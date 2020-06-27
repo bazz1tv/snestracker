@@ -197,9 +197,11 @@ OBJCFLAGS += $(gme_CPPFLAGS) $(debugger_CPPFLAGS) -MMD -MP
 CPPSOURCES_SHARED = $(wildcard $(SHARED_DIR)*.cpp) $(wildcard $(SHARED_DIR)*/*.cpp)\
 										$(wildcard $(SHARED_DIR)*/*/*.cpp)\
 
+# The Tracker cpp files here are so std can rip to STI file format
 CPPSOURCES_DEBUGGER = $(CPPSOURCES) $(CPPSOURCES_SHARED) \
 $(wildcard debugger/*.cpp) $(wildcard debugger/*/*.cpp) \
-$(wildcard debugger/*/*/*.cpp)
+$(wildcard debugger/*/*/*.cpp) tracker/Instruments.cpp tracker/Samples.cpp tracker/ChunkLoader.cpp \
+tracker/PanelCommon.cpp
 											 
 CPPSOURCES_TRACKER = $(CPPSOURCES) $(CPPSOURCES_SHARED) \
 $(wildcard tracker/*.cpp) $(wildcard tracker/*/*.cpp) \
@@ -221,7 +223,7 @@ all: $(global_requirements)
 $(DEP_DEBUGGER) $(OBJECTS_DEBUGGER2): CPPFLAGS += $(debugger_CPPFLAGS)
 $(DEP_TRACKER) $(OBJECTS_TRACKER2): CPPFLAGS += $(tracker_CPPFLAGS)
 
-$(BIN)/$(EXECUTABLE_DEBUGGER).app: $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
+$(BIN)/$(EXECUTABLE_DEBUGGER).app: Info.plist osx_ship.sh $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
 	mkdir -p $@ $@/Contents/Lib $@/Contents/Resources $@/Contents/MacOS
 	cp $(BIN)/$(EXECUTABLE_DEBUGGER) $@/Contents/MacOS
 	cp Info.plist $@/Contents
@@ -231,7 +233,7 @@ $(BIN)/$(EXECUTABLE_DEBUGGER).app: $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(UNRAR)
 	bash ./osx_ship.sh $@ $(EXECUTABLE_DEBUGGER) $@/Contents/Lib
 	touch $@
 
-$(BIN)/$(EXECUTABLE_TRACKER).app: $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
+$(BIN)/$(EXECUTABLE_TRACKER).app: Info.plist osx_ship.sh $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
 	mkdir -p $@ $@/Contents/Lib $@/Contents/Resources $@/Contents/MacOS
 	cp $(BIN)/$(EXECUTABLE_TRACKER) $@/Contents/MacOS
 	cp Info.plist $@/Contents

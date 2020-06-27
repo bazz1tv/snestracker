@@ -22,7 +22,7 @@ struct BrrContextMenu
 
 	int receive_event(const SDL_Event &ev);
 
-  void update( uint16_t brr_addr );
+  void update( uint16_t brr_addr, uint16_t brr_loop_addr );
 
 	Context_Menu menu;
 	Context_Menu_Item menu_items[SIZEOF_MENU+1] = 
@@ -49,7 +49,7 @@ struct BrrContextMenu
 		 * this, BRR+ may seem a waste but it is a way to more simply
 		 * communicate BRR detail that is not only SNES Tracker data. */
 		{"RIP BRR",true, &write_brr_to_file_callback, NULL},
-		{"Rip STI",true, &write_sti_to_file_callback, NULL, false},
+		{"Rip STI",true, &write_sti_to_file_callback, NULL},
 		{"",false, NULL,NULL}
 	};
 

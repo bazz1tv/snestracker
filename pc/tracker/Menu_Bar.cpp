@@ -51,20 +51,19 @@ void Menu_Bar::draw(SDL_Surface *screen)
 int Menu_Bar::File_Context::new_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
-	if (fc->filepath)
-		fc->filepath[0] = 0;
+	fc->filepath[0] = 0;
 
 	::tracker->reset();
-	::tracker->patseq.num_entries = 1;
-	::tracker->patseq.sequence[0] = 0;
-	::tracker->patseq.patterns[0].used = 1;
+	::tracker->song.patseq.num_entries = 1;
+	::tracker->song.patseq.sequence[0] = 0;
+	::tracker->song.patseq.patterns[0].used = 1;
 }
 
 int Menu_Bar::File_Context::open_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
 	/* Open the file */
-	nfdresult_t rc = SdlNfd::get_file_handle("r", "stp");
+	nfdresult_t rc = SdlNfd::get_file_handle("r", SONGFILE_EXT);
 	if (rc != NFD_OKAY)
 		return rc;
 
@@ -107,7 +106,7 @@ int Menu_Bar::File_Context::save_song(void *data)
 
 	if (fc->filepath[0] == 0)
 	{
-		if (SdlNfd::get_file_handle("w", "stp") != NFD_OKAY)
+		if (SdlNfd::get_file_handle("w", SONGFILE_EXT) != NFD_OKAY)
 			return -1;
 
     DEBUGLOG("attempting to save to new file: %s\n", SdlNfd::outPath);
@@ -141,7 +140,7 @@ int Menu_Bar::File_Context::save_as_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
 
-	if (SdlNfd::get_file_handle("w", "stp") != NFD_OKAY)
+	if (SdlNfd::get_file_handle("w", SONGFILE_EXT) != NFD_OKAY)
     return -1;
 
   DEBUGLOG("attempting to save to new file: %s\n", SdlNfd::outPath);
@@ -261,6 +260,7 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y,
   return false;
 }
 
+#include "kbd.h"
 int Menu_Bar::receive_event(SDL_Event &ev)
 { 
   int r;
@@ -271,6 +271,22 @@ int Menu_Bar::receive_event(SDL_Event &ev)
     {
       bool r = false; //tabs.check_mouse_and_execute(ev.button.x, ev.button.y);
       if (r) return r;
+    }
+  }
+  else if (ev.type == SDL_KEYDOWN)
+  {
+    int scancode = ev.key.keysym.sym;
+    int mod = ev.key.keysym.mod;
+    switch (scancode)
+    {
+      case SDLK_o:
+        if (MODONLY(mod, CMD_CTRL_KEY))
+          File_Context::open_song(&context_menus.file_context);
+      break;
+      case SDLK_e:
+        if (MODONLY(mod, CMD_CTRL_KEY))
+          File_Context::export_spc(NULL);
+      break;
     }
   }
 

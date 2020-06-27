@@ -38,4 +38,5 @@ union Adsr
   struct {
     uint8_t adsr1, adsr2;
   }__attribute__((packed));
+  uint16_t adsr;
 } __attribute__((packed));

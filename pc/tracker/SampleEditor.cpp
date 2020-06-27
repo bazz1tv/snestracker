@@ -17,8 +17,6 @@ SampleEditor::SampleEditor() :
   finetune_decbtn("-", decfinetune, this, true)
 {
   /* Disable not-yet-supported features */
-  loop_incbtn.enabled = false;
-  loop_decbtn.enabled = false;
   finetune_incbtn.enabled = false;
   finetune_decbtn.enabled = false;
 }
@@ -26,14 +24,14 @@ SampleEditor::SampleEditor() :
 void SampleEditor :: update_loop()
 {
 	sprintf(loop_cbuf, "$%04x",
-	  ::tracker->samples[ ::tracker->main_window.samplepanel.currow ].rel_loop);
+	  ::tracker->song.samples[ ::tracker->main_window.samplepanel.currow ].rel_loop);
 }
 
 /* Same code as Instrument editor fine tune (detune). Maybe we can
  * abstract the function out to reduce code size?? TODO*/
 void SampleEditor :: update_finetune()
 {
-  int8_t ft = ::tracker->samples[ ::tracker->main_window.samplepanel.currow ].finetune;
+  int8_t ft = ::tracker->song.samples[ ::tracker->main_window.samplepanel.currow ].finetune;
   char sign = '+';
   if (ft < 0)
     sprintf(finetune_cbuf, "%04d", ft);
@@ -49,6 +47,11 @@ void SampleEditor :: set_coords(int x, int y)
    * F.Tune +000 +-*/
 
   int yy = y;
+
+  this->x = x;
+  this->y = y;
+
+  y += CHAR_HEIGHT * 2;
 
 	loop_title.rect.x = x;
 	loop_title.rect.y = y;
@@ -85,8 +88,29 @@ void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
 	update_loop();
   update_finetune();
 
-	loop_title.draw(screen, Colors::nearblack);
-	loop_valtext.draw(screen, Colors::nearblack);
+  Uint32 present_color;
+  {
+    char tmpbuf[128];
+    Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
+    if (s->brr)
+    {
+      sprintf(tmpbuf, "BRR Size: $%04x  ", s->brrsize);
+      sdlfont_drawString(screen, x, y, tmpbuf);
+      present_color = Colors::white;
+      loop_incbtn.enabled = true;
+      loop_decbtn.enabled = true;
+    }
+    else
+    {
+      sdlfont_drawString(screen, x, y, "No Sample Loaded!");
+      present_color = Colors::nearblack;
+      loop_incbtn.enabled = false;
+      loop_decbtn.enabled = false;
+    }
+  }
+
+	loop_title.draw(screen, present_color);
+	loop_valtext.draw(screen, present_color);
 	loop_incbtn.draw(screen);
 	loop_decbtn.draw(screen);
 
@@ -99,7 +123,7 @@ void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
 int SampleEditor::incloop(void *i)
 {
 	SampleEditor *ie = (SampleEditor *)i;
-	Sample *s = &::tracker->samples[::tracker->main_window.samplepanel.currow];
+	Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
 	s->inc_loop();
 
 	ie->update_loop();
@@ -108,7 +132,7 @@ int SampleEditor::incloop(void *i)
 int SampleEditor::decloop(void *i)
 {
 	SampleEditor *ie = (SampleEditor *)i;
-	Sample *s = &::tracker->samples[::tracker->main_window.samplepanel.currow];
+	Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
 	s->dec_loop();
 
 	ie->update_loop();
@@ -119,7 +143,7 @@ int SampleEditor::decloop(void *i)
 int SampleEditor::incfinetune(void *i)
 {
   SampleEditor *ie = (SampleEditor *)i;
-  Sample *s = &::tracker->samples[::tracker->main_window.samplepanel.currow];
+  Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
   s->inc_finetune();
   ie->update_finetune();
 }
@@ -127,7 +151,7 @@ int SampleEditor::incfinetune(void *i)
 int SampleEditor::decfinetune(void *i)
 {
   SampleEditor *ie = (SampleEditor *)i;
-	Sample *s = &::tracker->samples[::tracker->main_window.samplepanel.currow];
+	Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
 	s->dec_finetune();
   ie->update_finetune();
 }

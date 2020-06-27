@@ -8,7 +8,7 @@
 #include "PanelCommon.h"
 #include "Samples.h"
 
-Instrument::Instrument() : used(0), srcn(0), vol(0x50), pan(0x80),
+Instrument::Instrument() : srcn(0), vol(0x50), pan(0x80),
    semitone_offset(0), finetune(0)
 {
   name[0] = 0;
@@ -68,6 +68,335 @@ void Instrument::dec_finetune(Instrument *i)
     i->finetune--;
 }
 
+bool Instrument::operator==(const Instrument& rhs)
+{
+  return (!strcmp(this->name, rhs.name) &&
+          this->srcn == rhs.srcn &&
+          this->adsr.adsr == rhs.adsr.adsr &&
+          this->vol == rhs.vol &&
+          this->pan == rhs.pan &&
+          this->semitone_offset == rhs.semitone_offset &&
+          this->finetune == rhs.finetune);
+}
+
+#define INST_COREINFO_SIZE sizeof(Instrument::vol) + sizeof(Instrument::pan) + sizeof(Instrument::adsr)
+#define INST_SONGMETA_SIZE sizeof(InstrumentChunkLoader::idx) + sizeof(Instrument::srcn)
+#define INST_TUNE_SIZE sizeof(Instrument::finetune)
+
+InstrumentChunkLoader::InstrumentChunkLoader(struct Instrument *i, bool ignoreSongMeta/*=false*/) :
+  ChunkLoader(ChunkID::Instrument), instruments(i), ignoreSongMeta(ignoreSongMeta)
+{}
+
+size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
+{
+  size_t maxread = 0;
+
+  DEBUGLOG("InstrumentChunkLoader::load()\n");
+
+  /* Every time we encounter an instrument in a song, we need to reload the idx */
+  if (!ignoreSongMeta)
+    idx_loaded = false;
+
+  while (maxread < chunksize)
+  {
+    uint8_t subchunkid;
+    uint16_t subchunksize;
+
+    //DEBUGLOG("maxread = %zu\n", maxread);
+
+    if (read(file, &subchunkid, 1, 1, &maxread) == 0)
+      break;
+    if (read(file, &subchunksize, 2, 1, &maxread) == 0)
+      break;
+
+    //DEBUGLOG("subchunksize = %hu\n", subchunksize);
+
+    switch (subchunkid)
+    {
+      case SubChunkID::songmeta:
+      {
+        DEBUGLOG("\tSubChunkID::songmeta\n");
+        size_t minimum_chunksize = INST_SONGMETA_SIZE;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        if (ignoreSongMeta)
+        {
+          DEBUGLOG("\t\tignoring...\n");
+          break;
+        }
+        read(file, &idx, 1, 1, &maxread);
+        read(file, &instruments[idx].srcn, 1, 1, &maxread);
+        DEBUGLOG("\t\tidx: %d\n", idx);
+
+        subchunksize -= INST_SONGMETA_SIZE;
+        idx_loaded = true;
+      }
+      break;
+      case SubChunkID::coreinfo:
+      {
+        DEBUGLOG("\tSubChunkID::coreinfo\n");
+        size_t minimum_chunksize = INST_COREINFO_SIZE;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        read(file, &instruments[idx].vol, 1, 1, &maxread);
+        read(file, &instruments[idx].pan, 1, 1, &maxread);
+        read(file, &instruments[idx].adsr.adsr1, 1, 1, &maxread);
+        read(file, &instruments[idx].adsr.adsr2, 1, 1, &maxread);
+
+        subchunksize -= INST_COREINFO_SIZE;
+      }
+      break;
+      case SubChunkID::name:
+      {
+        DEBUGLOG("\tSubChunkID::name\n");
+        assert(idx_loaded);
+        size_t bytesread = ChunkLoader::read_str_from_file2(file, instruments[idx].name, subchunksize, INSTR_NAME_MAXLEN);
+        subchunksize -= bytesread;
+        maxread += bytesread;
+      }
+      break;
+      case SubChunkID::tune:
+      {
+        DEBUGLOG("\tSubChunkID::tune\n");
+        size_t minimum_chunksize = INST_TUNE_SIZE;
+        if (subchunksize > minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
+        }
+        else if (subchunksize < minimum_chunksize)
+        {
+          DEBUGLOG("\t\tSubChunk %d is smaller than expected. cannot use\n", subchunkid);
+          break;
+        }
+
+        read(file, &instruments[idx].finetune, 1, 1, &maxread);
+
+        subchunksize -= INST_TUNE_SIZE;
+      }
+      break;
+      default:
+        DEBUGLOG("\tUnknown SubChunkID: %d. skipping over..\n", subchunkid);
+      break;
+    }
+
+    /* Skip the unrecognized part of the chunk */
+    if (subchunksize)
+    {
+      DEBUGLOG("\tskipping past %d unread bytes of chunk\n", subchunksize);
+      SDL_RWseek(file, subchunksize, RW_SEEK_CUR);
+      maxread += subchunksize;
+    }
+  }
+}
+
+/* Write the chunk for particular instrument indexed by i */
+size_t InstrumentChunkLoader::save(SDL_RWops *file, int i)
+{
+  struct Instrument *instr = &instruments[i];
+
+  uint8_t byte;
+  uint16_t word;
+  uint16_t chunklen = 0;
+  Sint64 chunksize_location, chunkend_location;
+
+  DEBUGLOG("InstrumentChunkLoader::save()\n");
+
+  DEBUGLOG("\tInstrument #%d, Writing top-level chunkid: %d\n", i, chunkid);
+  // write this master chunk id
+  byte = chunkid;
+  SDL_RWwrite(file, &byte, 1, 1);
+  // stub the master chunksize for later writing
+  chunksize_location = SDL_RWtell(file);
+  SDL_RWwrite(file, &chunklen, 2, 1);
+
+  if (ignoreSongMeta == false)
+  {
+    DEBUGLOG("\t\tSubChunkID::songmeta\n");
+    byte = SubChunkID::songmeta;
+    write(file, &byte, 1, 1, &chunklen);
+    word = INST_SONGMETA_SIZE; // we know the length in advance
+    write(file, &word, 2, 1, &chunklen);
+    write(file, &i, 1, 1, &chunklen); // write Instrument index (only 1 byt, &chunklene)
+    write(file, &instr->srcn, 1, 1, &chunklen);
+  }
+
+  DEBUGLOG("\t\tSubChunkID::coreinfo\n");
+  byte = SubChunkID::coreinfo;
+  write(file, &byte, 1, 1, &chunklen);
+  word = INST_COREINFO_SIZE; // we know the length in advance
+  write(file, &word, 2, 1, &chunklen);
+  write(file, &instr->vol, 1, 1, &chunklen);
+  write(file, &instr->pan, 1, 1, &chunklen);
+  write(file, &instr->adsr.adsr1, 1, 1, &chunklen);
+  write(file, &instr->adsr.adsr2, 1, 1, &chunklen);
+
+  word = strlen(instruments[i].name);
+  if (word > 0)
+  {
+    DEBUGLOG("\t\tSubChunkID::name\n");
+    byte = SubChunkID::name;
+    write(file, &byte, 1, 1, &chunklen);
+    write(file, &word, 2, 1, &chunklen);
+    write(file, instruments[i].name,  word, 1, &chunklen);
+  }
+
+
+  DEBUGLOG("\t\tSubChunkID::tune\n");
+  byte = SubChunkID::tune;
+  write(file, &byte, 1, 1, &chunklen);
+  word = INST_TUNE_SIZE; // we know the length in advance
+  write(file, &word, 2, 1, &chunklen);
+  write(file, &instr->finetune, 1, 1, &chunklen);
+
+  DEBUGLOG("\tWriting chunksize\n");
+  chunkend_location = SDL_RWtell(file);
+  SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
+  SDL_RWwrite(file, &chunklen, 2, 1);
+  SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
+}
+
+/* TODO: integrate chunklen (featured below) into the ChunkLoader class, and have
+ChunkLoader::write() automatically update it. Then user just needs to make sure
+they clear the chunklen when calculating a new chunklen */
+
+size_t InstrumentChunkLoader::save(SDL_RWops *file)
+{
+  DEBUGLOG("InstrumentChunkLoader::save() (all)\n");
+  for (uint16_t i=0; i < NUM_INSTR; i++)
+  {
+    if (instruments[i] != ::Instrument()) // empty instrument
+      save(file, i);
+  }
+}
+
+size_t InstrumentChunkLoader::save(SDL_RWops *file, struct Instrument *instr)
+{
+  struct Instrument *backup = instruments;
+  instruments = instr;
+  save(file, 0);
+  instruments = backup;
+}
+
+/////////////////// INSTRUMENT FILE LOADER //////////////////
+
+#include "gui/DialogBox.h"
+const char InstrumentFileLoader::HeaderStr[];
+
+InstrumentFileLoader::InstrumentFileLoader(Instrument *instrument, Sample *sample) :
+
+  vcl  ( new VersionChunkLoader(INSTRFILE_VER_MAJOR, INSTRFILE_VER_MINOR, INSTRFILE_VER_MICRO) ),
+  scl  ( new SampleChunkLoader(sample, true) ),
+  icl  ( new InstrumentChunkLoader(instrument, true) ),
+
+  instrument(instrument)
+{}
+
+InstrumentFileLoader::~InstrumentFileLoader()
+{
+  delete icl;
+  delete scl;
+  delete vcl;
+}
+
+// convenience function
+size_t InstrumentFileLoader::save(SDL_RWops *file)
+{
+  /* TODO: Here (or on higher level) inform user if the data came from a file
+  of an older file format version - inform that we are saving in the new format.
+  Or, if the file loaded was too new, inform that file is being saved in the
+  older format of current software */
+  DEBUGLOG("Writing File HeaderString: %s\n", HeaderStr);
+  SDL_RWwrite(file, HeaderStr, sizeof(HeaderStr) - 1, 1);
+  vcl->save(file);  // version
+  scl->save(file, 0);  // samples
+  icl->save(file, 0);  // instruments
+}
+
+InstrumentFileLoader::ret_t InstrumentFileLoader::load(SDL_RWops *file)
+{
+  DEBUGLOG("Reading File's HeaderString\n");
+  auto rc = readHeader(file);
+  if (rc == HEADER_OK)
+  {
+    icl->setIdx(0);
+    scl->setIdx(0);
+    ChunkLoader::loadchunks(file);
+    if (scl->instr_srcn == -1)
+    {
+      DEBUGLOG("Sample limit reached you crazy mofo!\n");
+    }
+    else
+    {
+      instrument->srcn = scl->instr_srcn;
+    }
+    return FILE_LOADED;
+  }
+  else
+  {
+    assert(rc == HEADER_BAD);
+    auto drc = DialogBox::SimpleYesNo("Unrecognized header",
+      "This file might be incompatible or corrupted. Load anyways?");
+    switch (drc)
+    {
+      case DialogBox::YES:
+        fprintf(stderr, "USER SAID YES\n");
+        ChunkLoader::loadchunks(file);
+        return FILE_LOADED;
+      default:
+        return HEADER_BAD;
+    }
+  }
+}
+
+InstrumentFileLoader::ret_t InstrumentFileLoader::readHeader(SDL_RWops *file)
+{
+  uint8_t buf[sizeof(HeaderStr)];
+  size_t rc;
+
+  rc = SDL_RWread(file, buf, sizeof(HeaderStr) - 1, 1);
+
+  if (rc == 0)
+  {
+    DEBUGLOG("\tCould not read from file: %s\n", SDL_GetError());
+    return HEADER_BAD;
+  }
+
+  buf[sizeof(HeaderStr) - 1] = 0;
+
+  ret_t ret;
+  // The newer header is "InstrumentST"
+  if (strcmp( (const char *)buf, HeaderStr) == 0)
+  {
+    DEBUGLOG("\tHeader is of 'Current' chunk format.\n");
+    ret = HEADER_OK;
+  }
+  // bad file header
+  else
+  {
+    DEBUGLOG("\tUnrecognized header! This file might be incompatible or corrupted. Load anyways?\n");
+    ret = HEADER_BAD;
+  }
+
+  return ret;
+}
+
+
 /* The instrument panel is something like
  * Instruments  (Load) (Save) (Zap)
  * ------+-------------------------+
@@ -89,9 +418,6 @@ Instrument_Panel::Instrument_Panel(Instrument *iptr, Sample_Panel *sp) :
     instruments(iptr),
     samplepanel(sp)
 {
-  loadbtn.enabled = false;
-  savebtn.enabled = false;
-  zapbtn.enabled = false;
 }
 
 Instrument_Panel::~Instrument_Panel()
@@ -359,6 +685,28 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   }
 }
 
+static void AskDeleteSample(Instrument_Panel *ip)
+{
+  Instrument *instr = &ip->instruments[ip->currow];
+  Sample *sample = &ip->samplepanel->samples[instr->srcn];
+  char strbuf[100];
+  sprintf(strbuf, "Do you wish to delete the sample for this instrument as well?\n\n"
+    "sample #%02d, \"%s\"", instr->srcn, sample->name);
+  auto rc = DialogBox::SimpleYesNo("Delete sample?", strbuf, false);
+
+  switch (rc)
+  {
+    case DialogBox::YES:
+      sample->clear();
+    break;
+    case DialogBox::NO:
+    default:
+      return;
+  }
+}
+
+#include "SdlNfd.h"
+#define OVERWRITE_STR "Do you really want to %s this instrument?\n\n instrument #%02d, \"%s\""
 /* In these following functions, we need an core instruments handle, and
  * the index into that table. Can get that through the Instrument_Panel.
  * This is still GUI centric.*/
@@ -366,9 +714,39 @@ int Instrument_Panel::load(void *ipanel)
 {
   Instrument_Panel *ip = (Instrument_Panel *)ipanel;
   Instrument *instruments = ip->instruments;
-  int currow = ip->currow;
 
   fprintf(stderr, "LOAD\n");
+
+  /* First, check if the current instrument slot is non-default data, and warn
+  the user you would be overwriting the old data */
+  Instrument *instr = &ip->instruments[ip->currow];
+  Sample *samples = ip->samplepanel->samples;
+  Sample *sample = &samples[instr->srcn];
+
+  if (*instr != Instrument())
+  {
+    char strbuf[100];
+    sprintf(strbuf, OVERWRITE_STR, "overwrite", ip->currow + 1, instr->name);
+    auto drc = DialogBox::SimpleYesNo("Overwrite Instrument?", strbuf);
+    switch (drc)
+    {
+      case DialogBox::YES:
+        AskDeleteSample(ip);
+      break;
+      case DialogBox::NO:
+      default:
+        return -1;
+    }
+  }
+
+  if (SdlNfd::get_file_handle("r", INSTRFILE_EXT) == NFD_OKAY)
+  {
+    InstrumentFileLoader ifl(instr, samples);
+    ifl.load(SdlNfd::file);
+  }
+
+  /* Update the sample panel highlighted row to cover the srcn connected to this instrument */
+  ip->samplepanel->currow = instr->srcn;
   return 0;
 }
 
@@ -376,6 +754,25 @@ int Instrument_Panel::save(void *ipanel)
 {
   Instrument_Panel *ip = (Instrument_Panel *)ipanel;
   fprintf(stderr, "SAVE\n");
+
+  /* First make sure this instrument actually references a real BRR sample */
+  Instrument *instr = &ip->instruments[ip->currow];
+  Sample *sample = &ip->samplepanel->samples[instr->srcn];
+
+  if (sample->brr == NULL/* || sample->brrsize == 0*/)
+  {
+    DialogBox::SimpleOK("No Sample data",
+      "This instrument references a blank sample.\n\n"
+      "Please load and connect a valid sample to this instrument first.");
+    return -1;
+  }
+
+  if (SdlNfd::get_file_handle("w", INSTRFILE_EXT) == NFD_OKAY)
+  {
+    DEBUGLOG("\tinstrument path:%s\n", SdlNfd::outPath);
+    InstrumentFileLoader ifl(instr, sample);
+    ifl.save(SdlNfd::file);
+  }
   return 0;
 }
 
@@ -383,5 +780,27 @@ int Instrument_Panel::zap(void *ipanel)
 {
   Instrument_Panel *ip = (Instrument_Panel *)ipanel;
   fprintf(stderr, "ZAP\n");
+
+  Instrument *instr = &ip->instruments[ip->currow];
+  Sample *samples = ip->samplepanel->samples;
+  Sample *sample = &samples[instr->srcn];
+
+  if (*instr != Instrument())
+  {
+    char strbuf[100];
+    sprintf(strbuf, OVERWRITE_STR, "zap", ip->currow + 1, instr->name);
+    auto drc = DialogBox::SimpleYesNo("Zap Instrument?", strbuf);
+    switch (drc)
+    {
+      case DialogBox::YES:
+        AskDeleteSample(ip);
+      break;
+      case DialogBox::NO:
+      default:
+        return -1;
+    }
+  }
+
+  *instr = Instrument();
   return 0;
 }
