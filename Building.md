@@ -92,7 +92,17 @@ Here's a rough guide to establish a 64-bit cross build environment on Gentoo Lin
 ```
 emerge -av sys-devel/crossdev
 crossdev --target x86_64-w64-mingw32
-x86_64-w64-mingw32-emerge -av media-libs/libsdl2 dev-libs/boost
+x86_64-w64-mingw32-emerge -av dev-libs/boost
+```
+
+Then compile SDL2 manually. (Don't use `emerge` for sdl2 or you will miss out on video hardware acceleration)
+
+```
+wget http://libsdl.org/release/SDL2-2.0.10.tar.gz
+tar -zxf SDL2-2.0.10.tar.gz ; cd SDL2-2.0.10
+./configure --prefix=/usr/x86_64-w64-mingw32/usr --host=x86_64-w64-mingw32 \
+--enable-sdl2-config=no --with-sysroot=/usr/x86_64-w64-mingw32/usr/include
+make && sudo make install
 ```
 
 Then, from snestracker folder:
@@ -104,8 +114,7 @@ prefix=/usr/x86_64-w64-mingw32/usr CROSS_COMPILE=x86_64-w64-mingw32- make
 Provided that compilation was successful, the following DLLs need to be copied into the directory where the EXE will be located.
 
 ```
-cp /usr/x86_64-w64-mingw32/usr/bin/libSDL2-2-0-0.dll \
-/usr/x86_64-w64-mingw32/usr/lib/libboost_filesystem.dll \
+cp /usr/x86_64-w64-mingw32/usr/{bin/SDL2.dll,lib/libboost_filesystem.dll} \
 /usr/lib/gcc/x86_64-w64-mingw32/9.2.0/{libgcc_s_seh-1.dll,libstdc++-6.dll} pc/bin
 ```
 
@@ -124,7 +133,8 @@ sudo apt-get update && sudo apt-get install mingw-w64 pkg-config
 wget http://libsdl.org/release/SDL2-2.0.12.tar.gz
 tar -zxf SDL2-2.0.12.tar.gz
 cd SDL2-2.0.12
-./configure --prefix=/usr/x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --enable-sdl2-config=no
+./configure --prefix=/usr/x86_64-w64-mingw32 --host=x86_64-w64-mingw32 \
+--with-sysroot=/usr/x86_64-w64-mingw32/include --enable-sdl2-config=no
 make
 sudo make install
 
