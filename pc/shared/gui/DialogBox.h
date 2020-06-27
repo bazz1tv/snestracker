@@ -13,15 +13,15 @@ namespace DialogBox
     NO,
   };
 
-  int Custom(const char *title, const char *msg, int numButtons,
-                    const char **buttonText, int defaultButton=0);
-  ret_t SimpleYesNo(const char *title, const char *msg, bool defaultYes=true);
-
   enum Simple {
     INFO = SDL_MESSAGEBOX_INFORMATION,
     WARNING = SDL_MESSAGEBOX_WARNING,
     ERR = SDL_MESSAGEBOX_ERROR
   };
+
+  int Custom(const char *title, const char *msg, int numButtons,
+                    const char **buttonText, int defaultButton=0, Simple type=INFO);
+  ret_t SimpleYesNo(const char *title, const char *msg, bool defaultYes=true);
 
   void SimpleOK(const char *title, const char *msg, Simple type=INFO);
 };

@@ -278,7 +278,8 @@ int Main_Window::receive_event(SDL_Event &ev)
 {
   check_quit(ev);
 
-  handle_text_edit_rect_event(ev, &song_title);
+  if (handle_text_edit_rect_event(ev, &song_title) == 2)
+    tracker->song.changed = true;
   instreditor_btn.check_event(ev);
 	sample_editor_btn.check_event(ev);
   songsettings_btn.check_event(ev);

@@ -68,6 +68,10 @@ struct SongSettings
   // Allow wrapping for EFB
   void inc_efb();
   void dec_efb();
+
+  struct {
+    bool *changed;
+  } metadata;
 };
 
 class SongSettingsChunkLoader : public ChunkLoader

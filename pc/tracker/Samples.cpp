@@ -12,10 +12,9 @@
 const int Sample_Panel::NUM_ROWS;
 #define SAMPLE_NAME_GUI_CHAR_WIDTH 22
 
-Sample::Sample() : brr(NULL), brrsize(0), rel_loop(0), semitone_offset(0),
-  finetune(0), loop(0)
+Sample::Sample() : brr(NULL)
 {
-  name[0] = 0;
+  clear();
 }
 
 Sample::~Sample()
@@ -31,25 +30,37 @@ Sample::~Sample()
 void Sample::inc_loop()
 {
 	if (brr != NULL)
+  {
 		rel_loop = rel_loop >= (brrsize - BRR_LEN) ? brrsize - BRR_LEN : rel_loop + BRR_LEN;
+    *metadata.changed = true;
+  }
 }
 
 void Sample::dec_loop()
 {
 	if (brr != NULL)
+  {
 		rel_loop = rel_loop >= BRR_LEN ? rel_loop - BRR_LEN : 0;
+    *metadata.changed = true;
+  }
 }
 
 void Sample::inc_finetune()
 {
 	if (brr != NULL && finetune < 127)
+  {
 		finetune++;
+    *metadata.changed = true;
+  }
 }
 
 void Sample::dec_finetune()
 {
 	if (brr != NULL && finetune > -128)
+  {
 		finetune--;
+    *metadata.changed = true;
+  }
 }
 
 bool Sample::identical(const Brr *brr)
@@ -84,10 +95,17 @@ bool Sample::identical(const Brr *brr)
 
 void Sample::clear()
 {
+  name[0] = 0;
+
   if (brr != NULL)
     free(brr);
 
-  *this = Sample();
+  brr = NULL;
+  brrsize = 0;
+  rel_loop = 0;
+  semitone_offset = 0;
+  finetune = 0;
+  loop = 0;
 }
 
 
@@ -533,8 +551,11 @@ int Sample_Panel::event_handler(const SDL_Event &ev)
       default:break;
     }
 
-    if (handle_text_edit_rect_event(ev, &sample_names[i]) == 1)
+    if (handle_text_edit_rect_event(ev, &sample_names[i]) == 2)
+    {
+      *samples[0].metadata.changed = true;
       return 1;
+    }
   }
 
   switch (ev.type)
@@ -717,6 +738,7 @@ int Sample_Panel::load(void *spanel)
 
     strncpy(s->name, Utility::getFileName(outPath), SAMPLE_NAME_MAXLEN - 1);
     s->name[SAMPLE_NAME_MAXLEN-1] = 0;
+    *s->metadata.changed = true;
   }
 
   return 0;
@@ -769,14 +791,14 @@ int Sample_Panel::clear(void *spanel)
     switch (drc)
     {
       case DialogBox::YES:
+        s->clear();
+        *s->metadata.changed = true;
       break;
       case DialogBox::NO:
       default:
         return -1;
     }
   }
-
-  s->clear();
 
   return 0;
 }

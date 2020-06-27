@@ -20,12 +20,14 @@ struct Instrument
 {
   Instrument();
   ~Instrument();
+  void reset();
   /* TODO: Move this metadata outside of the core instrument */
   char name[INSTR_NAME_MAXLEN]; // the name of the instrument
   /* the app-level sample data. How that gets exported into the snes
    * driver data is a different story */
 	uint8_t srcn; // like a DIR offset
 	Adsr adsr; // The volume envelope that will be used for this instrument
+  static const uint16_t constexpr DEFAULT_ADSR = 0xe0ff;
 	/* Aside from the ADSR hardware volume envelope, the voice stereo volume
 	 * may be adjusted real-time for additional effects.*/
 	/* Note on volume envelopes as I learned from Milky Tracker. The graph
@@ -35,8 +37,10 @@ struct Instrument
 	//PanEnvelope pe;
 	//  bool phaseflip=false;
   uint8_t vol;
+  static const uint8_t constexpr DEFAULT_VOL = 0x50;
   /* 0x80 = dead center, 0xFF = hard right, 0x00 = hard left */
   uint8_t pan;
+  static const uint8_t constexpr DEFAULT_PAN = 0x80;
   /* signed offset in semitones to pitch the sample. This will be used
    * directly by the SNES driver. The tracker must impose the restraints
    * on the range allowed */
@@ -57,6 +61,10 @@ struct Instrument
   static void dec_pan(Instrument *i);
   static void inc_finetune(Instrument *i);
   static void dec_finetune(Instrument *i);
+
+  struct {
+    bool *changed;
+  } metadata;
 };
 
 class InstrumentChunkLoader : public ChunkLoader

@@ -52,6 +52,7 @@ public:
 	void reset();
 	int read_from_file(SDL_RWops *file);
 	void save_to_file(SDL_RWops *file);
+  int DialogUnsavedChanges();
 
 	/* Tracker APU RAM mapping */
 	TrackerApuRam *apuram;

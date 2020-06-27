@@ -8,6 +8,7 @@
 #include "shared/SdlNfd.h"
 #include "shared/fps.h"
 #include "Song.h"
+#include "gui/DialogBox.h"
 
 #define L_FLAG 0
 #define R_FLAG 1
@@ -94,6 +95,9 @@ void Tracker::run()
   main_window.one_time_draw();
 
   cur_exp->draw();
+
+gameloop:
+  ::quitting = false;
   SDL_ShowWindow(::render->sdlWindow);
 
   // exp is changed from BaseD
@@ -144,6 +148,14 @@ void Tracker::run()
     frame.end();
   }
 
+  if (song.changed)
+  {
+    int rc = DialogUnsavedChanges();
+    if (rc < 0) // couldn't save file or user pressed cancel
+      goto gameloop;
+    // file saved or user pressed 'No'
+  }
+
   sub_window_experience = NULL;
 
   if (!player->is_paused() && player->track_started)
@@ -151,6 +163,47 @@ void Tracker::run()
     player->fade_out(false);
     player->pause(1, false, false);
   }
+}
+
+int Tracker::DialogUnsavedChanges()
+{
+  DEBUGLOG("SONG CHANGED\n");
+  const char *buttonStr[3] = { "Yes", "No", "Cancel" };
+  char msg[512];
+  snprintf(msg, 512 - 1,
+    "Would you like to save?"
+  );
+askagain:
+  int button = DialogBox::Custom("Unsaved changes!",
+    msg, 3, buttonStr);
+
+  if (button == 0) // YES
+  {
+    DEBUGLOG("\tUser pushed YES\n");
+    if (Menu_Bar::File_Context::save_song(NULL) < 0)
+    {
+      return -1; // couldn't save
+    }
+    return 0; // saved
+  }
+  else if (button == 1)
+  {
+    DEBUGLOG("\tUser pushed NO\n");
+    // do nothing
+    return 0; // did nothing
+  }
+  else if (button == 2) // CANCEL
+  {
+    DEBUGLOG("\tUser pushed CANCEL\n");
+    return -1; // cancel
+  }
+  else
+  {
+    DEBUGLOG("\tUNKNOWN BUTTON VALUE %d\n", button);
+    goto askagain;
+  }
+
+  //return 0;
 }
 
 void Tracker::handle_events()
@@ -507,7 +560,10 @@ void Tracker::inc_patlen()
 	    song.patseq.sequence[ main_window.patseqpanel.currow ] ].p.len;
 
 	if (*len < MAX_PATTERN_LEN)
+  {
 		*len += 1;
+    song.changed = true;
+  }
 }
 
 void Tracker::dec_patlen()
@@ -527,6 +583,8 @@ void Tracker::dec_patlen()
 		auto *rows_scrolled = &main_window.pateditpanel.rows_scrolled;
 		if (*rows_scrolled && (*rows_scrolled + main_window.pateditpanel.VISIBLE_ROWS) > *len)
 			*rows_scrolled -= 1;
+
+    song.changed = true;
 	}
 }
 

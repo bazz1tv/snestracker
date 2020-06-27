@@ -138,6 +138,9 @@ struct PatternSequencer
   // track-pattern rows. Like many other data types I have conjured, they
   // will need to later be converted to types that dynamically allocate
   // space. Or allocate max'es every time like is done now.
+  struct {
+    bool *changed;
+  } metadata;
 };
 
 class PatternSequencerChunkLoader : public ChunkLoader

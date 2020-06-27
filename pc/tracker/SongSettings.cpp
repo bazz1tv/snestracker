@@ -26,6 +26,7 @@ void SongSettings::inc_bpm()
   if (bpm >= MAX_BPM)
     bpm = MAX_BPM;
   else bpm++;
+  *metadata.changed = true;
 }
 
 void SongSettings::dec_bpm()
@@ -33,6 +34,7 @@ void SongSettings::dec_bpm()
   if (bpm <= MIN_BPM)
     bpm = MIN_BPM;
   else bpm--;
+  *metadata.changed = true;
 }
 
 void SongSettings::inc_spd()
@@ -40,6 +42,7 @@ void SongSettings::inc_spd()
   if (spd >= MAX_SPD)
     spd = MAX_SPD;
   else spd++;
+  *metadata.changed = true;
 }
 
 void SongSettings::dec_spd()
@@ -47,34 +50,41 @@ void SongSettings::dec_spd()
   if (spd <= MIN_SPD)
     spd = MIN_SPD;
   else spd--;
+  *metadata.changed = true;
 }
 
 void SongSettings::inc_vol(uint8_t *vol)
 {
   *vol += (*vol < 0x7F) ? 1 : 0;
+  ::tracker->song.changed = true;
 }
 void SongSettings::dec_vol(uint8_t *vol)
 {
   *vol -= (*vol > 0) ? 1 : 0;
+  ::tracker->song.changed = true;
 }
 
 void SongSettings::inc_edl()
 {
   edl += (edl < 0x0F) ? 1 : 0;
+  *metadata.changed = true;
 }
 void SongSettings::dec_edl()
 {
   edl -= (edl > 0) ? 1 : 0;
+  *metadata.changed = true;
 }
 
 // Allow wrapping for EFB
 void SongSettings::inc_efb()
 {
   efb++;
+  *metadata.changed = true;
 }
 void SongSettings::dec_efb()
 {
   efb--;
+  *metadata.changed = true;
 }
 
 SongSettingsChunkLoader::SongSettingsChunkLoader(struct SongSettings *ss) :

@@ -11,17 +11,13 @@ void Song::reset()
   // Reset all Samples (and free memory!)
   for (int i=0; i < NUM_SAMPLES; i++)
   {
-    Sample *s = &samples[i];
-    if (s->brr)
-      free(s->brr);
-    *s = Sample();
+    samples[i].clear();
   }
 
   // Reset all instruments
   for (int i=0; i < NUM_INSTR; i++)
   {
-    Instrument *instr = &instruments[i];
-    *instr = Instrument();
+    instruments[i].reset();
   }
 
   // Reset all patterns
@@ -37,18 +33,21 @@ void Song::reset()
    * that checks whether the index of that pattern is in the pattern sequencer.
    */
   patseq.patterns[0].used = 1;
+  changed = false;
 }
 
 void Song::load(SDL_RWops *file)
 {
   SongFileLoader sfl(this);
   sfl.load(file);
+  changed = false;
 }
 
 void Song::save(SDL_RWops *file)
 {
   SongFileLoader sfl(this);
   sfl.save(file);
+  changed = false;
 }
 
 const char SongFileLoader::HeaderStr[];

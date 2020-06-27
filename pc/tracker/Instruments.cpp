@@ -8,12 +8,21 @@
 #include "PanelCommon.h"
 #include "Samples.h"
 
-Instrument::Instrument() : srcn(0), vol(0x50), pan(0x80),
-   semitone_offset(0), finetune(0)
+Instrument::Instrument()
+{
+  reset();
+}
+
+void Instrument::reset()
 {
   name[0] = 0;
-  adsr.adsr1 = 0xff;
-  adsr.adsr2 = 0xe0;
+  srcn = 0;
+  adsr.adsr = DEFAULT_ADSR;
+  vol = DEFAULT_VOL;
+  pan = DEFAULT_PAN;
+  semitone_offset = 0;
+  finetune = 0;
+  // leave metadata untouched
 }
 
 Instrument::~Instrument()
@@ -23,49 +32,73 @@ Instrument::~Instrument()
 void Instrument::inc_srcn(Instrument *i)
 {
 	if (i->srcn != 0xFF)
+  {
 		i->srcn++;
+    *i->metadata.changed = true;
+  }
 }
 
 void Instrument::dec_srcn(Instrument *i)
 {
 		if (i->srcn > 0)
+    {
 			i->srcn--;
+      *i->metadata.changed = true;
+    }
 }
 
 void Instrument::inc_vol(Instrument *i)
 {
   if (i->vol != 0x7f)
+  {
     i->vol++;
+    *i->metadata.changed = true;
+  }
 }
 
 void Instrument::dec_vol(Instrument *i)
 {
   if (i->vol != 0x00)
+  {
     i->vol--;
+   *i->metadata.changed = true;
+  }
 }
 
 void Instrument::inc_pan(Instrument *i)
 {
   if (i->pan != 0xff)
+  {
     i->pan++;
+    *i->metadata.changed = true;
+  }
 }
 
 void Instrument::dec_pan(Instrument *i)
 {
   if (i->pan != 0x00)
+  {
+    *i->metadata.changed = true;
     i->pan--;
+  }
 }
 
 void Instrument::inc_finetune(Instrument *i)
 {
   if (i->finetune < 127)
+  {
+    *i->metadata.changed = true;
     i->finetune++;
+  }
 }
 
 void Instrument::dec_finetune(Instrument *i)
 {
   if (i->finetune > -128)
+  {
+    *i->metadata.changed = true;
     i->finetune--;
+  }
 }
 
 bool Instrument::operator==(const Instrument& rhs)
@@ -565,8 +598,11 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
       default:break;
     }
 
-    if (handle_text_edit_rect_event(ev, &instr_names[i]) == 1)
+    if (handle_text_edit_rect_event(ev, &instr_names[i]) == 2)
+    {
+      *instruments[0].metadata.changed = true;
       return 1;
+    }
   }
 
   switch (ev.type)
@@ -747,6 +783,7 @@ int Instrument_Panel::load(void *ipanel)
 
   /* Update the sample panel highlighted row to cover the srcn connected to this instrument */
   ip->samplepanel->currow = instr->srcn;
+  *instr->metadata.changed = true;
   return 0;
 }
 
@@ -794,6 +831,8 @@ int Instrument_Panel::zap(void *ipanel)
     {
       case DialogBox::YES:
         AskDeleteSample(ip);
+        instr->reset();
+        *instr->metadata.changed = true;
       break;
       case DialogBox::NO:
       default:
@@ -801,6 +840,5 @@ int Instrument_Panel::zap(void *ipanel)
     }
   }
 
-  *instr = Instrument();
   return 0;
 }
