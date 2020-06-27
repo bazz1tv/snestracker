@@ -45,6 +45,10 @@ struct Sample
 
   bool identical(const Brr *brr);
   void clear();
+
+  struct {
+    bool *changed;
+  } metadata;
 };
 
 /* Used for loading / storing sample data and metadata as chunks from/to a file. */

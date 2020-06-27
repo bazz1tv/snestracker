@@ -53,7 +53,7 @@ void AdsrPanel::set_coords(int x, int y)
                           sustainrelease_text.rect.x, y + CHAR_HEIGHT);
 }
 
-void AdsrPanel::check_event(const SDL_Event &ev)
+int AdsrPanel::check_event(const SDL_Event &ev)
 {
   int r;
   if ((r=adsr_context_menus.receive_event(ev)))
@@ -107,7 +107,7 @@ void AdsrPanel::check_event(const SDL_Event &ev)
         break;
       default:break;
     }
-    return;
+    return r;
   }
 
   switch (ev.type)
@@ -116,12 +116,13 @@ void AdsrPanel::check_event(const SDL_Event &ev)
       {
         if (adsr_context_menus.check_left_click_activate(ev.button.x, ev.button.y))
         {
-          return;
+          return 1;
         }
       }
     break;
     default:break;
   }
+  return 0;
 }
 
 void AdsrPanel::draw(SDL_Surface *screen)
@@ -340,7 +341,10 @@ int InstrumentEditor::handle_event(const SDL_Event &ev)
     tabs.check_mouse_and_execute(ev.button.x, ev.button.y);
 
   if (tabs.adsr.active)
-    adsrpanel.check_event(ev);
+  {
+    if (adsrpanel.check_event(ev) >= ADSR::Context_Menus::ATTACK_CHANGED)
+      *instrpanel->instruments[0].metadata.changed = true;
+  }
 }
 
 void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)

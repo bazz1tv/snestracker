@@ -15,7 +15,7 @@ struct AdsrPanel : public DrawRenderer
   // SDL_Renderer pre drawing stuff. also need to inherit Experience
   AdsrPanel(Instrument_Panel *ip);
   void set_coords(int x, int y);
-  void check_event(const SDL_Event &ev);
+  int check_event(const SDL_Event &ev);
   void run();
   void one_time_draw(SDL_Surface *screen=::render->screen);
   void draw(SDL_Surface *screen=::render->screen);

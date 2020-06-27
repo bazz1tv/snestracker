@@ -51,6 +51,16 @@ void Menu_Bar::draw(SDL_Surface *screen)
 int Menu_Bar::File_Context::new_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
+
+  if (::tracker->song.changed)
+  {
+    int rc = ::tracker->DialogUnsavedChanges();
+    //DEBUGLOG("rc = %d\n", rc);
+    if (rc == -1) // file didn't save, or user pressed cancel
+      return -1;
+    // 0 means file saved or user pressed no saving
+  }
+
 	fc->filepath[0] = 0;
 
 	::tracker->reset();
@@ -62,6 +72,17 @@ int Menu_Bar::File_Context::new_song(void *data)
 int Menu_Bar::File_Context::open_song(void *data)
 {
 	File_Context *fc = (File_Context *)data;
+
+  if (::tracker->song.changed)
+  {
+    int rc = ::tracker->DialogUnsavedChanges();
+    //DEBUGLOG("rc = %d\n", rc);
+    if (rc == -1) // file didn't save, or user pressed cancel
+      return -1;
+    // 0 means file saved or user pressed no saving
+  }
+
+  //DEBUGLOG("NOw open\n");
 	/* Open the file */
 	nfdresult_t rc = SdlNfd::get_file_handle("r", SONGFILE_EXT);
 	if (rc != NFD_OKAY)
@@ -96,12 +117,12 @@ static int save_common(Menu_Bar::File_Context *fc, SDL_RWops *file, nfdchar_t *f
 	::tracker->save_to_file(file);
 
 	strncpy(fc->filepath, filepath, 500);
-	return 0;
+	return NFD_OKAY;
 }
 
 int Menu_Bar::File_Context::save_song(void *data)
 {
-	File_Context *fc = (File_Context *)data;
+	File_Context *fc = (File_Context *)&tracker->menu_bar.context_menus.file_context;
   int rc = 0;
 
 	if (fc->filepath[0] == 0)
@@ -111,6 +132,8 @@ int Menu_Bar::File_Context::save_song(void *data)
 
     DEBUGLOG("attempting to save to new file: %s\n", SdlNfd::outPath);
     rc = save_common(fc, SdlNfd::file, SdlNfd::outPath);
+    if (rc != NFD_OKAY)
+      return -1;
 	}
 	else
   {
@@ -138,7 +161,7 @@ int Menu_Bar::File_Context::save_song(void *data)
 
 int Menu_Bar::File_Context::save_as_song(void *data)
 {
-	File_Context *fc = (File_Context *)data;
+	File_Context *fc = (File_Context *)&tracker->menu_bar.context_menus.file_context;
 
 	if (SdlNfd::get_file_handle("w", SONGFILE_EXT) != NFD_OKAY)
     return -1;

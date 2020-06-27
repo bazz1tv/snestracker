@@ -198,6 +198,7 @@ int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
       break; 
     }
   }
+  return 2;
 }
 
 // We need a callback that handles what happens when this rect has been

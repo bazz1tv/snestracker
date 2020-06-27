@@ -130,6 +130,17 @@ Pattern Sequencer Chunk
 
 struct Song
 {
+  Song()
+  {
+    int i;
+    for (i=0; i < NUM_SAMPLES; i++)
+      samples[i].metadata.changed = &changed;
+    for (i=0; i < NUM_INSTR; i++)
+      instruments[i].metadata.changed = &changed;
+    patseq.metadata.changed = &changed;
+
+    settings.metadata.changed = &changed;
+  }
   void reset();
   void load(SDL_RWops *file);
   void save(SDL_RWops *file);
@@ -138,6 +149,8 @@ struct Song
   Instrument instruments[NUM_INSTR];
   PatternSequencer patseq;
   SongSettings settings;
+//private:
+  bool changed;
 };
 
 class SongFileLoader

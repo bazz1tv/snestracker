@@ -906,6 +906,8 @@ int clone_seq_common(PatSeqPanel *psp)
 
   patseq->num_entries++;
   psp->currow++;
+
+  *patseq->metadata.changed = true;
   return 0;
 }
 
@@ -957,6 +959,8 @@ int PatSeqPanel::clear(void *pspanel)
   if (psp->currow >= patseq->num_entries)
     psp->currow = patseq->num_entries - 1;
 
+  *patseq->metadata.changed = true;
+
   return 0;
 }
 
@@ -974,6 +978,7 @@ int PatSeqPanel::incpat(void *pspanel)
     *derp = MAX_PATTERNS - 1;
 
   patseq->patterns[patseq->sequence[psp->currow]].used++;
+  *patseq->metadata.changed = true;
   return 0;
 }
 
@@ -990,6 +995,7 @@ int PatSeqPanel::decpat(void *pspanel)
     *derp = 0;
 
   patseq->patterns[patseq->sequence[psp->currow]].used++;
+  *patseq->metadata.changed = true;
 }
 
 void PatSeqPanel::set_currow(int row)
@@ -1382,6 +1388,7 @@ void PatternEditorPanel::notehelper(int ndex)
       pw->note = (Note)n;
       pw->instr = ip->currow + 1;
       inc_currow(addval);
+      *psp->patseq->metadata.changed = true;
       //note2ascii(pw->note, guitrackrow[cur_track].note_strings[currow]);
     }
     else
@@ -1416,6 +1423,7 @@ void PatternEditorPanel::instrhelper(int n)
     pw->instr &= 0xf0;
     pw->instr |= n & 0x0f;
   }
+  *psp->patseq->metadata.changed = true;
   //instr2ascii(pw->note, guitrackrow[cur_track].instr_strings[currow]);
 }
 
@@ -1443,6 +1451,8 @@ void PatternEditorPanel::volhelper(int n)
     pw->vol &= 0xf0;
     pw->vol |= n & 0x0f;
   }
+
+  *psp->patseq->metadata.changed = true;
   //vol2ascii(pw->vol, guitrackrow[cur_track].vol_strings[currow]);
 }
 
@@ -1461,6 +1471,8 @@ void PatternEditorPanel::fxhelper(int n)
   }
 
   pw->fx = n;
+
+  *psp->patseq->metadata.changed = true;
 
   //fx2ascii(pw->fx, pw->fxparam, guitrackrow[cur_track].fx_strings[currow]);
 }
@@ -1489,6 +1501,7 @@ void PatternEditorPanel::fxparamhelper(int n)
     pw->fxparam &= 0xf0;
     pw->fxparam |= n & 0x0f;
   }
+  *psp->patseq->metadata.changed = true;
   //fxparam2ascii(pw->fx, pw->fxparam, guitrackrow[cur_track].fxparam_strings[currow]);
 }
 

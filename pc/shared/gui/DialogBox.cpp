@@ -10,7 +10,7 @@ DialogBox::ret_t DialogBox::SimpleYesNo(const char *title, const char *msg, bool
 
 /* Returns the index of the button that was pressed */
 int DialogBox::Custom(const char *title, const char *msg, int numButtons,
-                         const char **buttonText, int defaultButton/*=0*/)
+                         const char **buttonText, int defaultButton/*=0*/, Simple type/*=INFO*/)
 {
   int rc;
   SDL_MessageBoxButtonData *buttons = (SDL_MessageBoxButtonData *) malloc(sizeof(SDL_MessageBoxButtonData) * numButtons);
@@ -24,7 +24,7 @@ int DialogBox::Custom(const char *title, const char *msg, int numButtons,
 
 
   const SDL_MessageBoxData messageboxdata = {
-      SDL_MESSAGEBOX_INFORMATION, /* .flags */
+      type, /* .flags */
       NULL, /* .window */
       title, /* .title */
       msg, /* .message */
