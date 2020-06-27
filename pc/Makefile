@@ -143,7 +143,7 @@ else ifeq ($(uname_S), Cross_Windows)
 	CPPFLAGS += -fpermissive
 	# NFD
 	CPPSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_win.cpp
-	LDFLAGS += -mwindows -lole32 #-static-libgcc #-lcomctl32 -lcomdlg32
+	LDFLAGS += -lole32 #-static-libgcc #-lcomctl32 -lcomdlg32
 	BOOST_LDFLAGS := -lboost_system -lboost_filesystem
 	# Example of static library inclusion:
 	#BOOST_LDFLAGS := $(prefix)/lib/libboost_system.a $(prefix)/lib/libboost_filesystem.a
@@ -164,6 +164,9 @@ else ifeq ($(uname_S), Cross_Windows)
 		sdl2_cflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --cflags)
 		sdl2_ldflags = $(shell PKG_CONFIG_LIBDIR="$(prefix)/lib/pkgconfig" pkg-config sdl2 --libs)
 	endif
+
+	# Have a debug console
+	sdl2_ldflags := $(subst -mwindows,,$(sdl2_ldflags)) -mconsole -lcomdlg32
 
 	EXECUTABLE_DEBUGGER = std.exe
 	EXECUTABLE_TRACKER = st.exe
