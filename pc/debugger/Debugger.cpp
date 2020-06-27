@@ -23,12 +23,12 @@ main_window(argc,argv)
   fprintf(stderr, "x: %d, y: %d\n", x, y);
   x += 20;
   y += 20;
-  SDL_SetWindowPosition(::options_window->sdlWindow, x, y);
+  SDL_SetWindowPosition(::options_window->render.sdlWindow, x, y);
 
   int i=0;
-  window_map[i++] = ::options_window;
-  window_map[i++] = ::spc_export_window;
-  window_map[i] = NULL;
+  Window::map[i++] = ::options_window;
+  Window::map[i++] = ::spc_export_window;
+  Window::map[i] = NULL;
 
   int should_be_zero = SDL_GetCurrentDisplayMode(0, &monitor_display_mode);
 
@@ -215,46 +215,39 @@ void Debugger::handle_events()
             DEBUGLOG("Window %d Gained keyboard focus\n", ev.window.windowID);
             //SDL_GetMouseState(&mouse::x, &mouse::y);
             sub_window_experience = NULL;
-            for (int i=0; i < NUM_WINDOWS; i++)
+            Window *window = Window::getWindow(ev.window.windowID);
+            if (window && window->oktoshow)
             {
-              if (ev.window.windowID == window_map[i]->windowID)
-              {
-                if (window_map[i]->oktoshow)
-                {
-                  DEBUGLOG("Window_map %d gained experience. :D\n", i);
-                  sub_window_experience = (Experience *)window_map[i];
-                  //window_map[i]->raise();
-                }
-                break;
-              }
+              DEBUGLOG("Window_map \"%s\" gained experience. :D\n", window->title.c_str());
+              sub_window_experience = (Experience *)window;
+              //window_map[i]->raise();
             }
           }
           break;
           case SDL_WINDOWEVENT_SHOWN:
           {
             SDL_Log("Window %d shown", ev.window.windowID);
-            for (int i=0; i < NUM_WINDOWS; i++)
+            Window *window = Window::getWindow(ev.window.windowID);
+
+            if (window)
             {
-              if (ev.window.windowID == window_map[i]->windowID)
+              if (!window->oktoshow)
               {
-                if (!window_map[i]->oktoshow)
-                {
-                  window_map[i]->hide();
-                  /* maybe right here, instead of raising the main window, we should
-                    have a history of displayed windows.. and the last one should be raised.
-                  */
-                  sub_window_experience = NULL;
-                  //SDL_RaiseWindow(::render->::render->sdlWindow);
-                }
-                else
-                {
-                  sub_window_experience = NULL;
-                  DEBUGLOG("Window_map %d gained experience. :D\n", i);
-                  sub_window_experience = (Experience *)window_map[i];
-                  window_map[i]->raise();
-                }
-                break;
+                window->hide();
+                /* maybe right here, instead of raising the main window, we should
+                  have a history of displayed windows.. and the last one should be raised.
+                */
+                sub_window_experience = NULL;
+                //SDL_RaiseWindow(::render->::render->sdlWindow);
               }
+              else
+              {
+                sub_window_experience = NULL;
+                DEBUGLOG("Window_map \"%s\" gained experience. :D\n", window->title.c_str());
+                sub_window_experience = (Experience *)window;
+                window->raise();
+              }
+              break;
             }
           }
           break;
@@ -271,18 +264,16 @@ void Debugger::handle_events()
             }
             else
             {
-              for (int i=0; i < NUM_WINDOWS; i++)
+              Window *window = Window::getWindow(ev.window.windowID);
+              if (window)
               {
-                if (ev.window.windowID == window_map[i]->windowID)
-                {
-                  window_map[i]->hide();
-                  // maybe right here, instead of raising the main window, we should
-                  //  have a history of displayed windows.. and the last one should be raised.
+                window->hide();
+                // maybe right here, instead of raising the main window, we should
+                //  have a history of displayed windows.. and the last one should be raised.
 
-                  sub_window_experience = NULL;
-                  //SDL_RaiseWindow(::render->::render->sdlWindow);
-                  break;
-                }
+                sub_window_experience = NULL;
+                //SDL_RaiseWindow(::render->::render->sdlWindow);
+                break;
               }
             }
           }

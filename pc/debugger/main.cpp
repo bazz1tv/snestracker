@@ -2,9 +2,9 @@
 #include "Screen.h"
 #include "Colors.h"
 #include "Organization.h"
-
 #include "Render.h"
 #include "shared/SdlNfd.h"
+#include "Screen.h"
 
 int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
              SDL_Texture **sdlTexture, SDL_Surface **screen,
@@ -12,7 +12,7 @@ int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
 
 int main(int argc, char **argv)
 {
-  Render render;
+  Render render(SCREEN_WIDTH, SCREEN_HEIGHT);
   ::render = &render;
 
   init_sdl(&render.sdlWindow, &render.sdlRenderer,

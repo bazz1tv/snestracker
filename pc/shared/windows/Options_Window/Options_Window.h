@@ -73,7 +73,7 @@ struct Options_Window : public Window
       return false;
     }
     Tab audio;
-    void draw () { audio.draw(options_window.screen); }
+    void draw () { audio.draw(options_window.render.screen); }
     static int switch_to_audio_tab(void *data);
   } tabs;
 

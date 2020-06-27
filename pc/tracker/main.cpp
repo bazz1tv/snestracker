@@ -9,6 +9,7 @@
 #include "DEBUGLOG.h"
 #include "sdl_dblclick.h"
 #include "globals.h"
+#include "Screen.h"
 
 int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
              SDL_Texture **sdlTexture, SDL_Surface **screen,
@@ -19,7 +20,7 @@ int main(int argc, char **argv)
   time_t t = time(NULL);
   srand((unsigned int)t);
 
-  Render render;
+  Render render(SCREEN_WIDTH, SCREEN_HEIGHT);
   ::render = &render;
 
   init_sdl(&render.sdlWindow, &render.sdlRenderer,

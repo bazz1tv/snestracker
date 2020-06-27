@@ -106,7 +106,7 @@ void Options_Window::Tabs::preload(int x, int y)
 
 Options_Window::Content_Area::Content_Area(Options_Window &ref) : 
 options_window(ref),
-audio_options(ref.screen, ref.sdlRenderer)
+audio_options(ref.render.screen, ref.render.sdlRenderer)
 {
 
 }
@@ -121,5 +121,5 @@ void Options_Window::Content_Area::preload(int x, int y)
 
 void Options_Window::Content_Area::clear()
 {
-  SDL_FillRect(options_window.screen, &rect, Colors::Interface::color[Colors::Interface::bg]);
+  SDL_FillRect(options_window.render.screen, &rect, Colors::Interface::color[Colors::Interface::bg]);
 }

@@ -1,9 +1,12 @@
 #include "gui/Window.h"
 
-Window::Window(int width, int height, const char *title)
+Window *Window::map[NUM_WINDOWS+1];
+
+Window::Window(int width, int height, const char *title) : render(width, height)
 {
   rect.w = width;
   rect.h = height;
+  // TODO: maybe have a buffer to ensure we don't lose the string contents?
   this->title = title;
   init();
 }
@@ -11,8 +14,8 @@ Window::Window(int width, int height, const char *title)
 void Window::init()
 {
   this->destroy();
-  SDL_CreateWindowAndRenderer(rect.w, rect.h, SDL_WINDOW_HIDDEN /*| SDL_WINDOW_BORDERLESS*/, &sdlWindow, &sdlRenderer);
-  if (sdlWindow == NULL || sdlRenderer == NULL)
+  SDL_CreateWindowAndRenderer(rect.w, rect.h, SDL_WINDOW_HIDDEN /*| SDL_WINDOW_BORDERLESS*/, &render.sdlWindow, &render.sdlRenderer);
+  if (render.sdlWindow == NULL || render.sdlRenderer == NULL)
   {
     fprintf(stderr, "FCK\n");
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
@@ -22,63 +25,41 @@ void Window::init()
     return;
   }
 
-  windowID = SDL_GetWindowID(sdlWindow);
+  render.windowID = SDL_GetWindowID(render.sdlWindow);
 
   //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");  // make the scaled rendering look smoother.
-  SDL_RenderSetLogicalSize(sdlRenderer, rect.w, rect.h);
+  //SDL_RenderSetLogicalSize(render.sdlRenderer, rect.w, rect.h);
 
-  screen = SDL_CreateRGBSurface(0, rect.w, rect.h, 32,
+  render.screen = SDL_CreateRGBSurface(0, rect.w, rect.h, 32,
                                       0x00FF0000,
                                       0x0000FF00,
                                       0x000000FF,
                                       0xFF000000);
-  sdlTexture = SDL_CreateTexture(sdlRenderer,
+  render.sdlTexture = SDL_CreateTexture(render.sdlRenderer,
                                           SDL_PIXELFORMAT_ARGB8888,
                                           SDL_TEXTUREACCESS_STREAMING,
                                           rect.w, rect.h);
 
-  if (screen == NULL || sdlTexture == NULL)
+  if (render.screen == NULL || render.sdlTexture == NULL)
   {
-    fprintf(stderr, "MAn we have Window::Window problems : I couldn't allocate a screen or Texture :\n");
+    fprintf(stderr, "MAn we have Window::Window problems : I couldn't allocate a render.screen or Texture :\n");
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                        "Warning!",
-                       "Window::Window() - Could not allocate screen or Texture!",
+                       "Window::Window() - Could not allocate render.screen or Texture!",
                        NULL);
     return;
   }
 
-  SDL_SetColorKey(screen, SDL_TRUE, 0);
-  SDL_SetSurfaceBlendMode(screen, SDL_BLENDMODE_BLEND);
+  SDL_SetColorKey(render.screen, SDL_TRUE, 0);
+  SDL_SetSurfaceBlendMode(render.screen, SDL_BLENDMODE_BLEND);
 
-  SDL_SetTextureBlendMode(sdlTexture, SDL_BLENDMODE_BLEND);
+  SDL_SetTextureBlendMode(render.sdlTexture, SDL_BLENDMODE_BLEND);
 
-  SDL_SetWindowTitle(sdlWindow, title.c_str());
+  SDL_SetWindowTitle(render.sdlWindow, title.c_str());
 }
 
 void Window::destroy()
 {
-  if (screen)
-  {
-    SDL_FreeSurface(screen);
-    screen = NULL;
-  }
-  if (sdlTexture)
-  {
-    SDL_DestroyTexture(sdlTexture);
-    sdlTexture = NULL;
-  }
-    
-  if (sdlRenderer)
-  {
-    SDL_DestroyRenderer(sdlRenderer);
-    sdlRenderer = NULL;
-  }
-    
-  if(sdlWindow)
-  {
-    SDL_DestroyWindow(sdlWindow);
-    sdlWindow = NULL;
-  }  
 }
 
 Window::~Window()
@@ -89,27 +70,19 @@ Window::~Window()
 
 void Window::clear_screen()
 {
-  SDL_FillRect(screen, NULL, 0);
-  SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
-  SDL_RenderClear(sdlRenderer);
-  SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-  SDL_RenderPresent(sdlRenderer);
+  render.clear_screen();
 }
 
 void Window::update_screen()
 {
-  SDL_UpdateTexture(sdlTexture, NULL, screen->pixels, screen->pitch);
-  SDL_SetRenderDrawColor (sdlRenderer, 0, 0, 0, 0);
-  SDL_RenderClear(sdlRenderer);
-  SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-  SDL_RenderPresent(sdlRenderer);
+  render.sdl_draw();
 }
 
 void Window::show()
 {
   SDL_Log("Window::show()");
-  SDL_ShowWindow(sdlWindow);
-  SDL_RaiseWindow(sdlWindow);
+  SDL_ShowWindow(render.sdlWindow);
+  SDL_RaiseWindow(render.sdlWindow);
   oktoshow = true;
   //init();
 }
@@ -117,15 +90,36 @@ void Window::show()
 void Window::raise()
 {
   SDL_Log("Window::raise()");
-  SDL_RaiseWindow(sdlWindow);
+  SDL_RaiseWindow(render.sdlWindow);
 }
 
 void Window::hide()
 {
   //this->destroy();
-  //SDL_SetWindowGrab(sdlWindow, SDL_FALSE);
-  SDL_HideWindow(sdlWindow);
+  //SDL_SetWindowGrab(render.sdlWindow, SDL_FALSE);
+  SDL_HideWindow(render.sdlWindow);
   oktoshow = false;
-  //SDL_SetWindowPosition(sdlWindow, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED);
+  //SDL_SetWindowPosition(render.sdlWindow, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED);
 }
 
+Window * Window::getWindow(Uint32 windowID)
+{
+  for (int i=0; i < NUM_WINDOWS; i++)
+  {
+    if (map[i]->render.windowID == windowID)
+      return map[i];
+  }
+
+  return NULL;
+}
+
+Window * Window::getWindow(SDL_Window *sdlWindow)
+{
+  for (int i=0; i < NUM_WINDOWS; i++)
+  {
+    if (map[i]->render.sdlWindow == sdlWindow)
+      return map[i];
+  }
+
+  return NULL;
+}

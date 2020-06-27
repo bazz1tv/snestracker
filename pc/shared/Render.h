@@ -1,30 +1,26 @@
 #pragma once
 #include "SDL.h"
-#include "gui/Window.h"
 
+struct Window;
 struct Render
 {
 public:
-  Render();
+  Render(int w, int h);
   ~Render();
 
-  void sdl_draw(SDL_Surface *screen=Render::screen,
-    SDL_Texture *sdlTexture=Render::sdlTexture,
-    SDL_Renderer *sdlRenderer=Render::sdlRenderer);
-  void clear_screen(SDL_Surface *screen=Render::screen,
-    SDL_Texture *sdlTexture=Render::sdlTexture,
-    SDL_Renderer *sdlRenderer=Render::sdlRenderer);
+  void sdl_draw();
+  void clear_screen();
 
   void load_from_window(Window *win);
 
-  static SDL_Renderer *sdlRenderer;
-  static SDL_Texture *sdlTexture;
-  static SDL_Surface *screen;
+  SDL_Renderer *sdlRenderer;
+  SDL_Texture *sdlTexture;
+  SDL_Surface *screen;
 
   SDL_Window *sdlWindow;
   Uint32 windowID;
 
-  int w,h;
+  int w,h; // the native size
   float sx, sy; // raw scaling factors when not using SDL's logical scaling
   bool logical; // using SDL's logical scaling?
 };

@@ -56,23 +56,23 @@ void Spc_Export_Window::one_time_draw()
   int x=10, y=10;
   char tmpbuf[267];
   sprintf(tmpbuf, "Game....: %s", ::tag.game);
-  sdlfont_drawString(this->screen, x, y, tmpbuf); 
+  sdlfont_drawString(this->render.screen, x, y, tmpbuf);
   y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Title...: %s", ::tag.song);
-  sdlfont_drawString(this->screen, x, y, tmpbuf); 
+  sdlfont_drawString(this->render.screen, x, y, tmpbuf);
   y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Length..: %ld", ::tag.length);
-  sdlfont_drawString(this->screen, x, y, tmpbuf);
+  sdlfont_drawString(this->render.screen, x, y, tmpbuf);
   y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Composer: %s", ::tag.author);
-  sdlfont_drawString(this->screen, x, y, tmpbuf); 
+  sdlfont_drawString(this->render.screen, x, y, tmpbuf);
   y+=CHAR_HEIGHT*2;
 
   sprintf(tmpbuf, "Dumper..: %s", ::tag.dumper);
-  sdlfont_drawString(this->screen, x, y, tmpbuf); 
+  sdlfont_drawString(this->render.screen, x, y, tmpbuf);
   y+=CHAR_HEIGHT;
   sprintf(tmpbuf, "Comment.: %s", ::tag.comment);
-  sdlfont_drawString(this->screen, x, y, tmpbuf); 
+  sdlfont_drawString(this->render.screen, x, y, tmpbuf);
   y+=CHAR_HEIGHT*5;
 
   export_button.setup(WIDTH,y,true);
@@ -139,7 +139,7 @@ void Spc_Export_Window::run()
 
 void Spc_Export_Window::draw()
 {
-  export_button.draw(true, false, false, screen);
+  export_button.draw(true, false, false, render.screen);
   update_screen();
 }
 
@@ -164,7 +164,7 @@ int Spc_Export_Window::receive_event(SDL_Event &ev)
           SDL_Event close_window_ev;
           close_window_ev.type = SDL_WINDOWEVENT;
           close_window_ev.window.event = SDL_WINDOWEVENT_CLOSE;
-          close_window_ev.window.windowID = this->windowID;
+          close_window_ev.window.windowID = this->render.windowID;
           SDL_PushEvent(&close_window_ev);
         }
         break;
