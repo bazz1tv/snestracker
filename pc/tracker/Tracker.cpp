@@ -33,12 +33,12 @@ main_window(argc,argv, this)
   fprintf(stderr, "x: %d, y: %d\n", x, y);
   x += 20;
   y += 20;
-  SDL_SetWindowPosition(::options_window->sdlWindow, x, y);
+  SDL_SetWindowPosition(::options_window->render.sdlWindow, x, y);
 
   int i=0;
-  window_map[i++] = ::options_window;
-  window_map[i++] = ::spc_export_window;
-  window_map[i] = NULL;
+  Window::map[i++] = ::options_window;
+  Window::map[i++] = ::spc_export_window;
+  Window::map[i] = NULL;
 	// MARK END of subwindow code
 
   int should_be_zero = SDL_GetCurrentDisplayMode(0, &monitor_display_mode);
@@ -193,6 +193,11 @@ void Tracker::handle_events()
     if (SdlNfd::active())
       continue;
 
+    SDL_Event orig_ev = ev;
+    Window *win = Window::getWindow(SDL_GetMouseFocus());
+    //DEBUGLOG("GRabbed Window = %d\n", win ? win->render.windowID : -1);
+    Render *render = win ? &win->render : ::render;
+
     switch(ev.type)
     {
       case SDL_QUIT:
@@ -209,10 +214,10 @@ void Tracker::handle_events()
             int h = ev.window.data2;
 
             DEBUGLOG("window resize: w = %d, h = %d\n", w, h);
-            if (::render->logical == false)
+            if (render->logical == false)
             {
-              ::render->sx = (float)(w) / (float)(::render->w);
-              ::render->sy = (float)(h) / (float)(::render->h);
+              render->sx = (float)(w) / (float)(render->w);
+              render->sy = (float)(h) / (float)(render->h);
             }
           } break;
           case SDL_WINDOWEVENT_FOCUS_LOST:
@@ -229,43 +234,34 @@ void Tracker::handle_events()
           {
             DEBUGLOG("Window %d Gained keyboard focus\n", ev.window.windowID);
             sub_window_experience = NULL;
-            for (int i=0; i < NUM_WINDOWS; i++)
+            Window *window = Window::getWindow(ev.window.windowID);
+            if (window && window->oktoshow)
             {
-              if (ev.window.windowID == window_map[i]->windowID)
-              {
-                if (window_map[i]->oktoshow)
-                {
-                  DEBUGLOG("Window_map %d gained experience. :D\n", i);
-                  sub_window_experience = (Experience *)window_map[i];
-                }
-                break;
-              }
+              DEBUGLOG("Window_map \"%s\" gained experience. :D\n", window->title.c_str());
+              sub_window_experience = (Experience *)window;
             }
           }
           break;
           case SDL_WINDOWEVENT_SHOWN:
           {
             SDL_Log("Window %d shown", ev.window.windowID);
-            for (int i=0; i < NUM_WINDOWS; i++)
+            Window *window = Window::getWindow(ev.window.windowID);
+            if (window)
             {
-              if (ev.window.windowID == window_map[i]->windowID)
+              if (!window->oktoshow)
               {
-                if (!window_map[i]->oktoshow)
-                {
-                  window_map[i]->hide();
-                  /* maybe right here, instead of raising the main window, we should
-                    have a history of displayed windows.. and the last one should be raised.
-                  */
-                  sub_window_experience = NULL;
-                }
-                else
-                {
-                  sub_window_experience = NULL;
-                  DEBUGLOG("Window_map %d gained experience. :D\n", i);
-                  sub_window_experience = (Experience *)window_map[i];
-                  window_map[i]->raise();
-                }
-                break;
+                window->hide();
+                /* maybe right here, instead of raising the main window, we should
+                  have a history of displayed windows.. and the last one should be raised.
+                */
+                sub_window_experience = NULL;
+              }
+              else
+              {
+                sub_window_experience = NULL;
+                DEBUGLOG("Window_map \"%s\" gained experience. :D\n", window->title.c_str());
+                sub_window_experience = (Experience *)window;
+                window->raise();
               }
             }
           }
@@ -283,18 +279,16 @@ void Tracker::handle_events()
             }
             else
             {
-              for (int i=0; i < NUM_WINDOWS; i++)
+              Window *window = Window::getWindow(ev.window.windowID);
+              if (window && window->oktoshow)
               {
-                if (ev.window.windowID == window_map[i]->windowID)
-                {
-                  window_map[i]->hide();
+                  window->hide();
                   // maybe right here, instead of raising the main window, we should
                   //  have a history of displayed windows.. and the last one should be raised.
 
                   sub_window_experience = NULL;
                   SDL_RaiseWindow(::render->sdlWindow);
                   break;
-                }
               }
             }
           }
@@ -342,15 +336,15 @@ void Tracker::handle_events()
       {
         mouse::prescaled_x = ev.motion.x;
         mouse::prescaled_y = ev.motion.y;
-        ev.motion.x = static_cast<int> ((float)(ev.motion.x) / ::render->sx);
-        ev.motion.y = static_cast<int> ((float)(ev.motion.y) / ::render->sy);
+        ev.motion.x = static_cast<int> ((float)(ev.motion.x) / render->sx);
+        ev.motion.y = static_cast<int> ((float)(ev.motion.y) / render->sy);
         mouse::x = ev.motion.x;
         mouse::y = ev.motion.y;
       } break;
       case SDL_MOUSEBUTTONDOWN:
       {
-        ev.button.x = static_cast<int> ((float)(ev.button.x) / ::render->sx);
-        ev.button.y = static_cast<int> ((float)(ev.button.y) / ::render->sy);
+        ev.button.x = static_cast<int> ((float)(ev.button.x) / render->sx);
+        ev.button.y = static_cast<int> ((float)(ev.button.y) / render->sy);
         //DEBUGLOG("MOUSEBUTTONDOWN; ");
         /* In the case of touchpad soft clicking, it is expected that the
          * MOUSEBUTTONUP is sent as the immediate next event after the
@@ -364,8 +358,8 @@ void Tracker::handle_events()
       } break;
       case SDL_MOUSEBUTTONUP:
       {
-        ev.button.x = static_cast<int> ((float)(ev.button.x) / ::render->sx);
-        ev.button.y = static_cast<int> ((float)(ev.button.y) / ::render->sy);
+        ev.button.x = static_cast<int> ((float)(ev.button.x) / render->sx);
+        ev.button.y = static_cast<int> ((float)(ev.button.y) / render->sy);
         //DEBUGLOG("MOUSEBUTTONUP; ");
         /* If the last frame was the mbd, we know we have found the soft
          * click event pair. copy this mbu event to be postponed after
@@ -422,23 +416,23 @@ void Tracker::handle_events()
           {
             if (mod & KMOD_SHIFT) /* Switch between logical scaling and "raw" scaling */
             {
-              ::render->logical = !::render->logical;
-              if (::render->logical)
+              render->logical = !render->logical;
+              if (render->logical)
               {
-                SDL_RenderSetLogicalSize(::render->sdlRenderer, ::render->w, ::render->h);
+                SDL_RenderSetLogicalSize(render->sdlRenderer, render->w, render->h);
                 /* No need to use raw scaling factors because the app is fed pre-scaled
                 coordinates (eg. mouse coords) */
-                ::render->sx = ::render->sy = 1.0;
+                render->sx = render->sy = 1.0;
               }
               else
               {
                 int w,h;
                 // Remove Logical Scaling
-                SDL_RenderSetLogicalSize(::render->sdlRenderer, 0, 0);
+                SDL_RenderSetLogicalSize(render->sdlRenderer, 0, 0);
                 // Restore "raw" scaling factors
-                SDL_GetWindowSize(::render->sdlWindow, &w, &h);
-                ::render->sx = (float)(w) / (float)(::render->w);
-                ::render->sy = (float)(h) / (float)(::render->h);
+                SDL_GetWindowSize(render->sdlWindow, &w, &h);
+                render->sx = (float)(w) / (float)(render->w);
+                render->sy = (float)(h) / (float)(render->h);
               }
             }
             else /* Toggle between SDL stock Scaling filters */
@@ -494,7 +488,7 @@ void Tracker::handle_events()
  
     if (sub_window_experience)
     {
-      sub_window_experience->receive_event(ev);
+      sub_window_experience->receive_event(orig_ev);
     }
     else cur_exp->receive_event(ev);
 next_event:

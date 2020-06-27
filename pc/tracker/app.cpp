@@ -74,8 +74,8 @@ retry:
       h = crect->y + crect->h + 50;
       // create the window and assign it to the ao
       Window win(w, h, "Audio Devices");
-      ao.screen = win.screen;
-      ao.renderer = win.sdlRenderer;
+      ao.screen = win.render.screen;
+      ao.renderer = win.render.sdlRenderer;
       // Mark the currently selected item so we can track when it changes
       Context_Menu_Item *item = ao.context.menu->currently_selected_item;
 
