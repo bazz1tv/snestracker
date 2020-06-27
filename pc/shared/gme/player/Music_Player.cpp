@@ -561,8 +561,6 @@ static void sdl_callback( void* data, Uint8* out, int count )
 	sound_callback( sound_callback_data, (sample_t*) out, count / 2 );
 }
 
-#include "gui/DialogBox.h"
-
 static const char* sound_init( long sample_rate, int buf_size,
 		sound_callback_t cb, void* data, const char *audio_out_dev/*=NULL*/ )
 {
@@ -594,7 +592,6 @@ static const char* sound_init( long sample_rate, int buf_size,
 		audio_out_dev = "System Default";
 	}
 
-audio_dev_changed:
 	DEBUGLOG("Opening Audio out Device: %s\n", audio_out_dev);
 	Audio::Devices::selected_audio_out_dev = audio_out_dev;
 
@@ -602,46 +599,15 @@ audio_dev_changed:
 	if (!strcmp(audio_out_dev, "System Default"))
 		audio_out_dev = NULL;
 
-retry:
 	::audio->devices.id = SDL_OpenAudioDevice(
                             audio_out_dev, Audio::Devices::playback,
                             &as, &have, 0 );
 	if (::audio->devices.id < 2) // if open failed
 	{
-		DEBUGLOG("Couldn't open SDL audio: %s\n", SDL_GetError());
-
-		//                                                  STUB
-		const char *buttonStr[3] = { "Retry", "Quit", "Select Audio Device" };
-		char msg[512];
-		snprintf(msg, 512 - 1,
-			"There was a problem opening audio device \"%s\". "
-			"Please consider closing other audio apps and then clicking 'Retry'.",
-			Audio::Devices::selected_audio_out_dev
-		);
-		int button = DialogBox::Custom("Couldn't Open Audio Device!",
-			msg, 2, buttonStr, 0
-		);
-
-		if (button == 0)
-		{
-			DEBUGLOG("\tUser pushed RETRY\n");
-			goto retry;
-		}
-		else if (button == 1)
-		{
-			DEBUGLOG("\tUser pushed QUIT\n");
-			exit( EXIT_FAILURE );
-		}
-		else if (button == 2) // STUB
-		{
-			DEBUGLOG("\tUser pushed SELECT AUDIO DEVICE\n");
-			//Audio_Options ao(::render->sdlScreen, ::render->sdlRenderer);
-		}
-		else
-		{
-			DEBUGLOG("\tUNKNOWN BUTTON VALUE %d, forcing to RETRY\n", button);
-			goto retry;
-		}
+		const char* err = SDL_GetError();
+		if ( !err )
+			err = "Couldn't open SDL audio";
+		return err;
 	}
 	else 
 	{

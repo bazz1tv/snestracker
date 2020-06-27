@@ -6,13 +6,14 @@
 
 int Audio_Options::Context::change_audio_out_device(void *item)
 {
-
-  Context_Menu_Item *itemp = (Context_Menu_Item *)item;
+  Audio_Options *ao = (Audio_Options *) item;
+  Context_Menu_Item *itemp = (Context_Menu_Item *) ao->context.menu->currently_selected_item;
   SDL_Log("change_audio_out_device, %s", itemp->clickable_text.str);
-  ::player->init(::player->sample_rate, itemp->clickable_text.str);
+  if (ao->openDeviceonClick)
+    ::player->init(::player->sample_rate, itemp->clickable_text.str);
 }
 
-Audio_Options::Context::Context()
+Audio_Options::Context::Context(Audio_Options *ao) : ao(ao)
 {
   int selected_index=0;
   int i;
@@ -24,7 +25,7 @@ Audio_Options::Context::Context()
     //menu_items[i] = Context_Menu_Item(audio->devices.device_strings[i], true, NULL, NULL);
     menu_items[i].clickable_text.str = audio->devices.device_strings[i];
     menu_items[i].clickable_text.action = change_audio_out_device;
-    menu_items[i].clickable_text.data = &menu_items[i];
+    menu_items[i].clickable_text.data = ao;
     menu_items[i].is_visible=true;
     menu_items[i].clickable_text.init_width_height();
     if (!strcmp(audio->devices.selected_audio_out_dev,audio->devices.device_strings[i]))
@@ -50,9 +51,11 @@ Audio_Options::Context::~Context()
   delete[] menu_items;
 }
 
-Audio_Options::Audio_Options(SDL_Surface *screen, SDL_Renderer *renderer) : 
+Audio_Options::Audio_Options(SDL_Surface *screen, SDL_Renderer *renderer, bool openDeviceonClick/*=true*/) :
 screen(screen),
-renderer(renderer)
+renderer(renderer),
+context(this),
+openDeviceonClick(openDeviceonClick)
 {
 
 }
@@ -60,8 +63,7 @@ renderer(renderer)
 void Audio_Options::preload(SDL_Rect *rect)
 {
   this->rect = *rect;
-  // not using w or h yet
-  //SDL_Rect r = {rect.x,rect.y,20*CHAR_WIDTH, 8*CHAR_HEIGHT};
+  context.menu->preload(rect->x, rect->y);
 }
 
 void Audio_Options::run()
