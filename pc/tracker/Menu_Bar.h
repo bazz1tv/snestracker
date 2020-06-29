@@ -92,13 +92,32 @@ struct Menu_Bar
     };
   };
 
+  struct About_Context
+  {
+    About_Context() : menu(menu_items, true) {}
+
+    static int clicked_patreon(void *nada);
+    static int clicked_merch(void *nada);
+
+    Expanding_List menu;
+    Context_Menu_Item menu_items[3 + 1] =
+    {
+      { "About", true, NULL, NULL },
+      { "Patreon \x01", true, clicked_patreon, NULL },
+      { "Merch", true, clicked_merch, NULL },
+      {"", false, NULL, NULL}
+    };
+  };
+
   enum
   {
     EVENT_INACTIVE=0,
     EVENT_ACTIVE=1,
     EVENT_FILE,
+    EVENT_EDIT,
     EVENT_TRACK,
-    EVENT_WINDOW
+    EVENT_WINDOW,
+    EVENT_ABOUT
   };
 
   struct Context_Menus
@@ -114,14 +133,11 @@ struct Menu_Bar
     void draw(SDL_Surface *screen);
     void preload(int x, int y);
     void update(Uint8 adsr, Uint8 adsr2);
-    void deactivate_all() {
-      file_context.menu.deactivate();
-      edit_context.menu.deactivate();
-      window_context.menu.deactivate();
-    }
+    void deactivate_all();
 
     File_Context          file_context;
     Edit_Context          edit_context;
     Window_Context        window_context;
+    About_Context         about_context;
   } context_menus;
 };
