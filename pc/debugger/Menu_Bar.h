@@ -109,13 +109,31 @@ struct Menu_Bar
     };
   };
 
+  struct About_Context
+  {
+    About_Context() : menu(menu_items, true) {}
+
+    static int clicked_patreon(void *nada);
+    static int clicked_merch(void *nada);
+
+    Expanding_List menu;
+    Context_Menu_Item menu_items[3 + 1] =
+    {
+      { "About", true, NULL, NULL },
+      { "Patreon \x01", true, clicked_patreon, NULL },
+      { "Merch", true, clicked_merch, NULL },
+      {"", false, NULL, NULL}
+    };
+  };
+
   enum
   {
     EVENT_INACTIVE=0,
     EVENT_ACTIVE=1,
     EVENT_FILE,
     EVENT_TRACK,
-    EVENT_WINDOW
+    EVENT_WINDOW,
+    EVENT_ABOUT
   };
 
   struct Context_Menus
@@ -143,6 +161,7 @@ struct Menu_Bar
     Edit_Context          edit_context;
     Track_Context         track_context;
     Window_Context        window_context;
+    About_Context         about_context;
   } context_menus;
 
   struct Tabs

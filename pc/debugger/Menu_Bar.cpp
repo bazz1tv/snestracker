@@ -204,6 +204,10 @@ void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 
   window_context.menu.preload(x,y);
   x +=  ( strlen(window_context.menu_items[0].clickable_text.str) * CHAR_WIDTH ) + CHAR_WIDTH*2;
+
+  about_context.menu.preload(x,y);
+  x +=  ( strlen(about_context.menu_items[0].clickable_text.str)
+          * CHAR_WIDTH ) + CHAR_WIDTH*2;
 }
 
 bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Uint8 &button, const SDL_Event *ev)
@@ -213,6 +217,7 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
     edit_context.menu.deactivate();
     track_context.menu.deactivate();
     window_context.menu.deactivate();
+    about_context.menu.deactivate();
     return true;
   }
 
@@ -221,6 +226,7 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
     file_context.menu.deactivate();
     track_context.menu.deactivate();
     window_context.menu.deactivate();
+    about_context.menu.deactivate();
     return true;
   }
 
@@ -232,6 +238,7 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
     file_context.menu.deactivate();
     edit_context.menu.deactivate();
     window_context.menu.deactivate();
+    about_context.menu.deactivate();
     return true;
   }
   if (window_context.menu.check_left_click_activate(x, y, button, ev))
@@ -239,6 +246,14 @@ bool Menu_Bar::Context_Menus::check_left_click_activate(int &x, int &y, const Ui
     file_context.menu.deactivate();
     edit_context.menu.deactivate();
     track_context.menu.deactivate();
+    about_context.menu.deactivate();
+    return true;
+  }
+  if (about_context.menu.check_left_click_activate(x, y, button, ev))
+  {
+    file_context.menu.deactivate();
+    edit_context.menu.deactivate();
+    window_context.menu.deactivate();
     return true;
   }
 
@@ -269,7 +284,8 @@ bool Menu_Bar::Context_Menus::is_anything_active()
   return (file_context.menu.is_active || 
     edit_context.menu.is_active || 
     track_context.menu.is_active || 
-    window_context.menu.is_active);
+    window_context.menu.is_active ||
+    about_context.menu.is_active);
 }
 int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
 {
@@ -308,6 +324,12 @@ int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
         return EVENT_WINDOW;
       return EVENT_ACTIVE;
     }
+    if ((r=about_context.menu.receive_event(ev)))
+    {
+      if (r == Expanding_List::EVENT_MENU)
+        return EVENT_ABOUT;
+      return EVENT_ACTIVE;
+    }
   }
 
   return EVENT_INACTIVE;
@@ -329,6 +351,7 @@ void Menu_Bar::Context_Menus::draw(SDL_Surface *screen)
   {
     track_context.draw(screen);
     window_context.menu.draw(screen);
+    about_context.menu.draw(screen);
   }
 }
 
@@ -345,4 +368,16 @@ void Menu_Bar::Tabs::preload(int x, int y)
   instr.rect.y = mem.rect.y;
 
   rect = {mem.rect.x, mem.rect.y, instr.rect.x - mem.rect.x + instr.rect.w, CHAR_HEIGHT};
+}
+
+int Menu_Bar::About_Context::clicked_patreon(void *nada)
+{
+  DEBUGLOG("CLICKED PATREON\n");
+  openUrl(PATREON_URL);
+}
+
+int Menu_Bar::About_Context::clicked_merch(void *nada)
+{
+  DEBUGLOG("CLICKED MERCH\n");
+  openUrl(MERCH_URL);
 }
