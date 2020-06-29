@@ -29,11 +29,13 @@ union Adsr
 {
   // raw adsr reg values
   struct {
-    uint8_t sustain_rate :4;
-    uint8_t sustain_level :4;
+    // byte 1
     uint8_t attack_rate :4;
     uint8_t decay_rate :3;
     uint8_t adsr_active :1;
+    // byte 2
+    uint8_t sustain_rate :5;
+    uint8_t sustain_level :3;
   }__attribute__((packed));
   struct {
     uint8_t adsr1, adsr2;
