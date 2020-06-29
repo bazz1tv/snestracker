@@ -16,7 +16,7 @@ File_System::File_System()
 #define PFREE(path) if (path) SDL_free(path)
 File_System::~File_System()
 {
-  fprintf(stderr, "~File_System");
+  fprintf(stderr, "~File_System\n");
   PFREE(pref_path);
   PFREE(pref_path_quoted);
   PFREE(data_path);
@@ -28,8 +28,8 @@ File_System::~File_System()
                     (strlen(RM_CMD) + strlen(tmp_path_quoted) + 2));
     strcpy (rm_cmd, RM_CMD);
     strcat (rm_cmd, tmp_path_quoted);
-    printf("rm_cmd = %s\n", rm_cmd);
-    //system(rm_cmd);
+    printf("\trm_cmd = %s\n", rm_cmd);
+    system(rm_cmd);
 
     SDL_free(rm_cmd);
     SDL_free(tmp_path_quoted);
