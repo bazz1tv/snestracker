@@ -1,3 +1,5 @@
+#include "platform.h"
+#include "kbd.h"
 #include "tracker/Instruments.h"
 #include "shared/Colors.h"
 #include "shared/sdl_userevents.h"
@@ -620,13 +622,13 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
         switch(scancode)
         {
           case SDLK_UP:
-            if (mod & KMOD_SHIFT && !(mod & KMOD_CTRL))
+            if (MODONLY(mod, KMOD_SHIFT))
             {
               dec_currow();
             }
             break;
           case SDLK_DOWN:
-            if (mod & KMOD_SHIFT && !(mod & KMOD_CTRL))
+            if (MODONLY(mod, KMOD_SHIFT))
             {
               inc_currow();
             }

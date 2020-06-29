@@ -1,3 +1,6 @@
+#include "platform.h"
+#include "kbd.h"
+
 #include "Samples.h"
 #include "Instruments.h"
 #include "shared/Colors.h"
@@ -8,6 +11,8 @@
 #include "shared/sdl_dblclick.h"
 #include "globals.h" // for ::mouse
 #include "PanelCommon.h"
+
+
 
 const int Sample_Panel::NUM_ROWS;
 #define SAMPLE_NAME_GUI_CHAR_WIDTH 22
@@ -568,14 +573,14 @@ int Sample_Panel::event_handler(const SDL_Event &ev)
         switch(scancode)
         {
           case SDLK_UP:
-            if (mod & KMOD_SHIFT && (mod & KMOD_CTRL))
+            if (MODONLY(mod, KMOD_SHIFT | CMD_CTRL_KEY))
             {
               dec_currow();
 							return ROW_UPDATED;
             }
             break;
           case SDLK_DOWN:
-            if (mod & KMOD_SHIFT && (mod & KMOD_CTRL))
+            if (MODONLY(mod, KMOD_SHIFT | CMD_CTRL_KEY))
             {
               inc_currow();
 							return ROW_UPDATED;

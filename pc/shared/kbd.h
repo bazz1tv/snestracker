@@ -5,11 +5,11 @@
  * held, and to check if any modifier is held, respectively:
  *
  * Examples:
- * check if only the CTRL modifier (left or right) is held:
- *   if (MODONLY(mod, KMOD_CTRL))
+ * check for CTRL + SHIFT:
+ *   if (MODONLY(mod, KMOD_CTRL | KMOD_SHIFT))
  *
  *
  *
  *   */
-#define MODONLY(mod, k) ( (mod) & (k) && !( (mod) & ~(k) ) )
+bool MODONLY(const Uint16 &mod, const Uint16 k);
 #define MOD_ANY(mod) (mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI))

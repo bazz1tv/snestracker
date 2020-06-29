@@ -750,31 +750,31 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
         switch(scancode)
         {
           case SDLK_UP:
-            if (MODONLY(mod, KMOD_CTRL))
+            if (MODONLY(mod, CMD_CTRL_KEY))
             {
               dec_currow();
             }
             break;
           case SDLK_DOWN:
-            if (MODONLY(mod, KMOD_CTRL))
+            if (MODONLY(mod, CMD_CTRL_KEY))
             {
               inc_currow();
             }
             break;
           case SDLK_LEFT:
-            if (MODONLY(mod, KMOD_CTRL))
+            if (MODONLY(mod, CMD_CTRL_KEY))
               decpat(this);
           break;
           case SDLK_RIGHT:
-            if (MODONLY(mod, KMOD_CTRL))
+            if (MODONLY(mod, CMD_CTRL_KEY))
               incpat(this);
           break;
           case SDLK_F9:
-            if (MODONLY(mod, KMOD_CTRL))
+            if (MODONLY(mod, CMD_CTRL_KEY))
               clear(this);
           break;
           case SDLK_F10:
-            if (MODONLY(mod, KMOD_CTRL))
+            if (MODONLY(mod, CMD_CTRL_KEY))
             {
               //insert_pattern();
               PatternMeta *p = get_current_pattern_meta(this);
@@ -795,11 +795,11 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
             }
           break;
           case SDLK_F11:
-            if (MODONLY(mod, KMOD_CTRL))
+            if (MODONLY(mod, CMD_CTRL_KEY))
               clone_seq_common(this);
           break;
           case SDLK_F12:
-          if (MODONLY(mod, KMOD_CTRL))
+          if (MODONLY(mod, CMD_CTRL_KEY))
             clone(this);
           break;
 
@@ -1865,7 +1865,7 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
   switch(scancode)
   {
     case SDLK_w:
-      if (MODONLY(mod, KMOD_CTRL))
+      if (MODONLY(mod, CMD_CTRL_KEY))
         pattern_wrap = !pattern_wrap;
     break;
     case SDLK_PAGEUP:
@@ -1953,9 +1953,6 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
     default:break;
   }
 }
-
-#define MODONLY(mod, k) ( (mod) & (k) && !( (mod) & ~(k) ) )
-#define MOD_ANY(mod) (mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI))
 
 void PatternEditorPanel::piano_kb(const int scancode, const int mod)
 {
