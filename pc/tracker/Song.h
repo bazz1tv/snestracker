@@ -150,7 +150,21 @@ struct Song
   PatternSequencer patseq;
   SongSettings settings;
 //private:
-  bool changed;
+  bool changed; // used to track changes to the song
+/* "changed" is distributed to Song subcomponents in the following manner:
+ -----------------
+|                 |
+|  Song::changed  |
+|                 |
+ -----------------
+   |   |   |   |
+   |   |   |   |
+   |   |   |   |
+   |   |    \   \------<-- *Sample::metadata.changed
+   |   |     ------<------ *Instrument::metadata.changed
+    \   \-------<--------- *PatternSequencer::metadata.changed
+     ------------<-------- *SongSettings::metadata.changed
+*/
 };
 
 class SongFileLoader
