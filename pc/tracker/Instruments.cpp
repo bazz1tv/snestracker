@@ -187,10 +187,15 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
           break;
         }
 
-        read(file, &instruments[idx].vol, 1, 1, &maxread);
-        read(file, &instruments[idx].pan, 1, 1, &maxread);
-        read(file, &instruments[idx].adsr.adsr1, 1, 1, &maxread);
-        read(file, &instruments[idx].adsr.adsr2, 1, 1, &maxread);
+        struct Instrument *instr = &instruments[idx];
+
+        read(file, &instr->vol, 1, 1, &maxread);
+        read(file, &instr->pan, 1, 1, &maxread);
+        read(file, &instr->adsr.adsr1, 1, 1, &maxread);
+        read(file, &instr->adsr.adsr2, 1, 1, &maxread);
+
+        // Ensure Hardware ADSR is activated since that's the only thing supported
+        instr->adsr.adsr_active = 1;
 
         subchunksize -= INST_COREINFO_SIZE;
       }
