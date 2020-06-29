@@ -1066,6 +1066,7 @@ void Tracker::reset()
    * SPC driver. To bypass this issue, drain all UserEvents when we
    * perform a tracker reset (eg. when opening a file). */
   SDL_FlushEvent(SDL_USEREVENT);
+
 	// Reset Important GUI Elements
 	if (Text_Edit_Rect::cur_editing_ter)
 		Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
@@ -1080,6 +1081,7 @@ void Tracker::reset()
   song.reset();
 
 	// Reset Other GUI elements
+  Voice_Control::unmute_all();
 
 	/* HACKS */
 	/* Since the BPM and SPD widgets do not constantly poll (they normally
