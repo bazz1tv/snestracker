@@ -556,9 +556,8 @@ ReadInstr:
       mov b, #0   ; 16-bit shift prep
       push y
         mov y, #4 ; multiply by 0x10  2 4 8 16 <<4
-        clrc
--       asl a
-        bcc +
+-       clrc
+        asl a
         rol b
 +       dbnz y, -
 
@@ -613,24 +612,23 @@ doShiftThing:
   ; I just want to get back the processor flags on X
   dec x
   inc x
-  clrc
   ; If X is zero, there is no need to shift the value
   beq @CalcnStore
   ; Based on if X is negative, we need to do LSR and inc that value to ZERO
   bpl @positiveX
 @negativeX
-- lsr a
-  bcc +
-  ror b
-+ inc x
+- clrc
+  lsr b
+  ror a
+  inc x
   bne -
   bra @CalcnStore
 @positiveX
   ; Based on X positive, we need to ASL and dec that value to zero
-- asl a
-  bcc +
+- clrc
+  asl a
   rol b
-+ dec x
+  dec x
   bne -
 @CalcnStore
   mov c, a  ; BC = final scaled pitch offset
