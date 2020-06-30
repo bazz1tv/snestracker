@@ -451,6 +451,8 @@ ReadNote:
     adc a, #plo
     push a
       mov dspaddr, a
+      ; load up the fine tune for this instrument
+      ;mov a, !finetuneData + X
       mov a, !noteLUT2 + y
       mov dspdata, a
     pop a
@@ -472,23 +474,39 @@ asl_a_x4:
 .endr
   ret
 
+; IN: <ptrack_ptr>
+;     Y = idx into ptrack_ptr
+;     X = curtrack
+; CLOBBERS: A, Y, <de>
+getInstrPtr:
+  mov a, [ptrack_ptr] + y ; instrument number
+  asl a
+  mov y, a  ; Y: idx into instrument table
+  mov a, [instrtable_ptr] + y
+  mov e, a
+  inc y
+  mov a, [instrtable_ptr] + y
+  mov d, a ; DE -> instrument
+  ret
+
+/* Corresponds to the high byte of the pitch register. The index into this table
+is the amount of times you had to RSH the P(H) to hit zero. Negative values
+indicate how many times to RSH a positive finetune value, and positive values indicate how many times to
+LSH a positive fine tune value. For negative fine tune values, you should decrement
+this. */
+finetunePitchShiftLUT:
+;  $01 $02 $04 $08 $10 $20
+.db -4, -3, -2, -1, 0, 1
+
 ; IN: <ptrack_ptr>,
 ;     Y = idx into ptrack_ptr,
 ;     X = curtrack
 ; OUT: updated Y index, Curtrack DSP written
-; CLOBBERS: A, <de>
+; CLOBBERS: A, <de>, bc
 ReadInstr:
   push x
   push y
-    mov a, [ptrack_ptr] + y ; A instrument number == SRCN??
-    ;push a
-    asl a
-    mov y, a ; Y: idx into instrument table
-    mov a, [instrtable_ptr] + y
-    mov e, a
-    inc y
-    mov a, [instrtable_ptr] + y
-    mov d, a ; DE -> instrument
+    call !getInstrPtr
     call !getDSPIDX 
     ; TODO: Implement PAN around here
     mov x,a ; NOTE X overwritten here with DSP addr (pushed tho)
@@ -501,9 +519,68 @@ ReadInstr:
     mov dspaddr, x ; vol_r
     mov dspdata, a ; mimic vol to vol_r (pan not yet impl'd)
 
-    inc x
-    inc x
-    inc x
+    inc x           ; pitch (lo) idx
+    mov dspaddr, x
+    mov g, dspdata
+    push x
+      inc x           ; pitch (hi) idx
+      mov dspaddr, x
+      mov a, dspdata  ; A = pitch (hi)
+              ; Calculate how many LSR of P(Hi) until zero. This actually is a fast
+                    ; way to discover what octave we're in. I can track the
+                    ; octave of the hardware value of the note just by how many
+                    ; right bit shifts until it hits zero! 
+      mov x, #-1    ; prepare for a 0 value after increment
+-     inc x
+      lsr a
+      bne -
+      ; X: the octave index into finetunePitchShiftLUT
+      mov a, !finetunePitchShiftLUT + X
+      mov x, a  ; X: finetunePitchShiftLUT value for safekeeping until after finetune value is known
+
+      ; assume positive
+      clr1 s.0    ; mark this guy as positive
+      ; Load up the FineTune Value
+      inc y           ; Y: finetune idx
+      mov a, [de] + y ; A: finetune value
+; FINE TUNE 1st Level Scaling
+      bpl @positive
+@negative:
+      set1 s.0  ;mark this guy as negative
+      ;dec x     ; dec Shift value
+      ; make the value positive so we can treat it the same
+      ; TODO handle 0x80 case
+      eor a, #$FF
+      inc a
+@positive:
+      mov b, #0   ; 16-bit shift prep
+      push y
+        mov y, #4 ; multiply by 0x10  2 4 8 16 <<4
+        clrc
+-       asl a
+        bcc +
+        rol b
++       dbnz y, -
+
+        ;mov c, a  ; BC = Finetune value before 2nd-level scaling
+        ; Now it's time to shift the pitch value based on its octave according to the value in X
+        call !doShiftThing
+        mov b, #$3f
+        mov c, #$ff
+        cmpw ya, bc
+        bcc @val_ok
+        movw ya, bc
+@val_ok
+        ; It is time to update the pitch values
+        mov dspdata, y ; pitch(HI)
+      pop y
+    pop x
+    mov dspaddr, x
+    mov dspdata, a
+    inc x ; p-hi
+    ; END FINE TUNE CALCULATION CODE
+
+    inc x           ; srcn
     mov dspaddr, x ; srcn
     inc y ; pan
     inc y ; src
@@ -521,10 +598,50 @@ ReadInstr:
     inc y
     mov a, [de] + y ; adsr2
     mov dspdata, a
-    ; write to DSP hi byte
+
   pop y
   inc y
-  pop x
+  pop x ; track idx
+  ret
+
+; IN: X = Octave Shift amount
+;     B = Finetune value high byte before 2nd-level scaling
+;     A = ^ low byte
+;     dspdata,G = base hardware pitch value
+; OUT: YA = new hardware pitch value
+doShiftThing:
+  ; I just want to get back the processor flags on X
+  dec x
+  inc x
+  clrc
+  ; If X is zero, there is no need to shift the value
+  beq @CalcnStore
+  ; Based on if X is negative, we need to do LSR and inc that value to ZERO
+  bpl @positiveX
+@negativeX
+- lsr a
+  bcc +
+  ror b
++ inc x
+  bne -
+  bra @CalcnStore
+@positiveX
+  ; Based on X positive, we need to ASL and dec that value to zero
+- asl a
+  bcc +
+  rol b
++ dec x
+  bne -
+@CalcnStore
+  mov c, a  ; BC = final scaled pitch offset
+  mov y, dspdata
+  mov a, g    ; YA = hardware base pitch value
+  bbc s.0, @add_offset
+@subtract_offset
+  SUBW ya, bc
+  ret
+@add_offset
+  ADDW ya, bc
   ret
 
 ; IN: <ptrack_ptr>,
@@ -556,22 +673,6 @@ ReadFx:
   ret
 ReadFxParam:
   ; TODO
-  inc y
-  ret
-
-/*ReadCommon:
-  push x
-  mov x,a
-  mov a, [ptrack_ptr] + y
-  pop y ; old x (curtrack) now in y
-  push y
-  pop y
-  inc y
-  jmp [!idea+X]
-idea:
-.dw ReadNote, ReadInstr, ReadVol, ReadFx, ReadFxParam
-*/
-_incyret1:
   inc y
   ret
 

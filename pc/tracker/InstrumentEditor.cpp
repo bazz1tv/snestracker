@@ -240,8 +240,6 @@ InstrumentEditor::InstrumentEditor(Instrument_Panel *instrpanel) :
   /* disable not-ready buttons */
   pan_incbtn.enabled = false;
   pan_decbtn.enabled = false;
-  finetune_incbtn.enabled = false;
-  finetune_decbtn.enabled = false;
 }
 void InstrumentEditor :: update_srcn()
 {
@@ -369,8 +367,8 @@ void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
   pan_incbtn.draw(screen);
   pan_decbtn.draw(screen);
 
-  finetune_title.draw(screen, Colors::nearblack);
-  finetune_valtext.draw(screen, Colors::nearblack);
+  finetune_title.draw(screen);
+  finetune_valtext.draw(screen);
   finetune_incbtn.draw(screen);
   finetune_decbtn.draw(screen);
 

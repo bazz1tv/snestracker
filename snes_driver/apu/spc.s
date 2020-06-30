@@ -9,18 +9,32 @@
 l               db
 h               db
 
+c				db
+b				db
+
 e               db
 d               db
+
+g				db
+f				db
+
+s				db
+r				db
 
 PrevCmd         db
 SnesBuffer0     db
 SnesBuffer1     db
 
 flags           db
+
+finetuneData  INSTANCEOF FinetuneData 8
 .ends
 
 .equ hl l EXPORT
+.equ bc c EXPORT
 .equ de e EXPORT
+.equ fg g EXPORT
+.equ rs s EXPORT
 
 .BANK 0 SLOT SPC_CODE_SLOT
 .ORG 0

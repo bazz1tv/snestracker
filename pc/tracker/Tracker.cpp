@@ -919,12 +919,13 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 
 		// Time to load instrument info
 		::IAPURAM[cursample_i++] = instr->vol;
+    ::IAPURAM[cursample_i++] = instr->finetune;
+
 		::IAPURAM[cursample_i++] = instr->pan;
 		::IAPURAM[cursample_i++] = instr->srcn;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr1;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr2;
 		::IAPURAM[cursample_i++] = instr->semitone_offset;
-		::IAPURAM[cursample_i++] = instr->finetune;
 	}
 	apuram->dspdir_i = dspdir_i;
 	::player->spc_write_dsp(dsp_reg::dir, dspdir_i);

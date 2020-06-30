@@ -67,3 +67,7 @@ adsr2 db
 semitone_offset db ; TODO
 finetune db        ; TODO
 .endst
+
+.struct FinetuneData
+finetune	db
+.endst
