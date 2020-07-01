@@ -446,8 +446,8 @@ is the amount of times you had to RSH the P(H) to hit zero. Negative values
 indicate how many times to RSH a positive finetune value, and positive values indicate how many times to
 LSH a positive fine tune value. */
 finetunePitchShiftLUT:
-;  $01 $02 $04 $08 $10 $20
-.db -4, -3, -2, -1, 0, 1
+; $01 $02 $04 $08 $10 $20, $40
+.db 1,  2,  4,  8, 16, 32,  64
 ; IN: x = curtrack 
 ;     note
 ; CLOBBERS: A, Y
@@ -460,21 +460,23 @@ DoFinetune:
     mov a, activeInstrument + X
     call !loadInstrPtr  ; then, [DE] -> Instrument
     mov a, note + 1 ; load P(HI)
-    
+
+    mov x, #-1    ; prepare for a 0 value after increment
+    cmp a, #$3f
+    bne +
+    inc x         ; since #$3f is the final octave but doesn't reach the next bit
+                  ; I accomodate it for it manually
++
                   ; Calculate how many LSR of P(Hi) until zero. This actually is a fast
                   ; way to discover what octave we're in. I can track the
                   ; octave of the hardware value of the note just by how many
                   ; right bit shifts until it hits zero! 
-    mov x, #-1    ; prepare for a 0 value after increment
 -   inc x
     lsr a
     bne -
     ; X: the octave index into finetunePitchShiftLUT
-    mov a, !finetunePitchShiftLUT + X
-    mov x, a  ; X: finetunePitchShiftLUT value for safekeeping until after finetune value is known
-  
-    ; assume positive
-    clr1 s.0    ; mark this guy as positive
+
+    clr1 s.0      ; initially mark the polarity marker as positive
     ; Load up the FineTune Value
     mov y, #Instrument.finetune           ; Y: finetune idx
     mov a, [de] + y ; A: finetune value
@@ -482,23 +484,17 @@ DoFinetune:
     bpl @positive
 @negative:  
     set1 s.0  ;mark this guy as negative
-    ;dec x     ; dec Shift value
     ; make the value positive so we can treat it the same
     ; TODO handle 0x80 case
     eor a, #$FF
     inc a
-@positive:  
-    mov b, #0   ; 16-bit shift prep
-    mov y, #3   ; 16-bit multiply by 0x8
--   asl a
-    rol b
-+   dbnz y, -
+@positive:
 /* But why multiply by 0x10? It is because this is the resolution of fine tune that
 will be consistent across octaves. This was figured out via the following pitch
 octave table. You need to first understand that every octave has a resolution
 difference of a power of 2:
 
-$3fff +1 technically
+$3fff +2      6 : finetune << 2
 $2000 +1      5 : finetune << 1
 $1000 - Base octave 4 : finetune >> 0
 $0800 -1      3 : finetune >> 1
@@ -506,39 +502,26 @@ $0400 -2      2 : finetune >> 2
 $0200 -3      1 : finetune >> 3
 $0100 -4      0 : finetune >> 4
 
-Since I need to be able to >>4 to the lowest supported octave,
-that means i need 1<<4 finetune step value.
+But since this has mixed LSH and RSH, it's easier coding to specify in terms of
+one operator. So I do all RSH as follows:
+
+$3fff +2      6 : finetune
+$2000 +1      5 : finetune >> 1
+$1000  0      4 : finetune >> 2
+$0800 -1      3 : finetune >> 3
+$0400 -2      2 : finetune >> 4
+$0200 -3      1 : finetune >> 5
+$0100 -4      0 : finetune >> 6
 */
-  
-    ; Now it's time to shift the pitch value based on its octave according to the value in X
+    push a
+      mov a, !finetunePitchShiftLUT + X
+      mov y, a
+    pop a
+    mul ya
+    mov b, y
+    mov c, a
     
-    ;doShiftThing:
-    ; IN: X = Octave Shift amount
-    ;     B = Finetune value high byte before 2nd-level scaling
-    ;     A = Finetune value low byte
-    ;     dspdata,G = base hardware pitch value
-    ; OUT: YA = new hardware pitch value
-    ; I just want to get back the processor flags on X
-    dec x
-    inc x
-    ; If X is zero, there is no need to shift the value
-    beq @CalcnStore
-    ; Based on if X is negative, we need to do LSR and inc that value to ZERO
-    bpl @positiveX
-@negativeX  
--   lsr b
-    ror a
-    inc x
-    bne -
-    bra @CalcnStore
-@positiveX  
-    ; Based on X positive, we need to ASL and dec that value to zero
--   asl a
-    rol b
-    dec x
-    bne -
-@CalcnStore  
-    mov c, a  ; BC = final scaled pitch offset
+    ; YA = final scaled pitch offset
     mov y, note + 1
     mov a, note    ; YA = NoteLUT2 hardware base pitch value
     bbc s.0, @add_offset
@@ -548,12 +531,11 @@ that means i need 1<<4 finetune step value.
 @add_offset  
     ADDW ya, bc
 +  
-  ; ---- doShiftThing END ----
-    mov b, #$3f
-    mov c, #$ff
-    cmpw ya, bc
-    bcc @val_ok
-    movw ya, bc
+  ; ---- check the pitch isn't beyond allowable range 3FFF ----
+    cmp y, #$40
+    bmi @val_ok
+    mov y, #$3f
+    mov a, #$ff
 @val_ok  
     ; It is time to update the pitch values
     mov note + 0, a  ; store pitch(LO)
