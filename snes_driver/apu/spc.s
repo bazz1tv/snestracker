@@ -27,7 +27,7 @@ SnesBuffer1     db
 
 flags           db
 
-finetuneData  INSTANCEOF FinetuneData 8
+activeInstrument  dsb 8
 .ends
 
 .equ hl l EXPORT

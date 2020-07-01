@@ -60,14 +60,10 @@ sequences     db
 ; code uses.
 .struct Instrument
 vol db
+finetune db
 pan db ; TODO
 srcn db
 adsr1 db
 adsr2 db
 semitone_offset db ; TODO
-finetune db        ; TODO
-.endst
-
-.struct FinetuneData
-finetune	db
 .endst

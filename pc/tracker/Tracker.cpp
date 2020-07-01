@@ -772,8 +772,6 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
           ::IAPURAM[pat_i++] = ( 1<<CBIT ) | cbyte;
         /* we should now write the actual byte for any data that is
          * present */
-        if (pr->note)
-          ::IAPURAM[pat_i++] = pr->note - 1;
         if (pr->instr && DIFF_LAST_INSTR)
         {
           last_instr = pr->instr;
@@ -789,6 +787,8 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
             if (highest_instr < (pr->instr - 1)) highest_instr = pr->instr - 1;
           }
         }
+        if (pr->note)
+          ::IAPURAM[pat_i++] = pr->note - 1;
         if (pr->vol)
           ::IAPURAM[pat_i++] = pr->vol;
         if (pr->fx)
