@@ -544,30 +544,46 @@ $0100 -4      0 : finetune >> 6
   pop x ; curtrack
   ret
 
+; The octave that the NoteLUT is specified in
+.define NoteLUTOctave 6
 ; IN: <ptrack_ptr>,
 ;     Y = idx into ptrack_ptr,
 ;     X = curtrack
 ; OUT: updated Y index, Curtrack DSP PITCH written
 ; CLOBBERS: A, de
 ReadNote:
-  ;push x
+  push x
   push y
-    
-    ; -------------------------
-    mov a, [ptrack_ptr] + y ; the NOTE number
-    asl a
-    mov y, a                ; Y: idx into notelut
+    ; Update the key-on buffer
     call !VoiceNumToVoiceBit
     or a, konbuf
     mov konbuf, a           ; A has bit that this voice represents
+    ; -------------------------
+    mov a, [ptrack_ptr] + y ; the NOTE number
+    mov x, #12              ; divide by octave
+    mov y, #0
+    div ya, x
+                            ; A = octave. Y = note
+    mov x, a                ; X = octave
+    mov a, y
+    asl a
+    mov y, a                ; Y: idx into notelut
+
     mov a, !noteLUT2 + y
     mov note, a             ; store plo into curtrack Note temporary variable
     mov a, !noteLUT2+1 + y  ; phi
     mov note + 1, a         ; store phi "
 
+-   cmp x, #NoteLUTOctave
+    bcs +
+    lsr note + 1
+    ror note
+    inc x
+    bra -
++
   pop y
   inc y
-  ;pop x
+  pop x
   ret
 
 ; IN: X: curtrack
@@ -823,8 +839,8 @@ ReadPTracks:
   mov reportTrackerCmd, #reportTrackerCmd_SetPattern
   ret
 
-; Credz to loveemu / Real
-; I wanted to make my own Note table :'3
+; It turns out I produced this same exact table myself in my old code.
+; check out 09f91126 pc-side/bak/C/notes_mapping
 /*
 noteLUT:
 .dw  $0000,
@@ -837,6 +853,7 @@ noteLUT:
 .dw  $00b5, $00c0, $00cb, $00d7, $00e4, $00f2, 
 */
 noteLUT2:
+/*
 ; c0
 .dw  $0100, $010f, $011f, $0130,
 .dw  $0143, $0156,
@@ -856,12 +873,18 @@ noteLUT2:
 ; "C-4"
 .dw  $1000, $10f4, $11f6, $1307,
 .dw  $1429, $155c,
-.dw  $16a1, $17f9, $1966, $1ae9, $1c82, $1e34, 
+.dw  $16a1, $17f9, $1966, $1ae9, $1c82, $1e34,
+*/
+/*
 ; "C-5"
 .dw  $2000, $21e7, $23eb, $260e,
 .dw  $2851, $2ab7,
-.dw  $2d41, $2ff2, $32cc, $35d1, $3904, $3c68,
+.dw  $2d41, $2ff2, $32cc, $35d1, $3905, $3c68,
+*/
 ; C-6
-.dw  $3fff
+;.dw  $3fff
+.dw $4000, $43ce, $47d6, $4c1c,
+.dw $50a3, $556e,
+.dw $5a83, $5fe4, $6598, $6ba3, $7209, $78d1,
 
 .ends
