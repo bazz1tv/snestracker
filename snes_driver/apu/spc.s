@@ -26,8 +26,6 @@ SnesBuffer0     db
 SnesBuffer1     db
 
 flags           db
-
-activeInstrument  dsb 8
 .ends
 
 .equ hl l EXPORT
