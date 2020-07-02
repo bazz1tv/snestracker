@@ -478,11 +478,12 @@ the multiplication implementation as well)
 
 ; Based on octave $4000
 finetuneEqualTemperamentLUT:
-.db $01, $01, $01, $01, $01, $01, $01, $01, $02, $02, $02, $02
-.db $02, $02, $02, $02, $03, $03, $03, $03, $03, $03, $04, $04
-.db $04, $04, $04, $05, $05, $05, $06, $06, $06, $07, $07, $08
+;.db $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01
+;.db $02, $02, $02, $02, $03, $03, $03, $03, $03, $03, $03, $03
+;.db $04, $04, $04, $04, $06, $06, $06, $06, $06, $07, $07, $07
 .db $08, $08, $09, $0a, $0a, $0b, $0b, $0c, $0d, $0d, $0e, $0f
 .db $10, $11, $12, $13, $14, $15, $17, $18, $19, $1b, $1d, $1e
+
 .db $20, $22, $24, $26, $28, $2b, $2d, $30, $33, $36, $39, $3c
 .db $40, $44, $48, $4c, $51, $55, $5b, $60, $66, $6c, $72, $79
 
@@ -551,10 +552,19 @@ $0100 -4      0 : finetune >> 6
 */
 
     push a
-      mov x, noteTrackerIdx  ; VERIFY THIS WORKS!
-      ;mov a, !finetunePitchShiftLUT + X
-      ;mov x, a
+      mov x, note_idx
       mov a, !finetuneEqualTemperamentLUT + X
+      mov y, a
+      mov a, #6
+      setc
+      sbc a, note_octave  ; VERIFY THIS WORKS!
+      mov x, a
+    pop a
+-   dec x
+    bmi +
+    lsr a
+    bra -
++
 /* this is just an optimization instruction. It beats doing the check on X first
 and having 2 branch instructions. It's safe to do since the highest val is 0x40 */
 ;       asl a
@@ -562,11 +572,7 @@ and having 2 branch instructions. It's safe to do since the highest val is 0x40 
 ;       dec x
 ;       bpl -
 @noNeedToShift
-      mov y, a
-    pop a
-
-
-
+    
     mul ya
     mov b, y
     mov c, a
