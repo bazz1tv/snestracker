@@ -58,7 +58,10 @@ PUBLIC_END    dsb 0
 activeInstrument  dsb 8
 
 ;CurTrackData
-note   dw
+note            dw
+note_idx        db
+noteTrackerIdx  db
+note_octave     db
 ;EndCurTrackData
 
 .ENDS
@@ -439,15 +442,59 @@ VoiceNumToVoiceBit:
   ret
 
 
+/*
+00 1.0
+01 1.059463094359295  1.0595
+02 1.122462048309372  1.1225
+03 1.18920711500272   1.1892
+04 1.259921049894872  1.2599
+05 1.334839854170033  1.3348
+06 1.414213562373093  1.4142
+07 1.498307076876679  1.4983
+08 1.587401051968196  1.5874
+09 1.681792830507425  1.6818
+10 1.781797436280674  1.7818
+11 1.887748625363382  1.8877
+12 2
 
+Need 15-bit to represent this fraction. Simplify to 16-bits
+will need 8 bits for the integer. (and remove -128 in favor of -127)
+
+STORE THE ABOVE TABLE IN 8.16 FIXED FORMAT
+
+.dw 0 ; 1.0
+; The rest represent the decimal portion of 1.xxxx
+.dw 595,  1225, 1892, 2599,
+.dw 3348, 4142, 4983, 5874,
+.dw 6818, 7818, 8877
+.dw 0 ; 2.0
+
+It will just be a matter of converting input numbers to the format 8.16,
+and using bit shift tricks to enable multiplication up to 127 (note this could be
+truncated to the minimum scale value (16), or 32 for some padding. it simplifies
+the multiplication implementation as well)
+
+*/
+
+; Based on octave $4000
+finetuneEqualTemperamentLUT:
+.db $01, $01, $01, $01, $01, $01, $01, $01, $02, $02, $02, $02
+.db $02, $02, $02, $02, $03, $03, $03, $03, $03, $03, $04, $04
+.db $04, $04, $04, $05, $05, $05, $06, $06, $06, $07, $07, $08
+.db $08, $08, $09, $0a, $0a, $0b, $0b, $0c, $0d, $0d, $0e, $0f
+.db $10, $11, $12, $13, $14, $15, $17, $18, $19, $1b, $1d, $1e
+.db $20, $22, $24, $26, $28, $2b, $2d, $30, $33, $36, $39, $3c
+.db $40, $44, $48, $4c, $51, $55, $5b, $60, $66, $6c, $72, $79
 
 /* Corresponds to the high byte of the pitch register. The index into this table
 is the amount of times you had to RSH the P(H) to hit zero. Negative values
 indicate how many times to RSH a positive finetune value, and positive values indicate how many times to
 LSH a positive fine tune value. */
 finetunePitchShiftLUT:
+;   0   1   2   3   4   5    6
 ; $01 $02 $04 $08 $10 $20, $40
-.db 1,  2,  4,  8, 16, 32,  64
+;.db 1,  2,  4,  8, 16, 32,  64
+.db 6,  5,  4,  3,  2,  1,   0
 ; IN: x = curtrack 
 ;     note
 ; CLOBBERS: A, Y
@@ -460,21 +507,6 @@ DoFinetune:
     mov a, activeInstrument + X
     call !loadInstrPtr  ; then, [DE] -> Instrument
     mov a, note + 1 ; load P(HI)
-
-    mov x, #-1    ; prepare for a 0 value after increment
-    cmp a, #$3f
-    bne +
-    inc x         ; since #$3f is the final octave but doesn't reach the next bit
-                  ; I accomodate it for it manually
-+
-                  ; Calculate how many LSR of P(Hi) until zero. This actually is a fast
-                  ; way to discover what octave we're in. I can track the
-                  ; octave of the hardware value of the note just by how many
-                  ; right bit shifts until it hits zero! 
--   inc x
-    lsr a
-    bne -
-    ; X: the octave index into finetunePitchShiftLUT
 
     clr1 s.0      ; initially mark the polarity marker as positive
     ; Load up the FineTune Value
@@ -513,10 +545,28 @@ $0400 -2      2 : finetune >> 4
 $0200 -3      1 : finetune >> 5
 $0100 -4      0 : finetune >> 6
 */
+
+/* Version 2: Fine pitch value -127 : +127
+  
+*/
+
     push a
-      mov a, !finetunePitchShiftLUT + X
+      mov x, noteTrackerIdx  ; VERIFY THIS WORKS!
+      ;mov a, !finetunePitchShiftLUT + X
+      ;mov x, a
+      mov a, !finetuneEqualTemperamentLUT + X
+/* this is just an optimization instruction. It beats doing the check on X first
+and having 2 branch instructions. It's safe to do since the highest val is 0x40 */
+;       asl a
+; -     lsr a
+;       dec x
+;       bpl -
+@noNeedToShift
       mov y, a
     pop a
+
+
+
     mul ya
     mov b, y
     mov c, a
@@ -560,11 +610,14 @@ ReadNote:
     mov konbuf, a           ; A has bit that this voice represents
     ; -------------------------
     mov a, [ptrack_ptr] + y ; the NOTE number
+    mov noteTrackerIdx, a
     mov x, #12              ; divide by octave
     mov y, #0
     div ya, x
                             ; A = octave. Y = note
+    mov note_octave, a
     mov x, a                ; X = octave
+    mov note_idx, y         ; store the 0-11 note index for later. TODO- use a temp variable
     mov a, y
     asl a
     mov y, a                ; Y: idx into notelut
@@ -865,7 +918,7 @@ noteLUT2:
 ; c2
 .dw  $0400, $043d, $047d, $04c2,
 .dw  $050a, $0557,
-.dw  $05a8, $05fe, $065a, $06ba, $0721, $078d, 
+.dw  $05a8, $05fe, $0659, $06ba, $0721, $078d, 
 ; c3
 .dw  $0800, $087a, $08fb, $0984, 
 .dw  $0a14, $0aae,
