@@ -622,23 +622,27 @@ ReadNote:
     div ya, x
                             ; A = octave. Y = note
     mov note_octave, a
-    mov x, a                ; X = octave
+    ;mov x, a                ; X = octave
     mov note_idx, y         ; store the 0-11 note index for later. TODO- use a temp variable
-    mov a, y
+    ;mov a, y
+    ;asl a
+    ;mov y, a                ; Y: idx into notelut
+
+    mov a, noteTrackerIdx
     asl a
-    mov y, a                ; Y: idx into notelut
+    mov y, a
 
     mov a, !noteLUT2 + y
     mov note, a             ; store plo into curtrack Note temporary variable
     mov a, !noteLUT2+1 + y  ; phi
     mov note + 1, a         ; store phi "
 
--   cmp x, #NoteLUTOctave
-    bcs +
-    lsr note + 1
-    ror note
-    inc x
-    bra -
+; -   cmp x, #NoteLUTOctave
+;     bcs +
+;     lsr note + 1
+;     ror note
+;     inc x
+;     bra -
 +
   pop y
   inc y
@@ -912,7 +916,6 @@ noteLUT:
 .dw  $00b5, $00c0, $00cb, $00d7, $00e4, $00f2, 
 */
 noteLUT2:
-/*
 ; c0
 .dw  $0100, $010f, $011f, $0130,
 .dw  $0143, $0156,
@@ -933,13 +936,12 @@ noteLUT2:
 .dw  $1000, $10f4, $11f6, $1307,
 .dw  $1429, $155c,
 .dw  $16a1, $17f9, $1966, $1ae9, $1c82, $1e34,
-*/
-/*
+
 ; "C-5"
 .dw  $2000, $21e7, $23eb, $260e,
 .dw  $2851, $2ab7,
 .dw  $2d41, $2ff2, $32cc, $35d1, $3905, $3c68,
-*/
+
 ; C-6
 ;.dw  $3fff
 .dw $4000, $43ce, $47d6, $4c1c,
