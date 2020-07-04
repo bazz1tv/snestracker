@@ -615,7 +615,8 @@ PatSeqPanel::PatSeqPanel(PatternSequencer *patseq) :
   incpatbtn("+", PatSeqPanel::incpat, this),
   decpatbtn("-", PatSeqPanel::decpat, this),
 
-  patseq(patseq)
+  patseq(patseq),
+  lastTimeScrolled(0)
 {
 }
 
@@ -688,9 +689,26 @@ void PatSeqPanel::set_coords(int x, int y)
   decpatbtn.rect.y = incpatbtn.rect.y;// + CHAR_HEIGHT;
 }
 
+static void apuSetPattern(int currow)
+{
+  if (::tracker->playback)
+  {
+    // send command to set the pattern
+    ::player->spc_emu()->write_port(2, currow);
+    ::player->spc_emu()->write_port(1, SPCCMD_SETPATTERN);
+    while (::player->spc_emu()->read_port(1) != SPCCMD_SETPATTERN)
+      SDL_Delay(1);
+    ::player->spc_emu()->write_port(1, SPCCMD_NOP);
+  }
+}
+
 int PatSeqPanel::event_handler(const SDL_Event &ev)
 {
-  mousewheel_rows_event_handler(ev, &rows_scrolled, VISIBLE_ROWS, patseq->num_entries, &rect);
+  if (mousewheel_rows_event_handler(ev, &rows_scrolled, VISIBLE_ROWS, patseq->num_entries, &rect))
+  {
+    // mark the last time you've scrolled
+    lastTimeScrolled = SDL_GetTicks();
+  }
 
   /* If the user clicks within a certain row rect. A row rect is comprised
    * of the index region (including padding), the spacer, and the
@@ -722,6 +740,8 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
                   {
                     //SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
                     currow = rows_scrolled + i;
+
+                    apuSetPattern(currow);
                   }
                   return 1;
                 }
@@ -753,12 +773,14 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
             if (MODONLY(mod, CMD_CTRL_KEY))
             {
               dec_currow();
+              apuSetPattern(currow);
             }
             break;
           case SDLK_DOWN:
             if (MODONLY(mod, CMD_CTRL_KEY))
             {
               inc_currow();
+              apuSetPattern(currow);
             }
             break;
           case SDLK_LEFT:
@@ -998,45 +1020,37 @@ int PatSeqPanel::decpat(void *pspanel)
   *patseq->metadata.changed = true;
 }
 
-void PatSeqPanel::set_currow(int row)
+void PatSeqPanel::set_currow(int row, bool updateScrolled/*=true*/)
 {
-	assert(row < patseq->num_entries);
+  if (row >= patseq->num_entries)
+    row = patseq->num_entries - 1;
+  else if (row < 0)
+    row = 0;
+
 	currow = row;
-	if (currow >= (rows_scrolled + VISIBLE_ROWS))
-		rows_scrolled = currow - VISIBLE_ROWS + 1;
-	else if (row == 0)
-		rows_scrolled = 0;
+
+
+  // (when the song is playing, If the user scrolled in the patseqpanel,
+  // the update mechanism won't interfere for 2000 ms
+  if ( updateScrolled && ( !::tracker->playback || (SDL_GetTicks() > (lastTimeScrolled + 2000)) ) )
+  {
+    if (currow < rows_scrolled)
+      rows_scrolled = currow;
+    else if (currow >= (rows_scrolled + VISIBLE_ROWS))
+      rows_scrolled = currow - VISIBLE_ROWS + 1;
+    else if (row == 0)
+      rows_scrolled = 0;
+  }
 }
 
 void PatSeqPanel::inc_currow()
 {
-  if (currow >= (patseq->num_entries - 1))
-  {
-    currow = 0;
-    rows_scrolled = 0;
-  }
-  else
-  {
-    if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
-      rows_scrolled++;
-
-    currow++;
-  }
+  set_currow(currow + 1);
 }
 
 void PatSeqPanel::dec_currow()
 {
-  if (currow > 0)
-  {
-    if ((currow - rows_scrolled) % VISIBLE_ROWS == 0)
-      rows_scrolled--;
-    currow--;
-  }
-  else
-  {
-    currow = patseq->num_entries - 1;
-    rows_scrolled = patseq->num_entries >= VISIBLE_ROWS ? currow - (VISIBLE_ROWS-1) : 0;
-  }
+  set_currow(currow - 1);
 }
 
 ///////////////////////////////////////////////////////////////////////

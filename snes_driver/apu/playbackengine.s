@@ -313,7 +313,9 @@ PlaySong:
 	clr1 control.ctrlbit_t0 ; stop Timer 0
 	mov t0div, ticks
 
-  call !ReloadSpdDec
+	set1 control.ctrlbit_t0 ; start Timer 0
+
+PlaySongFromSetPatternCmd:
 	call !LoadPattern
 
   ; although the pattern player will eventually update the tracker, this
@@ -322,10 +324,15 @@ PlaySong:
   mov a, sequencer_i
   mov reportTrackerArg, a
   mov reportTrackerCmd, #reportTrackerCmd_SetPattern
-  mov reportTrackerArg, #0
+  mov a, #0
+  mov reportTrackerArg, a
   mov reportTrackerCmd, #reportTrackerCmd_SetRow
+	; reset the 8 voice rle counters (stale values can cause playback order issues)
+	mov x, #7
+-	mov rlecounters + x, a
+	dec x
+	bpl -
 
-	set1 control.ctrlbit_t0 ; start Timer 0
 	set1 flags.bPlaySong
 
 	MOV dspaddr, #flg   ; TURN OFF MUTE, enable echo
@@ -339,6 +346,11 @@ PlaySong:
 
 StopSong:
 	clr1 flags.bPlaySong
+; decays playing sounds (otherwise they could last infinitely depending on ADSR)
+; Clobbers: [dspaddr]
+koffAllNotes:
+	mov dspaddr, #koff
+	mov dspdata, #$FF
 __ret:
   ret
 
@@ -371,6 +383,12 @@ calc_kofftick:
 	inc a
 @ret:
 	ret
+
+; 1 byte argument in port 2 - Pattern# to play
+SetPattern:
+	call !StopSong
+	mov sequencer_i, spcport2
+	jmp !PlaySongFromSetPatternCmd
 
 ContinueSong:
   ; We need to check the timer for a start of row. iow, first check that a

@@ -22,8 +22,6 @@ s				db
 r				db
 
 PrevCmd         db
-SnesBuffer0     db
-SnesBuffer1     db
 
 flags           db
 .ends
@@ -57,8 +55,7 @@ MAIN:
 	mov dspaddr, #evol_r
 	mov dspdata, a
 
-	mov dspaddr, #koff
-	mov dspdata, a
+	call !koffAllNotes
 	mov dspaddr, #pmon
 	mov dspdata, a
 	mov dspaddr, #non
@@ -124,7 +121,7 @@ PollExit:
   bra MainLoop   ; repoll snes
 
 CmdJumpTable:
-  .dw EmptyHandler, FetchRamValue, WriteRamByte, PlaySong, StopSong
+  .dw EmptyHandler, FetchRamValue, WriteRamByte, PlaySong, StopSong, SetPattern
 EmptyHandler:
   ret
 
