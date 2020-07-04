@@ -423,35 +423,6 @@ DoFinetune:
     eor a, #$FF
     inc a
 @positive:
-/* But why multiply by 0x10? It is because this is the resolution of fine tune that
-will be consistent across octaves. This was figured out via the following pitch
-octave table. You need to first understand that every octave has a resolution
-difference of a power of 2:
-
-$3fff +2      6 : finetune << 2
-$2000 +1      5 : finetune << 1
-$1000 - Base octave 4 : finetune >> 0
-$0800 -1      3 : finetune >> 1
-$0400 -2      2 : finetune >> 2
-$0200 -3      1 : finetune >> 3
-$0100 -4      0 : finetune >> 4
-
-But since this has mixed LSH and RSH, it's easier coding to specify in terms of
-one operator. So I do all RSH as follows:
-
-$3fff +2      6 : finetune
-$2000 +1      5 : finetune >> 1
-$1000  0      4 : finetune >> 2
-$0800 -1      3 : finetune >> 3
-$0400 -2      2 : finetune >> 4
-$0200 -3      1 : finetune >> 5
-$0100 -4      0 : finetune >> 6
-*/
-
-/* Version 2: Fine pitch value -127 : +127
-  
-*/
-
     push a
       mov x, note_idx
       mov a, !finetuneEqualTemperamentLUT + X
