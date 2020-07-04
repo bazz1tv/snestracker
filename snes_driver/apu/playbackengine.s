@@ -58,10 +58,10 @@ PUBLIC_END    dsb 0
 activeInstrument  dsb 8
 
 ;CurTrackData
-note            dw  ; workable copy of the actual pitch value to be stored to DSP
-note_idx        db  ; tracker's note % 12
-noteTrackerIdx  db  ; tracker's note index
-note_octave     db  ;
+note_pitch           dw  ; workable copy of the actual pitch value to be stored to DSP
+;note_idx_mod12     db  ; tracker's note % 12
+note_idx            db  ; tracker's note index
+note_octave         db
 ;EndCurTrackData
 
 .ENDS
@@ -407,7 +407,7 @@ DoFinetune:
     ; Load instrument pointer in advance
     mov a, activeInstrument + X
     call !loadInstrPtr  ; then, [DE] -> Instrument
-    mov a, note + 1 ; load P(HI)
+    mov a, note_pitch + 1 ; load P(HI)
 
     clr1 s.0      ; initially mark the polarity marker as positive
     ; Load up the FineTune Value
@@ -452,7 +452,7 @@ $0100 -4      0 : finetune >> 6
 */
 
     push a
-      mov x, noteTrackerIdx
+      mov x, note_idx
       mov a, !finetuneEqualTemperamentLUT + X
       mov y, a
       mov x, note_octave
@@ -469,8 +469,8 @@ $0100 -4      0 : finetune >> 6
     mov c, a
     
     ; YA = final scaled pitch offset
-    mov y, note + 1
-    mov a, note    ; YA = NoteLUT2 hardware base pitch value
+    mov y, note_pitch + 1
+    mov a, note_pitch    ; YA = NoteLUT2 hardware base pitch value
     bbc s.0, @add_offset
 @subtract_offset  
     SUBW ya, bc
@@ -485,8 +485,8 @@ $0100 -4      0 : finetune >> 6
     mov a, #$ff
 @val_ok  
     ; It is time to update the pitch values
-    mov note + 0, a  ; store pitch(LO)
-    mov note + 1, y  ; store pitch(HI)
+    mov note_pitch + 0, a  ; store pitch(LO)
+    mov note_pitch + 1, y  ; store pitch(HI)
   pop x ; curtrack
   ret
 
@@ -509,21 +509,21 @@ ReadNote:
     call !ReadInstr             ; to keep it updated with Tracker interface changes
     ; -------------------------
     mov a, [ptrack_ptr] + y ; the NOTE number
-    mov noteTrackerIdx, a
+    mov note_idx, a
     mov x, #12              ; divide by octave
     mov y, #0
     div ya, x
                             ; A = octave. Y = note
     mov note_octave, a
-    mov note_idx, y         ; store the 0-11 note index for later. TODO- use a temp variable
-    mov a, noteTrackerIdx
+;    mov note_idx_mod12, y         ; store the 0-11 note index for later. TODO- use a temp variable
+    mov a, note_idx
     asl a
     mov y, a
 
     mov a, !noteLUT2 + y
-    mov note, a             ; store plo into curtrack Note temporary variable
+    mov note_pitch, a             ; store plo into curtrack Note temporary variable
     mov a, !noteLUT2+1 + y  ; phi
-    mov note + 1, a         ; store phi "
+    mov note_pitch + 1, a         ; store phi "
   pop y
   inc y
   pop x
@@ -752,9 +752,9 @@ ReadPTracks:
   clrc
   adc a, #plo
   mov dspaddr, a
-  mov dspdata, note
+  mov dspdata, note_pitch
   inc dspaddr
-  mov dspdata, note + 1
+  mov dspdata, note_pitch + 1
 
 @track_done:
   ; if this is the last row, do not do a readahead (it will be done when
