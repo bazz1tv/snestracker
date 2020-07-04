@@ -58,10 +58,10 @@ PUBLIC_END    dsb 0
 activeInstrument  dsb 8
 
 ;CurTrackData
-note            dw
-note_idx        db
-noteTrackerIdx  db
-note_octave     db
+note            dw  ; workable copy of the actual pitch value to be stored to DSP
+note_idx        db  ; tracker's note % 12
+noteTrackerIdx  db  ; tracker's note index
+note_octave     db  ;
 ;EndCurTrackData
 
 .ENDS
@@ -442,60 +442,73 @@ VoiceNumToVoiceBit:
   ret
 
 
-/*
+/* 12-Tone Equal Temperament (12-TET) (ET) is the most popular method of
+intervalizing an octave. The octave is split into twelve equally distant steps.
+This system is a simple compromise between the ability to modulate keys vs. having perfect
+tuning, though our ears have grown quite accustomed to the sound of these pitch
+relations. An example of instruments using ET is the piano and guitar.
+
+ET establishes a constant ratio between all 12 steps of octave. Because musical
+notes are built by a ratio, the distance between each note expands as you move
+upward and contracts as you move downward. This means the math used to make adjustments
+upon any note cannot be linear (fixed offsets).
+
+Every increasing octave has double the resolution of the last.
+The distance between each octave doubles!  0-1--2---3----4-----5------6-------7
+Be sure to understand that this distance growth is not only per octave, the growth
+is happening per note!
+
+ET table can be uncovered most simply by obtaining the twelth root of 2. 2^(1/12)
+
+For an individual octave:
 00 1.0
-01 1.059463094359295  1.0595
-02 1.122462048309372  1.1225
-03 1.18920711500272   1.1892
-04 1.259921049894872  1.2599
-05 1.334839854170033  1.3348
-06 1.414213562373093  1.4142
-07 1.498307076876679  1.4983
-08 1.587401051968196  1.5874
-09 1.681792830507425  1.6818
-10 1.781797436280674  1.7818
-11 1.887748625363382  1.8877
+01 1.059463094359295
+02 1.122462048309372
+03 1.18920711500272 
+04 1.259921049894872
+05 1.334839854170033
+06 1.414213562373093
+07 1.498307076876679
+08 1.587401051968196
+09 1.681792830507425
+10 1.781797436280674
+11 1.887748625363382
 12 2
 
-Need 15-bit to represent this fraction. Simplify to 16-bits
-will need 8 bits for the integer. (and remove -128 in favor of -127)
-
-STORE THE ABOVE TABLE IN 8.16 FIXED FORMAT
-
-.dw 0 ; 1.0
-; The rest represent the decimal portion of 1.xxxx
-.dw 595,  1225, 1892, 2599,
-.dw 3348, 4142, 4983, 5874,
-.dw 6818, 7818, 8877
-.dw 0 ; 2.0
-
-It will just be a matter of converting input numbers to the format 8.16,
-and using bit shift tricks to enable multiplication up to 127 (note this could be
-truncated to the minimum scale value (16), or 32 for some padding. it simplifies
-the multiplication implementation as well)
-
+I could have implemented 8.16 fixed point math (somehow) to be able to perform
+these calculations, but instead I went for precalculated tables.
 */
 
-; Based on octave $4000
 finetuneEqualTemperamentLUT:
 ;.db $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01
 ;.db $02, $02, $02, $02, $03, $03, $03, $03, $03, $03, $03, $03
 ;.db $04, $04, $04, $04, $06, $06, $06, $06, $06, $07, $07, $07
+;.db $08, $08, $09, $0a, $0a, $0b, $0b, $0c, $0d, $0d, $0e, $0f
+;.db $10, $11, $12, $13, $14, $15, $17, $18, $19, $1b, $1d, $1e
+;.db $20, $22, $24, $26, $28, $2b, $2d, $30, $33, $36, $39, $3c
+;.db $40, $44, $48, $4c, $51, $55, $5b, $60, $66, $6c, $72, $79
+
+.db $01, $01, $01, $01, $01, $01, $01, $01, $02, $02, $02, $02
+;.db $02, $02, $02, $02, $03, $03, $03, $03, $03, $03, $03, $03
+.db $04, $04, $04, $04, $06, $06, $06, $06, $06, $07, $07, $08
+.db $04, $04, $04, $04, $06, $06, $06, $06, $06, $07, $07, $08
+.db $08, $08, $09, $0a, $0a, $0b, $0b, $0c, $0d, $0d, $0e, $0f
+.db $08, $08, $09, $0a, $0a, $0b, $0b, $0c, $0d, $0d, $0e, $0f
 .db $08, $08, $09, $0a, $0a, $0b, $0b, $0c, $0d, $0d, $0e, $0f
 .db $10, $11, $12, $13, $14, $15, $17, $18, $19, $1b, $1d, $1e
 
-.db $20, $22, $24, $26, $28, $2b, $2d, $30, $33, $36, $39, $3c
-.db $40, $44, $48, $4c, $51, $55, $5b, $60, $66, $6c, $72, $79
+; The table below is used in conjunction with the above table
+OctaveShiftRightLUT:
+.db 2, 3, 2, 2, 1, 0, 0
+; 2 4 8 16
+; (i >> 2) * 1 => (i / 4) * 1 => i/4
+; (i >> 3) * 4 => (i / 8) * 4 => i/2
+; (i >> 2) * 4 => (i / 4) * 4 => i
+; (i >> 2) * 8 => (i / 4) * 8 => 2i
+; (i >> 1) * 8 => (i / 2) * 8 => 4i
+; (i >> 0) * 8 => (  i  ) * 8 => 8i
+; (i >> 0) * 16 =>(  i  ) * 16 => 16i
 
-/* Corresponds to the high byte of the pitch register. The index into this table
-is the amount of times you had to RSH the P(H) to hit zero. Negative values
-indicate how many times to RSH a positive finetune value, and positive values indicate how many times to
-LSH a positive fine tune value. */
-finetunePitchShiftLUT:
-;   0   1   2   3   4   5    6
-; $01 $02 $04 $08 $10 $20, $40
-;.db 1,  2,  4,  8, 16, 32,  64
-.db 6,  5,  4,  3,  2,  1,   0
 ; IN: x = curtrack 
 ;     note
 ; CLOBBERS: A, Y
@@ -552,27 +565,18 @@ $0100 -4      0 : finetune >> 6
 */
 
     push a
-      mov x, note_idx
+      mov x, noteTrackerIdx
       mov a, !finetuneEqualTemperamentLUT + X
       mov y, a
-      mov a, #6
-      setc
-      sbc a, note_octave  ; VERIFY THIS WORKS!
+      mov x, note_octave
+      mov a, !OctaveShiftRightLUT + x
       mov x, a
     pop a
 -   dec x
     bmi +
     lsr a
     bra -
-+
-/* this is just an optimization instruction. It beats doing the check on X first
-and having 2 branch instructions. It's safe to do since the highest val is 0x40 */
-;       asl a
-; -     lsr a
-;       dec x
-;       bpl -
-@noNeedToShift
-    
++    
     mul ya
     mov b, y
     mov c, a
@@ -583,10 +587,10 @@ and having 2 branch instructions. It's safe to do since the highest val is 0x40 
     bbc s.0, @add_offset
 @subtract_offset  
     SUBW ya, bc
-    bra +
+    bra @offset_done
 @add_offset  
     ADDW ya, bc
-+  
+@offset_done
   ; ---- check the pitch isn't beyond allowable range 3FFF ----
     cmp y, #$40
     bmi @val_ok
@@ -596,7 +600,6 @@ and having 2 branch instructions. It's safe to do since the highest val is 0x40 
     ; It is time to update the pitch values
     mov note + 0, a  ; store pitch(LO)
     mov note + 1, y  ; store pitch(HI)
-  ; END FINE TUNE CALCULATION CODE
   pop x ; curtrack
   ret
 
@@ -615,6 +618,9 @@ ReadNote:
     or a, konbuf
     mov konbuf, a           ; A has bit that this voice represents
     ; -------------------------
+    mov a, activeInstrument + x ; The only reason I read the instrument here is
+    call !ReadInstr             ; to keep it updated with Tracker interface changes
+    ; -------------------------
     mov a, [ptrack_ptr] + y ; the NOTE number
     mov noteTrackerIdx, a
     mov x, #12              ; divide by octave
@@ -622,12 +628,7 @@ ReadNote:
     div ya, x
                             ; A = octave. Y = note
     mov note_octave, a
-    ;mov x, a                ; X = octave
     mov note_idx, y         ; store the 0-11 note index for later. TODO- use a temp variable
-    ;mov a, y
-    ;asl a
-    ;mov y, a                ; Y: idx into notelut
-
     mov a, noteTrackerIdx
     asl a
     mov y, a
@@ -636,14 +637,6 @@ ReadNote:
     mov note, a             ; store plo into curtrack Note temporary variable
     mov a, !noteLUT2+1 + y  ; phi
     mov note + 1, a         ; store phi "
-
-; -   cmp x, #NoteLUTOctave
-;     bcs +
-;     lsr note + 1
-;     ror note
-;     inc x
-;     bra -
-+
   pop y
   inc y
   pop x
@@ -676,16 +669,13 @@ loadInstrPtr:
   pop y
   ret
 
-; IN: <ptrack_ptr>,
-;     Y = idx into ptrack_ptr,
+; IN: A = instrument number
 ;     X = curtrack
-; OUT: updated Y index, Curtrack DSP written
-; CLOBBERS: A, <de>, bc
+; OUT: Curtrack DSP written
+; CLOBBERS: A, de
 ReadInstr:
   push x
   push y
-    
-    mov a, [ptrack_ptr] + y     ; instrument number
     mov activeInstrument + X, a ; record this track's active instrument number
     ; instrument number MUST BE in A now
     call !loadInstrPtr
@@ -724,7 +714,6 @@ ReadInstr:
     mov dspdata, a
 
   pop y
-  inc y
   pop x ; track idx
   ret
 
@@ -829,6 +818,8 @@ ReadPTracks:
   call !ReadNote
 @@test_cbinstr:
   bbc l.CBIT_INSTR, @@test_cbvol
+  mov a, [ptrack_ptr] + y     ; instrument number
+  inc y
   call !ReadInstr
 @@test_cbvol:
   bbc l.CBIT_VOL, @@test_cbfx
