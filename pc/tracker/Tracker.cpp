@@ -972,66 +972,6 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
     apuRender.highest_pattern, apuRender.highest_instr, apuRender.highest_sample);
 }
 
-/* The benefit of adding a chunksize after the ID, is that one ID can be
- * extended. If the the app processing the file does not recognize
- * additional length of a known chunk, it can ignore the new data and
- * hopefully still have a successful process. Likewise, new version of the
- * app can process the old files and use default values where
- * new-version-data is missing.
- *
- * This could all be implemented without chunksizes metadata, but I fear
- * the outcome might be that a great many IDs get created, even for rather
- * trivial additions (1 byte). On the other hand, the word-size chunksize
- * metadata would triple the size of every chunk header. However, if 3 IDS
- * need to be made to suit data that could have gone into one ID with
- * chunksize specifier, then it would be worth it.
- *
- * Since it's difficult to forecast the amount of IDS and new data that
- * will be added to the fileformat, It's just a toss up, it could go either way.
- *
- * I need to just make a choice and stick with it, and fight the urge to
- * optimize (prematurely). Well, I've elected to add just ID, no size
- * metadata. */
-
-/* one way to do it would be to make the classes self-loading from a RWops
- * pointer. they would basically extend a class such as:
- *
- * class FileLoader
- * {
- *    FileLoader(uint8_t mcid, size_t sc) : master_chunkid(mcid), supported_chunksize(sc) {}
- *    virtual int load(SDL_RWops *file, size_t chunksize);
- *    size_t supported_chunksize;
- *    uint8_t master_chunkid;
- * };
- *
- * int FileLoader::load(SDL_RWops *file, size_t chunksize, uint8_t chunkid)
- * {
- *   // include some generic top level debugging code here.
- *   assert(chunkid == master_chunkid);
- *   if (chunksize > supported_chunksize)
- *    DEBUGLOG(
- *     "ChunkID: %s, chunksize $%04X > supported_chunksize $%04X!
- *      Perhaps your tracker software could use an update?\n",
- *      getidstr(chunkid), chunksize, supported_chunksize);
- *   else if (chunksize < supported_chunksize)
- *    DEBUGLOG(
- *     "ChunkID: %s, chunksize $%04X < supported_chunksize $%04X!
- *      Perhaps this track was created by an older version of the tracker
- *      software; This song was created by v%s, this tracker is v%s \n",
- *      getidstr(chunkid), chunksize, supported_chunksize, filever,
- *      TRACKER_VER);
- *   return 0;
- * }
- *
- * externally (in the Tracker) would be a map structure from
- * ChunkID to (FileLoader *), so that the tracker's read_from_file()
- * routine could have ~3 lines
- * of code to check for master-level chunkIDs and just call the
- * compile-time-mapped FileLoader->load() with the file handle and chunk
- * size. Then that object just loads itself up
- *
- * */
-
 /*
 Other ideas:
 

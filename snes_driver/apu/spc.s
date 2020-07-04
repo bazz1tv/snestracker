@@ -42,6 +42,8 @@ MAIN:
 	;mov dspdata, #1
 
 	CLRP ; set dp to 0
+	;mov x, #$EF
+	;mov sp, x
 	mov dspaddr, #flg
 	mov dspdata, #$e0 ; reset, no echo writes, mute amp
 	mov a, #0
