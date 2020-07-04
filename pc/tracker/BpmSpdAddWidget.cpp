@@ -29,15 +29,28 @@ BpmSpdAddWidget::BpmSpdAddWidget(Tracker *tracker, PatternEditorPanel *pep) :
   updateadd();
 }
 
+#include "apuram.h"
+
 /* these functions query the proper handles on that real data. */
 void BpmSpdAddWidget :: updatebpm()
 {
   sprintf(bpm_cbuf, "%03d", tracker->song.settings.bpm);
+  if (tracker->playback)
+  {
+    tracker->apuram->ticks = tracker->calcTicks();
+    ::player->spc_write(0xfa, tracker->apuram->ticks);  // update Timer0 (0xfa)
+  }
 }
 
 void BpmSpdAddWidget :: updatespd()
 {
   sprintf(spd_cbuf, "%02d", tracker->song.settings.spd);
+  if (tracker->playback)
+  {
+    tracker->apuram->ticks = tracker->calcTicks();
+    ::player->spc_write(0xfa, tracker->apuram->ticks); // update Timer0 (0xfa)
+    tracker->apuram->spd = tracker->song.settings.spd;
+  }
 }
 
 void BpmSpdAddWidget :: updateadd()

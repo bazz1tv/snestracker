@@ -49,6 +49,8 @@ public:
 	void dec_patlen();
 
   void render_to_apu(bool repeat_pattern = false);
+  int calcTicks();
+
 	void reset();
 	int read_from_file(SDL_RWops *file);
 	void save_to_file(SDL_RWops *file);

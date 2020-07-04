@@ -590,6 +590,22 @@ void Tracker::dec_patlen()
 
 // SNES APU timer 0 and 1 frequency rate in seconds
 #define TIMER01_FREQS 0.000125
+int Tracker::calcTicks()
+{
+  /* Convert BPM to ticks */
+  // Ticks = 60 / ( BPM * 4 * Spd * freqS )
+  double ticks = 60.0 / ( (double)song.settings.bpm * 4.0 * (double)song.settings.spd * TIMER01_FREQS );
+  int ticksi = (int) floor(ticks + 0.5);
+  if (ticksi == 256)
+    ticksi = 0; // max timer setting is 0
+  else if (ticksi > 256)
+  {
+    DEBUGLOG("Ticks value too high\n");
+    ticksi = 255;
+  }
+
+  return ticksi;
+}
 
 void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 {
@@ -608,19 +624,8 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
   /* Quick thoughts on Timer : We could add a checkmark to use the high
    * frequency timer. Also could have a mode where you specify ticks and
    * see the actual BPM */
-  /* Convert BPM to ticks */
-  // Ticks = 60 / ( BPM * 4 * Spd * freqS )
-  double ticks = 60.0 / ( (double)song.settings.bpm * 4.0 * (double)song.settings.spd * TIMER01_FREQS );
-  int ticksi = (int) floor(ticks + 0.5);
-	if (ticksi == 256)
-		ticksi = 0; // max timer setting is 0
-	else if (ticksi > 256)
-	{
-		DEBUGLOG("Ticks value too high\n");
-		ticksi = 255;
-	}
-	// Forcing using timer0 for ticks, but that's fine for now (or forever)
-	apuram->ticks = ticksi;
+  
+	apuram->ticks = calcTicks();
 	apuram->spd = song.settings.spd;
 	/* END BPM AND SPD */
 
