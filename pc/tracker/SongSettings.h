@@ -49,7 +49,7 @@ struct SongSettings
   char song_title_str[SONGTITLE_SIZE];
 
   static const constexpr unsigned int MIN_BPM = 32, MAX_BPM = 999, DEFAULT_BPM = 120;
-  static const constexpr unsigned int MIN_SPD = 1, MAX_SPD = 31, DEFAULT_SPD = 6;
+  static const constexpr unsigned int MIN_SPD = 16, MAX_SPD = 31, DEFAULT_SPD = 16;
 
   unsigned int bpm :11;
   unsigned int spd :5;
