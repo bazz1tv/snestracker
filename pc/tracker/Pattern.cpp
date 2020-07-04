@@ -1400,7 +1400,7 @@ void PatternEditorPanel::notehelper(int ndex)
   Pattern *pat = get_current_pattern(psp);
   PatternRow *pw = &pat->trackrows[cur_track][currow];
   int n = NOTE_C0 + ndex + (cur_octave * 12);
-  if (n <= NOTE_C6)
+  if (n <= NOTE_D6)
   {
     if (recording)
     {

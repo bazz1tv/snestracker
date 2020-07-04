@@ -75,7 +75,10 @@ enum Note
   no(3),
   no(4), // BASE OCTAVE
   no(5),
-  NOTE_C6 // SNES APU limit is C 2 octaves from base
+  NOTE_C6, // SNES APU limit is C 2 octaves from base
+  // Additions for Fine-tune
+  NOTE_CSHARP6,
+  NOTE_D6
   //no(7),
   //no(8),
 };
