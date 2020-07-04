@@ -628,7 +628,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	uint16_t freeram_i = SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE;
 
   uint16_t numinstr = 0;
-  uint8_t highest_instr = 0;
+  apuRender.highest_instr = 0;
   /* TODO: Could optimize this into bitflags */
 	uint8_t used_instr[NUM_INSTR];
   memset(used_instr, 0, sizeof(used_instr));
@@ -639,7 +639,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
   // calculated, we can allocate the amount of RAM necessary for the
   // PatternLUT (detailed below comments).
   uint8_t num_usedpatterns = 0;
-  uint16_t highest_pattern = 0;
+  apuRender.highest_pattern = 0;
   uint16_t patternlut_i = freeram_i; // position pattern data at start of free ram
   uint16_t patternlut_size;
 
@@ -652,11 +652,11 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
     if (pm->used == 0)
       continue;
     num_usedpatterns++;
-    highest_pattern = p;
+    apuRender.highest_pattern = p;
   }
   // Note we don't optimize the pattern LUT by consolidating unused
   // patterns. This was chosen for debugging purposes for Version 1
-  patternlut_size = (highest_pattern + 1) * 2; // WORD sized address table
+  patternlut_size = (apuRender.highest_pattern + 1) * 2; // WORD sized address table
   /* OK I'm thinking about how aside from the pattern data itself, how
    * that pattern data will be accessed. We can store a Pattern lookup
    * table that has the 16-bit addresses of each pattern in ascending
@@ -667,12 +667,12 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
    * another DP pointer for accessing Row data row by row.*/
   uint16_t *patlut = (uint16_t *) &::IAPURAM[patternlut_i];
   uint16_t pat_i = patternlut_i + patternlut_size; // index into RAM for actual pattern data
-  for (int p=0; p < MAX_PATTERNS; p++)
+  for (int p=0; p <= apuRender.highest_pattern; p++)
   {
     PatternMeta *pm = &song.patseq.patterns[p];
     if (pm->used == 0)
     {
-      if (p <= highest_pattern)
+      if (p <= apuRender.highest_pattern)
         *(patlut++) = 0xd00d;
       continue;
     }
@@ -786,7 +786,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
           {
             used_instr[pr->instr - 1] = 1;
             numinstr++;
-            if (highest_instr < (pr->instr - 1)) highest_instr = pr->instr - 1;
+            if (apuRender.highest_instr < (pr->instr - 1)) apuRender.highest_instr = pr->instr - 1;
           }
         }
         if (pr->vol)
@@ -820,16 +820,17 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
    * they reference to calculate the used_samples */
   /* TODO: Could optimize this into bitflags */
   uint16_t numsamples = 0;
-  uint8_t highest_sample = 0;
+  apuRender.highest_sample = 0;
   uint8_t used_samples[NUM_SAMPLES];
   memset(used_samples, 0, sizeof(used_samples));
-  for (int i=0; i < NUM_INSTR; i++)
+  for (int i=0; i <= apuRender.highest_instr; i++)
   {
     if (used_instr[i])
     {
       auto srcn = song.instruments[i].srcn;
       numsamples++;
-      if (highest_sample < srcn) highest_sample = srcn;
+      if (apuRender.highest_sample < srcn)
+        apuRender.highest_sample = srcn;
       used_samples[srcn] = 1;
     }
   }
@@ -841,9 +842,9 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
   dir_i = patseq_i + ((patseq_i % 0x100) ? (0x100 - (patseq_i % 0x100)) : 0);
   dspdir_i = dir_i / 0x100;
 
-	uint16_t instrtable_i = dir_i + ( (highest_sample + 1) * 0x4);
+	uint16_t instrtable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4);
 	//                             {applied size of DIR}  {INSTR TABLE SIZE}
-	uint16_t sampletable_i = dir_i + ( (highest_sample + 1) * 0x4) + ( (highest_instr + 1) * 0x7);
+	uint16_t sampletable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4) + ( (apuRender.highest_instr + 1) * 0x4);
 
 	apuram->instrtable_ptr = instrtable_i;
 
@@ -865,11 +866,11 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	 * so that instruments can be updated. The same could be done for
 	 * instrument mappings, now that I think of it. but for now, let's not
 	 * optimize  */
-	for (int i=0; i < NUM_SAMPLES; i++)
+	for (int i=0; i <= apuRender.highest_sample; i++)
 	{
 		if (used_samples[i] == 0)
 		{
-			if (i <= highest_sample)
+			if (i <= apuRender.highest_sample)
 			{
 				// be neat and mark the unused unoptimized entries
 				uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
@@ -881,9 +882,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 		uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
 		*dir = cursample_i;
 		*(dir+1) = cursample_i + song.samples[i].rel_loop;
-		// has a sample. this instrument is valid for export. However, perhaps
-		// an even better exporter would also check if this instrument has
-		// been used in any (in)active pattern data.
+
 		size_t s=0;
 		for (; s < song.samples[i].brrsize; s++)
 		{
@@ -893,12 +892,12 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 		cursample_i += s;
 	}
 
-	for (int i=0; i < NUM_INSTR; i++)
+	for (int i=0; i <= apuRender.highest_instr; i++)
 	{
 		Instrument *instr = &song.instruments[i];
 		if (used_instr[i] == 0)
 		{
-			if (i <= highest_instr)
+			if (i <= apuRender.highest_instr)
 			{
 				// be neat and mark the unused unoptimized entries
 				uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i + (i*2)];
@@ -963,6 +962,9 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
     // play from beginning of sequence
 		sound_stop();
 	}
+
+  DEBUGLOG("apuRender.highest_pattern: %d, apuRender.highest_instr: %d, apuRender.highest_sample: %d\n",
+    apuRender.highest_pattern, apuRender.highest_instr, apuRender.highest_sample);
 }
 
 /* The benefit of adding a chunksize after the ID, is that one ID can be

@@ -56,6 +56,11 @@ public:
 
 	/* Tracker APU RAM mapping */
 	TrackerApuRam *apuram;
+  // Vars calculated at APU render time that are useful elsewhere
+  struct {
+    uint8_t highest_instr, highest_sample;
+    uint16_t highest_pattern;
+  } apuRender;
   /* TRACKER CORE -- Here is located the "model" data structures, not GUI
    * */
 	Song song;
