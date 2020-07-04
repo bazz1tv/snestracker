@@ -2,6 +2,36 @@
 #include "Instruments.h"
 #include "Tracker.h"
 
+
+/* I currently have a separate ApuInstr struct below for accessing the APU version
+of instruments. */
+#include "apuram.h"
+struct ApuInstr
+{
+  uint8_t vol;
+  int8_t finetune;
+  int8_t pan;
+  uint8_t srcn;
+  uint8_t adsr1, adsr2;
+  int8_t semitone_offset;
+};
+
+/* fetches an APURAM pointer to the Instrument Panel's highlighted instrument,
+or NULL if the tracker isn't playing or the currently highlighted instrument was
+not exported to apuram. */
+static ApuInstr * getCurApuInstr(Instrument_Panel *instrpanel)
+{
+  if (instrpanel == NULL || !::tracker->playback ||
+    instrpanel->currow > tracker->apuRender.highest_instr // the highlighted inst wasn't exported to APU
+  )
+    return NULL;
+  uint16_t *itab = (uint16_t *) &::IAPURAM[tracker->apuram->instrtable_ptr];
+  uint16_t instr_addr = itab[instrpanel->currow];
+  ApuInstr *apuinstr = (ApuInstr *) &::IAPURAM[instr_addr];
+  return apuinstr;
+}
+
+
 AdsrPanel::AdsrPanel(Instrument_Panel *ip) :
   attack_text("Attack"), decay_text("Decay"),
   sustainlevel_text("Sustain Lvl"), sustainrelease_text("Sustain Release"),
@@ -58,6 +88,8 @@ int AdsrPanel::check_event(const SDL_Event &ev)
   int r;
   if ((r=adsr_context_menus.receive_event(ev)))
   {
+    bool adsr_changed = false;  // probably true at this point, but being careful!
+    Instrument *curinst = &instrpanel->instruments[instrpanel->currow];
     switch (r)
     {
       case ADSR::Context_Menus::ATTACK_CHANGED:
@@ -69,6 +101,7 @@ int AdsrPanel::check_event(const SDL_Event &ev)
           uint8_t *adsr1 = &instrpanel->instruments[instrpanel->currow].adsr.adsr1;
           *adsr1 = *adsr1 & (~ADSR::ATTACK_MASK);
           *adsr1 |= ADSR::reverse_attack_index(i);
+          adsr_changed = true;
         }
         break;
       case ADSR::Context_Menus::DECAY_CHANGED:
@@ -80,6 +113,7 @@ int AdsrPanel::check_event(const SDL_Event &ev)
           uint8_t *adsr1 = &instrpanel->instruments[instrpanel->currow].adsr.adsr1;
           *adsr1 = *adsr1 & (~ADSR::DECAY_MASK);
           *adsr1 |= ADSR::reverse_decay_index(i);
+          adsr_changed = true;
         }
         break;
       case ADSR::Context_Menus::SUSTAIN_LEVEL_CHANGED:
@@ -92,6 +126,7 @@ int AdsrPanel::check_event(const SDL_Event &ev)
           uint8_t *adsr2 = &instrpanel->instruments[instrpanel->currow].adsr.adsr2;
           *adsr2 = *adsr2 & (~ADSR::SUSTAIN_LEVEL_MASK);
           *adsr2 |= ADSR::reverse_sustain_level_index(i);
+          adsr_changed = true;
         }
         break;
       case ADSR::Context_Menus::SUSTAIN_RELEASE_CHANGED:
@@ -103,9 +138,20 @@ int AdsrPanel::check_event(const SDL_Event &ev)
           uint8_t *adsr2 = &instrpanel->instruments[instrpanel->currow].adsr.adsr2;
           *adsr2 = *adsr2 & (~ADSR::SUSTAIN_RELEASE_MASK);
           *adsr2 |= ADSR::reverse_sustain_release_index(i);
+          adsr_changed = true;
         }
         break;
       default:break;
+    }
+
+    if (adsr_changed)
+    {
+      ApuInstr *apuinstr = getCurApuInstr(instrpanel);
+      if (apuinstr)
+      {
+        apuinstr->adsr1 = curinst->adsr.adsr1;
+        apuinstr->adsr2 = curinst->adsr.adsr2;
+      }
     }
     return r;
   }
@@ -241,14 +287,24 @@ InstrumentEditor::InstrumentEditor(Instrument_Panel *instrpanel) :
   pan_incbtn.enabled = false;
   pan_decbtn.enabled = false;
 }
+
 void InstrumentEditor :: update_srcn()
 {
-	sprintf(srcn_cbuf, "%02x", instrpanel->instruments[instrpanel->currow].srcn);
+  auto srcn = instrpanel->instruments[instrpanel->currow].srcn;
+	sprintf(srcn_cbuf, "%02x", srcn);
 
+  ApuInstr *apuinstr = getCurApuInstr(instrpanel);
+  if (apuinstr)
+    apuinstr->srcn = srcn;
 }
 void InstrumentEditor :: update_vol()
 {
-  sprintf(vol_cbuf, "%02x", instrpanel->instruments[instrpanel->currow].vol);
+  auto vol = instrpanel->instruments[instrpanel->currow].vol;
+  sprintf(vol_cbuf, "%02x", vol);
+
+  ApuInstr *apuinstr = getCurApuInstr(instrpanel);
+  if (apuinstr)
+    apuinstr->vol = vol;
 }
 
 void InstrumentEditor :: update_pan()
@@ -258,12 +314,18 @@ void InstrumentEditor :: update_pan()
 
 void InstrumentEditor :: update_finetune()
 {
-  int8_t ft = instrpanel->instruments[instrpanel->currow].finetune;
+  Instrument *curinst = &instrpanel->instruments[instrpanel->currow];
+
+  int8_t ft = curinst->finetune;
   char sign = '+';
   if (ft < 0)
     sprintf(finetune_cbuf, "%04d", ft);
   else
     sprintf(finetune_cbuf, "%c%03d", sign, ft);
+
+  ApuInstr *apuinstr = getCurApuInstr(instrpanel);
+  if (apuinstr)
+    apuinstr->finetune = ft;
 }
 
 void InstrumentEditor :: set_coords(int x, int y)
