@@ -385,8 +385,8 @@ finetuneEqualTemperamentLUT:
 .db $10, $11, $12, $13, $14, $15, $17, $18, $19, $1b, $1d, $1e
 
 ; The table below is used in conjunction with the above table
-OctaveShiftRightLUT:
-.db 2, 3, 2, 2, 1, 0, 0
+OctaveDivideLUT:
+.db 4, 8, 4, 4, 2, 1, 1
 ; 2 4 8 16
 ; (i >> 2) * 1 => (i / 4) * 1 => i/4
 ; (i >> 3) * 4 => (i / 8) * 4 => i/2
@@ -402,6 +402,7 @@ OctaveShiftRightLUT:
 ;           note
 ;           s.0
 ;           BC (final scaled pitch offset)
+;           DE (instrument pointer)
 DoFinetune:
   push x  ; curtrack
     ; Load instrument pointer in advance
@@ -456,18 +457,30 @@ $0100 -4      0 : finetune >> 6
       mov a, !finetuneEqualTemperamentLUT + X
       mov y, a
       mov x, note_octave
-      mov a, !OctaveShiftRightLUT + x
+      mov a, !OctaveDivideLUT + x
       mov x, a
     pop a
--   dec x
-    bmi +
-    lsr a
-    bra -
-+    
-    mul ya
-    mov b, y
+    push y      ; the multiplier from the ET lut
+      push y
+        mov y, #0
+        div ya, x
+        mov d, y  ; remainder. We can use this after later multiplication to make for up error
+      pop y       ; multiplier from ET LUT
+      mul ya
+      mov b, y    ; scaled pitch offset (before error makeup)
+      mov c, a    ; ""
+    pop a         ; multiplier from ET lut
+    mov y, #0
+    mov x, #2     ; / 2
+    div ya, x
+    mov x, d      ; IF there was an original remainder from the 1st division above, add accum to bc
+    bne @noRemainder
+    clrc
+    adc a, c
     mov c, a
-    
+    adc b, #0
+@noRemainder
+
     ; YA = final scaled pitch offset
     mov y, note_pitch + 1
     mov a, note_pitch    ; YA = NoteLUT2 hardware base pitch value
@@ -822,8 +835,8 @@ noteLUT2:
 
 ; C-6
 ;.dw  $3fff
-.dw $4000, $43ce, $47d6, $4c1c,
+.dw $4000, $43ce, $47d6,/* $4c1c,
 .dw $50a3, $556e,
-.dw $5a83, $5fe4, $6598, $6ba3, $7209, $78d1,
+.dw $5a83, $5fe4, $6598, $6ba3, $7209, $78d1,*/
 
 .ends
