@@ -739,7 +739,7 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
                   if ((currow - rows_scrolled) != i)
                   {
                     //SDL_FillRect(::render->screen, &highlight_r, Colors::transparent);
-                    currow = rows_scrolled + i;
+                    set_currow(rows_scrolled + i);
 
                     apuSetPattern(currow);
                   }
