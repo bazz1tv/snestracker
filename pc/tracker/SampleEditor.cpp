@@ -21,10 +21,17 @@ SampleEditor::SampleEditor() :
   finetune_decbtn.enabled = false;
 }
 
+struct DirEntry{
+  uint16_t sample;
+  uint16_t loop;
+} __attribute__((packed));
+
+#include "apuram.h"
 void SampleEditor :: update_loop()
 {
-	sprintf(loop_cbuf, "$%04x",
-	  ::tracker->song.samples[ ::tracker->main_window.samplepanel.currow ].rel_loop);
+  Sample_Panel *sp = &::tracker->main_window.samplepanel;
+  Sample *cursamp = &::tracker->song.samples[ sp->currow ];
+	sprintf(loop_cbuf, "$%04x", cursamp->rel_loop);
 }
 
 /* Same code as Instrument editor fine tune (detune). Maybe we can
@@ -120,6 +127,21 @@ void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
   finetune_decbtn.draw(screen);
 }
 
+static void loopHook(Sample_Panel *sp)
+{
+  Sample *cursamp = &::tracker->song.samples[ sp->currow ];
+  if (tracker->playback)
+  {
+    DirEntry *dirent = (DirEntry *) &::IAPURAM[::tracker->apuram->dspdir_i << 8];
+
+    dirent += sp->currow;
+    dirent->loop = dirent->sample + cursamp->rel_loop;
+
+    DEBUGLOG("dspdir_i: 0x%04x dirent->sample: %04X, dirent->loop: %04X\n",
+      ::tracker->apuram->dspdir_i << 8, dirent->sample, dirent->loop);
+  }
+}
+
 int SampleEditor::incloop(void *i)
 {
 	SampleEditor *ie = (SampleEditor *)i;
@@ -127,6 +149,7 @@ int SampleEditor::incloop(void *i)
 	s->inc_loop();
 
 	ie->update_loop();
+  loopHook(&::tracker->main_window.samplepanel);
 }
 
 int SampleEditor::decloop(void *i)
@@ -136,6 +159,7 @@ int SampleEditor::decloop(void *i)
 	s->dec_loop();
 
 	ie->update_loop();
+  loopHook(&::tracker->main_window.samplepanel);
 }
 
 
