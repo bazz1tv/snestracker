@@ -120,7 +120,10 @@ void Button::remove_hold_timer()
   /* ASSUMES holdrepeat flag check has already been done */
   if (hold_tid)
   {
-    SDL_RemoveTimer(hold_tid);
+    if (SDL_RemoveTimer(hold_tid) == SDL_FALSE)
+    {
+      DEBUGLOG("COULD NOT REMOVE TIMER IN BUTTON!\n");
+    }
     hold_tid = 0;
   }
   else
