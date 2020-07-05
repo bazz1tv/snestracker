@@ -376,7 +376,6 @@ finetuneEqualTemperamentLUT:
 ;.db $40, $44, $48, $4c, $51, $55, $5b, $60, $66, $6c, $72, $79
 
 .db $01, $01, $01, $01, $01, $01, $01, $01, $02, $02, $02, $02
-;.db $02, $02, $02, $02, $03, $03, $03, $03, $03, $03, $03, $03
 .db $04, $04, $04, $04, $06, $06, $06, $06, $06, $07, $07, $08
 .db $04, $04, $04, $04, $06, $06, $06, $06, $06, $07, $07, $08
 .db $08, $08, $09, $0a, $0a, $0b, $0b, $0c, $0d, $0d, $0e, $0f
@@ -385,16 +384,16 @@ finetuneEqualTemperamentLUT:
 .db $10, $11, $12, $13, $14, $15, $17, $18, $19, $1b, $1d, $1e
 
 ; The table below is used in conjunction with the above table
-OctaveDivideLUT:
+OctaveDivisorLUT:
 .db 4, 8, 4, 4, 2, 1, 1
 ; 2 4 8 16
-; (i >> 2) * 1 => (i / 4) * 1 => i/4
-; (i >> 3) * 4 => (i / 8) * 4 => i/2
-; (i >> 2) * 4 => (i / 4) * 4 => i
-; (i >> 2) * 8 => (i / 4) * 8 => 2i
-; (i >> 1) * 8 => (i / 2) * 8 => 4i
-; (i >> 0) * 8 => (  i  ) * 8 => 8i
-; (i >> 0) * 16 =>(  i  ) * 16 => 16i
+; (i >> 2) * 1 => (i / 4) * (1 ET )=> i/4
+; (i >> 3) * 4 => (i / 8) * (4 ET )=> i/2
+; (i >> 2) * 4 => (i / 4) * (4 ET )=> i
+; (i >> 2) * 8 => (i / 4) * (8 ET )=> 2i
+; (i >> 1) * 8 => (i / 2) * (8 ET )=> 4i
+; (i >> 0) * 8 => (  i  ) * (8 ET )=> 8i
+; (i >> 0) * 16 =>(  i  ) * (16ET ) => 16i
 
 ; IN: x = curtrack 
 ;     note
@@ -428,26 +427,26 @@ DoFinetune:
       mov a, !finetuneEqualTemperamentLUT + X
       mov y, a
       mov x, note_octave
-      mov a, !OctaveDivideLUT + x
+      mov a, !OctaveDivisorLUT + x
       mov x, a
     pop a
-    push y      ; the multiplier from the ET lut
+    push y      ; the ET lut multiplier
       push y
         mov y, #0
-        div ya, x
+        div ya, x ; YA / X => finetuneTrackerVal / OctaveDivisor
         mov d, y  ; remainder. We can use this after later multiplication to make for up error
-      pop y       ; multiplier from ET LUT
-      mul ya
+      pop y       ; ET LUT multiplier
+      mul ya      ; Y * A ==> ETLUTm * (ftTrackVal / OctaveDivisor)
       mov b, y    ; scaled pitch offset (before error makeup)
       mov c, a    ; ""
     pop a         ; multiplier from ET lut
     mov y, #0
-    mov x, #2     ; / 2
-    div ya, x
-    mov x, d      ; IF there was an original remainder from the 1st division above, add accum to bc
+    div ya, x     ; YA / X => finetuneETLUTVal  / OctaveDivisor
+    mov y, d      ; IF there was an original remainder from the 1st division above, add accum to bc
     bne @noRemainder
+    mul ya        ; Y*A ==> (original remainder) * (multiple of original divisor)
     clrc
-    adc a, c
+    adc a, c      ; Add that to the scaled pitch offset
     mov c, a
     adc b, #0
 @noRemainder
