@@ -577,22 +577,18 @@ Multiply1_16by8i:
   mov result + 4, a
 @multiply
   movw ya, multiplicand     ; YA = original multiplicand value (decimal)
-  clrc
 ;-- Decimal Math --
   addw ya, result           ; YA = YA + lowmid
   movw result, ya           ; update the value
 ;-- Integer Math --
-  mov a, multiplicand + INT ; A = integer of multiplicand
-  adc a, result + INT       ; Adds integer including carry over from decimal math
+  adc result + INT, multiplicand + INT       ; Adds integer including carry over from decimal math
                             ; (if it was 16.16 we would need to do this with #0 for higher byte too)
-  mov result + INT, a
-
-  dec x                       ; Redo the addition "multiplier" amount of times
+  dec x                     ; Redo the addition "multiplier" amount of times
   bne @multiply
   ; RESULT IN! high == result integer, mid == result decimal, low == result decimal that can be used for rounding
 ;-- Rounding -- (Could be moved to separate subroutine)
   mov a, result
-  bmi @no_roundup_needed    ; if < 0x80 (0.5), do not round (round down). Else, round up
+  bpl @no_roundup_needed    ; if < 0x80 (0.5), do not round (round down). Else, round up
   inc result + 1            ; Roundup, and carry over if necessary
   bne @@no_carry
   inc result + INT
@@ -672,30 +668,30 @@ Multiply1_16by1_16:
   mov a, multiplier+1
   xcn a                     ; swap nibble
   and a, #$0f
-  beq @highbyte_highnibble_clear            ; If nibble 0x0F000 is set, << 12 and add as many times as the nibble is
-  mov x, a                  ; X = how many times to add shiftbuf to result
+  beq @highbyte_highnibble_clear      ; If nibble 0x00F000 is set, << 12 and add as many times as the nibble is
+  mov x, a                            ; X = how many times to add shiftbuf to result
   call !addShiftBuf
 @highbyte_highnibble_clear
   call !RorNibble5
   mov a, multiplier+1
   and a, #$0f
-  beq @highbyte_lownibble_clear            ; If nibble 0x0F000 is set, << 12 and add as many times as the nibble is
-  mov x, a                  ; X = how many times to add shiftbuf to result
+  beq @highbyte_lownibble_clear       ; If nibble 0x000F00 is set, << 8 and add as many times as the nibble is
+  mov x, a                            ; X = how many times to add shiftbuf to result
   call !addShiftBuf
 @highbyte_lownibble_clear
   call !RorNibble5
   mov a, multiplier
   xcn a
   and a, #$0f
-  beq @lowbyte_highnibble_clear            ; If nibble 0x0F000 is set, << 12 and add as many times as the nibble is
-  mov x, a                  ; X = how many times to add shiftbuf to result
+  beq @lowbyte_highnibble_clear       ; If nibble 0x0000F0 is set, << 4 and add as many times as the nibble is
+  mov x, a                            ; X = how many times to add shiftbuf to result
   call !addShiftBuf
 @lowbyte_highnibble_clear
   call !RorNibble5
   mov a, multiplier
   and a, #$0f
-  beq @lowbyte_lownibble_clear            ; If nibble 0x0F000 is set, << 12 and add as many times as the nibble is
-  mov x, a                  ; X = how many times to add shiftbuf to result
+  beq @lowbyte_lownibble_clear        ; If nibble 0x00000F is set, << 0 and add as many times as the nibble is
+  mov x, a                            ; X = how many times to add shiftbuf to result
   call !addShiftBuf
 @lowbyte_lownibble_clear
 ;-- Rounding -- (Could be moved to separate subroutine)
@@ -782,9 +778,6 @@ DoFinetune:
     ;ret
     mov x, a
     call !Multiply1_16by8i
-
-    movw note_pitch, ya
-
   ; ---- check the pitch isn't beyond allowable range 3FFF ----
     cmp y, #$40
     bmi @val_ok
@@ -1042,6 +1035,9 @@ ReadPTracks:
     mov ptrack_ptrs + 1 + x, y
   pop x
   
+  call !VoiceNumToVoiceBit
+  and a, konbuf
+  beq @No_Note_For_ThisTrack
   ; Do processing here. Such as finetune or effects
   call !DoFinetune
   ; once processing is done. Load the note into DSP
@@ -1052,6 +1048,8 @@ ReadPTracks:
   mov dspdata, note_pitch
   inc dspaddr
   mov dspdata, note_pitch + 1
+
+@No_Note_For_ThisTrack
 
 @track_done:
   ; if this is the last row, do not do a readahead (it will be done when
