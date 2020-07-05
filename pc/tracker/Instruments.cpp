@@ -87,7 +87,7 @@ void Instrument::dec_pan(Instrument *i)
 
 void Instrument::inc_finetune(Instrument *i)
 {
-  if (i->finetune < 127)
+  if (i->finetune < 99)
   {
     *i->metadata.changed = true;
     i->finetune++;
@@ -96,7 +96,7 @@ void Instrument::inc_finetune(Instrument *i)
 
 void Instrument::dec_finetune(Instrument *i)
 {
-  if (i->finetune > -128)
+  if (i->finetune > -99)
   {
     *i->metadata.changed = true;
     i->finetune--;
