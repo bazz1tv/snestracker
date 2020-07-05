@@ -1032,9 +1032,11 @@ void PatSeqPanel::set_currow(int row, bool updateScrolled/*=true*/)
   /* If the next pattern's length is shorter than the current row of the pattern
    * editor panel, then set it to the last row of that pattern */
   Pattern *p = get_current_pattern(this);
-  auto &pepc = ::tracker->main_window.pateditpanel.currow;
-  if ( pepc >= p->len)
-    pepc = p->len - 1;
+  PatternEditorPanel &pep = ::tracker->main_window.pateditpanel;
+  if ( pep.currow >= p->len)
+    pep.set_currow(p->len - 1);
+  else if ( pep.currow < pep.rows_scrolled )
+    pep.set_currow(pep.currow);
 
   // (when the song is playing, If the user scrolled in the patseqpanel,
   // the update mechanism won't interfere for 2000 ms
