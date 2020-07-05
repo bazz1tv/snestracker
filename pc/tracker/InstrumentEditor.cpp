@@ -292,19 +292,11 @@ void InstrumentEditor :: update_srcn()
 {
   auto srcn = instrpanel->instruments[instrpanel->currow].srcn;
 	sprintf(srcn_cbuf, "%02x", srcn);
-
-  ApuInstr *apuinstr = getCurApuInstr(instrpanel);
-  if (apuinstr)
-    apuinstr->srcn = srcn;
 }
 void InstrumentEditor :: update_vol()
 {
   auto vol = instrpanel->instruments[instrpanel->currow].vol;
   sprintf(vol_cbuf, "%02x", vol);
-
-  ApuInstr *apuinstr = getCurApuInstr(instrpanel);
-  if (apuinstr)
-    apuinstr->vol = vol;
 }
 
 void InstrumentEditor :: update_pan()
@@ -322,10 +314,6 @@ void InstrumentEditor :: update_finetune()
     sprintf(finetune_cbuf, "%04d", ft);
   else
     sprintf(finetune_cbuf, "%c%03d", sign, ft);
-
-  ApuInstr *apuinstr = getCurApuInstr(instrpanel);
-  if (apuinstr)
-    apuinstr->finetune = ft;
 }
 
 void InstrumentEditor :: set_coords(int x, int y)
@@ -455,6 +443,13 @@ int InstrumentEditor::incsrcn(void *i)
 	sp->rows_scrolled = (sp->currow / Sample_Panel::NUM_ROWS) * Sample_Panel::NUM_ROWS;
 
 	ie->update_srcn();
+  /* The following kept out of update_srcn because update_srcn() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto srcn = ie->instrpanel->instruments[ie->instrpanel->currow].srcn;
+    apuinstr->srcn = srcn;
+  }
 }
 
 int InstrumentEditor::decsrcn(void *i)
@@ -469,6 +464,13 @@ int InstrumentEditor::decsrcn(void *i)
 	sp->rows_scrolled = (sp->currow / Sample_Panel::NUM_ROWS) * Sample_Panel::NUM_ROWS;
 
 	ie->update_srcn();
+  /* The following kept out of update_srcn because update_srcn() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto srcn = ie->instrpanel->instruments[ie->instrpanel->currow].srcn;
+    apuinstr->srcn = srcn;
+  }
 }
 
 int InstrumentEditor::incvol(void *i)
@@ -477,6 +479,14 @@ int InstrumentEditor::incvol(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::inc_vol(curinst);
   ie->update_vol();
+
+  /* The following kept out of update_xx because update_xx() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto vol = ie->instrpanel->instruments[ie->instrpanel->currow].vol;
+    apuinstr->vol = vol;
+  }
 }
 
 int InstrumentEditor::decvol(void *i)
@@ -485,6 +495,14 @@ int InstrumentEditor::decvol(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::dec_vol(curinst);
   ie->update_vol();
+
+  /* The following kept out of update_xx because update_xx() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto vol = ie->instrpanel->instruments[ie->instrpanel->currow].vol;
+    apuinstr->vol = vol;
+  }
 }
 
 int InstrumentEditor::incpan(void *i)
@@ -509,6 +527,14 @@ int InstrumentEditor::incfinetune(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::inc_finetune(curinst);
   ie->update_finetune();
+
+  /* The following kept out of update_xx because update_xx() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    int8_t ft = curinst->finetune;
+    apuinstr->finetune = ft;
+  }
 }
 
 int InstrumentEditor::decfinetune(void *i)
@@ -517,6 +543,14 @@ int InstrumentEditor::decfinetune(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::dec_finetune(curinst);
   ie->update_finetune();
+
+  /* The following kept out of update_xx because update_xx() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    int8_t ft = curinst->finetune;
+    apuinstr->finetune = ft;
+  }
 }
 
 InstrumentEditor::Tabs::Tabs(InstrumentEditor *ie) :
