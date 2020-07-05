@@ -69,7 +69,8 @@ note_idx_mod12      db  ; tracker's note % 12
 .RAMSECTION "math-dp0" BANK 0 SLOT SPC_DP0_SLOT
 multiplicand  dsb 3
 multiplier    dsb 3
-result        dsb 5
+result        dsb 5 ; 48-bits
+shiftbuf      dsb 5 ; shift buffer
 .ENDS
 
 .BANK 0 SLOT SPC_CODE_SLOT
@@ -600,6 +601,38 @@ Multiply1_16by8i:
   movw ya, result + 1       ; 8.8 rounded result
   ret
 
+; == Helper routines ==
+;IN: x = number of times to add the shiftbuf to result
+addShiftBuf:
+@@add
+  movw ya, shiftbuf     ; YA = original multiplicand value (decimal)
+;-- Decimal Math --
+  addw ya, result           ; YA = YA + lowmid
+  movw result, ya           ; update the value
+;-- Integer Math --
+  adc result + 2, shiftbuf + 2 ; A = integer of multiplicand
+                            ; Adds integer including carry over from decimal math
+                            ; (if it was 16.16 we would need to do this with #0 for higher byte too)
+  adc result + 3, shiftbuf + 3
+  adc result + 4, shiftbuf + 4
+
+  dec x                       ; Redo the addition "multiplier" amount of times
+  bne @@add
+  ret
+
+RorNibble5:
+  ; Pre-emptively ROR a nibble (4 bits)  effectively is multiplicand << 12
+  mov x, #4
+- clrc
+  ror shiftbuf + 4
+  ror shiftbuf + 3
+  ror shiftbuf + 2
+  ror shiftbuf + 1
+  ror shiftbuf + 0
+  dec x
+  bne -
+  ret
+
 /*
   Multiplies a 1.16 x 1.16. This could support up to 8.16 but the range
   your results need to cover may require extending the bit-range of this subroutine's
@@ -620,37 +653,54 @@ Multiply1_16by1_16:
   mov a, #0
   mov y, a
   movw result, ya     ; clear
+  movw shiftbuf, ya
   ; Optimization 0x1.0000 is simply LSH 16 and every multiplicand has it
   movw ya, multiplicand     ; YA = original multiplicand value (decimal)
-  movw result + 2, ya ;
-  mov  result + 4, multiplicand + INT
-  dec multiplier + INT
+  movw shiftbuf + 2, ya     ; << 16
+  movw result + 2, ya       ; effectively << 16
+  mov a, multiplicand + INT
+  mov shiftbuf + 4, a
+  mov  result + 4, a
+
+  dec multiplier + INT      ; dec multiplier and check if we're done
   bne +
   movw ya, multiplier
   beq @done
 +
 
-@multiply
-  movw ya, multiplicand     ; YA = original multiplicand value (decimal)
-  clrc
-;-- Decimal Math --
-  addw ya, result           ; YA = YA + lowmid
-  movw result, ya           ; update the value
-;-- Integer Math --
-  adc result + 2, multiplicand + INT ; A = integer of multiplicand
-                            ; Adds integer including carry over from decimal math
-                            ; (if it was 16.16 we would need to do this with #0 for higher byte too)
-  adc result + 3, #0
-  adc result + 4, #0
-
-  dec x                       ; Redo the addition "multiplier" amount of times
-  bne @multiply
-  decw multiplier + 1
-  bpl @multiply
-  ; RESULT IN! high == result integer, mid == result decimal, low == result decimal that can be used for rounding
+  call !RorNibble5
+  mov a, multiplier+1
+  xcn a                     ; swap nibble
+  and a, #$0f
+  beq @highbyte_highnibble_clear            ; If nibble 0x0F000 is set, << 12 and add as many times as the nibble is
+  mov x, a                  ; X = how many times to add shiftbuf to result
+  call !addShiftBuf
+@highbyte_highnibble_clear
+  call !RorNibble5
+  mov a, multiplier+1
+  and a, #$0f
+  beq @highbyte_lownibble_clear            ; If nibble 0x0F000 is set, << 12 and add as many times as the nibble is
+  mov x, a                  ; X = how many times to add shiftbuf to result
+  call !addShiftBuf
+@highbyte_lownibble_clear
+  call !RorNibble5
+  mov a, multiplier
+  xcn a
+  and a, #$0f
+  beq @lowbyte_highnibble_clear            ; If nibble 0x0F000 is set, << 12 and add as many times as the nibble is
+  mov x, a                  ; X = how many times to add shiftbuf to result
+  call !addShiftBuf
+@lowbyte_highnibble_clear
+  call !RorNibble5
+  mov a, multiplier
+  and a, #$0f
+  beq @lowbyte_lownibble_clear            ; If nibble 0x0F000 is set, << 12 and add as many times as the nibble is
+  mov x, a                  ; X = how many times to add shiftbuf to result
+  call !addShiftBuf
+@lowbyte_lownibble_clear
 ;-- Rounding -- (Could be moved to separate subroutine)
   movw ya, result
-  bmi @no_roundup_needed    ; if < 0x80 (0.5), do not round (round down). Else, round up
+  bpl @no_roundup_needed    ; if < 0x80 (0.5), do not round (round down). Else, round up
   incw result + 2            ; Roundup, and carry over if necessary
   bne @@no_carry
   inc result + 4
