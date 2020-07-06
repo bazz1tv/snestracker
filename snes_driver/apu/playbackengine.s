@@ -630,9 +630,9 @@ Multiply4_16by4_16:
 
   call !RorNibble5
   mov a, multiplier+1
-  xcn a                     ; swap nibble
-  and a, #$0f
+  and a, #$f0
   beq @highbyte_highnibble_clear      ; If nibble 0x00F000 is set, << 12 and add as many times as the nibble is
+  xcn a                               ; swap nibble
   mov x, a                            ; X = how many times to add shiftbuf to result
   call !addShiftBuf
 @highbyte_highnibble_clear
@@ -645,9 +645,9 @@ Multiply4_16by4_16:
 @highbyte_lownibble_clear
   call !RorNibble5
   mov a, multiplier
-  xcn a
-  and a, #$0f
+  and a, #$f0
   beq @lowbyte_highnibble_clear       ; If nibble 0x0000F0 is set, << 4 and add as many times as the nibble is
+  xcn a
   mov x, a                            ; X = how many times to add shiftbuf to result
   call !addShiftBuf
 @lowbyte_highnibble_clear
@@ -701,7 +701,7 @@ DoFinetune:
     dec x
     bpl @@no_wrap
     mov x, #11 * 2  ; go from bottom note of octave to top note of lower octave
-    dec note_octave
+    dec note_octave ; WARNING: modifying the original note octave reference
 @@no_wrap:
     clrc        ; count negatively from 100
     adc a, #100 ; reverse-index into centLUT (-1 Accum => 99 lut index)
@@ -724,24 +724,28 @@ DoFinetune:
     mov x, #1
 
     call !Multiply4_16by4_16
-    movw multiplicand, ya
+    movw multiplicand, ya     ; X:YA => 12TET * Finetune. Store as multiplicand for next call
     mov multiplicand + INT, x
-    ; Store the multiplier
-    ; Get the note octave multiplier
-    ;call !GetOctaveMultiplierInt8
-    ;code to get octave byte multiplier from octave 0-6: (smaller than a byte-sized LUT!)
-    ; IN:  x: octave
-    ; OUT: a: multiplier
-  ;GetOctaveMultiplierInt8:
-    mov x, note_octave
+
+    ;code to get octave byte multiplier from octave -1 - 6: (smaller than a byte-sized LUT!)
     mov a, #0
+    mov x, note_octave
+    bpl @octavePositive
+    mov a, #$80
+    mov y, #0
+    mov x, a
+    bra @callMultiply
+@octavePositive:
     setc
 -   rol a
     dec x
     bpl -
     inc x ; 0
     mov y, a
-    mov a, #0
+    mov a, #0 ; X:YA = 0.octave
+              ; Although it is an integer, by putting it in the fraction I am effectively
+              ; preshifting the result.
+@callMultiply
     call !Multiply4_16by4_16
   ; ---- check the pitch isn't beyond allowable range 3FFF ----
     cmp y, #$40
