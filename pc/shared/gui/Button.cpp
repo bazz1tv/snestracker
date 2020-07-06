@@ -77,7 +77,7 @@ void Button::check_event(const SDL_Event &ev)
 {
   if (!enabled)
     return;
-  if (ev.type == SDL_MOUSEBUTTONDOWN &&
+  if (state == 0 && ev.type == SDL_MOUSEBUTTONDOWN &&
       (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &outer)) &&
       ev.button.button == SDL_BUTTON_LEFT)
   {
@@ -92,16 +92,12 @@ void Button::check_event(const SDL_Event &ev)
   }
   else if (state == LEFTMOUSEBUTTON_HELD_IN_RECT)
   {
-    if (ev.type == SDL_MOUSEMOTION &&
-        (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT)))
+    if (!Utility::coord_is_in_rect(mouse::x, mouse::y, &outer))
     {
-      if (!Utility::coord_is_in_rect(ev.motion.x, ev.motion.y, &outer))
-      {
-        state = 0;
-        // reset the timer
-        if (holdrepeat)
-          remove_hold_timer();
-      }
+      state = 0;
+      // reset the timer
+      if (holdrepeat)
+        remove_hold_timer();
     }
     else if (ev.type == SDL_MOUSEBUTTONUP)
     {
