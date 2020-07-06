@@ -67,10 +67,10 @@ note_idx_mod12      db  ; tracker's note % 12
 .ENDS
 
 .RAMSECTION "math-dp0" BANK 0 SLOT SPC_DP0_SLOT
-multiplicand  dsb 3
-multiplier    dsb 3
-result        dsb 5 ; 48-bits
-shiftbuf      dsb 5 ; shift buffer
+multiplicand  dsb 3 ; 8.16 format
+multiplier    dsb 3 ; 8.16 format
+result        dsb 5 ; 40-bits
+shiftbuf      dsb 5 ; multiplicand shift buffer (detailed in HOW IT WORKS section below)
 .ENDS
 
 .BANK 0 SLOT SPC_CODE_SLOT
@@ -337,15 +337,15 @@ VoiceNumToVoiceBit:
 
 
 /* 12-Tone Equal Temperament (12-TET) (ET) is the most popular method of
-intervalizing an octave. The octave is split into twelve equally distant steps.
+intervalizing an octave. The octave is split into twelve equally distant intervals.
 This system is a simple compromise between the ability to modulate keys vs. having perfect
-tuning, though our ears have grown quite accustomed to the sound of these pitch
-relations. An example of instruments using ET is the piano and guitar.
+tuning, though our ears have grown quite accustomed to the sound.
+An example of instruments using ET is the piano and guitar.
 
 ET establishes a constant ratio between all 12 steps of octave. Because musical
 notes are built by a ratio, the distance between each note expands as you move
 upward and contracts as you move downward. This means the math used to make adjustments
-upon any note cannot be linear (fixed offsets).
+upon any note cannot be linear (eg. fixed offsets).
 
 Every increasing octave has double the resolution of the last.
 The distance between each octave doubles!  0-1--2---3----4-----5------6-------7
@@ -369,16 +369,17 @@ For an individual octave:
 11 1.887748625363382
 12 2
 
-I could have implemented 8.16 fixed point math (somehow) to be able to perform
-these calculations, but instead I went for precalculated tables.
 */
 
 /*
-
+Fixed Point Math
+----------------
 Starting to wrap my head around the 8.16 16.16 fixed point math. Here goes an explanation.
 
-To scale decimal values from 0.0 to 1.0 in a 16-bit window, this means that
-0x8000 is .5 and 0x0001 is 1/0x10000 or 1/65636 == 0.000015258789063
+To scale decimal values from 0.0 to 1.0 in a 16-bit window, you use all 16-bits,
+that's 65536 values to represent 0 to 1.
+this means that
+0x8000 is .5 and 0x0001 is 1/65636 == 0.000015258789063
 
 The values useful for semi-tones and cents are
 semi-tone (st): the twelvth root of 2 or 2^(1/12) == 1.059463094359295
@@ -509,11 +510,12 @@ CentMultiplicandLUT:
 /*cent[99]: 1.058851301188465 : HEX(.16 fixed): 0x10f11 */ .dw $0f11
 
 /*
-It is not necessary to use a LUT for all of these values. But it's an easy starting point.
-Later these values could be calculated from a smaller LUT.
+It is necessary to use a LUT for all of these values, because they require many fractional
+multiplications to be calculated. The CPU will already be occupied with the multiplications
+I want to do based on those values, let alone calculating those too!
 
-note: Since the number 1 is in every one of these entries, we can remove it from the
-actual table entries.
+note: Since the integer number 1 is in every one of these entries, we can remove it from the
+actual table entries and specify it only once from code.
 
 Next comes actually computing semi-tone note values, and final note values from a finetune setting.
 Thanks to the LUT, the hardest part of the math is removed.
@@ -528,43 +530,36 @@ again optimize. Just multiply by 0x10 and then there's no need to shift back.
 NOTE: The only difference to get a proper multiplication (not optimized due to non-fractional multiplier),
 is to change the carry-over addition to go all the way up to the max-bit-range you'll need to cover the
 raw math. You need to descern the range of your input multiplicands and multipliers to determine the max
-range you'll need to use in your calculations. It could be as high as 64-bits! (or higher?!)
+range you'll need to use in your calculations. It could be as high as 64-bits, or higher.
 
-NOTE: the (bit-width of the multiplier - 8) is how much will have to shifted right
+Since all of my needed multiplications are based between 1 and 2, I only need 40-bits,
+which can hold two 4.16 numbers multiplied together. To figure that out, simply multiply
+together the fixed point representations of the two largest numbers you need to support.
+In my case, I knew it was made up of (highest semi-tone * highest cent * highest octave)
+First, check the first two:
+ 0x1e343 * 0x10f11 => 0x1FFB40473 (33 bits)
+And then using the >>16 result in the next biggest calculation:
+ 0x1ffb4 * 0x4000  => (smaller)
+
+
+
+NOTE: You can save on bitshifts when multiplying only an integer (no frac).
+the (bit-width of the multiplier - 8) is how much will have to shifted right
 after the result is calculated.
-examples: 0x010f39 * 0x10 => no shift
-          0x010f39 * 0x8000 => RSH 8
+examples: 0x010f39 * 0x10 => no shift    ==    ( ( 0x010f39 *   0x100000 ) >> 16 )
+          0x010f39 * 0x8000 => RSH 8     ==    ( ( 0x010f39 * 0x80000000 ) >> 16 )
           0x010f39 * 0x018000 => RSH 16
-Of course, rather than all that shifting, just load from the higher RAM address or register.
-
-The multiplication will be done via addition (not sure if `mul ya` instruction would help here, since it's only 8-bit x 8-bit)
-like so:
-
-let's say the 0x10 is in X, and 0x10f39 is in 3 ram locations low, mid, high, top:
-We can make use of addw (yay!)
+Of course, rather than all that shifting manually, since it is a multiple of 8,
+just load from the higher RAM address or register.
 */
 
-
-
-/*
-;IN: de: location of what to copy
-;     x: dp-destination
-copy3:
-  mov y, #3
-  mov a, [de]+y
-- mov (x)+, a
-  dec y
-  bne -
-  ret
-*/
-
-.equ INT      2
+.equ INT 2    ; byte offset Where the integer starts in the 8.16 number
 
 ; == Helper routines ==
 ;IN: x = number of times to add the shiftbuf to result
 addShiftBuf:
 @@add
-  movw ya, shiftbuf     ; YA = original multiplicand value (decimal)
+  movw ya, shiftbuf         ; YA = original multiplicand value (decimal)
 ;-- Decimal Math --
   addw ya, result           ; YA = YA + lowmid
   movw result, ya           ; update the value
@@ -580,7 +575,7 @@ addShiftBuf:
   ret
 
 RorNibble5:
-  ; Pre-emptively ROR a nibble (4 bits)  effectively is multiplicand << 12
+  ; Pre-emptively ROR a nibble (4 bits)
   mov x, #4
 - clrc
   ror shiftbuf + 4
@@ -593,37 +588,89 @@ RorNibble5:
   ret
 
 /*
-  Multiplies a 1.16 x 1.16. This could support up to 8.16 but the range
-  your results need to cover may require extending the bit-range of this subroutine's
-  adc, incs, and rors.
-  IN: x: multiplier int8
+  Multiplies a 4.16 x 4.16. Note that this equates to a pre-shifted expanded result of
+  8.32. This means you could use this routine to do a 7.16 * 1.16, or a
+  5.16 * 3.16. I imagine similar flexibility is possible at the fractional level
+  but I've never tried it.
+
+  When extending support, please see all relative
+  subroutine's adc, incs, and rors, the size of the variables, etc.
+  IN: x: multiplier unsigned int8
       ya: multiplier fractional .16
       multiplicand + (0-2): multiplicand 1.16
-  OUT: 8.8 rounded result YA
+  OUT: 8.16 rounded result X:YA
 */
 Multiply4_16by4_16:
 ; prep work
-  movw multiplier, ya
+  movw multiplier, ya       ; load the provided multiplier into ram
   mov multiplier + INT, x
-  ;mov x, a            ; multiplier LSB
-  ;bne @no_accomodation
-  ;decw multiplier + 1 ; compensate for my funky loop
-@no_accomodation
-  mov a, #0
+
+  mov a, #0                 ; clear the results and multiplicand-shift-buffer
   mov y, a
-  movw result, ya     ; clear
-  movw result + 2, ya     ; clear
-  mov result + 4, a
-  movw shiftbuf, ya
-  ; Optimization 0x1.0000 is simply LSH 16 and every multiplicand has it
+  movw result, ya           ; clear
+  movw result + 2, ya       ; clear
+  mov result + 4, a         ; clear
+  movw shiftbuf, ya         ; clear
+
   movw ya, multiplicand     ; YA = original multiplicand value (decimal)
   movw shiftbuf + 2, ya     ; << 16
   mov a, multiplicand + INT
-  mov shiftbuf + 4, a
+  mov shiftbuf + 4, a       ; Shiftbuf = (Multiplicand << 16)
+
+/* HOW IT WORKS
+
+Fun fact: The original version of the routine would add the multiplicand up 'multiplier' times,
+and it was so slow that it would take several seconds.
+
+This next implementation is the heart of why the math is speedy.
+
+Each nibble of the multiplier is looked at, and a bit-shifted representation of
+the multiplicand is added [nibble] times to the result. Here's an
+example:
+
+(Multiplicand)   (multiplier)        (result)             X:YA
+   0x12345     *   0x12345      =  0x14B65F099 >> 16 => 0x14B65
+
+I discovered for myself that left-shifted versions of the multiplier can be used
+to bulk up on additions of the multiplicand. It works like this. Every nibble
+represents a unit, much like in decimal there is the 10's place, 100's place, etc.
+In this case, each unit represents a shift amount.
+
+The 1 in 0x12345 is representing the 0x10000's place, << 16
+The 2 in 0x12345 is representing the 0x01000's place, << 12
+The 3 in 0x12345 is representing the 0x00100's place, << 8
+The 4 in 0x12345 is representing the 0x00010's place, << 4
+The 5 in 0x12345 is representing the 0x00001's place, << 0
+
+So that describes the places. Now, iterate through these nibbles like so:
+
+First, have a copy of the multiplicand to do all the bitshifting on. It
+must be wide enough for the preshifted result (in my case 40 bits). Let's call it
+shiftbuf. Then, begin analyzing the nibbles of the multiplier.
+
+I opted to start from the largest unit starting with a << 16 copy of the multiplicand in my shiftbuf.
+(Note: There were no cycles wasted to preshift 16 as you can simply store to higher ram location).
+Though I must say, I see no advantage to having done that.
+
+0x1 in 0x12345 is not 0, so add shiftbuf to result 0x1 times.
+Shiftbuf >>= 4 (to be consistent with the next nibble)
+0x2 in 0x12345 is not 0, so add shiftbuf to result 0x2 times.
+Shiftbuf >>= 4
+0x3 in 0x12345 is not 0, so add shiftbuf to result 0x3 times.
+Shiftbuf >>= 4
+0x4 in 0x12345 is not 0, so add shiftbuf to result 0x4 times.
+shiftbuf >>= 4
+0x5 in 0x12345 is not 0, so add shiftbuf to result 0x5 times.
+
+Then the result will yield 0x14B65F099 (preshifted result). And you can now
+do what you need with it. Round it etc.
+
+*/
+
 
   mov a, multiplier+2
   and a, #$0f
-  beq +                       ; If nibble 0x00F000 is set, << 12 and add as many times as the nibble is
+  beq +                               ; If nibble 0x0F0000 is set, << 16 and add as many times as the nibble is
   mov x, a                            ; X = how many times to add shiftbuf to result
   call !addShiftBuf
 +
@@ -727,7 +774,9 @@ DoFinetune:
     movw multiplicand, ya     ; X:YA => 12TET * Finetune. Store as multiplicand for next call
     mov multiplicand + INT, x
 
-    ;code to get octave byte multiplier from octave -1 - 6: (smaller than a byte-sized LUT!)
+    ;get octave multiplier from octave -1 - 6
+    /* Eventually SNES Tracker will index its notes values from 0 the negative
+     * octaves, which will help octave traversal with a simple LUT */
     mov a, #0
     mov x, note_octave
     bpl @octavePositive
