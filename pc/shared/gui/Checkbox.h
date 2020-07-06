@@ -22,7 +22,7 @@ private:
    * effect in draw() */
   enum
   {
-  	OFF=0
+  	OFF=0,
     ON=1,
   };
 
