@@ -560,43 +560,6 @@ copy3:
 
 .equ INT      2
 
-/*
-  Multiplies a 1.16 x 8-bit-int. This could support up to 8.16 but the range
-  your results need to cover may require extending the bit-range of this subroutine's
-  adc and incs. 
-  IN: x: multiplier int8
-      multiplicand + (0-2): multiplicand 8.16
-  OUT: 8.8 rounded result YA
-*/
-Multiply1_16by8i:
-; prep work
-  mov a, #0
-  mov y, a
-  movw result, ya     ; clear
-  movw result + 2, ya
-  mov result + 4, a
-@multiply
-  movw ya, multiplicand     ; YA = original multiplicand value (decimal)
-;-- Decimal Math --
-  addw ya, result           ; YA = YA + lowmid
-  movw result, ya           ; update the value
-;-- Integer Math --
-  adc result + INT, multiplicand + INT       ; Adds integer including carry over from decimal math
-                            ; (if it was 16.16 we would need to do this with #0 for higher byte too)
-  dec x                     ; Redo the addition "multiplier" amount of times
-  bne @multiply
-  ; RESULT IN! high == result integer, mid == result decimal, low == result decimal that can be used for rounding
-;-- Rounding -- (Could be moved to separate subroutine)
-  mov a, result
-  bpl @no_roundup_needed    ; if < 0x80 (0.5), do not round (round down). Else, round up
-  inc result + 1            ; Roundup, and carry over if necessary
-  bne @@no_carry
-  inc result + INT
-@@no_carry
-@no_roundup_needed
-  movw ya, result + 1       ; 8.8 rounded result
-  ret
-
 ; == Helper routines ==
 ;IN: x = number of times to add the shiftbuf to result
 addShiftBuf:
@@ -632,13 +595,13 @@ RorNibble5:
 /*
   Multiplies a 1.16 x 1.16. This could support up to 8.16 but the range
   your results need to cover may require extending the bit-range of this subroutine's
-  adc and incs. 
+  adc, incs, and rors.
   IN: x: multiplier int8
       ya: multiplier fractional .16
       multiplicand + (0-2): multiplicand 1.16
   OUT: 8.8 rounded result YA
 */
-Multiply1_16by1_16:
+Multiply4_16by4_16:
 ; prep work
   movw multiplier, ya
   mov multiplier + INT, x
@@ -649,19 +612,20 @@ Multiply1_16by1_16:
   mov a, #0
   mov y, a
   movw result, ya     ; clear
+  movw result + 2, ya     ; clear
+  mov result + 4, a
   movw shiftbuf, ya
   ; Optimization 0x1.0000 is simply LSH 16 and every multiplicand has it
   movw ya, multiplicand     ; YA = original multiplicand value (decimal)
   movw shiftbuf + 2, ya     ; << 16
-  movw result + 2, ya       ; effectively << 16
   mov a, multiplicand + INT
   mov shiftbuf + 4, a
-  mov  result + 4, a
 
-  dec multiplier + INT      ; dec multiplier and check if we're done
-  bne +
-  movw ya, multiplier
-  beq @done
+  mov a, multiplier+2
+  and a, #$0f
+  beq +                       ; If nibble 0x00F000 is set, << 12 and add as many times as the nibble is
+  mov x, a                            ; X = how many times to add shiftbuf to result
+  call !addShiftBuf
 +
 
   call !RorNibble5
@@ -759,7 +723,7 @@ DoFinetune:
     mov a, !CentMultiplicandLUT + x
     mov x, #1
 
-    call !Multiply1_16by1_16
+    call !Multiply4_16by4_16
     movw multiplicand, ya
     mov multiplicand + INT, x
     ; Store the multiplier
@@ -775,9 +739,10 @@ DoFinetune:
 -   rol a
     dec x
     bpl -
-    ;ret
-    mov x, a
-    call !Multiply1_16by8i
+    inc x ; 0
+    mov y, a
+    mov a, #0
+    call !Multiply4_16by4_16
   ; ---- check the pitch isn't beyond allowable range 3FFF ----
     cmp y, #$40
     bmi @val_ok
