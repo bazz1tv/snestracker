@@ -824,6 +824,20 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
           if (MODONLY(mod, CMD_CTRL_KEY))
             clone(this);
           break;
+          // Mute / Solo kbd shortcuts
+          case SDLK_1:
+          case SDLK_2:
+          case SDLK_3:
+          case SDLK_4:
+          case SDLK_5:
+          case SDLK_6:
+          case SDLK_7:
+          case SDLK_8:
+            if (MODONLY(mod, KMOD_ALT))
+              Voice_Control::toggle_mute(scancode - SDLK_1 + 1);
+            else if (MODONLY(mod, CMD_CTRL_KEY))
+              Voice_Control::toggle_solo(scancode - SDLK_1 + 1);
+          break;
 
           default:break;
         }
