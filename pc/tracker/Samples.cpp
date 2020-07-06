@@ -735,9 +735,7 @@ int Sample_Panel::load(void *spanel)
       return -1;
     }
 
-    if (s->brr != NULL)
-      free(s->brr);
-
+    s->clear();
     s->brr = brr;
     s->brrsize = brrsize;
 
