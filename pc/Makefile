@@ -143,7 +143,8 @@ else ifeq ($(uname_S), Cross_Windows)
 	CPPFLAGS += -fpermissive
 	# NFD
 	CPPSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_win.cpp
-	LDFLAGS += -lole32 #-static-libgcc #-lcomctl32 -lcomdlg32
+	# uuid needed for nfd
+	LDFLAGS += -lole32 -luuid #-static-libgcc #-lcomctl32 -lcomdlg32
 	BOOST_LDFLAGS := -lboost_system -lboost_filesystem
 	# Example of static library inclusion:
 	#BOOST_LDFLAGS := $(prefix)/lib/libboost_system.a $(prefix)/lib/libboost_filesystem.a
