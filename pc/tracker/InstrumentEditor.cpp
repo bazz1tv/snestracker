@@ -283,9 +283,6 @@ InstrumentEditor::InstrumentEditor(Instrument_Panel *instrpanel) :
   adsrpanel(instrpanel),
   instrpanel(instrpanel)
 {
-  /* disable not-ready buttons */
-  pan_incbtn.enabled = false;
-  pan_decbtn.enabled = false;
 }
 
 void InstrumentEditor :: update_srcn()
@@ -301,7 +298,13 @@ void InstrumentEditor :: update_vol()
 
 void InstrumentEditor :: update_pan()
 {
-  sprintf(pan_cbuf, "%02x", instrpanel->instruments[instrpanel->currow].pan);
+  Instrument *curinst = &instrpanel->instruments[instrpanel->currow];
+  int8_t pan = curinst->pan;
+  char sign = '+';
+  if (pan < 0)
+    sprintf(pan_cbuf, "%04d", pan);
+  else
+    sprintf(pan_cbuf, "%c%03d", sign, pan);
 }
 
 void InstrumentEditor :: update_finetune()
@@ -349,9 +352,9 @@ void InstrumentEditor :: set_coords(int x, int y)
 
   pan_title.rect.x = x;
   pan_title.rect.y = y;
-  pan_valtext.rect.x = x + ((sizeof("Pan......")-1) * CHAR_WIDTH);
+  pan_valtext.rect.x = x + ((sizeof("Pan....")-1) * CHAR_WIDTH);
   pan_valtext.rect.y = y;
-  pan_decbtn.rect.x  = pan_valtext.rect.x + (sizeof("80") * CHAR_WIDTH);
+  pan_decbtn.rect.x  = pan_valtext.rect.x + (sizeof("+000") * CHAR_WIDTH);
   pan_decbtn.rect.y = y;
   pan_incbtn.rect.x = pan_decbtn.rect.x + CHAR_WIDTH + 5;
   pan_incbtn.rect.y = y;
@@ -412,8 +415,8 @@ void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
   vol_incbtn.draw(screen);
   vol_decbtn.draw(screen);
 
-  pan_title.draw(screen, Colors::nearblack);
-  pan_valtext.draw(screen, Colors::nearblack);
+  pan_title.draw(screen);
+  pan_valtext.draw(screen);
   pan_incbtn.draw(screen);
   pan_decbtn.draw(screen);
 
@@ -511,6 +514,13 @@ int InstrumentEditor::incpan(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::inc_pan(curinst);
   ie->update_pan();
+
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    int8_t pan = curinst->pan;
+    apuinstr->pan = pan;
+  }
 }
 
 int InstrumentEditor::decpan(void *i)
@@ -519,6 +529,13 @@ int InstrumentEditor::decpan(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::dec_pan(curinst);
   ie->update_pan();
+
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    int8_t pan = curinst->pan;
+    apuinstr->pan = pan;
+  }
 }
 
 int InstrumentEditor::incfinetune(void *i)

@@ -67,7 +67,7 @@ struct InstrumentEditor
   static int decvol(void *i);
 
   void update_pan();
-  char pan_cbuf[4];
+  char pan_cbuf[5];
   Text pan_title, pan_valtext;
   Button pan_incbtn, pan_decbtn;
   static int incpan(void *i);

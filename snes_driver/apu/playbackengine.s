@@ -874,25 +874,73 @@ ReadInstr:
     mov activeInstrument + X, a ; record this track's active instrument number
     ; instrument number MUST BE in A now
     call !loadInstrPtr
-    call !getDSPIDX 
-    ; TODO: Implement PAN around here
-    mov x,a ; NOTE X overwritten here with DSP addr (pushed tho)
-    mov y, #0 ; reset index for indexing instrument
-    mov dspaddr, x ; Vol_l
-    mov a, [de] + y ; vol
+    call !getDSPIDX
+    push a  ; Dsp Idx
+      ; TODO: Implement PAN around here
+      mov y, #0 ; reset index for indexing instrument
+      mov a, [de] + y ; vol
+      ;mov trackVol + x, a
+      mov x, a        ; vol backup
+      push a          ; vol backup
+        clr1 c.1  ; remember if pan was positive or negative. just need a scratch bit
+        mov y, #Instrument.pan
+        mov a, [de] + y
+        bpl +
+        set1 c.1
+        eor a, #$ff
+        inc a
++       mov y, a
+        mov a, x    ; Y:A = pan:vol
+    ; Calculate DSP volume From the given Pan and Vol settings
+    /* putting PAN here will disrupt things when the user has a volume effect column value present
+    but I gotta get started somewhere!! */
+
+    /*
+      1/64 = 0.015625
+      0.015625÷(1÷65536)  = 1024 expressed in .16 fixedpoint
+
+      Effectively doing
+              vol        pan  => vol * 0x400 * pan
+          ----------  *
+              64
+
+      To enjoy the benefits of the mul ya instruction, first do `vol * pan`
+      since they are each 8-bits.
+    */
+                            ;vol * pan
+        mul ya
+        mov b, y
+        asl a
+        rol b
+        asl a
+        rol b
+        cmp a, #$80
+        bcc @round_down
+        inc b
+@round_down
+      pop a
+      mov y, a    ; vol backup xD
+      setc
+      sbc a, b    ; vol - subtraction value
+      bcs +
+      mov a, y    ; we overflowed, so put the original volume for an effect of 0 volume
++
+    pop x ; NOTE X overwritten here with DSP addr (pushed tho)
+    /* Rather than write the volume directly to DSP, save it */
+    mov dspaddr, x
+    mov dspdata, y
+    bbs c.1, +       ; if pan is negative don't write the subtracted value there
     mov dspdata, a
-
-    inc x
-    mov dspaddr, x ; vol_r
-    mov dspdata, a ; mimic vol to vol_r (pan not yet impl'd)
-
-    inc x           ; pitch (lo) idx
++   inc x           ; vol R
+    mov dspaddr, X
+    mov dspdata, y
+    bbc c.1, +       ; if pan is negative don't write the subtracted value there
+    mov dspdata, a
++   inc x           ; pitch (lo) idx
     inc x           ; p-hi
     inc x           ; srcn
     mov dspaddr, x ; srcn
-    inc y ; finetune
-    inc y ; pan
-    inc y ; src
+    mov y, #Instrument.srcn
     mov a, [de] + y
     mov dspdata, a ; srcn
 

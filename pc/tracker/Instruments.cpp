@@ -69,16 +69,16 @@ void Instrument::dec_vol(Instrument *i)
 
 void Instrument::inc_pan(Instrument *i)
 {
-  if (i->pan != 0xff)
+  if (i->pan < 64)
   {
-    i->pan++;
     *i->metadata.changed = true;
+    i->pan++;
   }
 }
 
 void Instrument::dec_pan(Instrument *i)
 {
-  if (i->pan != 0x00)
+  if (i->pan > -64)
   {
     *i->metadata.changed = true;
     i->pan--;
@@ -193,6 +193,9 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
 
         read(file, &instr->vol, 1, 1, &maxread);
         read(file, &instr->pan, 1, 1, &maxread);
+        // The old version 0.1.0 didn't use panning but stored this now invalid value
+        if (instr->pan == -128) // migrate it
+          instr->pan = Instrument::DEFAULT_PAN;
         read(file, &instr->adsr.adsr1, 1, 1, &maxread);
         read(file, &instr->adsr.adsr2, 1, 1, &maxread);
 

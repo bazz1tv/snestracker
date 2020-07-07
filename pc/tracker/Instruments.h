@@ -38,9 +38,9 @@ struct Instrument
 	//  bool phaseflip=false;
   uint8_t vol;
   static const uint8_t constexpr DEFAULT_VOL = 0x50;
-  /* 0x80 = dead center, 0xFF = hard right, 0x00 = hard left */
-  uint8_t pan;
-  static const uint8_t constexpr DEFAULT_PAN = 0x80;
+  /* -64 = hard left, 0 = dead center, 64 = hard right,  */
+  int8_t pan;
+  static const uint8_t constexpr DEFAULT_PAN = 0x00;
   /* signed offset in semitones to pitch the sample. This will be used
    * directly by the SNES driver. The tracker must impose the restraints
    * on the range allowed */
