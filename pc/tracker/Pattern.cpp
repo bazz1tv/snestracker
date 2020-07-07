@@ -963,8 +963,12 @@ int PatSeqPanel::clone(void *pspanel)
 int PatSeqPanel::seq(void *pspanel)
 {
   PatSeqPanel *psp = (PatSeqPanel *)pspanel;
+  PatternSequencer *patseq = psp->patseq;
   fprintf(stderr, "PatSeqPanel::seq()\n");
   clone_seq_common(psp);
+  // Set the new pattern's length to the same as the previous one
+  PatternMeta *pm = &patseq->patterns[patseq->sequence[psp->currow]];
+  pm->p.len = (pm - 1)->p.len; 
   return 0;
 }
 
