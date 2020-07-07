@@ -1,7 +1,18 @@
 #include "SampleEditor.h"
 #include "Tracker.h"
+#include "apuram.h"
 
 extern Tracker *tracker;
+
+/* NOTE: Live sample loop point adjustment works as intended, but if the sample
+used a filter that uses sample history, the live adjustment can cause it to
+get dirty and create glitchy sounds until the next KON */
+struct DirEntry{
+  uint16_t sample;
+  uint16_t loop;
+} __attribute__((packed));
+
+static int clickedLoopCheckbox(void *s);
 
 SampleEditor::SampleEditor() :
 	loop_cbuf("00"),
@@ -9,6 +20,8 @@ SampleEditor::SampleEditor() :
 	loop_valtext(loop_cbuf),
 	loop_incbtn("+", incloop, this, true),
 	loop_decbtn("-", decloop, this, true),
+  loopCheckbox(),
+
 
   finetune_cbuf("+000"),
   finetune_title("F.tune"),
@@ -21,17 +34,14 @@ SampleEditor::SampleEditor() :
   finetune_decbtn.enabled = false;
 }
 
-struct DirEntry{
-  uint16_t sample;
-  uint16_t loop;
-} __attribute__((packed));
-
-#include "apuram.h"
 void SampleEditor :: update_loop()
 {
   Sample_Panel *sp = &::tracker->main_window.samplepanel;
   Sample *cursamp = &::tracker->song.samples[ sp->currow ];
 	sprintf(loop_cbuf, "$%04x", cursamp->rel_loop);
+
+  // update what the checkbox refers to
+  loopCheckbox.state = &cursamp->metadata.loop;
 }
 
 /* Same code as Instrument editor fine tune (detune). Maybe we can
@@ -69,6 +79,9 @@ void SampleEditor :: set_coords(int x, int y)
 	loop_decbtn.rect.x = loop_incbtn.rect.x + CHAR_WIDTH + 5;
 	loop_decbtn.rect.y = y;
 
+  loopCheckbox.rect.x = loop_decbtn.rect.x + (CHAR_WIDTH * 2);
+  loopCheckbox.rect.y = y;
+
   y += CHAR_HEIGHT + 5;
 
   finetune_title.rect.x = x;
@@ -85,6 +98,7 @@ int SampleEditor::handle_event(const SDL_Event &ev)
 {
 	loop_incbtn.check_event(ev);
 	loop_decbtn.check_event(ev);
+  loopCheckbox.check_event(ev);
 
   finetune_incbtn.check_event(ev);
   finetune_decbtn.check_event(ev);
@@ -106,6 +120,7 @@ void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
       present_color = Colors::white;
       loop_incbtn.enabled = true;
       loop_decbtn.enabled = true;
+      loopCheckbox.enabled = true;
     }
     else
     {
@@ -113,6 +128,7 @@ void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
       present_color = Colors::nearblack;
       loop_incbtn.enabled = false;
       loop_decbtn.enabled = false;
+      loopCheckbox.enabled = false;
     }
   }
 
@@ -120,6 +136,7 @@ void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
 	loop_valtext.draw(screen, present_color);
 	loop_incbtn.draw(screen);
 	loop_decbtn.draw(screen);
+  loopCheckbox.draw(screen);
 
   finetune_title.draw(screen, Colors::nearblack);
   finetune_valtext.draw(screen, Colors::nearblack);

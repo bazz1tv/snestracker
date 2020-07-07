@@ -111,6 +111,7 @@ void Sample::clear()
   semitone_offset = 0;
   finetune = 0;
   loop = 0;
+  metadata.loop = false;
 }
 
 

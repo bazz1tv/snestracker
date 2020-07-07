@@ -53,8 +53,10 @@ void Clickable_Rect::set_rect(int x, int y, int w, int h)
 
 void Clickable_Rect::do_thing(void *newdata/*=NULL*/)
 {
-  assert(action);
-  if (!newdata)
-    action(data);
-  else action(newdata);
+  if (action)
+  {
+    if (!newdata)
+      action(data);
+    else action(newdata);
+  }
 }

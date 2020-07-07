@@ -16,16 +16,10 @@ struct Checkbox : public Clickable_Rect
   void draw(SDL_Surface *screen);
 
   SDL_Rect inner;
-
+  bool *state;
 private:
   /* Based on the below state, alternative colors and positioning will
    * effect in draw() */
-  enum
-  {
-  	OFF=0,
-    ON=1,
-  };
-
-  bool *state;
+  
   unsigned int almost_clicked :1;
 };

@@ -48,6 +48,7 @@ struct Sample
 
   struct {
     bool *changed;
+    bool loop;      // whether or not this sample BRR end block should set loop on
   } metadata;
 };
 
