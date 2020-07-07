@@ -21,7 +21,8 @@ Texture::~Texture()
   }
 }
 
-void Texture::load_bmp(Texture *t, const char *filename, SDL_Renderer *r)
+/* IN: an uninitialized texture pointer */
+int Texture::load_bmp(Texture *t, const char *filename, SDL_Renderer *r)
 {
   char path[260];
   assert(::file_system);
@@ -36,7 +37,7 @@ void Texture::load_bmp(Texture *t, const char *filename, SDL_Renderer *r)
   if (t->surface == NULL)
   {
     DEBUGLOG("\tcouldn't load, '%s'\n", SDL_GetError());
-    /* TODO: Fail gracefully */
+    return -1;
   }
 
   SDL_SetColorKey(t->surface, SDL_TRUE, SDL_MapRGB(t->surface->format,
@@ -46,8 +47,10 @@ void Texture::load_bmp(Texture *t, const char *filename, SDL_Renderer *r)
   if (t->sdltexture == NULL)
   {
     DEBUGLOG("\tUnable to create texture, '%s'\n", SDL_GetError());
-    /* TODO: Fail gracefully */
+    return -2;
   }
+
+  return 0;
 }
 
 /* untested */
