@@ -728,7 +728,7 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   }
 }
 
-static void AskDeleteSample(Instrument_Panel *ip)
+static bool AskDeleteSample(Instrument_Panel *ip)
 {
   Instrument *instr = &ip->instruments[ip->currow];
   Sample *sample = &ip->samplepanel->samples[instr->srcn];
@@ -740,11 +740,11 @@ static void AskDeleteSample(Instrument_Panel *ip)
   switch (rc)
   {
     case DialogBox::YES:
-      sample->clear();
+      return true;
     break;
     case DialogBox::NO:
     default:
-      return;
+      return false;
   }
 }
 
@@ -765,6 +765,7 @@ int Instrument_Panel::load(void *ipanel)
   Instrument *instr = &ip->instruments[ip->currow];
   Sample *samples = ip->samplepanel->samples;
   Sample *sample = &samples[instr->srcn];
+  bool deletesample = false;
 
   if (*instr != Instrument())
   {
@@ -774,7 +775,7 @@ int Instrument_Panel::load(void *ipanel)
     switch (drc)
     {
       case DialogBox::YES:
-        AskDeleteSample(ip);
+        deletesample = AskDeleteSample(ip);
       break;
       case DialogBox::NO:
       default:
@@ -784,6 +785,8 @@ int Instrument_Panel::load(void *ipanel)
 
   if (SdlNfd::get_file_handle("r", INSTRFILE_EXT) == NFD_OKAY)
   {
+    if (deletesample)
+      sample->clear();
     InstrumentFileLoader ifl(instr, samples);
     ifl.load(SdlNfd::file);
 
