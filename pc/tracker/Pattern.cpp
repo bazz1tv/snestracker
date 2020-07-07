@@ -683,10 +683,10 @@ void PatSeqPanel::set_coords(int x, int y)
   rect.h = (CHAR_HEIGHT * (VISIBLE_ROWS)) + 1;
 
   // put the inc/dec pat buttons to the right of the rect.
-  incpatbtn.rect.x = rect.x + rect.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
-  incpatbtn.rect.y = rect.y + 4;
-  decpatbtn.rect.x = incpatbtn.rect.x + incpatbtn.rect.w + 5;
-  decpatbtn.rect.y = incpatbtn.rect.y;// + CHAR_HEIGHT;
+  decpatbtn.rect.x = rect.x + rect.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
+  decpatbtn.rect.y = rect.y + 4;
+  incpatbtn.rect.x = decpatbtn.rect.x + incpatbtn.rect.w + 5;
+  incpatbtn.rect.y = decpatbtn.rect.y;// + CHAR_HEIGHT;
 }
 
 static void apuSetPattern(int currow)

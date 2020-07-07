@@ -44,10 +44,10 @@ void PatLenWidget :: set_coords(int x, int y)
 	patlen_title.rect.y = y;
 	patlen_valtext.rect.x = x + ((4 + 1) * CHAR_WIDTH);
 	patlen_valtext.rect.y = y;
-	patlen_incbtn.rect.x  = patlen_valtext.rect.x + (5 * CHAR_WIDTH);
-	patlen_incbtn.rect.y = y;
-	patlen_decbtn.rect.x = patlen_incbtn.rect.x + CHAR_WIDTH + 5;
+	patlen_decbtn.rect.x  = patlen_valtext.rect.x + (5 * CHAR_WIDTH);
 	patlen_decbtn.rect.y = y;
+	patlen_incbtn.rect.x = patlen_decbtn.rect.x + CHAR_WIDTH + 5;
+	patlen_incbtn.rect.y = y;
 
 	y += CHAR_HEIGHT + 2;
 
@@ -56,7 +56,7 @@ void PatLenWidget :: set_coords(int x, int y)
 	seqlen_valtext.rect.x = x + ((4 + 1) * CHAR_WIDTH);
 	seqlen_valtext.rect.y = y;
 
-	rect.w = patlen_decbtn.rect.x + patlen_decbtn.rect.w - rect.x + 2;
+	rect.w = patlen_incbtn.rect.x + patlen_incbtn.rect.w - rect.x + 2;
 	rect.h = seqlen_valtext.rect.y + seqlen_valtext.rect.h - rect.y + 2;
 }
 

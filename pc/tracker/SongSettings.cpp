@@ -339,10 +339,10 @@ void SongSettingsPanel :: set_coords(int x, int y)
 	mvol_title.rect.y = y;
 	mvol_valtext.rect.x = x + ((sizeof("Main Vol      ")-1) * CHAR_WIDTH);
 	mvol_valtext.rect.y = y;
-	mvol_incbtn.rect.x  = mvol_valtext.rect.x + (sizeof("$00") * CHAR_WIDTH);
-	mvol_incbtn.rect.y = y;
-	mvol_decbtn.rect.x = mvol_incbtn.rect.x + CHAR_WIDTH + 5;
+	mvol_decbtn.rect.x  = mvol_valtext.rect.x + (sizeof("$00") * CHAR_WIDTH);
 	mvol_decbtn.rect.y = y;
+	mvol_incbtn.rect.x = mvol_decbtn.rect.x + CHAR_WIDTH + 5;
+	mvol_incbtn.rect.y = y;
 
   y += CHAR_HEIGHT + 5;
 
@@ -350,10 +350,10 @@ void SongSettingsPanel :: set_coords(int x, int y)
   evol_title.rect.y = y;
   evol_valtext.rect.x = x + ((sizeof("Main Vol      ")-1) * CHAR_WIDTH);
   evol_valtext.rect.y = y;
-  evol_incbtn.rect.x  = evol_valtext.rect.x + (sizeof("$00") * CHAR_WIDTH);
-  evol_incbtn.rect.y = y;
-  evol_decbtn.rect.x = evol_incbtn.rect.x + CHAR_WIDTH + 5;
+  evol_decbtn.rect.x  = evol_valtext.rect.x + (sizeof("$00") * CHAR_WIDTH);
   evol_decbtn.rect.y = y;
+  evol_incbtn.rect.x = evol_decbtn.rect.x + CHAR_WIDTH + 5;
+  evol_incbtn.rect.y = y;
 
   y += CHAR_HEIGHT + 5;
   
@@ -361,10 +361,10 @@ void SongSettingsPanel :: set_coords(int x, int y)
   edl_title.rect.y = y;
   edl_valtext.rect.x = x + ((sizeof("Main Vol      ")-1) * CHAR_WIDTH);
   edl_valtext.rect.y = y;
-  edl_incbtn.rect.x  = edl_valtext.rect.x + (sizeof("$00") * CHAR_WIDTH);
-  edl_incbtn.rect.y = y;
-  edl_decbtn.rect.x = edl_incbtn.rect.x + CHAR_WIDTH + 5;
+  edl_decbtn.rect.x  = edl_valtext.rect.x + (sizeof("$00") * CHAR_WIDTH);
   edl_decbtn.rect.y = y;
+  edl_incbtn.rect.x = edl_decbtn.rect.x + CHAR_WIDTH + 5;
+  edl_incbtn.rect.y = y;
 
   y += CHAR_HEIGHT + 5;
   
@@ -372,10 +372,10 @@ void SongSettingsPanel :: set_coords(int x, int y)
   efb_title.rect.y = y;
   efb_valtext.rect.x = x + ((sizeof("Main Vol      ")-1) * CHAR_WIDTH);
   efb_valtext.rect.y = y;
-  efb_incbtn.rect.x  = efb_valtext.rect.x + (sizeof("$00") * CHAR_WIDTH);
-  efb_incbtn.rect.y = y;
-  efb_decbtn.rect.x = efb_incbtn.rect.x + CHAR_WIDTH + 5;
+  efb_decbtn.rect.x  = efb_valtext.rect.x + (sizeof("$00") * CHAR_WIDTH);
   efb_decbtn.rect.y = y;
+  efb_incbtn.rect.x = efb_decbtn.rect.x + CHAR_WIDTH + 5;
+  efb_incbtn.rect.y = y;
 
   //y += CHAR_HEIGHT + 5;
 }

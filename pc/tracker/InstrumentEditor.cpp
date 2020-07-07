@@ -329,10 +329,10 @@ void InstrumentEditor :: set_coords(int x, int y)
 	srcn_title.rect.y = y;
 	srcn_valtext.rect.x = x + ((sizeof("Sample...")-1) * CHAR_WIDTH);
 	srcn_valtext.rect.y = y;
-	srcn_incbtn.rect.x  = srcn_valtext.rect.x + (sizeof("00") * CHAR_WIDTH);
-	srcn_incbtn.rect.y = y;
-	srcn_decbtn.rect.x = srcn_incbtn.rect.x + CHAR_WIDTH + 5;
+	srcn_decbtn.rect.x  = srcn_valtext.rect.x + (sizeof("00") * CHAR_WIDTH);
 	srcn_decbtn.rect.y = y;
+	srcn_incbtn.rect.x = srcn_decbtn.rect.x + CHAR_WIDTH + 5;
+	srcn_incbtn.rect.y = y;
 
 	y += CHAR_HEIGHT + 5;
 
@@ -340,10 +340,10 @@ void InstrumentEditor :: set_coords(int x, int y)
   vol_title.rect.y = y;
   vol_valtext.rect.x = x + ((sizeof("Vol......")-1) * CHAR_WIDTH);
   vol_valtext.rect.y = y;
-  vol_incbtn.rect.x  = vol_valtext.rect.x + (sizeof("7f") * CHAR_WIDTH);
-  vol_incbtn.rect.y = y;
-  vol_decbtn.rect.x = vol_incbtn.rect.x + CHAR_WIDTH + 5;
+  vol_decbtn.rect.x  = vol_valtext.rect.x + (sizeof("7f") * CHAR_WIDTH);
   vol_decbtn.rect.y = y;
+  vol_incbtn.rect.x = vol_decbtn.rect.x + CHAR_WIDTH + 5;
+  vol_incbtn.rect.y = y;
 
   y += CHAR_HEIGHT + 5;
 
@@ -351,10 +351,10 @@ void InstrumentEditor :: set_coords(int x, int y)
   pan_title.rect.y = y;
   pan_valtext.rect.x = x + ((sizeof("Pan......")-1) * CHAR_WIDTH);
   pan_valtext.rect.y = y;
-  pan_incbtn.rect.x  = pan_valtext.rect.x + (sizeof("80") * CHAR_WIDTH);
-  pan_incbtn.rect.y = y;
-  pan_decbtn.rect.x = pan_incbtn.rect.x + CHAR_WIDTH + 5;
+  pan_decbtn.rect.x  = pan_valtext.rect.x + (sizeof("80") * CHAR_WIDTH);
   pan_decbtn.rect.y = y;
+  pan_incbtn.rect.x = pan_decbtn.rect.x + CHAR_WIDTH + 5;
+  pan_incbtn.rect.y = y;
 
   y += CHAR_HEIGHT + 5;
 
@@ -362,10 +362,10 @@ void InstrumentEditor :: set_coords(int x, int y)
   finetune_title.rect.y = y;
   finetune_valtext.rect.x = x + ((sizeof("F.Tune")) * CHAR_WIDTH);
   finetune_valtext.rect.y = y;
-  finetune_incbtn.rect.x  = finetune_valtext.rect.x + (sizeof("+000") * CHAR_WIDTH);
-  finetune_incbtn.rect.y = y;
-  finetune_decbtn.rect.x = finetune_incbtn.rect.x + CHAR_WIDTH + 5;
+  finetune_decbtn.rect.x  = finetune_valtext.rect.x + (sizeof("+000") * CHAR_WIDTH);
   finetune_decbtn.rect.y = y;
+  finetune_incbtn.rect.x = finetune_decbtn.rect.x + CHAR_WIDTH + 5;
+  finetune_incbtn.rect.y = y;
 
   tabs.set_coords(srcn_decbtn.rect.x + srcn_decbtn.rect.w + (CHAR_WIDTH*15), yy - 3);
   adsrpanel.set_coords(srcn_decbtn.rect.x + srcn_decbtn.rect.w + (CHAR_WIDTH*7), yy + (3*CHAR_HEIGHT));

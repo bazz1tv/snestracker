@@ -94,12 +94,12 @@ void SampleEditor :: set_coords(int x, int y)
 	loop_title.rect.y = y;
 	loop_valtext.rect.x = x + ((sizeof("Loop...")-1) * CHAR_WIDTH);
 	loop_valtext.rect.y = y;
-	loop_incbtn.rect.x  = loop_valtext.rect.x + (sizeof("$0000") * CHAR_WIDTH);
-	loop_incbtn.rect.y = y;
-	loop_decbtn.rect.x = loop_incbtn.rect.x + CHAR_WIDTH + 5;
+	loop_decbtn.rect.x  = loop_valtext.rect.x + (sizeof("$0000") * CHAR_WIDTH);
 	loop_decbtn.rect.y = y;
+	loop_incbtn.rect.x = loop_decbtn.rect.x + CHAR_WIDTH + 5;
+	loop_incbtn.rect.y = y;
 
-  loopCheckbox.rect.x = loop_decbtn.rect.x + (CHAR_WIDTH * 2);
+  loopCheckbox.rect.x = loop_incbtn.rect.x + (CHAR_WIDTH * 2);
   loopCheckbox.rect.y = y;
 
   y += CHAR_HEIGHT + 5;
@@ -108,10 +108,10 @@ void SampleEditor :: set_coords(int x, int y)
   finetune_title.rect.y = y;
   finetune_valtext.rect.x = x + ((sizeof("F.Tune ")) * CHAR_WIDTH);
   finetune_valtext.rect.y = y;
-  finetune_incbtn.rect.x  = finetune_valtext.rect.x + (sizeof("+000") * CHAR_WIDTH);
-  finetune_incbtn.rect.y = y;
-  finetune_decbtn.rect.x = finetune_incbtn.rect.x + CHAR_WIDTH + 5;
+  finetune_decbtn.rect.x  = finetune_valtext.rect.x + (sizeof("+000") * CHAR_WIDTH);
   finetune_decbtn.rect.y = y;
+  finetune_incbtn.rect.x = finetune_decbtn.rect.x + CHAR_WIDTH + 5;
+  finetune_incbtn.rect.y = y;
 }
 
 int SampleEditor::handle_event(const SDL_Event &ev)
