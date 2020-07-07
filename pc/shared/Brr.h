@@ -77,6 +77,8 @@ struct Brr
 
 int write_brr_to_file(const Brr *brr);
 uint16_t get_brr_size(const Brr *brr);
+Brr * getBrrEndBlock(Brr *brr);
+bool doesBrrLoop(Brr *brr);
 // SORT OF SEPARATE SNES TRACKER BRR RELATED STUFF
 #define BRRP_MAGIC_STR "ST-BRRP"  // the S has the low 2 bits set,
 //an unlikely situation for any BRR Sample

@@ -786,11 +786,14 @@ int Instrument_Panel::load(void *ipanel)
   {
     InstrumentFileLoader ifl(instr, samples);
     ifl.load(SdlNfd::file);
-  }
 
-  /* Update the sample panel highlighted row to cover the srcn connected to this instrument */
-  ip->samplepanel->currow = instr->srcn;
-  *instr->metadata.changed = true;
+    /* Update the sample panel highlighted row to cover the srcn connected to this instrument */
+    ip->samplepanel->currow = instr->srcn;
+    *instr->metadata.changed = true;
+
+    sample = &samples[instr->srcn];
+    sample->metadata.loop = doesBrrLoop(sample->brr);
+  }
   return 0;
 }
 

@@ -36,7 +36,6 @@ struct Sample
    * on the range allowed */
   int8_t semitone_offset; // TODO
 	int8_t finetune;
-  bool loop;
 
 	void inc_loop();
 	void dec_loop();

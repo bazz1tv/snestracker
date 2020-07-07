@@ -110,7 +110,6 @@ void Sample::clear()
   rel_loop = 0;
   semitone_offset = 0;
   finetune = 0;
-  loop = 0;
   metadata.loop = false;
 }
 
@@ -265,15 +264,13 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
         }
 
         struct Sample *s = &samples[idx];
-        if (s->brr != NULL)
-          free(s->brr);
+        s->clear();
 
         s->brr = brr;
         s->brrsize = subchunksize;
         subchunksize -= nb_read_total;
 
-        Brr *lastblock = (Brr *) &(((uint8_t *)(brr))[s->brrsize - sizeof(Brr)]);
-        s->loop = lastblock->loop ? true : false;
+        s->metadata.loop = doesBrrLoop(s->brr);
       }
       break;
       case SubChunkID::tune:
@@ -743,6 +740,7 @@ int Sample_Panel::load(void *spanel)
     strncpy(s->name, Utility::getFileName(outPath), SAMPLE_NAME_MAXLEN - 1);
     s->name[SAMPLE_NAME_MAXLEN-1] = 0;
     *s->metadata.changed = true;
+    s->metadata.loop = doesBrrLoop(s->brr);
   }
 
   return 0;

@@ -12,7 +12,27 @@ struct DirEntry{
   uint16_t loop;
 } __attribute__((packed));
 
-static int clickedLoopCheckbox(void *s);
+static int clickedLoopCheckbox(void *s)
+{
+  DEBUGLOG("clickedLoopCheckbox: ");
+  Sample_Panel *sp = &::tracker->main_window.samplepanel;
+  Sample *sample = (Sample *) &::tracker->song.samples[sp->currow];
+  Brr *endblock = getBrrEndBlock(sample->brr);
+  endblock->loop = !endblock->loop;
+
+  if (tracker->playback)
+  {
+    DirEntry *dirent = (DirEntry *) &::IAPURAM[::tracker->apuram->dspdir_i << 8];
+
+    dirent += sp->currow;
+    Brr *brr = (Brr *) &::IAPURAM[dirent->sample];
+    Brr *endblock = getBrrEndBlock(brr);
+    endblock->loop = !endblock->loop;
+    //DEBUGLOG("dspdir_i: 0x%04x dirent->sample: %04X, dirent->loop: %04X\n",
+      //::tracker->apuram->dspdir_i << 8, dirent->sample, dirent->loop);
+  }
+  return 0;
+}
 
 SampleEditor::SampleEditor() :
 	loop_cbuf("00"),
@@ -20,7 +40,7 @@ SampleEditor::SampleEditor() :
 	loop_valtext(loop_cbuf),
 	loop_incbtn("+", incloop, this, true),
 	loop_decbtn("-", decloop, this, true),
-  loopCheckbox(),
+  loopCheckbox(NULL, clickedLoopCheckbox, NULL),
 
 
   finetune_cbuf("+000"),
