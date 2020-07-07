@@ -8,8 +8,8 @@ Checkbox::Checkbox(bool *state/*=NULL*/, int (*action)(void *data)/*=NULL*/, voi
     Clickable_Rect(action, data),
     state(state), almost_clicked(0)
 {
-  rect.w = 8;
-  rect.h = 8;
+  rect.w = 9;
+  rect.h = 9;
 }
 
 void Checkbox::check_event(const SDL_Event &ev)
