@@ -457,11 +457,17 @@ void Tracker::handle_events()
 
 						playback = !playback;
 						if (playback)
+            {
 							render_to_apu(repeat_pattern);
+              // prevent user from decreasing pattern length
+              main_window.plwidget.patlen_decbtn.enabled = false;
+            }
 						else
             {
 							::player->fade_out(true);
               // pause taken care of in sound_stop userevent called from fadeout thread
+              // Re-enable the pattern length decrement button
+              main_window.plwidget.patlen_decbtn.enabled = true;
             }
           }
 					break;
