@@ -21,17 +21,17 @@ void Checkbox::check_event(const SDL_Event &ev)
       ev.button.button == SDL_BUTTON_LEFT)
   {
     //DEBUGLOG("Checkbox mouseCheckboxdown; ");
-    DEBUGLOG("Checkbox MouseCheckboxup; ");
+    //DEBUGLOG("Checkbox MouseCheckboxup; ");
     //if (almost_clicked)
     //{
       //DEBUGLOG("Checkbox check/execute\n");
-      check_mouse_and_execute(mouse::x, mouse::y, &rect);
       if (state != NULL)
       {
         //DEBUGLOG("WE'rE HERE\n");
         *state = !*state;
         //DEBUGLOG("state is %d\n", *state);
       }
+      check_mouse_and_execute(mouse::x, mouse::y, &rect);
   }
 }
 
