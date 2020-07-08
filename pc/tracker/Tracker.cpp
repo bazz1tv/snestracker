@@ -438,6 +438,14 @@ void Tracker::handle_events()
         int mod = ev.key.keysym.mod;
         switch (scancode)
         {
+          case SDLK_q:
+            if ( MODONLY(mod, CMD_CTRL_KEY) )
+            {
+              SDL_Event quit_ev;
+              quit_ev.type = SDL_QUIT;
+              SDL_PushEvent(&quit_ev);
+            }
+          break;
           case SDLK_LEFT:
             if ( MODONLY(mod, KMOD_SHIFT | CMD_CTRL_KEY) )
               mousecursors->prev();
