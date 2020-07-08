@@ -3,6 +3,8 @@
 #include "SDL.h"
 #include "Audio.h"
 #include "gui/Context_Menu.h"
+#include "gui/Button.h"
+#include "gui/Text.h"
 struct Audio_Options : public Experience
 {
   Audio_Options(SDL_Surface *screen, SDL_Renderer *sdlRenderer, bool openDeviceonClick=true);
@@ -30,6 +32,20 @@ struct Audio_Options : public Experience
   private:
     Audio_Options *ao;
   } context;
+
+  // Audio Buffer Size
+  struct BufferSize
+  {
+    BufferSize();
+    void update();
+    void setCoords(int x, int y);
+    char cbuf[sizeof("131072")];
+    Text title, valtext;
+    Button decbtn, incbtn;
+    static int inc(void *i);
+    static int dec(void *i);
+  };
+  BufferSize bufferSize;
 
 private:
   bool openDeviceonClick;

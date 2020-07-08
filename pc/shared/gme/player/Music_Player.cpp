@@ -119,6 +119,7 @@ void Music_Player::dec_curtrack() { curtrack--; }
 Music_Player::Music_Player() :
 	gain_db(0.0),
 	track_started(false),
+	sample_frame_size(DEFAULT_SAMPLE_FRAME_SIZE),
 	spc_filter(new Spc_Filter),
 	emu_(0),
 	paused(false),
@@ -141,7 +142,6 @@ blargg_err_t Music_Player::init( long rate, const char *audio_out_dev/*=NULL*/ )
 	}
 	sample_rate = rate;
 	
-	int sample_frame_size = 512 * pow(2,2);
 	stereo_bufs_per_sec = (double)sample_rate / (double)sample_frame_size;
 
 	DEBUGLOG("samples = %d\n", sample_frame_size);
