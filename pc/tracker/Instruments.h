@@ -65,6 +65,10 @@ struct Instrument
   struct {
     bool *changed;
   } metadata;
+
+  /* whether or not echo is enabled for this instrument. Currently uses
+   * echo settings specified in your SongSettings */
+  bool echo;
 };
 
 class InstrumentChunkLoader : public ChunkLoader

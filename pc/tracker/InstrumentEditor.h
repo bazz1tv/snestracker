@@ -6,6 +6,7 @@
 #include "shared/gui/Graph.h"
 #include "shared/ADSR.h"
 #include "shared/DrawRenderer.h"
+#include "shared/gui/Checkbox.h"
 
 struct Instrument_Panel;
 
@@ -79,6 +80,18 @@ struct InstrumentEditor
   Button finetune_incbtn, finetune_decbtn;
   static int incfinetune(void *i);
   static int decfinetune(void *i);
+
+  // Audio Buffer Size
+  struct EchoEnable
+  {
+    EchoEnable(InstrumentEditor *ie);
+    void setCoords(int x, int y);
+    void update();
+    Text title;
+    Checkbox checkbox;
+    static int clicked(void *i);
+  };
+  EchoEnable echoEnable;
 
 //////////// TABS /////////
   struct Tabs

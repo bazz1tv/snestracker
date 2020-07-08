@@ -95,3 +95,5 @@ public:
 private:
 	SpcReport spcreport;
 };
+
+uint8_t calcESAfromEDL(uint8_t edl);

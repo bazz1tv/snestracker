@@ -1,5 +1,6 @@
 #include "SongSettings.h"
 #include "Tracker.h"
+#include "apuram.h"
 
 SongSettings::SongSettings() : bpm(DEFAULT_BPM), spd(DEFAULT_SPD)
 {
@@ -297,13 +298,6 @@ SongSettingsPanel::SongSettingsPanel() :
   efb_incbtn("+", inc_efb, this, true),
   efb_decbtn("-", dec_efb, this, true)
 {
-  // disable not-fully-supported features
-  evol_incbtn.enabled = false;
-  evol_decbtn.enabled = false;
-  edl_incbtn.enabled = false;
-  edl_decbtn.enabled = false;
-  efb_incbtn.enabled = false;
-  efb_decbtn.enabled = false;
 }
 
 void SongSettingsPanel::update_mvol()
@@ -407,18 +401,18 @@ void SongSettingsPanel::draw(SDL_Surface *screen/*=::render->screen*/)
 	mvol_incbtn.draw(screen);
 	mvol_decbtn.draw(screen);
 
-  evol_title.draw(screen, Colors::nearblack);
-  evol_valtext.draw(screen, Colors::nearblack);
+  evol_title.draw(screen);
+  evol_valtext.draw(screen);
   evol_incbtn.draw(screen);
   evol_decbtn.draw(screen);
 
-  edl_title.draw(screen, Colors::nearblack);
-  edl_valtext.draw(screen, Colors::nearblack);
+  edl_title.draw(screen);
+  edl_valtext.draw(screen);
   edl_incbtn.draw(screen);
   edl_decbtn.draw(screen);
   
-  efb_title.draw(screen, Colors::nearblack);
-  efb_valtext.draw(screen, Colors::nearblack);
+  efb_title.draw(screen);
+  efb_valtext.draw(screen);
   efb_incbtn.draw(screen);
   efb_decbtn.draw(screen);
 }
@@ -442,6 +436,14 @@ int SongSettingsPanel::inc_evol(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   SongSettings::inc_vol(&::tracker->song.settings.evol);
   ie->update_evol();
+
+  if (tracker->playback)
+  {
+    auto evol = ::tracker->song.settings.evol;
+    ::player->spc_write_dsp(dsp_reg::evol_l, evol);
+    ::player->spc_write_dsp(dsp_reg::evol_r, evol);
+    tracker->apuram->evol_val = evol;
+  }
 }
 
 int SongSettingsPanel::dec_evol(void *i)
@@ -449,6 +451,14 @@ int SongSettingsPanel::dec_evol(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   SongSettings::dec_vol(&::tracker->song.settings.evol);
   ie->update_evol();
+
+  if (tracker->playback)
+  {
+    auto evol = ::tracker->song.settings.evol;
+    ::player->spc_write_dsp(dsp_reg::evol_l, evol);
+    ::player->spc_write_dsp(dsp_reg::evol_r, evol);
+    tracker->apuram->evol_val = evol;
+  }
 }
 
 int SongSettingsPanel::inc_edl(void *i)
@@ -456,6 +466,20 @@ int SongSettingsPanel::inc_edl(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   ::tracker->song.settings.inc_edl();
   ie->update_edl();
+
+  if (tracker->playback)
+  {
+    auto edl = ::tracker->song.settings.edl;
+    auto esa = calcESAfromEDL(edl);
+    /* The order of the following two writes is CRUCIAL. Since the echo buffer
+     * is mapped to the end of RAM. The ordering avoids rollover and changes
+     * whether we are incrementing or decrementing the edl (growing or shrinking
+     * the echo buffer and relocating its start address) */
+    ::player->spc_write_dsp(dsp_reg::esa, esa);
+    ::player->spc_write_dsp(dsp_reg::edl, edl);
+    tracker->apuram->esa_val = esa;
+    tracker->apuram->edl_val = edl;
+  }
 }
 
 int SongSettingsPanel::dec_edl(void *i)
@@ -463,6 +487,29 @@ int SongSettingsPanel::dec_edl(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   ::tracker->song.settings.dec_edl();
   ie->update_edl();
+
+  if (tracker->playback)
+  {
+    auto edl = ::tracker->song.settings.edl;
+    auto esa = calcESAfromEDL(edl);
+    /* The order of the following two writes is CRUCIAL. Since the echo buffer
+     * is mapped to the end of RAM. The ordering avoids rollover and changes
+     * whether we are incrementing or decrementing the edl (growing or shrinking
+     * the echo buffer and relocating its start address) */
+    ::player->spc_write_dsp(dsp_reg::edl, edl);
+    /* strange.. the SPC bugs out even with the expected correct order of dsp writes.
+     * I'm commenting out the call (see below) for now. This means that the echo buffer will
+     * always remain at the highest EDL setting (lowest address) you specified
+     * (during song playback or the one you set before playback), which doesn't
+     * pose any problem under normal circumstances (you haven't uploaded too many
+     * samples, leaving no room for the desired echo buffer)
+     * 
+     * When I integrate the debugger into the tracker, I will be able to take a
+     * better look at what might be causing this. */
+    //::player->spc_write_dsp(dsp_reg::esa, esa);
+    tracker->apuram->edl_val = edl;
+    tracker->apuram->esa_val = esa;
+  }
 }
 
 int SongSettingsPanel::inc_efb(void *i)
@@ -470,6 +517,13 @@ int SongSettingsPanel::inc_efb(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   ::tracker->song.settings.inc_efb();
   ie->update_efb();
+
+  if (tracker->playback)
+  {
+    auto efb = ::tracker->song.settings.efb;
+    ::player->spc_write_dsp(dsp_reg::efb, efb);
+    tracker->apuram->efb_val = efb;
+  }
 }
 
 int SongSettingsPanel::dec_efb(void *i)
@@ -477,4 +531,11 @@ int SongSettingsPanel::dec_efb(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   ::tracker->song.settings.dec_efb();
   ie->update_efb();
+
+  if (tracker->playback)
+  {
+    auto efb = ::tracker->song.settings.efb;
+    ::player->spc_write_dsp(dsp_reg::efb, efb);
+    tracker->apuram->efb_val = efb;
+  }
 }

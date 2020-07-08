@@ -18,6 +18,7 @@ rlecounters dsb 8
 
 konbuf db
 koffbuf db ; not sure if needed
+echobuf db
 
 ; WARNING : keep the public stuff out of address 0000 and 0001 because
 ; that is the jump address stored from IPL ROM
@@ -282,7 +283,7 @@ ContinueSong:
 ; 1 tick HAS passed
   mov spddec, a
   dec a
-  bpl +  ; this essentially gives if (a <= 0) mark next row for processing
+  bpl +  ; this essentially gives if (a < 0) mark next row for processing
   set1 flags.bNextRow ; set the flag indicating we will process the next row
   bra @onlyfx
 + ; at this point, a tick has been fired
@@ -310,6 +311,11 @@ ContinueSong:
   ; next row man!
   mov konbuf, #0
   call !ReadPTracks
+
+  mov a, echobuf
+  mov dspaddr, #eon
+  mov dspdata, a
+
   mov a, konbuf
   beq @no_kon
   mov dspaddr, #koff
@@ -849,7 +855,6 @@ asl_a_x4:
 
 ; IN:
 ;     A = instrument number
-;     X = curtrack
 ; OUT: de = pointer to instrument
 ; CLOBBERS: A, <de>
 loadInstrPtr:
@@ -867,13 +872,17 @@ loadInstrPtr:
 ; IN: A = instrument number
 ;     X = curtrack
 ; OUT: Curtrack DSP written
-; CLOBBERS: A, de
+; CLOBBERS: A, de, c.1, b, g
 ReadInstr:
   push x
   push y
     mov activeInstrument + X, a ; record this track's active instrument number
     ; instrument number MUST BE in A now
     call !loadInstrPtr
+    /* TODO: optimize by having a temp-track variable that has this bit value
+     * */
+    call !VoiceNumToVoiceBit
+    mov g, a
     call !getDSPIDX
     push a  ; Dsp Idx
       ; TODO: Implement PAN around here
@@ -955,6 +964,17 @@ ReadInstr:
     inc y
     mov a, [de] + y ; adsr2
     mov dspdata, a
+
+    inc y           ; echo enable
+    mov a, [de] + y
+    bne +
+    mov a, #$FF
+    eor a, g
+    and a, echobuf
+    mov echobuf, a
+    bra ++
++   or echobuf, g
+++ 
 
   pop y
   pop x ; track idx

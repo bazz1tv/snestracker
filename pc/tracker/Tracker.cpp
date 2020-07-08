@@ -930,11 +930,11 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 		// Time to load instrument info
 		::IAPURAM[cursample_i++] = instr->vol;
     ::IAPURAM[cursample_i++] = instr->finetune;
-
 		::IAPURAM[cursample_i++] = instr->pan;
 		::IAPURAM[cursample_i++] = instr->srcn;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr1;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr2;
+    ::IAPURAM[cursample_i++] = instr->echo; // I'd like this to be BIT flags but echo is the only member
 		::IAPURAM[cursample_i++] = instr->semitone_offset;
 	}
 	apuram->dspdir_i = dspdir_i;
@@ -955,7 +955,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
    * ROM. Note that the asm RAM clear routine can be executed even with
    * IPL active (write-only)*/
   // if EDL is 0, just stick the 4 bytes of echo buffer at $FF00
-  apuram->esa_val = song.settings.edl ? ( 0x10000 - (song.settings.edl * 0x800) ) >> 8 : 0xff;
+  apuram->esa_val = calcESAfromEDL(song.settings.edl);
   apuram->edl_val = song.settings.edl;
   apuram->efb_val = song.settings.efb;
   uint8_t *coeff = &apuram->c0_val;
@@ -976,6 +976,11 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 
   DEBUGLOG("apuRender.highest_pattern: %d, apuRender.highest_instr: %d, apuRender.highest_sample: %d\n",
     apuRender.highest_pattern, apuRender.highest_instr, apuRender.highest_sample);
+}
+
+uint8_t calcESAfromEDL(uint8_t edl)
+{
+  return edl ? ( 0x10000 - (edl * 0x800) ) >> 8 : 0xff;
 }
 
 /*

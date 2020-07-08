@@ -13,6 +13,7 @@ struct ApuInstr
   int8_t pan;
   uint8_t srcn;
   uint8_t adsr1, adsr2;
+  uint8_t echo; // echo
   int8_t semitone_offset;
 };
 
@@ -29,6 +30,39 @@ static ApuInstr * getCurApuInstr(Instrument_Panel *instrpanel)
   uint16_t instr_addr = itab[instrpanel->currow];
   ApuInstr *apuinstr = (ApuInstr *) &::IAPURAM[instr_addr];
   return apuinstr;
+}
+
+InstrumentEditor::EchoEnable::EchoEnable(InstrumentEditor *ie) :
+  title("Echo"),
+  checkbox(NULL, clicked, ie)
+{}
+
+void InstrumentEditor::EchoEnable::setCoords(int x, int y)
+{
+  title.rect.x = x;
+  title.rect.y = y;
+  checkbox.rect.x = x + ( (strlen(title.str) + 1) * CHAR_WIDTH );
+  checkbox.rect.y = y;
+}
+
+void InstrumentEditor::EchoEnable::update()
+{
+  Instrument_Panel *ip = &::tracker->main_window.instrpanel;
+  Instrument *curinst = &::tracker->song.instruments[ ip->currow ];
+  // update what the checkbox refers to
+  checkbox.state = &curinst->echo;
+}
+
+int InstrumentEditor::EchoEnable::clicked(void *i)
+{
+  InstrumentEditor *ie = (InstrumentEditor *)i;
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto echo = ie->instrpanel->instruments[ie->instrpanel->currow].echo;
+    apuinstr->echo = !echo;
+  }
+  return 0;
 }
 
 
@@ -279,6 +313,8 @@ InstrumentEditor::InstrumentEditor(Instrument_Panel *instrpanel) :
   finetune_incbtn("+", incfinetune, this, true),
   finetune_decbtn("-", decfinetune, this, true),
 
+  echoEnable(this),
+
   tabs(this),
   adsrpanel(instrpanel),
   instrpanel(instrpanel)
@@ -370,6 +406,10 @@ void InstrumentEditor :: set_coords(int x, int y)
   finetune_incbtn.rect.x = finetune_decbtn.rect.x + CHAR_WIDTH + 5;
   finetune_incbtn.rect.y = y;
 
+  y += CHAR_HEIGHT * 2;
+
+  echoEnable.setCoords(x, y);
+
   tabs.set_coords(srcn_decbtn.rect.x + srcn_decbtn.rect.w + (CHAR_WIDTH*15), yy - 3);
   adsrpanel.set_coords(srcn_decbtn.rect.x + srcn_decbtn.rect.w + (CHAR_WIDTH*7), yy + (3*CHAR_HEIGHT));
 }
@@ -387,6 +427,8 @@ int InstrumentEditor::handle_event(const SDL_Event &ev)
 
   finetune_incbtn.check_event(ev);
   finetune_decbtn.check_event(ev);
+
+  echoEnable.checkbox.check_event(ev);
 
   if (ev.type == SDL_MOUSEBUTTONDOWN && ev.button.button == SDL_BUTTON_LEFT)
     tabs.check_mouse_and_execute(ev.button.x, ev.button.y);
@@ -424,6 +466,10 @@ void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
   finetune_valtext.draw(screen);
   finetune_incbtn.draw(screen);
   finetune_decbtn.draw(screen);
+
+  echoEnable.update();
+  echoEnable.title.draw(screen);
+  echoEnable.checkbox.draw(screen);
 
   tabs.draw();
 
