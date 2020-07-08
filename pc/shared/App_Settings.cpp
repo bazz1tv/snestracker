@@ -7,6 +7,7 @@
 #include <cstring>
 #include "utility.h"
 #include "Audio.h"
+#include "gme/player/Music_Player.h"
 #include "DEBUGLOG.h"
 
 int App_Settings::MAXLINE=600;
@@ -50,8 +51,10 @@ void App_Settings::save()
   row << "audio_out_dev " << Audio::Devices::selected_audio_out_dev << std::endl;
   ofs.write( row.str().c_str(), row.str().length() );
   Utility::clearsstream(row);
-  //sprintf( row, "Sounds %d\n", pSettings->Sounds );
-  //Key_walk_left,Key_walk_right,Key_shoot_primary,Key_shoot_secondary;
+
+  row << "sample_frame_size " << ::player->sample_frame_size << std::endl;
+  ofs.write( row.str().c_str(), row.str().length() );
+  Utility::clearsstream(row);
 
   ofs.close();
 }
@@ -212,6 +215,20 @@ int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int 
       }
     }
     fprintf(stderr, "Audio Out Device set to %s\n", vars.audio_out_dev);
+  }
+  else if ( strcmp( parts[0], "sample_frame_size") == 0 )
+  {
+    if (count == 1)
+    {
+      fprintf(stderr, "using default %d\n", DEFAULT_SAMPLE_FRAME_SIZE);
+      return 0;
+    }
+    else if (!(atoi >> ibuffer))
+    {
+      fprintf(stderr, "Preferences: Couldn't Parse [%s]\n",  parts[0]);
+    }
+    ::player->sample_frame_size = ibuffer;
+    fprintf(stderr, "sample_frame_size set to %d\n", ibuffer);
   }
   else
   {

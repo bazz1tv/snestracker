@@ -64,21 +64,20 @@ Audio_Options::BufferSize::BufferSize() :
   cbuf("  2048"),
   title("Buffer Size"),
   valtext(cbuf),
-  decbtn("-", dec, this, true),
-  incbtn("+", inc, this, true)
+  decbtn("<", dec, this, true),
+  incbtn(">", inc, this, true)
 {}
 
 void Audio_Options::BufferSize::update()
 {
   sprintf(cbuf, "%6d", ::player->sample_frame_size);
-  ::player->init(::player->sample_rate, Audio::Devices::selected_audio_out_dev);
 }
 
 void Audio_Options::BufferSize::setCoords(int x, int y)
 {
   title.rect.x = x;
   title.rect.y = y;
-  valtext.rect.x = x + ( (strlen(title.str) + 2) * CHAR_WIDTH );
+  valtext.rect.x = x + ( (strlen(title.str) + 1) * CHAR_WIDTH );
   valtext.rect.y = y;
   decbtn.rect.x  = valtext.rect.x + ( (strlen(valtext.str) + 1) * CHAR_WIDTH );
   decbtn.rect.y = y;
@@ -92,7 +91,7 @@ int Audio_Options::BufferSize::inc(void *b)
   if (::player->sample_frame_size <= 262144)
   {
     ::player->sample_frame_size *= 2;
-    bs->update();
+    ::player->init(::player->sample_rate, Audio::Devices::selected_audio_out_dev);
   }
 }
 
@@ -102,7 +101,7 @@ int Audio_Options::BufferSize::dec(void *b)
   if (::player->sample_frame_size >= 2)
   {
     ::player->sample_frame_size /= 2;
-    bs->update();
+    ::player->init(::player->sample_rate, Audio::Devices::selected_audio_out_dev);
   }
 }
 
@@ -111,7 +110,7 @@ void Audio_Options::preload(SDL_Rect *rect)
   this->rect = *rect;
   context.menu->preload(rect->x, rect->y);
 
-  bufferSize.setCoords(rect->x, rect->y + context.menu->created_at.h + (2*CHAR_WIDTH));
+  bufferSize.setCoords(rect->x, rect->y + context.menu->created_at.h + (3*CHAR_WIDTH));
 }
 
 void Audio_Options::run()
@@ -130,6 +129,7 @@ void Audio_Options::draw()
   context.menu->draw(screen);
   //SDL_Log("Audio_Options::draw");
 
+  bufferSize.update();
   bufferSize.title.draw(screen);
   bufferSize.valtext.draw(screen);
   bufferSize.incbtn.draw(screen);

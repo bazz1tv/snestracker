@@ -24,10 +24,10 @@ static int create_midi(void *vapp)
 App::App(int &argc, char **argv, int samplerate/*=44100*/)
 {
   file_system = new File_System;
-  app_settings=new App_Settings(file_system);
-  audio=new Audio;
-  player=new Music_Player;
+  audio = new Audio;
+  player = new Music_Player;
   ::player = player;
+  app_settings = new App_Settings(file_system);
 
 ///////////// OPEN AUDIO OUTPUT DEVICE ///////////////////////
   const char *outdev = app_settings->vars.audio_out_dev;
