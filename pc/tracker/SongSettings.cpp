@@ -428,6 +428,14 @@ int SongSettingsPanel::inc_mvol(void *i)
 	SongSettingsPanel *ie = (SongSettingsPanel *)i;
 	SongSettings::inc_vol(&::tracker->song.settings.mvol);
 	ie->update_mvol();
+
+  if (tracker->playback)
+  {
+    auto mvol = ::tracker->song.settings.mvol;
+    ::player->spc_write_dsp(dsp_reg::mvol_l, mvol);
+    ::player->spc_write_dsp(dsp_reg::mvol_r, mvol);
+    tracker->apuram->mvol_val = mvol;
+  }
 }
 
 int SongSettingsPanel::dec_mvol(void *i)
@@ -435,6 +443,14 @@ int SongSettingsPanel::dec_mvol(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   SongSettings::dec_vol(&::tracker->song.settings.mvol);
   ie->update_mvol();
+
+  if (tracker->playback)
+  {
+    auto mvol = ::tracker->song.settings.mvol;
+    ::player->spc_write_dsp(dsp_reg::mvol_l, mvol);
+    ::player->spc_write_dsp(dsp_reg::mvol_r, mvol);
+    tracker->apuram->mvol_val = mvol;
+  }
 }
 
 int SongSettingsPanel::inc_evol(void *i)
