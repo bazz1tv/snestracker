@@ -144,6 +144,8 @@ SongFileLoader::ret_t SongFileLoader::readHeader(SDL_RWops *file)
   {
     DEBUGLOG("\tFound older (pre-version) song file\n");
     ret = HEADER_OLD;
+    DialogBox::SimpleOK("Older File Format Detected",
+            "This file will be migrated to the new format the next time you save.");
   }
   // The newer header is "SONGST"
   else if (strcmp( (const char *)buf, HeaderStr) == 0)
