@@ -38,6 +38,7 @@
 struct SongSettings
 {
   SongSettings();
+  void reset();   // reset to defaults
   void setdefault_songtitle();
   void setdefault_volandecho();
   void setdefault_fir();

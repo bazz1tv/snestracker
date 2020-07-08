@@ -3,10 +3,7 @@
 void Song::reset()
 {
   // Reset Song Title
-  settings.song_title_str[0] = 0;
-
-  settings.bpm = SongSettings::DEFAULT_BPM;
-  settings.spd = SongSettings::DEFAULT_SPD;
+  settings.reset();
 
   // Reset all Samples (and free memory!)
   for (int i=0; i < NUM_SAMPLES; i++)

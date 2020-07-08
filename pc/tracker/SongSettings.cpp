@@ -2,8 +2,14 @@
 #include "Tracker.h"
 #include "apuram.h"
 
-SongSettings::SongSettings() : bpm(DEFAULT_BPM), spd(DEFAULT_SPD)
+SongSettings::SongSettings()
 {
+  reset();
+}
+
+void SongSettings::reset()
+{
+  bpm = DEFAULT_BPM; spd = DEFAULT_SPD;
   setdefault_songtitle();
   setdefault_volandecho();
   setdefault_fir();
