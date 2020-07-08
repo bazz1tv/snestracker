@@ -9,6 +9,7 @@
 #include "globals.h" // for mouse::
 #include "PanelCommon.h"
 #include "Samples.h"
+#include "apuram.h"
 
 Instrument::Instrument()
 {
@@ -25,6 +26,7 @@ void Instrument::reset()
   semitone_offset = 0;
   finetune = 0;
   // leave metadata untouched
+  echo = false;
 }
 
 Instrument::~Instrument()
@@ -114,8 +116,13 @@ bool Instrument::operator==(const Instrument& rhs)
           this->finetune == rhs.finetune);
 }
 
-#define INST_COREINFO_SIZE sizeof(Instrument::vol) + sizeof(Instrument::pan) + sizeof(Instrument::adsr)
-#define INST_SONGMETA_SIZE sizeof(InstrumentChunkLoader::idx) + sizeof(Instrument::srcn)
+#define MIN_INST_COREINFO_SIZE sizeof(Instrument::vol) + sizeof(Instrument::pan) + sizeof(Instrument::adsr)
+#define MAX_INST_COREINFO_SIZE sizeof(Instrument::vol) + sizeof(Instrument::pan) + sizeof(Instrument::adsr)
+
+#define MIN_INST_SONGMETA_SIZE sizeof(InstrumentChunkLoader::idx) + sizeof(Instrument::srcn)
+#define MAX_INST_SONGMETA_SIZE sizeof(InstrumentChunkLoader::idx) + sizeof(Instrument::srcn)\
+  + 1 /* flags */
+
 #define INST_TUNE_SIZE sizeof(Instrument::finetune)
 
 InstrumentChunkLoader::InstrumentChunkLoader(struct Instrument *i, bool ignoreSongMeta/*=false*/) :
@@ -151,8 +158,10 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
       case SubChunkID::songmeta:
       {
         DEBUGLOG("\tSubChunkID::songmeta\n");
-        size_t minimum_chunksize = INST_SONGMETA_SIZE;
-        if (subchunksize > minimum_chunksize)
+        const size_t constexpr minimum_chunksize = MIN_INST_SONGMETA_SIZE;
+        const size_t constexpr maximum_chunksize = MAX_INST_SONGMETA_SIZE;
+        size_t bytesread = 0;
+        if (subchunksize > maximum_chunksize)
         {
           DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
         }
@@ -167,19 +176,32 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
           DEBUGLOG("\t\tignoring...\n");
           break;
         }
-        read(file, &idx, 1, 1, &maxread);
-        read(file, &instruments[idx].srcn, 1, 1, &maxread);
+        read(file, &idx, 1, 1, &bytesread);
+
+        struct Instrument *instr = &instruments[idx];
+        read(file, &instr->srcn, 1, 1, &bytesread);
         DEBUGLOG("\t\tidx: %d\n", idx);
 
-        subchunksize -= INST_SONGMETA_SIZE;
+        if (bytesread < subchunksize) // we have entries beyond the minimum needed
+        {
+          uint8_t flags;
+          read (file, &flags, 1, 1, &bytesread);
+          if (flags & INSTR_FLAG_ECHO)
+            instr->echo = true;
+        }
+
+        subchunksize -= bytesread;
+        maxread += bytesread;
         idx_loaded = true;
       }
       break;
       case SubChunkID::coreinfo:
       {
         DEBUGLOG("\tSubChunkID::coreinfo\n");
-        size_t minimum_chunksize = INST_COREINFO_SIZE;
-        if (subchunksize > minimum_chunksize)
+        const size_t constexpr minimum_chunksize = MIN_INST_COREINFO_SIZE;
+        const size_t constexpr maximum_chunksize = MAX_INST_COREINFO_SIZE;
+        size_t bytesread = 0;
+        if (subchunksize > maximum_chunksize)
         {
           DEBUGLOG("\t\tSubChunk %d is bigger than expected.\n", subchunkid);
         }
@@ -191,18 +213,23 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
 
         struct Instrument *instr = &instruments[idx];
 
-        read(file, &instr->vol, 1, 1, &maxread);
-        read(file, &instr->pan, 1, 1, &maxread);
+        read(file, &instr->vol, 1, 1, &bytesread);
+        read(file, &instr->pan, 1, 1, &bytesread);
         // The old version 0.1.0 didn't use panning but stored this now invalid value
         if (instr->pan == -128) // migrate it
           instr->pan = Instrument::DEFAULT_PAN;
-        read(file, &instr->adsr.adsr1, 1, 1, &maxread);
-        read(file, &instr->adsr.adsr2, 1, 1, &maxread);
-
+        read(file, &instr->adsr.adsr1, 1, 1, &bytesread);
+        read(file, &instr->adsr.adsr2, 1, 1, &bytesread);
         // Ensure Hardware ADSR is activated since that's the only thing supported
         instr->adsr.adsr_active = 1;
+        //
+        if (bytesread < subchunksize) // we have entries beyond the minimum needed
+        {
+          
+        }
 
-        subchunksize -= INST_COREINFO_SIZE;
+        subchunksize -= bytesread;
+        maxread += bytesread;
       }
       break;
       case SubChunkID::name:
@@ -273,16 +300,20 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file, int i)
     DEBUGLOG("\t\tSubChunkID::songmeta\n");
     byte = SubChunkID::songmeta;
     write(file, &byte, 1, 1, &chunklen);
-    word = INST_SONGMETA_SIZE; // we know the length in advance
+    word = MAX_INST_SONGMETA_SIZE; // we know the length in advance
     write(file, &word, 2, 1, &chunklen);
     write(file, &i, 1, 1, &chunklen); // write Instrument index (only 1 byt, &chunklene)
     write(file, &instr->srcn, 1, 1, &chunklen);
+
+    /* consolidate boolean flags into one byte */
+    uint8_t flags = instr->echo ? INSTR_FLAG_ECHO : 0;
+    write(file, &flags, 1, 1, &chunklen);
   }
 
   DEBUGLOG("\t\tSubChunkID::coreinfo\n");
   byte = SubChunkID::coreinfo;
   write(file, &byte, 1, 1, &chunklen);
-  word = INST_COREINFO_SIZE; // we know the length in advance
+  word = MAX_INST_COREINFO_SIZE; // we know the length in advance
   write(file, &word, 2, 1, &chunklen);
   write(file, &instr->vol, 1, 1, &chunklen);
   write(file, &instr->pan, 1, 1, &chunklen);

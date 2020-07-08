@@ -872,7 +872,7 @@ loadInstrPtr:
 ; IN: A = instrument number
 ;     X = curtrack
 ; OUT: Curtrack DSP written
-; CLOBBERS: A, de, c.1, b, g
+; CLOBBERS: A, de, c.1, b, fg
 ReadInstr:
   push x
   push y
@@ -967,6 +967,7 @@ ReadInstr:
 
     inc y           ; echo enable
     mov a, [de] + y
+    and a, #INSTR_FLAG_ECHO
     bne +
     mov a, #$FF
     eor a, g

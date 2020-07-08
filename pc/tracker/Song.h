@@ -76,16 +76,17 @@ Instrument Chunk
   songmeta
     index       -- 1 byte, the index this instrument belongs
     srcn        -- 1 byte, the sample number connected to this instrument
+    flags       -- 1 byte, holds on-off state (eg echo). Added in 0.1.1
     [EXTENDABLE]
   coreinfo
     vol         -- 1 byte, volume
-    pan         -- 1 byte (impl TODO)
+    pan         -- 1 byte
     adsr        -- 2 bytes, hardware ADSR envelope setting
     [EXTENDABLE]
   name
     non-null terminated string of instrument name
   tune
-    finetune        -- 1 byte (impl TODO)
+    finetune        -- 1 byte
     [EXTENDABLE]
   [EXTENDABLE]
 
@@ -119,7 +120,7 @@ Pattern Sequencer Chunk
 
 #define SONGFILE_VER_MAJOR 0
 #define SONGFILE_VER_MINOR 1
-#define SONGFILE_VER_MICRO 0
+#define SONGFILE_VER_MICRO 1
 // concats the 3 version values into a string
 #define SONGFILE_VER_STRING(maj, min, mic) #maj "." #min "." #mic
 // allows calling the above macro with macro arguments

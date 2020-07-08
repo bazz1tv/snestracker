@@ -942,7 +942,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 		::IAPURAM[cursample_i++] = instr->srcn;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr1;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr2;
-    ::IAPURAM[cursample_i++] = instr->echo; // I'd like this to be BIT flags but echo is the only member
+    ::IAPURAM[cursample_i++] = (instr->echo ? INSTR_FLAG_ECHO : 0);
 		::IAPURAM[cursample_i++] = instr->semitone_offset;
 	}
 	apuram->dspdir_i = dspdir_i;

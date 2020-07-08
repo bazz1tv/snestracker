@@ -13,7 +13,7 @@ struct ApuInstr
   int8_t pan;
   uint8_t srcn;
   uint8_t adsr1, adsr2;
-  uint8_t echo; // echo
+  uint8_t flags; // echo
   int8_t semitone_offset;
 };
 
@@ -64,7 +64,10 @@ int InstrumentEditor::EchoEnable::clicked(void *i)
   if (apuinstr)
   {
     auto echo = curinst.echo;
-    apuinstr->echo = !echo;
+    if (echo)
+      apuinstr->flags |= INSTR_FLAG_ECHO;
+    else
+      apuinstr->flags &= ~(INSTR_FLAG_ECHO);
   }
   return 0;
 }

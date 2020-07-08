@@ -42,6 +42,7 @@
 .PRINT "\n"
 .PRINT "#define EXTFLAGS_REPEATPATTERN 0x", HEX REPEATPATTERN, "\n"
 .PRINT "#define EXTFLAGS_SKIP_ECHOBUF_CLEAR 0x", HEX SKIP_ECHOBUF_CLEAR, "\n"
+.PRINT "\n"
 ; We can make struct definitions that don't need to be defined in RAM,
 ; used purely by their definition as a way to informatically load offsets
 ; from RAM pointers
@@ -65,5 +66,12 @@ pan db ; TODO
 srcn db
 adsr1 db
 adsr2 db
+flags db
 semitone_offset db ; TODO
 .endst
+
+
+.equ  INSTR_FLAG_ECHO 1
+
+
+.PRINT "#define INSTR_FLAG_ECHO 0x", HEX INSTR_FLAG_ECHO, "\n"
