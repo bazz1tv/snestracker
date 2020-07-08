@@ -17,6 +17,9 @@ static int clickedLoopCheckbox(void *s)
   DEBUGLOG("clickedLoopCheckbox: ");
   Sample_Panel *sp = &::tracker->main_window.samplepanel;
   Sample *sample = (Sample *) &::tracker->song.samples[sp->currow];
+
+  *sample->metadata.changed = true;
+
   Brr *endblock = getBrrEndBlock(sample->brr);
   endblock->loop = !endblock->loop;
 

@@ -56,10 +56,14 @@ void InstrumentEditor::EchoEnable::update()
 int InstrumentEditor::EchoEnable::clicked(void *i)
 {
   InstrumentEditor *ie = (InstrumentEditor *)i;
+  Instrument &curinst = ie->instrpanel->instruments[ie->instrpanel->currow];
+  
+  *curinst.metadata.changed = true;
+
   ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
   if (apuinstr)
   {
-    auto echo = ie->instrpanel->instruments[ie->instrpanel->currow].echo;
+    auto echo = curinst.echo;
     apuinstr->echo = !echo;
   }
   return 0;
