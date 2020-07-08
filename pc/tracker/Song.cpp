@@ -259,6 +259,8 @@ int SongFileLoader::loadOld(SDL_RWops *file)
     // Time to load instrument info
     SDL_RWread(file, &instr->vol, 1, 1);
     SDL_RWread(file, &instr->pan, 1, 1);
+    if (instr->pan == -128)
+      instr->pan = 0;
     SDL_RWread(file, &instr->srcn, 1, 1);
     SDL_RWread(file, &instr->adsr.adsr1, 1, 1);
     SDL_RWread(file, &instr->adsr.adsr2, 1, 1);
