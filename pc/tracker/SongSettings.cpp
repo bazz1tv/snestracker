@@ -429,7 +429,7 @@ int SongSettingsPanel::inc_mvol(void *i)
 	SongSettings::inc_vol(&::tracker->song.settings.mvol);
 	ie->update_mvol();
 
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     auto mvol = ::tracker->song.settings.mvol;
     ::player->spc_write_dsp(dsp_reg::mvol_l, mvol);
@@ -444,7 +444,7 @@ int SongSettingsPanel::dec_mvol(void *i)
   SongSettings::dec_vol(&::tracker->song.settings.mvol);
   ie->update_mvol();
 
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     auto mvol = ::tracker->song.settings.mvol;
     ::player->spc_write_dsp(dsp_reg::mvol_l, mvol);
@@ -459,7 +459,7 @@ int SongSettingsPanel::inc_evol(void *i)
   SongSettings::inc_vol(&::tracker->song.settings.evol);
   ie->update_evol();
 
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     auto evol = ::tracker->song.settings.evol;
     ::player->spc_write_dsp(dsp_reg::evol_l, evol);
@@ -474,7 +474,7 @@ int SongSettingsPanel::dec_evol(void *i)
   SongSettings::dec_vol(&::tracker->song.settings.evol);
   ie->update_evol();
 
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     auto evol = ::tracker->song.settings.evol;
     ::player->spc_write_dsp(dsp_reg::evol_l, evol);
@@ -489,7 +489,7 @@ int SongSettingsPanel::inc_edl(void *i)
   ::tracker->song.settings.inc_edl();
   ie->update_edl();
 
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     auto edl = ::tracker->song.settings.edl;
     auto esa = calcESAfromEDL(edl);
@@ -510,7 +510,7 @@ int SongSettingsPanel::dec_edl(void *i)
   ::tracker->song.settings.dec_edl();
   ie->update_edl();
 
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     auto edl = ::tracker->song.settings.edl;
     auto esa = calcESAfromEDL(edl);
@@ -540,7 +540,7 @@ int SongSettingsPanel::inc_efb(void *i)
   ::tracker->song.settings.inc_efb();
   ie->update_efb();
 
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     auto efb = ::tracker->song.settings.efb;
     ::player->spc_write_dsp(dsp_reg::efb, efb);
@@ -554,7 +554,7 @@ int SongSettingsPanel::dec_efb(void *i)
   ::tracker->song.settings.dec_efb();
   ie->update_efb();
 
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     auto efb = ::tracker->song.settings.efb;
     ::player->spc_write_dsp(dsp_reg::efb, efb);

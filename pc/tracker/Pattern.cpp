@@ -691,7 +691,7 @@ void PatSeqPanel::set_coords(int x, int y)
 
 static void apuSetPattern(int currow)
 {
-  if (::tracker->playback)
+  if (::tracker->rendering())
   {
     // send command to set the pattern
     ::player->spc_emu()->write_port(2, currow);
@@ -1065,7 +1065,7 @@ void PatSeqPanel::set_currow(int row, bool updateScrolled/*=true*/)
 
   // (when the song is playing, If the user scrolled in the patseqpanel,
   // the update mechanism won't interfere for 2000 ms
-  if ( updateScrolled && ( !::tracker->playback || (SDL_GetTicks() > (lastTimeScrolled + 2000)) ) )
+  if ( updateScrolled && ( !::tracker->rendering() || (SDL_GetTicks() > (lastTimeScrolled + 2000)) ) )
   {
     if (currow < rows_scrolled)
       rows_scrolled = currow;
@@ -1438,10 +1438,18 @@ void PatternEditorPanel::notehelper(int ndex)
       *psp->patseq->metadata.changed = true;
       //note2ascii(pw->note, guitrackrow[cur_track].note_strings[currow]);
     }
-    else
+    //DEBUGLOG("YOU ARE HERE\n");
+    /* TODO: Play the sample through the API just like in std instrument
+     * window */
+    if (::tracker->instr_render)
     {
-      /* TODO: Play the sample through the API just like in std instrument
-       * window */
+      ::player->spc_emu()->write_port(0, 0);       // instr#
+      ::player->spc_emu()->write_port(2, n - 1);                // note
+      ::player->spc_emu()->write_port(3, cur_track);  // track
+      ::player->spc_emu()->write_port(1, SPCCMD_PLAYINSTRUMENT);  // command
+      while (::player->spc_emu()->read_port(1) != SPCCMD_PLAYINSTRUMENT)
+        SDL_Delay(1);
+      ::player->spc_emu()->write_port(1, SPCCMD_NOP);  // command
     }
   }
 }

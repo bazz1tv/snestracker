@@ -23,7 +23,7 @@ static int clickedLoopCheckbox(void *s)
   Brr *endblock = getBrrEndBlock(sample->brr);
   endblock->loop = !endblock->loop;
 
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     DirEntry *dirent = (DirEntry *) &::IAPURAM[::tracker->apuram->dspdir_i << 8];
 
@@ -170,7 +170,7 @@ void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
 static void loopHook(Sample_Panel *sp)
 {
   Sample *cursamp = &::tracker->song.samples[ sp->currow ];
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     DirEntry *dirent = (DirEntry *) &::IAPURAM[::tracker->apuram->dspdir_i << 8];
 

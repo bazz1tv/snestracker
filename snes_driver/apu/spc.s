@@ -108,6 +108,7 @@ Poll:
     
   cmp a, #CmdEnd
   bpl PollExit
+  mov spcport1, a
   ; push the PollExit address to stack and do a table jump
   asl a ; word-sized index into jump table
   mov x, a
@@ -124,6 +125,7 @@ PollExit:
 
 CmdJumpTable:
   .dw EmptyHandler, FetchRamValue, WriteRamByte, PlaySong, StopSong, SetPattern
+  .dw PlayInstrument
 EmptyHandler:
   ret
 

@@ -1,11 +1,7 @@
 #pragma once
 #include <stdint.h>
-#include "gui/Text_Edit_Rect.h"
-#include "gui/Text.h"
-#include "gui/Button.h"
-#include "shared/Render.h"
-#include "shared/dsptypes.h"
 #include "ChunkLoader.h"
+#include "shared/dsptypes.h"
 /* This number is hardcoded for now until sucessful testing is
  * done. Later, it will be made so that the limit can be dynamically
  * increased */
@@ -71,6 +67,17 @@ struct Instrument
   bool echo;
 };
 
+struct ApuInstr
+{
+  uint8_t vol;
+  int8_t finetune;
+  int8_t pan;
+  uint8_t srcn;
+  uint8_t adsr1, adsr2;
+  uint8_t flags; // echo
+  int8_t semitone_offset;
+};
+
 class InstrumentChunkLoader : public ChunkLoader
 {
 public:
@@ -124,7 +131,7 @@ The order presented below is the only supported ordering.
 
 Version Chunk
   coreinfo
-    Song file version. 3 16-bit unsigned integers (Form into major.minor.micro)
+    file version. 3 16-bit unsigned integers (Form into major.minor.micro)
     App version. The version of snestracker that saved this file. Same format as previous.
     [EXTENDABLE]
   commithash
@@ -207,51 +214,4 @@ private:
   InstrumentChunkLoader *icl;
 
   Instrument *instrument;
-};
-
-
-struct Sample_Panel;
-/* That defined the Data model above. Now time to get that into a view */
-struct Instrument_Panel
-{
-  /* Initialize the panel view from an X/Y coordinate. Additionally, we
-   * need a reference to the instruments */
-  Instrument_Panel(Instrument *instruments, Sample_Panel *sp);
-  ~Instrument_Panel();
-
-  int event_handler(const SDL_Event &ev);
-  void one_time_draw(SDL_Surface *screen=::render->screen);
-  void draw(SDL_Surface *screen=::render->screen);
-  void set_coords(int x, int y);
-
-	void set_currow(int c);
-	void inc_currow();
-	void dec_currow();
-
-  // callback funcs for the buttons
-  static int load(void *ipanel);
-  static int save(void *ipanel);
-  static int zap(void *ipanel);
-
-  Text title;
-  Button loadbtn, savebtn, zapbtn;
-  Text instr_indices[NUM_INSTR];
-
-  // the number of instrument rows in GUI
-  static const int NUM_ROWS = 8;
-  int rows_scrolled = 0;
-  // the current selected row
-  int currow = 0;
-
-  // 4 is for eg. "01|\0"
-  char instr_index_strings[NUM_ROWS][4];
-  Text_Edit_Rect instr_names[NUM_ROWS];
-  /* a direct handle on the data, rather than accessing through an API */
-  Instrument *instruments;
-	// handle on the sample panel to update its currow when selecting an
-	// instr
-	Sample_Panel *samplepanel;
-  /* Todo, calculate the panel rect */
-  SDL_Rect rect; // define the boundaries of the entire panel
-  SDL_Rect highlight_r; // the highlight rect of current select instr
 };

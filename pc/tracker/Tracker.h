@@ -48,6 +48,7 @@ public:
 	void inc_patlen();
 	void dec_patlen();
 
+  void renderCurrentInstrument();
   void render_to_apu(bool repeat_pattern = false);
   int calcTicks();
 
@@ -88,6 +89,8 @@ public:
   static std::unordered_set<DrawRenderer *> prerenders, postrenders;
 
   bool playback = false; // is tracker playback happening?
+  bool instr_render = false;
+  bool rendering();
 
   FPS frame;  // framerate control
 

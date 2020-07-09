@@ -1,28 +1,19 @@
 #include "InstrumentEditor.h"
-#include "Instruments.h"
+#include "Instrument_Panel.h"
+#include "Sample_Panel.h"
 #include "Tracker.h"
 
 
 /* I currently have a separate ApuInstr struct below for accessing the APU version
 of instruments. */
 #include "apuram.h"
-struct ApuInstr
-{
-  uint8_t vol;
-  int8_t finetune;
-  int8_t pan;
-  uint8_t srcn;
-  uint8_t adsr1, adsr2;
-  uint8_t flags; // echo
-  int8_t semitone_offset;
-};
 
 /* fetches an APURAM pointer to the Instrument Panel's highlighted instrument,
 or NULL if the tracker isn't playing or the currently highlighted instrument was
 not exported to apuram. */
 static ApuInstr * getCurApuInstr(Instrument_Panel *instrpanel)
 {
-  if (instrpanel == NULL || !::tracker->playback ||
+  if (instrpanel == NULL || !::tracker->rendering() ||
     instrpanel->currow > tracker->apuRender.highest_instr // the highlighted inst wasn't exported to APU
   )
     return NULL;

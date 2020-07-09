@@ -303,7 +303,7 @@ ContinueSong:
 @onlyfx:
   ; do FX processing here on every tick
 
-  bbc flags.bNextRow, @ret
+  bbc flags.bNextRow, __ret2
 @nextrow:
   clr1 flags.bNextRow
   call !ReloadSpdDec
@@ -312,6 +312,7 @@ ContinueSong:
   mov konbuf, #0
   call !ReadPTracks
 
+HackishPlayInstrumentFunctionality:
   mov a, echobuf
   mov dspaddr, #eon
   mov dspdata, a
@@ -324,7 +325,7 @@ ContinueSong:
   mov dspdata, a
   ; TODO: KOFF
 @no_kon:
-@ret:
+__ret2:
   ret
 
 ; IN: X=vnum (0-7)
@@ -813,16 +814,14 @@ DoFinetune:
   pop x ; curtrack
   ret
 
-; The octave that the NoteLUT is specified in
-.define NoteLUTOctave 6
-; IN: <ptrack_ptr>,
-;     Y = idx into ptrack_ptr,
+; IN: A = note index
 ;     X = curtrack
 ; OUT: updated Y index, Curtrack DSP PITCH written
 ; CLOBBERS: A, de
 ReadNote:
   push x
   push y
+    mov y, a
     ; Update the key-on buffer
     call !VoiceNumToVoiceBit
     or a, konbuf
@@ -831,7 +830,7 @@ ReadNote:
     mov a, activeInstrument + x ; The only reason I read the instrument here is
     call !ReadInstr             ; to keep it updated with Tracker interface changes
     ; -------------------------
-    mov a, [ptrack_ptr] + y ; the NOTE number
+    mov a, y ; the NOTE number
     mov note_idx, a
     mov x, #12              ; divide by octave
     mov y, #0
@@ -839,7 +838,6 @@ ReadNote:
                             ; A = octave. Y = note
     movw note_octave, ya    ; store word to RAM note_octave and note_idx_mod12 (note_octave + 1)
   pop y
-  inc y
   pop x
   ret
 
@@ -1079,6 +1077,8 @@ ReadPTracks:
 ; rewrite all the code
 @@test_cbnote:
   bbc l.CBIT_NOTE, @@test_cbinstr
+  mov a, [ptrack_ptr] + y     ; instrument number
+  inc y
   call !ReadNote
 @@test_cbinstr:
   bbc l.CBIT_INSTR, @@test_cbvol
@@ -1121,23 +1121,8 @@ ReadPTracks:
     mov ptrack_ptrs + x, a
     mov ptrack_ptrs + 1 + x, y
   pop x
-  
-  call !VoiceNumToVoiceBit
-  and a, konbuf
-  beq @No_Note_For_ThisTrack
-  ; Do processing here. Such as finetune or effects
-  call !DoFinetune
-  ; once processing is done. Load the note into DSP
-  call !getDSPIDX
-  clrc
-  adc a, #plo
-  mov dspaddr, a
-  mov dspdata, note_pitch
-  inc dspaddr
-  mov dspdata, note_pitch + 1
 
-@No_Note_For_ThisTrack
-
+  call !TrackRowPostProcess
 @track_done:
   ; if this is the last row, do not do a readahead (it will be done when
   ; the next pattern is loaded)
@@ -1160,6 +1145,26 @@ ReadPTracks:
   mov a, sequencer_i
   mov reportTrackerArg, a
   mov reportTrackerCmd, #reportTrackerCmd_SetPattern
+  ret
+
+; IN: x = curtrack
+;     konbuf = which notes to trigger
+; CLOBBERS: a,x,y and check DoFineTune especially
+TrackRowPostProcess:
+  call !VoiceNumToVoiceBit
+  and a, konbuf
+  beq @No_Note_For_ThisTrack
+  ; Do processing here. Such as finetune or effects
+  call !DoFinetune
+  ; once processing is done. Load the note into DSP
+  call !getDSPIDX
+  clrc
+  adc a, #plo
+  mov dspaddr, a
+  mov dspdata, note_pitch
+  inc dspaddr
+  mov dspdata, note_pitch + 1
+@No_Note_For_ThisTrack
   ret
 
 .ends

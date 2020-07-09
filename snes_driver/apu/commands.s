@@ -7,7 +7,7 @@
 .ORG 0
 .SECTION "Commands" SEMIFREE
 
-PlaySong:
+PrepHardware:
   ; Song Settings
   ; load fir filter coefficients
   mov y, #8
@@ -63,6 +63,12 @@ PlaySong:
 
   set1 control.ctrlbit_t0 ; start Timer 0
 
+  MOV dspaddr, #flg   ; TURN OFF MUTE, enable echo
+  MOV dspdata, #%00000000
+  ret
+
+PlaySong:
+  call !PrepHardware
 PlaySongFromSetPatternCmd:
   call !LoadPattern
 
@@ -82,9 +88,6 @@ PlaySongFromSetPatternCmd:
   bpl -
 
   set1 flags.bPlaySong
-
-  MOV dspaddr, #flg   ; TURN OFF MUTE, enable echo
-  MOV dspdata, #%00000000
 
   ret
 
@@ -138,6 +141,21 @@ SetPattern:
   mov sequencer_i, spcport2
   jmp !PlaySongFromSetPatternCmd
 
+; IN: spcport0: instr #
+;     spcport2: note index (see enum Note in CPP code)
+;     spcport3: track# (0-7)
+;CLOBBERS:  a,x,y, rs, ptrack_ptr
+PlayInstrument:
+  mov konbuf, #0
+  call !PrepHardware
+  ; Hack this so it uses pre-existing functionality from the pattern reader
+  mov x, spcport3 ; track# (curtrack)
+  mov a, #0 ;spcport0 ; instr#
+  mov activeInstrument + x, a
+  mov a, spcport2 ; note
+  call !ReadNote
+  call !TrackRowPostProcess
+  jmp !HackishPlayInstrumentFunctionality
 
 ; clobbers: Y A X
 FetchRamValue:   

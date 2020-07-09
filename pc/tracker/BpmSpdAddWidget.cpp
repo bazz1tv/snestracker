@@ -38,7 +38,7 @@ BpmSpdAddWidget::BpmSpdAddWidget(Tracker *tracker, PatternEditorPanel *pep) :
 void BpmSpdAddWidget :: updatebpm()
 {
   sprintf(bpm_cbuf, "%03d", tracker->song.settings.bpm);
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     tracker->apuram->ticks = tracker->calcTicks();
     ::player->spc_write(0xfa, tracker->apuram->ticks);  // update Timer0 (0xfa)
@@ -48,7 +48,7 @@ void BpmSpdAddWidget :: updatebpm()
 void BpmSpdAddWidget :: updatespd()
 {
   sprintf(spd_cbuf, "%02d", tracker->song.settings.spd);
-  if (tracker->playback)
+  if (tracker->rendering())
   {
     tracker->apuram->ticks = tracker->calcTicks();
     ::player->spc_write(0xfa, tracker->apuram->ticks); // update Timer0 (0xfa)

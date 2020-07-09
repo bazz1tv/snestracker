@@ -206,6 +206,8 @@ askagain:
   //return 0;
 }
 
+bool Tracker::rendering() { return playback || instr_render; }
+
 void Tracker::handle_events()
 {
   SDL_Event ev;
@@ -363,8 +365,15 @@ void Tracker::handle_events()
         switch (ev.user.code)
         {
           case UserEvents::sound_stop:
-						::player->post_fadeout();
-            ::player->pause(true, false, false);
+            if (!instr_render)
+            {
+						  ::player->post_fadeout();
+              ::player->pause(true, false, false);
+            }
+            else
+            {
+              renderCurrentInstrument();
+            }
 						break;
           case UserEvents::callback:
           {
@@ -619,6 +628,123 @@ int Tracker::calcTicks()
   }
 
   return ticksi;
+}
+
+void Tracker::renderCurrentInstrument()
+{
+  DEBUGLOG("render_to_apu(); playback: %d\n", playback);
+  ::player->pause(0, false, false);
+  ::player->start_track(0);
+  // SPC player fade to virtually never end (24 hours -> ms)
+  ::player->emu()->set_fade(24 * 60 * 60 * 1000);
+  // note, this does indeed fit into 32-bit even with the samplerate calcs
+  // done from set_fade()
+
+  // This is absolutely crucial for the tracker to sync properly with the
+  // APU emu!!! v v v  Otherwise the emu runs too fast ahead of the audio
+  ::player->ignore_silence();
+  /* BPM AND SPD */
+  /* Quick thoughts on Timer : We could add a checkmark to use the high
+   * frequency timer. Also could have a mode where you specify ticks and
+   * see the actual BPM */
+  
+  apuram->ticks = calcTicks();
+  apuram->spd = song.settings.spd;
+  /* END BPM AND SPD */
+
+  // Find the position in SPC RAM after driver code
+  uint16_t freeram_i = SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE;
+
+
+  // Only render the current instrument
+
+  /* PlayInstrument */
+  const Instrument *instr = &song.instruments[main_window.instrpanel.currow];
+
+  if (song.samples[instr->srcn].brr == NULL)
+    return; // forget it..
+
+  //DEBUGLOG("instr->srcn = %d\n", instr->srcn);
+  /* Another strategy would be to position the DIR at the base of the
+   * offset rather than push it up further. Would need to check how many
+   * DIR entries are needed if there's room or not */
+  uint16_t dir_i, dspdir_i;
+  dir_i = freeram_i + ((freeram_i % 0x100) ? (0x100 - (freeram_i % 0x100)) : 0);
+  dspdir_i = dir_i / 0x100;
+
+  uint16_t instrtable_i = dir_i + ( (1) * 0x4);
+  apuram->instrtable_ptr = instrtable_i;
+
+  /* We have got to load these samples in first, so the DIR table knows
+   * where the samples are */
+  /* DIR is specified in multiples of 0x100. So if we're shy of that, we
+   * need to move it up. I think a smarter program would mark that unused
+   * area as free for something */
+
+  /* DIR can be at max 0x400 bytes in size, but any unused space in DIR
+   * can be used for other data */
+  // Write the sample and loop information to the DIR. Then write the DSP
+  // DIR value to DSP
+  uint16_t cursample_i = dir_i + ( (1 + 1) * 0x4 ) + ( (1 + 1) * 4 );
+
+  uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i];
+  *dir = cursample_i;
+  *(dir+1) = cursample_i + song.samples[instr->srcn].rel_loop;
+
+  size_t s=0;
+  for (; s < song.samples[instr->srcn].brrsize; s++)
+  {
+    uint8_t *bytes = (uint8_t *)song.samples[instr->srcn].brr;
+    ::IAPURAM[cursample_i + s] = bytes[s];
+  }
+  cursample_i += s;
+  
+  /* Could add a (SHA1) signature to Sample struct so that we can
+   * identify repeat usage of the same sample and only load it once to
+   * SPC RAM. For now, don't do this!! We're trying to get to first
+   * working tracker status here! Plus, it's possible the user wants the
+   * 2 identical samples to be treated individually (maybe their doing
+   * something complicated) */
+  uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i];
+  *it = cursample_i;
+
+  // Time to load instrument info
+  ::IAPURAM[cursample_i++] = instr->vol;
+  ::IAPURAM[cursample_i++] = instr->finetune;
+  ::IAPURAM[cursample_i++] = instr->pan;
+  ::IAPURAM[cursample_i++] = 0; // instr->srcn;
+  ::IAPURAM[cursample_i++] = instr->adsr.adsr1;
+  ::IAPURAM[cursample_i++] = instr->adsr.adsr2;
+  ::IAPURAM[cursample_i++] = (instr->echo ? INSTR_FLAG_ECHO : 0);
+  ::IAPURAM[cursample_i++] = instr->semitone_offset;
+
+  apuram->dspdir_i = dspdir_i;
+  ::player->spc_write_dsp(dsp_reg::dir, dspdir_i);
+  // INSTRUMENTS END
+
+  // set flag whether to repeat the pattern, and also set the bit to skip
+  // the echobuf clear
+  apuram->extflags |= (1 << EXTFLAGS_SKIP_ECHOBUF_CLEAR);
+  // PATTERN SEQUENCER END
+
+  // SONG SETTINGS
+  apuram->mvol_val = song.settings.mvol;
+  apuram->evol_val = song.settings.evol;
+  /* calculate ESA */
+  /* The ESA will be, based on EDL, pushed all the way to the end of RAM,
+   * so control bit 7 ($F1) must be reset to enable the RAM region of IPL
+   * ROM. Note that the asm RAM clear routine can be executed even with
+   * IPL active (write-only)*/
+  // if EDL is 0, just stick the 4 bytes of echo buffer at $FF00
+  apuram->esa_val = calcESAfromEDL(song.settings.edl);
+  apuram->edl_val = song.settings.edl;
+  apuram->efb_val = song.settings.efb;
+  uint8_t *coeff = &apuram->c0_val;
+  for (int i=0; i < 8; i++)
+    coeff[i] = song.settings.fir[i];
+  // SONG SETTINGS END
+
+  instr_render = true;
 }
 
 void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
@@ -1025,6 +1151,7 @@ void Tracker::reset()
 {
   // stop the player incase it's playing
   playback = false;
+  instr_render = false;
   ::player->fade_out(false); // immediate fade-out (no thread)
   ::player->pause(true, false, false);
   /* It was shown that the program would crash if a file was opened while
@@ -1038,14 +1165,14 @@ void Tracker::reset()
 	if (Text_Edit_Rect::cur_editing_ter)
 		Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
 
+  song.reset();
+
 	// Reset Panel currows
   main_window.pateditpanel.set_currow(0);
 	main_window.patseqpanel.set_currow(0);
 	main_window.instrpanel.set_currow(0);
 	main_window.samplepanel.currow = 0;
 	main_window.samplepanel.rows_scrolled = 0;
-
-  song.reset();
 
 	// Reset Other GUI elements
   Voice_Control::unmute_all();

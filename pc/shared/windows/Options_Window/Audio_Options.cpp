@@ -11,6 +11,8 @@ int Audio_Options::Context::change_audio_out_device(void *item)
   SDL_Log("change_audio_out_device, %s", itemp->clickable_text.str);
   if (ao->openDeviceonClick)
     ::player->init(::player->sample_rate, itemp->clickable_text.str);
+
+  return 0;
 }
 
 Audio_Options::Context::Context(Audio_Options *ao) : ao(ao)
@@ -64,8 +66,8 @@ Audio_Options::BufferSize::BufferSize() :
   cbuf("  2048"),
   title("Buffer Size"),
   valtext(cbuf),
-  decbtn("<", dec, this, true),
-  incbtn(">", inc, this, true)
+  decbtn("<", dec, this, false),
+  incbtn(">", inc, this, false)
 {}
 
 void Audio_Options::BufferSize::update()
@@ -152,7 +154,6 @@ void Audio_Options::one_time_draw()
 int Audio_Options::receive_event(SDL_Event &ev)
 {
   //SDL_Log("Audio_Options::receieve_event");
-  dblclick::check_event(&ev);
   bufferSize.decbtn.check_event(ev);
   bufferSize.incbtn.check_event(ev);
 
