@@ -1019,6 +1019,9 @@ int PatSeqPanel::incpat(void *pspanel)
 
   patseq->patterns[patseq->sequence[psp->currow]].used++;
   *patseq->metadata.changed = true;
+
+  /* Fixes #36 */
+  ::tracker->main_window.pateditpanel.set_currow(::tracker->main_window.pateditpanel.currow);
   return 0;
 }
 
@@ -1036,6 +1039,10 @@ int PatSeqPanel::decpat(void *pspanel)
 
   patseq->patterns[patseq->sequence[psp->currow]].used++;
   *patseq->metadata.changed = true;
+
+  /* Fixes #36 */
+  ::tracker->main_window.pateditpanel.set_currow(::tracker->main_window.pateditpanel.currow);
+  return 0;
 }
 
 void PatSeqPanel::set_currow(int row, bool updateScrolled/*=true*/)
@@ -1831,11 +1838,12 @@ void PatternEditorPanel::dec_addval()
 
 void PatternEditorPanel::set_currow(int row)
 {
-	assert(row < get_current_pattern(psp)->len);
+	if ( ! (row < get_current_pattern(psp)->len) )
+    row = get_current_pattern(psp)->len - 1;
 	currow = row;
 	if (currow >= (rows_scrolled + VISIBLE_ROWS))
 		rows_scrolled = currow - VISIBLE_ROWS + 1;
-	else if (row == 0)
+	else
 		rows_scrolled = 0;
 }
 
