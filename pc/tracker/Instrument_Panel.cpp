@@ -24,6 +24,7 @@ Instrument_Panel::Instrument_Panel(Instrument *iptr, Sample_Panel *sp) :
     title("Instruments"),
     loadbtn("Load", Instrument_Panel::load, this),
     savebtn("Save", Instrument_Panel::save, this),
+    dupbtn("Dup", Instrument_Panel::dup, this),
     zapbtn("Zap", Instrument_Panel::zap, this),
     instruments(iptr),
     samplepanel(sp)
@@ -58,6 +59,10 @@ void Instrument_Panel::set_coords(int x, int y)
   savebtn.rect.y = y;
 
   x += savebtn.rect.w + (2*CHAR_WIDTH);
+  dupbtn.rect.x = x;
+  dupbtn.rect.y = y;
+
+  x += dupbtn.rect.w + (2*CHAR_WIDTH);
   zapbtn.rect.x = x;
   zapbtn.rect.y = y;
 
@@ -210,6 +215,7 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
 
   loadbtn.check_event(ev);
   savebtn.check_event(ev);
+  dupbtn.check_event(ev);
   zapbtn.check_event(ev);
 }
 
@@ -267,6 +273,7 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   title.draw(screen);
   loadbtn.draw(screen);
   savebtn.draw(screen);
+  dupbtn.draw(screen);
   zapbtn.draw(screen);
 
   SDL_Rect r = {rect.x + 1, rect.y + 1, rect.w - 1, rect.h - 1};
@@ -402,6 +409,30 @@ int Instrument_Panel::save(void *ipanel)
   }
   return 0;
 }
+
+// duplicate instrument
+int Instrument_Panel::dup(void *ipanel)
+{
+  Instrument_Panel *ip = (Instrument_Panel *)ipanel;
+  fprintf(stderr, "Instrument_Panel::DUP\n");
+
+  Instrument *instr = &ip->instruments[ip->currow];
+
+  if (*instr == Instrument())
+    return 1;
+  
+  for (int i = ip->currow + 1; i < NUM_INSTR; i++)
+  {
+    Instrument *instrCandidate = &ip->instruments[i];
+    if (*instrCandidate == Instrument())
+    {
+      *instrCandidate = *instr;
+      break;
+    }
+  }
+  return 0;
+}
+
 
 int Instrument_Panel::zap(void *ipanel)
 {

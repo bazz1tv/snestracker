@@ -25,10 +25,11 @@ struct Instrument_Panel
   // callback funcs for the buttons
   static int load(void *ipanel);
   static int save(void *ipanel);
+  static int dup(void *ipanel);
   static int zap(void *ipanel);
 
   Text title;
-  Button loadbtn, savebtn, zapbtn;
+  Button loadbtn, savebtn, dupbtn, zapbtn;
   Text instr_indices[NUM_INSTR];
 
   // the number of instrument rows in GUI
