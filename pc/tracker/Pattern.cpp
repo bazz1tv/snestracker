@@ -1999,7 +1999,7 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
   switch(scancode)
   {
     case SDLK_w:
-      if (MODONLY(mod, CMD_CTRL_KEY))
+      if (MODONLY(mod, KMOD_ALT))
         pattern_wrap = !pattern_wrap;
     break;
     case SDLK_PAGEUP:
