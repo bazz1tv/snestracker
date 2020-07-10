@@ -609,11 +609,15 @@ size_t PatternSequencerChunkLoader::save(SDL_RWops *file)
 const int PatSeqPanel::VISIBLE_ROWS;
 
 PatSeqPanel::PatSeqPanel(PatternSequencer *patseq) :
+  title("Pat. Sequencer"),
   clonebtn("Clone", PatSeqPanel::clone, this),
-  seqbtn("Seq", PatSeqPanel::seq, this),
-  clearbtn("Clr", PatSeqPanel::clear, this),
+  seqbtn("New", PatSeqPanel::seq, this),
+  clearbtn("Del", PatSeqPanel::clear, this),
+  insbtn("Ins", PatSeqPanel::insertPat, this),
   incpatbtn("+", PatSeqPanel::incpat, this),
   decpatbtn("-", PatSeqPanel::decpat, this),
+  movePatUpbtn(FONT_CODE_V_TRI_STR, PatSeqPanel::movePatUp, this),
+  movePatDownbtn(FONT_CODE_V_TRI_STR, PatSeqPanel::movePatDown, this),
 
   patseq(patseq),
   lastTimeScrolled(0)
@@ -637,22 +641,32 @@ void PatSeqPanel::set_coords(int x, int y)
                      of all pspanel entities */
 
   //x += title.rect.w + (2*CHAR_WIDTH);
+  title.rect.x = x;
+  title.rect.y = y;
+
+  y += CHAR_HEIGHT + (CHAR_HEIGHT / 2);
+
+  
+
   clonebtn.rect.x = x;
   clonebtn.rect.y = y;
-
   x += clonebtn.rect.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
+  
   seqbtn.rect.x = x;
   seqbtn.rect.y = y;
-
   x += seqbtn.rect.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
-  clearbtn.rect.x = x;
-  clearbtn.rect.y = y;
+
+  insbtn.rect.x = x;
+  insbtn.rect.y = y;
 
   y += CHAR_HEIGHT + (CHAR_HEIGHT/2);
   y += 2;
   rect.y = y;
 
   y += 2; //(CHAR_HEIGHT / 2);
+
+  clearbtn.rect.x = x;
+  clearbtn.rect.y = y;
 
   /* This init was postponed until now to avoid having to iterate through
    * all instruments multiple times */
@@ -684,9 +698,14 @@ void PatSeqPanel::set_coords(int x, int y)
 
   // put the inc/dec pat buttons to the right of the rect.
   decpatbtn.rect.x = rect.x + rect.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
-  decpatbtn.rect.y = rect.y + 4;
+  decpatbtn.rect.y = rect.y + 2;
   incpatbtn.rect.x = decpatbtn.rect.x + incpatbtn.rect.w + 5;
   incpatbtn.rect.y = decpatbtn.rect.y;// + CHAR_HEIGHT;
+
+  movePatUpbtn.rect.x = decpatbtn.rect.x;
+  movePatUpbtn.rect.y = decpatbtn.rect.y + (CHAR_HEIGHT * 2);
+  movePatDownbtn.rect.x = movePatUpbtn.rect.x;
+  movePatDownbtn.rect.y = movePatUpbtn.rect.y + CHAR_HEIGHT + 5;
 }
 
 static void apuSetPattern(int currow)
@@ -846,8 +865,11 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
   clonebtn.check_event(ev);
   seqbtn.check_event(ev);
   clearbtn.check_event(ev);
+  insbtn.check_event(ev);
   incpatbtn.check_event(ev);
   decpatbtn.check_event(ev);
+  movePatUpbtn.check_event(ev);
+  movePatDownbtn.check_event(ev);
 }
 
 void PatSeqPanel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
@@ -858,13 +880,15 @@ void PatSeqPanel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
 void PatSeqPanel::draw(SDL_Surface *screen/*=::render->screen*/)
 {
   one_time_draw();
-  /* First, draw the "Instruments" strings and top buttons */
-  //title.draw(screen);
+  title.draw(screen);
   clonebtn.draw(screen);
   seqbtn.draw(screen);
   clearbtn.draw(screen);
+  insbtn.draw(screen);
   incpatbtn.draw(screen);
   decpatbtn.draw(screen);
+  movePatUpbtn.draw(screen);
+  movePatDownbtn.draw(screen, true);
 
   SDL_Rect r = {rect.x + 1, rect.y + 1, rect.w - 1, rect.h - 1};
   SDL_FillRect(screen, &r, Colors::transparent);
@@ -907,6 +931,56 @@ void PatSeqPanel::draw(SDL_Surface *screen/*=::render->screen*/)
   }
 }
 
+int PatSeqPanel::movePatUp(void *pspanel)
+{
+  fprintf(stderr, "PatSeqPanel::movePatUP()\n");
+  PatSeqPanel *psp = (PatSeqPanel *)pspanel;
+  PatternSequencer *patseq = psp->patseq;
+
+  if ( psp->currow == 0 )
+    return 1;
+  
+  auto copy = patseq->sequence[psp->currow - 1];
+  patseq->sequence[psp->currow - 1] = patseq->sequence[psp->currow];
+  patseq->sequence[psp->currow] = copy;
+
+  psp->set_currow ( psp->currow - 1 );
+  return 0;
+}
+
+int PatSeqPanel::movePatDown(void *pspanel)
+{
+  fprintf(stderr, "PatSeqPanel::movePatDOWN()\n");
+  PatSeqPanel *psp = (PatSeqPanel *)pspanel;
+  PatternSequencer *patseq = psp->patseq;
+
+  if ( psp->currow > (patseq->num_entries - 2) )
+    return 1;
+  
+  auto copy = patseq->sequence[psp->currow + 1];
+  patseq->sequence[psp->currow + 1] = patseq->sequence[psp->currow];
+  patseq->sequence[psp->currow] = copy;
+
+  psp->set_currow ( psp->currow + 1 );
+}
+
+int PatSeqPanel::insertPat(void *pspanel)
+{
+  fprintf(stderr, "PatSeqPanel::insertPat()\n");
+  PatSeqPanel *psp = (PatSeqPanel *)pspanel;
+  PatternSequencer *patseq = psp->patseq;
+
+  patseq->sequence.insert(patseq->sequence.begin()+psp->currow+1, patseq->sequence[psp->currow]);
+  patseq->num_entries++;
+  psp->set_currow(psp->currow + 1);
+
+  PatternMeta *pm = &patseq->patterns[patseq->sequence[psp->currow]];
+  pm->used++;
+
+  *patseq->metadata.changed = true;
+  return 0;
+}
+
 ////////////////////// START PATTERN EDITOR STUFF ///////////////////////
 
 static int get_unused_pattern_index(PatternSequencer *ps)
@@ -936,12 +1010,8 @@ int clone_seq_common(PatSeqPanel *psp)
       unused_index);
 
   up->used += 1;
-
-  if ((psp->currow - psp->rows_scrolled) % psp->VISIBLE_ROWS == (psp->VISIBLE_ROWS - 1))
-    psp->rows_scrolled++;
-
   patseq->num_entries++;
-  psp->currow++;
+  psp->set_currow(psp->currow + 1);
 
   *patseq->metadata.changed = true;
   return 0;
@@ -1000,6 +1070,9 @@ int PatSeqPanel::clear(void *pspanel)
     psp->currow = patseq->num_entries - 1;
 
   *patseq->metadata.changed = true;
+
+  /* Fixes #36 */
+  ::tracker->main_window.pateditpanel.set_currow(::tracker->main_window.pateditpanel.currow);
 
   return 0;
 }

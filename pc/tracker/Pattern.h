@@ -104,7 +104,7 @@ struct PatternRow // defines one row of Pattern Data
 #define MAX_PATTERNS 0x80
 #define MIN_PATTERN_LEN 1
 #define MAX_PATTERN_LEN 0x80
-#define DEFAULT_PATTERN_LEN 0x40
+#define DEFAULT_PATTERN_LEN 0x20
 
 struct Pattern
 {
@@ -207,15 +207,19 @@ struct PatSeqPanel // PatternSequencerPanel
   static const int VISIBLE_ROWS = 8;
   int currow = 0; /* This is not only controlled by the user, but also by
   the playback engine. At least that's the plan. */
+  Text title;
 
-  Button clonebtn, seqbtn, clearbtn;
-  Button incpatbtn, decpatbtn;
+  Button clonebtn, seqbtn, clearbtn, insbtn;
+  Button incpatbtn, decpatbtn, movePatUpbtn, movePatDownbtn;
   // callback funcs for the buttons
   static int clone(void *pspanel);
   static int seq(void *pspanel);
   static int clear(void *pspanel);
+  static int insertPat(void *pspanel);
   static int incpat(void *pspanel);
   static int decpat(void *pspanel);
+  static int movePatUp(void *pspanel);
+  static int movePatDown(void *pspanel);
 
   Text index_text[VISIBLE_ROWS];
   char index_strings[VISIBLE_ROWS][4];

@@ -126,7 +126,7 @@ void Button::remove_hold_timer()
     DEBUGLOG("Button::remove_hold_timer() called when no timer was active\n");
 }
 
-void Button::draw(SDL_Surface *screen)
+void Button::draw(SDL_Surface *screen, bool flipV/*=false*/)
 {
   //DEBUGLOG("Button::draw; ");
   // redudant calculating outer rect every frame :(
@@ -139,18 +139,18 @@ void Button::draw(SDL_Surface *screen)
         state ? rect.y : rect.y + 2, str,
         Colors::transparent,
         Colors::Interface::color[Colors::Interface::button_bg + state],
-        false);
+        false, flipV);
 
   if (enabled)
     sdlfont_drawString(screen, state ? rect.x + 1 : rect.x,
       state ? rect.y + 2 : rect.y, str,
       Colors::Interface::color[Colors::Interface::button_fg + state],
       Colors::Interface::color[Colors::Interface::button_bg + state],
-      false);
+      false, flipV);
   else
     sdlfont_drawString(screen, rect.x,
       rect.y, str,
       Colors::gray,
       Colors::Interface::color[Colors::Interface::button_bg + state],
-      false);
+      false, flipV);
 }
