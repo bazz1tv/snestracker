@@ -497,6 +497,11 @@ int InstrumentEditor::incsrcn(void *i)
     auto srcn = ie->instrpanel->instruments[ie->instrpanel->currow].srcn;
     apuinstr->srcn = srcn;
   }
+
+  if (::tracker->instr_render && !tracker->playback)
+  {
+    ::tracker->renderCurrentInstrument();
+  }
 }
 
 int InstrumentEditor::decsrcn(void *i)
@@ -517,6 +522,11 @@ int InstrumentEditor::decsrcn(void *i)
   {
     auto srcn = ie->instrpanel->instruments[ie->instrpanel->currow].srcn;
     apuinstr->srcn = srcn;
+  }
+
+  if (::tracker->instr_render && !tracker->playback)
+  {
+    ::tracker->renderCurrentInstrument();
   }
 }
 
