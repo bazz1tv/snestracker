@@ -680,7 +680,8 @@ void Tracker::renderCurrentInstrument()
   // Only render the current instrument
 
   /* PlayInstrument */
-  const Instrument *instr = &song.instruments[main_window.instrpanel.currow];
+  auto instr_num = main_window.instrpanel.currow;
+  const Instrument *instr = &song.instruments[instr_num];
 
   if (song.samples[instr->srcn].brr == NULL)
     return; // forget it..
@@ -693,8 +694,8 @@ void Tracker::renderCurrentInstrument()
   dir_i = freeram_i + ((freeram_i % 0x100) ? (0x100 - (freeram_i % 0x100)) : 0);
   dspdir_i = dir_i / 0x100;
 
-  uint16_t instrtable_i = dir_i + ( (1) * 0x4);
-  apuram->instrtable_ptr = instrtable_i;
+  uint16_t instrtable_i = dir_i + ( (instr->srcn + 1) * 0x4);
+  apuram->instrtable_ptr = instrtable_i ;
 
   /* We have got to load these samples in first, so the DIR table knows
    * where the samples are */
@@ -706,9 +707,9 @@ void Tracker::renderCurrentInstrument()
    * can be used for other data */
   // Write the sample and loop information to the DIR. Then write the DSP
   // DIR value to DSP
-  uint16_t cursample_i = dir_i + ( (1 + 1) * 0x4 ) + ( (1 + 1) * 4 );
+  uint16_t cursample_i = dir_i + ( (instr->srcn + 1) * 0x4 ) + ( (instr_num + 1) * 2 );
 
-  uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i];
+  uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (instr->srcn * 4)];
   *dir = cursample_i;
   *(dir+1) = cursample_i + song.samples[instr->srcn].rel_loop;
 
@@ -726,14 +727,14 @@ void Tracker::renderCurrentInstrument()
    * working tracker status here! Plus, it's possible the user wants the
    * 2 identical samples to be treated individually (maybe their doing
    * something complicated) */
-  uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i];
+  uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i + (instr_num * 2)];
   *it = cursample_i;
 
   // Time to load instrument info
   ::IAPURAM[cursample_i++] = instr->vol;
   ::IAPURAM[cursample_i++] = instr->finetune;
   ::IAPURAM[cursample_i++] = instr->pan;
-  ::IAPURAM[cursample_i++] = 0; // instr->srcn;
+  ::IAPURAM[cursample_i++] = instr->srcn;
   ::IAPURAM[cursample_i++] = instr->adsr.adsr1;
   ::IAPURAM[cursample_i++] = instr->adsr.adsr2;
   ::IAPURAM[cursample_i++] = (instr->echo ? INSTR_FLAG_ECHO : 0);

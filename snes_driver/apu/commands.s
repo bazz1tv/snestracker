@@ -150,7 +150,7 @@ PlayInstrument:
   call !PrepHardware
   ; Hack this so it uses pre-existing functionality from the pattern reader
   mov x, spcport3 ; track# (curtrack)
-  mov a, #0 ;spcport0 ; instr#
+  mov a, spcport0 ; instr#
   mov activeInstrument + x, a
   mov a, spcport2 ; note
   call !ReadNote

@@ -14,7 +14,7 @@ not exported to apuram. */
 static ApuInstr * getCurApuInstr(Instrument_Panel *instrpanel)
 {
   if (instrpanel == NULL || !::tracker->rendering() ||
-    instrpanel->currow > tracker->apuRender.highest_instr // the highlighted inst wasn't exported to APU
+    (::tracker->playback && instrpanel->currow > tracker->apuRender.highest_instr) // the highlighted inst wasn't exported to APU
   )
     return NULL;
   uint16_t *itab = (uint16_t *) &::IAPURAM[tracker->apuram->instrtable_ptr];

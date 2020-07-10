@@ -1520,7 +1520,7 @@ void PatternEditorPanel::notehelper(int ndex)
      * window */
     if (::tracker->instr_render && !::tracker->playback)
     {
-      ::player->spc_emu()->write_port(0, 0);       // instr#
+      ::player->spc_emu()->write_port(0, ip->currow);       // instr#
       ::player->spc_emu()->write_port(2, n - 1);                // note
       ::player->spc_emu()->write_port(3, cur_track);  // track
       ::player->spc_emu()->write_port(1, SPCCMD_PLAYINSTRUMENT);  // command
