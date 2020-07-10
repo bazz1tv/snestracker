@@ -945,6 +945,8 @@ int PatSeqPanel::movePatUp(void *pspanel)
   patseq->sequence[psp->currow] = copy;
 
   psp->set_currow ( psp->currow - 1 );
+  *patseq->metadata.changed = true;
+
   return 0;
 }
 
@@ -962,6 +964,8 @@ int PatSeqPanel::movePatDown(void *pspanel)
   patseq->sequence[psp->currow] = copy;
 
   psp->set_currow ( psp->currow + 1 );
+  *patseq->metadata.changed = true;
+  return 0;
 }
 
 int PatSeqPanel::insertPat(void *pspanel)
