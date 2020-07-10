@@ -481,6 +481,15 @@ void Tracker::handle_events()
 							render_to_apu(repeat_pattern);
               // prevent user from decreasing pattern length
               main_window.plwidget.patlen_decbtn.enabled = false;
+              main_window.plwidget.patlen_incbtn.enabled = false;
+              main_window.patseqpanel.clonebtn.enabled = false;
+              main_window.patseqpanel.seqbtn.enabled = false;
+              main_window.patseqpanel.clearbtn.enabled = false;
+              main_window.patseqpanel.insbtn.enabled = false;
+              main_window.patseqpanel.incpatbtn.enabled = false;
+              main_window.patseqpanel.decpatbtn.enabled = false;
+              main_window.patseqpanel.movePatUpbtn.enabled = false;
+              main_window.patseqpanel.movePatDownbtn.enabled = false;
             }
 						else
             {
@@ -488,6 +497,15 @@ void Tracker::handle_events()
               // pause taken care of in sound_stop userevent called from fadeout thread
               // Re-enable the pattern length decrement button
               main_window.plwidget.patlen_decbtn.enabled = true;
+              main_window.plwidget.patlen_incbtn.enabled = true;
+              main_window.patseqpanel.clonebtn.enabled = true;
+              main_window.patseqpanel.seqbtn.enabled = true;
+              main_window.patseqpanel.clearbtn.enabled = true;
+              main_window.patseqpanel.insbtn.enabled = true;
+              main_window.patseqpanel.incpatbtn.enabled = true;
+              main_window.patseqpanel.decpatbtn.enabled = true;
+              main_window.patseqpanel.movePatUpbtn.enabled = true;
+              main_window.patseqpanel.movePatDownbtn.enabled = true;
             }
           }
 					break;
