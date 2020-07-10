@@ -57,6 +57,6 @@ void Checkbox::draw(SDL_Surface *screen)
   else if (state != NULL && *state == false)
   {
     //DEBUGLOG("OFF");
-    SDL_FillRect(screen, &inner, Colors::transparent);
+    SDL_FillRect(screen, &inner, Colors::nearblack);
   }
 }
