@@ -710,7 +710,7 @@ void PatSeqPanel::set_coords(int x, int y)
 
 static void apuSetPattern(int currow)
 {
-  if (::tracker->rendering())
+  if (::tracker->playback)
   {
     // send command to set the pattern
     ::player->spc_emu()->write_port(2, currow);
