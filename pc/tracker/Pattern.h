@@ -209,7 +209,7 @@ struct PatSeqPanel // PatternSequencerPanel
   the playback engine. At least that's the plan. */
   Text title;
 
-  Button clonebtn, seqbtn, clearbtn, insbtn;
+  Button clonebtn, seqbtn, clearbtn, insbtn, zapbtn;
   Button incpatbtn, decpatbtn, movePatUpbtn, movePatDownbtn;
   // callback funcs for the buttons
   static int clone(void *pspanel);
@@ -220,6 +220,7 @@ struct PatSeqPanel // PatternSequencerPanel
   static int decpat(void *pspanel);
   static int movePatUp(void *pspanel);
   static int movePatDown(void *pspanel);
+  static int zapPat(void *pspanel);
 
   Text index_text[VISIBLE_ROWS];
   char index_strings[VISIBLE_ROWS][4];

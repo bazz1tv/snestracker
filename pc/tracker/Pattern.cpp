@@ -614,6 +614,7 @@ PatSeqPanel::PatSeqPanel(PatternSequencer *patseq) :
   seqbtn("New", PatSeqPanel::seq, this),
   clearbtn("Del", PatSeqPanel::clear, this),
   insbtn("Ins", PatSeqPanel::insertPat, this),
+  zapbtn("Zap", PatSeqPanel::zapPat, this),
   incpatbtn("+", PatSeqPanel::incpat, this),
   decpatbtn("-", PatSeqPanel::decpat, this),
   movePatUpbtn(FONT_CODE_V_TRI_STR, PatSeqPanel::movePatUp, this),
@@ -667,6 +668,10 @@ void PatSeqPanel::set_coords(int x, int y)
 
   clearbtn.rect.x = x;
   clearbtn.rect.y = y;
+
+  int zap_y = y + CHAR_HEIGHT + (CHAR_HEIGHT / 2) + 4;
+  zapbtn.rect.x = x;
+  zapbtn.rect.y = zap_y;
 
   /* This init was postponed until now to avoid having to iterate through
    * all instruments multiple times */
@@ -866,6 +871,7 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
   seqbtn.check_event(ev);
   clearbtn.check_event(ev);
   insbtn.check_event(ev);
+  zapbtn.check_event(ev);
   incpatbtn.check_event(ev);
   decpatbtn.check_event(ev);
   movePatUpbtn.check_event(ev);
@@ -885,6 +891,7 @@ void PatSeqPanel::draw(SDL_Surface *screen/*=::render->screen*/)
   seqbtn.draw(screen);
   clearbtn.draw(screen);
   insbtn.draw(screen);
+  zapbtn.draw(screen);
   incpatbtn.draw(screen);
   decpatbtn.draw(screen);
   movePatUpbtn.draw(screen);
@@ -985,13 +992,45 @@ int PatSeqPanel::insertPat(void *pspanel)
   return 0;
 }
 
+int PatSeqPanel::zapPat(void *pspanel)
+{
+  fprintf(stderr, "PatSeqPanel::zapPat()\n");
+  PatSeqPanel *psp = (PatSeqPanel *)pspanel;
+  PatternSequencer *patseq = psp->patseq;
+
+  PatternMeta *pm = &patseq->patterns[patseq->sequence[psp->currow]];
+  auto lenBackup = pm->p.len;
+  memset(pm, 0, sizeof(PatternMeta));
+  pm->p.len = lenBackup;
+  pm->used = 1;
+}
+
 ////////////////////// START PATTERN EDITOR STUFF ///////////////////////
 
 static int get_unused_pattern_index(PatternSequencer *ps)
 {
   for (int i=0; i < MAX_PATTERNS; i++)
-    if (ps->patterns[i].used == 0)
+  {
+    bool skipPat = false;
+    const Pattern *p = &ps->patterns[i].p; 
+    for (int t=0; t < MAX_TRACKS; t++)
+    {
+      for (int r=0; r < MAX_PATTERN_LEN; r++)
+      {
+        const PatternRow *row = &p->trackrows[t][r];
+
+        if (!PATROW_EMPTY(row))
+        {
+          skipPat = true;
+          break;
+        }
+      }
+      if (skipPat)
+        break;
+    }
+    if (!skipPat)
       return i;
+  }
   return -1;
 }
 

@@ -486,6 +486,7 @@ void Tracker::handle_events()
               main_window.patseqpanel.seqbtn.enabled = false;
               main_window.patseqpanel.clearbtn.enabled = false;
               main_window.patseqpanel.insbtn.enabled = false;
+              main_window.patseqpanel.zapbtn.enabled = false;
               main_window.patseqpanel.incpatbtn.enabled = false;
               main_window.patseqpanel.decpatbtn.enabled = false;
               main_window.patseqpanel.movePatUpbtn.enabled = false;
@@ -502,6 +503,7 @@ void Tracker::handle_events()
               main_window.patseqpanel.seqbtn.enabled = true;
               main_window.patseqpanel.clearbtn.enabled = true;
               main_window.patseqpanel.insbtn.enabled = true;
+              main_window.patseqpanel.zapbtn.enabled = true;
               main_window.patseqpanel.incpatbtn.enabled = true;
               main_window.patseqpanel.decpatbtn.enabled = true;
               main_window.patseqpanel.movePatUpbtn.enabled = true;
