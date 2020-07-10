@@ -1556,6 +1556,7 @@ void PatternEditorPanel::instrhelper(int n)
     pw->instr |= n & 0x0f;
   }
   *psp->patseq->metadata.changed = true;
+  inc_currow(addval);
   //instr2ascii(pw->note, guitrackrow[cur_track].instr_strings[currow]);
 }
 
