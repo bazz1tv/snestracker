@@ -219,7 +219,8 @@ void Instrument_Panel::set_currow(int c)
   samplepanel->currow = instruments[c].srcn;
   samplepanel->rows_scrolled = (samplepanel->currow / Sample_Panel::NUM_ROWS) * Sample_Panel::NUM_ROWS;
 
-  if (samplepanel->samples[instruments[currow].srcn].brr != NULL)
+  // If the instrument's BRR sample is valid and the tracker is not playing the song
+  if (samplepanel->samples[instruments[currow].srcn].brr != NULL && !::tracker->playback)
     ::tracker->renderCurrentInstrument();
 }
 
@@ -419,8 +420,15 @@ int Instrument_Panel::zap(void *ipanel)
     switch (drc)
     {
       case DialogBox::YES:
-        AskDeleteSample(ip);
         instr->reset();
+        if (AskDeleteSample(ip))
+        {
+          sample->clear();
+          ::tracker->instr_render = false;
+        }
+        else if (samples[ip->instruments[ip->currow].srcn].brr != NULL && !::tracker->playback)
+          ::tracker->renderCurrentInstrument();
+
         *instr->metadata.changed = true;
       break;
       case DialogBox::NO:

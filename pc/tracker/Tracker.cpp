@@ -447,6 +447,9 @@ void Tracker::handle_events()
         int mod = ev.key.keysym.mod;
         switch (scancode)
         {
+          case SDLK_ESCAPE:
+            ::player->spc_write_dsp(dsp_reg::koff, 0xff);
+          break;
           case SDLK_q:
             if ( MODONLY(mod, CMD_CTRL_KEY) )
             {
@@ -1199,6 +1202,8 @@ int Tracker::read_from_file(SDL_RWops *file)
 	main_window.bsawidget.updatebpm();
 	main_window.bsawidget.updatespd();
 
+  if (song.samples[song.instruments[main_window.instrpanel.currow].srcn].brr != NULL && !::tracker->playback)
+    ::tracker->renderCurrentInstrument();
 	return 0;
 }
 

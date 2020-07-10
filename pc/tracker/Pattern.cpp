@@ -1441,7 +1441,7 @@ void PatternEditorPanel::notehelper(int ndex)
     //DEBUGLOG("YOU ARE HERE\n");
     /* TODO: Play the sample through the API just like in std instrument
      * window */
-    if (::tracker->instr_render)
+    if (::tracker->instr_render && !::tracker->playback)
     {
       ::player->spc_emu()->write_port(0, 0);       // instr#
       ::player->spc_emu()->write_port(2, n - 1);                // note
