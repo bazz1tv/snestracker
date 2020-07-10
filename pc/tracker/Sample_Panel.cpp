@@ -19,7 +19,7 @@ Sample_Panel::Sample_Panel(Sample* samples) :
   title("Samples:"),
   loadbtn("Load", Sample_Panel::load, this),
   savebtn("Save", Sample_Panel::save, this),
-  clearbtn("Clear", Sample_Panel::clear, this),
+  clearbtn("Zap", Sample_Panel::clear, this),
   samples(samples)
 {
   /* Disable unimpl'd buttons */
