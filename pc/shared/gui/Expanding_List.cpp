@@ -147,8 +147,8 @@ void Expanding_List::draw(SDL_Surface *screen)
   //greatest_length=0;
 
   // draw background panel
-  if (is_active) SDL_FillRect(screen, &created_at, Colors::Interface::color[Colors::Interface::Type::bg]);  
-  SDL_FillRect(screen, &single_item_rect, Colors::Interface::color[Colors::Interface::Type::bg]);
+  if (is_active) SDL_FillRect(screen, &created_at, SDL_MapRGB(screen->format, 67, 66, 106));  
+  //SDL_FillRect(screen, &single_item_rect, SDL_MapRGB(screen->format, 67, 66, 106));
 
   // find highlighted strip
     // this should go in its own function called from SDL_MOUSEMOTION event
@@ -160,7 +160,7 @@ void Expanding_List::draw(SDL_Surface *screen)
   {
     if (is_static)
     {
-      SDL_FillRect(screen, &single_item_rect, Colors::magenta);
+      SDL_FillRect(screen, &single_item_rect, Colors::black);
     }
     //SDL_FillRect(screen, &created_at, Colors::black);
     //fprintf(stderr, "TTT");
@@ -180,7 +180,7 @@ void Expanding_List::draw(SDL_Surface *screen)
           if (items[i].enabled && (items[i].clickable_text.str && items[i].clickable_text.str[0] != '-') && ((is_static && i !=0) || !is_static))
           {
             SDL_Rect r = {created_at.x, created_at.y + (drawn)*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
-            SDL_FillRect(screen, &r, Colors::magenta);
+            SDL_FillRect(screen, &r, Colors::black);
           }
         }
         // Draw "locked out" color text if this row is disabled
@@ -189,7 +189,7 @@ void Expanding_List::draw(SDL_Surface *screen)
           sdlfont_drawString(screen, created_at.x+1,
             created_at.y + 1 + (drawn*TILE_HEIGHT),
             items[i].clickable_text.str,
-            Colors::nearblack,
+            SDL_MapRGB(screen->format, 107, 107, 139),
             Colors::Interface::color[Colors::Interface::Type::text_bg], false);
         }
         else
