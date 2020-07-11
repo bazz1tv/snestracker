@@ -56,6 +56,7 @@ static void updateRecentFiles(Menu_Bar::File_Context *fc)
     if (RecentFiles::paths[i] != NULL)
     {
       fc->menu_items[RECENTFILE_STARTIDX - 1].is_visible = true; // enable the recentfiles HEADLINE
+      fc->menu_items[RECENTFILE_STARTIDX + NUM_RECENTFILES].is_visible = true; // enable the end-of-recentfiles separator
       fc->menu_items[RECENTFILE_STARTIDX + i].is_visible = true; // enable the entry
       fc->menu_items[RECENTFILE_STARTIDX + i].clickable_text.str = RecentFiles::dnames[i];
       fc->menu_items[RECENTFILE_STARTIDX + i].clickable_text.init_width_height();

@@ -83,8 +83,12 @@ void RecentFiles::push(const char *path)
       const char *p = paths[NUM_RECENTFILES - 1];
       const char *d = dnames[NUM_RECENTFILES - 1];
       if (! ( d < ( p + strlen(p) ) ) )
+      {
         SDL_free(dnames[NUM_RECENTFILES - 1]);
+        //dnames[NUM_RECENTFILES - 1] = NULL
+      }
       SDL_free(paths[NUM_RECENTFILES - 1]);
+      //paths[NUM_RECENTFILES - 1] = NULL;
     }
 
     // move everything up the list
@@ -97,13 +101,13 @@ void RecentFiles::push(const char *path)
     paths[0] = (char *) SDL_malloc( sizeof(char) * ( strlen(path) + 1) );
     strcpy(paths[0], path);
 
-    dnames[0] = (char *) Utility::getFileName(path);
+    dnames[0] = (char *) Utility::getFileName(paths[0]);
 
     /* Now, check if there are entries with the same filename but in different folders */
     bool change = false;
     for (int i=1; i < ( NUM_RECENTFILES ); i++)
     {
-        if (strcmp(dnames[0], dnames[i]) == 0)
+        if (dnames[i] && strcmp(dnames[0], dnames[i]) == 0)
         {
           char *dirname = Utility::getDirectoryName(paths[i]);
           char *dirfile = (char *) SDL_malloc( 
@@ -128,7 +132,6 @@ void RecentFiles::push(const char *path)
       strcat(dirfile, dirname);
 
       dnames[0] = dirfile;
-      change = true;
     }
   }
 }

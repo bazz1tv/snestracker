@@ -53,7 +53,7 @@ struct Menu_Bar
       {"5", false, openRecent, (void *)5},
       {"6", false, openRecent, (void *)6},
       {"7", false, openRecent, (void *)7},
-      {"--", true},
+      {"--", false},
 ////////////////////////////////////////////////////////
       {"Quit",         true,  quit,       NULL},
 ////////////////////////////////////////////////////////
