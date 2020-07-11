@@ -116,8 +116,8 @@ struct Menu_Bar
     Expanding_List menu;
     Context_Menu_Item menu_items[5] =
     {
-      {"-",      true,  NULL,  NULL, false},
       { "About", true, NULL, NULL },
+      {"-",      true,  NULL,  NULL, false},
       { "Patreon \x01", true, clicked_patreon, NULL },
       { "Merch", true, clicked_merch, NULL },
       {"", false, NULL, NULL}
