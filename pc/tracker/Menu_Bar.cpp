@@ -55,6 +55,7 @@ static void updateRecentFiles(Menu_Bar::File_Context *fc)
   {
     if (RecentFiles::paths[i] != NULL)
     {
+      fc->menu_items[RECENTFILE_STARTIDX - 2].is_visible = true; // enable the recentfiles HEAD spacer
       fc->menu_items[RECENTFILE_STARTIDX - 1].is_visible = true; // enable the recentfiles HEADLINE
       fc->menu_items[RECENTFILE_STARTIDX + NUM_RECENTFILES].is_visible = true; // enable the end-of-recentfiles separator
       fc->menu_items[RECENTFILE_STARTIDX + i].is_visible = true; // enable the entry
@@ -316,6 +317,17 @@ int Menu_Bar::File_Context::export_wav(void *data)
 void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 {
   this->x = x; this->y = y;
+
+  file_context.menu.linespace = 4;
+  edit_context.menu.linespace = 4;
+  window_context.menu.linespace = 4;
+  about_context.menu.linespace = 4;
+
+  file_context.menu.hpadding = CHAR_WIDTH;
+  edit_context.menu.hpadding = CHAR_WIDTH;
+  window_context.menu.hpadding = CHAR_WIDTH;
+  about_context.menu.hpadding = CHAR_WIDTH;
+
   file_context.menu.preload(x, y);
   x +=  ( strlen(file_context.menu_items[0].clickable_text.str)
           * CHAR_WIDTH ) + CHAR_WIDTH*2;

@@ -14,8 +14,8 @@ bool Context_Menu::coord_is_in_menu(const int &x, const int &y, const int idx)
 
   b1 = x >= created_at.x;
   b2 = x < (created_at.x + greatest_length);
-  b3 = y >= ( created_at.y + (idx * TILE_HEIGHT) );
-  b4 = y <  ( created_at.y + (idx * TILE_HEIGHT) + TILE_HEIGHT );
+  b3 = y >= ( created_at.y + (idx * (TILE_HEIGHT + linespace)) );
+  b4 = y <  ( created_at.y + (idx * (TILE_HEIGHT + linespace)) + TILE_HEIGHT );
 
   /*DEBUGLOG("idx = %d\n", idx);
   if (b1)
@@ -177,7 +177,7 @@ void Context_Menu::draw(SDL_Surface *screen)
       if (items[i].enabled == false)
       {
         sdlfont_drawString(screen, created_at.x+1,
-                         created_at.y + 1 + (drawn*TILE_HEIGHT),
+                         created_at.y + 1 + (drawn*(TILE_HEIGHT + linespace)),
                          items[i].clickable_text.str,
                          Colors::nearblack, bg_color, false);
       }
@@ -188,7 +188,7 @@ void Context_Menu::draw(SDL_Surface *screen)
             // draw the highlighter
             if (should_highlight_hover)
             {
-              SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT),
+              SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT + linespace),
                             created_at.w, TILE_HEIGHT};
               SDL_FillRect(screen, &r, Colors::magenta);
               bg_color = Colors::magenta;
@@ -198,7 +198,7 @@ void Context_Menu::draw(SDL_Surface *screen)
         {
           if (&items[i] == currently_selected_item )
           {
-            SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT),
+            SDL_Rect r = {created_at.x, created_at.y + drawn*(TILE_HEIGHT + linespace),
                           created_at.w, TILE_HEIGHT};
             SDL_FillRect(screen, &r, Colors::magenta);
             bg_color = Colors::magenta;
@@ -206,7 +206,7 @@ void Context_Menu::draw(SDL_Surface *screen)
         }
         // draw this nigga
         sdlfont_drawString(screen, created_at.x+1,
-                           created_at.y + 1 + (drawn*TILE_HEIGHT),
+                           created_at.y + 1 + (drawn*(TILE_HEIGHT + linespace)),
                            items[i].clickable_text.str,
                            Colors::white, bg_color, false);
       }
@@ -242,5 +242,5 @@ void Context_Menu::preload(int &x, int &y, bool use_cache)
   }
 
   created_at.w = greatest_length+TILE_WIDTH*3;
-  created_at.h = visible_items*TILE_HEIGHT + TILE_HEIGHT/2;
+  created_at.h = visible_items*(TILE_HEIGHT + linespace) + TILE_HEIGHT/2;
 }

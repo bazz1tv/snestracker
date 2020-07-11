@@ -128,6 +128,8 @@ is_static(isStatic)
 void Expanding_List::preload(int x, int y, bool use_cache/*=false*/)
 {
   Context_Menu::preload(x,y,use_cache);
+  //created_at.y += (TILE_HEIGHT) + linespace;
+  //created_at.h -= (TILE_HEIGHT) + linespace;
   single_item_rect.x = created_at.x;
   single_item_rect.y = created_at.y;
   if (is_static)
@@ -135,7 +137,7 @@ void Expanding_List::preload(int x, int y, bool use_cache/*=false*/)
   else single_item_rect.w = created_at.w;
   
   single_item_rect.h = TILE_HEIGHT;
-  if (!is_static) created_at.y += TILE_HEIGHT;
+  if (!is_static) created_at.y += TILE_HEIGHT + linespace;
   
 }
 
@@ -145,9 +147,9 @@ void Expanding_List::draw(SDL_Surface *screen)
   if (is_static) i = 0;
   //visible_items=0;
   //greatest_length=0;
-
+  Uint32 snesBG = SDL_MapRGB(screen->format, 57, 56, 106);
   // draw background panel
-  if (is_active) SDL_FillRect(screen, &created_at, SDL_MapRGB(screen->format, 57, 56, 106));  
+  if (is_active) SDL_FillRect(screen, &created_at, snesBG);  
   //SDL_FillRect(screen, &single_item_rect, SDL_MapRGB(screen->format, 67, 66, 106));
 
   // find highlighted strip
@@ -160,7 +162,7 @@ void Expanding_List::draw(SDL_Surface *screen)
   {
     if (is_static)
     {
-      SDL_FillRect(screen, &single_item_rect, Colors::black);
+      SDL_FillRect(screen, &single_item_rect, snesBG);
     }
     //SDL_FillRect(screen, &created_at, Colors::black);
     //fprintf(stderr, "TTT");
@@ -179,22 +181,29 @@ void Expanding_List::draw(SDL_Surface *screen)
           // draw the highlighter if enabled
           if (items[i].enabled && (items[i].clickable_text.str && items[i].clickable_text.str[0] != '-') && ((is_static && i !=0) || !is_static))
           {
-            SDL_Rect r = {created_at.x, created_at.y + (drawn)*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
+            SDL_Rect r = {
+              created_at.x,
+              created_at.y + (drawn)*(TILE_HEIGHT + linespace) - (linespace / 2),
+              created_at.w,
+              TILE_HEIGHT + linespace
+            };
             SDL_FillRect(screen, &r, SDL_MapRGB(screen->format, 127, 107, 226)); // or blue 206
           }
         }
         // Draw "locked out" color text if this row is disabled
         if (items[i].enabled == false)
         {
-          sdlfont_drawString(screen, created_at.x+1,
-            created_at.y + 1 + (drawn*TILE_HEIGHT),
+          sdlfont_drawString(screen, created_at.x+1+hpadding,
+            created_at.y + 1 + (drawn*(TILE_HEIGHT + linespace)),
             items[i].clickable_text.str,
             SDL_MapRGB(screen->format, 107, 107, 139),
             Colors::Interface::color[Colors::Interface::Type::text_bg], false);
         }
         else
         {
-            sdlfont_drawString(screen, created_at.x+1, created_at.y + 1 + ((drawn)*TILE_HEIGHT) /*+ (i > 0 ? TILE_HEIGHT:0)*/, 
+            sdlfont_drawString(screen,
+              created_at.x + 1 + (i == 0 ? 0 : hpadding),
+              created_at.y + 1 + ((drawn)*(TILE_HEIGHT + linespace)) /*+ (i > 0 ? TILE_HEIGHT:0)*/, 
               items[i].clickable_text.str, Colors::Interface::color[Colors::Interface::Type::text_fg],
               Colors::Interface::color[Colors::Interface::Type::text_bg], false);
         }

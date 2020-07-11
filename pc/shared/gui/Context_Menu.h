@@ -48,4 +48,8 @@ struct Context_Menu
   Context_Menu_Item *currently_selected_item=NULL;
   int currently_selected_item_index=0;
   int highlighted_item_index=0, highlighted_item_draw_index=0;
+
+  //V3
+  int linespace=0;
+  int hpadding=0;
 };

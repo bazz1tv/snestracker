@@ -32,7 +32,7 @@ struct Menu_Bar
 		nfdchar_t filepath[500];
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[20] =
+    Context_Menu_Item menu_items[21] =
     {
       {"File",         true,  NULL,       NULL},
 ////////////////////////////////////////////////////////
@@ -44,6 +44,7 @@ struct Menu_Bar
       {"Export SPC",   true,  export_spc, NULL},
       {"Export WAV",   true,  export_wav, NULL, false},
 ////////////////////////////////////////////////////////
+      {" ", false, NULL, NULL, false},
       {"-- Recent Files --", false, NULL, NULL},
       {"0", false, openRecent, (void *)0},
       {"1", false, openRecent, (void *)1},
@@ -53,14 +54,14 @@ struct Menu_Bar
       {"5", false, openRecent, (void *)5},
       {"6", false, openRecent, (void *)6},
       {"7", false, openRecent, (void *)7},
-      {"--", false},
+      {" ", false, NULL, NULL, false},
 ////////////////////////////////////////////////////////
       {"Quit",         true,  quit,       NULL},
 ////////////////////////////////////////////////////////
       {"",             false, NULL,      NULL}
     };
 
-#define RECENTFILE_STARTIDX 9
+#define RECENTFILE_STARTIDX 10
   };
 
   struct Edit_Context
