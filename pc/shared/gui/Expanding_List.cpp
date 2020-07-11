@@ -147,7 +147,7 @@ void Expanding_List::draw(SDL_Surface *screen)
   //greatest_length=0;
 
   // draw background panel
-  if (is_active) SDL_FillRect(screen, &created_at, SDL_MapRGB(screen->format, 67, 66, 106));  
+  if (is_active) SDL_FillRect(screen, &created_at, SDL_MapRGB(screen->format, 57, 56, 106));  
   //SDL_FillRect(screen, &single_item_rect, SDL_MapRGB(screen->format, 67, 66, 106));
 
   // find highlighted strip
