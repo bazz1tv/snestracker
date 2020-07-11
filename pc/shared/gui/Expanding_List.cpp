@@ -180,7 +180,7 @@ void Expanding_List::draw(SDL_Surface *screen)
           if (items[i].enabled && (items[i].clickable_text.str && items[i].clickable_text.str[0] != '-') && ((is_static && i !=0) || !is_static))
           {
             SDL_Rect r = {created_at.x, created_at.y + (drawn)*(TILE_HEIGHT), created_at.w, TILE_HEIGHT};
-            SDL_FillRect(screen, &r, Colors::black);
+            SDL_FillRect(screen, &r, SDL_MapRGB(screen->format, 127, 107, 226)); // or blue 206
           }
         }
         // Draw "locked out" color text if this row is disabled
