@@ -274,7 +274,7 @@ int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int 
     strcpy(RecentFiles::paths[ibuffer], parts[2]);
     if (count > 3)
     {
-      for (i=2; i < count; i++)
+      for (i=3; i < count; i++)
       {
         strcat(RecentFiles::paths[ibuffer], " ");
         strcat(RecentFiles::paths[ibuffer], parts[i]);

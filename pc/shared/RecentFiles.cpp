@@ -2,6 +2,8 @@
 #include "SDL.h"
 #include "utility.h"
 #include "font.h"
+#include "DEBUGLOG.h"
+#include <assert.h>
 
 char * RecentFiles::paths[NUM_RECENTFILES];
 char * RecentFiles::dnames[NUM_RECENTFILES];
@@ -82,11 +84,8 @@ void RecentFiles::push(const char *path)
     {
       const char *p = paths[NUM_RECENTFILES - 1];
       const char *d = dnames[NUM_RECENTFILES - 1];
-      if (! ( d < ( p + strlen(p) ) ) )
-      {
-        SDL_free(dnames[NUM_RECENTFILES - 1]);
-        //dnames[NUM_RECENTFILES - 1] = NULL
-      }
+      SDL_free(dnames[NUM_RECENTFILES - 1]);
+
       SDL_free(paths[NUM_RECENTFILES - 1]);
       //paths[NUM_RECENTFILES - 1] = NULL;
     }
@@ -101,7 +100,10 @@ void RecentFiles::push(const char *path)
     paths[0] = (char *) SDL_malloc( sizeof(char) * ( strlen(path) + 1) );
     strcpy(paths[0], path);
 
-    dnames[0] = (char *) Utility::getFileName(paths[0]);
+    char *filename = (char *) Utility::getFileName(paths[0]);
+    dnames[0] = (char *) SDL_malloc( sizeof(char) * ( strlen(filename) + 1 + 1) );
+    strcpy(dnames[0], FONT_BULLETPOINT_STR);
+    strcat(dnames[0], filename);
 
     /* Now, check if there are entries with the same filename but in different folders */
     bool change = false;
@@ -116,6 +118,9 @@ void RecentFiles::push(const char *path)
           strcpy(dirfile, dnames[i]);
           strcat(dirfile, " " FONT_LONGDASH_STR FONT_LONGDASH_STR " " FONT_FOLDER_STR);
           strcat(dirfile, dirname);
+
+          if (dnames[i] != NULL)
+            SDL_free(dnames[NUM_RECENTFILES - 1]);
 
           dnames[i] = dirfile;
           change = true;
@@ -140,7 +145,15 @@ void RecentFiles::createDisplayNames()
 {
   for (int i=0; i < NUM_RECENTFILES; i++)
   {
-    dnames[i] = (char *) Utility::getFileName(paths[i]);
+    DEBUGLOG("\tpath: %s\n", paths[i]);
+    if (paths[i] != NULL)
+    {
+      char *filename = (char *) Utility::getFileName(paths[i]);
+      assert(filename != NULL);
+      dnames[i] = (char *) SDL_malloc( sizeof(char) * ( strlen(filename) + 1 + 1) );
+      strcpy(dnames[i], FONT_BULLETPOINT_STR);
+      strcat(dnames[i], filename);
+    }
   }
 
   for (int i=0; i < ( NUM_RECENTFILES - 1 ); i++)
@@ -148,7 +161,7 @@ void RecentFiles::createDisplayNames()
     bool change = false;
     for (int j=i+1; j < NUM_RECENTFILES; j++)
     {
-      if (strcmp(dnames[i], dnames[j]) == 0)
+      if (dnames[i] && dnames[j] && strcmp(dnames[i], dnames[j]) == 0)
       {
         char *dirname = Utility::getDirectoryName(paths[j]);
         char *dirfile = (char *) SDL_malloc( 

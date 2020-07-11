@@ -18,8 +18,24 @@ unsigned char font[] = {
 0b11111000,
 0b00000000,
 
-0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,
+// 0x03, period in middle veritcal
+0b00000000,
+0b00000000,
+0b00000000,
+0b00010000,
+0b00000000,
+0b00000000,
+0b00000000,
+
+// 0x04, period in middle veritcal
+0b00000000,
+0b00000000,
+0b00110000,
+0b01111000,
+0b00110000,
+0b00000000,
+0b00000000,
+
 0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
@@ -134,14 +150,8 @@ unsigned char font[] = {
 0b01111110,
 0b00000000,
 
-// 0x5f, period in middle veritcal
-0b00000000,
-0b00000000,
-0b00000000,
-0b00010000,
-0b00000000,
-0b00000000,
-0b00000000,
+// 0x5f, underscore
+0,0,0,0,0,0,0x7e,
 
 // 0x60, period in middle veritcal
 0b00000000,
@@ -256,7 +266,7 @@ unsigned char tmp[] = {
 
 unsigned char *font_getChar(char c)
 {
-	if (c < 0x20 && c > 2) {
+	if (c < 0x20 && c > 4) {
 		c = 0x2e; // replace invalid chars by '.'
 	}
 	if (c>=0x61 && c<=0x7a) { c &= 0xdf; } // convert lowercase to uppercase
