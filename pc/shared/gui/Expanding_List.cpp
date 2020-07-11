@@ -91,7 +91,7 @@ leftclick:
           fprintf(stderr, "highlighted_item_index = %d\n", highlighted_item_index);
           if (highlighted_item_index == 0 && ev.type == SDL_MOUSEBUTTONUP) break;
           /* Only call the row's callback if we were in its coord area */
-          if (coord_is_in_menu(ev.button.x, ev.button.y, highlighted_item_index))
+          if (coord_is_in_menu(ev.button.x, ev.button.y, highlighted_item_draw_index))
           {
             //DEBUGLOG("did a thing!\n");
             do_thing();
@@ -174,6 +174,7 @@ void Expanding_List::draw(SDL_Surface *screen)
         {
           highlighted_item = &items[i];
           highlighted_item_index = i;
+          highlighted_item_draw_index = drawn;
 
           // draw the highlighter if enabled
           if (items[i].enabled && (items[i].clickable_text.str && items[i].clickable_text.str[0] != '-') && ((is_static && i !=0) || !is_static))

@@ -10,6 +10,7 @@
 #include "sdl_dblclick.h"
 #include "globals.h"
 #include "Screen.h"
+#include "RecentFiles.h"
 
 int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
              SDL_Texture **sdlTexture, SDL_Surface **screen,
@@ -28,7 +29,7 @@ int main(int argc, char **argv)
 
   render.windowID = SDL_GetWindowID(render.sdlWindow);
   SdlNfd::init(render.sdlWindow);
-
+  RecentFiles::init();
 
   App app(argc, argv, 32000);
   app.run();

@@ -17,10 +17,7 @@ struct Menu_Bar
   
   struct File_Context
   {
-    File_Context() : menu(menu_items, true)
-    {
-      memset(filepath, 0, 500);
-    }
+    File_Context();
 
     static int new_song(void *data);
     static int open_song(void *data);
@@ -30,11 +27,12 @@ struct Menu_Bar
     static int export_spc(void *data);
     static int export_wav(void *data);
     static int quit(void *data) { ::quitting = true; return 0; }
+    static int openRecent(void *i);
 
 		nfdchar_t filepath[500];
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[10] =
+    Context_Menu_Item menu_items[16] =
     {
       {"File",         true,  NULL,       NULL},
 ////////////////////////////////////////////////////////
@@ -45,10 +43,20 @@ struct Menu_Bar
 			{"Save as...",   true,  save_as_song,  this},
       {"Export SPC",   true,  export_spc, NULL},
       {"Export WAV",   true,  export_wav, NULL, false},
+////////////////////////////////////////////////////////
+      {"-- Recent Files --", false, NULL, NULL},
+      {"0", false, openRecent, (void *)0},
+      {"1", false, openRecent, (void *)1},
+      {"2", false, openRecent, (void *)2},
+      {"3", false, openRecent, (void *)3},
+      {"--", true},
+////////////////////////////////////////////////////////
       {"Quit",         true,  quit,       NULL},
 ////////////////////////////////////////////////////////
       {"",             false, NULL,      NULL}
     };
+
+#define RECENTFILE_STARTIDX 9
   };
 
   struct Edit_Context

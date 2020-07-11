@@ -8,6 +8,7 @@
 #include "Tracker.h"
 
 #include "shared/SdlNfd.h"
+#include "shared/RecentFiles.h"
 
 extern Tracker *tracker;
 
@@ -47,6 +48,77 @@ void Menu_Bar::draw(SDL_Surface *screen)
   context_menus.draw(screen);
 }
 
+static void updateRecentFiles(Menu_Bar::File_Context *fc)
+{
+  /* Check for populated strings */
+  for (int i=0; i < NUM_RECENTFILES; i++)
+  {
+    if (RecentFiles::paths[i] != NULL)
+    {
+      fc->menu_items[RECENTFILE_STARTIDX - 1].is_visible = true; // enable the recentfiles HEADLINE
+      fc->menu_items[RECENTFILE_STARTIDX + i].is_visible = true; // enable the entry
+      fc->menu_items[RECENTFILE_STARTIDX + i].clickable_text.str = RecentFiles::paths[i];
+      fc->menu_items[RECENTFILE_STARTIDX + i].clickable_text.init_width_height();
+    }
+    else
+    {
+      fc->menu_items[RECENTFILE_STARTIDX + i].is_visible = false; // enable the entry
+    }
+  }
+
+  fc->menu.preload(fc->menu.created_at.x, fc->menu.created_at.y);
+}
+
+int Menu_Bar::File_Context::openRecent(void *i)
+{
+  intptr_t idx = (intptr_t) i;
+  const char *path = RecentFiles::paths[idx];
+
+  if (::tracker->song.changed)
+  {
+    int rc = ::tracker->DialogUnsavedChanges();
+    //DEBUGLOG("rc = %d\n", rc);
+    if (rc == -1) // file didn't save, or user pressed cancel
+      return -1;
+    // 0 means file saved or user pressed no saving
+  }
+
+  SDL_RWops *file = SDL_RWFromFile(path, "r");
+  if (file == NULL)
+  {
+    char tmpbuf[500];
+    sprintf(tmpbuf, "Warning: Unable to open file %s!\n %s", path,
+            SDL_GetError() );
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                   "Could not open FILE!",
+                   tmpbuf,
+                   NULL);
+    // TODO
+    //RecentFiles::remove(idx);
+    return NFD_ERROR;
+  }
+
+  auto rc = ::tracker->read_from_file(file);
+
+  if (rc == 0)
+  {
+    /*Successful. Update the current song's filepath */
+    strncpy(::tracker->menu_bar.context_menus.file_context.filepath, path, 500);
+    /* Add the filename to the RecentFiles list */
+    RecentFiles::push(path); //psuedo-code
+    /* Update the Open Recent Context Menu! */
+    updateRecentFiles(&::tracker->menu_bar.context_menus.file_context);
+  }
+
+  return rc;
+}
+
+Menu_Bar::File_Context::File_Context() : menu(menu_items, true)
+{
+  memset(filepath, 0, 500);
+
+  updateRecentFiles(this);
+}
 
 int Menu_Bar::File_Context::new_song(void *data)
 {
@@ -93,8 +165,11 @@ int Menu_Bar::File_Context::open_song(void *data)
 	if (rc == 0)
 	{
 		/*Successful. Update the current song's filepath */
-
 		strncpy(fc->filepath, SdlNfd::outPath, 500);
+    /* Add the filename to the RecentFiles list */
+    RecentFiles::push(fc->filepath); //psuedo-code
+    /* Update the Open Recent Context Menu! */
+    updateRecentFiles(fc);
 	}
 
 	return rc;
