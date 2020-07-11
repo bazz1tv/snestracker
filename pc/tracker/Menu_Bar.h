@@ -45,7 +45,7 @@ struct Menu_Bar
       {"Export WAV",   true,  export_wav, NULL, false},
 ////////////////////////////////////////////////////////
       {" ", false, NULL, NULL, false},
-      {"-- Recent Files --", false, NULL, NULL},
+      {"Recent Files:", false, NULL, NULL},
       {"0", false, openRecent, (void *)0},
       {"1", false, openRecent, (void *)1},
       {"2", false, openRecent, (void *)2},

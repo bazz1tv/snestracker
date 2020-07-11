@@ -149,7 +149,13 @@ void Expanding_List::draw(SDL_Surface *screen)
   //greatest_length=0;
   Uint32 snesBG = SDL_MapRGB(screen->format, 57, 56, 106);
   // draw background panel
-  if (is_active) SDL_FillRect(screen, &created_at, snesBG);  
+  if (is_active)
+  {
+    SDL_Rect r = created_at;
+    r.y += CHAR_HEIGHT;
+    r.h -= CHAR_HEIGHT;
+    SDL_FillRect(screen, &r, snesBG);
+  }
   //SDL_FillRect(screen, &single_item_rect, SDL_MapRGB(screen->format, 67, 66, 106));
 
   // find highlighted strip
@@ -162,7 +168,7 @@ void Expanding_List::draw(SDL_Surface *screen)
   {
     if (is_static)
     {
-      SDL_FillRect(screen, &single_item_rect, snesBG);
+      SDL_FillRect(screen, &single_item_rect, Colors::white);
     }
     //SDL_FillRect(screen, &created_at, Colors::black);
     //fprintf(stderr, "TTT");
@@ -201,11 +207,14 @@ void Expanding_List::draw(SDL_Surface *screen)
         }
         else
         {
+          //DEBUGLOG("i=%d, str=%s\n", i, items[i].clickable_text.str);
             sdlfont_drawString(screen,
               created_at.x + 1 + (i == 0 ? 0 : hpadding),
               created_at.y + 1 + ((drawn)*(TILE_HEIGHT + linespace)) /*+ (i > 0 ? TILE_HEIGHT:0)*/, 
-              items[i].clickable_text.str, Colors::Interface::color[Colors::Interface::Type::text_fg],
-              Colors::Interface::color[Colors::Interface::Type::text_bg], false);
+              items[i].clickable_text.str,
+              ( i == 0 ? Colors::black : Colors::Interface::color[Colors::Interface::Type::text_fg] ),
+              ( i == 0 ? Colors::white : Colors::Interface::color[Colors::Interface::Type::text_bg] ),
+              ( i == 0 ? true : false));
         }
         drawn++;
       }
