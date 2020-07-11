@@ -9,8 +9,15 @@ unsigned char font[] = {
 0b00111110,
 0b00011100,
 0b00001000,
+// 0x02 folder
+0b00000000,
+0b00000000,
+0b11000000,
+0b11111000,
+0b11111000,
+0b11111000,
+0b00000000,
 
-0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
@@ -249,7 +256,7 @@ unsigned char tmp[] = {
 
 unsigned char *font_getChar(char c)
 {
-	if (c < 0x20 && c > 1) {
+	if (c < 0x20 && c > 2) {
 		c = 0x2e; // replace invalid chars by '.'
 	}
 	if (c>=0x61 && c<=0x7a) { c &= 0xdf; } // convert lowercase to uppercase

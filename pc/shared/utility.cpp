@@ -18,6 +18,36 @@ const char * getFileName(const char *s)
   (whoami = strrchr(s, sep)) ? ++whoami : (whoami = NULL);
   return whoami;
 }
+
+char * getDirectoryName(const char *s)
+{
+  static char *newstr = NULL;
+  if (s == NULL)
+    return ("");
+
+  char sep = '/';
+
+#ifdef _WIN32
+  sep = '\\';
+#endif
+
+  if (newstr != NULL)
+    SDL_free(newstr);
+
+  newstr = (char *) SDL_malloc( sizeof(char) * ( strlen(s) + 1 ) );
+  strcpy(newstr, s);
+
+  char *filename = (char *) getFileName(newstr);
+  if (filename == NULL)
+    return NULL;
+
+  *(filename - 1) = 0; // turn the '/' to NULL char
+  char *whoami;
+  (whoami = strrchr(newstr, sep)) ? ++whoami : (whoami = NULL);
+  return whoami;
+}
+
+
   extern int random(int min, int max);
 
 SDL_Texture *load_texture_bmp( const char *path, SDL_Renderer *r )

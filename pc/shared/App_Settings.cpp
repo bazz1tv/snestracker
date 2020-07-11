@@ -280,6 +280,8 @@ int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int 
         strcat(RecentFiles::paths[ibuffer], parts[i]);
       }
     }
+
+    RecentFiles::createDisplayNames();
     fprintf(stderr, "Recent file %02d set to %s\n", ibuffer, RecentFiles::paths[ibuffer]);
   }
   else
