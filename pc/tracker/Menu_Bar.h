@@ -32,10 +32,11 @@ struct Menu_Bar
 		nfdchar_t filepath[500];
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[21] =
+    Context_Menu_Item menu_items[22] =
     {
       {"File",         true,  NULL,       NULL},
 ////////////////////////////////////////////////////////
+      {"-", true, NULL, NULL, false},
       {"New Song",     true,  new_song,   this},
       {"Open ST-Song", true,  open_song,  this},
 			{"Open ST-SPC",  true,  open_spc,   NULL, false},
@@ -44,8 +45,8 @@ struct Menu_Bar
       {"Export SPC",   true,  export_spc, NULL},
       {"Export WAV",   true,  export_wav, NULL, false},
 ////////////////////////////////////////////////////////
-      {" ", false, NULL, NULL, false},
-      {"Recent Files:", false, NULL, NULL},
+      {"-", false, NULL, NULL, false},
+      {"Recent Files:", false, NULL, NULL, false, false},
       {"0", false, openRecent, (void *)0},
       {"1", false, openRecent, (void *)1},
       {"2", false, openRecent, (void *)2},
@@ -54,14 +55,14 @@ struct Menu_Bar
       {"5", false, openRecent, (void *)5},
       {"6", false, openRecent, (void *)6},
       {"7", false, openRecent, (void *)7},
-      {" ", false, NULL, NULL, false},
+      {"-", false, NULL, NULL, false},
 ////////////////////////////////////////////////////////
       {"Quit",         true,  quit,       NULL},
 ////////////////////////////////////////////////////////
       {"",             false, NULL,      NULL}
     };
 
-#define RECENTFILE_STARTIDX 10
+#define RECENTFILE_STARTIDX 11
   };
 
   struct Edit_Context
@@ -78,7 +79,7 @@ struct Menu_Bar
     Context_Menu_Item menu_items[6] = 
     {
       {"Edit",        true,  NULL,                 NULL},
-      {"------",      true,  NULL,                 NULL},
+      {"-",           true,  NULL,                 NULL, false},
       {"Copy",        true,  copy,                 NULL, false},
       {"Paste",       true,  paste,                NULL, false},
       {"Options",     true,  open_options_window,  NULL},
@@ -99,7 +100,7 @@ struct Menu_Bar
     Context_Menu_Item menu_items[7] = 
     {
       {"Window",               true,  NULL,  NULL},
-      {"-------------",        true,  NULL,  NULL},
+      {"-",                    true,  NULL,  NULL, false},
       {"Nothing here yet :9",  true,  NULL,  NULL},
       {"",                     false, NULL,  NULL}
     };
@@ -113,8 +114,9 @@ struct Menu_Bar
     static int clicked_merch(void *nada);
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[3 + 1] =
+    Context_Menu_Item menu_items[5] =
     {
+      {"-",      true,  NULL,  NULL, false},
       { "About", true, NULL, NULL },
       { "Patreon \x01", true, clicked_patreon, NULL },
       { "Merch", true, clicked_merch, NULL },

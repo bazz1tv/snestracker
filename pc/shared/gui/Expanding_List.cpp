@@ -188,7 +188,7 @@ void Expanding_List::draw(SDL_Surface *screen)
           highlighted_item_draw_index = drawn;
 
           // draw the highlighter if enabled
-          if (items[i].enabled && (items[i].clickable_text.str && items[i].clickable_text.str[0] != '-') && ((is_static && i !=0) || !is_static))
+          if (items[i].enabled && ((is_static && i !=0) || !is_static))
           {
             SDL_Rect r = {
               created_at.x,
@@ -199,25 +199,39 @@ void Expanding_List::draw(SDL_Surface *screen)
             SDL_FillRect(screen, &r, SDL_MapRGB(screen->format, 127, 107, 226)); // or blue 206
           }
         }
-        // Draw "locked out" color text if this row is disabled
-        if (items[i].enabled == false)
+
+        if (items[i].clickable_text.str[0] == '-')
         {
-          sdlfont_drawString(screen, created_at.x+1+hpadding,
-            created_at.y + 1 + (TILE_HEIGHT / 2) + (drawn*(TILE_HEIGHT + linespace)),
-            items[i].clickable_text.str,
-            SDL_MapRGB(screen->format, 107, 107, 139),
-            Colors::Interface::color[Colors::Interface::Type::text_bg], false);
+          SDL_Rect r = {
+            created_at.x + 1 + ( i == 0 ? 0 : hpadding ),
+            created_at.y + 1 + ( is_static && i == 0 ? 0 : (TILE_HEIGHT / 2)) + ((drawn)*(TILE_HEIGHT + linespace)) + 2,
+            created_at.w - hpadding*2,
+            1
+          };
+          SDL_FillRect(screen, &r, SDL_MapRGB(screen->format, 112, 98, 199));
         }
         else
         {
-          //DEBUGLOG("i=%d, str=%s\n", i, items[i].clickable_text.str);
-            sdlfont_drawString(screen,
-              created_at.x + 1 + ( i == 0 ? 0 : hpadding ),
-              created_at.y + 1 + ( is_static && i == 0 ? 0 : (TILE_HEIGHT / 2)) + ((drawn)*(TILE_HEIGHT + linespace)) /*+ (i > 0 ? TILE_HEIGHT:0)*/, 
+          // Draw "locked out" color text if this row is disabled
+          if (items[i].enabled == false)
+          {
+            sdlfont_drawString(screen, created_at.x+1+hpadding,
+              created_at.y + 1 + (TILE_HEIGHT / 2) + (drawn*(TILE_HEIGHT + linespace)),
               items[i].clickable_text.str,
-              ( is_static && i == 0 ? Colors::black : Colors::Interface::color[Colors::Interface::Type::text_fg] ),
-              ( is_static && i == 0 ? Colors::white : Colors::Interface::color[Colors::Interface::Type::text_bg] ),
-              ( is_static && i == 0 ? true : false));
+              items[i].darken ? SDL_MapRGB(screen->format, 107, 107, 139) : Colors::Interface::color[Colors::Interface::Type::text_fg],
+              Colors::Interface::color[Colors::Interface::Type::text_bg], false);
+          }
+          else
+          {
+            //DEBUGLOG("i=%d, str=%s\n", i, items[i].clickable_text.str);
+              sdlfont_drawString(screen,
+                created_at.x + 1 + ( i == 0 ? 0 : hpadding ),
+                created_at.y + 1 + ( is_static && i == 0 ? 0 : (TILE_HEIGHT / 2)) + ((drawn)*(TILE_HEIGHT + linespace)) /*+ (i > 0 ? TILE_HEIGHT:0)*/, 
+                items[i].clickable_text.str,
+                ( is_static && i == 0 ? Colors::black : Colors::Interface::color[Colors::Interface::Type::text_fg] ),
+                ( is_static && i == 0 ? Colors::white : Colors::Interface::color[Colors::Interface::Type::text_bg] ),
+                ( is_static && i == 0 ? true : false));
+          }
         }
         drawn++;
       }

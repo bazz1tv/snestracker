@@ -5,12 +5,14 @@ struct Context_Menu_Item
 {
   Context_Menu_Item(const char *str="", bool is_visible=false,
                     int (*action)(void *)=NULL, void *data=NULL,
-                    bool enabled=true);
+                    bool enabled=true, bool darken=true);
   Clickable_Text clickable_text;
   bool is_visible;
 
   // V2
   bool enabled;
+  // V3
+  bool darken;
 };
 
 struct Context_Menu
