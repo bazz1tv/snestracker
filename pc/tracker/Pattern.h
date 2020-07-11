@@ -330,7 +330,7 @@ private:
   void dec_curtrack();
 
   // needs to be renamed
-  void notehelper(int ndex);
+  void notehelper(int ndex, bool absmidi=false);
   void instrhelper(int n);
   void volhelper(int n);
   void fxhelper(int n);

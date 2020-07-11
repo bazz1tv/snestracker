@@ -1538,11 +1538,11 @@ Pattern * get_current_pattern(PatSeqPanel *psp)
   return &psp->patseq->patterns[psp->patseq->sequence[psp->currow]].p;
 }
 
-void PatternEditorPanel::notehelper(int ndex)
+void PatternEditorPanel::notehelper(int ndex, bool absmidi/*=false*/)
 {
   Pattern *pat = get_current_pattern(psp);
   PatternRow *pw = &pat->trackrows[cur_track][currow];
-  int n = NOTE_C0 + ndex + (cur_octave * 12);
+  int n = NOTE_C0 + ndex + ( absmidi ? 0 : (cur_octave * 12) );
   if (n <= NOTE_D6)
   {
     if (recording)
@@ -1824,6 +1824,20 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
         }
 
       } break;
+    case SDL_USEREVENT:
+    {
+      if (ev.user.code == UserEvents::play_pitch)
+      {
+        uintptr_t tmp = (uintptr_t)ev.user.data1;
+        unsigned char pitch = (unsigned char)tmp;
+        DEBUGLOG("tmp=%d, pitch=%d\n", tmp, pitch);
+        notehelper(pitch - 12, true);
+      }
+      else if (ev.user.code == UserEvents::keyoff)
+      {
+        ::player->spc_write_dsp(dsp_reg::koff, 0xff);
+      }
+    } break;
     default:break;
   }
 }
