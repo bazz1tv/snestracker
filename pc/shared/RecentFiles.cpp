@@ -70,7 +70,7 @@ void RecentFiles::push(const char *path)
     /* If the last item is not NULL, free it */
     if (paths[NUM_RECENTFILES - 1] != NULL)
     {
-      SDL_free(paths[NUM_RECENTFILES]);
+      SDL_free(paths[NUM_RECENTFILES - 1]);
     }
 
     // move everything up the list

@@ -1,6 +1,6 @@
 #pragma once
 
-#define NUM_RECENTFILES 4
+#define NUM_RECENTFILES 8
 namespace RecentFiles
 {
   void init();

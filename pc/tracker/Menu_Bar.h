@@ -32,7 +32,7 @@ struct Menu_Bar
 		nfdchar_t filepath[500];
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[16] =
+    Context_Menu_Item menu_items[20] =
     {
       {"File",         true,  NULL,       NULL},
 ////////////////////////////////////////////////////////
@@ -49,6 +49,10 @@ struct Menu_Bar
       {"1", false, openRecent, (void *)1},
       {"2", false, openRecent, (void *)2},
       {"3", false, openRecent, (void *)3},
+      {"4", false, openRecent, (void *)4},
+      {"5", false, openRecent, (void *)5},
+      {"6", false, openRecent, (void *)6},
+      {"7", false, openRecent, (void *)7},
       {"--", true},
 ////////////////////////////////////////////////////////
       {"Quit",         true,  quit,       NULL},
