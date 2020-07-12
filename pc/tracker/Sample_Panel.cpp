@@ -335,6 +335,42 @@ int Sample_Panel::load(void *spanel)
       return -1;
     }
 
+    uint16_t loop = 0;
+    if (brrsize % 9 != 0)
+    {
+      /* This might be an AddmusicM header / c700 file */
+      DEBUGLOG("This might be c700\n");
+      /* This might be a c700 BRR file */
+      if (brrsize % 9 == 2)
+      {
+        DEBUGLOG("This might be c700\n");
+        //Brr *c700 = &buf[2];
+        Brr end;
+
+        auto startLocation = SDL_RWtell(file);
+
+        SDL_RWseek(file, brrsize - 9, RW_SEEK_SET);
+        SDL_RWread(file, &end, 1, 1);
+        SDL_RWseek(file, startLocation, RW_SEEK_SET);
+        if (end.end)
+        {
+          SDL_RWread(file, &loop, 2, 1);
+          brrsize -= 2;
+        }
+        else
+        {
+          // No end block, invalid file
+          DEBUGLOG("\t No end block.\n");
+          return -1;
+        }
+      }
+      else
+      {
+        DEBUGLOG("invalid file\n");
+        return -1; // invalid file
+      }
+    }
+
     Brr *brr = (Brr *) malloc(brrsize);
 
     Sint64 nb_read_total = 0, nb_read = 1;
@@ -351,9 +387,12 @@ int Sample_Panel::load(void *spanel)
       return -1;
     }
 
+
+
     s->clear();
     s->brr = brr;
     s->brrsize = brrsize;
+    s->rel_loop = loop;
 
     strncpy(s->name, Utility::getFileName(outPath), SAMPLE_NAME_MAXLEN - 1);
     s->name[SAMPLE_NAME_MAXLEN-1] = 0;
