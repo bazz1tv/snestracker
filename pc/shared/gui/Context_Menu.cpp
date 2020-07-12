@@ -252,5 +252,5 @@ void Context_Menu::preload(int &x, int &y, bool use_cache)
   }
 
   created_at.w = greatest_length+TILE_WIDTH*3;
-  created_at.h = visible_items*(TILE_HEIGHT + linespace) + TILE_HEIGHT/2 + TILE_HEIGHT/2;
+  created_at.h = visible_items*(TILE_HEIGHT + linespace) + TILE_HEIGHT/2;// + TILE_HEIGHT/2;
 }

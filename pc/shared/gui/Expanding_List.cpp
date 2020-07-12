@@ -128,6 +128,7 @@ is_static(isStatic)
 void Expanding_List::preload(int x, int y, bool use_cache/*=false*/)
 {
   Context_Menu::preload(x,y,use_cache);
+  created_at.h += TILE_HEIGHT / 2;
   //created_at.y += (TILE_HEIGHT) + linespace;
   //created_at.h -= (TILE_HEIGHT) + linespace;
   single_item_rect.x = created_at.x;

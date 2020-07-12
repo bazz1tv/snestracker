@@ -43,6 +43,8 @@ Audio_Options::Context::Context(Audio_Options *ao) : ao(ao)
   menu->should_highlight_currently_selected_item = true;
   menu->currently_selected_item = &menu->items[selected_index];
   menu->currently_selected_item_index = selected_index;
+  menu->linespace = 4;
+  menu->hpadding = CHAR_WIDTH;
 }
 
 Audio_Options::Context::~Context()
