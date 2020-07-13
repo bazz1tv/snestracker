@@ -206,6 +206,21 @@ askagain:
   //return 0;
 }
 
+#define SET_PLAYBACK_BUTTONS(truefalse) \
+main_window.plwidget.patlen_decbtn.enabled = truefalse;\
+main_window.plwidget.patlen_incbtn.enabled = truefalse;\
+main_window.patseqpanel.clonebtn.enabled = truefalse;\
+main_window.patseqpanel.seqbtn.enabled = truefalse;\
+main_window.patseqpanel.clearbtn.enabled = truefalse;\
+main_window.patseqpanel.insbtn.enabled = truefalse;\
+main_window.patseqpanel.zapbtn.enabled = truefalse;\
+main_window.patseqpanel.incpatbtn.enabled = truefalse;\
+main_window.patseqpanel.decpatbtn.enabled = truefalse;\
+main_window.patseqpanel.movePatUpbtn.enabled = truefalse;\
+main_window.patseqpanel.movePatDownbtn.enabled = truefalse;\
+main_window.samplepanel.loadbtn.enabled = truefalse;\
+main_window.instrpanel.loadbtn.enabled = truefalse
+
 bool Tracker::rendering() { return playback || instr_render; }
 
 void Tracker::handle_events()
@@ -480,34 +495,14 @@ void Tracker::handle_events()
             {
 							render_to_apu(repeat_pattern);
               // prevent user from decreasing pattern length
-              main_window.plwidget.patlen_decbtn.enabled = false;
-              main_window.plwidget.patlen_incbtn.enabled = false;
-              main_window.patseqpanel.clonebtn.enabled = false;
-              main_window.patseqpanel.seqbtn.enabled = false;
-              main_window.patseqpanel.clearbtn.enabled = false;
-              main_window.patseqpanel.insbtn.enabled = false;
-              main_window.patseqpanel.zapbtn.enabled = false;
-              main_window.patseqpanel.incpatbtn.enabled = false;
-              main_window.patseqpanel.decpatbtn.enabled = false;
-              main_window.patseqpanel.movePatUpbtn.enabled = false;
-              main_window.patseqpanel.movePatDownbtn.enabled = false;
+              SET_PLAYBACK_BUTTONS(false);
             }
 						else
             {
 							::player->fade_out(true);
               // pause taken care of in sound_stop userevent called from fadeout thread
               // Re-enable the pattern length decrement button
-              main_window.plwidget.patlen_decbtn.enabled = true;
-              main_window.plwidget.patlen_incbtn.enabled = true;
-              main_window.patseqpanel.clonebtn.enabled = true;
-              main_window.patseqpanel.seqbtn.enabled = true;
-              main_window.patseqpanel.clearbtn.enabled = true;
-              main_window.patseqpanel.insbtn.enabled = true;
-              main_window.patseqpanel.zapbtn.enabled = true;
-              main_window.patseqpanel.incpatbtn.enabled = true;
-              main_window.patseqpanel.decpatbtn.enabled = true;
-              main_window.patseqpanel.movePatUpbtn.enabled = true;
-              main_window.patseqpanel.movePatDownbtn.enabled = true;
+              SET_PLAYBACK_BUTTONS(true);
             }
           }
 					break;
@@ -1200,6 +1195,8 @@ void Tracker::reset()
 
 	// Reset Other GUI elements
   Voice_Control::unmute_all();
+  /* enable all critical playback buttons that may have been disabled if we are in playback state */
+  SET_PLAYBACK_BUTTONS(true);
 
 	/* HACKS */
 	/* Since the BPM and SPD widgets do not constantly poll (they normally
