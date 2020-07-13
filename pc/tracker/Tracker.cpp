@@ -591,6 +591,9 @@ void Tracker::handle_events()
             }
           }
 					break;
+          default:
+            //DEBUGLOG("scancode = %08x\n", scancode);
+          break;
         }
       } break;
       case SDL_KEYUP:

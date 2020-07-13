@@ -1,3 +1,4 @@
+#include "platform.h"
 #include "Pattern.h"
 #include "PanelCommon.h"
 #include "sdl_userevents.h"
@@ -1940,6 +1941,9 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
       dec_currow();
     break;
     case SDLK_INSERT:
+#ifdef PLATFORM_MACOSX          // On my Macbook Pro with El Capitan, the usual keycode for INSERT
+    case SDLK_KP_ENTER: // Fn + Enter is giving this code, so let's make sure to process it on Mac.
+#endif
       if (MODONLY(mod, KMOD_SHIFT))
         for (int t=0; t < MAX_TRACKS; t++)
           moveforward(get_current_pattern(psp), t, currow);
