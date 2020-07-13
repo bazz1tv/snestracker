@@ -484,17 +484,20 @@ void Tracker::handle_events()
 					case SDLK_RETURN:
           {
             bool repeat_pattern = false;
+            bool startFromPlayhead = false;
 						if (Text_Edit_Rect::cur_editing_ter != NULL)
 							break;
 
-            if (MODONLY(mod, KMOD_SHIFT))
+            if (mod & CMD_CTRL_KEY)
+              startFromPlayhead = true;
+            if (mod & KMOD_SHIFT)
               repeat_pattern = true;
 
 						playback = !playback;
 						if (playback)
             {
-							render_to_apu(repeat_pattern);
-              // prevent user from decreasing pattern length
+							render_to_apu(repeat_pattern, startFromPlayhead);
+              // prevent user from decreasing pattern length, etc
               SET_PLAYBACK_BUTTONS(false);
             }
 						else
@@ -650,7 +653,9 @@ int Tracker::calcTicks()
 
 void Tracker::renderCurrentInstrument()
 {
-  DEBUGLOG("render_to_apu(); playback: %d\n", playback);
+  DEBUGLOG("renderCurrentInstrument(); instr_render: %d, playback: %d\n",
+    instr_render, playback);
+
   ::player->pause(0, false, false);
   ::player->start_track(0);
   // SPC player fade to virtually never end (24 hours -> ms)
@@ -766,7 +771,7 @@ void Tracker::renderCurrentInstrument()
   instr_render = true;
 }
 
-void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
+void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhead/*=false*/)
 {
   DEBUGLOG("render_to_apu(); playback: %d\n", playback);
   ::player->pause(0, false, false);
@@ -1008,7 +1013,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 
 	uint16_t instrtable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4);
 	//                             {applied size of DIR}  {INSTR TABLE SIZE}
-	uint16_t sampletable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4) + ( (apuRender.highest_instr + 1) * 0x4);
+	uint16_t sampletable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4) + ( (apuRender.highest_instr + 1) * 0x2);
 
 	apuram->instrtable_ptr = instrtable_i;
 
@@ -1096,7 +1101,13 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 
   // set flag whether to repeat the pattern, and also set the bit to skip
   // the echobuf clear
-  apuram->extflags |= (repeat_pattern << EXTFLAGS_REPEATPATTERN) | (1 << EXTFLAGS_SKIP_ECHOBUF_CLEAR);
+  apuram->extflags |= (repeat_pattern << EXTFLAGS_REPEATPATTERN) | (1 << EXTFLAGS_SKIP_ECHOBUF_CLEAR)
+                    | (startFromPlayhead << EXTFLAGS_START_FROM_PLAYHEAD);
+
+//  if (startFromPlayhead)
+  // This is only actually used when startFromPlayhead is true
+  apuram->startPatRow = main_window.pateditpanel.currow;
+  //DEBUGLOG("startPatRow: %d\n", apuram->startPatRow);
 	// PATTERN SEQUENCER END
 
   // SONG SETTINGS

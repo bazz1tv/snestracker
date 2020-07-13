@@ -81,14 +81,8 @@ PlaySongFromSetPatternCmd:
   mov a, #0
   mov reportTrackerArg, a
   mov reportTrackerCmd, #reportTrackerCmd_SetRow
-  ; reset the 8 voice rle counters (stale values can cause playback order issues)
-  mov x, #7
-- mov rlecounters + x, a
-  dec x
-  bpl -
 
   set1 flags.bPlaySong
-
   ret
 
 .macro lda

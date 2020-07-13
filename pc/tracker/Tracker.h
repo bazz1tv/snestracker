@@ -49,7 +49,7 @@ public:
 	void dec_patlen();
 
   void renderCurrentInstrument();
-  void render_to_apu(bool repeat_pattern = false);
+  void render_to_apu(bool repeat_pattern = false, bool startFromPlayhead = false);
   int calcTicks();
 
 	void reset();

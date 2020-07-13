@@ -37,6 +37,7 @@ sequencer_i db ; index into the sequencer table
 patterntable_ptr  dw ; pattern table turns pattern index into pattern address
 
 extflags db
+startPatRow db        ; Only used when StartFromPlayhead extflag is active
 
 ; SongSettings vals
 mvol_val db
@@ -262,8 +263,30 @@ LoadPattern:
   mov x, #7
 - call !Loadptrack_ptr
   call !readahead ; will "plant" a future tick KOFF if note encountered
+                  ; reset the 8 voice rle counters (stale values can cause playback order issues)
+  mov a, #0
+  mov rlecounters + x, a
   dec x
   bpl -
+
+  ; New Feature : StartFromPlayhead
+  bbc extflags.START_FROM_PLAYHEAD, @noStartFromPlayhead
+  bbs extflags.REPEATPATTERN, +
+  clr1 extflags.START_FROM_PLAYHEAD ; If we are not repeating the pattern, unset this flag
+                                    ; so the rest of the song continues as normal (upon pattern reload)
+  ; Read pattern rows until we arrive at the desired pattern
++ mov dspaddr, #koff
+  mov dspdata, #$FF
+- cmp startPatRow, inc_to_patlen
+  beq +
+  call !ReadPTracks ; The idea is to speed through playback without actually writing to DSP
+  bra -
++ ;clr1 extflags.START_FROM_PLAYHEAD
+  mov konbuf, #0
+  mov dspaddr, #koff
+  mov dspdata, #$FF
+@noStartFromPlayhead
+
 __ret:
   ret
 
