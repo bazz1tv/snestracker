@@ -32,6 +32,20 @@ void RecentFiles::deinit()
   }
 }
 
+void RecentFiles::remove(int idx)
+{
+  if (paths[idx])
+    SDL_free(paths[idx]);
+  if (dnames[idx])
+    SDL_free(dnames[idx]);
+
+  for (int i = idx; i < (NUM_RECENTFILES - 1); i++)
+  {
+    paths[i] = paths[i+1];
+    dnames[i] = dnames[i+1];
+  }
+}
+
 void RecentFiles::push(const char *path)
 {
   fprintf(stderr, "RecentFiles::push()!\n");
@@ -85,7 +99,6 @@ void RecentFiles::push(const char *path)
       const char *p = paths[NUM_RECENTFILES - 1];
       const char *d = dnames[NUM_RECENTFILES - 1];
       SDL_free(dnames[NUM_RECENTFILES - 1]);
-
       SDL_free(paths[NUM_RECENTFILES - 1]);
       //paths[NUM_RECENTFILES - 1] = NULL;
     }

@@ -6,6 +6,7 @@ namespace RecentFiles
   void init();
   void deinit();
   void push(const char *path);
+  void remove(int idx);
   void createDisplayNames();
 
   extern char *paths[NUM_RECENTFILES];

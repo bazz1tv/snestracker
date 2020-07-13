@@ -96,7 +96,9 @@ int Menu_Bar::File_Context::openRecent(void *i)
                    tmpbuf,
                    NULL);
     // TODO
-    //RecentFiles::remove(idx);
+    RecentFiles::remove(idx);
+    updateRecentFiles(&::tracker->menu_bar.context_menus.file_context);
+
     return NFD_ERROR;
   }
 
@@ -194,6 +196,11 @@ static int save_common(Menu_Bar::File_Context *fc, SDL_RWops *file, nfdchar_t *f
 	::tracker->save_to_file(file);
 
 	strncpy(fc->filepath, filepath, 500);
+
+  /* Add the filename to the RecentFiles list */
+  RecentFiles::push(filepath); //psuedo-code
+  /* Update the Open Recent Context Menu! */
+  updateRecentFiles(&::tracker->menu_bar.context_menus.file_context);
 	return NFD_OKAY;
 }
 
