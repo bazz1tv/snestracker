@@ -1928,9 +1928,44 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
   {
     case SDLK_DELETE:
 		{
-			Pattern *p = get_current_pattern(psp);
-			uint8_t instr = p->trackrows[cur_track][currow].instr;
-			p->trackrows[cur_track][currow] = PatternRow();
+      switch (highlighted_subsection) {
+        case NOTE:
+        {
+          Pattern *p = get_current_pattern(psp);
+          p->trackrows[cur_track][currow] = PatternRow();
+        }
+        break;
+        case INSTR_HI:
+        case INSTR_LO:
+        {
+          Pattern *p = get_current_pattern(psp);
+          p->trackrows[cur_track][currow].instr = 0;
+        }
+        break;
+        case VOL_HI:
+        case VOL_LO:
+        {
+          Pattern *p = get_current_pattern(psp);
+          p->trackrows[cur_track][currow].vol = 0;
+        }
+        break;
+        case FX:
+        {
+          Pattern *p = get_current_pattern(psp);
+          p->trackrows[cur_track][currow].fx = 0;
+          p->trackrows[cur_track][currow].fxparam = 0;
+        }
+        break;
+        case FXPARAM_HI:
+        case FXPARAM_LO:
+        {
+          Pattern *p = get_current_pattern(psp);
+          p->trackrows[cur_track][currow].fx = 0;
+          p->trackrows[cur_track][currow].fxparam = 0;
+        }
+        break;
+        default:break;
+      }
 		}
     break;
     case SDLK_BACKSPACE:
