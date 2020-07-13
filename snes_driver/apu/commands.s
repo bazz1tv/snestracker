@@ -75,12 +75,12 @@ PlaySongFromSetPatternCmd:
   ; although the pattern player will eventually update the tracker, this
   ; immediate update gives the impression of a snappy tracker response.
   ; send a setpattern and setrow command to tracker
-  mov a, sequencer_i
-  mov reportTrackerArg, a
-  mov reportTrackerCmd, #reportTrackerCmd_SetPattern
-  mov a, #0
-  mov reportTrackerArg, a
-  mov reportTrackerCmd, #reportTrackerCmd_SetRow
+  ; mov a, sequencer_i
+  ; mov reportTrackerArg, a
+  ; mov reportTrackerCmd, #reportTrackerCmd_SetPattern
+  ; mov a, #0
+  ; mov reportTrackerArg, a
+  ; mov reportTrackerCmd, #reportTrackerCmd_SetRow
 
   set1 flags.bPlaySong
   ret

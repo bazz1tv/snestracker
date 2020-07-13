@@ -271,11 +271,8 @@ LoadPattern:
 
   ; New Feature : StartFromPlayhead
   bbc extflags.START_FROM_PLAYHEAD, @noStartFromPlayhead
-  bbs extflags.REPEATPATTERN, +
-  clr1 extflags.START_FROM_PLAYHEAD ; If we are not repeating the pattern, unset this flag
-                                    ; so the rest of the song continues as normal (upon pattern reload)
   ; Read pattern rows until we arrive at the desired pattern
-+ mov dspaddr, #koff
+  mov dspaddr, #koff
   mov dspdata, #$FF
 - cmp startPatRow, inc_to_patlen
   beq +
@@ -285,6 +282,10 @@ LoadPattern:
   mov konbuf, #0
   mov dspaddr, #koff
   mov dspdata, #$FF
+  bbs extflags.REPEATPATTERN, +
+  clr1 extflags.START_FROM_PLAYHEAD ; If we are not repeating the pattern, unset this flag
+                                    ; so the rest of the song continues as normal (upon pattern reload)
++
 @noStartFromPlayhead
 
 __ret:
@@ -1163,11 +1164,15 @@ ReadPTracks:
 @report:
   dec a ; the tracker should highlight the row that has just been
   ; processed, rather than the next row yet to be processed
-  mov reportTrackerArg, a
+  bbc extflags.START_FROM_PLAYHEAD, +
+  cmp startPatRow, inc_to_patlen
+  bcs @dont_update_tracker_pos
++ mov reportTrackerArg, a
   mov reportTrackerCmd, #reportTrackerCmd_SetRow
   mov a, sequencer_i
   mov reportTrackerArg, a
   mov reportTrackerCmd, #reportTrackerCmd_SetPattern
+@dont_update_tracker_pos
   ret
 
 ; IN: x = curtrack

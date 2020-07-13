@@ -1985,7 +1985,7 @@ void PatternEditorPanel::set_currow(int row)
   {
 		rows_scrolled = currow - VISIBLE_ROWS + 1;
   }
-	else
+	else if (currow < VISIBLE_ROWS)
   {
     //DEBUGLOG("set rows_scrolled to 0");
 		rows_scrolled = 0;
