@@ -97,6 +97,12 @@ public:
 
 private:
 	SpcReport spcreport;
+
+  /* The following variables are exclusively for the Alt-Return "Return playhead
+   * to original position functionality" */
+  int psp_currow_stash, pep_currow_stash;
+  int psp_rows_scrolled_stash, pep_rows_scrolled_stash;
+  bool alt_return_was_held;
 };
 
 uint8_t calcESAfromEDL(uint8_t edl);

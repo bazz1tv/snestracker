@@ -1980,10 +1980,16 @@ void PatternEditorPanel::set_currow(int row)
 	if ( ! (row < get_current_pattern(psp)->len) )
     row = get_current_pattern(psp)->len - 1;
 	currow = row;
+  //DEBUGLOG("currow = %d, rows_scrolled = %d, rs + vr = %d\n", currow, rows_scrolled, rows_scrolled + VISIBLE_ROWS);
 	if (currow >= (rows_scrolled + VISIBLE_ROWS))
+  {
 		rows_scrolled = currow - VISIBLE_ROWS + 1;
+  }
 	else
+  {
+    //DEBUGLOG("set rows_scrolled to 0");
 		rows_scrolled = 0;
+  }
 }
 
 void PatternEditorPanel::inc_currow(int howmany/*=1*/, bool wrap/*=true*/)

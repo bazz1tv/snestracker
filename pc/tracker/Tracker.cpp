@@ -399,13 +399,16 @@ void Tracker::handle_events()
           }
           break;
 					case UserEvents::report_tracker_incrow:
-						main_window.pateditpanel.inc_currow();
+            if(playback)
+						  main_window.pateditpanel.inc_currow();
 					break;
 					case UserEvents::report_tracker_setrow:
-						main_window.pateditpanel.set_currow((intptr_t)ev.user.data1);
+            if(playback)
+						  main_window.pateditpanel.set_currow((intptr_t)ev.user.data1);
 					break;
 					case UserEvents::report_tracker_setpattern:
-						main_window.patseqpanel.set_currow((intptr_t)ev.user.data1);
+            if(playback)
+						  main_window.patseqpanel.set_currow((intptr_t)ev.user.data1);
 					break;
         }
       } break;
@@ -483,15 +486,30 @@ void Tracker::handle_events()
           break;
 					case SDLK_RETURN:
           {
+            if (ev.key.repeat != 0) // Do not process key held down repeat events for this key
+              break;
             bool repeat_pattern = false;
             bool startFromPlayhead = false;
 						if (Text_Edit_Rect::cur_editing_ter != NULL)
 							break;
 
-            if (mod & CMD_CTRL_KEY)
+            if (MODONLY(mod, KMOD_ALT))
+            {
+              alt_return_was_held = true;
+              /* mark copies of the patseqpanel->currow and pateditpanel->currow for later restoration */
+              psp_currow_stash  = main_window.patseqpanel.currow;
+              pep_currow_stash = main_window.pateditpanel.currow;
+              psp_rows_scrolled_stash  = main_window.patseqpanel.rows_scrolled;
+              pep_rows_scrolled_stash = main_window.pateditpanel.rows_scrolled;
               startFromPlayhead = true;
-            if (mod & KMOD_SHIFT)
-              repeat_pattern = true;
+            }
+            else
+            {
+              if (mod & CMD_CTRL_KEY)
+                startFromPlayhead = true;
+              if (mod & KMOD_SHIFT)
+                repeat_pattern = true;
+            }
 
 						playback = !playback;
 						if (playback)
@@ -575,6 +593,33 @@ void Tracker::handle_events()
 					break;
         }
       } break;
+      case SDL_KEYUP:
+      {
+        int scancode = ev.key.keysym.sym;
+        int mod = ev.key.keysym.mod;
+        switch (scancode)
+        {
+          case SDLK_RETURN:
+            if(alt_return_was_held)
+            {
+              alt_return_was_held = false;
+              playback = false;
+              ::player->fade_out(true);
+              // pause taken care of in sound_stop userevent called from fadeout thread
+              // Re-enable the pattern length decrement button
+              SET_PLAYBACK_BUTTONS(true);
+              //SDL_FlushEvent(SDL_USEREVENT);
+              main_window.patseqpanel.currow = psp_currow_stash;
+              main_window.pateditpanel.currow = pep_currow_stash;
+              main_window.patseqpanel.rows_scrolled = psp_rows_scrolled_stash;
+              main_window.pateditpanel.rows_scrolled = pep_rows_scrolled_stash;
+              //DEBUGLOG("set psp->currow to %d, pep->currow to %d\n",
+                //patseqpanel_currow_stash, pateditpanel_currow_stash);
+            }
+          break;
+        }
+      }
+      break;
       default:break;
     }
 
@@ -1380,6 +1425,7 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 			{
 				case REPORT_TRACKER_INCROW:
 				{
+          //DEBUGLOG("REPORT::TRACKER::INCROW");
 					SDL_Event uev;
 					uev.type = SDL_USEREVENT;
 					uev.user.code = UserEvents::report_tracker_incrow;
@@ -1388,6 +1434,7 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 				}
 				case REPORT_TRACKER_SETROW:
 				{
+          //DEBUGLOG("REPORT::TRACKER::SETROW");
 					SDL_Event uev;
 					uev.type = SDL_USEREVENT;
 					uev.user.data1 = (void *)arg;
