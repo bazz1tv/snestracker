@@ -2391,7 +2391,12 @@ void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
     for (int r=0; r < min(VISIBLE_ROWS, (pat->len - rows_scrolled)); r++)
     {
       index_text[r].str = index_strings[rows_scrolled + r];
-      index_text[r].draw(screen,
+      if ( (rows_scrolled + r) % 4 == 0)
+        index_text[r].draw(screen,
+          Colors::yellow,
+          false);
+      else
+        index_text[r].draw(screen,
           Colors::Interface::color[Colors::Interface::Type::text_fg],
           false);
 
