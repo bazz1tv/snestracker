@@ -2062,10 +2062,10 @@ void PatternEditorPanel::events_kb_universal(const int scancode, const int mod)
         pattern_wrap = !pattern_wrap;
     break;
     case SDLK_PAGEUP:
-      dec_currow(16, false);
+      dec_currow(VISIBLE_ROWS > 16 ? 16 : VISIBLE_ROWS, false);
     break;
     case SDLK_PAGEDOWN:
-      inc_currow(16, false);
+      inc_currow(VISIBLE_ROWS > 16 ? 16 : VISIBLE_ROWS, false);
     break;
     case SDLK_HOME:
       currow = 0;
