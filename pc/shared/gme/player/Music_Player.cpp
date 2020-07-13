@@ -628,7 +628,6 @@ static const char* sound_init( long sample_rate, int buf_size,
 
 void sound_start()
 {
-  SDL_UnlockAudioDevice(::audio->devices.id);
 	if (!Music_Player::exporting)
 		SDL_PauseAudioDevice(::audio->devices.id, 0);
 }
@@ -636,10 +635,6 @@ void sound_start()
 void sound_stop()
 {
 	SDL_PauseAudioDevice(::audio->devices.id, 1);
-	
-	// be sure audio thread is not active
-	SDL_LockAudioDevice(::audio->devices.id);
-  SDL_UnlockAudioDevice(::audio->devices.id);
 }
 
 void sound_cleanup()
