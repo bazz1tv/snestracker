@@ -615,7 +615,7 @@ PatSeqPanel::PatSeqPanel(PatternSequencer *patseq) :
   seqbtn("New", PatSeqPanel::seq, this),
   clearbtn("Del", PatSeqPanel::clear, this),
   insbtn("Ins", PatSeqPanel::insertPat, this),
-  zapbtn("Zap", PatSeqPanel::zapPat, this),
+  zapbtn("Clr", PatSeqPanel::zapPat, this),
   incpatbtn("+", PatSeqPanel::incpat, this),
   decpatbtn("-", PatSeqPanel::decpat, this),
   movePatUpbtn(FONT_CODE_V_TRI_STR, PatSeqPanel::movePatUp, this),
@@ -1004,6 +1004,8 @@ int PatSeqPanel::zapPat(void *pspanel)
   memset(pm, 0, sizeof(PatternMeta));
   pm->p.len = lenBackup;
   pm->used = 1;
+
+  //clear(pspanel);
 }
 
 ////////////////////// START PATTERN EDITOR STUFF ///////////////////////
