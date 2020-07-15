@@ -206,6 +206,14 @@ askagain:
   //return 0;
 }
 
+/* Print SNES Tracker, version, followed by str */
+void Tracker::updateWindowTitle(const char *str)
+{
+  /* put the filename in the window title */
+  snprintf(windowStr, PATH_MAX, PROG_NAME_VERSION_STRING " - %s", APP_VERSION, str);
+  SDL_SetWindowTitle(::render->sdlWindow, windowStr);
+}
+
 #define SET_PLAYBACK_BUTTONS(truefalse) \
 main_window.plwidget.patlen_decbtn.enabled = truefalse;\
 main_window.plwidget.patlen_incbtn.enabled = truefalse;\
@@ -1263,6 +1271,8 @@ void Tracker::reset()
 	 * need to manually update it */
 	main_window.bsawidget.updatebpm();
 	main_window.bsawidget.updatespd();
+
+  updateWindowTitle("New Song");
 }
 
 /* TODO: Add sanitization where necessary */

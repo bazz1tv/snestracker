@@ -57,6 +57,8 @@ public:
 	void save_to_file(SDL_RWops *file);
   int DialogUnsavedChanges();
 
+  void updateWindowTitle(const char *str);
+
 	/* Tracker APU RAM mapping */
 	TrackerApuRam *apuram;
   // Vars calculated at APU render time that are useful elsewhere
@@ -103,6 +105,9 @@ private:
   int psp_currow_stash, pep_currow_stash;
   int psp_rows_scrolled_stash, pep_rows_scrolled_stash;
   bool alt_return_was_held;
+
+  /////
+  char windowStr[PATH_MAX];
 };
 
 uint8_t calcESAfromEDL(uint8_t edl);

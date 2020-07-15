@@ -110,7 +110,8 @@ int Menu_Bar::File_Context::openRecent(void *i)
   {
     /*Successful. Update the current song's filepath */
     strncpy(::tracker->menu_bar.context_menus.file_context.filepath, path, 500);
-    /* Add the filename to the RecentFiles list */
+    /* put the filename in the window title */
+    ::tracker->updateWindowTitle( Utility::getFileName(RecentFiles::paths[idx]) );    /* Add the filename to the RecentFiles list */
     RecentFiles::push(path); //psuedo-code
     /* Update the Open Recent Context Menu! */
     updateRecentFiles(&::tracker->menu_bar.context_menus.file_context);
@@ -172,6 +173,8 @@ int Menu_Bar::File_Context::open_song(void *data)
 	{
 		/*Successful. Update the current song's filepath */
 		strncpy(fc->filepath, SdlNfd::outPath, 500);
+    /* put the filename in the window title */
+    ::tracker->updateWindowTitle( Utility::getFileName(fc->filepath) );
     /* Add the filename to the RecentFiles list */
     RecentFiles::push(fc->filepath); //psuedo-code
     /* Update the Open Recent Context Menu! */
@@ -203,6 +206,9 @@ static int save_common(Menu_Bar::File_Context *fc, SDL_RWops *file, nfdchar_t *f
   RecentFiles::push(filepath); //psuedo-code
   /* Update the Open Recent Context Menu! */
   updateRecentFiles(&::tracker->menu_bar.context_menus.file_context);
+
+  /* put the filename in the window title */
+  ::tracker->updateWindowTitle( Utility::getFileName( filepath ) );
 	return NFD_OKAY;
 }
 
