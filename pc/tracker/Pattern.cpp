@@ -1177,7 +1177,7 @@ void PatSeqPanel::set_currow(int row, bool updateScrolled/*=true*/)
   PatternEditorPanel &pep = ::tracker->main_window.pateditpanel;
   if ( pep.currow >= p->len)
     pep.set_currow(p->len - 1);
-  else if ( pep.currow < pep.rows_scrolled )
+  //else if ( pep.currow < pep.rows_scrolled )
     pep.set_currow(pep.currow);
 
   // (when the song is playing, If the user scrolled in the patseqpanel,
@@ -2016,23 +2016,37 @@ void PatternEditorPanel::dec_addval()
 
 void PatternEditorPanel::set_currow(int row)
 {
-	if ( ! (row < get_current_pattern(psp)->len) )
-    row = get_current_pattern(psp)->len - 1;
+  auto patlen = get_current_pattern(psp)->len;
+	if ( ! ( row < patlen ) )
+    row = patlen - 1;
 	currow = row;
-  //DEBUGLOG("currow = %d, rows_scrolled = %d, rs + vr = %d\n", currow, rows_scrolled, rows_scrolled + VISIBLE_ROWS);
-	if (currow >= (rows_scrolled + VISIBLE_ROWS))
+  DEBUGLOG("currow = %d, rows_scrolled = %d, rs + vr = %d\n", currow, rows_scrolled, rows_scrolled + VISIBLE_ROWS);
+	if (currow == 0)
+    rows_scrolled = 0;
+  else if (currow >= (rows_scrolled + VISIBLE_ROWS))
   {
-		rows_scrolled = currow - VISIBLE_ROWS + 1;
+		rows_scrolled = (currow - VISIBLE_ROWS + 1) > 0 ? (currow - VISIBLE_ROWS + 1) : 0;
+    DEBUGLOG("\tset rows_scrolled to %d\n", rows_scrolled);
   }
-	else if (currow < VISIBLE_ROWS)
+	else if (currow < VISIBLE_ROWS && ( rows_scrolled > currow) )
   {
-    //DEBUGLOG("set rows_scrolled to 0\n");
+    DEBUGLOG("\tset rows_scrolled to 0\n");
 		rows_scrolled = 0;
+  }
+  else if ( ( rows_scrolled + VISIBLE_ROWS ) <= patlen &&
+    currow < (VISIBLE_ROWS + rows_scrolled) && ( rows_scrolled <= (currow) ) )
+  {
+    DEBUGLOG("Won't change rows_scrolled\n");
+  }
+  else if ( ( rows_scrolled + VISIBLE_ROWS ) > patlen )
+  /* the very last row is displayed and could be expressed with a lower scroll value */
+  {
+    rows_scrolled = patlen - VISIBLE_ROWS;
   }
   else
   {
-    //DEBUGLOG("ELSE HIT\n");
-    rows_scrolled = currow - VISIBLE_ROWS + 1;
+    DEBUGLOG("ELSE HIT\n");
+    rows_scrolled = (currow - VISIBLE_ROWS + 1) > 0 ? (currow - VISIBLE_ROWS + 1) : 0;
   }
 }
 
