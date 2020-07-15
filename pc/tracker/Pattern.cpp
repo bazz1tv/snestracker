@@ -1013,7 +1013,12 @@ static int get_unused_pattern_index(PatternSequencer *ps)
   for (int i=0; i < MAX_PATTERNS; i++)
   {
     bool skipPat = false;
-    const Pattern *p = &ps->patterns[i].p; 
+    const PatternMeta *pm = &ps->patterns[i];
+    const Pattern *p = &pm->p;
+
+    if (pm->used)
+      continue;
+
     for (int t=0; t < MAX_TRACKS; t++)
     {
       for (int r=0; r < MAX_PATTERN_LEN; r++)
