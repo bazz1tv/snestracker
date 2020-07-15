@@ -172,6 +172,8 @@ else ifeq ($(uname_S), Cross_Windows)
 	EXECUTABLE_TRACKER = st.exe
 	UNRAR = unrar.exe
 	DEC7Z = 7zDec.exe
+
+	OBJECTS_TRACKER := winres.o
 else ifeq ($(uname_S), Windows)
     
 else
@@ -213,7 +215,7 @@ $(wildcard tracker/*/*/*.cpp)
 
 # 
 OBJECTS_DEBUGGER = $(CPPSOURCES_DEBUGGER:.cpp=.o) $(MSOURCES:.m=.o) $(CSOURCES:.c=.o)
-OBJECTS_TRACKER = $(CPPSOURCES_TRACKER:.cpp=.o) $(MSOURCES:.m=.o) $(CSOURCES:.c=.o)
+OBJECTS_TRACKER += $(CPPSOURCES_TRACKER:.cpp=.o) $(MSOURCES:.m=.o) $(CSOURCES:.c=.o)
 
 OBJECTS_DEBUGGER2 = $(addprefix $(OBJ)/, $(OBJECTS_DEBUGGER))
 OBJECTS_TRACKER2 = $(addprefix $(OBJ)/, $(OBJECTS_TRACKER))
@@ -287,6 +289,9 @@ $(OBJ)/%.o: %.cpp
 $(OBJ)/%.o: %.m
 	@mkdir -p $(@D)
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
+
+$(OBJ)/winres.o: winres.rc
+	$(CROSS_COMPILE)windres winres.rc $(OBJ)/winres.o
 	
 clean:
 	@# Remove both Linux and Windows versions of unrar and 7zdec
