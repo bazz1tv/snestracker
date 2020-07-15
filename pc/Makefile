@@ -290,7 +290,7 @@ $(OBJ)/%.o: %.m
 	@mkdir -p $(@D)
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
 
-$(OBJ)/winres.o: winres.rc
+$(OBJ)/winres.o: winres.rc st.ico
 	$(CROSS_COMPILE)windres winres.rc $(OBJ)/winres.o
 	
 clean:
