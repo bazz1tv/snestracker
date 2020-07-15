@@ -2036,16 +2036,18 @@ void PatternEditorPanel::set_currow(int row)
   else if ( ( rows_scrolled + VISIBLE_ROWS ) <= patlen &&
     currow < (VISIBLE_ROWS + rows_scrolled) && ( rows_scrolled <= (currow) ) )
   {
-    DEBUGLOG("Won't change rows_scrolled\n");
+    DEBUGLOG("\tWon't change rows_scrolled\n");
   }
   else if ( ( rows_scrolled + VISIBLE_ROWS ) > patlen )
   /* the very last row is displayed and could be expressed with a lower scroll value */
   {
-    rows_scrolled = patlen - VISIBLE_ROWS;
+    DEBUGLOG("\there\n");
+    int subtract = (patlen > VISIBLE_ROWS) ? patlen : VISIBLE_ROWS;
+    rows_scrolled = subtract - VISIBLE_ROWS;
   }
   else
   {
-    DEBUGLOG("ELSE HIT\n");
+    DEBUGLOG("\tELSE HIT\n");
     rows_scrolled = (currow - VISIBLE_ROWS + 1) > 0 ? (currow - VISIBLE_ROWS + 1) : 0;
   }
 }
