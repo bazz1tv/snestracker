@@ -2026,8 +2026,13 @@ void PatternEditorPanel::set_currow(int row)
   }
 	else if (currow < VISIBLE_ROWS)
   {
-    //DEBUGLOG("set rows_scrolled to 0");
+    //DEBUGLOG("set rows_scrolled to 0\n");
 		rows_scrolled = 0;
+  }
+  else
+  {
+    //DEBUGLOG("ELSE HIT\n");
+    rows_scrolled = currow - VISIBLE_ROWS + 1;
   }
 }
 
