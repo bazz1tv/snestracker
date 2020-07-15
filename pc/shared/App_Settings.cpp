@@ -11,6 +11,7 @@
 #include "DEBUGLOG.h"
 #include "platform.h"
 #include "RecentFiles.h"
+#include "Audio_Options.h"
 
 int App_Settings::MAXLINE=600;
 App_Settings *app_settings;
@@ -242,8 +243,17 @@ int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int 
     {
       fprintf(stderr, "Preferences: Couldn't Parse [%s]\n",  parts[0]);
     }
-    ::player->sample_frame_size = ibuffer;
-    fprintf(stderr, "sample_frame_size set to %d\n", ibuffer);
+
+    // number is out of range or not power of 2
+    if(ibuffer < AUDIO_BUFFER_MIN || ibuffer > AUDIO_BUFFER_MAX ||
+        ( ibuffer != 0 && (ibuffer & (ibuffer-1)) != 0 ) )
+    {
+      DEBUGLOG("incorrect sample_frame_size in preferences: %d\n", ibuffer);
+      ::player->sample_frame_size = DEFAULT_SAMPLE_FRAME_SIZE;
+    }
+    else
+      ::player->sample_frame_size = ibuffer;
+    fprintf(stderr, "sample_frame_size set to %d\n", ::player->sample_frame_size);
   }
   else if ( strcmp( parts[0], "recent_file") == 0 )
   {

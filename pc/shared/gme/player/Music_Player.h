@@ -12,7 +12,7 @@
 #include "gme_m/Spc_Filter.h"
 #include "Audio.h"
 
-#define DEFAULT_SAMPLE_FRAME_SIZE 2048
+#define DEFAULT_SAMPLE_FRAME_SIZE 1024
 
 typedef double gain_t;
 

@@ -34,6 +34,8 @@ struct Audio_Options : public Experience
   } context;
 
   // Audio Buffer Size
+#define AUDIO_BUFFER_MIN 2
+#define AUDIO_BUFFER_MAX 32768
   struct BufferSize
   {
     BufferSize();

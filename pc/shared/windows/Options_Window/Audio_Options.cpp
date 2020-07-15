@@ -92,7 +92,7 @@ void Audio_Options::BufferSize::setCoords(int x, int y)
 int Audio_Options::BufferSize::inc(void *b)
 {
   BufferSize *bs = (BufferSize *) b;
-  if (::player->sample_frame_size <= 262144)
+  if (::player->sample_frame_size < AUDIO_BUFFER_MAX)
   {
     ::player->sample_frame_size *= 2;
     ::player->init(::player->sample_rate, Audio::Devices::selected_audio_out_dev);
@@ -102,7 +102,7 @@ int Audio_Options::BufferSize::inc(void *b)
 int Audio_Options::BufferSize::dec(void *b)
 {
   BufferSize *bs = (BufferSize *) b;
-  if (::player->sample_frame_size >= 2)
+  if (::player->sample_frame_size > AUDIO_BUFFER_MIN)
   {
     ::player->sample_frame_size /= 2;
     ::player->init(::player->sample_rate, Audio::Devices::selected_audio_out_dev);
