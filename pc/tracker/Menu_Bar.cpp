@@ -104,6 +104,8 @@ int Menu_Bar::File_Context::openRecent(void *i)
 
   auto rc = ::tracker->read_from_file(file);
 
+  SDL_RWclose(file);
+
   if (rc == 0)
   {
     /*Successful. Update the current song's filepath */
