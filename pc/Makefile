@@ -280,36 +280,41 @@ st.icns:
 # Depends on ImageMagick
 st.ico: st-icons-png/256-stroked-thick.png st-icons-png/64.png st-icons-png/48.png\
 	st-icons-png/32.png st-icons-png/24.png st-icons-png/16.png Makefile
+	rm -rf $(OBJ)/st-ico/
 	mkdir -p $(OBJ)/st-ico
-	convert st-icons-png/256-stroked-thick.png $(OBJ)/st-ico/256-24bit.ico
-	convert st-icons-png/256-stroked-thick.png -depth 8 -colors 256 $(OBJ)/st-ico/256-8bit.ico
-	convert st-icons-png/256-stroked-thick.png -depth 4 -colors 16 $(OBJ)/st-ico/256-4bit.ico
-	#convert st-icons-png/128-stroked.png $(OBJ)/st-ico/128-24bit.ico
+	convert st-icons-png/256-stroked-thick.png $(OBJ)/st-ico/256-32bit.png
+	#convert st-icons-png/256-stroked-thick.png -depth 8 -colors 256 $(OBJ)/st-ico/256-8bit.ico
+	#convert st-icons-png/256-stroked-thick.png -depth 4 -colors 16 $(OBJ)/st-ico/256-4bit.ico
+	convert st-icons-png/128-stroked.png $(OBJ)/st-ico/128-32bit.png
 	#convert st-icons-png/128-stroked.png -depth 8 -colors 256 $(OBJ)/st-ico/128-8bit.ico
 	#convert st-icons-png/128-stroked.png -depth 4 -colors 16 $(OBJ)/st-ico/128-4bit.ico
-	convert st-icons-png/64.png $(OBJ)/st-ico/64-24bit.ico
-	convert st-icons-png/64.png -depth 8 -colors 256 $(OBJ)/st-ico/64-8bit.ico
-	convert st-icons-png/64.png -depth 4 -colors 16 $(OBJ)/st-ico/64-4bit.ico
-	convert st-icons-png/48.png $(OBJ)/st-ico/48-24bit.ico
-	convert st-icons-png/48.png -depth 8 -colors 256 $(OBJ)/st-ico/48-8bit.ico
-	convert st-icons-png/48.png -depth 4 -colors 16 $(OBJ)/st-ico/48-4bit.ico
-	convert st-icons-png/32.png $(OBJ)/st-ico/32-24bit.ico
-	convert st-icons-png/32.png -depth 8 -colors 256 $(OBJ)/st-ico/32-8bit.ico
-	convert st-icons-png/32.png -depth 4 -colors 16 $(OBJ)/st-ico/32-4bit.ico
+	convert st-icons-png/64.png $(OBJ)/st-ico/64-32bit.png
+	#convert st-icons-png/64.png -depth 8 -colors 256 +dither $(OBJ)/st-ico/64-8bit.png
+	#convert st-icons-png/64.png -depth 4 -colors 16 +dither $(OBJ)/st-ico/64-4bit.png
+	convert st-icons-png/48.png $(OBJ)/st-ico/48-32bit.png
+	convert st-icons-png/48.png -depth 8 -colors 256 +dither $(OBJ)/st-ico/48-8bit.png
+	convert st-icons-png/48.png -depth 4 -colors 16 +dither $(OBJ)/st-ico/48-4bit.png
+	convert st-icons-png/32.png $(OBJ)/st-ico/32-32bit.png
+	convert st-icons-png/32.png -depth 8 -colors 256 +dither $(OBJ)/st-ico/32-8bit.png
+	convert st-icons-png/32.png -depth 4 -colors 16 +dither $(OBJ)/st-ico/32-4bit.png
 	#
-	convert st-icons-png/24.png $(OBJ)/st-ico/24-24bit.ico
-	convert st-icons-png/24.png -depth 8 -colors 256 $(OBJ)/st-ico/24-8bit.ico
-	convert st-icons-png/24.png -depth 4 -colors 16 $(OBJ)/st-ico/24-4bit.ico
-	convert st-icons-png/16.png $(OBJ)/st-ico/16-24bit.ico
-	convert st-icons-png/16.png -depth 8 -colors 256 $(OBJ)/st-ico/16-8bit.ico
-	convert st-icons-png/16.png -depth 4 -colors 16 $(OBJ)/st-ico/16-4bit.ico
-	convert $(OBJ)/st-ico/*.ico st.ico
+	convert st-icons-png/24.png $(OBJ)/st-ico/24-32bit.png
+	convert st-icons-png/24.png -depth 8 -colors 256 +dither $(OBJ)/st-ico/24-8bit.png
+	convert st-icons-png/24.png -depth 4 -colors 16 +dither $(OBJ)/st-ico/24-4bit.png
+	convert st-icons-png/16.png $(OBJ)/st-ico/16-32bit.png
+	convert st-icons-png/16.png -depth 8 -colors 256 +dither $(OBJ)/st-ico/16-8bit.png
+	convert st-icons-png/16.png -depth 4 -colors 16 +dither $(OBJ)/st-ico/16-4bit.png
+	convert $(OBJ)/st-ico/*.png st.ico
 
 $(BIN)/$(EXECUTABLE_DEBUGGER): $(OBJECTS_DEBUGGER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_DEBUGGER2) $(LDFLAGS) -o $@
+	# For the Windows version
+	cp $(BIN)/{std.exe,"$(PRETTY_DEBUGGER).exe"}
 
 $(BIN)/$(EXECUTABLE_TRACKER): $(OBJECTS_TRACKER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_TRACKER2) $(LDFLAGS) -o $@
+	# For the Windows version
+	cp $(BIN)/{st.exe,"$(PRETTY_TRACKER).exe"}
 
 
 $(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(PROJ_DIR)/lzma1505/C/Util/7z/7zMain.c

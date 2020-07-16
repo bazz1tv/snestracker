@@ -11,6 +11,7 @@
 #include "globals.h"
 #include "Screen.h"
 #include "RecentFiles.h"
+#include "platform.h"
 
 static int init_sdl(SDL_Window **sdlWindow, SDL_Renderer **sdlRenderer,
              SDL_Texture **sdlTexture, SDL_Surface **screen,
@@ -52,6 +53,8 @@ lower resolution icon! */
 void SetIcon(SDL_Window* window)
 {
 #include "st_icon32_rle.h"
+
+  DEBUGLOG("SETTING ICON\n");
 
   // these masks are needed to tell SDL_CreateRGBSurface(From)
   // to assume the data it gets is byte-wise RGB(A) data
