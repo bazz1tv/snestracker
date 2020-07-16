@@ -261,6 +261,21 @@ $(BIN)/$(EXECUTABLE_TRACKER).app: st.icns Info.plist osx_ship.sh $(BIN)/$(EXECUT
 	cp -r $@ "$(BIN)/$(PRETTY_TRACKER).app"
 	mv $@/Contents/MacOS/$(EXECUTABLE_TRACKER) "$(BIN)/$(PRETTY_TRACKER).app/Contents/MacOS/$(PRETTY_TRACKER)"
 
+# Automated creation of Mac icon pack (icns) from our PNG renders
+st.icns:
+	mkdir -p $(OBJ)/st.iconset
+	cp st-icons-png/1024-stroked-thick.png $(OBJ)/st.iconset/icon_512x512@2x.png
+	cp st-icons-png/512-stroked-thick.png $(OBJ)/st.iconset/icon_512x512.png
+	cp st-icons-png/512-stroked-thick.png $(OBJ)/st.iconset/icon_256x256@2x.png
+	cp st-icons-png/256-stroked-thick.png $(OBJ)/st.iconset/icon_256x256.png
+	cp st-icons-png/256-stroked-thick.png $(OBJ)/st.iconset/icon_128x128@2x.png
+	cp st-icons-png/128-stroked.png $(OBJ)/st.iconset/icon_128x128.png
+	cp st-icons-png/64.png $(OBJ)/st.iconset/icon_32x32@2x.png
+	cp st-icons-png/32.png $(OBJ)/st.iconset/icon_32x32.png
+	cp st-icons-png/32.png $(OBJ)/st.iconset/icon_16x16@2x.png
+	cp st-icons-png/16.png $(OBJ)/st.iconset/icon_16x16.png
+	iconutil -c icns -o st.icns $(OBJ)/st.iconset
+
 
 $(BIN)/$(EXECUTABLE_DEBUGGER): $(OBJECTS_DEBUGGER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_DEBUGGER2) $(LDFLAGS) -o $@
@@ -310,6 +325,7 @@ clean:
 	rm -f $(BIN)/{7zDec,7zDec.exe}
 	rm -f $(BIN)/$(EXECUTABLE_DEBUGGER);
 	rm -f $(BIN)/$(EXECUTABLE_TRACKER);
+	rm -rf $(OBJ)
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 	rm -f {$(PROJ_DIR)/lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
 	rm -f {$(PROJ_DIR)/unrar/,}{unrar,unrar.exe}
