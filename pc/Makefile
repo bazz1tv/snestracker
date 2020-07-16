@@ -18,6 +18,10 @@ endif
 global_requirements = $(LIBJDKMIDI_LIB) $(CPPSOURCES) $(CSOURCES) $(MSOURCES) \
 $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(EXECUTABLE_TRACKER)
 
+# Pretty (long, space delim) names for the apps
+PRETTY_DEBUGGER = SPC Debugger
+PRETTY_TRACKER = SNES Tracker
+
 # This is where source that both tracker and STD will use. NOTE THE inclusion of the forward slash ;)
 SHARED_DIR = shared/
 PROJ_DIR = ext
@@ -237,6 +241,9 @@ $(BIN)/$(EXECUTABLE_DEBUGGER).app: Info.plist osx_ship.sh $(BIN)/$(EXECUTABLE_DE
 	cp -r $(BIN)/cursors $@/Contents/Resources # Copy mouse icons
 	bash ./osx_ship.sh $@ $(EXECUTABLE_DEBUGGER) $@/Contents/Lib
 	touch $@
+	# Have a pretty version
+	cp -r $@ "$(BIN)/$(PRETTY_DEBUGGER).app"
+	mv $@/Contents/MacOS/$(EXECUTABLE_DEBUGGER) "$(BIN)/$(PRETTY_DEBUGGER).app/Contents/MacOS/$(PRETTY_DEBUGGER)"
 
 $(BIN)/$(EXECUTABLE_TRACKER).app: st.icns Info.plist osx_ship.sh $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
 	mkdir -p $@ $@/Contents/Lib $@/Contents/Resources $@/Contents/MacOS
@@ -250,6 +257,9 @@ $(BIN)/$(EXECUTABLE_TRACKER).app: st.icns Info.plist osx_ship.sh $(BIN)/$(EXECUT
 	bash ./osx_ship.sh $@ $(EXECUTABLE_TRACKER) $@/Contents/Lib
 	#$@/Contents/MacOS/$(EXECUTABLE_TRACKER)
 	touch $@
+	# Have a pretty version
+	cp -r $@ "$(BIN)/$(PRETTY_TRACKER).app"
+	mv $@/Contents/MacOS/$(EXECUTABLE_TRACKER) "$(BIN)/$(PRETTY_TRACKER).app/Contents/MacOS/$(PRETTY_TRACKER)"
 
 
 $(BIN)/$(EXECUTABLE_DEBUGGER): $(OBJECTS_DEBUGGER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
