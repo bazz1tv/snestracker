@@ -31,7 +31,15 @@ int main(int argc, char **argv)
 
   render.windowID = SDL_GetWindowID(render.sdlWindow);
 
+/* Fixes the issue on certain Windows platforms that render a black icon (WINE)
+or half black icon (Win7). The problem probably stems from the ICO file, but since
+we cannot identify it yet, this is the fix.
+
+Be sure NOT to use this function on Mac because it will cause the Dock to use a
+lower resolution icon! */
+#ifdef PLATFORM_WINDOWS
   SetIcon(::render->sdlWindow);
+#endif
 
   SdlNfd::init(render.sdlWindow);
   RecentFiles::init();
@@ -40,6 +48,7 @@ int main(int argc, char **argv)
   app.run();
 }
 
+#ifdef PLATFORM_WINDOWS
 void SetIcon(SDL_Window* window)
 {
 #include "st_icon32_rle.h"
@@ -84,6 +93,7 @@ void SetIcon(SDL_Window* window)
 _free_buf:
   SDL_free(st_icon_pixel_buf);
 }
+#endif /* PLATFORM_WINDOWS */
 
 
 

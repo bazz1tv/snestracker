@@ -238,12 +238,13 @@ $(BIN)/$(EXECUTABLE_DEBUGGER).app: Info.plist osx_ship.sh $(BIN)/$(EXECUTABLE_DE
 	bash ./osx_ship.sh $@ $(EXECUTABLE_DEBUGGER) $@/Contents/Lib
 	touch $@
 
-$(BIN)/$(EXECUTABLE_TRACKER).app: Info.plist osx_ship.sh $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
+$(BIN)/$(EXECUTABLE_TRACKER).app: st.icns Info.plist osx_ship.sh $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
 	mkdir -p $@ $@/Contents/Lib $@/Contents/Resources $@/Contents/MacOS
 	cp $(BIN)/$(EXECUTABLE_TRACKER) $@/Contents/MacOS
 	cp Info.plist $@/Contents
 	cp $(BIN)/$(UNRAR) $@/Contents/Resources
 	cp $(BIN)/$(DEC7Z) $@/Contents/Resources
+	cp st.icns $@/Contents/Resources
 	cp -r $(BIN)/cursors $@/Contents/Resources # Copy mouse icons
 	cp $(BIN)/tracker.spc $@/Contents/Resources # copy SPC driver
 	bash ./osx_ship.sh $@ $(EXECUTABLE_TRACKER) $@/Contents/Lib
