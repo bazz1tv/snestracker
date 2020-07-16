@@ -29,27 +29,6 @@ App::App(int &argc, char **argv, int samplerate/*=44100*/)
   ::player = player;
   app_settings = new App_Settings(file_system);
 
-  assert(::file_system);
-  char *tb = (char *) SDL_malloc(sizeof(char) * PATH_MAX);
-  tb[0] = 0;
-  // quoted data path does not play nice here
-  strcpy(tb, file_system->data_path);
-  strcat(tb, "gfx/32.bmp");
-  DEBUGLOG("path = %s\n", tb);
-    SDL_Surface *appIcon = SDL_LoadBMP(tb);
-  SDL_free(tb);
-  if (!appIcon)
-  {
-    DEBUGLOG("SURFACE: %s\n", SDL_GetError());
-  }
-  else
-  {
-    // hard coded color key should be pulled as a data member later
-    SDL_SetColorKey(appIcon, SDL_TRUE, SDL_MapRGB(appIcon->format, 255, 0, 255));
-    SDL_SetWindowIcon(::render->sdlWindow, appIcon);
-    SDL_FreeSurface(appIcon);
-  }
-
 ///////////// OPEN AUDIO OUTPUT DEVICE ///////////////////////
   const char *outdev = app_settings->vars.audio_out_dev;
 retry:
