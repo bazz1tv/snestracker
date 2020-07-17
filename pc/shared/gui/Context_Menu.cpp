@@ -13,7 +13,7 @@ bool Context_Menu::coord_is_in_menu(const int &x, const int &y, const int idx)
   bool b1, b2, b3, b4;
 
   b1 = x >= created_at.x;
-  b2 = x < (created_at.x + greatest_length);
+  b2 = x < (created_at.x + created_at.w);
   b3 = y >= ( created_at.y + (idx * (TILE_HEIGHT + linespace)) + 1 );
   b4 = y <  ( created_at.y + (idx * (TILE_HEIGHT + linespace)) + TILE_HEIGHT + linespace + 1 );
 
