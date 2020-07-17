@@ -119,7 +119,7 @@ struct Menu_Bar
       { "About", true, NULL, NULL },
       {"-",      true,  NULL,  NULL, false},
       { "Patreon \x01", true, clicked_patreon, NULL },
-      { "Merch", true, clicked_merch, NULL },
+      { "Gift Shop", true, clicked_merch, NULL },
       {"", false, NULL, NULL}
     };
   };

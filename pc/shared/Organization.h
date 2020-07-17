@@ -16,5 +16,5 @@
 
 /* use HTTP so it can be easily forwarded in the future. Site will automatically
 convert it to HTTPS */
-#define PATREON_URL "http://patreon.bazz1.com"
-#define MERCH_URL "http://stswag.bazz1.com"
+#define PATREON_URL "http://patreon.snestracker.com"
+#define MERCH_URL "http://shop.snestracker.com"
