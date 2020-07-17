@@ -308,13 +308,13 @@ st.ico: st-icons-png/256-stroked-thick.png st-icons-png/64.png st-icons-png/48.p
 
 $(BIN)/$(EXECUTABLE_DEBUGGER): $(OBJECTS_DEBUGGER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_DEBUGGER2) $(LDFLAGS) -o $@
-	# For the Windows version
-	cp $(BIN)/{std.exe,"$(PRETTY_DEBUGGER).exe"}
+	# For the Windows version. and don't error out on non-windows by returning true from a subshell
+	( cp $(BIN)/{std.exe,"$(PRETTY_DEBUGGER).exe"} ; true )
 
 $(BIN)/$(EXECUTABLE_TRACKER): $(OBJECTS_TRACKER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_TRACKER2) $(LDFLAGS) -o $@
-	# For the Windows version
-	cp $(BIN)/{st.exe,"$(PRETTY_TRACKER).exe"}
+	# For the Windows version. and don't error out on non-windows by returning true from a subshell
+	( cp $(BIN)/{st.exe,"$(PRETTY_TRACKER).exe"} ; true )
 
 
 $(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(PROJ_DIR)/lzma1505/C/Util/7z/7zMain.c
