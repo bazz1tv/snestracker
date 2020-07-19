@@ -259,7 +259,11 @@ int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int 
   {
     unsigned int i;
 
-    if (count < 3) return 0;
+    if (count < 3)
+    {
+      //DEBUGLOG("COUNT < 3\n");
+      return 0;
+    }
 
     if (!(atoi >> ibuffer))
     {
@@ -267,12 +271,19 @@ int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int 
     }
 
     if (strlen(parts[2]) > PATH_MAX)
+    {
+      //DEBUGLOG("strlen(parts[2]) > PATH_MAX!\n");
       return 0;
+    }
     size_t total_strlen=0;
  
     for (i=2; i < count; i++)
+    {
       total_strlen += strlen(parts[i]);
-    total_strlen += 1;
+      total_strlen += 1;  // Add 1 for the SPACE or end-of-line (null byte)
+      //DEBUGLOG("\ttotal_strlen = %d\n", total_strlen);
+    }
+    //DEBUGLOG("total_strlen = %d\n", total_strlen);
 
     if (RecentFiles::paths[ibuffer] != NULL)
     {
