@@ -1,47 +1,38 @@
-snestracker
-===========
+SNES Tracker
+============
 
 [![Build Status](https://dev.azure.com/bazzinotti/snestracker/_apis/build/status/bazzinotti.snestracker?branchName=master)](https://dev.azure.com/bazzinotti/snestracker/_build/latest?definitionId=1&branchName=master)
 
-Congratulations, you have stumbled upon a rare item. Currently in its embryonic stages, snestracker aims to become a full-featured cross platform music production software for the Super Nintendo Entertainment System  (SNES), AKA the Super Famicom.
+SNES Tracker, currently in its toddler stages, aims to become a full-featured
+cross platform music production software for the Super Nintendo Entertainment
+System  (SNES), AKA the Super Famicom.
 
-snestracker uses a custom SPC700 Audio Processing Unit (APU) emulator to produce cycle-accurate emulation, allowing you to create accurate SNES music in the comfort of your PC workstation.
+Here is an image of the current early alpha!
 
-snestracker will take advantage of the most important hardware Digital Signal Processing (DSP) features of the SNES, including noise, echo customization, pitch modulation, ADSR envelopes, stereo panning, and inverse phasing (surround sound).
+![SNES Tracker early prototype preview](./pics/snestracker.png)
 
-The music that you create with SNES Tracker exports to various formats. It will export standalone music files in the form of a demo ROM, SPC, WAV. You will eventually be able to incorporate your new music and sound effects into your own custom programs / video games!
+Downloads
+=========
 
-Here is an image of the current early prototype!
+You can download SNES Tracker today by donating via
+[Patreon](https://patreon.snestracker.com) or by purchasing a gift from the
+[SNES Tracker Gift Shop](https://shop.snestracker.com). These builds may include
+early access and premium features.
 
-![snestracker early prototype preview](./pics/snestracker.png)
+The following downloads are available:
 
-Debugger
-========
+- Windows 64-bit
+- MacOS (10.9+) 64-bit
+- Linux users are encouraged to download the Windows build and run from WINE until a Linux build is released
 
-In addition to the tracker, there is a debugger program that allows you to hone in on SPC files in various ways. Here is a preview of the main pane, based on raph's vspcplay.
-![debugger photo](./pics/std-mem.png)
+Older versions can be built from Github. See [Building.md](./Building.md)
 
-Features
---------
-- Memory Tab
-  - Full view of RAM identifying read/write/execute points, including echo region and BRR sample/loop data regions.
-  - Sample download
-  - Real-time inspection and modification of SPC RAM and DSP registers
-  - Global tempo and volume adjustments
-  - Real-time channel activity indicators. pitch, volume, and gain.
-  - Channel solo/mute
-  - APU port interaction tool.
-    - Interact with the SPC as if you are the SNES. This is great to find new sounds, or reverse engineer the SPC engine
-- DSP Tab
-  - Full access to all global and voice DSP registers in "break-out" format.
-  - DIRectory tool - see what sample entries are active, download samples, change dir location!
-- Instrument Tab
-  - Play any voice at any octave, with ability to customize ADSR. Can even play through MIDI keyboard
-- SPC Export
+SPC Debugger
+------------
 
-Building
---------
-See [Building.md](./Building.md)
+SNES Tracker also sports its own SPC debugger. See [Debugger.md](./Debugger.md) for
+more details.
+
 
 Road Map
 --------
@@ -50,21 +41,35 @@ Coming soon, [Roadmap.md](./Roadmap.md)
 Community
 =========
 
-Feel free to join the new snestracker [Discord Server](https://discord.gg/2WXEJU9). You may also join via IRC. **Server**: irc.esper.net **Channel**:#snestracker
+Feel free to join the new SNES Tracker [Discord Server](https://discord.gg/2WXEJU9). You may also join via IRC. **Server**: irc.esper.net **Channel**:#snestracker
 
 The Discord and IRC are bridged by snesbot :)
-
-Contributing
-============
-
-Contributions from the community are valid and welcome! For those curious about getting involved, have a look at [Good First Issues](https://github.com/bazzinotti/snestracker/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). If you see an issue that appeals to you, post a comment demonstrating your interest. You are also encouraged to join the Discord or IRC. Be interactive! Together we will learn, grow, and make snestracker the best it can be.
 
 Supporting
 ==========
 
-If you love what I'm doing with snestracker, please join me on my new [Patreon](http://patreon.bazz1.com). I also am selling the brand new [Bazz branded T-Shirt.](https://bazz1.com/shop/t-shirts/bazz-short-sleeve-unisex-t-shirt/) It looks awesome and is very comfy.
+I hope that you love what I'm doing with SNES Tracker. You see, SNES Tracker is still a
+program that needs a lot of tender, loving care to blossom. If you would like to
+get more involved, please take a look at my new
+[Patreon](http://patreon.bazz1.com) and/or make a visit to the [Gift Shop](https://shop.snestracker.com)
+ to find yourself something you'd appreciate having that also helps keep the project alive!
 
 ![T-Shirt Preview](https://bazz1.com/wp-content/uploads/2020/05/mockup-22a5493f-160x160.png)
+
+Contributing
+============
+
+Contributions from the community are valid and welcome! For those curious about
+getting involved, have a look at [Good First Issues](https://github.com/bazzinot
+ti/snestracker/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). If
+you see an issue that appeals to you, post a comment demonstrating your
+interest. You are also encouraged to join the Discord or IRC. Be interactive!
+Together we will learn, grow, and make snestracker the best it can be.
+
+Note: Contributing to SNES Tracker does not entitle the contributor to profits on
+SNES Tracker sales. By contributing (eg. by way of pull request),
+the contributor also grants Bazz the necessary rights to relicense the software
+at any time without need for further correspondence.
 
 Other Recommendations
 =====================
@@ -93,5 +98,4 @@ Developed by Bazz, <bazz@bazz1.com>
 
 Special thanks to Blargg.
 
-Shoutout to byuu, Neviksti, mukunda (eKid), Oli (Vilxdryad) and the snesdev community!
-
+Shoutout to byuu, Neviksti, mukunda (eKid), Oli (Vilxdryad), RowanDDR, and the snesdev community!

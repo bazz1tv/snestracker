@@ -9,9 +9,9 @@ Road map coming soon. For now, Here is list of features in mind for implementati
 - Better font control
 - Bazz Logo Intro
 - improved stored-file preferences design (modular impl)
-- Make the file formats extendable, backwards/forwards compatible
-  - song (project) (stp)
-  - instrument (sti)
+- ~~Make the file formats extendable, backwards/forwards compatible~~
+  - ~~song (project) (sts/stp)~~
+  - ~~instrument (sti)~~
 - Channel Oscilloscopes
 - Scroll bars (gui)
 - Improved ADSR gui
