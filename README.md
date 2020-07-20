@@ -60,9 +60,8 @@ Contributing
 ============
 
 Contributions from the community are valid and welcome! For those curious about
-getting involved, have a look at [Good First Issues](https://github.com/bazzinot
-ti/snestracker/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). If
-you see an issue that appeals to you, post a comment demonstrating your
+getting involved, have a look at [Good First Issues](https://github.com/bazzinotti/snestracker/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+If you see an issue that appeals to you, post a comment demonstrating your
 interest. You are also encouraged to join the Discord or IRC. Be interactive!
 Together we will learn, grow, and make snestracker the best it can be.
 
