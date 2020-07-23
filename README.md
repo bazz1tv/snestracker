@@ -1,13 +1,14 @@
+<img src="https://i.postimg.cc/2jhmZ5fM/snes-tracker-logo.png" alt="SNES Tracker logo" align="right" width="120" />
+
 SNES Tracker
 ============
 
 [![Build Status](https://dev.azure.com/bazzinotti/snestracker/_apis/build/status/bazzinotti.snestracker?branchName=master)](https://dev.azure.com/bazzinotti/snestracker/_build/latest?definitionId=1&branchName=master)
 
-SNES Tracker, currently in its toddler stages, aims to become a full-featured
-cross platform music production software for the Super Nintendo Entertainment
-System  (SNES), AKA the Super Famicom.
+SNES Tracker aims to become a full-featured cross-platform music production software
+for the Super Nintendo Entertainment System (SNES), aka the Super Famicom.
 
-Here is an image of the current early alpha!
+Here is an image of a recent early alpha!
 
 ![SNES Tracker early prototype preview](./pics/snestracker.png)
 
@@ -21,8 +22,8 @@ early access and premium features.
 
 The following downloads are available:
 
-- Windows 64-bit
-- MacOS (10.9+) 64-bit
+- Windows 7 (64-bit) and newer
+- MacOS 10.9 and newer
 - Linux users are encouraged to download the Windows build and run from WINE until a Linux build is released
 
 Older versions can be built from Github. See [Building.md](./Building.md)
