@@ -1,9 +1,10 @@
-<img src="https://i.postimg.cc/2jhmZ5fM/snes-tracker-logo.png" alt="SNES Tracker logo" align="right" width="120" />
-
 SNES Tracker
 ============
 
 [![Build Status](https://dev.azure.com/bazzinotti/snestracker/_apis/build/status/bazzinotti.snestracker?branchName=master)](https://dev.azure.com/bazzinotti/snestracker/_build/latest?definitionId=1&branchName=master)
+
+<!-- temporary external graphic until v0.1.1 is released to Github on August 18th 2020 -->
+<img src="https://i.postimg.cc/2jhmZ5fM/snes-tracker-logo.png" alt="SNES Tracker logo" align="right" width="120" />
 
 SNES Tracker aims to become a full-featured cross-platform music production software
 for the Super Nintendo Entertainment System (SNES), aka the Super Famicom.
