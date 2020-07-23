@@ -207,6 +207,7 @@ size_t SongSettingsChunkLoader::load(SDL_RWops *file, size_t chunksize)
       maxread += subchunksize;
     }
   }
+  return maxread;
 }
 
 size_t SongSettingsChunkLoader::save(SDL_RWops *file)
@@ -271,6 +272,7 @@ size_t SongSettingsChunkLoader::save(SDL_RWops *file)
   SDL_RWwrite(file, &chunklen, 2, 1);
 
   SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
+  return 0;
 }
 
 /* OF course I am aware of the repetitive nature of this code impl. But
@@ -393,6 +395,7 @@ int SongSettingsPanel::handle_event(const SDL_Event &ev)
 
   efb_incbtn.check_event(ev);
   efb_decbtn.check_event(ev);
+  return 0;
 }
 
 void SongSettingsPanel::draw(SDL_Surface *screen/*=::render->screen*/)
@@ -436,6 +439,7 @@ int SongSettingsPanel::inc_mvol(void *i)
     ::player->spc_write_dsp(dsp_reg::mvol_r, mvol);
     tracker->apuram->mvol_val = mvol;
   }
+	return 0;
 }
 
 int SongSettingsPanel::dec_mvol(void *i)
@@ -451,6 +455,7 @@ int SongSettingsPanel::dec_mvol(void *i)
     ::player->spc_write_dsp(dsp_reg::mvol_r, mvol);
     tracker->apuram->mvol_val = mvol;
   }
+  return 0;
 }
 
 int SongSettingsPanel::inc_evol(void *i)
@@ -466,6 +471,7 @@ int SongSettingsPanel::inc_evol(void *i)
     ::player->spc_write_dsp(dsp_reg::evol_r, evol);
     tracker->apuram->evol_val = evol;
   }
+  return 0;
 }
 
 int SongSettingsPanel::dec_evol(void *i)
@@ -481,6 +487,7 @@ int SongSettingsPanel::dec_evol(void *i)
     ::player->spc_write_dsp(dsp_reg::evol_r, evol);
     tracker->apuram->evol_val = evol;
   }
+  return 0;
 }
 
 int SongSettingsPanel::inc_edl(void *i)
@@ -502,6 +509,7 @@ int SongSettingsPanel::inc_edl(void *i)
     tracker->apuram->esa_val = esa;
     tracker->apuram->edl_val = edl;
   }
+  return 0;
 }
 
 int SongSettingsPanel::dec_edl(void *i)
@@ -532,6 +540,7 @@ int SongSettingsPanel::dec_edl(void *i)
     tracker->apuram->edl_val = edl;
     tracker->apuram->esa_val = esa;
   }
+  return 0;
 }
 
 int SongSettingsPanel::inc_efb(void *i)
@@ -546,6 +555,7 @@ int SongSettingsPanel::inc_efb(void *i)
     ::player->spc_write_dsp(dsp_reg::efb, efb);
     tracker->apuram->efb_val = efb;
   }
+  return 0;
 }
 
 int SongSettingsPanel::dec_efb(void *i)
@@ -560,4 +570,5 @@ int SongSettingsPanel::dec_efb(void *i)
     ::player->spc_write_dsp(dsp_reg::efb, efb);
     tracker->apuram->efb_val = efb;
   }
+  return 0;
 }

@@ -436,6 +436,7 @@ int InstrumentEditor::handle_event(const SDL_Event &ev)
     if (adsrpanel.check_event(ev) >= ADSR::Context_Menus::ATTACK_CHANGED)
       *instrpanel->instruments[0].metadata.changed = true;
   }
+  return 0;
 }
 
 void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
@@ -502,6 +503,7 @@ int InstrumentEditor::incsrcn(void *i)
   {
     ::tracker->renderCurrentInstrument();
   }
+	return 0;
 }
 
 int InstrumentEditor::decsrcn(void *i)
@@ -528,6 +530,7 @@ int InstrumentEditor::decsrcn(void *i)
   {
     ::tracker->renderCurrentInstrument();
   }
+	return 0;
 }
 
 int InstrumentEditor::incvol(void *i)
@@ -544,6 +547,7 @@ int InstrumentEditor::incvol(void *i)
     auto vol = ie->instrpanel->instruments[ie->instrpanel->currow].vol;
     apuinstr->vol = vol;
   }
+  return 0;
 }
 
 int InstrumentEditor::decvol(void *i)
@@ -560,6 +564,7 @@ int InstrumentEditor::decvol(void *i)
     auto vol = ie->instrpanel->instruments[ie->instrpanel->currow].vol;
     apuinstr->vol = vol;
   }
+  return 0;
 }
 
 int InstrumentEditor::incpan(void *i)
@@ -575,6 +580,7 @@ int InstrumentEditor::incpan(void *i)
     int8_t pan = curinst->pan;
     apuinstr->pan = pan;
   }
+  return 0;
 }
 
 int InstrumentEditor::decpan(void *i)
@@ -590,6 +596,7 @@ int InstrumentEditor::decpan(void *i)
     int8_t pan = curinst->pan;
     apuinstr->pan = pan;
   }
+  return 0;
 }
 
 int InstrumentEditor::incfinetune(void *i)
@@ -606,6 +613,7 @@ int InstrumentEditor::incfinetune(void *i)
     int8_t ft = curinst->finetune;
     apuinstr->finetune = ft;
   }
+  return 0;
 }
 
 int InstrumentEditor::decfinetune(void *i)
@@ -622,6 +630,7 @@ int InstrumentEditor::decfinetune(void *i)
     int8_t ft = curinst->finetune;
     apuinstr->finetune = ft;
   }
+  return 0;
 }
 
 InstrumentEditor::Tabs::Tabs(InstrumentEditor *ie) :
@@ -672,6 +681,7 @@ int InstrumentEditor::Tabs::switchto_adsr(void *i)
   ie->tabs.vol.active = false;
   ie->tabs.pan.active = false;
   Tracker::prerenders.insert((DrawRenderer *)&ie->adsrpanel);
+  return 0;
 }
 
 int InstrumentEditor::Tabs::switchto_vol(void *i)
@@ -681,6 +691,7 @@ int InstrumentEditor::Tabs::switchto_vol(void *i)
   ie->tabs.vol.active = true;
   ie->tabs.pan.active = false;
   Tracker::prerenders.erase((DrawRenderer *)&ie->adsrpanel);
+  return 0;
 }
 
 int InstrumentEditor::Tabs::switchto_pan(void *i)
@@ -690,4 +701,5 @@ int InstrumentEditor::Tabs::switchto_pan(void *i)
   ie->tabs.vol.active = false;
   ie->tabs.pan.active = true;
   Tracker::prerenders.erase((DrawRenderer *)&ie->adsrpanel);
+  return 0;
 }

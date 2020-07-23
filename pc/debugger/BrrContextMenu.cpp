@@ -116,7 +116,7 @@ uint16_t get_voice_srcn_addr(uint8_t voice)
 int BrrContextMenu::write_brr_to_file_callback(void *data)
 {
 	uintptr_t brr_addr = (uintptr_t) data;
-	write_brr_to_file( (Brr *) &::IAPURAM[brr_addr]);
+	return write_brr_to_file( (Brr *) &::IAPURAM[brr_addr]);
 }
 
 int BrrContextMenu::write_sti_to_file_callback(void *data)
@@ -146,6 +146,7 @@ int BrrContextMenu::write_sti_to_file_callback(void *data)
 	}
 
 	sample.brr = NULL; // stop destructor from freeing that mem
+	return 0;
 }
 
 #include "BaseD.h"

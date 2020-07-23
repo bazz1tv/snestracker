@@ -306,6 +306,7 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
       maxread += subchunksize;
     }
   }
+  return maxread;
 }
 
 size_t SampleChunkLoader::save(SDL_RWops *file, int i)
@@ -376,6 +377,7 @@ size_t SampleChunkLoader::save(SDL_RWops *file, int i)
   SDL_RWwrite(file, &chunklen, 2, 1);
 
   SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
+  return 0;
 }
 
 size_t SampleChunkLoader::save(SDL_RWops *file)
@@ -386,6 +388,7 @@ size_t SampleChunkLoader::save(SDL_RWops *file)
     if (samples[i].brr != NULL)
       save(file, i);
   }
+  return 0;
 }
 
 size_t SampleChunkLoader::save(SDL_RWops *file, struct Sample *s)
@@ -394,4 +397,5 @@ size_t SampleChunkLoader::save(SDL_RWops *file, struct Sample *s)
   samples = s;
   save(file, 0);
   samples = backup;
+  return 0;
 }

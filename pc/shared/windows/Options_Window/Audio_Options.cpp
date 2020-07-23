@@ -11,7 +11,6 @@ int Audio_Options::Context::change_audio_out_device(void *item)
   SDL_Log("change_audio_out_device, %s", itemp->clickable_text.str);
   if (ao->openDeviceonClick)
     ::player->init(::player->sample_rate, itemp->clickable_text.str);
-
   return 0;
 }
 
@@ -189,4 +188,5 @@ int Audio_Options::receive_event(SDL_Event &ev)
 
     default:break;
   }
+  return 0;
 }

@@ -86,6 +86,7 @@ size_t SongFileLoader::save(SDL_RWops *file)
   icl->save(file);  // instruments
   pcl->save(file);  // patterns
   pscl->save(file); // pattern sequence
+  return 0;
 }
 
 SongFileLoader::ret_t SongFileLoader::load(SDL_RWops *file)
@@ -358,6 +359,7 @@ int SongFileLoader::loadOld(SDL_RWops *file)
     patseq.patterns[patseq.sequence[i]].used++;
     patseq.num_entries++;
   }
+  return 0;
 }
 
 size_t read_str_from_file(SDL_RWops *file, char *str_ptr, int size)

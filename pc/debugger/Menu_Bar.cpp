@@ -374,10 +374,12 @@ int Menu_Bar::About_Context::clicked_patreon(void *nada)
 {
   DEBUGLOG("CLICKED PATREON\n");
   openUrl(PATREON_URL);
+  return 0;
 }
 
 int Menu_Bar::About_Context::clicked_merch(void *nada)
 {
   DEBUGLOG("CLICKED MERCH\n");
   openUrl(MERCH_URL);
+  return 0;
 }
