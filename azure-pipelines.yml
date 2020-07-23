@@ -13,7 +13,10 @@ jobs:
     vmImage: 'macOS-10.14'
   steps:
   - script: |
-      brew update && brew install sdl2 boost cmake
+      brew update
+      brew list sdl2 &>/dev/null || brew install sdl2
+      brew list boost &>/dev/null || brew install boost
+      brew list cmake &>/dev/null || brew install cmake
     displayName: 'deps'
   - script: ./build-submodules.sh
     displayName: 'submodules'
