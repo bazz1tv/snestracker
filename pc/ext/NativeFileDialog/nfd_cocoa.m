@@ -8,6 +8,13 @@
 #include "nfd.h"
 #include "nfd_common.h"
 
+/* OSX Compatibility Hack for MacOS < 10.9. This was tested on 10.6.8 Snow Leopard */
+#ifdef __MAC_OS_X_VERSION_MAX_ALLOWED
+#   if __MAC_OS_X_VERSION_MAX_ALLOWED < 1090
+#       define NSModalResponseOK NSAlertDefaultReturn
+#   endif
+#endif
+
 static NSArray *BuildAllowedFileTypes( const char *filterList )
 {
     // Commas and semicolons are the same thing on this platform
