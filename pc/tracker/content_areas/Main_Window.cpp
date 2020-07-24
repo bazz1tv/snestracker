@@ -154,6 +154,7 @@ int Main_Window::toggle_instreditor(void *m)
     if (mw->instreditor.tabs.adsr.active)
       Tracker::prerenders.erase((DrawRenderer *)&mw->instreditor.adsrpanel);
   }
+  return 0;
 }
 
 /* By and large a copy of toggle_instreditor. Maybe we can reduce code
@@ -175,6 +176,7 @@ int Main_Window::toggle_sample_editor(void *m)
 		mw->pateditpanel.set_visible_rows(0x08);
 	else
 		mw->pateditpanel.set_visible_rows(mw->pateditpanel.MAX_VISIBLE_ROWS);
+  return 0;
 }
 
 /* By and large a copy of toggle_instreditor. Maybe we can reduce code
@@ -196,6 +198,7 @@ int Main_Window::toggle_songsettings(void *m)
     mw->pateditpanel.set_visible_rows(0x08);
   else
     mw->pateditpanel.set_visible_rows(mw->pateditpanel.MAX_VISIBLE_ROWS);
+  return 0;
 }
 
 int Main_Window::Gain::change(void *dblnewgain)
@@ -381,6 +384,7 @@ int Main_Window::receive_event(SDL_Event &ev)
   default:
     break;
   }
+  return 0;
 }
 
 void Main_Window::run()

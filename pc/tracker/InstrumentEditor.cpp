@@ -345,6 +345,7 @@ int InstrumentEditor::handle_event(const SDL_Event &ev)
     if (adsrpanel.check_event(ev) >= ADSR::Context_Menus::ATTACK_CHANGED)
       *instrpanel->instruments[0].metadata.changed = true;
   }
+  return 0;
 }
 
 void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
@@ -395,6 +396,7 @@ int InstrumentEditor::incsrcn(void *i)
 	sp->rows_scrolled = (sp->currow / Sample_Panel::NUM_ROWS) * Sample_Panel::NUM_ROWS;
 
 	ie->update_srcn();
+	return 0;
 }
 
 int InstrumentEditor::decsrcn(void *i)
@@ -409,6 +411,7 @@ int InstrumentEditor::decsrcn(void *i)
 	sp->rows_scrolled = (sp->currow / Sample_Panel::NUM_ROWS) * Sample_Panel::NUM_ROWS;
 
 	ie->update_srcn();
+	return 0;
 }
 
 int InstrumentEditor::incvol(void *i)
@@ -417,6 +420,7 @@ int InstrumentEditor::incvol(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::inc_vol(curinst);
   ie->update_vol();
+  return 0;
 }
 
 int InstrumentEditor::decvol(void *i)
@@ -425,6 +429,7 @@ int InstrumentEditor::decvol(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::dec_vol(curinst);
   ie->update_vol();
+  return 0;
 }
 
 int InstrumentEditor::incpan(void *i)
@@ -433,6 +438,7 @@ int InstrumentEditor::incpan(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::inc_pan(curinst);
   ie->update_pan();
+  return 0;
 }
 
 int InstrumentEditor::decpan(void *i)
@@ -441,6 +447,7 @@ int InstrumentEditor::decpan(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::dec_pan(curinst);
   ie->update_pan();
+  return 0;
 }
 
 int InstrumentEditor::incfinetune(void *i)
@@ -449,6 +456,7 @@ int InstrumentEditor::incfinetune(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::inc_finetune(curinst);
   ie->update_finetune();
+  return 0;
 }
 
 int InstrumentEditor::decfinetune(void *i)
@@ -457,6 +465,7 @@ int InstrumentEditor::decfinetune(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::dec_finetune(curinst);
   ie->update_finetune();
+  return 0;
 }
 
 InstrumentEditor::Tabs::Tabs(InstrumentEditor *ie) :
@@ -507,6 +516,7 @@ int InstrumentEditor::Tabs::switchto_adsr(void *i)
   ie->tabs.vol.active = false;
   ie->tabs.pan.active = false;
   Tracker::prerenders.insert((DrawRenderer *)&ie->adsrpanel);
+  return 0;
 }
 
 int InstrumentEditor::Tabs::switchto_vol(void *i)
@@ -516,6 +526,7 @@ int InstrumentEditor::Tabs::switchto_vol(void *i)
   ie->tabs.vol.active = true;
   ie->tabs.pan.active = false;
   Tracker::prerenders.erase((DrawRenderer *)&ie->adsrpanel);
+  return 0;
 }
 
 int InstrumentEditor::Tabs::switchto_pan(void *i)
@@ -525,4 +536,5 @@ int InstrumentEditor::Tabs::switchto_pan(void *i)
   ie->tabs.vol.active = false;
   ie->tabs.pan.active = true;
   Tracker::prerenders.erase((DrawRenderer *)&ie->adsrpanel);
+  return 0;
 }

@@ -7,6 +7,7 @@ bool Tab::check_mouse_and_execute(int x, int y, void *newdata/*=NULL*/)
 {
   if (enabled)
     return Clickable_Rect::check_mouse_and_execute(x,y,newdata);
+  else {return false;}
 }
 
 int Tab::horiz_pixel_length()
