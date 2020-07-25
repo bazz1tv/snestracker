@@ -23,9 +23,16 @@ SHARED_DIR = shared/
 PROJ_DIR = ext
 #
 
-CC ?= $(CROSS_COMPILE)g++
-CPP ?= $(CROSS_COMPILE)g++
+# Only Set compilers if they are unset (default). This lets you set them from the environment manually.
+ifeq ($(origin CC),default)
+	CC = $(CROSS_COMPILE)g++
+endif
+ifeq ($(origin CPP),default)
+	CPP = $(CROSS_COMPILE)g++
+endif
+# OBJCC is not a Make default variable so use this syntax instead
 OBJCC ?= $(CROSS_COMPILE)g++
+
 debug = -g
 optimize = -O3
 
