@@ -12,8 +12,10 @@ else ifeq ($(uname_S), Cross_Windows)
 endif
 
 ifeq ($(uname_S), Darwin)
-	OSX_BACKSUPPORT = -arch x86_64 -mmacosx-version-min=10.9 \
-	-DMAC_OS_X_VERSION_MIN_REQUIRED=1090
+	ifeq ($(OSX_BACKSUPPORT), 1)
+		OSX_BACKSUPPORT = -arch x86_64 -mmacosx-version-min=10.9 \
+		-DMAC_OS_X_VERSION_MIN_REQUIRED=1090
+	endif
 	CXXFLAGS += $(OSX_BACKSUPPORT)
 	LDFLAGS += $(OSX_BACKSUPPORT)
 endif
