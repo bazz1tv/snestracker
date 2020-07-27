@@ -1,5 +1,8 @@
 Building
 ========
+
+_Friendly reminder_: A fully built SNES Tracker can be obtained by being a member of my [Patreon](https://patreon.snestracker.com) or by making a purchase at the [SNES Tracker Gift Shop](https://shop.snestracker.com). This official version may include early access and/or premium features, as my thanks to you.
+
 You may perform any of the following compilation scenarios:
 
 - compile native on OS X
