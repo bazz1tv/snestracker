@@ -1973,6 +1973,8 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
         break;
         default:break;
       }
+      // update that the song changed
+      *psp->patseq->metadata.changed = true;
 		}
     break;
     case SDLK_BACKSPACE:
@@ -1981,6 +1983,8 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
           moveback(get_current_pattern(psp), t, currow, ip);
       else moveback(get_current_pattern(psp), cur_track, currow, ip);
       dec_currow();
+      // update that the song changed
+      *psp->patseq->metadata.changed = true;
     break;
     case SDLK_INSERT:
 #ifdef PLATFORM_MACOSX          // On my Macbook Pro with El Capitan, the usual keycode for INSERT
@@ -1990,6 +1994,8 @@ void PatternEditorPanel::recording_kb(const int scancode, const int mod)
         for (int t=0; t < MAX_TRACKS; t++)
           moveforward(get_current_pattern(psp), t, currow);
       else moveforward(get_current_pattern(psp), cur_track, currow);
+      // update that the song changed
+      *psp->patseq->metadata.changed = true;
     break;
     case SDLK_0:
       if (MODONLY(mod, KMOD_ALT))
