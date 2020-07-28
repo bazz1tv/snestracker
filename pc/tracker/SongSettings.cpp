@@ -200,6 +200,7 @@ size_t SongSettingsChunkLoader::load(SDL_RWops *file, size_t chunksize)
       maxread += subchunksize;
     }
   }
+  return maxread;
 }
 
 size_t SongSettingsChunkLoader::save(SDL_RWops *file)
@@ -264,6 +265,7 @@ size_t SongSettingsChunkLoader::save(SDL_RWops *file)
   SDL_RWwrite(file, &chunklen, 2, 1);
 
   SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
+  return 0;
 }
 
 /* OF course I am aware of the repetitive nature of this code impl. But
@@ -393,6 +395,7 @@ int SongSettingsPanel::handle_event(const SDL_Event &ev)
 
   efb_incbtn.check_event(ev);
   efb_decbtn.check_event(ev);
+  return 0;
 }
 
 void SongSettingsPanel::draw(SDL_Surface *screen/*=::render->screen*/)
@@ -428,6 +431,7 @@ int SongSettingsPanel::inc_mvol(void *i)
 	SongSettingsPanel *ie = (SongSettingsPanel *)i;
 	SongSettings::inc_vol(&::tracker->song.settings.mvol);
 	ie->update_mvol();
+	return 0;
 }
 
 int SongSettingsPanel::dec_mvol(void *i)
@@ -435,6 +439,7 @@ int SongSettingsPanel::dec_mvol(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   SongSettings::dec_vol(&::tracker->song.settings.mvol);
   ie->update_mvol();
+  return 0;
 }
 
 int SongSettingsPanel::inc_evol(void *i)
@@ -442,6 +447,7 @@ int SongSettingsPanel::inc_evol(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   SongSettings::inc_vol(&::tracker->song.settings.evol);
   ie->update_evol();
+  return 0;
 }
 
 int SongSettingsPanel::dec_evol(void *i)
@@ -449,6 +455,7 @@ int SongSettingsPanel::dec_evol(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   SongSettings::dec_vol(&::tracker->song.settings.evol);
   ie->update_evol();
+  return 0;
 }
 
 int SongSettingsPanel::inc_edl(void *i)
@@ -456,6 +463,7 @@ int SongSettingsPanel::inc_edl(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   ::tracker->song.settings.inc_edl();
   ie->update_edl();
+  return 0;
 }
 
 int SongSettingsPanel::dec_edl(void *i)
@@ -463,6 +471,7 @@ int SongSettingsPanel::dec_edl(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   ::tracker->song.settings.dec_edl();
   ie->update_edl();
+  return 0;
 }
 
 int SongSettingsPanel::inc_efb(void *i)
@@ -470,6 +479,7 @@ int SongSettingsPanel::inc_efb(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   ::tracker->song.settings.inc_efb();
   ie->update_efb();
+  return 0;
 }
 
 int SongSettingsPanel::dec_efb(void *i)
@@ -477,4 +487,5 @@ int SongSettingsPanel::dec_efb(void *i)
   SongSettingsPanel *ie = (SongSettingsPanel *)i;
   ::tracker->song.settings.dec_efb();
   ie->update_efb();
+  return 0;
 }

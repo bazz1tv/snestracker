@@ -22,11 +22,13 @@ Menu_Bar::~Menu_Bar()
 int Menu_Bar::Edit_Context::copy(void *data)
 {
   // STUB
+  return 0;
 }
 
 int Menu_Bar::Edit_Context::paste(void *data)
 {
   // STUB
+  return 0;
 }
 
 int Menu_Bar::Edit_Context::open_options_window(void *data)
@@ -67,6 +69,7 @@ int Menu_Bar::File_Context::new_song(void *data)
 	::tracker->song.patseq.num_entries = 1;
 	::tracker->song.patseq.sequence[0] = 0;
 	::tracker->song.patseq.patterns[0].used = 1;
+	return 0;
 }
 
 int Menu_Bar::File_Context::open_song(void *data)
@@ -404,10 +407,12 @@ int Menu_Bar::About_Context::clicked_patreon(void *nada)
 {
   DEBUGLOG("CLICKED PATREON\n");
   openUrl(PATREON_URL);
+  return 0;
 }
 
 int Menu_Bar::About_Context::clicked_merch(void *nada)
 {
   DEBUGLOG("CLICKED MERCH\n");
   openUrl(MERCH_URL);
+  return 0;
 }

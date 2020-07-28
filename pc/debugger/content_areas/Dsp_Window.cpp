@@ -764,7 +764,7 @@ int Dsp_Window::receive_event(SDL_Event &ev)
     {
       default:break;
     }
-    return;
+    return 0;
   }
 
   dblclick::check_event(&ev);
@@ -1276,12 +1276,12 @@ int Dsp_Window::receive_event(SDL_Event &ev)
     case SDL_MOUSEBUTTONDOWN:           
       {
         if (screw_clickable.check_mouse_and_execute(ev.button.x, ev.button.y))
-          return;
+          return 0;
         for (int i=0; i < NUM_TIMERS; i++)
         {
           timers.num = i;
           if (timers.label[i].check_mouse_and_execute(ev.button.x, ev.button.y))
-            return;
+            return 0;
         }
 				/* NOTE: Add code here to check for clicks over DIR entries */
         for (int i=0; i < NUM_DIR_ENTRIES_DISPLAYED; i++)
@@ -1291,7 +1291,7 @@ int Dsp_Window::receive_event(SDL_Event &ev)
 					      dir_rects[i].check_mouse_and_execute(ev.button.x, ev.button.y) ) ||
 					     ( ev.button.button == SDL_BUTTON_LEFT &&
 					      loop_clickable[i].clickable_text.check_mouse_and_execute(ev.button.x, ev.button.y)) )
-            return;
+            return 0;
         }
         for (int i=0; i < MAX_VOICES; i++)
         {
@@ -1305,6 +1305,7 @@ int Dsp_Window::receive_event(SDL_Event &ev)
       default:
       break;
   }
+  return 0;
 }
 
 int Dsp_Window::dir_rect_clicked(void *idx)
@@ -1327,4 +1328,5 @@ int Dsp_Window::dir_rect_clicked(void *idx)
 
 	::brrcontext.menu.preload(mouse::x, mouse::y);
 	::brrcontext.menu.activate();
+	return 0;
 }

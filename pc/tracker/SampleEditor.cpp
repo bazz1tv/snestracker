@@ -81,6 +81,7 @@ int SampleEditor::handle_event(const SDL_Event &ev)
 
   finetune_incbtn.check_event(ev);
   finetune_decbtn.check_event(ev);
+  return 0;
 }
 
 void SampleEditor::draw(SDL_Surface *screen/*=::render->screen*/)
@@ -127,6 +128,7 @@ int SampleEditor::incloop(void *i)
 	s->inc_loop();
 
 	ie->update_loop();
+	return 0;
 }
 
 int SampleEditor::decloop(void *i)
@@ -136,6 +138,7 @@ int SampleEditor::decloop(void *i)
 	s->dec_loop();
 
 	ie->update_loop();
+	return 0;
 }
 
 
@@ -146,6 +149,7 @@ int SampleEditor::incfinetune(void *i)
   Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
   s->inc_finetune();
   ie->update_finetune();
+  return 0;
 }
 
 int SampleEditor::decfinetune(void *i)
@@ -154,4 +158,5 @@ int SampleEditor::decfinetune(void *i)
 	Sample *s = &::tracker->song.samples[::tracker->main_window.samplepanel.currow];
 	s->dec_finetune();
   ie->update_finetune();
+  return 0;
 }

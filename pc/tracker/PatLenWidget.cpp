@@ -64,6 +64,7 @@ int PatLenWidget::handle_event(const SDL_Event &ev)
 {
 	patlen_incbtn.check_event(ev);
 	patlen_decbtn.check_event(ev);
+	return 0;
 }
 
 void PatLenWidget::draw(SDL_Surface *screen/*=::render->screen*/)
@@ -85,6 +86,7 @@ int PatLenWidget::inc_patlen(void *bsaw)
 	//DEBUGLOG("inc_patlen; ");
 	::tracker->inc_patlen();
 	b->update_patlen();
+	return 0;
 }
 
 int PatLenWidget::dec_patlen(void *bsaw)
@@ -92,4 +94,5 @@ int PatLenWidget::dec_patlen(void *bsaw)
 	PatLenWidget *b = (PatLenWidget *)bsaw;
 	::tracker->dec_patlen();
 	b->update_patlen();
+	return 0;
 }
