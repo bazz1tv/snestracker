@@ -107,7 +107,8 @@ bool Instrument::operator==(const Instrument& rhs)
           this->vol == rhs.vol &&
           this->pan == rhs.pan &&
           this->semitone_offset == rhs.semitone_offset &&
-          this->finetune == rhs.finetune);
+          this->finetune == rhs.finetune &&
+          this->echo == rhs.echo);
 }
 
 #define MIN_INST_COREINFO_SIZE sizeof(Instrument::vol) + sizeof(Instrument::pan) + sizeof(Instrument::adsr)
