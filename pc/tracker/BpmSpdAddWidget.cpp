@@ -27,9 +27,6 @@ BpmSpdAddWidget::BpmSpdAddWidget(Tracker *tracker, PatternEditorPanel *pep) :
   updatebpm();
   updatespd();
   updateadd();
-
-  spd_incbtn.enabled = false;
-  spd_decbtn.enabled = false;
 }
 
 #include "apuram.h"
