@@ -5,12 +5,14 @@ struct Context_Menu_Item
 {
   Context_Menu_Item(const char *str="", bool is_visible=false,
                     int (*action)(void *)=NULL, void *data=NULL,
-                    bool enabled=true);
+                    bool enabled=true, bool darken=true);
   Clickable_Text clickable_text;
   bool is_visible;
 
   // V2
   bool enabled;
+  // V3
+  bool darken;
 };
 
 struct Context_Menu
@@ -48,4 +50,8 @@ struct Context_Menu
   Context_Menu_Item *currently_selected_item=NULL;
   int currently_selected_item_index=0;
   int highlighted_item_index=0, highlighted_item_draw_index=0;
+
+  //V3
+  int linespace=0;
+  int hpadding=0;
 };

@@ -34,3 +34,15 @@ int write_brr_to_file(const Brr *brr)
 	return 0;
 }
 
+/* This expects a SANE Brr reference */
+Brr * getBrrEndBlock(Brr *brr)
+{
+	while ( ! ((brr++)->end) );
+	return --brr;
+}
+
+bool doesBrrLoop(Brr *brr)
+{
+	Brr *endblock = getBrrEndBlock(brr);
+	return endblock->loop;
+}

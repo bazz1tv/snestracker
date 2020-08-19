@@ -77,7 +77,7 @@ void Button::check_event(const SDL_Event &ev)
 {
   if (!enabled)
     return;
-  if (ev.type == SDL_MOUSEBUTTONDOWN &&
+  if (state == 0 && ev.type == SDL_MOUSEBUTTONDOWN &&
       (Utility::coord_is_in_rect(ev.button.x, ev.button.y, &outer)) &&
       ev.button.button == SDL_BUTTON_LEFT)
   {
@@ -92,16 +92,12 @@ void Button::check_event(const SDL_Event &ev)
   }
   else if (state == LEFTMOUSEBUTTON_HELD_IN_RECT)
   {
-    if (ev.type == SDL_MOUSEMOTION &&
-        (ev.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT)))
+    if (!Utility::coord_is_in_rect(mouse::x, mouse::y, &outer))
     {
-      if (!Utility::coord_is_in_rect(ev.motion.x, ev.motion.y, &outer))
-      {
-        state = 0;
-        // reset the timer
-        if (holdrepeat)
-          remove_hold_timer();
-      }
+      state = 0;
+      // reset the timer
+      if (holdrepeat)
+        remove_hold_timer();
     }
     else if (ev.type == SDL_MOUSEBUTTONUP)
     {
@@ -120,14 +116,17 @@ void Button::remove_hold_timer()
   /* ASSUMES holdrepeat flag check has already been done */
   if (hold_tid)
   {
-    SDL_RemoveTimer(hold_tid);
+    if (SDL_RemoveTimer(hold_tid) == SDL_FALSE)
+    {
+      DEBUGLOG("COULD NOT REMOVE TIMER IN BUTTON!\n");
+    }
     hold_tid = 0;
   }
   else
     DEBUGLOG("Button::remove_hold_timer() called when no timer was active\n");
 }
 
-void Button::draw(SDL_Surface *screen)
+void Button::draw(SDL_Surface *screen, bool flipV/*=false*/)
 {
   //DEBUGLOG("Button::draw; ");
   // redudant calculating outer rect every frame :(
@@ -140,18 +139,18 @@ void Button::draw(SDL_Surface *screen)
         state ? rect.y : rect.y + 2, str,
         Colors::transparent,
         Colors::Interface::color[Colors::Interface::button_bg + state],
-        false);
+        false, flipV);
 
   if (enabled)
     sdlfont_drawString(screen, state ? rect.x + 1 : rect.x,
       state ? rect.y + 2 : rect.y, str,
       Colors::Interface::color[Colors::Interface::button_fg + state],
       Colors::Interface::color[Colors::Interface::button_bg + state],
-      false);
+      false, flipV);
   else
     sdlfont_drawString(screen, rect.x,
       rect.y, str,
       Colors::gray,
       Colors::Interface::color[Colors::Interface::button_bg + state],
-      false);
+      false, flipV);
 }

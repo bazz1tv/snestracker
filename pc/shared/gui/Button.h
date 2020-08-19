@@ -13,7 +13,7 @@ struct Button : public Clickable_Text
   
   void check_event(const SDL_Event &ev);
 
-  void draw(SDL_Surface *screen);
+  void draw(SDL_Surface *screen, bool flipV=false);
 
   static Uint32 held_callback(Uint32 interval, void *b);
   static void trigger_callback(void *b);

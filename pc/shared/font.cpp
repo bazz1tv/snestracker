@@ -9,10 +9,33 @@ unsigned char font[] = {
 0b00111110,
 0b00011100,
 0b00001000,
+// 0x02 folder
+0b00000000,
+0b00000000,
+0b11000000,
+0b11111000,
+0b11111000,
+0b11111000,
+0b00000000,
 
-0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,
+// 0x03, period in middle veritcal
+0b00000000,
+0b00000000,
+0b00000000,
+0b00010000,
+0b00000000,
+0b00000000,
+0b00000000,
+
+// 0x04, period in middle veritcal
+0b00000000,
+0b00000000,
+0b00110000,
+0b01111000,
+0b00110000,
+0b00000000,
+0b00000000,
+
 0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,
@@ -108,7 +131,14 @@ unsigned char font[] = {
 0xfe,0xc6,0x8c,0x18,0x32,0x66,0xfe,  // Z
 
 0x7e,0x7e,0x7e,0x7e,0x7e,0x7e,0x7e,  // block added by bazz use 0x5B
-0x00,0x00,0x00,0x10,0x38,0x7c,0xfe,  // vertical up triangle prototype bazz
+//0x00,0x00,0x00,0x10,0x38,0x7c,0xfe,  // vertical up triangle prototype bazz
+0b00000000,
+0b00000000,
+0b00010000,
+0b00111000,
+0b01111100,
+0b11111110,
+0b00000000,
 0x20,0x30,0x38,0x3c,0x38,0x30,0x20,  // horizontal right pointed triangle
 
 // 0x5e, cursor block with black border
@@ -120,14 +150,8 @@ unsigned char font[] = {
 0b01111110,
 0b00000000,
 
-// 0x5f, period in middle veritcal
-0b00000000,
-0b00000000,
-0b00000000,
-0b00010000,
-0b00000000,
-0b00000000,
-0b00000000,
+// 0x5f, underscore
+0,0,0,0,0,0,0x7e,
 
 // 0x60, period in middle veritcal
 0b00000000,
@@ -206,11 +230,6 @@ unsigned char font[] = {
 
 };
 
-#define FONT_CODE_V_TRI 0x5C
-#define FONT_CODE_V_TRI_STR "\x5c"
-#define FONT_CODE_H_TRI 0x5D
-#define FONT_CODE_H_TRI_STR "\x5d"
-
 unsigned char font_2c[] = {
   0x00,0x30,0x30,0x00,0x00,0x00,0x00, // :
   0x00,0x00,0x00,0x00,0x30,0x30,0x00,
@@ -247,7 +266,7 @@ unsigned char tmp[] = {
 
 unsigned char *font_getChar(char c)
 {
-	if (c < 0x20 && c > 1) {
+	if (c < 0x20 && c > 4) {
 		c = 0x2e; // replace invalid chars by '.'
 	}
 	if (c>=0x61 && c<=0x7a) { c &= 0xdf; } // convert lowercase to uppercase

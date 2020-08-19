@@ -6,7 +6,7 @@ struct Texture
 {
   //Texture();
   ~Texture();
-  static void load_bmp(Texture *t, const char *filename, SDL_Renderer *r);
+  static int load_bmp(Texture *t, const char *filename, SDL_Renderer *r);
   // you may optionally query the width and height from SDL
   static void queryXY(Texture *t);
 
@@ -27,7 +27,7 @@ struct TextureFrame
 struct TextureAni
 {
   ~TextureAni();
-  //bool loaded;
+  bool loaded;
   int num_frames;
   int num_sprites;
   int num_textures;

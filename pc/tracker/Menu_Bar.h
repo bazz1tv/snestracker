@@ -17,10 +17,7 @@ struct Menu_Bar
   
   struct File_Context
   {
-    File_Context() : menu(menu_items, true)
-    {
-      memset(filepath, 0, 500);
-    }
+    File_Context();
 
     static int new_song(void *data);
     static int open_song(void *data);
@@ -30,14 +27,16 @@ struct Menu_Bar
     static int export_spc(void *data);
     static int export_wav(void *data);
     static int quit(void *data) { ::quitting = true; return 0; }
+    static int openRecent(void *i);
 
 		nfdchar_t filepath[500];
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[10] =
+    Context_Menu_Item menu_items[22] =
     {
       {"File",         true,  NULL,       NULL},
 ////////////////////////////////////////////////////////
+      {"-", true, NULL, NULL, false},
       {"New Song",     true,  new_song,   this},
       {"Open ST-Song", true,  open_song,  this},
 			{"Open ST-SPC",  true,  open_spc,   NULL, false},
@@ -45,10 +44,25 @@ struct Menu_Bar
 			{"Save as...",   true,  save_as_song,  this},
       {"Export SPC",   true,  export_spc, NULL},
       {"Export WAV",   true,  export_wav, NULL, false},
+////////////////////////////////////////////////////////
+      {"-", false, NULL, NULL, false},
+      {"Recent Files:", false, NULL, NULL, false, false},
+      {"0", false, openRecent, (void *)0},
+      {"1", false, openRecent, (void *)1},
+      {"2", false, openRecent, (void *)2},
+      {"3", false, openRecent, (void *)3},
+      {"4", false, openRecent, (void *)4},
+      {"5", false, openRecent, (void *)5},
+      {"6", false, openRecent, (void *)6},
+      {"7", false, openRecent, (void *)7},
+      {"-", false, NULL, NULL, false},
+////////////////////////////////////////////////////////
       {"Quit",         true,  quit,       NULL},
 ////////////////////////////////////////////////////////
       {"",             false, NULL,      NULL}
     };
+
+#define RECENTFILE_STARTIDX 11
   };
 
   struct Edit_Context
@@ -65,7 +79,7 @@ struct Menu_Bar
     Context_Menu_Item menu_items[6] = 
     {
       {"Edit",        true,  NULL,                 NULL},
-      {"------",      true,  NULL,                 NULL},
+      {"-",           true,  NULL,                 NULL, false},
       {"Copy",        true,  copy,                 NULL, false},
       {"Paste",       true,  paste,                NULL, false},
       {"Options",     true,  open_options_window,  NULL},
@@ -86,7 +100,7 @@ struct Menu_Bar
     Context_Menu_Item menu_items[7] = 
     {
       {"Window",               true,  NULL,  NULL},
-      {"-------------",        true,  NULL,  NULL},
+      {"-",                    true,  NULL,  NULL, false},
       {"Nothing here yet :9",  true,  NULL,  NULL},
       {"",                     false, NULL,  NULL}
     };
@@ -100,11 +114,12 @@ struct Menu_Bar
     static int clicked_merch(void *nada);
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[3 + 1] =
+    Context_Menu_Item menu_items[5] =
     {
       { "About", true, NULL, NULL },
+      {"-",      true,  NULL,  NULL, false},
       { "Patreon \x01", true, clicked_patreon, NULL },
-      { "Merch", true, clicked_merch, NULL },
+      { "Gift Shop", true, clicked_merch, NULL },
       {"", false, NULL, NULL}
     };
   };

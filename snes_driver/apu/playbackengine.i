@@ -24,6 +24,7 @@
 .enum 0
 	REPEATPATTERN db
 	SKIP_ECHOBUF_CLEAR db
+	START_FROM_PLAYHEAD db
 .ende
 
 ; Generate C printouts for the Tracker app
@@ -42,6 +43,9 @@
 .PRINT "\n"
 .PRINT "#define EXTFLAGS_REPEATPATTERN 0x", HEX REPEATPATTERN, "\n"
 .PRINT "#define EXTFLAGS_SKIP_ECHOBUF_CLEAR 0x", HEX SKIP_ECHOBUF_CLEAR, "\n"
+.PRINT "#define EXTFLAGS_START_FROM_PLAYHEAD 0x", HEX START_FROM_PLAYHEAD, "\n"
+
+.PRINT "\n"
 ; We can make struct definitions that don't need to be defined in RAM,
 ; used purely by their definition as a way to informatically load offsets
 ; from RAM pointers
@@ -54,16 +58,19 @@ sequences     db
    make it addressable. In reality, it's the size specified by num_entries.
    Each entry is just a byte specifying the pattern number */
 
-; it turns out that due to the use of indirect addressing, I can't make
-; use of these struct definitions, but they still uphold the rules of the
-; locations of the DATA members if I export them to C structs that the C
-; code uses.
 .struct Instrument
 vol db
+finetune db
 pan db ; TODO
 srcn db
 adsr1 db
 adsr2 db
+flags db
 semitone_offset db ; TODO
-finetune db        ; TODO
 .endst
+
+
+.equ  INSTR_FLAG_ECHO 1
+
+
+.PRINT "#define INSTR_FLAG_ECHO 0x", HEX INSTR_FLAG_ECHO, "\n"

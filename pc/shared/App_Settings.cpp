@@ -7,7 +7,11 @@
 #include <cstring>
 #include "utility.h"
 #include "Audio.h"
+#include "gme/player/Music_Player.h"
 #include "DEBUGLOG.h"
+#include "platform.h"
+#include "RecentFiles.h"
+#include "Audio_Options.h"
 
 int App_Settings::MAXLINE=600;
 App_Settings *app_settings;
@@ -26,7 +30,6 @@ App_Settings::~App_Settings()
   {
     SDL_free(vars.audio_out_dev);
   }
-  
 }
 
 void App_Settings::save()
@@ -50,8 +53,24 @@ void App_Settings::save()
   row << "audio_out_dev " << Audio::Devices::selected_audio_out_dev << std::endl;
   ofs.write( row.str().c_str(), row.str().length() );
   Utility::clearsstream(row);
-  //sprintf( row, "Sounds %d\n", pSettings->Sounds );
-  //Key_walk_left,Key_walk_right,Key_shoot_primary,Key_shoot_secondary;
+
+  row << "sample_frame_size " << ::player->sample_frame_size << std::endl;
+  ofs.write( row.str().c_str(), row.str().length() );
+  Utility::clearsstream(row);
+
+  for (int i=0; i < NUM_RECENTFILES; i++)
+  {
+    char str[sizeof("01")];
+    fprintf(stderr, "Almost Writing Path!\n");
+    if ( RecentFiles::paths[i] != NULL)
+    {
+      fprintf(stderr, "Writing Path!\n");
+      sprintf(str, "%02d", i);
+      row << "recent_file" << " " << str << " " << RecentFiles::paths[i] << std::endl;
+      ofs.write( row.str().c_str(), row.str().length() );
+      Utility::clearsstream(row);
+    }
+  }
 
   ofs.close();
 }
@@ -212,6 +231,79 @@ int App_Settings :: parse_line( char ** parts, unsigned int count, unsigned int 
       }
     }
     fprintf(stderr, "Audio Out Device set to %s\n", vars.audio_out_dev);
+  }
+  else if ( strcmp( parts[0], "sample_frame_size") == 0 )
+  {
+    if (count == 1)
+    {
+      fprintf(stderr, "using default %d\n", DEFAULT_SAMPLE_FRAME_SIZE);
+      return 0;
+    }
+    else if (!(atoi >> ibuffer))
+    {
+      fprintf(stderr, "Preferences: Couldn't Parse [%s]\n",  parts[0]);
+    }
+
+    // number is out of range or not power of 2
+    if(ibuffer < AUDIO_BUFFER_MIN || ibuffer > AUDIO_BUFFER_MAX ||
+        ( ibuffer != 0 && (ibuffer & (ibuffer-1)) != 0 ) )
+    {
+      DEBUGLOG("incorrect sample_frame_size in preferences: %d\n", ibuffer);
+      ::player->sample_frame_size = DEFAULT_SAMPLE_FRAME_SIZE;
+    }
+    else
+      ::player->sample_frame_size = ibuffer;
+    fprintf(stderr, "sample_frame_size set to %d\n", ::player->sample_frame_size);
+  }
+  else if ( strcmp( parts[0], "recent_file") == 0 )
+  {
+    unsigned int i;
+
+    if (count < 3)
+    {
+      //DEBUGLOG("COUNT < 3\n");
+      return 0;
+    }
+
+    if (!(atoi >> ibuffer))
+    {
+      fprintf(stderr, "Preferences: Couldn't Parse [%s]\n",  parts[0]);
+    }
+
+    if (strlen(parts[2]) > PATH_MAX)
+    {
+      //DEBUGLOG("strlen(parts[2]) > PATH_MAX!\n");
+      return 0;
+    }
+    size_t total_strlen=0;
+ 
+    for (i=2; i < count; i++)
+    {
+      total_strlen += strlen(parts[i]);
+      total_strlen += 1;  // Add 1 for the SPACE or end-of-line (null byte)
+      //DEBUGLOG("\ttotal_strlen = %d\n", total_strlen);
+    }
+    //DEBUGLOG("total_strlen = %d\n", total_strlen);
+
+    if (RecentFiles::paths[ibuffer] != NULL)
+    {
+      fprintf(stderr, "\tAlready loaded recentFile%02d! Overwriting...\n", ibuffer);
+      SDL_free(RecentFiles::paths[ibuffer]);
+    }
+
+    RecentFiles::paths[ibuffer] = (char *) SDL_malloc(sizeof(char) * (total_strlen));
+    strcpy(RecentFiles::paths[ibuffer], parts[2]);
+    if (count > 3)
+    {
+      for (i=3; i < count; i++)
+      {
+        strcat(RecentFiles::paths[ibuffer], " ");
+        strcat(RecentFiles::paths[ibuffer], parts[i]);
+      }
+    }
+
+    RecentFiles::createDisplayNames();
+    fprintf(stderr, "Recent file %02d set to %s\n", ibuffer, RecentFiles::paths[ibuffer]);
   }
   else
   {

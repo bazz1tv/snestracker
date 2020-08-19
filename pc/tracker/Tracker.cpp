@@ -206,6 +206,31 @@ askagain:
   //return 0;
 }
 
+/* Print SNES Tracker, version, followed by str */
+void Tracker::updateWindowTitle(const char *str)
+{
+  /* put the filename in the window title */
+  snprintf(windowStr, PATH_MAX, PROG_NAME_VERSION_STRING " - %s", APP_VERSION, str);
+  SDL_SetWindowTitle(::render->sdlWindow, windowStr);
+}
+
+#define SET_PLAYBACK_BUTTONS(truefalse) \
+main_window.plwidget.patlen_decbtn.enabled = truefalse;\
+main_window.plwidget.patlen_incbtn.enabled = truefalse;\
+main_window.patseqpanel.clonebtn.enabled = truefalse;\
+main_window.patseqpanel.seqbtn.enabled = truefalse;\
+main_window.patseqpanel.clearbtn.enabled = truefalse;\
+main_window.patseqpanel.insbtn.enabled = truefalse;\
+main_window.patseqpanel.zapbtn.enabled = truefalse;\
+main_window.patseqpanel.incpatbtn.enabled = truefalse;\
+main_window.patseqpanel.decpatbtn.enabled = truefalse;\
+main_window.patseqpanel.movePatUpbtn.enabled = truefalse;\
+main_window.patseqpanel.movePatDownbtn.enabled = truefalse;\
+main_window.samplepanel.loadbtn.enabled = truefalse;\
+main_window.instrpanel.loadbtn.enabled = truefalse
+
+bool Tracker::rendering() { return playback || instr_render; }
+
 void Tracker::handle_events()
 {
   SDL_Event ev;
@@ -363,8 +388,15 @@ void Tracker::handle_events()
         switch (ev.user.code)
         {
           case UserEvents::sound_stop:
-						::player->post_fadeout();
-            ::player->pause(true, false, false);
+            if (!instr_render)
+            {
+						  ::player->post_fadeout();
+              ::player->pause(true, false, false);
+            }
+            else
+            {
+              renderCurrentInstrument();
+            }
 						break;
           case UserEvents::callback:
           {
@@ -375,13 +407,16 @@ void Tracker::handle_events()
           }
           break;
 					case UserEvents::report_tracker_incrow:
-						main_window.pateditpanel.inc_currow();
+            if(playback)
+						  main_window.pateditpanel.inc_currow();
 					break;
 					case UserEvents::report_tracker_setrow:
-						main_window.pateditpanel.set_currow((intptr_t)ev.user.data1);
+            if(playback)
+						  main_window.pateditpanel.set_currow((intptr_t)ev.user.data1);
 					break;
 					case UserEvents::report_tracker_setpattern:
-						main_window.patseqpanel.set_currow((intptr_t)ev.user.data1);
+            if(playback)
+						  main_window.patseqpanel.set_currow((intptr_t)ev.user.data1);
 					break;
         }
       } break;
@@ -438,6 +473,17 @@ void Tracker::handle_events()
         int mod = ev.key.keysym.mod;
         switch (scancode)
         {
+          case SDLK_ESCAPE:
+            ::player->spc_write_dsp(dsp_reg::koff, 0xff);
+          break;
+          case SDLK_q:
+            if ( MODONLY(mod, CMD_CTRL_KEY) )
+            {
+              SDL_Event quit_ev;
+              quit_ev.type = SDL_QUIT;
+              SDL_PushEvent(&quit_ev);
+            }
+          break;
           case SDLK_LEFT:
             if ( MODONLY(mod, KMOD_SHIFT | CMD_CTRL_KEY) )
               mousecursors->prev();
@@ -448,20 +494,44 @@ void Tracker::handle_events()
           break;
 					case SDLK_RETURN:
           {
+            if (ev.key.repeat != 0) // Do not process key held down repeat events for this key
+              break;
             bool repeat_pattern = false;
+            bool startFromPlayhead = false;
 						if (Text_Edit_Rect::cur_editing_ter != NULL)
 							break;
 
-            if (MODONLY(mod, KMOD_SHIFT))
-              repeat_pattern = true;
+            if (MODONLY(mod, KMOD_ALT))
+            {
+              alt_return_was_held = true;
+              /* mark copies of the patseqpanel->currow and pateditpanel->currow for later restoration */
+              psp_currow_stash  = main_window.patseqpanel.currow;
+              pep_currow_stash = main_window.pateditpanel.currow;
+              psp_rows_scrolled_stash  = main_window.patseqpanel.rows_scrolled;
+              pep_rows_scrolled_stash = main_window.pateditpanel.rows_scrolled;
+              startFromPlayhead = true;
+            }
+            else
+            {
+              if (mod & CMD_CTRL_KEY)
+                startFromPlayhead = true;
+              if (mod & KMOD_SHIFT)
+                repeat_pattern = true;
+            }
 
 						playback = !playback;
 						if (playback)
-							render_to_apu(repeat_pattern);
+            {
+							render_to_apu(repeat_pattern, startFromPlayhead);
+              // prevent user from decreasing pattern length, etc
+              SET_PLAYBACK_BUTTONS(false);
+            }
 						else
             {
 							::player->fade_out(true);
               // pause taken care of in sound_stop userevent called from fadeout thread
+              // Re-enable the pattern length decrement button
+              SET_PLAYBACK_BUTTONS(true);
             }
           }
 					break;
@@ -529,8 +599,38 @@ void Tracker::handle_events()
             }
           }
 					break;
+          default:
+            //DEBUGLOG("scancode = %08x\n", scancode);
+          break;
         }
       } break;
+      case SDL_KEYUP:
+      {
+        int scancode = ev.key.keysym.sym;
+        int mod = ev.key.keysym.mod;
+        switch (scancode)
+        {
+          case SDLK_RETURN:
+            if(alt_return_was_held)
+            {
+              alt_return_was_held = false;
+              playback = false;
+              ::player->fade_out(true);
+              // pause taken care of in sound_stop userevent called from fadeout thread
+              // Re-enable the pattern length decrement button
+              SET_PLAYBACK_BUTTONS(true);
+              //SDL_FlushEvent(SDL_USEREVENT);
+              main_window.patseqpanel.currow = psp_currow_stash;
+              main_window.pateditpanel.currow = pep_currow_stash;
+              main_window.patseqpanel.rows_scrolled = psp_rows_scrolled_stash;
+              main_window.pateditpanel.rows_scrolled = pep_rows_scrolled_stash;
+              //DEBUGLOG("set psp->currow to %d, pep->currow to %d\n",
+                //patseqpanel_currow_stash, pateditpanel_currow_stash);
+            }
+          break;
+        }
+      }
+      break;
       default:break;
     }
 
@@ -590,8 +690,144 @@ void Tracker::dec_patlen()
 
 // SNES APU timer 0 and 1 frequency rate in seconds
 #define TIMER01_FREQS 0.000125
+int Tracker::calcTicks()
+{
+  /* Convert BPM to ticks */
+  // Ticks = 60 / ( BPM * 4 * Spd * freqS )
+  double ticks = 60.0 / ( (double)song.settings.bpm * 4.0 * (double)song.settings.spd * TIMER01_FREQS );
+  int ticksi = (int) floor(ticks + 0.5);
+  if (ticksi == 256)
+    ticksi = 0; // max timer setting is 0
+  else if (ticksi > 256)
+  {
+    DEBUGLOG("Ticks value too high\n");
+    ticksi = 255;
+  }
 
-void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
+  return ticksi;
+}
+
+void Tracker::renderCurrentInstrument()
+{
+  DEBUGLOG("renderCurrentInstrument(); instr_render: %d, playback: %d\n",
+    instr_render, playback);
+
+  ::player->pause(0, false, false);
+  ::player->start_track(0);
+  // SPC player fade to virtually never end (24 hours -> ms)
+  ::player->emu()->set_fade(24 * 60 * 60 * 1000);
+  // note, this does indeed fit into 32-bit even with the samplerate calcs
+  // done from set_fade()
+
+  // This is absolutely crucial for the tracker to sync properly with the
+  // APU emu!!! v v v  Otherwise the emu runs too fast ahead of the audio
+  ::player->ignore_silence();
+  /* BPM AND SPD */
+  /* Quick thoughts on Timer : We could add a checkmark to use the high
+   * frequency timer. Also could have a mode where you specify ticks and
+   * see the actual BPM */
+  
+  apuram->ticks = calcTicks();
+  apuram->spd = song.settings.spd;
+  /* END BPM AND SPD */
+
+  // Find the position in SPC RAM after driver code
+  uint16_t freeram_i = SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE;
+
+
+  // Only render the current instrument
+
+  /* PlayInstrument */
+  auto instr_num = main_window.instrpanel.currow;
+  const Instrument *instr = &song.instruments[instr_num];
+
+  if (song.samples[instr->srcn].brr == NULL)
+    return; // forget it..
+
+  //DEBUGLOG("instr->srcn = %d\n", instr->srcn);
+  /* Another strategy would be to position the DIR at the base of the
+   * offset rather than push it up further. Would need to check how many
+   * DIR entries are needed if there's room or not */
+  uint16_t dir_i, dspdir_i;
+  dir_i = freeram_i + ((freeram_i % 0x100) ? (0x100 - (freeram_i % 0x100)) : 0);
+  dspdir_i = dir_i / 0x100;
+
+  uint16_t instrtable_i = dir_i + ( (instr->srcn + 1) * 0x4);
+  apuram->instrtable_ptr = instrtable_i ;
+
+  /* We have got to load these samples in first, so the DIR table knows
+   * where the samples are */
+  /* DIR is specified in multiples of 0x100. So if we're shy of that, we
+   * need to move it up. I think a smarter program would mark that unused
+   * area as free for something */
+
+  /* DIR can be at max 0x400 bytes in size, but any unused space in DIR
+   * can be used for other data */
+  // Write the sample and loop information to the DIR. Then write the DSP
+  // DIR value to DSP
+  uint16_t cursample_i = dir_i + ( (instr->srcn + 1) * 0x4 ) + ( (instr_num + 1) * 2 );
+
+  uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (instr->srcn * 4)];
+  *dir = cursample_i;
+  *(dir+1) = cursample_i + song.samples[instr->srcn].rel_loop;
+
+  size_t s=0;
+  for (; s < song.samples[instr->srcn].brrsize; s++)
+  {
+    uint8_t *bytes = (uint8_t *)song.samples[instr->srcn].brr;
+    ::IAPURAM[cursample_i + s] = bytes[s];
+  }
+  cursample_i += s;
+  
+  /* Could add a (SHA1) signature to Sample struct so that we can
+   * identify repeat usage of the same sample and only load it once to
+   * SPC RAM. For now, don't do this!! We're trying to get to first
+   * working tracker status here! Plus, it's possible the user wants the
+   * 2 identical samples to be treated individually (maybe their doing
+   * something complicated) */
+  uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i + (instr_num * 2)];
+  *it = cursample_i;
+
+  // Time to load instrument info
+  ::IAPURAM[cursample_i++] = instr->vol;
+  ::IAPURAM[cursample_i++] = instr->finetune;
+  ::IAPURAM[cursample_i++] = instr->pan;
+  ::IAPURAM[cursample_i++] = instr->srcn;
+  ::IAPURAM[cursample_i++] = instr->adsr.adsr1;
+  ::IAPURAM[cursample_i++] = instr->adsr.adsr2;
+  ::IAPURAM[cursample_i++] = (instr->echo ? INSTR_FLAG_ECHO : 0);
+  ::IAPURAM[cursample_i++] = instr->semitone_offset;
+
+  apuram->dspdir_i = dspdir_i;
+  ::player->spc_write_dsp(dsp_reg::dir, dspdir_i);
+  // INSTRUMENTS END
+
+  // set flag whether to repeat the pattern, and also set the bit to skip
+  // the echobuf clear
+  apuram->extflags |= (1 << EXTFLAGS_SKIP_ECHOBUF_CLEAR);
+  // PATTERN SEQUENCER END
+
+  // SONG SETTINGS
+  apuram->mvol_val = song.settings.mvol;
+  apuram->evol_val = song.settings.evol;
+  /* calculate ESA */
+  /* The ESA will be, based on EDL, pushed all the way to the end of RAM,
+   * so control bit 7 ($F1) must be reset to enable the RAM region of IPL
+   * ROM. Note that the asm RAM clear routine can be executed even with
+   * IPL active (write-only)*/
+  // if EDL is 0, just stick the 4 bytes of echo buffer at $FF00
+  apuram->esa_val = calcESAfromEDL(song.settings.edl);
+  apuram->edl_val = song.settings.edl;
+  apuram->efb_val = song.settings.efb;
+  uint8_t *coeff = &apuram->c0_val;
+  for (int i=0; i < 8; i++)
+    coeff[i] = song.settings.fir[i];
+  // SONG SETTINGS END
+
+  instr_render = true;
+}
+
+void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhead/*=false*/)
 {
   DEBUGLOG("render_to_apu(); playback: %d\n", playback);
   ::player->pause(0, false, false);
@@ -608,19 +844,8 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
   /* Quick thoughts on Timer : We could add a checkmark to use the high
    * frequency timer. Also could have a mode where you specify ticks and
    * see the actual BPM */
-  /* Convert BPM to ticks */
-  // Ticks = 60 / ( BPM * 4 * Spd * freqS )
-  double ticks = 60.0 / ( (double)song.settings.bpm * 4.0 * (double)song.settings.spd * TIMER01_FREQS );
-  int ticksi = (int) floor(ticks + 0.5);
-	if (ticksi == 256)
-		ticksi = 0; // max timer setting is 0
-	else if (ticksi > 256)
-	{
-		DEBUGLOG("Ticks value too high\n");
-		ticksi = 255;
-	}
-	// Forcing using timer0 for ticks, but that's fine for now (or forever)
-	apuram->ticks = ticksi;
+  
+	apuram->ticks = calcTicks();
 	apuram->spd = song.settings.spd;
 	/* END BPM AND SPD */
 
@@ -628,7 +853,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	uint16_t freeram_i = SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE;
 
   uint16_t numinstr = 0;
-  uint8_t highest_instr = 0;
+  apuRender.highest_instr = 0;
   /* TODO: Could optimize this into bitflags */
 	uint8_t used_instr[NUM_INSTR];
   memset(used_instr, 0, sizeof(used_instr));
@@ -639,7 +864,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
   // calculated, we can allocate the amount of RAM necessary for the
   // PatternLUT (detailed below comments).
   uint8_t num_usedpatterns = 0;
-  uint16_t highest_pattern = 0;
+  apuRender.highest_pattern = 0;
   uint16_t patternlut_i = freeram_i; // position pattern data at start of free ram
   uint16_t patternlut_size;
 
@@ -652,11 +877,11 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
     if (pm->used == 0)
       continue;
     num_usedpatterns++;
-    highest_pattern = p;
+    apuRender.highest_pattern = p;
   }
   // Note we don't optimize the pattern LUT by consolidating unused
   // patterns. This was chosen for debugging purposes for Version 1
-  patternlut_size = (highest_pattern + 1) * 2; // WORD sized address table
+  patternlut_size = (apuRender.highest_pattern + 1) * 2; // WORD sized address table
   /* OK I'm thinking about how aside from the pattern data itself, how
    * that pattern data will be accessed. We can store a Pattern lookup
    * table that has the 16-bit addresses of each pattern in ascending
@@ -667,12 +892,12 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
    * another DP pointer for accessing Row data row by row.*/
   uint16_t *patlut = (uint16_t *) &::IAPURAM[patternlut_i];
   uint16_t pat_i = patternlut_i + patternlut_size; // index into RAM for actual pattern data
-  for (int p=0; p < MAX_PATTERNS; p++)
+  for (int p=0; p <= apuRender.highest_pattern; p++)
   {
     PatternMeta *pm = &song.patseq.patterns[p];
     if (pm->used == 0)
     {
-      if (p <= highest_pattern)
+      if (p <= apuRender.highest_pattern)
         *(patlut++) = 0xd00d;
       continue;
     }
@@ -786,7 +1011,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
           {
             used_instr[pr->instr - 1] = 1;
             numinstr++;
-            if (highest_instr < (pr->instr - 1)) highest_instr = pr->instr - 1;
+            if (apuRender.highest_instr < (pr->instr - 1)) apuRender.highest_instr = pr->instr - 1;
           }
         }
         if (pr->vol)
@@ -820,16 +1045,17 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
    * they reference to calculate the used_samples */
   /* TODO: Could optimize this into bitflags */
   uint16_t numsamples = 0;
-  uint8_t highest_sample = 0;
+  apuRender.highest_sample = 0;
   uint8_t used_samples[NUM_SAMPLES];
   memset(used_samples, 0, sizeof(used_samples));
-  for (int i=0; i < NUM_INSTR; i++)
+  for (int i=0; i <= apuRender.highest_instr; i++)
   {
     if (used_instr[i])
     {
       auto srcn = song.instruments[i].srcn;
       numsamples++;
-      if (highest_sample < srcn) highest_sample = srcn;
+      if (apuRender.highest_sample < srcn)
+        apuRender.highest_sample = srcn;
       used_samples[srcn] = 1;
     }
   }
@@ -841,9 +1067,9 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
   dir_i = patseq_i + ((patseq_i % 0x100) ? (0x100 - (patseq_i % 0x100)) : 0);
   dspdir_i = dir_i / 0x100;
 
-	uint16_t instrtable_i = dir_i + ( (highest_sample + 1) * 0x4);
+	uint16_t instrtable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4);
 	//                             {applied size of DIR}  {INSTR TABLE SIZE}
-	uint16_t sampletable_i = dir_i + ( (highest_sample + 1) * 0x4) + ( (highest_instr + 1) * 0x7);
+	uint16_t sampletable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4) + ( (apuRender.highest_instr + 1) * 0x2);
 
 	apuram->instrtable_ptr = instrtable_i;
 
@@ -865,11 +1091,11 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 	 * so that instruments can be updated. The same could be done for
 	 * instrument mappings, now that I think of it. but for now, let's not
 	 * optimize  */
-	for (int i=0; i < NUM_SAMPLES; i++)
+	for (int i=0; i <= apuRender.highest_sample; i++)
 	{
 		if (used_samples[i] == 0)
 		{
-			if (i <= highest_sample)
+			if (i <= apuRender.highest_sample)
 			{
 				// be neat and mark the unused unoptimized entries
 				uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
@@ -881,9 +1107,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 		uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
 		*dir = cursample_i;
 		*(dir+1) = cursample_i + song.samples[i].rel_loop;
-		// has a sample. this instrument is valid for export. However, perhaps
-		// an even better exporter would also check if this instrument has
-		// been used in any (in)active pattern data.
+
 		size_t s=0;
 		for (; s < song.samples[i].brrsize; s++)
 		{
@@ -893,12 +1117,12 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 		cursample_i += s;
 	}
 
-	for (int i=0; i < NUM_INSTR; i++)
+	for (int i=0; i <= apuRender.highest_instr; i++)
 	{
 		Instrument *instr = &song.instruments[i];
 		if (used_instr[i] == 0)
 		{
-			if (i <= highest_instr)
+			if (i <= apuRender.highest_instr)
 			{
 				// be neat and mark the unused unoptimized entries
 				uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i + (i*2)];
@@ -919,12 +1143,13 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 
 		// Time to load instrument info
 		::IAPURAM[cursample_i++] = instr->vol;
+    ::IAPURAM[cursample_i++] = instr->finetune;
 		::IAPURAM[cursample_i++] = instr->pan;
 		::IAPURAM[cursample_i++] = instr->srcn;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr1;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr2;
+    ::IAPURAM[cursample_i++] = (instr->echo ? INSTR_FLAG_ECHO : 0);
 		::IAPURAM[cursample_i++] = instr->semitone_offset;
-		::IAPURAM[cursample_i++] = instr->finetune;
 	}
 	apuram->dspdir_i = dspdir_i;
 	::player->spc_write_dsp(dsp_reg::dir, dspdir_i);
@@ -932,7 +1157,13 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
 
   // set flag whether to repeat the pattern, and also set the bit to skip
   // the echobuf clear
-  apuram->extflags |= (repeat_pattern << EXTFLAGS_REPEATPATTERN) | (1 << EXTFLAGS_SKIP_ECHOBUF_CLEAR);
+  apuram->extflags |= (repeat_pattern << EXTFLAGS_REPEATPATTERN) | (1 << EXTFLAGS_SKIP_ECHOBUF_CLEAR)
+                    | (startFromPlayhead << EXTFLAGS_START_FROM_PLAYHEAD);
+
+//  if (startFromPlayhead)
+  // This is only actually used when startFromPlayhead is true
+  apuram->startPatRow = main_window.pateditpanel.currow;
+  //DEBUGLOG("startPatRow: %d\n", apuram->startPatRow);
 	// PATTERN SEQUENCER END
 
   // SONG SETTINGS
@@ -944,7 +1175,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
    * ROM. Note that the asm RAM clear routine can be executed even with
    * IPL active (write-only)*/
   // if EDL is 0, just stick the 4 bytes of echo buffer at $FF00
-  apuram->esa_val = song.settings.edl ? ( 0x10000 - (song.settings.edl * 0x800) ) >> 8 : 0xff;
+  apuram->esa_val = calcESAfromEDL(song.settings.edl);
   apuram->edl_val = song.settings.edl;
   apuram->efb_val = song.settings.efb;
   uint8_t *coeff = &apuram->c0_val;
@@ -962,67 +1193,15 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/)
     // play from beginning of sequence
 		sound_stop();
 	}
+
+  DEBUGLOG("apuRender.highest_pattern: %d, apuRender.highest_instr: %d, apuRender.highest_sample: %d\n",
+    apuRender.highest_pattern, apuRender.highest_instr, apuRender.highest_sample);
 }
 
-/* The benefit of adding a chunksize after the ID, is that one ID can be
- * extended. If the the app processing the file does not recognize
- * additional length of a known chunk, it can ignore the new data and
- * hopefully still have a successful process. Likewise, new version of the
- * app can process the old files and use default values where
- * new-version-data is missing.
- *
- * This could all be implemented without chunksizes metadata, but I fear
- * the outcome might be that a great many IDs get created, even for rather
- * trivial additions (1 byte). On the other hand, the word-size chunksize
- * metadata would triple the size of every chunk header. However, if 3 IDS
- * need to be made to suit data that could have gone into one ID with
- * chunksize specifier, then it would be worth it.
- *
- * Since it's difficult to forecast the amount of IDS and new data that
- * will be added to the fileformat, It's just a toss up, it could go either way.
- *
- * I need to just make a choice and stick with it, and fight the urge to
- * optimize (prematurely). Well, I've elected to add just ID, no size
- * metadata. */
-
-/* one way to do it would be to make the classes self-loading from a RWops
- * pointer. they would basically extend a class such as:
- *
- * class FileLoader
- * {
- *    FileLoader(uint8_t mcid, size_t sc) : master_chunkid(mcid), supported_chunksize(sc) {}
- *    virtual int load(SDL_RWops *file, size_t chunksize);
- *    size_t supported_chunksize;
- *    uint8_t master_chunkid;
- * };
- *
- * int FileLoader::load(SDL_RWops *file, size_t chunksize, uint8_t chunkid)
- * {
- *   // include some generic top level debugging code here.
- *   assert(chunkid == master_chunkid);
- *   if (chunksize > supported_chunksize)
- *    DEBUGLOG(
- *     "ChunkID: %s, chunksize $%04X > supported_chunksize $%04X!
- *      Perhaps your tracker software could use an update?\n",
- *      getidstr(chunkid), chunksize, supported_chunksize);
- *   else if (chunksize < supported_chunksize)
- *    DEBUGLOG(
- *     "ChunkID: %s, chunksize $%04X < supported_chunksize $%04X!
- *      Perhaps this track was created by an older version of the tracker
- *      software; This song was created by v%s, this tracker is v%s \n",
- *      getidstr(chunkid), chunksize, supported_chunksize, filever,
- *      TRACKER_VER);
- *   return 0;
- * }
- *
- * externally (in the Tracker) would be a map structure from
- * ChunkID to (FileLoader *), so that the tracker's read_from_file()
- * routine could have ~3 lines
- * of code to check for master-level chunkIDs and just call the
- * compile-time-mapped FileLoader->load() with the file handle and chunk
- * size. Then that object just loads itself up
- *
- * */
+uint8_t calcESAfromEDL(uint8_t edl)
+{
+  return edl ? ( 0x10000 - (edl * 0x800) ) >> 8 : 0xff;
+}
 
 /*
 Other ideas:
@@ -1058,6 +1237,7 @@ void Tracker::reset()
 {
   // stop the player incase it's playing
   playback = false;
+  instr_render = false;
   ::player->fade_out(false); // immediate fade-out (no thread)
   ::player->pause(true, false, false);
   /* It was shown that the program would crash if a file was opened while
@@ -1071,6 +1251,8 @@ void Tracker::reset()
 	if (Text_Edit_Rect::cur_editing_ter)
 		Text_Edit_Rect::stop_editing(Text_Edit_Rect::cur_editing_ter);
 
+  song.reset();
+
 	// Reset Panel currows
   main_window.pateditpanel.set_currow(0);
 	main_window.patseqpanel.set_currow(0);
@@ -1078,10 +1260,10 @@ void Tracker::reset()
 	main_window.samplepanel.currow = 0;
 	main_window.samplepanel.rows_scrolled = 0;
 
-  song.reset();
-
 	// Reset Other GUI elements
   Voice_Control::unmute_all();
+  /* enable all critical playback buttons that may have been disabled if we are in playback state */
+  SET_PLAYBACK_BUTTONS(true);
 
 	/* HACKS */
 	/* Since the BPM and SPD widgets do not constantly poll (they normally
@@ -1089,6 +1271,8 @@ void Tracker::reset()
 	 * need to manually update it */
 	main_window.bsawidget.updatebpm();
 	main_window.bsawidget.updatespd();
+
+  updateWindowTitle("New Song");
 }
 
 /* TODO: Add sanitization where necessary */
@@ -1105,6 +1289,8 @@ int Tracker::read_from_file(SDL_RWops *file)
 	main_window.bsawidget.updatebpm();
 	main_window.bsawidget.updatespd();
 
+  if (song.samples[song.instruments[main_window.instrpanel.currow].srcn].brr != NULL && !::tracker->playback)
+    ::tracker->renderCurrentInstrument();
 	return 0;
 }
 
@@ -1252,6 +1438,7 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 			{
 				case REPORT_TRACKER_INCROW:
 				{
+          //DEBUGLOG("REPORT::TRACKER::INCROW");
 					SDL_Event uev;
 					uev.type = SDL_USEREVENT;
 					uev.user.code = UserEvents::report_tracker_incrow;
@@ -1260,6 +1447,7 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 				}
 				case REPORT_TRACKER_SETROW:
 				{
+          //DEBUGLOG("REPORT::TRACKER::SETROW");
 					SDL_Event uev;
 					uev.type = SDL_USEREVENT;
 					uev.user.data1 = (void *)arg;

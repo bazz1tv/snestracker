@@ -1,6 +1,68 @@
 #include "InstrumentEditor.h"
-#include "Instruments.h"
+#include "Instrument_Panel.h"
+#include "Sample_Panel.h"
 #include "Tracker.h"
+
+
+/* I currently have a separate ApuInstr struct below for accessing the APU version
+of instruments. */
+#include "apuram.h"
+
+/* fetches an APURAM pointer to the Instrument Panel's highlighted instrument,
+or NULL if the tracker isn't playing or the currently highlighted instrument was
+not exported to apuram. */
+static ApuInstr * getCurApuInstr(Instrument_Panel *instrpanel)
+{
+  if (instrpanel == NULL || !::tracker->rendering() ||
+    (::tracker->playback && instrpanel->currow > tracker->apuRender.highest_instr) // the highlighted inst wasn't exported to APU
+  )
+    return NULL;
+  uint16_t *itab = (uint16_t *) &::IAPURAM[tracker->apuram->instrtable_ptr];
+  uint16_t instr_addr = itab[instrpanel->currow];
+  ApuInstr *apuinstr = (ApuInstr *) &::IAPURAM[instr_addr];
+  return apuinstr;
+}
+
+InstrumentEditor::EchoEnable::EchoEnable(InstrumentEditor *ie) :
+  title("Echo"),
+  checkbox(NULL, clicked, ie)
+{}
+
+void InstrumentEditor::EchoEnable::setCoords(int x, int y)
+{
+  title.rect.x = x;
+  title.rect.y = y;
+  checkbox.rect.x = x + ( (strlen(title.str) + 1) * CHAR_WIDTH );
+  checkbox.rect.y = y;
+}
+
+void InstrumentEditor::EchoEnable::update()
+{
+  Instrument_Panel *ip = &::tracker->main_window.instrpanel;
+  Instrument *curinst = &::tracker->song.instruments[ ip->currow ];
+  // update what the checkbox refers to
+  checkbox.state = &curinst->echo;
+}
+
+int InstrumentEditor::EchoEnable::clicked(void *i)
+{
+  InstrumentEditor *ie = (InstrumentEditor *)i;
+  Instrument &curinst = ie->instrpanel->instruments[ie->instrpanel->currow];
+  
+  *curinst.metadata.changed = true;
+
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto echo = curinst.echo;
+    if (echo)
+      apuinstr->flags |= INSTR_FLAG_ECHO;
+    else
+      apuinstr->flags &= ~(INSTR_FLAG_ECHO);
+  }
+  return 0;
+}
+
 
 AdsrPanel::AdsrPanel(Instrument_Panel *ip) :
   attack_text("Attack"), decay_text("Decay"),
@@ -58,6 +120,8 @@ int AdsrPanel::check_event(const SDL_Event &ev)
   int r;
   if ((r=adsr_context_menus.receive_event(ev)))
   {
+    bool adsr_changed = false;  // probably true at this point, but being careful!
+    Instrument *curinst = &instrpanel->instruments[instrpanel->currow];
     switch (r)
     {
       case ADSR::Context_Menus::ATTACK_CHANGED:
@@ -69,6 +133,7 @@ int AdsrPanel::check_event(const SDL_Event &ev)
           uint8_t *adsr1 = &instrpanel->instruments[instrpanel->currow].adsr.adsr1;
           *adsr1 = *adsr1 & (~ADSR::ATTACK_MASK);
           *adsr1 |= ADSR::reverse_attack_index(i);
+          adsr_changed = true;
         }
         break;
       case ADSR::Context_Menus::DECAY_CHANGED:
@@ -80,6 +145,7 @@ int AdsrPanel::check_event(const SDL_Event &ev)
           uint8_t *adsr1 = &instrpanel->instruments[instrpanel->currow].adsr.adsr1;
           *adsr1 = *adsr1 & (~ADSR::DECAY_MASK);
           *adsr1 |= ADSR::reverse_decay_index(i);
+          adsr_changed = true;
         }
         break;
       case ADSR::Context_Menus::SUSTAIN_LEVEL_CHANGED:
@@ -92,6 +158,7 @@ int AdsrPanel::check_event(const SDL_Event &ev)
           uint8_t *adsr2 = &instrpanel->instruments[instrpanel->currow].adsr.adsr2;
           *adsr2 = *adsr2 & (~ADSR::SUSTAIN_LEVEL_MASK);
           *adsr2 |= ADSR::reverse_sustain_level_index(i);
+          adsr_changed = true;
         }
         break;
       case ADSR::Context_Menus::SUSTAIN_RELEASE_CHANGED:
@@ -103,9 +170,20 @@ int AdsrPanel::check_event(const SDL_Event &ev)
           uint8_t *adsr2 = &instrpanel->instruments[instrpanel->currow].adsr.adsr2;
           *adsr2 = *adsr2 & (~ADSR::SUSTAIN_RELEASE_MASK);
           *adsr2 |= ADSR::reverse_sustain_release_index(i);
+          adsr_changed = true;
         }
         break;
       default:break;
+    }
+
+    if (adsr_changed)
+    {
+      ApuInstr *apuinstr = getCurApuInstr(instrpanel);
+      if (apuinstr)
+      {
+        apuinstr->adsr1 = curinst->adsr.adsr1;
+        apuinstr->adsr2 = curinst->adsr.adsr2;
+      }
     }
     return r;
   }
@@ -233,34 +311,41 @@ InstrumentEditor::InstrumentEditor(Instrument_Panel *instrpanel) :
   finetune_incbtn("+", incfinetune, this, true),
   finetune_decbtn("-", decfinetune, this, true),
 
+  echoEnable(this),
+
   tabs(this),
   adsrpanel(instrpanel),
   instrpanel(instrpanel)
 {
-  /* disable not-ready buttons */
-  pan_incbtn.enabled = false;
-  pan_decbtn.enabled = false;
-  finetune_incbtn.enabled = false;
-  finetune_decbtn.enabled = false;
 }
+
 void InstrumentEditor :: update_srcn()
 {
-	sprintf(srcn_cbuf, "%02x", instrpanel->instruments[instrpanel->currow].srcn);
-
+  auto srcn = instrpanel->instruments[instrpanel->currow].srcn;
+	sprintf(srcn_cbuf, "%02x", srcn);
 }
 void InstrumentEditor :: update_vol()
 {
-  sprintf(vol_cbuf, "%02x", instrpanel->instruments[instrpanel->currow].vol);
+  auto vol = instrpanel->instruments[instrpanel->currow].vol;
+  sprintf(vol_cbuf, "%02x", vol);
 }
 
 void InstrumentEditor :: update_pan()
 {
-  sprintf(pan_cbuf, "%02x", instrpanel->instruments[instrpanel->currow].pan);
+  Instrument *curinst = &instrpanel->instruments[instrpanel->currow];
+  int8_t pan = curinst->pan;
+  char sign = '+';
+  if (pan < 0)
+    sprintf(pan_cbuf, "%04d", pan);
+  else
+    sprintf(pan_cbuf, "%c%03d", sign, pan);
 }
 
 void InstrumentEditor :: update_finetune()
 {
-  int8_t ft = instrpanel->instruments[instrpanel->currow].finetune;
+  Instrument *curinst = &instrpanel->instruments[instrpanel->currow];
+
+  int8_t ft = curinst->finetune;
   char sign = '+';
   if (ft < 0)
     sprintf(finetune_cbuf, "%04d", ft);
@@ -281,10 +366,10 @@ void InstrumentEditor :: set_coords(int x, int y)
 	srcn_title.rect.y = y;
 	srcn_valtext.rect.x = x + ((sizeof("Sample...")-1) * CHAR_WIDTH);
 	srcn_valtext.rect.y = y;
-	srcn_incbtn.rect.x  = srcn_valtext.rect.x + (sizeof("00") * CHAR_WIDTH);
-	srcn_incbtn.rect.y = y;
-	srcn_decbtn.rect.x = srcn_incbtn.rect.x + CHAR_WIDTH + 5;
+	srcn_decbtn.rect.x  = srcn_valtext.rect.x + (sizeof("00") * CHAR_WIDTH);
 	srcn_decbtn.rect.y = y;
+	srcn_incbtn.rect.x = srcn_decbtn.rect.x + CHAR_WIDTH + 5;
+	srcn_incbtn.rect.y = y;
 
 	y += CHAR_HEIGHT + 5;
 
@@ -292,21 +377,21 @@ void InstrumentEditor :: set_coords(int x, int y)
   vol_title.rect.y = y;
   vol_valtext.rect.x = x + ((sizeof("Vol......")-1) * CHAR_WIDTH);
   vol_valtext.rect.y = y;
-  vol_incbtn.rect.x  = vol_valtext.rect.x + (sizeof("7f") * CHAR_WIDTH);
-  vol_incbtn.rect.y = y;
-  vol_decbtn.rect.x = vol_incbtn.rect.x + CHAR_WIDTH + 5;
+  vol_decbtn.rect.x  = vol_valtext.rect.x + (sizeof("7f") * CHAR_WIDTH);
   vol_decbtn.rect.y = y;
+  vol_incbtn.rect.x = vol_decbtn.rect.x + CHAR_WIDTH + 5;
+  vol_incbtn.rect.y = y;
 
   y += CHAR_HEIGHT + 5;
 
   pan_title.rect.x = x;
   pan_title.rect.y = y;
-  pan_valtext.rect.x = x + ((sizeof("Pan......")-1) * CHAR_WIDTH);
+  pan_valtext.rect.x = x + ((sizeof("Pan....")-1) * CHAR_WIDTH);
   pan_valtext.rect.y = y;
-  pan_incbtn.rect.x  = pan_valtext.rect.x + (sizeof("80") * CHAR_WIDTH);
-  pan_incbtn.rect.y = y;
-  pan_decbtn.rect.x = pan_incbtn.rect.x + CHAR_WIDTH + 5;
+  pan_decbtn.rect.x  = pan_valtext.rect.x + (sizeof("+000") * CHAR_WIDTH);
   pan_decbtn.rect.y = y;
+  pan_incbtn.rect.x = pan_decbtn.rect.x + CHAR_WIDTH + 5;
+  pan_incbtn.rect.y = y;
 
   y += CHAR_HEIGHT + 5;
 
@@ -314,10 +399,14 @@ void InstrumentEditor :: set_coords(int x, int y)
   finetune_title.rect.y = y;
   finetune_valtext.rect.x = x + ((sizeof("F.Tune")) * CHAR_WIDTH);
   finetune_valtext.rect.y = y;
-  finetune_incbtn.rect.x  = finetune_valtext.rect.x + (sizeof("+000") * CHAR_WIDTH);
-  finetune_incbtn.rect.y = y;
-  finetune_decbtn.rect.x = finetune_incbtn.rect.x + CHAR_WIDTH + 5;
+  finetune_decbtn.rect.x  = finetune_valtext.rect.x + (sizeof("+000") * CHAR_WIDTH);
   finetune_decbtn.rect.y = y;
+  finetune_incbtn.rect.x = finetune_decbtn.rect.x + CHAR_WIDTH + 5;
+  finetune_incbtn.rect.y = y;
+
+  y += CHAR_HEIGHT * 2;
+
+  echoEnable.setCoords(x, y);
 
   tabs.set_coords(srcn_decbtn.rect.x + srcn_decbtn.rect.w + (CHAR_WIDTH*15), yy - 3);
   adsrpanel.set_coords(srcn_decbtn.rect.x + srcn_decbtn.rect.w + (CHAR_WIDTH*7), yy + (3*CHAR_HEIGHT));
@@ -336,6 +425,8 @@ int InstrumentEditor::handle_event(const SDL_Event &ev)
 
   finetune_incbtn.check_event(ev);
   finetune_decbtn.check_event(ev);
+
+  echoEnable.checkbox.check_event(ev);
 
   if (ev.type == SDL_MOUSEBUTTONDOWN && ev.button.button == SDL_BUTTON_LEFT)
     tabs.check_mouse_and_execute(ev.button.x, ev.button.y);
@@ -364,15 +455,19 @@ void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
   vol_incbtn.draw(screen);
   vol_decbtn.draw(screen);
 
-  pan_title.draw(screen, Colors::nearblack);
-  pan_valtext.draw(screen, Colors::nearblack);
+  pan_title.draw(screen);
+  pan_valtext.draw(screen);
   pan_incbtn.draw(screen);
   pan_decbtn.draw(screen);
 
-  finetune_title.draw(screen, Colors::nearblack);
-  finetune_valtext.draw(screen, Colors::nearblack);
+  finetune_title.draw(screen);
+  finetune_valtext.draw(screen);
   finetune_incbtn.draw(screen);
   finetune_decbtn.draw(screen);
+
+  echoEnable.update();
+  echoEnable.title.draw(screen);
+  echoEnable.checkbox.draw(screen);
 
   tabs.draw();
 
@@ -395,6 +490,18 @@ int InstrumentEditor::incsrcn(void *i)
 	sp->rows_scrolled = (sp->currow / Sample_Panel::NUM_ROWS) * Sample_Panel::NUM_ROWS;
 
 	ie->update_srcn();
+  /* The following kept out of update_srcn because update_srcn() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto srcn = ie->instrpanel->instruments[ie->instrpanel->currow].srcn;
+    apuinstr->srcn = srcn;
+  }
+
+  if (::tracker->instr_render && !tracker->playback)
+  {
+    ::tracker->renderCurrentInstrument();
+  }
 }
 
 int InstrumentEditor::decsrcn(void *i)
@@ -409,6 +516,18 @@ int InstrumentEditor::decsrcn(void *i)
 	sp->rows_scrolled = (sp->currow / Sample_Panel::NUM_ROWS) * Sample_Panel::NUM_ROWS;
 
 	ie->update_srcn();
+  /* The following kept out of update_srcn because update_srcn() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto srcn = ie->instrpanel->instruments[ie->instrpanel->currow].srcn;
+    apuinstr->srcn = srcn;
+  }
+
+  if (::tracker->instr_render && !tracker->playback)
+  {
+    ::tracker->renderCurrentInstrument();
+  }
 }
 
 int InstrumentEditor::incvol(void *i)
@@ -417,6 +536,14 @@ int InstrumentEditor::incvol(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::inc_vol(curinst);
   ie->update_vol();
+
+  /* The following kept out of update_xx because update_xx() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto vol = ie->instrpanel->instruments[ie->instrpanel->currow].vol;
+    apuinstr->vol = vol;
+  }
 }
 
 int InstrumentEditor::decvol(void *i)
@@ -425,6 +552,14 @@ int InstrumentEditor::decvol(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::dec_vol(curinst);
   ie->update_vol();
+
+  /* The following kept out of update_xx because update_xx() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto vol = ie->instrpanel->instruments[ie->instrpanel->currow].vol;
+    apuinstr->vol = vol;
+  }
 }
 
 int InstrumentEditor::incpan(void *i)
@@ -433,6 +568,13 @@ int InstrumentEditor::incpan(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::inc_pan(curinst);
   ie->update_pan();
+
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    int8_t pan = curinst->pan;
+    apuinstr->pan = pan;
+  }
 }
 
 int InstrumentEditor::decpan(void *i)
@@ -441,6 +583,13 @@ int InstrumentEditor::decpan(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::dec_pan(curinst);
   ie->update_pan();
+
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    int8_t pan = curinst->pan;
+    apuinstr->pan = pan;
+  }
 }
 
 int InstrumentEditor::incfinetune(void *i)
@@ -449,6 +598,14 @@ int InstrumentEditor::incfinetune(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::inc_finetune(curinst);
   ie->update_finetune();
+
+  /* The following kept out of update_xx because update_xx() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    int8_t ft = curinst->finetune;
+    apuinstr->finetune = ft;
+  }
 }
 
 int InstrumentEditor::decfinetune(void *i)
@@ -457,6 +614,14 @@ int InstrumentEditor::decfinetune(void *i)
   Instrument *curinst = &ie->instrpanel->instruments[ie->instrpanel->currow];
   Instrument::dec_finetune(curinst);
   ie->update_finetune();
+
+  /* The following kept out of update_xx because update_xx() is called too frequently */
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    int8_t ft = curinst->finetune;
+    apuinstr->finetune = ft;
+  }
 }
 
 InstrumentEditor::Tabs::Tabs(InstrumentEditor *ie) :

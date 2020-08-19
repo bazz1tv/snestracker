@@ -12,6 +12,8 @@
 #include "gme_m/Spc_Filter.h"
 #include "Audio.h"
 
+#define DEFAULT_SAMPLE_FRAME_SIZE 1024
+
 typedef double gain_t;
 
 void sound_start();
@@ -119,6 +121,7 @@ public:
 	}*/
 	void post_fadeout();
 	void fade_out(bool threaded=false); // public function
+	int sample_frame_size;				// default
 	double stereo_bufs_per_sec;
 
 	static void fill_buffer( void*, sample_t*, int );

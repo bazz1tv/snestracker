@@ -213,7 +213,15 @@ MouseCursors::MouseCursors()
     { {0x00ff00}, "cursors/sparkle-small",  1, 1},
   };
   for (int i=0; i < 3; i++)
-    Texture::load_bmp(&mcaap->texture[i], mcaap->texture[i].filename, ::render->sdlRenderer);
+  {
+    if (
+      Texture::load_bmp(&mcaap->texture[i], mcaap->texture[i].filename,
+        ::render->sdlRenderer) < 0 )
+    {
+      mcaap->loaded = false;
+      /* should I notify the user or just silently let it go? */
+    }
+  }
 
   mcaap->num_frames = 15;
   mcaap->num_sprites = 4;
@@ -331,19 +339,19 @@ void BmpCursorAni::load_bmps(BmpCursorAni *a)
       strcat(tb, f->filename);
       strcat(tb, ".bmp");
       //strcat(tb, "\"");
-      f->surface = SDL_LoadBMP(tb);
-      // hard coded color key should be pulled as a data member later
-      SDL_SetColorKey(f->surface, SDL_TRUE,
-        SDL_MapRGB(f->surface->format, f->colorkey.r, f->colorkey.g,
-                   f->colorkey.b));
-
       DEBUGLOG("path = %s\n", tb);
+      
+      f->surface = SDL_LoadBMP(tb);
       if (!f->surface)
       {
         DEBUGLOG("SURFACE: %s\n", SDL_GetError());
         a->loaded = false;
         return;
       }
+      // hard coded color key should be pulled as a data member later
+      SDL_SetColorKey(f->surface, SDL_TRUE,
+        SDL_MapRGB(f->surface->format, f->colorkey.r, f->colorkey.g,
+                   f->colorkey.b));
 
       f->cursor = SDL_CreateColorCursor(f->surface,
           a->hotspot.x, a->hotspot.y);
@@ -378,17 +386,20 @@ void BmpCursor::load_bmp(BmpCursor *b)
     strcat(tb, ".bmp");
     //strcat(tb, "\"");
     b->surface = SDL_LoadBMP(tb);
-    SDL_SetColorKey(b->surface, SDL_TRUE,
-        SDL_MapRGB(b->surface->format,
-                    b->colorkey.r, b->colorkey.g, b->colorkey.b));
 
     DEBUGLOG("path = %s\n", tb);
     if (!b->surface)
     {
-      DEBUGLOG("SURFACE: %s\n", SDL_GetError());
+      DEBUGLOG("\tcouldn't load, '%s'\n", SDL_GetError());
       b->loaded = false;
       return;
     }
+
+    SDL_SetColorKey(b->surface, SDL_TRUE,
+        SDL_MapRGB(b->surface->format,
+                    b->colorkey.r, b->colorkey.g, b->colorkey.b));
+
+    
     SDL_Cursor **c = &b->cursor;
     *c = SDL_CreateColorCursor(b->surface,
             b->hotspot.x, b->hotspot.y);
@@ -400,6 +411,7 @@ void BmpCursor::load_bmp(BmpCursor *b)
         b->surface = NULL;
       }
       b->loaded = false;
+      DEBUGLOG("\tcouldn't create cursor, '%s'\n", SDL_GetError());
       return;
     }
     b->loaded = true;
@@ -428,7 +440,8 @@ void MouseCursors::set_cursor(int i)
 
   if (i >= CURSOR_BMP_START && i < CURSOR_ANI_END && index >= CURSOR_BMP_START && index < CURSOR_ANI_END)
   {
-    MouseTextureAni *selected = MouseTextureAni::selected;
+    MouseTextureAni *selected = MouseTextureAni::selected->loaded ?
+                                MouseTextureAni::selected : NULL;
     if (selected)
     {
       int hx, hy, ohx, ohy;

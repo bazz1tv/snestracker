@@ -2,6 +2,7 @@
 
 #include "shared/gui/Text.h"
 #include "shared/gui/Button.h"
+#include "shared/gui/Checkbox.h"
 
 struct SampleEditor
 {
@@ -15,6 +16,7 @@ struct SampleEditor
 	char loop_cbuf[sizeof("$1000")];
 	Text loop_title, loop_valtext;
 	Button loop_incbtn, loop_decbtn;
+	Checkbox loopCheckbox;
 	static int incloop(void *i);
 	static int decloop(void *i);
 

@@ -3,10 +3,7 @@
 void Song::reset()
 {
   // Reset Song Title
-  settings.song_title_str[0] = 0;
-
-  settings.bpm = SongSettings::DEFAULT_BPM;
-  settings.spd = SongSettings::DEFAULT_SPD;
+  settings.reset();
 
   // Reset all Samples (and free memory!)
   for (int i=0; i < NUM_SAMPLES; i++)
@@ -147,6 +144,8 @@ SongFileLoader::ret_t SongFileLoader::readHeader(SDL_RWops *file)
   {
     DEBUGLOG("\tFound older (pre-version) song file\n");
     ret = HEADER_OLD;
+    DialogBox::SimpleOK("Older File Format Detected",
+            "This file will be migrated to the new format the next time you save.");
   }
   // The newer header is "SONGST"
   else if (strcmp( (const char *)buf, HeaderStr) == 0)
@@ -260,6 +259,8 @@ int SongFileLoader::loadOld(SDL_RWops *file)
     // Time to load instrument info
     SDL_RWread(file, &instr->vol, 1, 1);
     SDL_RWread(file, &instr->pan, 1, 1);
+    if (instr->pan == -128)
+      instr->pan = 0;
     SDL_RWread(file, &instr->srcn, 1, 1);
     SDL_RWread(file, &instr->adsr.adsr1, 1, 1);
     SDL_RWread(file, &instr->adsr.adsr2, 1, 1);

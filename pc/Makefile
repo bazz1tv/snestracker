@@ -18,6 +18,10 @@ endif
 global_requirements = $(LIBJDKMIDI_LIB) $(CPPSOURCES) $(CSOURCES) $(MSOURCES) \
 $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(EXECUTABLE_TRACKER)
 
+# Pretty (long, space delim) names for the apps
+PRETTY_DEBUGGER = SPC Debugger
+PRETTY_TRACKER = SNES Tracker
+
 # This is where source that both tracker and STD will use. NOTE THE inclusion of the forward slash ;)
 SHARED_DIR = shared/
 PROJ_DIR = ext
@@ -143,7 +147,8 @@ else ifeq ($(uname_S), Cross_Windows)
 	CPPFLAGS += -fpermissive
 	# NFD
 	CPPSOURCES += $(PROJ_DIR)/NativeFileDialog/nfd_win.cpp
-	LDFLAGS += -lole32 #-static-libgcc #-lcomctl32 -lcomdlg32
+	# uuid needed for nfd
+	LDFLAGS += -lole32 -luuid #-static-libgcc #-lcomctl32 -lcomdlg32
 	BOOST_LDFLAGS := -lboost_system -lboost_filesystem
 	# Example of static library inclusion:
 	#BOOST_LDFLAGS := $(prefix)/lib/libboost_system.a $(prefix)/lib/libboost_filesystem.a
@@ -171,6 +176,8 @@ else ifeq ($(uname_S), Cross_Windows)
 	EXECUTABLE_TRACKER = st.exe
 	UNRAR = unrar.exe
 	DEC7Z = 7zDec.exe
+
+	OBJECTS_TRACKER := winres.o
 else ifeq ($(uname_S), Windows)
     
 else
@@ -212,7 +219,7 @@ $(wildcard tracker/*/*/*.cpp)
 
 # 
 OBJECTS_DEBUGGER = $(CPPSOURCES_DEBUGGER:.cpp=.o) $(MSOURCES:.m=.o) $(CSOURCES:.c=.o)
-OBJECTS_TRACKER = $(CPPSOURCES_TRACKER:.cpp=.o) $(MSOURCES:.m=.o) $(CSOURCES:.c=.o)
+OBJECTS_TRACKER += $(CPPSOURCES_TRACKER:.cpp=.o) $(MSOURCES:.m=.o) $(CSOURCES:.c=.o)
 
 OBJECTS_DEBUGGER2 = $(addprefix $(OBJ)/, $(OBJECTS_DEBUGGER))
 OBJECTS_TRACKER2 = $(addprefix $(OBJ)/, $(OBJECTS_TRACKER))
@@ -234,25 +241,80 @@ $(BIN)/$(EXECUTABLE_DEBUGGER).app: Info.plist osx_ship.sh $(BIN)/$(EXECUTABLE_DE
 	cp -r $(BIN)/cursors $@/Contents/Resources # Copy mouse icons
 	bash ./osx_ship.sh $@ $(EXECUTABLE_DEBUGGER) $@/Contents/Lib
 	touch $@
+	# Have a pretty version
+	cp -r $@ "$(BIN)/$(PRETTY_DEBUGGER).app"
+	mv $@/Contents/MacOS/$(EXECUTABLE_DEBUGGER) "$(BIN)/$(PRETTY_DEBUGGER).app/Contents/MacOS/$(PRETTY_DEBUGGER)"
 
-$(BIN)/$(EXECUTABLE_TRACKER).app: Info.plist osx_ship.sh $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
+$(BIN)/$(EXECUTABLE_TRACKER).app: st.icns Info.plist osx_ship.sh $(BIN)/$(EXECUTABLE_TRACKER) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z)
 	mkdir -p $@ $@/Contents/Lib $@/Contents/Resources $@/Contents/MacOS
 	cp $(BIN)/$(EXECUTABLE_TRACKER) $@/Contents/MacOS
 	cp Info.plist $@/Contents
 	cp $(BIN)/$(UNRAR) $@/Contents/Resources
 	cp $(BIN)/$(DEC7Z) $@/Contents/Resources
+	cp st.icns $@/Contents/Resources
 	cp -r $(BIN)/cursors $@/Contents/Resources # Copy mouse icons
 	cp $(BIN)/tracker.spc $@/Contents/Resources # copy SPC driver
 	bash ./osx_ship.sh $@ $(EXECUTABLE_TRACKER) $@/Contents/Lib
 	#$@/Contents/MacOS/$(EXECUTABLE_TRACKER)
 	touch $@
+	# Have a pretty version
+	cp -r $@ "$(BIN)/$(PRETTY_TRACKER).app"
+	mv $@/Contents/MacOS/$(EXECUTABLE_TRACKER) "$(BIN)/$(PRETTY_TRACKER).app/Contents/MacOS/$(PRETTY_TRACKER)"
 
+# Automated creation of Mac icon pack (icns) from our PNG renders
+st.icns:
+	mkdir -p $(OBJ)/st.iconset
+	cp st-icons-png/1024-stroked-thick.png $(OBJ)/st.iconset/icon_512x512@2x.png
+	cp st-icons-png/512-stroked-thick.png $(OBJ)/st.iconset/icon_512x512.png
+	cp st-icons-png/512-stroked-thick.png $(OBJ)/st.iconset/icon_256x256@2x.png
+	cp st-icons-png/256-stroked-thick.png $(OBJ)/st.iconset/icon_256x256.png
+	cp st-icons-png/256-stroked-thick.png $(OBJ)/st.iconset/icon_128x128@2x.png
+	cp st-icons-png/128-stroked.png $(OBJ)/st.iconset/icon_128x128.png
+	cp st-icons-png/64.png $(OBJ)/st.iconset/icon_32x32@2x.png
+	cp st-icons-png/32.png $(OBJ)/st.iconset/icon_32x32.png
+	cp st-icons-png/32.png $(OBJ)/st.iconset/icon_16x16@2x.png
+	cp st-icons-png/16.png $(OBJ)/st.iconset/icon_16x16.png
+	iconutil -c icns -o st.icns $(OBJ)/st.iconset
+
+# Automatic creation of Windows icon pack (ico) from our PNG renders
+# Depends on ImageMagick
+st.ico: st-icons-png/256-stroked-thick.png st-icons-png/64.png st-icons-png/48.png\
+	st-icons-png/32.png st-icons-png/24.png st-icons-png/16.png Makefile
+	rm -rf $(OBJ)/st-ico/
+	mkdir -p $(OBJ)/st-ico
+	convert st-icons-png/256-stroked-thick.png $(OBJ)/st-ico/256-32bit.png
+	#convert st-icons-png/256-stroked-thick.png -depth 8 -colors 256 $(OBJ)/st-ico/256-8bit.ico
+	#convert st-icons-png/256-stroked-thick.png -depth 4 -colors 16 $(OBJ)/st-ico/256-4bit.ico
+	convert st-icons-png/128-stroked.png $(OBJ)/st-ico/128-32bit.png
+	#convert st-icons-png/128-stroked.png -depth 8 -colors 256 $(OBJ)/st-ico/128-8bit.ico
+	#convert st-icons-png/128-stroked.png -depth 4 -colors 16 $(OBJ)/st-ico/128-4bit.ico
+	convert st-icons-png/64.png $(OBJ)/st-ico/64-32bit.png
+	#convert st-icons-png/64.png -depth 8 -colors 256 +dither $(OBJ)/st-ico/64-8bit.png
+	#convert st-icons-png/64.png -depth 4 -colors 16 +dither $(OBJ)/st-ico/64-4bit.png
+	convert st-icons-png/48.png $(OBJ)/st-ico/48-32bit.png
+	convert st-icons-png/48.png -depth 8 -colors 256 +dither $(OBJ)/st-ico/48-8bit.png
+	convert st-icons-png/48.png -depth 4 -colors 16 +dither $(OBJ)/st-ico/48-4bit.png
+	convert st-icons-png/32.png $(OBJ)/st-ico/32-32bit.png
+	convert st-icons-png/32.png -depth 8 -colors 256 +dither $(OBJ)/st-ico/32-8bit.png
+	convert st-icons-png/32.png -depth 4 -colors 16 +dither $(OBJ)/st-ico/32-4bit.png
+	#
+	convert st-icons-png/24.png $(OBJ)/st-ico/24-32bit.png
+	convert st-icons-png/24.png -depth 8 -colors 256 +dither $(OBJ)/st-ico/24-8bit.png
+	convert st-icons-png/24.png -depth 4 -colors 16 +dither $(OBJ)/st-ico/24-4bit.png
+	convert st-icons-png/16.png $(OBJ)/st-ico/16-32bit.png
+	convert st-icons-png/16.png -depth 8 -colors 256 +dither $(OBJ)/st-ico/16-8bit.png
+	convert st-icons-png/16.png -depth 4 -colors 16 +dither $(OBJ)/st-ico/16-4bit.png
+	convert $(OBJ)/st-ico/*.png st.ico
 
 $(BIN)/$(EXECUTABLE_DEBUGGER): $(OBJECTS_DEBUGGER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_DEBUGGER2) $(LDFLAGS) -o $@
+	# For the Windows version. and don't error out on non-windows by returning true from a subshell
+	( cp $(BIN)/{std.exe,"$(PRETTY_DEBUGGER).exe"} ; true )
 
 $(BIN)/$(EXECUTABLE_TRACKER): $(OBJECTS_TRACKER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_TRACKER2) $(LDFLAGS) -o $@
+	# For the Windows version. and don't error out on non-windows by returning true from a subshell
+	( cp $(BIN)/{st.exe,"$(PRETTY_TRACKER).exe"} ; true )
 
 
 $(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(PROJ_DIR)/lzma1505/C/Util/7z/7zMain.c
@@ -286,6 +348,9 @@ $(OBJ)/%.o: %.cpp
 $(OBJ)/%.o: %.m
 	@mkdir -p $(@D)
 	$(OBJCC) $(OBJCFLAGS) -c $< -o $@
+
+$(OBJ)/winres.o: winres.rc st.ico
+	$(CROSS_COMPILE)windres winres.rc $(OBJ)/winres.o
 	
 clean:
 	@# Remove both Linux and Windows versions of unrar and 7zdec
@@ -293,6 +358,7 @@ clean:
 	rm -f $(BIN)/{7zDec,7zDec.exe}
 	rm -f $(BIN)/$(EXECUTABLE_DEBUGGER);
 	rm -f $(BIN)/$(EXECUTABLE_TRACKER);
+	rm -rf $(OBJ)
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 	rm -f {$(PROJ_DIR)/lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
 	rm -f {$(PROJ_DIR)/unrar/,}{unrar,unrar.exe}

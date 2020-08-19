@@ -41,14 +41,14 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   patseqpanel.set_coords(x, y);
 
-	plwidget.set_coords(x, y + patseqpanel.rect.h + 20);
+	plwidget.set_coords(x, patseqpanel.rect.y + patseqpanel.rect.h + CHAR_HEIGHT);
 
 	x = 150;
 
   song_title_label.rect.x = x;
   song_title_label.rect.y = y;
   
-  y += CHAR_HEIGHT + 2;
+  y += CHAR_HEIGHT + 5;
   song_title.rect.x = 150;
   song_title.rect.y = y;
 

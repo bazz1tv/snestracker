@@ -56,12 +56,9 @@ void Midi::PrintSysEx( FILE *f, jdkmidi::MIDISystemExclusive *ex )
 
 void Midi::PrintMsg( FILE *f, jdkmidi::MIDIMessage *m )
 {
-  // SNES shit
+  // SNES
   if (m->IsNoteOn())
   {
-    /* FIX ME
-    if (BaseD::grand_mode == BaseD::GrandMode::INSTRUMENT)
-    {
       SDL_Event event2;
 
       event2.type = SDL_USEREVENT;
@@ -70,24 +67,19 @@ void Midi::PrintMsg( FILE *f, jdkmidi::MIDIMessage *m )
       event2.user.data2 = 0;
       SDL_PushEvent(&event2);
       last_note_on = m->GetNote();
-    }*/
   }
   else if (m->IsNoteOff())
   {
-    /* FIXME
-    if (BaseD::grand_mode == BaseD::GrandMode::INSTRUMENT)
+    if (m->GetNote() == last_note_on)
     {
-      if (m->GetNote() == last_note_on)
-      {
-        SDL_Event event2;
+      SDL_Event event2;
 
-        event2.type = SDL_USEREVENT;
-        event2.user.code = UserEvents::keyoff;
-        event2.user.data1 = (void*)m->GetNote();
-        event2.user.data2 = 0;
-        SDL_PushEvent(&event2);
-      }
-    }*/
+      event2.type = SDL_USEREVENT;
+      event2.user.code = UserEvents::keyoff;
+      event2.user.data1 = (void*)m->GetNote();
+      event2.user.data2 = 0;
+      SDL_PushEvent(&event2);
+    }
   }
   else if (m->IsProgramChange())
   {

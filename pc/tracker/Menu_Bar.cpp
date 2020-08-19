@@ -8,6 +8,7 @@
 #include "Tracker.h"
 
 #include "shared/SdlNfd.h"
+#include "shared/RecentFiles.h"
 
 extern Tracker *tracker;
 
@@ -47,6 +48,84 @@ void Menu_Bar::draw(SDL_Surface *screen)
   context_menus.draw(screen);
 }
 
+static void updateRecentFiles(Menu_Bar::File_Context *fc)
+{
+  /* Check for populated strings */
+  for (int i=0; i < NUM_RECENTFILES; i++)
+  {
+    if (RecentFiles::paths[i] != NULL)
+    {
+      fc->menu_items[RECENTFILE_STARTIDX - 2].is_visible = true; // enable the recentfiles HEAD spacer
+      fc->menu_items[RECENTFILE_STARTIDX - 1].is_visible = true; // enable the recentfiles HEADLINE
+      fc->menu_items[RECENTFILE_STARTIDX + NUM_RECENTFILES].is_visible = true; // enable the end-of-recentfiles separator
+      fc->menu_items[RECENTFILE_STARTIDX + i].is_visible = true; // enable the entry
+      fc->menu_items[RECENTFILE_STARTIDX + i].clickable_text.str = RecentFiles::dnames[i];
+      fc->menu_items[RECENTFILE_STARTIDX + i].clickable_text.init_width_height();
+    }
+    else
+    {
+      fc->menu_items[RECENTFILE_STARTIDX + i].is_visible = false; // enable the entry
+    }
+  }
+
+  fc->menu.preload(fc->menu.created_at.x, fc->menu.created_at.y);
+}
+
+int Menu_Bar::File_Context::openRecent(void *i)
+{
+  intptr_t idx = (intptr_t) i;
+  const char *path = RecentFiles::paths[idx];
+
+  if (::tracker->song.changed)
+  {
+    int rc = ::tracker->DialogUnsavedChanges();
+    //DEBUGLOG("rc = %d\n", rc);
+    if (rc == -1) // file didn't save, or user pressed cancel
+      return -1;
+    // 0 means file saved or user pressed no saving
+  }
+
+  SDL_RWops *file = SDL_RWFromFile(path, "r");
+  if (file == NULL)
+  {
+    char tmpbuf[500];
+    sprintf(tmpbuf, "Warning: Unable to open file %s!\n %s", path,
+            SDL_GetError() );
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                   "Could not open FILE!",
+                   tmpbuf,
+                   NULL);
+    // TODO
+    RecentFiles::remove(idx);
+    updateRecentFiles(&::tracker->menu_bar.context_menus.file_context);
+
+    return NFD_ERROR;
+  }
+
+  auto rc = ::tracker->read_from_file(file);
+
+  SDL_RWclose(file);
+
+  if (rc == 0)
+  {
+    /*Successful. Update the current song's filepath */
+    strncpy(::tracker->menu_bar.context_menus.file_context.filepath, path, 500);
+    /* put the filename in the window title */
+    ::tracker->updateWindowTitle( Utility::getFileName(RecentFiles::paths[idx]) );    /* Add the filename to the RecentFiles list */
+    RecentFiles::push(path); //psuedo-code
+    /* Update the Open Recent Context Menu! */
+    updateRecentFiles(&::tracker->menu_bar.context_menus.file_context);
+  }
+
+  return rc;
+}
+
+Menu_Bar::File_Context::File_Context() : menu(menu_items, true)
+{
+  memset(filepath, 0, 500);
+
+  updateRecentFiles(this);
+}
 
 int Menu_Bar::File_Context::new_song(void *data)
 {
@@ -93,8 +172,13 @@ int Menu_Bar::File_Context::open_song(void *data)
 	if (rc == 0)
 	{
 		/*Successful. Update the current song's filepath */
-
 		strncpy(fc->filepath, SdlNfd::outPath, 500);
+    /* put the filename in the window title */
+    ::tracker->updateWindowTitle( Utility::getFileName(fc->filepath) );
+    /* Add the filename to the RecentFiles list */
+    RecentFiles::push(fc->filepath); //psuedo-code
+    /* Update the Open Recent Context Menu! */
+    updateRecentFiles(fc);
 	}
 
 	return rc;
@@ -117,6 +201,14 @@ static int save_common(Menu_Bar::File_Context *fc, SDL_RWops *file, nfdchar_t *f
 	::tracker->save_to_file(file);
 
 	strncpy(fc->filepath, filepath, 500);
+
+  /* Add the filename to the RecentFiles list */
+  RecentFiles::push(filepath); //psuedo-code
+  /* Update the Open Recent Context Menu! */
+  updateRecentFiles(&::tracker->menu_bar.context_menus.file_context);
+
+  /* put the filename in the window title */
+  ::tracker->updateWindowTitle( Utility::getFileName( filepath ) );
 	return NFD_OKAY;
 }
 
@@ -240,6 +332,17 @@ int Menu_Bar::File_Context::export_wav(void *data)
 void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 {
   this->x = x; this->y = y;
+
+  file_context.menu.linespace = 4;
+  edit_context.menu.linespace = 4;
+  window_context.menu.linespace = 4;
+  about_context.menu.linespace = 4;
+
+  file_context.menu.hpadding = CHAR_WIDTH;
+  edit_context.menu.hpadding = CHAR_WIDTH;
+  window_context.menu.hpadding = CHAR_WIDTH;
+  about_context.menu.hpadding = CHAR_WIDTH;
+
   file_context.menu.preload(x, y);
   x +=  ( strlen(file_context.menu_items[0].clickable_text.str)
           * CHAR_WIDTH ) + CHAR_WIDTH*2;

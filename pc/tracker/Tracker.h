@@ -48,14 +48,24 @@ public:
 	void inc_patlen();
 	void dec_patlen();
 
-  void render_to_apu(bool repeat_pattern = false);
+  void renderCurrentInstrument();
+  void render_to_apu(bool repeat_pattern = false, bool startFromPlayhead = false);
+  int calcTicks();
+
 	void reset();
 	int read_from_file(SDL_RWops *file);
 	void save_to_file(SDL_RWops *file);
   int DialogUnsavedChanges();
 
+  void updateWindowTitle(const char *str);
+
 	/* Tracker APU RAM mapping */
 	TrackerApuRam *apuram;
+  // Vars calculated at APU render time that are useful elsewhere
+  struct {
+    uint8_t highest_instr, highest_sample;
+    uint16_t highest_pattern;
+  } apuRender;
   /* TRACKER CORE -- Here is located the "model" data structures, not GUI
    * */
 	Song song;
@@ -81,10 +91,23 @@ public:
   static std::unordered_set<DrawRenderer *> prerenders, postrenders;
 
   bool playback = false; // is tracker playback happening?
+  bool instr_render = false;
+  bool rendering();
 
   FPS frame;  // framerate control
 
 
 private:
 	SpcReport spcreport;
+
+  /* The following variables are exclusively for the Alt-Return "Return playhead
+   * to original position functionality" */
+  int psp_currow_stash, pep_currow_stash;
+  int psp_rows_scrolled_stash, pep_rows_scrolled_stash;
+  bool alt_return_was_held;
+
+  /////
+  char windowStr[PATH_MAX];
 };
+
+uint8_t calcESAfromEDL(uint8_t edl);

@@ -9,18 +9,28 @@
 l               db
 h               db
 
+c				db
+b				db
+
 e               db
 d               db
 
+g				db
+f				db
+
+s				db
+r				db
+
 PrevCmd         db
-SnesBuffer0     db
-SnesBuffer1     db
 
 flags           db
 .ends
 
 .equ hl l EXPORT
+.equ bc c EXPORT
 .equ de e EXPORT
+.equ fg g EXPORT
+.equ rs s EXPORT
 
 .BANK 0 SLOT SPC_CODE_SLOT
 .ORG 0
@@ -32,6 +42,8 @@ MAIN:
 	;mov dspdata, #1
 
 	CLRP ; set dp to 0
+	;mov x, #$EF
+	;mov sp, x
 	mov dspaddr, #flg
 	mov dspdata, #$e0 ; reset, no echo writes, mute amp
 	mov a, #0
@@ -45,8 +57,7 @@ MAIN:
 	mov dspaddr, #evol_r
 	mov dspdata, a
 
-	mov dspaddr, #koff
-	mov dspdata, a
+	call !koffAllNotes
 	mov dspaddr, #pmon
 	mov dspdata, a
 	mov dspaddr, #non
@@ -97,6 +108,7 @@ Poll:
     
   cmp a, #CmdEnd
   bpl PollExit
+  mov spcport1, a
   ; push the PollExit address to stack and do a table jump
   asl a ; word-sized index into jump table
   mov x, a
@@ -112,7 +124,8 @@ PollExit:
   bra MainLoop   ; repoll snes
 
 CmdJumpTable:
-  .dw EmptyHandler, FetchRamValue, WriteRamByte, PlaySong, StopSong
+  .dw EmptyHandler, FetchRamValue, WriteRamByte, PlaySong, StopSong, SetPattern
+  .dw PlayInstrument
 EmptyHandler:
   ret
 

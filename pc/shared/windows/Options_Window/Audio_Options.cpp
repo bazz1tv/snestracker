@@ -11,6 +11,8 @@ int Audio_Options::Context::change_audio_out_device(void *item)
   SDL_Log("change_audio_out_device, %s", itemp->clickable_text.str);
   if (ao->openDeviceonClick)
     ::player->init(::player->sample_rate, itemp->clickable_text.str);
+
+  return 0;
 }
 
 Audio_Options::Context::Context(Audio_Options *ao) : ao(ao)
@@ -41,6 +43,8 @@ Audio_Options::Context::Context(Audio_Options *ao) : ao(ao)
   menu->should_highlight_currently_selected_item = true;
   menu->currently_selected_item = &menu->items[selected_index];
   menu->currently_selected_item_index = selected_index;
+  menu->linespace = 4;
+  menu->hpadding = CHAR_WIDTH;
 }
 
 Audio_Options::Context::~Context()
@@ -60,10 +64,57 @@ openDeviceonClick(openDeviceonClick)
 
 }
 
+Audio_Options::BufferSize::BufferSize() :
+  cbuf("  2048"),
+  title("Buffer Size"),
+  valtext(cbuf),
+  decbtn("<", dec, this, false),
+  incbtn(">", inc, this, false)
+{}
+
+void Audio_Options::BufferSize::update()
+{
+  sprintf(cbuf, "%6d", ::player->sample_frame_size);
+}
+
+void Audio_Options::BufferSize::setCoords(int x, int y)
+{
+  title.rect.x = x;
+  title.rect.y = y;
+  valtext.rect.x = x + ( (strlen(title.str) + 1) * CHAR_WIDTH );
+  valtext.rect.y = y;
+  decbtn.rect.x  = valtext.rect.x + ( (strlen(valtext.str) + 1) * CHAR_WIDTH );
+  decbtn.rect.y = y;
+  incbtn.rect.x = decbtn.rect.x + CHAR_WIDTH + 5;
+  incbtn.rect.y = y;
+}
+
+int Audio_Options::BufferSize::inc(void *b)
+{
+  BufferSize *bs = (BufferSize *) b;
+  if (::player->sample_frame_size < AUDIO_BUFFER_MAX)
+  {
+    ::player->sample_frame_size *= 2;
+    ::player->init(::player->sample_rate, Audio::Devices::selected_audio_out_dev);
+  }
+}
+
+int Audio_Options::BufferSize::dec(void *b)
+{
+  BufferSize *bs = (BufferSize *) b;
+  if (::player->sample_frame_size > AUDIO_BUFFER_MIN)
+  {
+    ::player->sample_frame_size /= 2;
+    ::player->init(::player->sample_rate, Audio::Devices::selected_audio_out_dev);
+  }
+}
+
 void Audio_Options::preload(SDL_Rect *rect)
 {
   this->rect = *rect;
   context.menu->preload(rect->x, rect->y);
+
+  bufferSize.setCoords(rect->x, rect->y + context.menu->created_at.h + (3*CHAR_WIDTH));
 }
 
 void Audio_Options::run()
@@ -81,6 +132,12 @@ void Audio_Options::draw()
   is_first_run=false;
   context.menu->draw(screen);
   //SDL_Log("Audio_Options::draw");
+
+  bufferSize.update();
+  bufferSize.title.draw(screen);
+  bufferSize.valtext.draw(screen);
+  bufferSize.incbtn.draw(screen);
+  bufferSize.decbtn.draw(screen);
 }
 void Audio_Options::one_time_draw()
 {
@@ -99,7 +156,8 @@ void Audio_Options::one_time_draw()
 int Audio_Options::receive_event(SDL_Event &ev)
 {
   //SDL_Log("Audio_Options::receieve_event");
-  dblclick::check_event(&ev);
+  bufferSize.decbtn.check_event(ev);
+  bufferSize.incbtn.check_event(ev);
 
   switch (ev.type)
   {

@@ -75,7 +75,10 @@ enum Note
   no(3),
   no(4), // BASE OCTAVE
   no(5),
-  NOTE_C6 // SNES APU limit is C 2 octaves from base
+  NOTE_C6, // SNES APU limit is C 2 octaves from base
+  // Additions for Fine-tune
+  NOTE_CSHARP6,
+  NOTE_D6
   //no(7),
   //no(8),
 };
@@ -101,7 +104,7 @@ struct PatternRow // defines one row of Pattern Data
 #define MAX_PATTERNS 0x80
 #define MIN_PATTERN_LEN 1
 #define MAX_PATTERN_LEN 0x80
-#define DEFAULT_PATTERN_LEN 0x40
+#define DEFAULT_PATTERN_LEN 0x20
 
 struct Pattern
 {
@@ -204,15 +207,20 @@ struct PatSeqPanel // PatternSequencerPanel
   static const int VISIBLE_ROWS = 8;
   int currow = 0; /* This is not only controlled by the user, but also by
   the playback engine. At least that's the plan. */
+  Text title;
 
-  Button clonebtn, seqbtn, clearbtn;
-  Button incpatbtn, decpatbtn;
+  Button clonebtn, seqbtn, clearbtn, insbtn, zapbtn;
+  Button incpatbtn, decpatbtn, movePatUpbtn, movePatDownbtn;
   // callback funcs for the buttons
   static int clone(void *pspanel);
   static int seq(void *pspanel);
   static int clear(void *pspanel);
+  static int insertPat(void *pspanel);
   static int incpat(void *pspanel);
   static int decpat(void *pspanel);
+  static int movePatUp(void *pspanel);
+  static int movePatDown(void *pspanel);
+  static int zapPat(void *pspanel);
 
   Text index_text[VISIBLE_ROWS];
   char index_strings[VISIBLE_ROWS][4];
@@ -225,9 +233,11 @@ struct PatSeqPanel // PatternSequencerPanel
   SDL_Rect highlight_r; // the highlight rect of current select instr
   PatternSequencer *patseq;
 
-	void set_currow(int row);
+	void set_currow(int row, bool updateScrolled=true);
   void inc_currow();
   void dec_currow();
+private:
+  Uint32 lastTimeScrolled;
 };
 
 struct Instrument_Panel;
@@ -320,7 +330,7 @@ private:
   void dec_curtrack();
 
   // needs to be renamed
-  void notehelper(int ndex);
+  void notehelper(int ndex, bool absmidi=false);
   void instrhelper(int n);
   void volhelper(int n);
   void fxhelper(int n);
