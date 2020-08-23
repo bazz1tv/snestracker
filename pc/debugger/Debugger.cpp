@@ -4,6 +4,8 @@
 #include "Screen.h"
 #include "sdl_userevents.h"
 
+#include "SdlNfd.h"
+
 #define L_FLAG 0
 #define R_FLAG 1
 
@@ -129,6 +131,11 @@ void Debugger::handle_events()
   while (SDL_PollEvent(&ev))
   {
     //DEBUGLOG("GOTEVENT 0x%x -", ev.type);
+
+    /* ignore events immediately after NFD dialog (#12) */
+    if (SdlNfd::active())
+      continue;
+
     switch(ev.type)
     {
       case SDL_QUIT:
