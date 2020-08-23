@@ -6,7 +6,7 @@
 #include "File_System.h"
 
 /// Current Settings Revision
-#define PREF_VERSION "0.6"
+#define PREF_VERSION "0.6.1"
 
 /// User Settings File
 #define USER_PREF_FILE_NAME "Preferences.ini"
