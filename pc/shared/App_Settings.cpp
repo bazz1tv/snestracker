@@ -41,7 +41,7 @@ void App_Settings::save()
   std::stringstream row;
   
   //sprintf( row,  "### Preferences file V.%s for MeatBall V.0 #### \n\n", PREF_VERSION );
-  row << "### Preferences file V." << PREF_VERSION << " for " << APP_NAME << " V.0 #### \n\n";
+  row << "### Preferences file V." << PREF_VERSION << " for " << APP_NAME_VERSION << " #### \n\n";
   ofs.write( row.str().c_str(), row.str().length() );
   Utility::clearsstream(row);
 

@@ -162,7 +162,14 @@ void RecentFiles::createDisplayNames()
     if (paths[i] != NULL)
     {
       char *filename = (char *) Utility::getFileName(paths[i]);
-      assert(filename != NULL);
+
+      // Fixes #139
+      if (filename == NULL)
+      {
+        paths[i] = NULL;
+        continue;
+      }
+
       dnames[i] = (char *) SDL_malloc( sizeof(char) * ( strlen(filename) + 1 + 1) );
       strcpy(dnames[i], FONT_BULLETPOINT_STR);
       strcat(dnames[i], filename);
