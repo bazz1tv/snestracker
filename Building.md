@@ -1,9 +1,12 @@
 Building
 ========
 
-_Friendly reminder_: A fully built SNES Tracker can be obtained by being a member of my [Patreon](https://patreon.snestracker.com) or by making a purchase at the [SNES Tracker Gift Shop](https://shop.snestracker.com). This official version may include early access and/or premium features, as my thanks to you.
+Three flavours of pre-built SNES Tracker binaries are available for you!
+- **OLD**: simply download @ https://github.com/bazzinotti/snestracker/releases.
+- **LATEST**: With any purchase from the [Gift Shop](https://shop.snestracker.com/) you'll receive a one-time instant download link to the latest version of SNES Tracker.
+- **LATEST+INTERIM**: As a thank you to my [Patreon](https://patreon.snestracker.com/) Supporters, who help to keep this project going, the latest version of SNES Tracker is available exclusively via Patreon a few weeks before it becomes available on github. Support me and this project by becoming a Patreon Supporter and you will not only receive a download link to the latest stable version each time it is released - you'll also unlock access to the very latest interim builds, experience up-to-the-minute bug fixes, features and improvements weeks before anybody else. Aside from builds access, you can also earn privileged roles in our Discord community, receive generous shop discounts, exclusive behind the scenes updates, and more!
 
-You may perform any of the following compilation scenarios:
+Alternatively, you may perform any of the following compilation scenarios:
 
 - compile native on OS X
 - compile native on Linux
