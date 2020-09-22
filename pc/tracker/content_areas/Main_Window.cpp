@@ -59,13 +59,9 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   bsawidget.set_coords(x, y + song_title.rect.h + CHAR_HEIGHT);
 
-	// sample editor button directly beneath instr editor button
-	sample_editor_btn.rect.x = x;
-	sample_editor_btn.rect.y = instreditor_btn.rect.y + instreditor_btn.rect.h + 5;
-
   // song settings button directly beneath sample editor button
   songsettings_btn.rect.x = x;
-  songsettings_btn.rect.y = sample_editor_btn.rect.y + sample_editor_btn.rect.h + 5;
+  songsettings_btn.rect.y = bsawidget.rect.y + bsawidget.rect.h + 4;
 
 
 /////////// COORDINATES FOR INSTRUMENT PANEL
@@ -77,8 +73,12 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   instreditor_btn.rect.y = instrpanel.rect.y + instrpanel.rect.h + (CHAR_HEIGHT * 1);
 
 
+/////////// COORDINATES FOR SAMPLE PANEL
   x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH) + padding_x_instrpanel_samplepanel;
   samplepanel.set_coords(x, yy);
+  // sample editor button directly beneath sample panel
+  sample_editor_btn.rect.x = samplepanel.loadbtn.rect.x;
+  sample_editor_btn.rect.y = samplepanel.rect.y + samplepanel.rect.h + (CHAR_HEIGHT);
 
   y = y + instrpanel.rect.h + CHAR_HEIGHT;
   pateditpanel.set_coords(xx, y);
