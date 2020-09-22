@@ -514,3 +514,21 @@ int Menu_Bar::About_Context::clicked_merch(void *nada)
   DEBUGLOG("CLICKED MERCH\n");
   openUrl(MERCH_URL);
 }
+
+int Menu_Bar::About_Context::clicked_soundcloud(void *nada)
+{
+  DEBUGLOG("CLICKED SOUNDCLOUD\n");
+  openUrl(SOUNDCLOUD_URL);
+}
+
+int Menu_Bar::About_Context::clicked_wiki(void *nada)
+{
+  DEBUGLOG("CLICKED WIKI\n");
+  openUrl(WIKI_URL);
+}
+
+int Menu_Bar::About_Context::clicked_twitter(void *nada)
+{
+  DEBUGLOG("CLICKED TWITTER\n");
+  openUrl(TWITTER_URL);
+}

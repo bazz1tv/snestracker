@@ -112,14 +112,21 @@ struct Menu_Bar
 
     static int clicked_patreon(void *nada);
     static int clicked_merch(void *nada);
+    static int clicked_soundcloud(void *nada);
+    static int clicked_wiki(void *nada);
+    static int clicked_twitter(void *nada);
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[5] =
+    Context_Menu_Item menu_items[9] =
     {
       { "About", true, NULL, NULL },
       {"-",      true,  NULL,  NULL, false},
+      { "Wiki", true, clicked_wiki, NULL },
+      {"-",      true,  NULL,  NULL, false},
       { "Patreon \x01", true, clicked_patreon, NULL },
       { "Gift Shop", true, clicked_merch, NULL },
+      { "Soundcloud", true, clicked_soundcloud, NULL },
+      { "Twitter", true, clicked_twitter, NULL },
       {"", false, NULL, NULL}
     };
   };

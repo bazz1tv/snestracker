@@ -18,3 +18,6 @@
 convert it to HTTPS */
 #define PATREON_URL "http://patreon.snestracker.com"
 #define MERCH_URL "http://shop.snestracker.com"
+#define SOUNDCLOUD_URL "https://soundcloud.snestracker.com"
+#define WIKI_URL "https://wiki.snestracker.com"
+#define TWITTER_URL "https://twitter.snestracker.com"
