@@ -43,25 +43,25 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
 	plwidget.set_coords(x, patseqpanel.rect.y + patseqpanel.rect.h + CHAR_HEIGHT);
 
-	x = 150;
+	x = 150 + 15;
 
   song_title_label.rect.x = x;
   song_title_label.rect.y = y;
   
   y += CHAR_HEIGHT + 5;
-  song_title.rect.x = 150;
+  song_title.rect.x = x;
   song_title.rect.y = y;
 
-  bsawidget.set_coords(150, y + song_title.rect.h + CHAR_HEIGHT);
+  bsawidget.set_coords(x, y + song_title.rect.h + CHAR_HEIGHT);
 
-  instreditor_btn.rect.x = 150;
+  instreditor_btn.rect.x = x;
   instreditor_btn.rect.y = bsawidget.rect.y + bsawidget.rect.h + 4;
 	// sample editor button directly beneath instr editor button
-	sample_editor_btn.rect.x = 150;
+	sample_editor_btn.rect.x = x;
 	sample_editor_btn.rect.y = instreditor_btn.rect.y + instreditor_btn.rect.h + 5;
 
   // song settings button directly beneath sample editor button
-  songsettings_btn.rect.x = 150;
+  songsettings_btn.rect.x = x;
   songsettings_btn.rect.y = sample_editor_btn.rect.y + sample_editor_btn.rect.h + 5;
 
   x += song_title.rect.w + (CHAR_WIDTH * 2);
