@@ -59,8 +59,6 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   bsawidget.set_coords(x, y + song_title.rect.h + CHAR_HEIGHT);
 
-  instreditor_btn.rect.x = x;
-  instreditor_btn.rect.y = bsawidget.rect.y + bsawidget.rect.h + 4;
 	// sample editor button directly beneath instr editor button
 	sample_editor_btn.rect.x = x;
 	sample_editor_btn.rect.y = instreditor_btn.rect.y + instreditor_btn.rect.h + 5;
@@ -69,8 +67,16 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   songsettings_btn.rect.x = x;
   songsettings_btn.rect.y = sample_editor_btn.rect.y + sample_editor_btn.rect.h + 5;
 
+
+/////////// COORDINATES FOR INSTRUMENT PANEL
+
   x += song_title.rect.w + (CHAR_WIDTH * 2) + padding_x_instrpanel_samplepanel;
   instrpanel.set_coords(x, yy);
+  // #142, move instrument editor button to be with instrument panel
+  instreditor_btn.rect.x = instrpanel.loadbtn.rect.x; // Use same indentation as Load Button
+  instreditor_btn.rect.y = instrpanel.rect.y + instrpanel.rect.h + (CHAR_HEIGHT * 1);
+
+
   x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH) + padding_x_instrpanel_samplepanel;
   samplepanel.set_coords(x, yy);
 
