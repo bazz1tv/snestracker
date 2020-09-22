@@ -28,6 +28,11 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   songsettings_btn("Sng Sett.", toggle_songsettings, this)
 {
   int x,y,xx,yy;
+  /* Address EASY Layout improvement from issue #142
+   * Applies to area, Instrument Panel, and Sample Panel */
+  constexpr int padding_x_instrpanel_samplepanel = 17;
+  constexpr int padding_x_songtitle_songsettings = 7;
+
   song_title.dblclick = false; // do not require dblclick to edit. single
 
   if (::render->screen == NULL)
@@ -43,7 +48,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
 	plwidget.set_coords(x, patseqpanel.rect.y + patseqpanel.rect.h + CHAR_HEIGHT);
 
-	x = 150 + 15;
+	x = 150 + padding_x_songtitle_songsettings;
 
   song_title_label.rect.x = x;
   song_title_label.rect.y = y;
@@ -64,9 +69,9 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   songsettings_btn.rect.x = x;
   songsettings_btn.rect.y = sample_editor_btn.rect.y + sample_editor_btn.rect.h + 5;
 
-  x += song_title.rect.w + (CHAR_WIDTH * 2);
+  x += song_title.rect.w + (CHAR_WIDTH * 2) + padding_x_instrpanel_samplepanel;
   instrpanel.set_coords(x, yy);
-  x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH);
+  x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH) + padding_x_instrpanel_samplepanel;
   samplepanel.set_coords(x, yy);
 
   y = y + instrpanel.rect.h + CHAR_HEIGHT;
