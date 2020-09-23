@@ -23,9 +23,9 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   pateditpanel(&patseqpanel, &instrpanel),
   bsawidget(tracker, &pateditpanel),
   instreditor(&instrpanel),
-  instreditor_btn("Inst. Ed.", toggle_instreditor, this),
-	sample_editor_btn("Samp. Ed.", toggle_sample_editor, this),
-  songsettings_btn("Sng Sett.", toggle_songsettings, this)
+  instreditor_btn("Instrument Editor", toggle_instreditor, this),
+	sample_editor_btn("Sample Editor", toggle_sample_editor, this),
+  songsettings_btn("Song Settings", toggle_songsettings, this)
 {
   int x,y,xx,yy;
   /* Address EASY Layout improvement from issue #142
