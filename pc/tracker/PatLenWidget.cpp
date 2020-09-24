@@ -5,13 +5,13 @@ extern Tracker *tracker;
 
 PatLenWidget::PatLenWidget() :
 	patlen_cbuf("$040"),
-	patlen_title("Plen"),
+	patlen_title("Pattern  Length:"),
 	patlen_valtext(patlen_cbuf),
 	patlen_incbtn("+", inc_patlen, this, true),
 	patlen_decbtn("-", dec_patlen, this, true),
 
 	seqlen_cbuf("$00"),
-	seqlen_title("Slen"),
+	seqlen_title("Sequence Length:"),
 	seqlen_valtext(seqlen_cbuf)
 
 {
@@ -42,7 +42,7 @@ void PatLenWidget :: set_coords(int x, int y)
 
 	patlen_title.rect.x = x;
 	patlen_title.rect.y = y;
-	patlen_valtext.rect.x = x + ((4 + 1) * CHAR_WIDTH);
+	patlen_valtext.rect.x = x + ((strlen(patlen_title.str) + 1) * CHAR_WIDTH);
 	patlen_valtext.rect.y = y;
 	patlen_decbtn.rect.x  = patlen_valtext.rect.x + (5 * CHAR_WIDTH);
 	patlen_decbtn.rect.y = y;
@@ -53,7 +53,7 @@ void PatLenWidget :: set_coords(int x, int y)
 
 	seqlen_title.rect.x = x;
 	seqlen_title.rect.y = y;
-	seqlen_valtext.rect.x = x + ((4 + 1) * CHAR_WIDTH);
+	seqlen_valtext.rect.x = x + ((strlen(seqlen_title.str) + 1) * CHAR_WIDTH);
 	seqlen_valtext.rect.y = y;
 
 	rect.w = patlen_incbtn.rect.x + patlen_incbtn.rect.w - rect.x + 2;
