@@ -249,10 +249,15 @@ void Main_Window::draw()
   //fprintf(stderr, "HERE!\n");
   song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
 	bsawidget.draw(::render->screen);
-  instreditor_btn.draw(::render->screen);
 	sample_editor_btn.draw(::render->screen);
   songsettings_btn.draw(::render->screen);
+
+  // BEWARE: Must draw instreditor_btn after the instrpanel
+  // TODO (Maybe): Put instreditor_btn into Instrument_Panel class with
+  // handle to Main_Window
   instrpanel.draw(::render->screen);
+  instreditor_btn.draw(::render->screen);
+
   samplepanel.draw(::render->screen);
   patseqpanel.draw(::render->screen);
 	plwidget.draw(::render->screen);

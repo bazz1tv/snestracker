@@ -103,6 +103,16 @@ void Instrument_Panel::set_coords(int x, int y)
   rect.w = ((INSTR_NAME_GUI_CHAR_WIDTH + 3) * CHAR_WIDTH) + 2;
   rect.h = (CHAR_HEIGHT * (NUM_ROWS)) + 1;
 
+  // Enlargen rect area for the background color area.
+#define PAD_X 5
+#define PAD_Y 10
+  rect_bg.x = rect.x - PAD_X;
+  rect_bg.y = title.rect.y - PAD_Y;
+  rect_bg.w = rect.w + (PAD_X * 2);
+  rect_bg.h = rect.h + (PAD_Y * 2) + 44; // added vertical padding for instrment editor button
+                                         // (in Main_Window)
+#undef PAD_X
+#undef PAD_Y
 }
 
 int Instrument_Panel::event_handler(const SDL_Event &ev)
@@ -269,8 +279,13 @@ void Instrument_Panel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
 void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
 {
   unsigned int i=0;
+
+  // Draw the background
+  SDL_FillRect(screen, &rect_bg, Colors::nearblack);
+
   /* First, draw the "Instruments" strings and top buttons */
-  title.draw(screen);
+  title.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+             true, false, false, Colors::nearblack);
   loadbtn.draw(screen);
   savebtn.draw(screen);
   dupbtn.draw(screen);
