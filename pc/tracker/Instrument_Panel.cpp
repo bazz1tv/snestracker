@@ -280,10 +280,11 @@ void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
 {
   unsigned int i=0;
 
-  // Draw the background
+  // Draw the background rect
   SDL_FillRect(screen, &rect_bg, Colors::nearblack);
 
   /* First, draw the "Instruments" strings and top buttons */
+  // Need to draw this title with the same background color as the rect_bg
   title.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
              true, false, false, Colors::nearblack);
   loadbtn.draw(screen);
