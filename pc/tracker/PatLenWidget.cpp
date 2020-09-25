@@ -5,13 +5,13 @@ extern Tracker *tracker;
 
 PatLenWidget::PatLenWidget() :
 	patlen_cbuf("$040"),
-	patlen_title("Pattern  Length:"),
+	patlen_title("Pat Len:"),
 	patlen_valtext(patlen_cbuf),
 	patlen_incbtn("+", inc_patlen, this, true),
 	patlen_decbtn("-", dec_patlen, this, true),
 
 	seqlen_cbuf("$00"),
-	seqlen_title("Sequence Length:"),
+	seqlen_title("Seq Len:"),
 	seqlen_valtext(seqlen_cbuf)
 
 {
