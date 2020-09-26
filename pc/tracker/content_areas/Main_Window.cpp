@@ -30,7 +30,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   int x,y,xx,yy;
   /* Address EASY Layout improvement from issue #142
    * Applies to area, Instrument Panel, and Sample Panel */
-  constexpr int padding_x_instrpanel_samplepanel = 17;
+  constexpr int padding_x_instrpanel = 10;
+  constexpr int padding_x_samplepanel = 17;
   constexpr int padding_x_songtitle_songsettings = 7;
 
   song_title.dblclick = false; // do not require dblclick to edit. single
@@ -46,7 +47,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   patseqpanel.set_coords(x, y);
 
-	x = 150 + padding_x_songtitle_songsettings;
+	x = 150 + padding_x_songtitle_songsettings + 10;
 
   song_title_label.rect.x = x;
   song_title_label.rect.y = y;
@@ -59,7 +60,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
 /////////// COORDINATES FOR INSTRUMENT PANEL
 
-  x += song_title.rect.w + (CHAR_WIDTH * 2) + padding_x_instrpanel_samplepanel;
+  x += song_title.rect.w + (CHAR_WIDTH * 2) + padding_x_instrpanel;
   instrpanel.set_coords(x, yy);
   // #142, move instrument editor button to be with instrument panel
   instreditor_btn.rect.x = instrpanel.loadbtn.rect.x; // Use same indentation as Load Button
@@ -79,7 +80,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
 
 /////////// COORDINATES FOR SAMPLE PANEL
-  x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH) + padding_x_instrpanel_samplepanel;
+  x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH) + padding_x_samplepanel;
   samplepanel.set_coords(x, yy);
   // sample editor button directly beneath sample panel
   sample_editor_btn.rect.x = samplepanel.loadbtn.rect.x;
