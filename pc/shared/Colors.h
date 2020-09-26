@@ -34,6 +34,7 @@ struct Colors
 
       //v0.2.1
       patseqpanelBG,
+      songpanelBG,
       SIZEOF
     };
     static Uint32 color[Type::SIZEOF];

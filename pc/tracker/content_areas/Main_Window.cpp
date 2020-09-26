@@ -61,6 +61,19 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   songsettings_btn.rect.x = x;
   songsettings_btn.rect.y = bsawidget.rect.y + bsawidget.rect.h + 4;
 
+// Song Area BG Rect Portion
+//
+#define PAD_X 5
+#define PAD_Y 10
+  song_rect_bg.x = song_title_label.rect.x - PAD_X;
+  song_rect_bg.y = song_title_label.rect.y - PAD_Y;
+  song_rect_bg.w = song_title.rect.w + (PAD_X * 2);
+  song_rect_bg.h = ( (songsettings_btn.rect.y + songsettings_btn.rect.h) - song_rect_bg.y ) + (PAD_Y * 2);
+#undef PAD_X
+#undef PAD_Y
+
+//
+
 
 /////////// COORDINATES FOR INSTRUMENT PANEL
 
@@ -226,8 +239,9 @@ void Main_Window::draw_memory_outline()
 void Main_Window::one_time_draw()
 {
   // draw one-time stuff
-  //SDL_FillRect(::render->screen, NULL, Colors::Interface::color[Colors::Interface::Type::bg]);
-  song_title_label.draw(::render->screen);
+  SDL_FillRect(::render->screen, &song_rect_bg, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
+  song_title_label.draw(::render->screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+               true, false, false, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
 
   instrpanel.one_time_draw();
   samplepanel.one_time_draw();
@@ -245,8 +259,8 @@ void Main_Window::draw()
   // base height
   i = 32 + SCREEN_Y_OFFSET;  
   //fprintf(stderr, "HERE!\n");
-  song_title.draw(Colors::Interface::color[Colors::Interface::Type::text_fg]);
-	bsawidget.draw(::render->screen);
+  song_title.draw();
+	bsawidget.draw(::render->screen, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
   songsettings_btn.draw(::render->screen);
 
   // BEWARE: Must draw instreditor_btn after the instrpanel

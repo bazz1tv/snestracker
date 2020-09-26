@@ -118,20 +118,27 @@ int BpmSpdAddWidget::handle_event(const SDL_Event &ev)
 //{
 //}
 
-void BpmSpdAddWidget::draw(SDL_Surface *screen/*=::render->screen*/)
+void BpmSpdAddWidget::draw(SDL_Surface *screen/*=::render->screen*/,
+                           Uint32 bgColor/*=Colors::transparent*/)
 {
-  bpm_title.draw(screen);
-  bpm_valtext.draw(screen);
+  bpm_title.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+        true, false, false, bgColor);
+  bpm_valtext.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+      true, false, false, bgColor);
   bpm_incbtn.draw(screen);
   bpm_decbtn.draw(screen);
-  spd_title.draw(screen);
-  spd_valtext.draw(screen);
+  spd_title.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+      true, false, false, bgColor);
+  spd_valtext.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+      true, false, false, bgColor);
   spd_incbtn.draw(screen);
   spd_decbtn.draw(screen);
 
   updateadd();
-  add_title.draw(screen);
-  add_valtext.draw(screen);
+  add_title.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+      true, false, false, bgColor);
+  add_valtext.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+      true, false, false, bgColor);
   add_incbtn.draw(screen);
   add_decbtn.draw(screen);
 }

@@ -13,7 +13,7 @@ struct BpmSpdAddWidget
   void set_coords(int x, int y);
   int handle_event(const SDL_Event &ev);
   /*void one_time_draw(SDL_Surface *screen=::render->screen);*/
-  void draw(SDL_Surface *screen=::render->screen);
+  void draw(SDL_Surface *screen=::render->screen, Uint32 bgColor=Colors::transparent);
 
   void updatebpm();
   void updatespd();

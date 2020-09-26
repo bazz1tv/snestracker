@@ -113,4 +113,7 @@ struct Main_Window : public Experience
   Button songsettings_btn;
   static int toggle_songsettings(void *m);
 ///////////// END AUX PANELS /////////////////////
+
+// v0.2.1
+  SDL_Rect song_rect_bg;
 };
