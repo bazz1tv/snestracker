@@ -85,6 +85,18 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   sample_editor_btn.rect.x = samplepanel.loadbtn.rect.x;
   sample_editor_btn.rect.y = samplepanel.rect.y + samplepanel.rect.h + (CHAR_HEIGHT);
 
+  // Enlargen rect area for the background color area.
+#define PAD_X 5
+#define PAD_Y 5
+  sample_rect_bg.x = samplepanel.rect.x - PAD_X;
+  sample_rect_bg.y = samplepanel.title.rect.y - PAD_Y;
+  sample_rect_bg.w = samplepanel.rect.w + (PAD_X * 2);
+  sample_rect_bg.h = ( ( sample_editor_btn.rect.y + sample_editor_btn.rect.h ) - sample_rect_bg.y ) + PAD_Y;
+  // (in Main_Window)
+#undef PAD_X
+#undef PAD_Y
+///////
+
   y = y + instrpanel.rect.h + CHAR_HEIGHT;
   pateditpanel.set_coords(xx, y);
   pateditpanel.set_visible_rows(0x08); // called to update rect.h
@@ -258,7 +270,10 @@ void Main_Window::one_time_draw()
   SDL_FillRect(::render->screen, &instr_rect_bg, Colors::nearblack);
   instrpanel.one_time_draw();
   // Sample Panel
+  // Draw the background rect
+  SDL_FillRect(::render->screen, &sample_rect_bg, Colors::nearblack);
   samplepanel.one_time_draw();
+
   patseqpanel.one_time_draw();
   pateditpanel.one_time_draw();
 }

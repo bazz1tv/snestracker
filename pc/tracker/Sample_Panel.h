@@ -43,7 +43,4 @@ struct Sample_Panel
   Sample *samples;
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr
-
-  // v0.2.1
-  SDL_Rect rect_bg;
 };
