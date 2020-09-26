@@ -49,7 +49,4 @@ struct Instrument_Panel
   /* Todo, calculate the panel rect */
   SDL_Rect rect; // define the boundaries of the entire panel
   SDL_Rect highlight_r; // the highlight rect of current select instr
-
-  // v0.2.1
-  SDL_Rect rect_bg; // define the background color fill area for the entire  panel
 };

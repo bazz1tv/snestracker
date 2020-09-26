@@ -65,6 +65,18 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   instreditor_btn.rect.x = instrpanel.loadbtn.rect.x; // Use same indentation as Load Button
   instreditor_btn.rect.y = instrpanel.rect.y + instrpanel.rect.h + (CHAR_HEIGHT * 1);
 
+  // Enlargen rect area for the background color area.
+#define PAD_X 5
+#define PAD_Y 5
+  instr_rect_bg.x = instrpanel.rect.x - PAD_X;
+  instr_rect_bg.y = instrpanel.title.rect.y - PAD_Y;
+  instr_rect_bg.w = instrpanel.rect.w + (PAD_X * 2);
+  instr_rect_bg.h = ( ( instreditor_btn.rect.y + instreditor_btn.rect.h ) - instr_rect_bg.y) + PAD_Y;
+  // (in Main_Window)
+#undef PAD_X
+#undef PAD_Y
+
+
 
 /////////// COORDINATES FOR SAMPLE PANEL
   x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH) + padding_x_instrpanel_samplepanel;
@@ -241,7 +253,11 @@ void Main_Window::one_time_draw()
   song_title_label.draw(::render->screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
                true, false, false, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
 
+  // Instrument Panel
+  // Draw the background rect
+  SDL_FillRect(::render->screen, &instr_rect_bg, Colors::nearblack);
   instrpanel.one_time_draw();
+  // Sample Panel
   samplepanel.one_time_draw();
   patseqpanel.one_time_draw();
   pateditpanel.one_time_draw();
