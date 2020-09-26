@@ -238,6 +238,25 @@ struct PatSeqPanel // PatternSequencerPanel
   void dec_currow();
 private:
   Uint32 lastTimeScrolled;
+
+public:
+  // v0.2.1
+  SDL_Rect rect_bg;
+  SDL_Rect rect_patTable;
+  // PatLenWidget
+  char patlen_cbuf[5];
+  Text patlen_title, patlen_valtext;
+  Button patlen_incbtn, patlen_decbtn;
+
+  char seqlen_cbuf[5];
+  Text seqlen_title, seqlen_valtext;
+
+  static int inc_patlen(void *bsaw);
+  static int dec_patlen(void *bsaw);
+
+  void update_patlen();
+	void update_seqlen();
+  // END PatLenWidget
 };
 
 struct Instrument_Panel;

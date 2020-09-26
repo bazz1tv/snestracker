@@ -622,7 +622,19 @@ PatSeqPanel::PatSeqPanel(PatternSequencer *patseq) :
   movePatDownbtn(FONT_CODE_V_TRI_STR, PatSeqPanel::movePatDown, this),
 
   patseq(patseq),
-  lastTimeScrolled(0)
+  lastTimeScrolled(0),
+
+  // PatLenWidget stuff
+  patlen_cbuf("$040"),
+	patlen_title("Pat Len:"),
+	patlen_valtext(patlen_cbuf),
+	patlen_incbtn("+", inc_patlen, this, true),
+	patlen_decbtn("-", dec_patlen, this, true),
+
+	seqlen_cbuf("$00"),
+	seqlen_title("Seq Len:"),
+	seqlen_valtext(seqlen_cbuf)
+
 {
 }
 
@@ -641,6 +653,8 @@ void PatSeqPanel::set_coords(int x, int y)
                      assignments are spread throughout this function rather than all being in one place,
                      due to the nature of the coordinates being manipulated to create the locations
                      of all pspanel entities */
+  rect.y = y;
+
 
   //x += title.rect.w + (2*CHAR_WIDTH);
   title.rect.x = x;
@@ -663,7 +677,12 @@ void PatSeqPanel::set_coords(int x, int y)
 
   y += CHAR_HEIGHT + (CHAR_HEIGHT/2);
   y += 2;
-  rect.y = y;
+
+  rect_patTable.x = rect.x;
+  rect_patTable.y = y;
+  rect_patTable.w = (5 * CHAR_WIDTH) + 2;
+  rect_patTable.h = (CHAR_HEIGHT * (VISIBLE_ROWS)) + 1;
+
 
   y += 2; //(CHAR_HEIGHT / 2);
 
@@ -699,12 +718,9 @@ void PatSeqPanel::set_coords(int x, int y)
     names[i].rect.w = 2 * CHAR_WIDTH;
   }
 
-  rect.w = (5 * CHAR_WIDTH) + 2;
-  rect.h = (CHAR_HEIGHT * (VISIBLE_ROWS)) + 1;
-
   // put the inc/dec pat buttons to the right of the rect.
-  decpatbtn.rect.x = rect.x + rect.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
-  decpatbtn.rect.y = rect.y + 2;
+  decpatbtn.rect.x = rect_patTable.x + rect_patTable.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
+  decpatbtn.rect.y = rect_patTable.y + 2;
   incpatbtn.rect.x = decpatbtn.rect.x + incpatbtn.rect.w + 5;
   incpatbtn.rect.y = decpatbtn.rect.y;// + CHAR_HEIGHT;
 
@@ -712,6 +728,39 @@ void PatSeqPanel::set_coords(int x, int y)
   movePatUpbtn.rect.y = decpatbtn.rect.y + (CHAR_HEIGHT * 2);
   movePatDownbtn.rect.x = movePatUpbtn.rect.x;
   movePatDownbtn.rect.y = movePatUpbtn.rect.y + CHAR_HEIGHT + 5;
+
+// PATTERN LENGTH AND SEQUENCER LENGTH PORTION:
+
+  patlen_title.rect.x = xx;
+	patlen_title.rect.y = rect_patTable.y + rect_patTable.h + CHAR_HEIGHT;
+	patlen_valtext.rect.x = patlen_title.rect.x + ((strlen(patlen_title.str) + 1) * CHAR_WIDTH);
+	patlen_valtext.rect.y = patlen_title.rect.y;
+	patlen_decbtn.rect.x  = patlen_valtext.rect.x + (5 * CHAR_WIDTH);
+	patlen_decbtn.rect.y = patlen_title.rect.y;
+	patlen_incbtn.rect.x = patlen_decbtn.rect.x + CHAR_WIDTH + 5;
+	patlen_incbtn.rect.y = patlen_title.rect.y;
+
+	seqlen_title.rect.x = xx;
+	seqlen_title.rect.y = patlen_title.rect.y + CHAR_HEIGHT + 2;
+	seqlen_valtext.rect.x = xx + ((strlen(seqlen_title.str) + 1) * CHAR_WIDTH);
+	seqlen_valtext.rect.y = seqlen_title.rect.y;
+
+// END PATLEN SEQLEN PORTION
+
+
+  rect.w = (patlen_incbtn.rect.x + patlen_incbtn.rect.w) - rect.x;
+  rect.h = (seqlen_title.rect.y + seqlen_title.rect.h) - rect.y;
+
+  // set the background rect coords
+#define PAD_X 5
+#define PAD_Y 5
+  rect_bg.x = rect.x - PAD_X;
+  rect_bg.y = rect.y - PAD_Y;
+  rect_bg.w = rect.w + (PAD_X * 2);
+  rect_bg.h = rect.h + (PAD_Y * 2); // added vertical padding for instrment editor button
+  // (in Main_Window)
+#undef PAD_X
+#undef PAD_Y
 }
 
 static void apuSetPattern(int currow)
@@ -877,17 +926,28 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
   decpatbtn.check_event(ev);
   movePatUpbtn.check_event(ev);
   movePatDownbtn.check_event(ev);
+
+  // PatLenWidget stuff
+	patlen_incbtn.check_event(ev);
+	patlen_decbtn.check_event(ev);
+
 }
 
 void PatSeqPanel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
 {
-  Utility::DrawRect(&rect, 1);
+  // Draw the background rect
+  SDL_FillRect(screen, &rect_bg, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
+  Utility::DrawRect(&rect_patTable, 1);
 }
 
 void PatSeqPanel::draw(SDL_Surface *screen/*=::render->screen*/)
 {
   one_time_draw();
-  title.draw(screen);
+
+  // draw the title with the same background color as the bg rect
+  title.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+             true, false, false, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
+
   clonebtn.draw(screen);
   seqbtn.draw(screen);
   clearbtn.draw(screen);
@@ -898,7 +958,28 @@ void PatSeqPanel::draw(SDL_Surface *screen/*=::render->screen*/)
   movePatUpbtn.draw(screen);
   movePatDownbtn.draw(screen, true);
 
-  SDL_Rect r = {rect.x + 1, rect.y + 1, rect.w - 1, rect.h - 1};
+  // PatLenWidget Stuff
+  update_patlen();
+  // Need to draw this title with the same background color as the rect_bg
+  patlen_title.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+             true, false, false, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
+
+	patlen_valtext.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+             true, false, false, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
+
+	patlen_incbtn.draw(screen);
+	patlen_decbtn.draw(screen);
+
+	update_seqlen();
+	seqlen_title.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+             true, false, false, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
+
+	seqlen_valtext.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+             true, false, false, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
+
+  // End PatLenWidget Stuff
+
+  SDL_Rect r = {rect_patTable.x + 1, rect_patTable.y + 1, rect_patTable.w - 1, rect_patTable.h - 1};
   SDL_FillRect(screen, &r, Colors::transparent);
 
   /* This should really be put in init and event code, to decrease
@@ -1208,6 +1289,33 @@ void PatSeqPanel::inc_currow()
 void PatSeqPanel::dec_currow()
 {
   set_currow(currow - 1);
+}
+
+/* these functions query the proper handles on that real data. */
+void PatSeqPanel :: update_patlen()
+{
+	uint8_t *len = &patseq->patterns[patseq->sequence[currow]].p.len;
+	sprintf(patlen_cbuf, "$%03x", *len);
+}
+
+void PatSeqPanel :: update_seqlen()
+{
+	sprintf(seqlen_cbuf, "$%02x", patseq->num_entries);
+}
+
+int PatSeqPanel::inc_patlen(void *bsaw)
+{
+	PatSeqPanel *b = (PatSeqPanel *)bsaw;
+	//DEBUGLOG("inc_patlen; ");
+	::tracker->inc_patlen();
+	b->update_patlen();
+}
+
+int PatSeqPanel::dec_patlen(void *bsaw)
+{
+	PatSeqPanel *b = (PatSeqPanel *)bsaw;
+	::tracker->dec_patlen();
+	b->update_patlen();
 }
 
 ///////////////////////////////////////////////////////////////////////

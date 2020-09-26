@@ -215,8 +215,8 @@ void Tracker::updateWindowTitle(const char *str)
 }
 
 #define SET_PLAYBACK_BUTTONS(truefalse) \
-main_window.plwidget.patlen_decbtn.enabled = truefalse;\
-main_window.plwidget.patlen_incbtn.enabled = truefalse;\
+main_window.patseqpanel.patlen_decbtn.enabled = truefalse;\
+main_window.patseqpanel.patlen_incbtn.enabled = truefalse;\
 main_window.patseqpanel.clonebtn.enabled = truefalse;\
 main_window.patseqpanel.seqbtn.enabled = truefalse;\
 main_window.patseqpanel.clearbtn.enabled = truefalse;\

@@ -46,8 +46,6 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   patseqpanel.set_coords(x, y);
 
-	plwidget.set_coords(x, patseqpanel.rect.y + patseqpanel.rect.h + CHAR_HEIGHT);
-
 	x = 150 + padding_x_songtitle_songsettings;
 
   song_title_label.rect.x = x;
@@ -264,7 +262,6 @@ void Main_Window::draw()
   sample_editor_btn.draw(::render->screen);
 
   patseqpanel.draw(::render->screen);
-	plwidget.draw(::render->screen);
   pateditpanel.draw(::render->screen);
   if (active_aux_panel & (1 << INSTREDITOR))
     instreditor.draw(::render->screen);
@@ -303,7 +300,6 @@ int Main_Window::receive_event(SDL_Event &ev)
   instreditor_btn.check_event(ev);
 	sample_editor_btn.check_event(ev);
   songsettings_btn.check_event(ev);
-	plwidget.handle_event(ev);
   bsawidget.handle_event(ev);
   instrpanel.event_handler(ev);
   samplepanel.event_handler(ev);
