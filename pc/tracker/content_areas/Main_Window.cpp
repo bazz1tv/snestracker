@@ -57,24 +57,6 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   bsawidget.set_coords(x, y + song_title.rect.h + CHAR_HEIGHT);
 
-  // song settings button directly beneath sample editor button
-  songsettings_btn.rect.x = x;
-  songsettings_btn.rect.y = bsawidget.rect.y + bsawidget.rect.h + 4;
-
-// Song Area BG Rect Portion
-//
-#define PAD_X 5
-#define PAD_Y 10
-  song_rect_bg.x = song_title_label.rect.x - PAD_X;
-  song_rect_bg.y = song_title_label.rect.y - PAD_Y;
-  song_rect_bg.w = song_title.rect.w + (PAD_X * 2);
-  song_rect_bg.h = ( (songsettings_btn.rect.y + songsettings_btn.rect.h) - song_rect_bg.y ) + (PAD_Y * 2);
-#undef PAD_X
-#undef PAD_Y
-
-//
-
-
 /////////// COORDINATES FOR INSTRUMENT PANEL
 
   x += song_title.rect.w + (CHAR_WIDTH * 2) + padding_x_instrpanel_samplepanel;
@@ -101,6 +83,22 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 	instreditor.set_coords(xx, y);
 	sample_editor.set_coords(xx, y);
   songsettings_panel.set_coords(xx, y);
+
+// Align song settings button vertically with the instrument editor and
+// sample editor buttons
+  songsettings_btn.rect.x = bsawidget.rect.x;
+  songsettings_btn.rect.y = instreditor_btn.rect.y;
+
+  // Song Area BG Rect Portion
+  //
+#define PAD_X 5
+#define PAD_Y 5
+  song_rect_bg.x = song_title_label.rect.x - PAD_X;
+  song_rect_bg.y = song_title_label.rect.y - PAD_Y;
+  song_rect_bg.w = song_title.rect.w + (PAD_X * 2);
+  song_rect_bg.h = ( (songsettings_btn.rect.y + songsettings_btn.rect.h) - song_rect_bg.y ) + (PAD_Y * 1);
+#undef PAD_X
+#undef PAD_Y
 }
 
 /*static inline void reset_byte_bit(uint8_t *byte, uint8_t bit)
