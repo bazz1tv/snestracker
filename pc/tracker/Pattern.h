@@ -248,14 +248,10 @@ public:
   Text patlen_title, patlen_valtext;
   Button patlen_incbtn, patlen_decbtn;
 
-  char seqlen_cbuf[5];
-  Text seqlen_title, seqlen_valtext;
-
   static int inc_patlen(void *bsaw);
   static int dec_patlen(void *bsaw);
 
   void update_patlen();
-	void update_seqlen();
   // END PatLenWidget
 };
 
