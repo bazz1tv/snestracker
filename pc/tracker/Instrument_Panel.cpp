@@ -273,15 +273,14 @@ void Instrument_Panel::inc_currow()
 
 void Instrument_Panel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
 {
+  // Draw the background rect
+  SDL_FillRect(screen, &rect_bg, Colors::nearblack);
   Utility::DrawRect(&rect, 1);
 }
 
 void Instrument_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
 {
   unsigned int i=0;
-
-  // Draw the background rect
-  SDL_FillRect(screen, &rect_bg, Colors::nearblack);
 
   /* First, draw the "Instruments" strings and top buttons */
   // Need to draw this title with the same background color as the rect_bg
