@@ -97,6 +97,8 @@ void Colors::precompute(SDL_Surface *screen)
   Interface::color[Interface::Type::vol] = green;
   Interface::color[Interface::Type::fx] = magenta;
   Interface::color[Interface::Type::fxparam] = orange;
+
+  Interface::color[Interface::Type::patseqpanelBG] = SDL_MapRGB(screen->format, 95, 73, 103);
 }
 
 Uint32 Colors::subtract(Uint32 *c, Uint8 subval)
