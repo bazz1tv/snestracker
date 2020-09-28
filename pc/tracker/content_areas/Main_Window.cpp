@@ -9,9 +9,43 @@
 #define L_FLAG 0
 #define R_FLAG 1
 
-#define PC_STR "PC: $%04x  "
-#define PC_X MEMORY_VIEW_X+8*12
-#define PC_Y MEMORY_VIEW_Y-10
+
+/*
+
+                     _.-*'"      "`*-._
+                _.-*'                  `*-._
+             .-'                            `-.
+  /`-.    .-'                  _.              `-.
+ :    `..'                  .-'_ .                `.
+ |    .'                 .-'_.' \ .                 \
+ |   /                 .' .*     ;               .-'"
+ :   L                    `.     | ;          .-'
+  \.' `*.          .-*"*-.  `.   ; |        .'
+  /      \        '       `.  `-'  ;      .'
+ : .'"`.  .       .-*'`*-.  \     .      (_
+ |              .'        \  .             `*-.
+ |.     .      /           ;                   `-.
+ :    db      '       d$b  |                      `-.
+ .   :PT;.   '       :P"T; :                         `.
+ :   :bd;   '        :b_d; :                           \
+ |   :$$; `'         :$$$; |                            \
+ |    TP              T$P  '                             ;
+ :                        /.-*'"`.                       |
+.sdP^T$bs.               /'       \
+$$$._.$$$$b.--._      _.'   .--.   ;
+`*$$$$$$P*'     `*--*'     '  / \  :
+   \                        .'   ; ;   [bug]
+    `.                  _.-'    ' /
+      `*-.                      .'
+          `*-._            _.-*'
+               `*=--..--=*'
+
+
+Sonic invaded the SNES Tracker Code!!
+Shoutz to BigMerl, Ravancloak, and Rowan from Twitch stream
+9/28/2020 <3 Much Love <3
+
+*/
 
 Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_title_label("Song Title:"),
