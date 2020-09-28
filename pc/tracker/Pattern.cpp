@@ -738,17 +738,6 @@ void PatSeqPanel::set_coords(int x, int y)
 
   rect.w = (patlen_incbtn.rect.x + patlen_incbtn.rect.w) - rect.x;
   rect.h = (patlen_title.rect.y + patlen_title.rect.h) - rect.y;
-
-  // set the background rect coords
-#define PAD_X 5
-#define PAD_Y 5
-  rect_bg.x = rect.x - PAD_X;
-  rect_bg.y = rect.y - PAD_Y;
-  rect_bg.w = rect.w + (PAD_X * 2);
-  rect_bg.h = rect.h + (PAD_Y * 2); // added vertical padding for instrment editor button
-  // (in Main_Window)
-#undef PAD_X
-#undef PAD_Y
 }
 
 static void apuSetPattern(int currow)
@@ -923,8 +912,6 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
 
 void PatSeqPanel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
 {
-  // Draw the background rect
-  SDL_FillRect(screen, &rect_bg, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
   Utility::DrawRect(&rect_patTable, 1);
 }
 

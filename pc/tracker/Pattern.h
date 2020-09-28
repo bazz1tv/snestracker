@@ -241,7 +241,6 @@ private:
 
 public:
   // v0.2.1
-  SDL_Rect rect_bg;
   SDL_Rect rect_patTable;
   // PatLenWidget
   char patlen_cbuf[5];

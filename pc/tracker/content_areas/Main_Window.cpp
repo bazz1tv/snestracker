@@ -64,9 +64,13 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   int x,y,xx,yy;
   /* Address EASY Layout improvement from issue #142
    * Applies to area, Instrument Panel, and Sample Panel */
-  constexpr int padding_x_instrpanel = 10;
-  constexpr int padding_x_samplepanel = 17;
-  constexpr int padding_x_songtitle_songsettings = 7;
+
+  // BG RECT internal padding
+  // TODO: rename to eg. INT_PAD_X
+  constexpr int PAD_X = 5;
+  constexpr int PAD_Y = 5;
+  // EXTERNAL ELEMENT PADDING
+  constexpr int EXT_PAD_X = 12;
 
   song_title.dblclick = false; // do not require dblclick to edit. single
 
@@ -76,12 +80,18 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
     exit(1);
   }
   
-  x = xx = 10; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
+  x = xx = EXT_PAD_X + PAD_X; //(SCREEN_WIDTH / 2) - ((strlen("Song Title") * CHAR_WIDTH) / 2 );
   y = yy = 50;
 
   patseqpanel.set_coords(x, y);
+  // Pattern Sequencer BG Rect
+  patseq_rect_bg.x = patseqpanel.rect.x - PAD_X;
+  patseq_rect_bg.y = patseqpanel.rect.y - PAD_Y;
+  patseq_rect_bg.w = patseqpanel.rect.w + (PAD_X * 2);
+  patseq_rect_bg.h = patseqpanel.rect.h + (PAD_Y * 2); // added vertical padding for instrment editor button
 
-	x = 150 + padding_x_songtitle_songsettings + 10;
+  // Update x coordinate for the Song panel
+	x = patseq_rect_bg.x + patseq_rect_bg.w + PAD_X + EXT_PAD_X;
 
   song_title_label.rect.x = x;
   song_title_label.rect.y = y;
@@ -92,44 +102,63 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   bsawidget.set_coords(x, y + song_title.rect.h + CHAR_HEIGHT);
 
+///
+// WHAT WE WANT:
+// To get the Song Panel BG Rect defined here so that we can position the
+// next element accordingly
+  /* This all stems from how the Song Settings button's Y coordinate is
+   * depending on the Instrument panel's Instrument editor button to be
+   * positioned first */
+
+// !HACK! Call the instrpanel.set_coords() with the proper Y value to get
+// the proper instreditor_btn Y position, so that we can establish the
+// Song Panel fully!!! \o/ Then, we actually positioning the instrument
+// panel FOR REAL. Call it again, with the proper X coordinate in place.
+  instrpanel.set_coords(x, yy); // x = dont care
+  // 
+  instreditor_btn.rect.y = instrpanel.rect.y + instrpanel.rect.h + (CHAR_HEIGHT * 1);
+
+  
+// Align song settings button vertically with the instrument editor and
+// sample editor buttons
+  songsettings_btn.rect.x = bsawidget.rect.x;
+  songsettings_btn.rect.y = instreditor_btn.rect.y; // OMG. WE FINALLY GOT THE PROPER Y COORDINATE \o/
+
+  // Song Area BG Rect Portion
+  //
+  song_rect_bg.x = song_title_label.rect.x - PAD_X;
+  song_rect_bg.y = song_title_label.rect.y - PAD_Y;
+  song_rect_bg.w = song_title.rect.w + (PAD_X * 2);
+  song_rect_bg.h = ( (songsettings_btn.rect.y + songsettings_btn.rect.h) - song_rect_bg.y ) + (PAD_Y * 1);
+
 /////////// COORDINATES FOR INSTRUMENT PANEL
 
-  x += song_title.rect.w + (CHAR_WIDTH * 2) + padding_x_instrpanel;
+  x = song_rect_bg.x + song_rect_bg.w + PAD_X + EXT_PAD_X;
+
   instrpanel.set_coords(x, yy);
   // #142, move instrument editor button to be with instrument panel
   instreditor_btn.rect.x = instrpanel.loadbtn.rect.x; // Use same indentation as Load Button
   instreditor_btn.rect.y = instrpanel.rect.y + instrpanel.rect.h + (CHAR_HEIGHT * 1);
 
   // Enlargen rect area for the background color area.
-#define PAD_X 5
-#define PAD_Y 5
   instr_rect_bg.x = instrpanel.rect.x - PAD_X;
   instr_rect_bg.y = instrpanel.title.rect.y - PAD_Y;
   instr_rect_bg.w = instrpanel.rect.w + (PAD_X * 2);
   instr_rect_bg.h = ( ( instreditor_btn.rect.y + instreditor_btn.rect.h ) - instr_rect_bg.y) + PAD_Y;
   // (in Main_Window)
-#undef PAD_X
-#undef PAD_Y
-
-
 
 /////////// COORDINATES FOR SAMPLE PANEL
-  x = instrpanel.rect.x + instrpanel.rect.w + (CHAR_WIDTH) + padding_x_samplepanel;
+  x = instr_rect_bg.x + instr_rect_bg.w + PAD_X + EXT_PAD_X;
   samplepanel.set_coords(x, yy);
   // sample editor button directly beneath sample panel
   sample_editor_btn.rect.x = samplepanel.loadbtn.rect.x;
   sample_editor_btn.rect.y = samplepanel.rect.y + samplepanel.rect.h + (CHAR_HEIGHT);
 
   // Enlargen rect area for the background color area.
-#define PAD_X 5
-#define PAD_Y 5
   sample_rect_bg.x = samplepanel.rect.x - PAD_X;
   sample_rect_bg.y = samplepanel.title.rect.y - PAD_Y;
   sample_rect_bg.w = samplepanel.rect.w + (PAD_X * 2);
   sample_rect_bg.h = ( ( sample_editor_btn.rect.y + sample_editor_btn.rect.h ) - sample_rect_bg.y ) + PAD_Y;
-  // (in Main_Window)
-#undef PAD_X
-#undef PAD_Y
 ///////
 
   y = y + instrpanel.rect.h + CHAR_HEIGHT;
@@ -142,22 +171,6 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 	instreditor.set_coords(xx, y);
 	sample_editor.set_coords(xx, y);
   songsettings_panel.set_coords(xx, y);
-
-// Align song settings button vertically with the instrument editor and
-// sample editor buttons
-  songsettings_btn.rect.x = bsawidget.rect.x;
-  songsettings_btn.rect.y = instreditor_btn.rect.y;
-
-  // Song Area BG Rect Portion
-  //
-#define PAD_X 5
-#define PAD_Y 5
-  song_rect_bg.x = song_title_label.rect.x - PAD_X;
-  song_rect_bg.y = song_title_label.rect.y - PAD_Y;
-  song_rect_bg.w = song_title.rect.w + (PAD_X * 2);
-  song_rect_bg.h = ( (songsettings_btn.rect.y + songsettings_btn.rect.h) - song_rect_bg.y ) + (PAD_Y * 1);
-#undef PAD_X
-#undef PAD_Y
 }
 
 /*static inline void reset_byte_bit(uint8_t *byte, uint8_t bit)
@@ -295,7 +308,11 @@ void Main_Window::draw_memory_outline()
 
 void Main_Window::one_time_draw()
 {
-  // draw one-time stuff
+  // Draw Pattern Sequencer BG Rect
+  SDL_FillRect(::render->screen, &patseq_rect_bg, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
+
+
+  // draw Song BG Rect
   SDL_FillRect(::render->screen, &song_rect_bg, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
   song_title_label.draw(::render->screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
                true, false, false, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);

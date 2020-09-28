@@ -115,6 +115,7 @@ struct Main_Window : public Experience
 ///////////// END AUX PANELS /////////////////////
 
 // v0.2.1
+  SDL_Rect patseq_rect_bg;
   SDL_Rect song_rect_bg;
   SDL_Rect instr_rect_bg; // define the background color fill area for the entire  panel
   SDL_Rect sample_rect_bg;
