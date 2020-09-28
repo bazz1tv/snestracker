@@ -2448,13 +2448,15 @@ void PatternEditorPanel::piano_kb(const int scancode, const int mod)
 
 void PatternEditorPanel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
 {
-  // draw a white border around the current visible rows, but also the max visible as well
-  Utility::DrawRect(&rect, 1);
-
   auto backup = VISIBLE_ROWS;
   set_visible_rows(MAX_VISIBLE_ROWS);
+  // Draw a black inside rect to cover the BG Rect
+  SDL_FillRect(screen, &rect, Colors::transparent);
   Utility::DrawRect(&rect, 1);
+
   set_visible_rows(backup);
+  // draw a white border around the current visible rows, but also the max visible as well
+  Utility::DrawRect(&rect, 1);
 }
 
 void PatternEditorPanel::draw(SDL_Surface *screen/*=::render->screen*/)
