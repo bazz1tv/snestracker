@@ -179,7 +179,6 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   patedit_rect_bg.w = pateditpanel.rect.w + (PAD_X * 2);
   patedit_rect_bg.h = ( ( pateditpanel.rect.y + pateditpanel.rect.h ) - patedit_rect_bg.y ) + PAD_Y;
 
-
   // These panels appear at the same coords when activated
 	instreditor.set_coords(xx, y);
 	sample_editor.set_coords(xx, y);
@@ -348,6 +347,14 @@ void Main_Window::one_time_draw()
   // Pattern Editor Panel
   SDL_FillRect(::render->screen, &patedit_rect_bg, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
   pateditpanel.one_time_draw();
+
+  ////// Draw a Rect to bridge the Patseq_rect_bg with the patedit_rect_bg
+  SDL_Rect bridge;
+  bridge.x = patseq_rect_bg.x;
+  bridge.y = patseq_rect_bg.y + patseq_rect_bg.h; // start where patseq rect ends, vertically
+  bridge.w = patseq_rect_bg.w;                    // same width at patseq rect
+  bridge.h = patedit_rect_bg.y - bridge.y + 1;
+  SDL_FillRect(::render->screen, &bridge, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
 }
 
 void Main_Window::draw()
