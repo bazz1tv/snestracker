@@ -22,6 +22,9 @@ const int Instrument_Panel::NUM_ROWS;
 // Shortened the length for new GUI layout (v0.2.1)
 #define INSTR_NAME_GUI_CHAR_WIDTH (22 - 3)
 
+// Little helper
+#define min(x, y) ((x) <= (y) ? (x) : (y))
+
 Instrument_Panel::Instrument_Panel(Instrument *iptr, Sample_Panel *sp) :
     title("Instruments"),
     loadbtn("Load", Instrument_Panel::load, this),
@@ -94,7 +97,7 @@ void Instrument_Panel::set_coords(int x, int y)
      * tracker (core), these strings should automatically update after a
      * redraw */
     instr_names[i].str = instruments[i].name;
-    instr_names[i].strsize = INSTR_NAME_MAXLEN;
+    instr_names[i].strsize = min(INSTR_NAME_MAXLEN, INSTR_NAME_GUI_CHAR_WIDTH);
     instr_names[i].rect = instr_indices[i].rect;
     instr_names[i].rect.x += 3 * CHAR_WIDTH;
     instr_names[i].rect.w = INSTR_NAME_GUI_CHAR_WIDTH * CHAR_WIDTH;

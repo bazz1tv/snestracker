@@ -68,8 +68,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   // BG RECT internal padding
   // TODO: rename to eg. INT_PAD_X
-  constexpr int PAD_X = 5;
-  constexpr int PAD_Y = 5;
+  constexpr int PAD_X = 10;
+  constexpr int PAD_Y = 10;
   // EXTERNAL ELEMENT PADDING
   constexpr int EXT_PAD_X = 12;
 
@@ -97,7 +97,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_label.rect.x = x;
   song_label.rect.y = y;
 
-  y += (CHAR_HEIGHT * 2) + (CHAR_HEIGHT / 3); // + 5;
+  y += (CHAR_HEIGHT * 2); // + 5;
   song_title_label.rect.x = x;
   song_title_label.rect.y = y;
   
