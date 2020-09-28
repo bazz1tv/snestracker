@@ -167,7 +167,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
 /////// COORDINATES FOR PATTERN EDITOR PANEL
 
-  y = y + instrpanel.rect.h + CHAR_HEIGHT;
+  y += instrpanel.rect.h + (CHAR_HEIGHT / 2);
   pateditpanel.set_coords(xx, y);
   pateditpanel.set_visible_rows(0x08); // called to update rect.h
   y = pateditpanel.rect.y + pateditpanel.rect.h + (CHAR_HEIGHT*2);
