@@ -18,7 +18,9 @@
  */
 
 const int Instrument_Panel::NUM_ROWS;
-#define INSTR_NAME_GUI_CHAR_WIDTH 22
+
+// Shortened the length for new GUI layout (v0.2.1)
+#define INSTR_NAME_GUI_CHAR_WIDTH (22 - 3)
 
 Instrument_Panel::Instrument_Panel(Instrument *iptr, Sample_Panel *sp) :
     title("Instruments"),
