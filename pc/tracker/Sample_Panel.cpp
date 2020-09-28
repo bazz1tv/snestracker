@@ -13,7 +13,8 @@
 #include "Tracker.h"
 
 const int Sample_Panel::NUM_ROWS;
-#define SAMPLE_NAME_GUI_CHAR_WIDTH 22
+// Shortened the length for new GUI layout (v0.2.1)
+#define SAMPLE_NAME_GUI_CHAR_WIDTH (22 - 3)
 
 Sample_Panel::Sample_Panel(Sample* samples) :
   title("Samples:"),
