@@ -30,6 +30,7 @@ struct Main_Window : public Experience
 {
   char tmpbuf[100];
 
+  Text song_label;
   Text song_title_label;
   Text_Edit_Rect song_title;
 

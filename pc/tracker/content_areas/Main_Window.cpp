@@ -48,7 +48,8 @@ Shoutz to BigMerl, Ravancloak, and Rowan from Twitch stream
 */
 
 Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
-  song_title_label("Song Title:"),
+  song_label("Song"),
+  song_title_label("Title:"),
   song_title(SongSettings::SONGTITLE_SIZE, tracker->song.settings.song_title_str, sizeof(tracker->song.settings.song_title_str)),
   tracker(tracker),
 	samplepanel(tracker->song.samples),
@@ -93,6 +94,10 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   // Update x coordinate for the Song panel
 	x = patseq_rect_bg.x + patseq_rect_bg.w + PAD_X + EXT_PAD_X;
 
+  song_label.rect.x = x;
+  song_label.rect.y = y;
+
+  y += (CHAR_HEIGHT * 2) + (CHAR_HEIGHT / 3); // + 5;
   song_title_label.rect.x = x;
   song_title_label.rect.y = y;
   
@@ -100,7 +105,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_title.rect.x = x;
   song_title.rect.y = y;
 
-  bsawidget.set_coords(x, y + song_title.rect.h + CHAR_HEIGHT);
+  bsawidget.set_coords(x, y + song_title.rect.h + (CHAR_HEIGHT + (CHAR_HEIGHT / 2)));
 
 ///
 // WHAT WE WANT:
@@ -126,8 +131,8 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
 
   // Song Area BG Rect Portion
   //
-  song_rect_bg.x = song_title_label.rect.x - PAD_X;
-  song_rect_bg.y = song_title_label.rect.y - PAD_Y;
+  song_rect_bg.x = song_label.rect.x - PAD_X;
+  song_rect_bg.y = song_label.rect.y - PAD_Y;
   song_rect_bg.w = song_title.rect.w + (PAD_X * 2);
   song_rect_bg.h = ( (songsettings_btn.rect.y + songsettings_btn.rect.h) - song_rect_bg.y ) + (PAD_Y * 1);
 
@@ -314,6 +319,8 @@ void Main_Window::one_time_draw()
 
   // draw Song BG Rect
   SDL_FillRect(::render->screen, &song_rect_bg, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
+  song_label.draw(::render->screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
+      true, false, false, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
   song_title_label.draw(::render->screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
                true, false, false, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
 
