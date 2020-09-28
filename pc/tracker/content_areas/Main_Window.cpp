@@ -105,7 +105,7 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_title.rect.x = x;
   song_title.rect.y = y;
 
-  bsawidget.set_coords(x, y + song_title.rect.h + (CHAR_HEIGHT + (CHAR_HEIGHT / 2)));
+  bsawidget.set_coords(x, y + song_title.rect.h + (CHAR_HEIGHT + (CHAR_HEIGHT / 2) + (CHAR_HEIGHT / 4)));
 
 ///
 // WHAT WE WANT:
