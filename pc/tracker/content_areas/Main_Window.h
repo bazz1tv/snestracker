@@ -120,4 +120,5 @@ struct Main_Window : public Experience
   SDL_Rect song_rect_bg;
   SDL_Rect instr_rect_bg; // define the background color fill area for the entire  panel
   SDL_Rect sample_rect_bg;
+  SDL_Rect patedit_rect_bg;
 };

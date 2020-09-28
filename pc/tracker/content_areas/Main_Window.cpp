@@ -164,13 +164,21 @@ Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   sample_rect_bg.y = samplepanel.title.rect.y - PAD_Y;
   sample_rect_bg.w = samplepanel.rect.w + (PAD_X * 2);
   sample_rect_bg.h = ( ( sample_editor_btn.rect.y + sample_editor_btn.rect.h ) - sample_rect_bg.y ) + PAD_Y;
-///////
+
+/////// COORDINATES FOR PATTERN EDITOR PANEL
 
   y = y + instrpanel.rect.h + CHAR_HEIGHT;
   pateditpanel.set_coords(xx, y);
   pateditpanel.set_visible_rows(0x08); // called to update rect.h
   y = pateditpanel.rect.y + pateditpanel.rect.h + (CHAR_HEIGHT*2);
   pateditpanel.set_visible_rows(PatternEditorPanel::MAX_VISIBLE_ROWS); // called to update rect.h
+
+  // Enlargen rect area for the background color area.
+  patedit_rect_bg.x = pateditpanel.rect.x - PAD_X;
+  patedit_rect_bg.y = pateditpanel.rect.y - PAD_Y;
+  patedit_rect_bg.w = pateditpanel.rect.w + (PAD_X * 2);
+  patedit_rect_bg.h = ( ( pateditpanel.rect.y + pateditpanel.rect.h ) - patedit_rect_bg.y ) + PAD_Y;
+
 
   // These panels appear at the same coords when activated
 	instreditor.set_coords(xx, y);
@@ -319,8 +327,10 @@ void Main_Window::one_time_draw()
 
   // draw Song BG Rect
   SDL_FillRect(::render->screen, &song_rect_bg, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
+  // "SONG"
   song_label.draw(::render->screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
       true, false, false, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
+  // "Title:"
   song_title_label.draw(::render->screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
                true, false, false, Colors::Interface::color[Colors::Interface::Type::songpanelBG]);
 
@@ -334,6 +344,9 @@ void Main_Window::one_time_draw()
   samplepanel.one_time_draw();
 
   patseqpanel.one_time_draw();
+
+  // Pattern Editor Panel
+  SDL_FillRect(::render->screen, &patedit_rect_bg, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
   pateditpanel.one_time_draw();
 }
 
