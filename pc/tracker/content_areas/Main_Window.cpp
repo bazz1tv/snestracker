@@ -349,12 +349,12 @@ void Main_Window::one_time_draw()
   pateditpanel.one_time_draw();
 
   ////// Draw a Rect to bridge the Patseq_rect_bg with the patedit_rect_bg
-  SDL_Rect bridge;
+  /*SDL_Rect bridge;
   bridge.x = patseq_rect_bg.x;
   bridge.y = patseq_rect_bg.y + patseq_rect_bg.h; // start where patseq rect ends, vertically
   bridge.w = patseq_rect_bg.w;                    // same width at patseq rect
   bridge.h = patedit_rect_bg.y - bridge.y + 1;
-  SDL_FillRect(::render->screen, &bridge, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);
+  SDL_FillRect(::render->screen, &bridge, Colors::Interface::color[Colors::Interface::Type::patseqpanelBG]);*/
 }
 
 void Main_Window::draw()

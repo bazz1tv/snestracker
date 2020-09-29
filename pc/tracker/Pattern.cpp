@@ -655,7 +655,7 @@ void PatSeqPanel::set_coords(int x, int y)
   title.rect.x = x;
   title.rect.y = y;
 
-  y += CHAR_HEIGHT + (CHAR_HEIGHT / 2);
+  y += (CHAR_HEIGHT * 2) + 2;
 
   
 
@@ -670,8 +670,7 @@ void PatSeqPanel::set_coords(int x, int y)
   insbtn.rect.x = x;
   insbtn.rect.y = y;
 
-  y += CHAR_HEIGHT + (CHAR_HEIGHT/2);
-  y += 2;
+  y += (CHAR_HEIGHT * 2);
 
   rect_patTable.x = rect.x;
   rect_patTable.y = y;
@@ -726,7 +725,7 @@ void PatSeqPanel::set_coords(int x, int y)
 
 // PATTERN LENGTH PORTION:
   patlen_title.rect.x = xx;
-	patlen_title.rect.y = rect_patTable.y + rect_patTable.h + CHAR_HEIGHT;
+	patlen_title.rect.y = rect_patTable.y + rect_patTable.h + (CHAR_HEIGHT * 2) + 1;// + (CHAR_HEIGHT / 2);
 	patlen_valtext.rect.x = patlen_title.rect.x + ((strlen(patlen_title.str) + 1) * CHAR_WIDTH);
 	patlen_valtext.rect.y = patlen_title.rect.y;
 	patlen_decbtn.rect.x  = patlen_valtext.rect.x + (5 * CHAR_WIDTH);
