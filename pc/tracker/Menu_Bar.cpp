@@ -527,6 +527,11 @@ int Menu_Bar::About_Context::clicked_wiki(void *nada)
   openUrl(WIKI_URL);
 }
 
+int Menu_Bar::About_Context::clicked_stream(void *nada)
+{
+  DEBUGLOG("CLICKED STREAM\n");
+  openUrl(STREAM_URL);
+}
 int Menu_Bar::About_Context::clicked_twitter(void *nada)
 {
   DEBUGLOG("CLICKED TWITTER\n");

@@ -16,8 +16,9 @@
 
 /* use HTTP so it can be easily forwarded in the future. Site will automatically
 convert it to HTTPS */
+#define WIKI_URL "https://wiki.snestracker.com"
 #define PATREON_URL "http://patreon.snestracker.com"
 #define MERCH_URL "http://shop.snestracker.com"
+#define STREAM_URL "https://stream.snestracker.com"
 #define SOUNDCLOUD_URL "https://soundcloud.snestracker.com"
-#define WIKI_URL "https://wiki.snestracker.com"
 #define TWITTER_URL "https://twitter.snestracker.com"
