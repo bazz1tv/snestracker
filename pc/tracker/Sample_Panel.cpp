@@ -264,7 +264,7 @@ void Sample_Panel::draw(SDL_Surface *screen/*=::render->screen*/)
   /* First, draw the "Instruments" strings and top buttons */
   // Need to draw this title with the same background color as the rect_bg
   title.draw(screen, Colors::Interface::color[Colors::Interface::Type::text_fg],
-      true, false, false, Colors::nearblack);
+      true, false, false, Colors::Interface::color[Colors::Interface::Type::samplepanelBG]);
   loadbtn.draw(screen);
   savebtn.draw(screen);
   clearbtn.draw(screen);

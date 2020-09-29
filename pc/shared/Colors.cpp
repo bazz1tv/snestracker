@@ -100,6 +100,8 @@ void Colors::precompute(SDL_Surface *screen)
 
   Interface::color[Interface::Type::patseqpanelBG] = SDL_MapRGB(screen->format, 95, 73, 103);
   Interface::color[Interface::Type::songpanelBG] = SDL_MapRGB(screen->format, 72, 80, 114);
+  Interface::color[Interface::Type::instrpanelBG] = nearblack;
+  Interface::color[Interface::Type::samplepanelBG] = nearblack;
 }
 
 Uint32 Colors::subtract(Uint32 *c, Uint8 subval)

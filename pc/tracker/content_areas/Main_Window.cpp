@@ -335,11 +335,11 @@ void Main_Window::one_time_draw()
 
   // Instrument Panel
   // Draw the background rect
-  SDL_FillRect(::render->screen, &instr_rect_bg, Colors::nearblack);
+  SDL_FillRect(::render->screen, &instr_rect_bg, Colors::Interface::color[Colors::Interface::Type::instrpanelBG]);
   instrpanel.one_time_draw();
   // Sample Panel
   // Draw the background rect
-  SDL_FillRect(::render->screen, &sample_rect_bg, Colors::nearblack);
+  SDL_FillRect(::render->screen, &sample_rect_bg, Colors::Interface::color[Colors::Interface::Type::samplepanelBG]);
   samplepanel.one_time_draw();
 
   patseqpanel.one_time_draw();
