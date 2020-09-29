@@ -20,7 +20,7 @@ const int Sample_Panel::NUM_ROWS;
 #define min(x, y) ((x) <= (y) ? (x) : (y))
 
 Sample_Panel::Sample_Panel(Sample* samples) :
-  title("Samples:"),
+  title("Samples"),
   loadbtn("Load", Sample_Panel::load, this),
   savebtn("Save", Sample_Panel::save, this),
   clearbtn("Zap", Sample_Panel::clear, this),
