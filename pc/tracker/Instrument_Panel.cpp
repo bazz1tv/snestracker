@@ -458,7 +458,6 @@ int Instrument_Panel::zap(void *ipanel)
     switch (drc)
     {
       case DialogBox::YES:
-        instr->reset();
         if (AskDeleteSample(ip))
         {
           sample->clear();
@@ -467,6 +466,7 @@ int Instrument_Panel::zap(void *ipanel)
         else if (samples[ip->instruments[ip->currow].srcn].brr != NULL && !::tracker->playback)
           ::tracker->renderCurrentInstrument();
 
+        instr->reset();
         *instr->metadata.changed = true;
       break;
       case DialogBox::NO:
