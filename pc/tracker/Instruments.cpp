@@ -15,6 +15,7 @@ void Instrument::reset()
   name[0] = 0;
   srcn = 0;
   adsr.adsr = DEFAULT_ADSR;
+  adsr.sustain_rate = 13; // ~ 2.8 s
   vol = DEFAULT_VOL;
   pan = DEFAULT_PAN;
   semitone_offset = 0;
