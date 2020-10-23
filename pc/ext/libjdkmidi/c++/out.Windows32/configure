@@ -1,0 +1,2 @@
+../configure  "--native-platform-linux=1"  "--cross-compiling=1" "--compiler-prefix=i686-w64-mingw32-"  "--target-platform-mingw32=1" "--prefix=/usr/i686-w64-mingw32/usr/" "$@"
+sed -i.bak "s#CXXFLAGS=#CXXFLAGS=-fpermissive#" Makefile

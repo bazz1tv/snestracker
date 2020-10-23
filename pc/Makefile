@@ -134,7 +134,13 @@ else ifeq ($(uname_S), Linux)
 	UNRAR = unrar
 	DEC7Z = 7zDec
 else ifeq ($(uname_S), Cross_Windows)
-	LIBJDKMIDI_OSDIR = $(PROJ_DIR)/libjdkmidi/c++/out.Windows
+	ifneq (,$(findstring i686,$(CROSS_COMPILE)))
+		# 32 butt
+		LIBJDKMIDI_OSDIR = $(PROJ_DIR)/libjdkmidi/c++/out.Windows32
+	else
+		# 64 Bit (implied from lack of i686 string)
+		LIBJDKMIDI_OSDIR = $(PROJ_DIR)/libjdkmidi/c++/out.Windows64
+	endif
 # debugging symbols are only visible from winedbg by -gstabs
 	debug = -gstabs
 	MIDI_DEFS     =   -D__WINDOWS_MM__ -DRTMIDI_DEBUG
@@ -362,7 +368,7 @@ clean:
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 	rm -f {$(PROJ_DIR)/lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
 	rm -f {$(PROJ_DIR)/unrar/,}{unrar,unrar.exe}
-	cd $(LIBJDKMIDI_OSDIR) && make clean
+	cd $(LIBJDKMIDI_OSDIR) && [ -f ./Makefile ] && make clean || true
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 -include $(DEP_DEBUGGER) $(DEP_TRACKER)

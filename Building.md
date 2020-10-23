@@ -93,7 +93,7 @@ Here are 64-bit cross build instructions for Gentoo or Ubuntu Linux.
 
 ### Gentoo
 
-Here's a rough guide to establish a 64-bit cross build environment on Gentoo Linux:
+#### 64-Bit
 
 ```
 emerge -av sys-devel/crossdev
@@ -127,7 +127,42 @@ cp /usr/x86_64-w64-mingw32/usr/{bin/SDL2.dll,lib/libboost_filesystem.dll} \
 Some of these library files are version dependent (eg. 9.2.0), so until an
 automation strategy is discovered (static build?), be careful.
 
+#### 32-Bit
+
+```
+emerge -av sys-devel/crossdev
+crossdev --target i686-w64-mingw32
+i686-w64-mingw32-emerge -av dev-libs/boost
+```
+
+Then compile SDL2 manually. (Don't use `emerge` for sdl2 or you will miss out on video hardware acceleration)
+
+```
+wget http://libsdl.org/release/SDL2-2.0.10.tar.gz
+tar -zxf SDL2-2.0.10.tar.gz ; cd SDL2-2.0.10
+./configure --prefix=/usr/i686-w64-mingw32/usr --host=i686-w64-mingw32 \
+--enable-sdl2-config=no --with-sysroot=/usr/i686-w64-mingw32/usr/include
+make && sudo make install
+```
+Then, from snestracker folder:
+
+```
+prefix=/usr/i686-w64-mingw32/usr CROSS_COMPILE=i686-w64-mingw32- make
+```
+
+Provided that compilation was successful, the following DLLs need to be copied into the directory where the EXE will be located.
+
+```
+cp /usr/i686-w64-mingw32/usr/{bin/SDL2.dll,lib/libboost_filesystem.dll} /usr/lib/gcc/i686-w64-mingw32/9.3.0/{libgcc_s_sjlj-1.dll,libstdc++-6.dll} pc/bin
+```
+
+Some of these library files are version dependent (eg. 9.2.0), so until an
+automation strategy is discovered (static build?), be careful.
+
+
 ### Ubuntu
+
+#### 64-bit
 
 (tested on 16.04), You can use the following commands to setup the build environment.
 
@@ -170,6 +205,13 @@ cp /usr/x86_64-w64-mingw32/{bin/SDL2.dll,lib/libboost_filesystem.dll} \
 
 Some of these library files are version dependent (eg. 5.3-posix), so until an
 automation strategy is discovered (static build?), be careful.
+
+#### 32-bit
+
+I haven't actually tested a 32-bit compile from Ubuntu, but it probably
+involves installing `i686-w64-mingw32-g++` package and adapting the 64-bit
+instructions in a similar fashion as can be observed from the Gentoo
+instructions.
 
 Internal Dependencies
 ---------------------
