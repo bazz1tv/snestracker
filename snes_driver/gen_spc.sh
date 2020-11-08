@@ -10,7 +10,7 @@ if [[ $1 = "" ]]; then
 	exit 1
 fi
 
-codestart=$(($(${wlaprefix}wla-spc700 -t apu/memorymap_defs.i 2>/dev/null | cut -f3 -d' ')))
+codestart=$(($(${wlaprefix}wla-spc700 -t apu/memorymap_defs.i 2>/dev/null | cut -f3 -d' ' | tr -d '\r')))
 
 
 total=$((0x10200))

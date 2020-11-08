@@ -124,11 +124,11 @@ $(OBJDIR)/apu/%.o: apu/%.s
 echo '#------------------------------'
 echo '#APU SIDE'
 echo '#------------------------------'
-cat /tmp/apu
+sed 's#\\\(.\)#/\1#g' /tmp/apu
 echo '#------------------------------'
 echo '#CPU SIDE'
 echo '#------------------------------'
-cat /tmp/cpu
+sed 's#\\\(.\)#/\1#g' /tmp/cpu
 echo '
 include Makefile.gfx
 

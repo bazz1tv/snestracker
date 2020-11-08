@@ -7,8 +7,13 @@ echo
 echo Building custom wla-dx
 echo ----------------------
 pushd submodules/wla-dx
-	mkdir -p build-wla && cd build-wla &&
-	cmake .. && cmake --build . --config Debug || (echo "CRITICAL ERROR" && exit 1)
+	mkdir -p build-wla && cd build-wla
+	# Conditional settings for compiling directly on Windows with MSYS
+	cmakeFlags=
+	if [[ "$OSTYPE" == "msys" ]]; then
+		cmakeFlags="-G 'MSYS Makefiles'"
+	fi
+	cmake .. ${cmakeFlag} && cmake --build . --config Debug || (echo "CRITICAL ERROR" && exit 1)
 popd
 
 echo
