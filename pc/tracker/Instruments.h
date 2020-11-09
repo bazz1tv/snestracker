@@ -7,6 +7,8 @@
  * increased */
 #define NUM_INSTR 0x40
 #define INSTR_NAME_MAXLEN 22
+// Shortened the length for new GUI layout (v0.2.1)
+#define INSTR_NAME_GUI_CHAR_WIDTH (22 - 3)
 #define APU_MAXVOL 0x7f
 
 // TODO : take out meta info from Instrument into a InstrumentMeta

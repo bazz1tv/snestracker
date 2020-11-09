@@ -233,6 +233,10 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
         DEBUGLOG("\tSubChunkID::name\n");
         assert(idx_loaded);
         size_t bytesread = ChunkLoader::read_str_from_file2(file, instruments[idx].name, subchunksize, INSTR_NAME_MAXLEN);
+
+        // Truncate the sample name for the GUI's shorter length
+        instruments[idx].name[INSTR_NAME_GUI_CHAR_WIDTH - 1] = 0;
+
         subchunksize -= bytesread;
         maxread += bytesread;
       }

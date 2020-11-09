@@ -19,9 +19,6 @@
 
 const int Instrument_Panel::NUM_ROWS;
 
-// Shortened the length for new GUI layout (v0.2.1)
-#define INSTR_NAME_GUI_CHAR_WIDTH (22 - 3)
-
 // Little helper
 #define min(x, y) ((x) <= (y) ? (x) : (y))
 

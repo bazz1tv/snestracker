@@ -9,6 +9,8 @@
  * increased */
 #define NUM_SAMPLES 0x100
 #define SAMPLE_NAME_MAXLEN 22
+// Shortened the length for new GUI layout (v0.2.1)
+#define SAMPLE_NAME_GUI_CHAR_WIDTH (22 - 3)
 
 struct Sample
 {

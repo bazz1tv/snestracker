@@ -193,6 +193,11 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
         DEBUGLOG("\tSubChunkID::name\n");
         assert(idx_loaded);
         size_t bytesread = ChunkLoader::read_str_from_file2(file, samples[idx].name, subchunksize, SAMPLE_NAME_MAXLEN);
+
+        // Truncate the sample name for the GUI's shorter length
+        // Shenanigans from 11/8/2020 Twitch Stream. Ariel: if {song ends=true, then noIt’sNotThisSongNeverEnds; song ends = false;}
+        samples[idx].name[SAMPLE_NAME_GUI_CHAR_WIDTH - 1] = 0;
+
         subchunksize -= bytesread;
         maxread += bytesread;
       }

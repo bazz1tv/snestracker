@@ -13,8 +13,6 @@
 #include "Tracker.h"
 
 const int Sample_Panel::NUM_ROWS;
-// Shortened the length for new GUI layout (v0.2.1)
-#define SAMPLE_NAME_GUI_CHAR_WIDTH (22 - 3)
 
 // Little helper
 #define min(x, y) ((x) <= (y) ? (x) : (y))
@@ -90,6 +88,7 @@ void Sample_Panel::set_coords(int x, int y)
      * tracker (core), these strings should automatically update after a
      * redraw */
     sample_names[i].str = samples[i].name;
+
     sample_names[i].strsize = min(SAMPLE_NAME_MAXLEN, SAMPLE_NAME_GUI_CHAR_WIDTH);
     sample_names[i].rect = sample_indices[i].rect; /* Base this rect off of the index rect */
     sample_names[i].rect.x += 3 * CHAR_WIDTH;
