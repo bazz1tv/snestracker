@@ -11,35 +11,53 @@ Alternatively, you may perform any of the following compilation scenarios:
 - compile native on OS X
 - compile native on Linux
 - cross-compile for Windows from Linux
-- Compile native on Windows
-
-In order to compile, certain library dependencies must be installed on your system first. In general, it is preferred to install these libraries through your package manager if available.
+- compile native on Windows
 
 Dependencies
 ------------
+
+Here is a general list of external dependencies. Further below are OS-specific instructions.
 
 - [SDL2](https://www.libsdl.org/download-2.0.php) - >=2.0.3-r200 - newer versions may be compatible
 - [Boost](http://www.boost.org/users/history/ "Boost") >=1.56.0-r1 - a newer version of Boost is likely compatible - need only compile the following: 
   - boost\_system
   - boost\_filesystem
+- imagemagick (for icon rendering)
+- wla-dx deps
+  - cmake
 - Linux-only deps
   - gtk 2 or 3 (`pc/Makefile` refers to gtk2 by default)
   - alsa-lib (rtmidi dep)
-- wla-dx deps
-  - cmake
 
-### Mac OS
+## Mac OS
 
 I recommend using [homebrew](https://brew.sh/) to install the system dependencies. Once homebrew is installed, simply run the following command from the terminal.
 
 ```
 brew install sdl2 boost cmake
+# Now we get and build SNES Tracker
+git clone https://github.com/bazzinotti/snestracker.git
+cd snestracker
+./build-submodules.sh
+make
 ```
 
-### Linux systems with apt (Debian, Ubuntu, etc)
+If you are building a distribution release, use `make OSX_BACKSUPPORT=1`
+
+## Linux
+
+### Apt (Debian, Ubuntu, etc)
 
 ```
-apt install libasound2-dev libsdl2-dev libboost-filesystem-dev libgtk2.0-dev cmake
+apt install libasound2-dev libsdl2-dev libboost-filesystem-dev libgtk2.0-dev cmake imagemagick
+```
+
+```
+# Now we get and build SNES Tracker
+git clone https://github.com/bazzinotti/snestracker.git
+cd snestracker
+./build-submodules.sh
+make
 ```
 
 ### Gentoo Linux
@@ -54,47 +72,41 @@ dev-libs/boost
 x11-libs/gtk+:2
 media-libs/alsa-lib
 dev-util/cmake
+media-gfx/imagemagick
 ```
 
 ```
 emerge --ask --verbose @snestracker
 ```
 
-Should the time come to release the dependencies associated with snes
-tracker, simply:
-
 ```
-emerge --deselect @snestracker
-# depclean as usual when you are ready to cleanup your system of unused dependencies
-emerge --ask --depclean
-```
-
-
-Submodules
-----------
-
-Snestracker relies on several internal projects that are all conveniently packaged into the snestracker repo. Provided you have installed the necessary system dependencies listed in the previous section, execute the following.
-
-```
+# Now we get and build SNES Tracker
 git clone https://github.com/bazzinotti/snestracker.git
 cd snestracker
 ./build-submodules.sh
-```
-
-Now that the dependent submodules have been built, you only need to run the following command to build snestracker.
-
-```
 make
 ```
+
+<details>
+<summary>Removal</summary>
+<br>
+Should the time come to release the dependencies associated with snes
+tracker, simply:
+<pre>
+emerge --deselect @snestracker
+# depclean as usual when you are ready to cleanup your system of unused dependencies
+emerge --ask --depclean
+</pre></details>
+
 
 Cross-Building for Windows
 --------------------------
 
 Here are 64-bit cross build instructions for Gentoo or Ubuntu Linux.
 
-### Gentoo
+## Gentoo
 
-#### 64-Bit
+### 64-Bit
 
 ```
 emerge -av sys-devel/crossdev
@@ -112,9 +124,12 @@ tar -zxf SDL2-2.0.10.tar.gz ; cd SDL2-2.0.10
 make && sudo make install
 ```
 
-Then, from snestracker folder:
-
 ```
+# Now we get and build SNES Tracker
+git clone https://github.com/bazzinotti/snestracker.git
+cd snestracker
+./build-submodules.sh
+
 prefix=/usr/x86_64-w64-mingw32/usr CROSS_COMPILE=x86_64-w64-mingw32- make
 ```
 
@@ -128,7 +143,7 @@ cp /usr/x86_64-w64-mingw32/usr/{bin/SDL2.dll,lib/libboost_filesystem.dll} \
 Some of these library files are version dependent (eg. 9.2.0), so until an
 automation strategy is discovered (static build?), be careful.
 
-#### 32-Bit
+### 32-Bit
 
 ```
 emerge -av sys-devel/crossdev
@@ -145,9 +160,13 @@ tar -zxf SDL2-2.0.10.tar.gz ; cd SDL2-2.0.10
 --enable-sdl2-config=no --with-sysroot=/usr/i686-w64-mingw32/usr/include
 make && sudo make install
 ```
-Then, from snestracker folder:
 
 ```
+# Now we get and build SNES Tracker
+git clone https://github.com/bazzinotti/snestracker.git
+cd snestracker
+./build-submodules.sh
+
 prefix=/usr/i686-w64-mingw32/usr CROSS_COMPILE=i686-w64-mingw32- make
 ```
 
@@ -160,9 +179,9 @@ cp /usr/i686-w64-mingw32/usr/{bin/SDL2.dll,lib/libboost_filesystem.dll} /usr/lib
 Some of these library files are version dependent (eg. 9.2.0), so until an
 automation strategy is discovered (static build?), be careful.
 
-### Ubuntu
+## Ubuntu
 
-#### 64-bit
+### 64-bit
 
 (tested on 16.04), You can use the following commands to setup the build environment.
 
@@ -190,9 +209,12 @@ sudo ./b2 --prefix=/usr/x86_64-w64-mingw32 --with-system --with-filesystem \
   variant=debug link=shared threading=multi address-model=64 install
 ```
 
-Then, from the snestracker folder:
-
 ```
+# Now we get and build SNES Tracker
+git clone https://github.com/bazzinotti/snestracker.git
+cd snestracker
+./build-submodules.sh
+
 prefix=/usr/x86_64-w64-mingw32 CROSS_COMPILE=x86_64-w64-mingw32- make
 ```
 
@@ -206,7 +228,7 @@ cp /usr/x86_64-w64-mingw32/{bin/SDL2.dll,lib/libboost_filesystem.dll} \
 Some of these library files are version dependent (eg. 5.3-posix), so until an
 automation strategy is discovered (static build?), be careful.
 
-#### 32-bit
+### 32-bit
 
 I haven't actually tested a 32-bit compile from Ubuntu, but it probably
 involves installing `i686-w64-mingw32-g++` package and adapting the 64-bit
