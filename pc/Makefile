@@ -18,9 +18,17 @@ endif
 global_requirements = $(LIBJDKMIDI_LIB) $(CPPSOURCES) $(CSOURCES) $(MSOURCES) \
 $(BIN)/$(EXECUTABLE_DEBUGGER) $(BIN)/$(EXECUTABLE_TRACKER)
 
+# the raw exe names. (Windows builds add .exe conditionally below)
+EXECUTABLE_DEBUGGER := std
+EXECUTABLE_TRACKER := st
+
 # Pretty (long, space delim) names for the apps
-PRETTY_DEBUGGER = SPC Debugger
-PRETTY_TRACKER = SNES Tracker
+PRETTY_DEBUGGER := SPC Debugger
+PRETTY_TRACKER := SNES Tracker
+
+# tool names (Windows builds add .exe conditionally below)
+UNRAR := unrar
+DEC7Z := 7zDec
 
 # This is where source that both tracker and STD will use. NOTE THE inclusion of the forward slash ;)
 SHARED_DIR = shared/
@@ -94,11 +102,6 @@ ifeq ($(uname_S), Darwin)
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
-	EXECUTABLE_DEBUGGER = std
-	EXECUTABLE_TRACKER = st
-	
-	UNRAR = unrar
-	DEC7Z = 7zDec
 else ifeq ($(uname_S), Linux)
 	LIBJDKMIDI_OSDIR = $(PROJ_DIR)/libjdkmidi/c++/out.Linux
 
@@ -128,11 +131,9 @@ else ifeq ($(uname_S), Linux)
 	sdl2_cflags = $(shell sdl2-config --cflags)
 	sdl2_ldflags = $(shell sdl2-config --libs)
 
-	EXECUTABLE_DEBUGGER = std
-	EXECUTABLE_TRACKER = st
-	
-	UNRAR = unrar
-	DEC7Z = 7zDec
+	PRETTY_DEBUGGER := spcdebug
+	PRETTY_TRACKER := snestracker
+
 else ifeq ($(uname_S), Cross_Windows)
 	ifneq (,$(findstring i686,$(CROSS_COMPILE)))
 		# 32 butt
@@ -178,10 +179,12 @@ else ifeq ($(uname_S), Cross_Windows)
 	# Have a debug console
 	sdl2_ldflags := $(subst -mwindows,,$(sdl2_ldflags)) -mconsole -lcomdlg32
 
-	EXECUTABLE_DEBUGGER = std.exe
-	EXECUTABLE_TRACKER = st.exe
-	UNRAR = unrar.exe
-	DEC7Z = 7zDec.exe
+	EXECUTABLE_DEBUGGER := $(EXECUTABLE_DEBUGGER).exe
+	EXECUTABLE_TRACKER := $(EXECUTABLE_TRACKER).exe
+	PRETTY_DEBUGGER := $(PRETTY_DEBUGGER).exe
+	PRETTY_TRACKER := $(PRETTY_TRACKER).exe
+	UNRAR := $(UNRAR).exe
+	DEC7Z := $(DEC7Z).exe
 
 	OBJECTS_TRACKER := winres.o
 else ifeq ($(uname_S), Windows)
@@ -314,13 +317,11 @@ st.ico: st-icons-png/256-stroked-thick.png st-icons-png/64.png st-icons-png/48.p
 
 $(BIN)/$(EXECUTABLE_DEBUGGER): $(OBJECTS_DEBUGGER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_DEBUGGER2) $(LDFLAGS) -o $@
-	# For the Windows version. and don't error out on non-windows by returning true from a subshell
-	( cp $(BIN)/{std.exe,"$(PRETTY_DEBUGGER).exe"} ; true )
+	cp $(BIN)/{$(EXECUTABLE_DEBUGGER),"$(PRETTY_DEBUGGER)"}
 
 $(BIN)/$(EXECUTABLE_TRACKER): $(OBJECTS_TRACKER2) $(BIN)/$(UNRAR) $(BIN)/$(DEC7Z) $(LIBJDKMIDI_LIB)
 	$(CC) $(OBJECTS_TRACKER2) $(LDFLAGS) -o $@
-	# For the Windows version. and don't error out on non-windows by returning true from a subshell
-	( cp $(BIN)/{st.exe,"$(PRETTY_TRACKER).exe"} ; true )
+	cp $(BIN)/{$(EXECUTABLE_TRACKER),"$(PRETTY_TRACKER)"}
 
 
 $(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(PROJ_DIR)/lzma1505/C/Util/7z/7zMain.c
@@ -362,8 +363,8 @@ clean:
 	@# Remove both Linux and Windows versions of unrar and 7zdec
 	rm -f $(BIN)/{unrar,unrar.exe}
 	rm -f $(BIN)/{7zDec,7zDec.exe}
-	rm -f $(BIN)/$(EXECUTABLE_DEBUGGER);
-	rm -f $(BIN)/$(EXECUTABLE_TRACKER);
+	rm -f $(BIN)/{$(EXECUTABLE_DEBUGGER),"$(PRETTY_DEBUGGER)"}
+	rm -f $(BIN)/{$(EXECUTABLE_TRACKER),"$(PRETTY_TRACKER)"}
 	rm -rf $(OBJ)
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 	rm -f {$(PROJ_DIR)/lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
