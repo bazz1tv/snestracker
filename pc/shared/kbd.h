@@ -1,6 +1,8 @@
 #pragma once
 #include "SDL.h"
 
+// modifier keys that toggle on and off (NUMLOCK, CAPS LOCK)
+#define TOGGLED_MODIFIERS (KMOD_NUM | KMOD_CAPS)
 /* Here are some macros to check if only one specific modifier key is
  * held, and to check if any modifier is held, respectively:
  *
@@ -12,4 +14,4 @@
  *
  *   */
 bool MODONLY(const Uint16 &mod, const Uint16 k);
-#define MOD_ANY(mod) (mod & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI))
+bool MOD_ANY(const Uint16 &mod);

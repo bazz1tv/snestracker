@@ -2,6 +2,9 @@
 
 bool MODONLY(const Uint16 &mod, const Uint16 k)
 {
+  // Do not acknowledge the state of NumLock
+  Uint16 modIgnoreNumlock = mod & (~TOGGLED_MODIFIERS);
+  // this enum serves as an index into the left/right modifier definition array below
   enum {
     CTRL=0,
     SHIFT,
@@ -26,7 +29,7 @@ bool MODONLY(const Uint16 &mod, const Uint16 k)
     {
       // if the keys pressed do not reflect the keys checked for
       // (applies to any specified L / R / LR mod key combo)
-      if ( ! ( (mod & modLR[i]) & (k & modLR[i]) ) )
+      if ( ! ( (modIgnoreNumlock & modLR[i]) & (k & modLR[i]) ) )
       {
         match = false;
         break;
@@ -34,7 +37,7 @@ bool MODONLY(const Uint16 &mod, const Uint16 k)
     }
     else // if we're not supposed to be checking for this pair
     {
-      if (mod & modLR[i]) // make sure this pair's keys are not held
+      if (modIgnoreNumlock & modLR[i]) // make sure this pair's keys are not held
       {
         match = false;
         break;
@@ -43,4 +46,11 @@ bool MODONLY(const Uint16 &mod, const Uint16 k)
   }
 
   return match;
+}
+
+bool MOD_ANY(const Uint16 &mod)
+{
+  // Do not acknowledge the state of NumLock
+  Uint16 modIgnoreNumlock = mod & (~TOGGLED_MODIFIERS);
+  return (modIgnoreNumlock & (KMOD_CTRL | KMOD_SHIFT | KMOD_ALT | KMOD_GUI));
 }

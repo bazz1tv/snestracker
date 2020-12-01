@@ -1924,7 +1924,9 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
 
 static int gethexkb(const int scancode, const int mod)
 {
-  if (mod)
+  // If any of the non-toggle modifiers are pressed, just return. Also be sure to ignore caps lock and Numlock
+  // Fixes "Numlock ON limits pattern editor functionality" #162
+  if (mod && !(mod & TOGGLED_MODIFIERS) )
     return -1;
 
   switch (scancode)

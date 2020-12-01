@@ -471,6 +471,8 @@ void Tracker::handle_events()
       {
         int scancode = ev.key.keysym.sym;
         int mod = ev.key.keysym.mod;
+
+        //DEBUGLOG("scancode: 0x%0x, mod: 0x%0x\n", scancode, mod);
         switch (scancode)
         {
           case SDLK_ESCAPE:
