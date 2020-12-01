@@ -1257,6 +1257,7 @@ void Tracker::reset()
   main_window.pateditpanel.set_currow(0);
 	main_window.patseqpanel.set_currow(0);
 	main_window.instrpanel.set_currow(0);
+  main_window.instrpanel.rows_scrolled = 0; // fixes #161 Scroll Instruments box to top when loading a song
 	main_window.samplepanel.currow = 0;
 	main_window.samplepanel.rows_scrolled = 0;
 
