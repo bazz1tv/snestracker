@@ -400,7 +400,7 @@ int Sample_Panel::load(void *spanel)
     s->brrsize = brrsize;
     s->rel_loop = loop;
 
-    strncpy(s->name, Utility::getFileName(outPath), SAMPLE_NAME_MAXLEN - 1);
+    strncpy(s->name, Utility::getFileName(outPath), SAMPLE_NAME_GUI_CHAR_WIDTH - 1);
     s->name[SAMPLE_NAME_MAXLEN-1] = 0;
     *s->metadata.changed = true;
     s->metadata.loop = doesBrrLoop(s->brr);
