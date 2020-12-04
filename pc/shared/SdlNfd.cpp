@@ -124,31 +124,33 @@ nfdresult_t SdlNfd::get_file_handle(const char *rw, const char *filter_list/*=NU
                      NULL);
 
       // Free finalPath here
-      if (finalPath != outPath) // only free if it was allocated
+      if (finalPath != outPath && finalPath != NULL) // only free if it was allocated
       {
         free(finalPath);
         finalPath = NULL;
       }
 
-      if (outPath)
+      if (outPath != NULL)
       {
         free(outPath);
         outPath = NULL;
       }
       return NFD_ERROR;
-    }
+    } // file == NULL
 
-    // Free finalPath here
-    if (finalPath != outPath) // only free if it was allocated
+
+    // If we're using FinalPath and its not equal to outPath, deallocate outPath and have it point to finalPath.
+    if (finalPath != outPath)
     {
-      free(finalPath);
-      finalPath = NULL;
+      free(outPath);
+      outPath = finalPath;
     }
-    return result;
-  }
+    // and then it will get deallocated by the normal outpath Codeflows which is good
+    return result;  // If the file was not NULL we return a nice happy OK
+  } // NFD_OKAY
   else if ( result == NFD_CANCEL )
   {
-    if (outPath)
+    if (outPath != NULL)
     {
       free(outPath);
       outPath = NULL;
@@ -171,7 +173,7 @@ nfdresult_t SdlNfd::get_file_handle(const char *rw, const char *filter_list/*=NU
 
 void SdlNfd::_release()
 {
-  if (outPath)
+  if (outPath != NULL)
   {
     free(outPath);
     outPath = NULL;
