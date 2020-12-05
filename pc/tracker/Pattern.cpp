@@ -13,7 +13,6 @@
 
 #include "apuram.h"
 
-
 static int clone_seq_common(PatSeqPanel *psp);
 static Pattern * get_current_pattern(PatSeqPanel *psp);
 static PatternMeta * get_current_pattern_meta(PatSeqPanel *psp);
@@ -670,6 +669,11 @@ void PatSeqPanel::set_coords(int x, int y)
   insbtn.rect.x = x;
   insbtn.rect.y = y;
 
+  x += insbtn.rect.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
+
+  clearbtn.rect.x = x;
+  clearbtn.rect.y = y;
+
   y += (CHAR_HEIGHT * 2);
 
   rect_patTable.x = rect.x;
@@ -680,12 +684,6 @@ void PatSeqPanel::set_coords(int x, int y)
 
   y += 2; //(CHAR_HEIGHT / 2);
 
-  clearbtn.rect.x = x;
-  clearbtn.rect.y = y;
-
-  int zap_y = y + CHAR_HEIGHT + (CHAR_HEIGHT / 2) + 4;
-  zapbtn.rect.x = x;
-  zapbtn.rect.y = zap_y;
 
   /* This init was postponed until now to avoid having to iterate through
    * all instruments multiple times */
@@ -716,19 +714,23 @@ void PatSeqPanel::set_coords(int x, int y)
   decpatbtn.rect.x = rect_patTable.x + rect_patTable.w + (CHAR_WIDTH) + (CHAR_WIDTH/2);
   decpatbtn.rect.y = rect_patTable.y + 2;
   incpatbtn.rect.x = decpatbtn.rect.x + incpatbtn.rect.w + 5;
-  incpatbtn.rect.y = decpatbtn.rect.y;// + CHAR_HEIGHT;
+  incpatbtn.rect.y = decpatbtn.rect.y;
 
   movePatUpbtn.rect.x = decpatbtn.rect.x;
   movePatUpbtn.rect.y = decpatbtn.rect.y + (CHAR_HEIGHT * 2);
   movePatDownbtn.rect.x = movePatUpbtn.rect.x;
   movePatDownbtn.rect.y = movePatUpbtn.rect.y + CHAR_HEIGHT + 5;
 
+  //int zap_y = y + CHAR_HEIGHT + (CHAR_HEIGHT / 2) + 4;
+  zapbtn.rect.x = movePatDownbtn.rect.x;
+  zapbtn.rect.y = movePatDownbtn.rect.y + (CHAR_HEIGHT * 2);
+
 // PATTERN LENGTH PORTION:
   patlen_title.rect.x = xx;
 	patlen_title.rect.y = rect_patTable.y + rect_patTable.h + (CHAR_HEIGHT * 2) + 1;// + (CHAR_HEIGHT / 2);
 	patlen_valtext.rect.x = patlen_title.rect.x + ((strlen(patlen_title.str) + 1) * CHAR_WIDTH);
 	patlen_valtext.rect.y = patlen_title.rect.y;
-	patlen_decbtn.rect.x  = patlen_valtext.rect.x + (5 * CHAR_WIDTH);
+	patlen_decbtn.rect.x  = patlen_valtext.rect.x + (9 * CHAR_WIDTH);
 	patlen_decbtn.rect.y = patlen_title.rect.y;
 	patlen_incbtn.rect.x = patlen_decbtn.rect.x + CHAR_WIDTH + 5;
 	patlen_incbtn.rect.y = patlen_title.rect.y;
