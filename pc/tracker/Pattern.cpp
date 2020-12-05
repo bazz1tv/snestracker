@@ -630,10 +630,15 @@ PatSeqPanel::PatSeqPanel(PatternSequencer *patseq) :
 	patlen_incbtn("+", inc_patlen, this, true),
 	patlen_decbtn("-", dec_patlen, this, true)
 {
+  for (int i=0; i < VISIBLE_ROWS; i++)
+  {
+    names[i] = Text_Edit_Rect(PATSEQ_NAME_MAXLEN, pattern_strings[i], PATSEQ_NAME_MAXLEN, false);
+  }
 }
 
 PatSeqPanel::~PatSeqPanel()
 {
+
 }
 
 #define min(x, y) ((x) <= (y) ? (x) : (y))
@@ -700,14 +705,9 @@ void PatSeqPanel::set_coords(int x, int y)
       CHAR_HEIGHT
     };
 
-    /* The GUI names[i].str now points to the core (tracker)'s
-     * instruments[i].str, meaning that when we load a file into the
-     * tracker (core), these strings should automatically update after a
-     * redraw */
-    names[i].str = pattern_strings[i];
-    names[i].rect = index_text[i].rect;
-    names[i].rect.x += 3 * CHAR_WIDTH;
-    names[i].rect.w = 2 * CHAR_WIDTH;
+    names[i].rect.x = index_text[i].rect.x;
+    names[i].rect.y = index_text[i].rect.y;
+    names[i].rect.h = index_text[i].rect.h;
   }
 
   // put the inc/dec pat buttons to the right of the rect.
@@ -767,6 +767,8 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
    * instrument name field (including padding).*/
   for (int i=0; i < min(VISIBLE_ROWS, (patseq->num_entries - rows_scrolled)); i++)
   {
+    if (handle_text_edit_rect_event(ev, &names[i]) == 2)
+      ::tracker->song.changed = true;
     /* Check the rect of the indice. Unfortunately, unless I edit the TER
      * code to allow using an alternative Rect (Clickable_Rect code
      * really), then I can't composite an all-inclusive rect to do the
@@ -808,6 +810,18 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
             default:break;
           }
         } break;
+      case SDL_USEREVENT:
+      {
+        if (ev.user.code == UserEvents::mouse_react)
+        {
+          SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
+          if (Utility::coord_is_in_rect(te->button.x,te->button.y, &rowRect))
+          {
+            names[i].do_thing(names[i].data);
+            return 1;
+          }
+        }
+      } break;
       default:break;
     }
   }

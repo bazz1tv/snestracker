@@ -224,10 +224,12 @@ struct PatSeqPanel // PatternSequencerPanel
 
   Text index_text[VISIBLE_ROWS];
   char index_strings[VISIBLE_ROWS][4];
+
+  // v0.2.3 Add Pattern Naming
+  #define PATSEQ_NAME_MAXLEN 14
   // names.. really just the pattern numbers. I'm using the term 'names'
   // only to simplify porting from the Sample and Instrument panel code
-  #define PATSEQ_NAME_MAXLEN 14
-  Clickable_Text names[VISIBLE_ROWS];
+  Text_Edit_Rect names[VISIBLE_ROWS];
   char pattern_strings[VISIBLE_ROWS][PATSEQ_NAME_MAXLEN + 1];
   int rows_scrolled = 0;
   SDL_Rect rect;

@@ -21,7 +21,6 @@ Text_Edit_Rect::Text_Edit_Rect(int visible_width/*=0*/, const char *str/*=""*/,
 }
 
 
-
 /* utf8 helper funcs from
  * https://hg.libsdl.org/SDL/file/783d1cff9b20/test/testime.c */
 
@@ -113,7 +112,12 @@ void Text_Edit_Rect::stop_editing(Text_Edit_Rect *ter/*=cur_editing_ter*/)
   ter->needs_redraw = true;
   Text_Edit_Rect::cur_editing_ter = NULL;
 }
-/* Let's try putting the edit logic into the window's logic handler. */
+
+/* A rough guess at the return codes LUL:
+  0: We're not editing the TER
+  1: we double clicked into the TER
+  2: We are editing the TER
+*/
 int handle_text_edit_rect_event(const SDL_Event &ev, Text_Edit_Rect *ter)
 {
   if (check_dblclick(ev, ter) == 1)
