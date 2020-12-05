@@ -226,8 +226,9 @@ struct PatSeqPanel // PatternSequencerPanel
   char index_strings[VISIBLE_ROWS][4];
   // names.. really just the pattern numbers. I'm using the term 'names'
   // only to simplify porting from the Sample and Instrument panel code
+  #define PATSEQ_NAME_MAXLEN 14
   Clickable_Text names[VISIBLE_ROWS];
-  char pattern_strings[VISIBLE_ROWS][3];
+  char pattern_strings[VISIBLE_ROWS][PATSEQ_NAME_MAXLEN + 1];
   int rows_scrolled = 0;
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr
@@ -241,7 +242,7 @@ private:
 
 public:
   // v0.2.1
-  SDL_Rect rect_patTable;
+  SDL_Rect rect_patTable; // This the actual pattern sequencer table rect
   // PatLenWidget
   char patlen_cbuf[5];
   Text patlen_title, patlen_valtext;

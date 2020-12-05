@@ -674,7 +674,7 @@ void PatSeqPanel::set_coords(int x, int y)
 
   rect_patTable.x = rect.x;
   rect_patTable.y = y;
-  rect_patTable.w = (5 * CHAR_WIDTH) + 2;
+  rect_patTable.w = (14 * CHAR_WIDTH) + 2;
   rect_patTable.h = (CHAR_HEIGHT * (VISIBLE_ROWS)) + 1;
 
 
@@ -774,6 +774,13 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
     r.w += names[i].rect.x - (r.x + r.w) - 1;
     assert(r.x + r.w < names[i].rect.x);
 
+    // Craft a rect that covers the following area
+    //     ---------------
+    // 01 | 01            |
+    //     ---------------
+    SDL_Rect rowRect = names[i].rect;
+    rowRect.w = rect_patTable.w - r.w - 2; // subtract border pixels
+
     switch (ev.type)
     {
       case SDL_MOUSEBUTTONDOWN:
@@ -784,7 +791,7 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
               {
                 if (Utility::coord_is_in_rect(ev.button.x,ev.button.y, &r)
                     || Utility::coord_is_in_rect(ev.button.x, ev.button.y,
-                      &names[i].rect))
+                      &rowRect))
                 {
                   if ((currow - rows_scrolled) != i)
                   {
@@ -954,9 +961,7 @@ void PatSeqPanel::draw(SDL_Surface *screen/*=::render->screen*/)
   {
     highlight_r = index_text[currow - rows_scrolled].rect;
     highlight_r.y -= 1;
-    highlight_r.w +=
-      (names[currow - rows_scrolled].rect.x - (highlight_r.x + highlight_r.w)) +
-      names[currow - rows_scrolled].rect.w;
+    highlight_r.w = rect_patTable.w - 2;
 
     SDL_FillRect(screen, &highlight_r, Colors::Interface::color[Colors::Interface::Type::selections]);
   }
