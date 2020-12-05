@@ -117,6 +117,10 @@ size_t SongSettingsChunkLoader::load(SDL_RWops *file, size_t chunksize)
       {
         DEBUGLOG("\tSubChunkID::songtitle");
         size_t bytesread = ChunkLoader::read_str_from_file2(file, songsettings->song_title_str, subchunksize, SongSettings::SONGTITLE_SIZE);
+
+        // Truncate the song name for the GUI's shorter length
+        songsettings->song_title_str[SongSettings::SONGTITLE_GUI_CHAR_WIDTH - 1] = 0;
+
         subchunksize -= bytesread;
         maxread += bytesread;
       }

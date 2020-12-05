@@ -47,6 +47,7 @@ struct SongSettings
   uint8_t fir[8];
 
   static const constexpr unsigned int SONGTITLE_SIZE = 22;
+  static const constexpr unsigned int SONGTITLE_GUI_CHAR_WIDTH = (22 - 6);
   char song_title_str[SONGTITLE_SIZE];
 
   static const constexpr unsigned int MIN_BPM = 32, MAX_BPM = 999, DEFAULT_BPM = 120;

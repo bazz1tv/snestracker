@@ -50,7 +50,7 @@ Shoutz to BigMerl, Ravancloak, and Rowan from Twitch stream
 Main_Window::Main_Window(int &argc, char **argv, Tracker *tracker) :
   song_label("Song"),
   song_title_label("Title:"),
-  song_title(SongSettings::SONGTITLE_SIZE, tracker->song.settings.song_title_str, sizeof(tracker->song.settings.song_title_str)),
+  song_title(SongSettings::SONGTITLE_GUI_CHAR_WIDTH, tracker->song.settings.song_title_str, SongSettings::SONGTITLE_GUI_CHAR_WIDTH),
   tracker(tracker),
 	samplepanel(tracker->song.samples),
   instrpanel(tracker->song.instruments, &samplepanel),
