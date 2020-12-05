@@ -632,7 +632,11 @@ PatSeqPanel::PatSeqPanel(PatternSequencer *patseq) :
 {
   for (int i=0; i < VISIBLE_ROWS; i++)
   {
-    names[i] = Text_Edit_Rect(PATSEQ_NAME_MAXLEN, pattern_strings[i], PATSEQ_NAME_MAXLEN, false);
+    names[i].str = patseq->patterns[i].name;
+    names[i].strsize = PATNAME_MAXLEN;
+    names[i].rect.w = PATNAME_MAXLEN * CHAR_WIDTH;
+    names[i].max_visible_chars = PATNAME_MAXLEN;
+    names[i].border = false;
   }
 }
 
@@ -683,7 +687,7 @@ void PatSeqPanel::set_coords(int x, int y)
 
   rect_patTable.x = rect.x;
   rect_patTable.y = y;
-  rect_patTable.w = (14 * CHAR_WIDTH) + 2;
+  rect_patTable.w = ( (PATNAME_MAXLEN + 3) * CHAR_WIDTH) + 2;
   rect_patTable.h = (CHAR_HEIGHT * (VISIBLE_ROWS)) + 1;
 
 
@@ -705,7 +709,7 @@ void PatSeqPanel::set_coords(int x, int y)
       CHAR_HEIGHT
     };
 
-    names[i].rect.x = index_text[i].rect.x;
+    names[i].rect.x = index_text[i].rect.x + (3 * CHAR_WIDTH);
     names[i].rect.y = index_text[i].rect.y;
     names[i].rect.h = index_text[i].rect.h;
   }
@@ -754,12 +758,21 @@ static void apuSetPattern(int currow)
   }
 }
 
+void syncPatNames(PatSeqPanel *psp)
+{
+  for (int i=0; i < min(PatSeqPanel::VISIBLE_ROWS, psp->patseq->num_entries); i++)
+  {
+    psp->names[i].str = psp->patseq->patterns[psp->patseq->sequence[i + psp->rows_scrolled]].name;
+  }
+}
+
 int PatSeqPanel::event_handler(const SDL_Event &ev)
 {
   if (mousewheel_rows_event_handler(ev, &rows_scrolled, VISIBLE_ROWS, patseq->num_entries, &rect))
   {
     // mark the last time you've scrolled
     lastTimeScrolled = SDL_GetTicks();
+    syncPatNames(this);
   }
 
   /* If the user clicks within a certain row rect. A row rect is comprised
@@ -810,18 +823,6 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
             default:break;
           }
         } break;
-      case SDL_USEREVENT:
-      {
-        if (ev.user.code == UserEvents::mouse_react)
-        {
-          SDL_Event *te = (SDL_Event *)ev.user.data1; // the mouse coordinates at time of double click
-          if (Utility::coord_is_in_rect(te->button.x,te->button.y, &rowRect))
-          {
-            names[i].do_thing(names[i].data);
-            return 1;
-          }
-        }
-      } break;
       default:break;
     }
   }
@@ -883,7 +884,10 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
               p->used += 1;
 
               if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
+              {
                 rows_scrolled++;
+                syncPatNames(this);
+              }
 
               patseq->num_entries++;
               currow++;
@@ -1001,9 +1005,8 @@ void PatSeqPanel::draw(SDL_Surface *screen/*=::render->screen*/)
         Colors::Interface::color[Colors::Interface::Type::text_bg],
         false);*/
 
-    conv_idx2ascii2(patseq->sequence[rows_scrolled + i], pattern_strings[i]);
     names[i].draw(Colors::Interface::color[Colors::Interface::Type::text_fg],
-        false);
+         false);
   }
 }
 
@@ -1142,9 +1145,17 @@ int PatSeqPanel::clone(void *pspanel)
   PatternSequencer *patseq = psp->patseq;
   fprintf(stderr, "PatSeqPanel::clone()\n");
   if(!clone_seq_common(psp))
+  {
     memcpy(&patseq->patterns[patseq->sequence[psp->currow]].p,
       &patseq->patterns[patseq->sequence[psp->currow - 1]].p,
       sizeof(Pattern));
+    strcpy(patseq->patterns[patseq->sequence[psp->currow]].name, patseq->patterns[patseq->sequence[psp->currow - 1]].name);
+    char *name = patseq->patterns[patseq->sequence[psp->currow]].name;
+    int len = strlen(name);
+    if (len >= (PATNAME_MAXLEN - 2))
+      len = PATNAME_MAXLEN - 3;
+    conv_idx2ascii2(patseq->sequence[psp->currow], &name[len]);
+  }
 
   return 0;
 }
@@ -1157,7 +1168,8 @@ int PatSeqPanel::seq(void *pspanel)
   clone_seq_common(psp);
   // Set the new pattern's length to the same as the previous one
   PatternMeta *pm = &patseq->patterns[patseq->sequence[psp->currow]];
-  pm->p.len = (pm - 1)->p.len; 
+  /* Fixes #175 */
+  pm->p.len = patseq->patterns[patseq->sequence[psp->currow - 1]].p.len;
   return 0;
 }
 
@@ -1193,6 +1205,8 @@ int PatSeqPanel::clear(void *pspanel)
   /* Fixes #36 */
   ::tracker->main_window.pateditpanel.set_currow(::tracker->main_window.pateditpanel.currow);
 
+  syncPatNames(psp);
+
   return 0;
 }
 
@@ -1214,6 +1228,8 @@ int PatSeqPanel::incpat(void *pspanel)
 
   /* Fixes #36 */
   ::tracker->main_window.pateditpanel.set_currow(::tracker->main_window.pateditpanel.currow);
+
+  syncPatNames(psp);
   return 0;
 }
 
@@ -1234,8 +1250,12 @@ int PatSeqPanel::decpat(void *pspanel)
 
   /* Fixes #36 */
   ::tracker->main_window.pateditpanel.set_currow(::tracker->main_window.pateditpanel.currow);
+
+  syncPatNames(psp);
   return 0;
 }
+
+
 
 void PatSeqPanel::set_currow(int row, bool updateScrolled/*=true*/)
 {
@@ -1266,6 +1286,8 @@ void PatSeqPanel::set_currow(int row, bool updateScrolled/*=true*/)
     else if (row == 0)
       rows_scrolled = 0;
   }
+
+  syncPatNames(this);
 }
 
 void PatSeqPanel::inc_currow()

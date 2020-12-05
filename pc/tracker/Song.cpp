@@ -1,5 +1,6 @@
 #include "Song.h"
 #include "gui/DialogBox.h"
+#include "PanelCommon.h"
 void Song::reset()
 {
   // Reset Song Title
@@ -22,6 +23,7 @@ void Song::reset()
   for (int i=0; i < MAX_PATTERNS; i++)
   {
     patseq.patterns[i].p.len = DEFAULT_PATTERN_LEN;
+    conv_idx2ascii2(i, patseq.patterns[i].name);
   }
   // Reset Pat Sequencer
   patseq.num_entries = 1;

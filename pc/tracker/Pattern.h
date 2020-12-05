@@ -106,6 +106,8 @@ struct PatternRow // defines one row of Pattern Data
 #define MAX_PATTERN_LEN 0x80
 #define DEFAULT_PATTERN_LEN 0x20
 
+#define PATNAME_MAXLEN 14
+
 struct Pattern
 {
   uint8_t len = DEFAULT_PATTERN_LEN;
@@ -128,6 +130,7 @@ struct PatternMeta
   // used is meta data that is not part of the structure mapped into SNES
   // APU RAM
   int used = 0; // number of sequence entries this pattern is in
+  char name[PATNAME_MAXLEN];
 };
 
 struct PatternSequencer
@@ -226,11 +229,9 @@ struct PatSeqPanel // PatternSequencerPanel
   char index_strings[VISIBLE_ROWS][4];
 
   // v0.2.3 Add Pattern Naming
-  #define PATSEQ_NAME_MAXLEN 14
   // names.. really just the pattern numbers. I'm using the term 'names'
   // only to simplify porting from the Sample and Instrument panel code
   Text_Edit_Rect names[VISIBLE_ROWS];
-  char pattern_strings[VISIBLE_ROWS][PATSEQ_NAME_MAXLEN + 1];
   int rows_scrolled = 0;
   SDL_Rect rect;
   SDL_Rect highlight_r; // the highlight rect of current select instr
