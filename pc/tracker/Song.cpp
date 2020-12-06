@@ -23,7 +23,8 @@ void Song::reset()
   for (int i=0; i < MAX_PATTERNS; i++)
   {
     patseq.patterns[i].p.len = DEFAULT_PATTERN_LEN;
-    conv_idx2ascii2(i, patseq.patterns[i].name);
+    //conv_idx2ascii2(i, patseq.patterns[i].name);
+    //strcpy(patseq.patterns[i].name, "-");
   }
   // Reset Pat Sequencer
   patseq.num_entries = 1;

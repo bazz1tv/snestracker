@@ -106,7 +106,7 @@ struct PatternRow // defines one row of Pattern Data
 #define MAX_PATTERN_LEN 0x80
 #define DEFAULT_PATTERN_LEN 0x20
 
-#define PATNAME_MAXLEN 14
+#define PATNAME_MAXLEN (10)
 
 struct Pattern
 {
@@ -226,7 +226,10 @@ struct PatSeqPanel // PatternSequencerPanel
   static int zapPat(void *pspanel);
 
   Text index_text[VISIBLE_ROWS];
-  char index_strings[VISIBLE_ROWS][4];
+  char index_strings[VISIBLE_ROWS][sizeof("01|")];
+
+  Text patid_text[VISIBLE_ROWS];
+  char patid_strings[VISIBLE_ROWS][sizeof("01")];
 
   // v0.2.3 Add Pattern Naming
   // names.. really just the pattern numbers. I'm using the term 'names'

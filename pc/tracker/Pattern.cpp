@@ -687,7 +687,7 @@ void PatSeqPanel::set_coords(int x, int y)
 
   rect_patTable.x = rect.x;
   rect_patTable.y = y;
-  rect_patTable.w = ( (PATNAME_MAXLEN + 3) * CHAR_WIDTH) + 2;
+  rect_patTable.w = ( (PATNAME_MAXLEN + 3 + 3) * CHAR_WIDTH) + 2;
   rect_patTable.h = (CHAR_HEIGHT * (VISIBLE_ROWS)) + 1;
 
 
@@ -698,9 +698,9 @@ void PatSeqPanel::set_coords(int x, int y)
    * all instruments multiple times */
   for (int i=0; i < VISIBLE_ROWS; i++)
   {
+    // INDEX TEXT
     index_text[i].str = index_strings[i];
     conv_idx2ascii2(rows_scrolled + i, index_strings[i]);
-
     index_text[i].rect =
     {
       xx,
@@ -709,7 +709,18 @@ void PatSeqPanel::set_coords(int x, int y)
       CHAR_HEIGHT
     };
 
-    names[i].rect.x = index_text[i].rect.x + (3 * CHAR_WIDTH);
+    // PATTERN ID (PATID) TEXT
+    patid_text[i].str = patid_strings[i];
+    conv_idx2ascii2(patseq->sequence[i + rows_scrolled], patid_strings[i]); // load the string with the pattern's ID
+    patid_text[i].rect =
+    {
+      xx + (3 * CHAR_WIDTH), // move over 3 characters to place beside sequence index text
+      y + (CHAR_HEIGHT * i),
+      2 * CHAR_WIDTH, // eg 00|
+      CHAR_HEIGHT
+    };
+
+    names[i].rect.x = index_text[i].rect.x + ( (3 + 3) * CHAR_WIDTH);
     names[i].rect.y = index_text[i].rect.y;
     names[i].rect.h = index_text[i].rect.h;
   }
@@ -997,6 +1008,11 @@ void PatSeqPanel::draw(SDL_Surface *screen/*=::render->screen*/)
     index_text[i].draw(screen,
         Colors::Interface::color[Colors::Interface::Type::text_fg],
         false);
+
+    conv_idx2ascii2(patseq->sequence[i + rows_scrolled], patid_strings[i]); // load the string with the pattern's ID
+    patid_text[i].draw(screen,
+        Colors::gray,
+        false);
     
     /*const SDL_Rect *tmp = &index_text[i].rect;
     sdlfont_drawString(screen,
@@ -1136,6 +1152,9 @@ int clone_seq_common(PatSeqPanel *psp)
   psp->set_currow(psp->currow + 1);
 
   *patseq->metadata.changed = true;
+
+  // copy the pattern name
+  strcpy(patseq->patterns[patseq->sequence[psp->currow]].name, patseq->patterns[patseq->sequence[psp->currow - 1]].name);
   return 0;
 }
 
@@ -1149,12 +1168,6 @@ int PatSeqPanel::clone(void *pspanel)
     memcpy(&patseq->patterns[patseq->sequence[psp->currow]].p,
       &patseq->patterns[patseq->sequence[psp->currow - 1]].p,
       sizeof(Pattern));
-    strcpy(patseq->patterns[patseq->sequence[psp->currow]].name, patseq->patterns[patseq->sequence[psp->currow - 1]].name);
-    char *name = patseq->patterns[patseq->sequence[psp->currow]].name;
-    int len = strlen(name);
-    if (len >= (PATNAME_MAXLEN - 2))
-      len = PATNAME_MAXLEN - 3;
-    conv_idx2ascii2(patseq->sequence[psp->currow], &name[len]);
   }
 
   return 0;
