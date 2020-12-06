@@ -328,15 +328,15 @@ $(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(PROJ_DIR)/lzma1505/C/
 	cp $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(BIN)
 
 $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z):
-	uname_S=$(uname_S) make -C $(PROJ_DIR)/lzma1505/C/Util/7z -f makefile.gcc
+	uname_S=$(uname_S) $(MAKE) -C $(PROJ_DIR)/lzma1505/C/Util/7z -f makefile.gcc
 
 $(BIN)/$(UNRAR): $(PROJ_DIR)/unrar/$(UNRAR)
 	cp $(PROJ_DIR)/unrar/$(UNRAR) $(BIN)
 $(PROJ_DIR)/unrar/$(UNRAR):
-	uname_S=$(uname_S) make -C $(PROJ_DIR)/unrar
+	uname_S=$(uname_S) $(MAKE) -C $(PROJ_DIR)/unrar
 
 $(LIBJDKMIDI_LIB): $(LIBJDKMIDI_OSDIR)/Makefile
-	cd $(LIBJDKMIDI_OSDIR) && make
+	cd $(LIBJDKMIDI_OSDIR) && $(MAKE)
 
 $(LIBJDKMIDI_OSDIR)/Makefile:
 	cd $(LIBJDKMIDI_OSDIR) && osxflags="$(OSX_BACKSUPPORT)" ./configure
