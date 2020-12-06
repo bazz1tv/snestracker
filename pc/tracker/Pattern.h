@@ -259,6 +259,7 @@ public:
   static int dec_patlen(void *bsaw);
 
   void update_patlen();
+  void syncPatNames();
   // END PatLenWidget
 };
 

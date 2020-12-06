@@ -792,11 +792,11 @@ static void apuSetPattern(int currow)
   }
 }
 
-void syncPatNames(PatSeqPanel *psp)
+void PatSeqPanel::syncPatNames()
 {
-  for (int i=0; i < min(PatSeqPanel::VISIBLE_ROWS, psp->patseq->num_entries); i++)
+  for (int i=0; i < min(PatSeqPanel::VISIBLE_ROWS, patseq->num_entries); i++)
   {
-    psp->names[i].str = psp->patseq->patterns[psp->patseq->sequence[i + psp->rows_scrolled]].name;
+    names[i].str = patseq->patterns[patseq->sequence[i + rows_scrolled]].name;
   }
 }
 
@@ -806,7 +806,7 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
   {
     // mark the last time you've scrolled
     lastTimeScrolled = SDL_GetTicks();
-    syncPatNames(this);
+    syncPatNames();
   }
 
   /* If the user clicks within a certain row rect. A row rect is comprised
@@ -920,7 +920,7 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
               if ((currow - rows_scrolled) % VISIBLE_ROWS == (VISIBLE_ROWS - 1))
               {
                 rows_scrolled++;
-                syncPatNames(this);
+                syncPatNames();
               }
 
               patseq->num_entries++;
@@ -1241,7 +1241,7 @@ int PatSeqPanel::clear(void *pspanel)
   /* Fixes #36 */
   ::tracker->main_window.pateditpanel.set_currow(::tracker->main_window.pateditpanel.currow);
 
-  syncPatNames(psp);
+  psp->syncPatNames();
 
   return 0;
 }
@@ -1265,7 +1265,7 @@ int PatSeqPanel::incpat(void *pspanel)
   /* Fixes #36 */
   ::tracker->main_window.pateditpanel.set_currow(::tracker->main_window.pateditpanel.currow);
 
-  syncPatNames(psp);
+  psp->syncPatNames();
   return 0;
 }
 
@@ -1287,7 +1287,7 @@ int PatSeqPanel::decpat(void *pspanel)
   /* Fixes #36 */
   ::tracker->main_window.pateditpanel.set_currow(::tracker->main_window.pateditpanel.currow);
 
-  syncPatNames(psp);
+  psp->syncPatNames();
   return 0;
 }
 
@@ -1323,7 +1323,7 @@ void PatSeqPanel::set_currow(int row, bool updateScrolled/*=true*/)
       rows_scrolled = 0;
   }
 
-  syncPatNames(this);
+  syncPatNames();
 }
 
 void PatSeqPanel::inc_currow()

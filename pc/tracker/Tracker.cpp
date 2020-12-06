@@ -1284,6 +1284,8 @@ int Tracker::read_from_file(SDL_RWops *file)
   reset(); // reset tracker
 
   song.load(file);
+  // This is to update the pattern Names in the pattern sequencer. Other MAJOR BUGS! BRO :P
+  main_window.patseqpanel.syncPatNames();
 
 	/* HACKS */
 	/* Since the BPM and SPD widgets do not constantly poll (they normally
