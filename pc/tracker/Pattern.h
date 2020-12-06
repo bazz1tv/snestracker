@@ -175,6 +175,7 @@ public:
   enum SubChunkID {
     coreinfo=0,
     Track,
+    name,
     NUM_SUBCHUNKIDS
   };
 private:

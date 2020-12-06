@@ -101,6 +101,8 @@ Pattern Chunk
     Data
       Compressed PatternRow data (when this data format is updated, update the Song version number)
     [EXTENDABLE]
+  name
+    non-null terminated string of instrument name
   [EXTENDABLE]
 
 Pattern Sequencer Chunk
@@ -120,7 +122,7 @@ Pattern Sequencer Chunk
 
 #define SONGFILE_VER_MAJOR 0
 #define SONGFILE_VER_MINOR 1
-#define SONGFILE_VER_MICRO 1
+#define SONGFILE_VER_MICRO 2
 // concats the 3 version values into a string
 #define SONGFILE_VER_STRING(maj, min, mic) #maj "." #min "." #mic
 // allows calling the above macro with macro arguments

@@ -364,6 +364,19 @@ size_t PatternChunkLoader::load(SDL_RWops *file, size_t chunksize)
         }
       }
       break;
+      case SubChunkID::name:
+      {
+        DEBUGLOG("\tSubChunkID::name\n");
+        assert(idx_loaded);
+        size_t bytesread = ChunkLoader::read_str_from_file2(file, patterns[idx].name, subchunksize, PATNAME_MAXLEN);
+
+        // Truncate the instrument name for the GUI's shorter length
+        //patterns->name[subchunksize] = 0;
+
+        subchunksize -= bytesread;
+        maxread += bytesread;
+      }
+      break;
       default:
         DEBUGLOG("\tUnknown SubChunkID: %d. skipping over..\n", subchunkid);
       break;
@@ -438,6 +451,16 @@ size_t PatternChunkLoader::save(SDL_RWops *file)
     write(file, &word, 2, 1, &chunklen);
     write(file, &p, 1, 1, &chunklen); // write pattern index
     write(file, &pattern->len, 1, 1, &chunklen);
+
+    word = strlen(pm->name);
+    if (word > 0)
+    {
+      DEBUGLOG("\t\tSubChunkID::name\n");
+      byte = SubChunkID::name;
+      write(file, &byte, 1, 1, &chunklen);
+      write(file, &word, 2, 1, &chunklen);
+      write(file, pm->name,  word, 1, &chunklen);
+    }
 
     for (int t=0; t < MAX_TRACKS; t++)
     {
@@ -1153,8 +1176,6 @@ int clone_seq_common(PatSeqPanel *psp)
 
   *patseq->metadata.changed = true;
 
-  // copy the pattern name
-  strcpy(patseq->patterns[patseq->sequence[psp->currow]].name, patseq->patterns[patseq->sequence[psp->currow - 1]].name);
   return 0;
 }
 
@@ -1163,11 +1184,13 @@ int PatSeqPanel::clone(void *pspanel)
   PatSeqPanel *psp = (PatSeqPanel *)pspanel;
   PatternSequencer *patseq = psp->patseq;
   fprintf(stderr, "PatSeqPanel::clone()\n");
-  if(!clone_seq_common(psp))
+  if(!clone_seq_common(psp))  // successful
   {
     memcpy(&patseq->patterns[patseq->sequence[psp->currow]].p,
       &patseq->patterns[patseq->sequence[psp->currow - 1]].p,
       sizeof(Pattern));
+    // copy the pattern name
+    strcpy(patseq->patterns[patseq->sequence[psp->currow]].name, patseq->patterns[patseq->sequence[psp->currow - 1]].name);
   }
 
   return 0;
