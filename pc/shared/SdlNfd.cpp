@@ -97,7 +97,7 @@ nfdresult_t SdlNfd::get_file_handle(const char *rw, const char *filter_list/*=NU
       if (strstr(outPath, extensionBuf) == NULL)
       {
         DEBUGLOG("File extension is NOT present\n");
-        finalPath = malloc (strlen(outPath) + 1 + strlen(extensionBuf) + 1); // the plus 1's are the '.' and the null char
+        finalPath = (char *) malloc (strlen(outPath) + 1 + strlen(extensionBuf) + 1); // the plus 1's are the '.' and the null char
         // append that extension to a new string
         strcpy(finalPath, outPath);
         strcat(finalPath, extensionBuf);
