@@ -50,7 +50,7 @@ See the [Wiki](https://wiki.snestracker.com) to learn more about how to use and 
 Community
 =========
 
-Feel free to join the new SNES Tracker [Discord Server](https://discord.gg/2WXEJU9). You may also join via IRC. **Server**: irc.esper.net **Channel**:#snestracker
+Feel free to join the new SNES Tracker [Discord Server](https://discord.snestracker.com). You may also join via IRC. **Server**: irc.esper.net **Channel**:#snestracker
 
 The Discord and IRC are bridged by snesbot :)
 
