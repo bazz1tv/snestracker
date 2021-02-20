@@ -18,7 +18,8 @@ rlecounters dsb 8
 
 konbuf db
 koffbuf db ; not sure if needed
-echobuf db
+echobuf db ; the buffer for enabling echo for voices
+pmodbuf db ; "                     " pmod
 
 ; WARNING : keep the public stuff out of address 0000 and 0001 because
 ; that is the jump address stored from IPL ROM
@@ -337,10 +338,15 @@ ContinueSong:
   call !ReadPTracks
 
 HackishPlayInstrumentFunctionality:
+  ; echo enable
   mov a, echobuf
   mov dspaddr, #eon
   mov dspdata, a
-
+  ; pitch modulation enable
+  mov a, pmodbuf
+  mov dspaddr, #pmon
+  mov dspdata, a
+  ; Key On
   mov a, konbuf
   beq @no_kon
   mov dspaddr, #koff
@@ -907,7 +913,6 @@ ReadInstr:
     mov g, a
     call !getDSPIDX
     push a  ; Dsp Idx
-      ; TODO: Implement PAN around here
       mov y, #0 ; reset index for indexing instrument
       mov a, [de] + y ; vol
       ;mov trackVol + x, a
@@ -987,18 +992,31 @@ ReadInstr:
     mov a, [de] + y ; adsr2
     mov dspdata, a
 
-    inc y           ; echo enable
+    inc y           ; flags(echo enable, pmod)
     mov a, [de] + y
-    and a, #INSTR_FLAG_ECHO
-    bne +
+    mov b, a
+;;;;;;;;;;;;;;
+    bbs b.INSTR_FLAG_ECHO, @enable_echo
+    ; disable echo for this voice
     mov a, #$FF
     eor a, g
     and a, echobuf
     mov echobuf, a
+    bra @check_pmod
+@enable_echo
+    or echobuf, g
+;;;;;;;;;;;;;;;
+@check_pmod
+    bbs b.INSTR_FLAG_PMOD, @enable_pmod
+    mov a, #$FF
+    eor a, g
+    and a, pmodbuf
+    mov pmodbuf, a
     bra ++
-+   or echobuf, g
-++ 
-
+@enable_pmod
+    or pmodbuf, g
+;;;;;;;;;;;;;;;
+++
   pop y
   pop x ; track idx
   ret

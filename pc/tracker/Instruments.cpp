@@ -182,8 +182,10 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
         {
           uint8_t flags;
           read (file, &flags, 1, 1, &bytesread);
-          if (flags & INSTR_FLAG_ECHO)
+          if (flags & (1<<INSTR_FLAG_ECHO))
             instr->echo = true;
+          if (flags & (1<<INSTR_FLAG_PMOD))
+            instr->pmod = true;
         }
 
         subchunksize -= bytesread;
@@ -306,7 +308,8 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file, int i)
     write(file, &instr->srcn, 1, 1, &chunklen);
 
     /* consolidate boolean flags into one byte */
-    uint8_t flags = instr->echo ? INSTR_FLAG_ECHO : 0;
+    uint8_t flags = instr->echo ? (1<<INSTR_FLAG_ECHO) : 0;
+    flags |= instr->pmod ? (1<<INSTR_FLAG_PMOD) : 0;
     write(file, &flags, 1, 1, &chunklen);
   }
 

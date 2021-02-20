@@ -98,3 +98,4 @@ clean: clean-gme_m
 	$(MAKE) -C snes_driver clean
 	$(MAKE) -C submodules/libgme_m clean
 	rm -f pc/bin/*.dll
+	rm -f pc/bin/*.dylib

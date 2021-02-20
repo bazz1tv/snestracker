@@ -797,7 +797,8 @@ void Tracker::renderCurrentInstrument()
   ::IAPURAM[cursample_i++] = instr->srcn;
   ::IAPURAM[cursample_i++] = instr->adsr.adsr1;
   ::IAPURAM[cursample_i++] = instr->adsr.adsr2;
-  ::IAPURAM[cursample_i++] = (instr->echo ? INSTR_FLAG_ECHO : 0);
+  ::IAPURAM[cursample_i++] = (instr->echo ? (1<<INSTR_FLAG_ECHO) : 0) |
+                             (instr->pmod ? (1<<INSTR_FLAG_PMOD) : 0);
   ::IAPURAM[cursample_i++] = instr->semitone_offset;
 
   apuram->dspdir_i = dspdir_i;
@@ -1150,7 +1151,8 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhea
 		::IAPURAM[cursample_i++] = instr->srcn;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr1;
 		::IAPURAM[cursample_i++] = instr->adsr.adsr2;
-    ::IAPURAM[cursample_i++] = (instr->echo ? INSTR_FLAG_ECHO : 0);
+    ::IAPURAM[cursample_i++] = (instr->echo ? (1<<INSTR_FLAG_ECHO) : 0) |
+                               (instr->pmod ? (1<<INSTR_FLAG_PMOD) : 0);
 		::IAPURAM[cursample_i++] = instr->semitone_offset;
 	}
 	apuram->dspdir_i = dspdir_i;

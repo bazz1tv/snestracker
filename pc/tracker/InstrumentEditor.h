@@ -81,7 +81,6 @@ struct InstrumentEditor
   static int incfinetune(void *i);
   static int decfinetune(void *i);
 
-  // Audio Buffer Size
   struct EchoEnable
   {
     EchoEnable(InstrumentEditor *ie);
@@ -92,6 +91,17 @@ struct InstrumentEditor
     static int clicked(void *i);
   };
   EchoEnable echoEnable;
+
+  struct PModEnable
+  {
+    PModEnable(InstrumentEditor *ie);
+    void setCoords(int x, int y);
+    void update();
+    Text title;
+    Checkbox checkbox;
+    static int clicked(void *i);
+  };
+  PModEnable pmodEnable;
 
 //////////// TABS /////////
   struct Tabs

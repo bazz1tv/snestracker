@@ -70,7 +70,10 @@ semitone_offset db ; TODO
 .endst
 
 
-.equ  INSTR_FLAG_ECHO 1
+;;; Add Instrument Flags HERE ;;;
+.equ  INSTR_FLAG_ECHO 0
+.equ  INSTR_FLAG_PMOD 1
 
-
+; Make sure to Print those flags out for apuram.h C header file
 .PRINT "#define INSTR_FLAG_ECHO 0x", HEX INSTR_FLAG_ECHO, "\n"
+.PRINT "#define INSTR_FLAG_PMOD 0x", HEX INSTR_FLAG_PMOD, "\n"

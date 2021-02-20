@@ -56,9 +56,49 @@ int InstrumentEditor::EchoEnable::clicked(void *i)
   {
     auto echo = curinst.echo;
     if (echo)
-      apuinstr->flags |= INSTR_FLAG_ECHO;
+      apuinstr->flags |= (1<<INSTR_FLAG_ECHO);
     else
-      apuinstr->flags &= ~(INSTR_FLAG_ECHO);
+      apuinstr->flags &= ~(1<<INSTR_FLAG_ECHO);
+  }
+  return 0;
+}
+
+InstrumentEditor::PModEnable::PModEnable(InstrumentEditor *ie) :
+  title("PMod"),
+  checkbox(NULL, clicked, ie)
+{}
+
+void InstrumentEditor::PModEnable::setCoords(int x, int y)
+{
+  title.rect.x = x;
+  title.rect.y = y;
+  checkbox.rect.x = x + ( (strlen(title.str) + 1) * CHAR_WIDTH );
+  checkbox.rect.y = y;
+}
+
+void InstrumentEditor::PModEnable::update()
+{
+  Instrument_Panel *ip = &::tracker->main_window.instrpanel;
+  Instrument *curinst = &::tracker->song.instruments[ ip->currow ];
+  // update what the checkbox refers to
+  checkbox.state = &curinst->pmod;
+}
+
+int InstrumentEditor::PModEnable::clicked(void *i)
+{
+  InstrumentEditor *ie = (InstrumentEditor *)i;
+  Instrument &curinst = ie->instrpanel->instruments[ie->instrpanel->currow];
+  
+  *curinst.metadata.changed = true;
+
+  ApuInstr *apuinstr = getCurApuInstr(ie->instrpanel);
+  if (apuinstr)
+  {
+    auto pmod = curinst.pmod;
+    if (pmod)
+      apuinstr->flags |= 1<<INSTR_FLAG_PMOD;
+    else
+      apuinstr->flags &= ~(1<<INSTR_FLAG_PMOD);
   }
   return 0;
 }
@@ -312,6 +352,7 @@ InstrumentEditor::InstrumentEditor(Instrument_Panel *instrpanel) :
   finetune_decbtn("-", decfinetune, this, true),
 
   echoEnable(this),
+  pmodEnable(this),
 
   tabs(this),
   adsrpanel(instrpanel),
@@ -405,8 +446,9 @@ void InstrumentEditor :: set_coords(int x, int y)
   finetune_incbtn.rect.y = y;
 
   y += CHAR_HEIGHT * 2;
-
   echoEnable.setCoords(x, y);
+  y += CHAR_HEIGHT * 2;
+  pmodEnable.setCoords(x, y);
 
   tabs.set_coords(srcn_decbtn.rect.x + srcn_decbtn.rect.w + (CHAR_WIDTH*15), yy - 3);
   adsrpanel.set_coords(srcn_decbtn.rect.x + srcn_decbtn.rect.w + (CHAR_WIDTH*7), yy + (3*CHAR_HEIGHT));
@@ -427,6 +469,7 @@ int InstrumentEditor::handle_event(const SDL_Event &ev)
   finetune_decbtn.check_event(ev);
 
   echoEnable.checkbox.check_event(ev);
+  pmodEnable.checkbox.check_event(ev);
 
   if (ev.type == SDL_MOUSEBUTTONDOWN && ev.button.button == SDL_BUTTON_LEFT)
     tabs.check_mouse_and_execute(ev.button.x, ev.button.y);
@@ -468,6 +511,10 @@ void InstrumentEditor::draw(SDL_Surface *screen/*=::render->screen*/)
   echoEnable.update();
   echoEnable.title.draw(screen);
   echoEnable.checkbox.draw(screen);
+
+  pmodEnable.update();
+  pmodEnable.title.draw(screen);
+  pmodEnable.checkbox.draw(screen);
 
   tabs.draw();
 

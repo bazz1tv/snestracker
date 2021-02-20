@@ -67,6 +67,8 @@ struct Instrument
   /* whether or not echo is enabled for this instrument. Currently uses
    * echo settings specified in your SongSettings */
   bool echo;
+
+  bool pmod;
 };
 
 struct ApuInstr
@@ -76,7 +78,7 @@ struct ApuInstr
   int8_t pan;
   uint8_t srcn;
   uint8_t adsr1, adsr2;
-  uint8_t flags; // echo
+  uint8_t flags; // echo, pmod
   int8_t semitone_offset;
 };
 
