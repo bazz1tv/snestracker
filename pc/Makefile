@@ -321,15 +321,15 @@ $(BIN)/$(DEC7Z): $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(PROJ_DIR)/lzma1505/C/
 	cp $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z) $(BIN)
 
 $(PROJ_DIR)/lzma1505/C/Util/7z/$(DEC7Z):
-	uname_S=$(uname_S) make -C $(PROJ_DIR)/lzma1505/C/Util/7z -f makefile.gcc
+	uname_S=$(uname_S) $(MAKE) -C $(PROJ_DIR)/lzma1505/C/Util/7z -f makefile.gcc
 
 $(BIN)/$(UNRAR): $(PROJ_DIR)/unrar/$(UNRAR)
 	cp $(PROJ_DIR)/unrar/$(UNRAR) $(BIN)
 $(PROJ_DIR)/unrar/$(UNRAR):
-	uname_S=$(uname_S) make -C $(PROJ_DIR)/unrar
+	uname_S=$(uname_S) $(MAKE) -C $(PROJ_DIR)/unrar
 
 $(LIBJDKMIDI_LIB): $(LIBJDKMIDI_OSDIR)/Makefile
-	cd $(LIBJDKMIDI_OSDIR) && make
+	cd $(LIBJDKMIDI_OSDIR) && $(MAKE)
 
 $(LIBJDKMIDI_OSDIR)/Makefile:
 	cd $(LIBJDKMIDI_OSDIR) && osxflags="$(OSX_BACKSUPPORT)" ./configure
@@ -362,7 +362,7 @@ clean:
 	find . -name "*.o" -o -name "*.d" | xargs rm -rf
 	rm -f {$(PROJ_DIR)/lzma1505/C/Util/7z/,}{7zDec,7zDec.exe}
 	rm -f {$(PROJ_DIR)/unrar/,}{unrar,unrar.exe}
-	cd $(LIBJDKMIDI_OSDIR) && make clean
+	cd $(LIBJDKMIDI_OSDIR) && $(MAKE) clean
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 -include $(DEP_DEBUGGER) $(DEP_TRACKER)

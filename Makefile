@@ -51,7 +51,7 @@ env.sh: Makefile
 # automate compilation and installation of LibGme_m dependency
 $(LIBGME_M_RELPATH):
 	prefix=$(CURDIR)/pc/bin CROSS_COMPILE=$(CROSS_COMPILE) \
-	make -C submodules/libgme_m install-lib-direct
+	$(MAKE) -C submodules/libgme_m install-lib-direct
 clean-gme_m:
 	rm -f $(LIBGME_M_RELPATH)*
 
@@ -62,7 +62,7 @@ $(SPCDRIVER_RELPATH): snes_driver/spc.sym snes_driver/gen_spc.sh Makefile snes_d
 	cd snes_driver && wlaprefix=$(WLAPREFIX) ./gen_spc.sh ../$(SPCDRIVER_RELPATH)
 
 snes_driver/spc.sym: FORCE Makefile snes_driver/Makefile
-	make -C snes_driver
+	$(MAKE) -C snes_driver
 
 snes_driver/Makefile: snes_driver/genmake Makefile
 	cd snes_driver ; wlaprefix=$(WLAPREFIX) pcx2snes_prefix=$(PCX2SNES_PREFIX) ./genmake > Makefile
@@ -86,7 +86,7 @@ $(APURAM_HEADER): snes_driver/spc.sym Makefile \
 	# but I guess I'll keep it non-global..?
 
 $(EXE_TRACKER_RELPATH): FORCE pc/tracker/apuram.h $(LIBGME_M_RELPATH)
-	make -C pc
+	$(MAKE) -C pc
 
 FORCE: ;
 
@@ -94,7 +94,7 @@ clean: clean-gme_m
 	# remove generated files
 	rm -f $(APURAM_HEADER)
 	rm -f $(SPCDRIVER_RELPATH)
-	make -C pc clean
-	make -C snes_driver clean
-	make -C submodules/libgme_m clean
+	$(MAKE) -C pc clean
+	$(MAKE) -C snes_driver clean
+	$(MAKE) -C submodules/libgme_m clean
 	rm -f pc/bin/*.dll
