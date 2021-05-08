@@ -328,6 +328,11 @@ int Menu_Bar::File_Context::export_wav(void *data)
   }
 }
 
+int Menu_Bar::File_Context::export_rom(void *data)
+{
+  return 0;
+}
+
 
 void Menu_Bar::Context_Menus::preload(int x/*=x*/, int y/*=y*/)
 {

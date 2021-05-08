@@ -26,13 +26,14 @@ struct Menu_Bar
 		static int open_spc(void *data);
     static int export_spc(void *data);
     static int export_wav(void *data);
+    static int export_rom(void *data);
     static int quit(void *data) { ::quitting = true; return 0; }
     static int openRecent(void *i);
 
 		nfdchar_t filepath[500];
 
     Expanding_List menu;
-    Context_Menu_Item menu_items[22] =
+    Context_Menu_Item menu_items[23] =
     {
       {"File",         true,  NULL,       NULL},
 ////////////////////////////////////////////////////////
@@ -44,6 +45,7 @@ struct Menu_Bar
 			{"Save as...",   true,  save_as_song,  this},
       {"Export SPC",   true,  export_spc, NULL},
       {"Export WAV",   true,  export_wav, NULL, false},
+      {"Export ROM",   true,  export_rom, NULL},
 ////////////////////////////////////////////////////////
       {"-", false, NULL, NULL, false},
       {"Recent Files:", false, NULL, NULL, false, false},
