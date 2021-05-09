@@ -370,16 +370,25 @@ int Menu_Bar::File_Context::export_rom(void *data)
     TrackerApuRam *apuram = ::tracker->apuram;
 
     fprintf(stderr, "Exporting ROM Payload to: %s\n", SdlNfd::outPath);
-
+/// 1
     // First write the Non-internal PUBLIC SPC Driver variables.
     // Make a note of the apuram->padding amount, so we know where to start
     // uploading to APU RAM
+
+    // Dest SPC Address
     word = ARRAY_SIZE(apuram->padding);
     SDL_RWwrite(file, &word, 2, 1);
+    // Data Size
     word = 0x10000 - ( ARRAY_SIZE(apuram->padding) + ARRAY_SIZE(apuram->padding2) );
     DEBUGLOG("Bytes of Public APU RAM vars: 0x%04x\n", word);
     DEBUGLOG("1: %d, 2: %d\n", ARRAY_SIZE(apuram->padding), ARRAY_SIZE(apuram->padding2));
     SDL_RWwrite(file, &word, 2, 1);
+    // Data
+    const char *raw = (const char *)apuram;
+    SDL_RWwrite(file, &raw[ARRAY_SIZE(apuram->padding)], word, 1);
+
+/// 2
+    
 
     //apuram->ticks
     //apuram->spd
