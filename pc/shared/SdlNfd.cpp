@@ -4,6 +4,8 @@
 nfdchar_t *SdlNfd::outPath = NULL;
 SDL_RWops *SdlNfd::file = NULL;
 
+nfdchar_t *SdlNfd::dirPath = NULL;
+
 bool SdlNfd::_active = false;
 Uint32 SdlNfd::_drain = 0;
 SDL_Window *SdlNfd::_sdlWindow = NULL;
@@ -171,6 +173,59 @@ nfdresult_t SdlNfd::get_file_handle(const char *rw, const char *filter_list/*=NU
   }
 }
 
+nfdresult_t SdlNfd::get_directory()
+{
+  if (_sdlWindow == NULL)
+  {
+    fprintf(stderr, "You haven't called SdlNfd::init()! file %s:%d (function %s)\n",
+            __FILE__, __LINE__, __func__);
+    return NFD_ERROR;
+  }
+
+  _release(); // release any previous allocated material that was accidently left over
+
+  char tmpbuf[200];
+  dirPath=NULL;
+  nfdresult_t result;
+
+  result = NFD_PickFolder( NULL, &dirPath );
+
+  /* bugfix #12
+  Focusing the main window from the NFD call has caused the SDL event loop to react
+  to certain NFD actions such as pressing enter to confirm the selected file also
+  causing the tracker to begin playback. To remedy this, a 200ms bypassing of events
+  is imposed after NFD has returned */
+  _drain = SDL_GetTicks() + 200; // 200ms ignore events after nfd dialog
+  _active = true;
+  SDL_RaiseWindow(_sdlWindow);
+
+  if ( result == NFD_OKAY )
+  {
+    return result;  // If the file was not NULL we return a nice happy OK
+  } // NFD_OKAY
+  else if ( result == NFD_CANCEL )
+  {
+    if (dirPath != NULL)
+    {
+      free(dirPath);
+      dirPath = NULL;
+    }
+
+    puts("User pressed cancel.");
+    return result;
+  }
+  else
+  {
+    printf("Error: %s, %s\n", dirPath, NFD_GetError() );
+    if (dirPath)
+    {
+      free(dirPath);
+      dirPath = NULL;
+    }
+    return NFD_ERROR;
+  }
+}
+
 void SdlNfd::_release()
 {
   if (outPath != NULL)
@@ -182,6 +237,12 @@ void SdlNfd::_release()
   {
     SDL_RWclose(file);
     file = NULL;
+  }
+
+  if (dirPath)
+  {
+    free(dirPath);
+    dirPath = NULL;
   }
 }
 

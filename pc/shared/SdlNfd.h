@@ -41,11 +41,16 @@ namespace SdlNfd
    */
   nfdresult_t get_file_handle(const char *rw, const char *filter_list=NULL);
 
+  // Prompts GUI for user to pick a directory, stores the string in dirPath.
+  nfdresult_t get_directory();
+
   /* The following 2 vars are populated after a call to get_file_handle().
   Every call to get_file_handle() will cause a check and free() on subsequently
   reserved data. It's a good idea to use done() when you are finished */
   extern nfdchar_t *outPath;
   extern SDL_RWops *file;
+
+  extern nfdchar_t *dirPath;
 
   /* call this from your SDL event handler, like:
   if (SdlNfd::active)
