@@ -330,6 +330,62 @@ int Menu_Bar::File_Context::export_wav(void *data)
 
 int Menu_Bar::File_Context::export_rom(void *data)
 {
+  // Populate APU RAM
+  ::tracker->playback = false;
+  ::player->fade_out(false); // immediate fade-out (no thread)
+  ::tracker->render_to_apu();
+  //::spc_export_window->show();
+
+  // Get Directory tthingy
+  nfdresult_t result = SdlNfd::get_directory();
+  if ( result == NFD_OKAY )
+  {
+    DEBUGLOG("Directory Set: %s\n", SdlNfd::dirPath);
+    return 0;
+  }
+/*
+  // Write to payload to a file
+  nfdresult_t result = SdlNfd::get_file_handle("w", "bin");
+
+  if (SdlNfd::file)
+  {
+    SDL_RWclose(SdlNfd::file);
+    SdlNfd::file = NULL;
+  }
+
+
+  if ( result == NFD_OKAY )
+  {
+    fprintf(stderr, "Exporting ROM Payload to: %s\n", SdlNfd::outPath);
+
+    // COPY APU RAM STUFF DERP
+    // Make a note of the apuram->padding amount, so we know where to start
+    // uploading to APU RAM
+    apuram->padding
+
+    apuram->ticks
+    apuram->spd
+
+    // Get the OTHER STUFF
+
+
+    ::player->pause(1, false, false);
+    //
+
+    // Begin writing to ROM payload file
+    // copy header info
+    //unsigned char *out = sew->state;
+    ///Spc_Emu::header_t *header = (Spc_Emu::header_t *)out;
+
+
+
+    ::player->spc_emu()->can_has_apu()->save_spc(out);
+    ::file_system->write_file( SdlNfd::outPath, sew->state, Snes_Spc::spc_file_size );
+    // restore player state
+    ::player->pause(1, false, false);
+    sew->hide();
+  }
+  // DONEZIES */
   return 0;
 }
 
