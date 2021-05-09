@@ -25,8 +25,8 @@ fi
 line=$(sed -n "$((startline + 1)),$((startline + 1))p" spc.sym | sed 's/00://')
 prevaddr=$((0x${line/ */}))
 prevname=${line/* /}
-totalsize=
-sed -n "$((startline+2)),${endline}p" spc.sym | sed 's/00://' | while IFS= read -r line; do
+totalsize=0
+while IFS= read -r line; do
   #echo "$line"
   #echo "$((0x${line/ */}))"
   #echo "${line/* /}"
@@ -34,13 +34,17 @@ sed -n "$((startline+2)),${endline}p" spc.sym | sed 's/00://' | while IFS= read 
   addr=$((0x${line/ */}))
   name=${line/* /}
   prevsize=$((addr - prevaddr))
+  #printf "// prevsize: 0x%x\n" $prevsize
   totalsize=$((totalsize + prevsize))
+  #printf "// totalsize: 0x%x\n" $totalsize
   printf "${tabs}${sizedecl[$((prevsize - 1))]} ${prevname};\n"
   prevname=$name
   prevaddr=$addr
-done
+done <<< $(sed -n "$((startline+2)),${endline}p" spc.sym | sed 's/00://')
 
+#printf "// 0x%x 0x%x\n" ${totalsize} $padding
 printf "${tabs}uint8_t padding2[0x%x];\n" $((0x10000 - totalsize - padding))
+
 #sed -n "${startline},${startline}p" spc.sym | \
 #  sed 's/00:\([0-9a-fA-F]\{4\}\) \(.*\)$/const uint16_t \2 = 0x\1,/'
 #sed -n "$((startline+1)),$((endline-1))p" spc.sym | \
