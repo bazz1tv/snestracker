@@ -6,6 +6,7 @@
 
 #include "gme/Wave_Writer.h"
 #include "Tracker.h"
+#include "apuram.h"
 
 #include "shared/SdlNfd.h"
 #include "shared/RecentFiles.h"
@@ -328,6 +329,8 @@ int Menu_Bar::File_Context::export_wav(void *data)
   }
 }
 
+#define ARRAY_SIZE(x) sizeof(x) / sizeof(x[0])
+
 int Menu_Bar::File_Context::export_rom(void *data)
 {
   // Populate APU RAM
@@ -337,39 +340,54 @@ int Menu_Bar::File_Context::export_rom(void *data)
   //::spc_export_window->show();
 
   // Get Directory tthingy
-  nfdresult_t result = SdlNfd::get_directory();
+  /*nfdresult_t result = SdlNfd::get_directory();
   if ( result == NFD_OKAY )
   {
     DEBUGLOG("Directory Set: %s\n", SdlNfd::dirPath);
-    return 0;
   }
-/*
+  else
+  {
+    return -1;
+  }*/
+
+  /*
+    Write a bin file that is a sequence of:
+    Dest SPC Address, Data Size, Data
+    ...
+    ...
+    .dw $0000, SPC_CODE_START
+
+    Figure out the Destination SPC Addresses
+  */
+
   // Write to payload to a file
   nfdresult_t result = SdlNfd::get_file_handle("w", "bin");
 
-  if (SdlNfd::file)
-  {
-    SDL_RWclose(SdlNfd::file);
-    SdlNfd::file = NULL;
-  }
-
-
   if ( result == NFD_OKAY )
   {
+    SDL_RWops *file = SdlNfd::file;
+    uint16_t word;
+    TrackerApuRam *apuram = ::tracker->apuram;
+
     fprintf(stderr, "Exporting ROM Payload to: %s\n", SdlNfd::outPath);
 
-    // COPY APU RAM STUFF DERP
+    // First write the Non-internal PUBLIC SPC Driver variables.
     // Make a note of the apuram->padding amount, so we know where to start
     // uploading to APU RAM
-    apuram->padding
+    word = ARRAY_SIZE(apuram->padding);
+    SDL_RWwrite(file, &word, 2, 1);
+    word = 0x10000 - ( ARRAY_SIZE(apuram->padding) + ARRAY_SIZE(apuram->padding2) );
+    DEBUGLOG("Bytes of Public APU RAM vars: 0x%04x\n", word);
+    DEBUGLOG("1: %d, 2: %d\n", ARRAY_SIZE(apuram->padding), ARRAY_SIZE(apuram->padding2));
+    SDL_RWwrite(file, &word, 2, 1);
 
-    apuram->ticks
-    apuram->spd
+    //apuram->ticks
+    //apuram->spd
 
     // Get the OTHER STUFF
 
 
-    ::player->pause(1, false, false);
+    //::player->pause(1, false, false);
     //
 
     // Begin writing to ROM payload file
@@ -379,11 +397,11 @@ int Menu_Bar::File_Context::export_rom(void *data)
 
 
 
-    ::player->spc_emu()->can_has_apu()->save_spc(out);
-    ::file_system->write_file( SdlNfd::outPath, sew->state, Snes_Spc::spc_file_size );
+    //::player->spc_emu()->can_has_apu()->save_spc(out);
+    //::file_system->write_file( SdlNfd::outPath, sew->state, Snes_Spc::spc_file_size );
     // restore player state
-    ::player->pause(1, false, false);
-    sew->hide();
+    //::player->pause(1, false, false);
+    //sew->hide();
   }
   // DONEZIES */
   return 0;
