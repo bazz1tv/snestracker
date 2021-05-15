@@ -370,8 +370,12 @@ int Menu_Bar::File_Context::export_rom(void *data)
     TrackerApuRam *apuram = ::tracker->apuram;
 
     fprintf(stderr, "Exporting ROM Payload to: %s\n", SdlNfd::outPath);
+
+/* // CONCERN: LOROM $8000 per bank */
+
 /// 1
     // First write the Non-internal PUBLIC SPC Driver variables.
+    /* eg. Instrument Table location, Pattern table location, etc etc */
     // Make a note of the apuram->padding amount, so we know where to start
     // uploading to APU RAM
 
@@ -387,8 +391,32 @@ int Menu_Bar::File_Context::export_rom(void *data)
     const char *raw = (const char *)apuram;
     SDL_RWwrite(file, &raw[ARRAY_SIZE(apuram->padding)], word, 1);
 
-/// 2
-    
+    /*
+      TODO: dspdir_i WHAT IS THIS AGAIN? LOL
+      patterntable_ptr
+      sequencer_ptr
+      instrtable_ptr
+    */
+
+/*
+      ; DATA FORMAT
+      ; (DW) Start Address to upload to SPC RAM, (DW) DATA SIZE
+      ; Data to upload
+*/
+/// 1a) Upload the Driver
+    word = SPCDRIVER_CODESTART;
+    SDL_RWwrite(file, &word, 2, 1);
+    word = SPCDRIVER_CODESIZE;
+    SDL_RWwrite(file, &word, 2, 1);
+    // Write the driver directly from IAPURAM
+    SDL_RWwrite(file, &::IAPURAM[SPCDRIVER_CODESTART], SPCDRIVER_CODESIZE, 1);
+
+
+
+
+/// 2 instrtable_ptr ; To upload all the instruments
+
+
 
     //apuram->ticks
     //apuram->spd
