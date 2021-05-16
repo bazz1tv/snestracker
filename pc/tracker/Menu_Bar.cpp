@@ -411,7 +411,7 @@ int Menu_Bar::File_Context::export_rom(void *data)
     // Write the driver directly from IAPURAM
     SDL_RWwrite(file, &::IAPURAM[SPCDRIVER_CODESTART], SPCDRIVER_CODESIZE, 1);
 
-/// 1b) Upload the Patterns Block (PatternLUT and patterns)
+/// 1b) Upload the Patterns Block (PatternLUT, patterns, Sequencer Table)
     auto PBSA = ::tracker->apuRender.patternsBlockStartAddress;
     word = PBSA;
     SDL_RWwrite(file, &word, 2, 1);

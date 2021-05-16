@@ -1171,8 +1171,6 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhea
 
   /// PATTERNS
   auto patsize = renderPatterns(freeram_i, used_instr);
-  apuRender.patternsBlockStartAddress = freeram_i;
-  apuRender.patternsBlockSize = patsize;
 
 // PATTERN SEQUENCER START
   // set the start sequence index to the currently selected one in the
@@ -1186,6 +1184,9 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhea
   ::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
   // going to check in apu driver for a negative number to mark end
 // PATTERN SEQUENCER END
+
+  apuRender.patternsBlockStartAddress = freeram_i;
+  apuRender.patternsBlockSize = patseq_i - freeram_i;
 
   renderSamplesAndInstruments(patseq_i, used_instr);
 
