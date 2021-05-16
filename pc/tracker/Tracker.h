@@ -53,6 +53,7 @@ public:
 private:
   uint16_t renderPatterns(uint16_t spcramloc, uint8_t *used_instr);
   uint16_t calcPatLutSize();
+  void renderSamplesAndInstruments(uint16_t spcramloc, const uint8_t *used_instr);
 
 public:
   int calcTicks();

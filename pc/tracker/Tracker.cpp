@@ -1014,6 +1014,132 @@ uint16_t Tracker::renderPatterns(uint16_t spcramloc, uint8_t *used_instr)
   return pat_i;
 }
 
+void Tracker::renderSamplesAndInstruments(uint16_t spcramloc, const uint8_t *used_instr)
+{
+// SAMPLES START
+  /* Now that we know what instruments are used, let's check the samples
+   * they reference to calculate the used_samples */
+  /* TODO: Could optimize this into bitflags */
+  uint16_t numsamples = 0;
+  apuRender.highest_sample = 0;
+  uint8_t used_samples[NUM_SAMPLES];
+  memset(used_samples, 0, sizeof(used_samples));
+  for (int i=0; i <= apuRender.highest_instr; i++)
+  {
+    if (used_instr[i])
+    {
+      auto srcn = song.instruments[i].srcn;
+      numsamples++;
+      if (apuRender.highest_sample < srcn)
+        apuRender.highest_sample = srcn;
+      used_samples[srcn] = 1;
+    }
+  }
+
+  /* Another strategy would be to position the DIR at the base of the
+   * offset rather than push it up further. Would need to check how many
+   * DIR entries are needed if there's room or not */
+  uint16_t dir_i, dspdir_i;
+  dir_i = spcramloc + ((spcramloc % 0x100) ? (0x100 - (spcramloc % 0x100)) : 0);
+  dspdir_i = dir_i / 0x100;
+
+  uint16_t instrtable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4);
+  //                             {applied size of DIR}  {INSTR TABLE SIZE}
+  uint16_t sampletable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4) + ( (apuRender.highest_instr + 1) * 0x2);
+
+  apuram->instrtable_ptr = instrtable_i;
+
+  /* We have got to load these samples in first, so the DIR table knows
+   * where the samples are */
+  /* DIR is specified in multiples of 0x100. So if we're shy of that, we
+   * need to move it up. I think a smarter program would mark that unused
+   * area as free for something */
+
+  /* DIR can be at max 0x400 bytes in size, but any unused space in DIR
+   * can be used for other data */
+  // Write the sample and loop information to the DIR. Then write the DSP
+  // DIR value to DSP
+  uint16_t cursample_i = sampletable_i;
+
+  /* TODO: Currently, the samples are half-assed optimized. A cool idea I
+   * have to remap and optimize from blank sample entries is to, as these
+   * entries are encountered, add to some sort of mapping data structure
+   * so that instruments can be updated. The same could be done for
+   * instrument mappings, now that I think of it. but for now, let's not
+   * optimize  */
+  for (int i=0; i <= apuRender.highest_sample; i++)
+  {
+    if (used_samples[i] == 0)
+    {
+      if (i <= apuRender.highest_sample)
+      {
+        // be neat and mark the unused unoptimized entries
+        uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
+        *dir = 0xdead;
+        *(dir+1) = 0xbeef;
+      }
+      continue;
+    }
+    uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
+    *dir = cursample_i;
+    *(dir+1) = cursample_i + song.samples[i].rel_loop;
+
+    size_t s=0;
+    for (; s < song.samples[i].brrsize; s++)
+    {
+      uint8_t *bytes = (uint8_t *)song.samples[i].brr;
+      ::IAPURAM[cursample_i + s] = bytes[s];
+    }
+    cursample_i += s;
+  }
+// SAMPLES END
+
+
+  // INSTRUMENT TABLE START
+
+  for (int i=0; i <= apuRender.highest_instr; i++)
+  {
+    Instrument *instr = &song.instruments[i];
+    if (used_instr[i] == 0)
+    {
+      if (i <= apuRender.highest_instr)
+      {
+        // be neat and mark the unused unoptimized entries
+        uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i + (i*2)];
+        *it = 0xf00d; /* I'm feeding the $BANANA register. Anyone remember
+        that one from the Yoshi Register doc? :D */
+      }
+      continue;
+    }
+
+    /* Could add a (SHA1) signature to Sample struct so that we can
+     * identify repeat usage of the same sample and only load it once to
+     * SPC RAM. For now, don't do this!! We're trying to get to first
+     * working tracker status here! Plus, it's possible the user wants the
+     * 2 identical samples to be treated individually (maybe their doing
+     * something complicated) */
+    uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i + (i*2)];
+    *it = cursample_i;
+
+    // Time to load instrument info
+    ::IAPURAM[cursample_i++] = instr->vol;
+    ::IAPURAM[cursample_i++] = instr->finetune;
+    ::IAPURAM[cursample_i++] = instr->pan;
+    ::IAPURAM[cursample_i++] = instr->srcn;
+    ::IAPURAM[cursample_i++] = instr->adsr.adsr1;
+    ::IAPURAM[cursample_i++] = instr->adsr.adsr2;
+    ::IAPURAM[cursample_i++] = (instr->echo ? (1<<INSTR_FLAG_ECHO) : 0) |
+                               (instr->pmod ? (1<<INSTR_FLAG_PMOD) : 0);
+    ::IAPURAM[cursample_i++] = instr->semitone_offset;
+  }
+
+  // TODO: Make sure the DSPDIR is written from the SPC Driver
+  apuram->dspdir_i = dspdir_i;
+  ::player->spc_write_dsp(dsp_reg::dir, dspdir_i);
+// INSTRUMENTS END
+// SAMPLES / INSTRUMENTS END
+}
+
 void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhead/*=false*/)
 {
   DEBUGLOG("render_to_apu(); playback: %d\n", playback);
@@ -1059,123 +1185,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhea
   // going to check in apu driver for a negative number to mark end
 // PATTERN SEQUENCER END
 
-
-  /* Now that we know what instruments are used, let's check the samples
-   * they reference to calculate the used_samples */
-  /* TODO: Could optimize this into bitflags */
-  uint16_t numsamples = 0;
-  apuRender.highest_sample = 0;
-  uint8_t used_samples[NUM_SAMPLES];
-  memset(used_samples, 0, sizeof(used_samples));
-  for (int i=0; i <= apuRender.highest_instr; i++)
-  {
-    if (used_instr[i])
-    {
-      auto srcn = song.instruments[i].srcn;
-      numsamples++;
-      if (apuRender.highest_sample < srcn)
-        apuRender.highest_sample = srcn;
-      used_samples[srcn] = 1;
-    }
-  }
-
-  /* Another strategy would be to position the DIR at the base of the
-   * offset rather than push it up further. Would need to check how many
-   * DIR entries are needed if there's room or not */
-  uint16_t dir_i, dspdir_i;
-  dir_i = patseq_i + ((patseq_i % 0x100) ? (0x100 - (patseq_i % 0x100)) : 0);
-  dspdir_i = dir_i / 0x100;
-
-	uint16_t instrtable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4);
-	//                             {applied size of DIR}  {INSTR TABLE SIZE}
-	uint16_t sampletable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4) + ( (apuRender.highest_instr + 1) * 0x2);
-
-	apuram->instrtable_ptr = instrtable_i;
-
-	/* We have got to load these samples in first, so the DIR table knows
-	 * where the samples are */
-	/* DIR is specified in multiples of 0x100. So if we're shy of that, we
-	 * need to move it up. I think a smarter program would mark that unused
-	 * area as free for something */
-
-	/* DIR can be at max 0x400 bytes in size, but any unused space in DIR
-	 * can be used for other data */
-	// Write the sample and loop information to the DIR. Then write the DSP
-	// DIR value to DSP
-	uint16_t cursample_i = sampletable_i;
-
-	/* TODO: Currently, the samples are half-assed optimized. A cool idea I
-	 * have to remap and optimize from blank sample entries is to, as these
-	 * entries are encountered, add to some sort of mapping data structure
-	 * so that instruments can be updated. The same could be done for
-	 * instrument mappings, now that I think of it. but for now, let's not
-	 * optimize  */
-	for (int i=0; i <= apuRender.highest_sample; i++)
-	{
-		if (used_samples[i] == 0)
-		{
-			if (i <= apuRender.highest_sample)
-			{
-				// be neat and mark the unused unoptimized entries
-				uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
-				*dir = 0xdead;
-				*(dir+1) = 0xbeef;
-			}
-			continue;
-		}
-		uint16_t *dir = (uint16_t *) &::IAPURAM[dir_i + (i * 4)];
-		*dir = cursample_i;
-		*(dir+1) = cursample_i + song.samples[i].rel_loop;
-
-		size_t s=0;
-		for (; s < song.samples[i].brrsize; s++)
-		{
-			uint8_t *bytes = (uint8_t *)song.samples[i].brr;
-			::IAPURAM[cursample_i + s] = bytes[s];
-		}
-		cursample_i += s;
-	}
-
-// INSTRUMENT TABLE START
-
-	for (int i=0; i <= apuRender.highest_instr; i++)
-	{
-		Instrument *instr = &song.instruments[i];
-		if (used_instr[i] == 0)
-		{
-			if (i <= apuRender.highest_instr)
-			{
-				// be neat and mark the unused unoptimized entries
-				uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i + (i*2)];
-				*it = 0xf00d; /* I'm feeding the $BANANA register. Anyone remember
-				that one from the Yoshi Register doc? :D */
-			}
-			continue;
-		}
-
-		/* Could add a (SHA1) signature to Sample struct so that we can
-		 * identify repeat usage of the same sample and only load it once to
-		 * SPC RAM. For now, don't do this!! We're trying to get to first
-		 * working tracker status here! Plus, it's possible the user wants the
-		 * 2 identical samples to be treated individually (maybe their doing
-		 * something complicated) */
-		uint16_t *it = (uint16_t *) &::IAPURAM[instrtable_i + (i*2)];
-		*it = cursample_i;
-
-		// Time to load instrument info
-		::IAPURAM[cursample_i++] = instr->vol;
-    ::IAPURAM[cursample_i++] = instr->finetune;
-		::IAPURAM[cursample_i++] = instr->pan;
-		::IAPURAM[cursample_i++] = instr->srcn;
-		::IAPURAM[cursample_i++] = instr->adsr.adsr1;
-		::IAPURAM[cursample_i++] = instr->adsr.adsr2;
-    ::IAPURAM[cursample_i++] = (instr->echo ? (1<<INSTR_FLAG_ECHO) : 0) |
-                               (instr->pmod ? (1<<INSTR_FLAG_PMOD) : 0);
-		::IAPURAM[cursample_i++] = instr->semitone_offset;
-	}
-	apuram->dspdir_i = dspdir_i;
-	::player->spc_write_dsp(dsp_reg::dir, dspdir_i);
-	// INSTRUMENTS END
+  renderSamplesAndInstruments(patseq_i, used_instr);
 
   // set flag whether to repeat the pattern, and also set the bit to skip
   // the echobuf clear
