@@ -859,7 +859,6 @@ uint16_t Tracker::renderPatterns(uint16_t spcramloc, uint8_t *used_instr)
   // PatternLUT (detailed below comments)
   apuRender.highest_pattern = 0;
   uint16_t patternlut_i = spcramloc; // position pattern data at start of free ram
-  uint16_t patternlut_size = calcPatLutSize();
 
   apuram->patterntable_ptr = patternlut_i;
 
@@ -872,7 +871,8 @@ uint16_t Tracker::renderPatterns(uint16_t spcramloc, uint8_t *used_instr)
    * into a DP address for indirect access to pattern data. There may be
    * another DP pointer for accessing Row data row by row.*/
   uint16_t *patlut = (uint16_t *) &::IAPURAM[patternlut_i];
-  uint16_t pat_i = patternlut_i + patternlut_size; // index into RAM for actual pattern data
+  uint16_t pat_i = patternlut_i + calcPatLutSize(); // index into RAM for actual pattern data
+  auto pat_i_start = pat_i;
   for (int p=0; p <= apuRender.highest_pattern; p++)
   {
     PatternMeta *pm = &song.patseq.patterns[p];
@@ -1011,7 +1011,7 @@ uint16_t Tracker::renderPatterns(uint16_t spcramloc, uint8_t *used_instr)
     //pm->sizeInAPURam = pat_i - pat_start_ram;
   }
   // PATTERNS END
-  return pat_i;
+  return pat_i - pat_i_start;
 }
 
 void Tracker::renderSamplesAndInstruments(uint16_t spcramloc, const uint8_t *used_instr)
@@ -1171,6 +1171,8 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhea
 
   /// PATTERNS
   auto patsize = renderPatterns(freeram_i, used_instr);
+  apuRender.patternsBlockStartAddress = freeram_i;
+  apuRender.patternsBlockSize = patsize;
 
 // PATTERN SEQUENCER START
   // set the start sequence index to the currently selected one in the

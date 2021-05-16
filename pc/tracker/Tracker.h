@@ -71,6 +71,7 @@ public:
   struct {
     uint8_t highest_instr, highest_sample;
     uint16_t highest_pattern;
+    uint16_t patternsBlockStartAddress, patternsBlockSize;
   } apuRender;
   /* TRACKER CORE -- Here is located the "model" data structures, not GUI
    * */
