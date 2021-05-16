@@ -50,6 +50,11 @@ public:
 
   void renderCurrentInstrument();
   void render_to_apu(bool repeat_pattern = false, bool startFromPlayhead = false);
+private:
+  uint16_t renderPatterns(uint16_t spcramloc, uint8_t *used_instr);
+  uint16_t calcPatLutSize();
+
+public:
   int calcTicks();
 
 	void reset();

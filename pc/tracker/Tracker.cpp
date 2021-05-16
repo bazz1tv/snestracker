@@ -728,7 +728,7 @@ void Tracker::renderCurrentInstrument()
   /* Quick thoughts on Timer : We could add a checkmark to use the high
    * frequency timer. Also could have a mode where you specify ticks and
    * see the actual BPM */
-  
+
   apuram->ticks = calcTicks();
   apuram->spd = song.settings.spd;
   /* END BPM AND SPD */
@@ -830,49 +830,9 @@ void Tracker::renderCurrentInstrument()
   instr_render = true;
 }
 
-void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhead/*=false*/)
+uint16_t Tracker::calcPatLutSize()
 {
-  DEBUGLOG("render_to_apu(); playback: %d\n", playback);
-  ::player->pause(0, false, false);
-	::player->start_track(0);
-	// SPC player fade to virtually never end (24 hours -> ms)
-	::player->emu()->set_fade(24 * 60 * 60 * 1000);
-	// note, this does indeed fit into 32-bit even with the samplerate calcs
-	// done from set_fade()
-
-	// This is absolutely crucial for the tracker to sync properly with the
-	// APU emu!!! v v v  Otherwise the emu runs too fast ahead of the audio
-	::player->ignore_silence();
-	/* BPM AND SPD */
-  /* Quick thoughts on Timer : We could add a checkmark to use the high
-   * frequency timer. Also could have a mode where you specify ticks and
-   * see the actual BPM */
-  
-	apuram->ticks = calcTicks();
-	apuram->spd = song.settings.spd;
-	/* END BPM AND SPD */
-
-  // Find the position in SPC RAM after driver code
-	uint16_t freeram_i = SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE;
-
-  uint16_t numinstr = 0;
-  apuRender.highest_instr = 0;
-  /* TODO: Could optimize this into bitflags */
-	uint8_t used_instr[NUM_INSTR];
-  memset(used_instr, 0, sizeof(used_instr));
-
-  // PATTERNS
-  // First calculate the number of used patterns in the song. This is not
-  // sequence length, but the number of unique patterns. With that length
-  // calculated, we can allocate the amount of RAM necessary for the
-  // PatternLUT (detailed below comments).
-  uint8_t num_usedpatterns = 0;
-  apuRender.highest_pattern = 0;
-  uint16_t patternlut_i = freeram_i; // position pattern data at start of free ram
-  uint16_t patternlut_size;
-
-  apuram->patterntable_ptr = patternlut_i;
-
+  uint8_t num_usedpatterns = 0; // NOTE: UNUSED METADATA HERE
   /* Track the number of used patterns and the highest pattern number */
   for (int p=0; p < MAX_PATTERNS; p++)
   {
@@ -884,7 +844,25 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhea
   }
   // Note we don't optimize the pattern LUT by consolidating unused
   // patterns. This was chosen for debugging purposes for Version 1
-  patternlut_size = (apuRender.highest_pattern + 1) * 2; // WORD sized address table
+  auto patternlut_size = (apuRender.highest_pattern + 1) * 2; // WORD sized address table
+  return patternlut_size;
+}
+
+uint16_t Tracker::renderPatterns(uint16_t spcramloc, uint8_t *used_instr)
+{
+  // PATTERNS
+  uint16_t numinstr = 0;
+  memset(used_instr, 0, NUM_INSTR);
+  // First calculate the number of used patterns in the song. This is not
+  // sequence length, but the number of unique patterns. With that length
+  // calculated, we can allocate the amount of RAM necessary for the
+  // PatternLUT (detailed below comments)
+  apuRender.highest_pattern = 0;
+  uint16_t patternlut_i = spcramloc; // position pattern data at start of free ram
+  uint16_t patternlut_size = calcPatLutSize();
+
+  apuram->patterntable_ptr = patternlut_i;
+
   /* OK I'm thinking about how aside from the pattern data itself, how
    * that pattern data will be accessed. We can store a Pattern lookup
    * table that has the 16-bit addresses of each pattern in ascending
@@ -905,6 +883,7 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhea
       continue;
     }
 
+    //auto pat_start_ram = pat_i;
     /* Here we need to iterate through the Pattern to form the compressed
      * version. For now, let's try to follow the XM version without RLE
      * compression */
@@ -1029,19 +1008,56 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhea
         tr = ttrr; // skip over empty rows
       }
     }
+    //pm->sizeInAPURam = pat_i - pat_start_ram;
   }
   // PATTERNS END
+  return pat_i;
+}
 
-  // PATTERN SEQUENCER START
+void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhead/*=false*/)
+{
+  DEBUGLOG("render_to_apu(); playback: %d\n", playback);
+  ::player->pause(0, false, false);
+	::player->start_track(0);
+	// SPC player fade to virtually never end (24 hours -> ms)
+	::player->emu()->set_fade(24 * 60 * 60 * 1000);
+	// note, this does indeed fit into 32-bit even with the samplerate calcs
+	// done from set_fade()
+
+	// This is absolutely crucial for the tracker to sync properly with the
+	// APU emu!!! v v v  Otherwise the emu runs too fast ahead of the audio
+	::player->ignore_silence();
+	/* BPM AND SPD */
+  /* Quick thoughts on Timer : We could add a checkmark to use the high
+   * frequency timer. Also could have a mode where you specify ticks and
+   * see the actual BPM */
+  
+	apuram->ticks = calcTicks();
+	apuram->spd = song.settings.spd;
+	/* END BPM AND SPD */
+
+  // Find the position in SPC RAM after driver code
+	uint16_t freeram_i = SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE;
+
+  apuRender.highest_instr = 0;
+  /* TODO: Could optimize this into bitflags */
+	uint8_t used_instr[NUM_INSTR];
+
+  /// PATTERNS
+  auto patsize = renderPatterns(freeram_i, used_instr);
+
+// PATTERN SEQUENCER START
   // set the start sequence index to the currently selected one in the
   // tracker (eg. play from current pattern)
   apuram->sequencer_i =  main_window.patseqpanel.currow;
-  uint16_t patseq_i = pat_i;
+  uint16_t patseq_i = freeram_i + patsize;
+
   apuram->sequencer_ptr = patseq_i;
   for (int i=0; i < song.patseq.num_entries; i++)
     ::IAPURAM[patseq_i++] = song.patseq.sequence[i];
   ::IAPURAM[patseq_i++] = 0xff; // mark end of sequence
   // going to check in apu driver for a negative number to mark end
+// PATTERN SEQUENCER END
 
 
   /* Now that we know what instruments are used, let's check the samples
@@ -1119,6 +1135,8 @@ void Tracker::render_to_apu(bool repeat_pattern/*=false*/, bool startFromPlayhea
 		}
 		cursample_i += s;
 	}
+
+// INSTRUMENT TABLE START
 
 	for (int i=0; i <= apuRender.highest_instr; i++)
 	{
