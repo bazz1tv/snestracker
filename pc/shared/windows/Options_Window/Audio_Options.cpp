@@ -96,6 +96,7 @@ int Audio_Options::BufferSize::inc(void *b)
     ::player->sample_frame_size *= 2;
     ::player->init(::player->sample_rate, Audio::Devices::selected_audio_out_dev);
   }
+  return 0;
 }
 
 int Audio_Options::BufferSize::dec(void *b)
@@ -106,6 +107,7 @@ int Audio_Options::BufferSize::dec(void *b)
     ::player->sample_frame_size /= 2;
     ::player->init(::player->sample_rate, Audio::Devices::selected_audio_out_dev);
   }
+  return 0;
 }
 
 void Audio_Options::preload(SDL_Rect *rect)
