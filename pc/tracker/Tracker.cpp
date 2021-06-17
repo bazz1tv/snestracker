@@ -1041,13 +1041,17 @@ void Tracker::renderSamplesAndInstruments(uint16_t spcramloc, const uint8_t *use
    * DIR entries are needed if there's room or not */
   uint16_t dir_i, dspdir_i;
   dir_i = spcramloc + ((spcramloc % 0x100) ? (0x100 - (spcramloc % 0x100)) : 0);
+  apuRender.sampleDirStartAddress = dir_i; // Mark the Directory Start Address
+  apuRender.sampleDirSize = (apuRender.highest_sample + 1) * 0x4;
   dspdir_i = dir_i / 0x100;
 
-  uint16_t instrtable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4);
-  //                             {applied size of DIR}  {INSTR TABLE SIZE}
+  uint16_t instrtable_i  = dir_i + ( (apuRender.highest_sample + 1) * 0x4);
+  //                               {applied size of DIR}  {INSTR TABLE SIZE}
   uint16_t sampletable_i = dir_i + ( (apuRender.highest_sample + 1) * 0x4) + ( (apuRender.highest_instr + 1) * 0x2);
 
   apuram->instrtable_ptr = instrtable_i;
+  apuRender.instrumentTableStartAddress = apuram->instrtable_ptr;
+  apuRender.instrumentTableSize = sampletable_i - instrtable_i;
 
   /* We have got to load these samples in first, so the DIR table knows
    * where the samples are */
@@ -1060,6 +1064,7 @@ void Tracker::renderSamplesAndInstruments(uint16_t spcramloc, const uint8_t *use
   // Write the sample and loop information to the DIR. Then write the DSP
   // DIR value to DSP
   uint16_t cursample_i = sampletable_i;
+  apuRender.samplesStartAddress = sampletable_i;
 
   /* TODO: Currently, the samples are half-assed optimized. A cool idea I
    * have to remap and optimize from blank sample entries is to, as these
@@ -1093,8 +1098,8 @@ void Tracker::renderSamplesAndInstruments(uint16_t spcramloc, const uint8_t *use
     cursample_i += s;
   }
 // SAMPLES END
-
-
+  apuRender.samplesSize = cursample_i - apuRender.samplesStartAddress;
+  apuRender.instrumentsStartAddress = cursample_i;
   // INSTRUMENT TABLE START
 
   for (int i=0; i <= apuRender.highest_instr; i++)
@@ -1132,7 +1137,7 @@ void Tracker::renderSamplesAndInstruments(uint16_t spcramloc, const uint8_t *use
                                (instr->pmod ? (1<<INSTR_FLAG_PMOD) : 0);
     ::IAPURAM[cursample_i++] = instr->semitone_offset;
   }
-
+  apuRender.instrumentsSize = cursample_i - apuRender.instrumentsStartAddress;
   // TODO: Make sure the DSPDIR is written from the SPC Driver
   apuram->dspdir_i = dspdir_i;
   ::player->spc_write_dsp(dsp_reg::dir, dspdir_i);

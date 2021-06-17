@@ -131,6 +131,7 @@ struct PatternMeta
   // APU RAM
   int used = 0; // number of sequence entries this pattern is in
   char name[PATNAME_MAXLEN];
+  //int sizeInAPURam = -1;
 };
 
 struct PatternSequencer

@@ -64,7 +64,7 @@ struct Menu_Bar
       {"",             false, NULL,      NULL}
     };
 
-#define RECENTFILE_STARTIDX 11
+#define RECENTFILE_STARTIDX 12
   };
 
   struct Edit_Context

@@ -72,6 +72,12 @@ public:
     uint8_t highest_instr, highest_sample;
     uint16_t highest_pattern;
     uint16_t patternsBlockStartAddress, patternsBlockSize;
+    uint16_t sampleDirStartAddress, sampleDirSize;
+    uint16_t samplesStartAddress, samplesSize;
+    uint16_t instrumentTableStartAddress, instrumentTableSize;
+    uint16_t instrumentsStartAddress, instrumentsSize;
+
+
   } apuRender;
   /* TRACKER CORE -- Here is located the "model" data structures, not GUI
    * */

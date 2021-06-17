@@ -380,16 +380,22 @@ int Menu_Bar::File_Context::export_rom(void *data)
     // uploading to APU RAM
 
     // Dest SPC Address
-    word = ARRAY_SIZE(apuram->padding);
-    SDL_RWwrite(file, &word, 2, 1);
-    // Data Size
-    word = 0x10000 - ( ARRAY_SIZE(apuram->padding) + ARRAY_SIZE(apuram->padding2) );
-    DEBUGLOG("Bytes of Public APU RAM vars: 0x%04x\n", word);
-    DEBUGLOG("1: %d, 2: %d\n", ARRAY_SIZE(apuram->padding), ARRAY_SIZE(apuram->padding2));
-    SDL_RWwrite(file, &word, 2, 1);
-    // Data
-    const char *raw = (const char *)apuram;
-    SDL_RWwrite(file, &raw[ARRAY_SIZE(apuram->padding)], word, 1);
+    {
+      apuram->extflags = 0;
+      auto startAddr = ARRAY_SIZE(apuram->padding);
+      word = startAddr;
+      SDL_RWwrite(file, &word, 2, 1);
+      // Data Size
+      word = 0x10000 - ( ARRAY_SIZE(apuram->padding) + ARRAY_SIZE(apuram->padding2) );
+      //DEBUGLOG("Bytes of Public APU RAM vars: 0x%04x\n", word);
+      //DEBUGLOG("1: %d, 2: %d\n", ARRAY_SIZE(apuram->padding), ARRAY_SIZE(apuram->padding2));
+      SDL_RWwrite(file, &word, 2, 1);
+      // Data
+      const char *raw = (const char *)apuram;
+      SDL_RWwrite(file, &raw[ARRAY_SIZE(apuram->padding)], word, 1);
+      DEBUGLOG("APU PUB RAM: 0x%04x - 0x%04x (0x%04x bytes)\n", startAddr, startAddr + word - 1, word);
+    }
+
 
     /*
       TODO: dspdir_i WHAT IS THIS AGAIN? LOL
@@ -410,6 +416,8 @@ int Menu_Bar::File_Context::export_rom(void *data)
     SDL_RWwrite(file, &word, 2, 1);
     // Write the driver directly from IAPURAM
     SDL_RWwrite(file, &::IAPURAM[SPCDRIVER_CODESTART], SPCDRIVER_CODESIZE, 1);
+    DEBUGLOG("Driver Block: 0x%04x - 0x%04x (0x%04x bytes)\n",
+              SPCDRIVER_CODESTART, SPCDRIVER_CODESTART + SPCDRIVER_CODESIZE - 1, SPCDRIVER_CODESIZE);
 
 /// 1b) Upload the Patterns Block (PatternLUT, patterns, Sequencer Table)
     auto PBSA = ::tracker->apuRender.patternsBlockStartAddress;
@@ -419,20 +427,52 @@ int Menu_Bar::File_Context::export_rom(void *data)
     word = PBS;
     SDL_RWwrite(file, &word, 2, 1);
     SDL_RWwrite(file, &::IAPURAM[PBSA], PBS, 1);
+    DEBUGLOG("Pattern Block: 0x%04x - 0x%04x (0x%04x bytes)\n", PBSA, PBSA + PBS - 1, PBS);
 
+/// 2 Samples & Instruments
+    auto SDSA = ::tracker->apuRender.sampleDirStartAddress;
+    word = SDSA;
+    SDL_RWwrite(file, &word, 2, 1);
+    auto SDS = ::tracker->apuRender.sampleDirSize;
+    word = SDS;
+    SDL_RWwrite(file, &word, 2, 1);
+    SDL_RWwrite(file, &::IAPURAM[SDSA], SDS, 1);
+    DEBUGLOG("SampleDir: 0x%04x - 0x%04x (0x%04x bytes)\n", SDSA, SDSA + SDS - 1, SDS);
 
-/// 2 instrtable_ptr ; To upload all the instruments
+    auto ITSA = ::tracker->apuRender.instrumentTableStartAddress;
+    word = ITSA;
+    SDL_RWwrite(file, &word, 2, 1);
+    auto ITS = ::tracker->apuRender.instrumentTableSize;
+    word = ITS;
+    SDL_RWwrite(file, &word, 2, 1);
+    SDL_RWwrite(file, &::IAPURAM[ITSA], ITS, 1);
+    DEBUGLOG("Instrument Table: 0x%04x - 0x%04x (0x%04x bytes)\n", ITSA, ITSA + ITS - 1, ITS);
 
+    auto SSA = ::tracker->apuRender.samplesStartAddress;
+    word = SSA;
+    SDL_RWwrite(file, &word, 2, 1);
+    auto SS = ::tracker->apuRender.samplesSize;
+    word = SS;
+    SDL_RWwrite(file, &word, 2, 1);
+    SDL_RWwrite(file, &::IAPURAM[SSA], SS, 1);
+    DEBUGLOG("Samples: 0x%04x - 0x%04x (0x%04x bytes)\n", SSA, SSA + SS - 1, SS);
 
+    auto ISA = ::tracker->apuRender.instrumentsStartAddress;
+    word = ISA;
+    SDL_RWwrite(file, &word, 2, 1);
+    auto IS = ::tracker->apuRender.instrumentsSize;
+    word = IS;
+    SDL_RWwrite(file, &word, 2, 1);
+    SDL_RWwrite(file, &::IAPURAM[ISA], IS, 1);
+    DEBUGLOG("Instruments: 0x%04x - 0x%04x (0x%04x bytes)\n", ISA, ISA + IS - 1, IS);
 
-    //apuram->ticks
-    //apuram->spd
-
-    // Get the OTHER STUFF
-
+    // Write the final instruction to jump SPC to driver start address
+    word = 0;
+    SDL_RWwrite(file, &word, 2, 1);
+    word = SPCDRIVER_CODESTART;
+    SDL_RWwrite(file, &word, 2, 1);
 
     //::player->pause(1, false, false);
-    //
 
     // Begin writing to ROM payload file
     // copy header info
