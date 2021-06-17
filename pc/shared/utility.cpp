@@ -47,6 +47,32 @@ char * getDirectoryName(const char *s)
   return whoami;
 }
 
+char * getDirectoryPath(const char *s)
+{
+  static char *newstr = NULL;
+  if (s == NULL)
+    return ("");
+
+  char sep = '/';
+
+#ifdef _WIN32
+  sep = '\\';
+#endif
+
+  if (newstr != NULL)
+    SDL_free(newstr);
+
+  newstr = (char *) SDL_malloc( sizeof(char) * ( strlen(s) + 1 ) );
+  strcpy(newstr, s);
+
+  char *filename = (char *) getFileName(newstr);
+  if (filename == NULL)
+    return NULL;
+
+  *(filename - 1) = 0; // turn the '/' to NULL char
+  return newstr;
+}
+
 
   extern int random(int min, int max);
 

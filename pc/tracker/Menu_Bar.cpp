@@ -11,6 +11,8 @@
 #include "shared/SdlNfd.h"
 #include "shared/RecentFiles.h"
 
+#include "gui/DialogBox.h"
+
 extern Tracker *tracker;
 
 Menu_Bar::Menu_Bar()
@@ -472,20 +474,71 @@ int Menu_Bar::File_Context::export_rom(void *data)
     word = SPCDRIVER_CODESTART;
     SDL_RWwrite(file, &word, 2, 1);
 
-    //::player->pause(1, false, false);
+    // Write the LoadMusic.bin file out
+    SDL_RWops *in, *out;
+    char LoadMusicPath[260], tmpbuf[260];
+    assert(::file_system);
 
-    // Begin writing to ROM payload file
-    // copy header info
-    //unsigned char *out = sew->state;
-    ///Spc_Emu::header_t *header = (Spc_Emu::header_t *)out;
+    strcpy(LoadMusicPath, ::file_system->data_path);
+    strcat(LoadMusicPath, "LoadMusic.bin");
+    in = SDL_RWFromFile(LoadMusicPath, "rb");
+    if (in == NULL)
+    {
+      sprintf(tmpbuf, "Warning: Unable to open file %s!\n %s", LoadMusicPath,
+              SDL_GetError() );
+      SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                     "Could not open FILE!",
+                     tmpbuf,
+                     NULL);
+      return -1;
+    }
 
+    char *dirName = Utility::getDirectoryPath(SdlNfd::outPath);
+    char *LoadMusicDest = (char *) malloc( strlen(dirName) + strlen("/LoadMusic.bin") );
+    strcpy(LoadMusicDest, dirName);
+    strcat(LoadMusicDest, "/LoadMusic.bin");
 
+    DEBUGLOG("Copying 'LoadMusic.bin': from '%s' to '%s'\n", LoadMusicPath, LoadMusicDest);
 
-    //::player->spc_emu()->can_has_apu()->save_spc(out);
-    //::file_system->write_file( SdlNfd::outPath, sew->state, Snes_Spc::spc_file_size );
-    // restore player state
-    //::player->pause(1, false, false);
-    //sew->hide();
+    out = SDL_RWFromFile(LoadMusicDest, "wb");
+    if (out == NULL)
+    {
+      sprintf(tmpbuf, "Warning: Unable to open file %s!\n %s", LoadMusicDest,
+              SDL_GetError() );
+      SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                     "Could not open FILE!",
+                     tmpbuf,
+                     NULL);
+      return -1;
+    }
+
+    Sint64 inSize = SDL_RWsize(in);
+
+    char* res = (char*) malloc(inSize);
+
+    Sint64 nb_read_total = 0, nb_read = 1;
+    char* buf = res;
+    while (nb_read_total < inSize && nb_read != 0) {
+        nb_read = SDL_RWread(in, buf, 1, (inSize - nb_read_total));
+        nb_read_total += nb_read;
+        buf += nb_read;
+    }
+    SDL_RWclose(in);
+
+    if (nb_read_total != inSize) {
+        free(res);
+        DEBUGLOG("Couldn't read entirety of LoadMusic.bin\n");
+        return -1;
+    }
+
+    SDL_RWwrite(out, res, inSize, 1);
+    SDL_RWclose(out);
+
+    sprintf(tmpbuf, "Wrote 2 files: '%s' and '%s' to '%s'",
+            Utility::getFileName(SdlNfd::outPath),
+            "LoadMusic.bin",
+            Utility::getDirectoryPath(SdlNfd::outPath));
+    DialogBox::SimpleOK("ROM Export Complete", tmpbuf);
   }
   // DONEZIES */
   return 0;

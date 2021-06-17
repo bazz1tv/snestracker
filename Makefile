@@ -59,7 +59,7 @@ clean-gme_m:
 # has the FORCE rule, we'll use that to make sure it is re-assembled if
 # necessary
 $(SPCDRIVER_RELPATH): snes_driver/spc.sym snes_driver/gen_spc.sh Makefile snes_driver/template.spc
-	cd snes_driver && wlaprefix=$(WLAPREFIX) ./gen_spc.sh ../$(SPCDRIVER_RELPATH)
+	cd snes_driver && wlaprefix=$(WLAPREFIX) ./gen_spc.sh ../$(SPCDRIVER_RELPATH) && cp LoadMusic.bin ../pc/bin
 
 snes_driver/spc.sym: FORCE Makefile snes_driver/Makefile
 	$(MAKE) -C snes_driver

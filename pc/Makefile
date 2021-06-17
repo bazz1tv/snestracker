@@ -263,6 +263,7 @@ $(BIN)/$(EXECUTABLE_TRACKER).app: st.icns Info.plist osx_ship.sh $(BIN)/$(EXECUT
 	cp st.icns $@/Contents/Resources
 	cp -r $(BIN)/cursors $@/Contents/Resources # Copy mouse icons
 	cp $(BIN)/tracker.spc $@/Contents/Resources # copy SPC driver
+	cp $(BIN)/LoadMusic.bin $@/Contents/Resources # Copy LoadMusic bin routine
 	bash ./osx_ship.sh $@ $(EXECUTABLE_TRACKER) $@/Contents/Lib
 	#$@/Contents/MacOS/$(EXECUTABLE_TRACKER)
 	touch $@
