@@ -233,7 +233,7 @@ int Menu_Bar::File_Context::save_song(void *data)
     SDL_RWops *file = SDL_RWFromFile(fc->filepath, "w");
     if (file == NULL)
     {
-      char tmpbuf[250];
+      char tmpbuf[532];
       sprintf(tmpbuf, "Warning: Unable to open file %s!\n %s", fc->filepath, SDL_GetError() );
       SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
           "Could not open FILE!",
@@ -442,7 +442,7 @@ bool Menu_Bar::Context_Menus::is_anything_active()
 int Menu_Bar::Context_Menus::receive_event(SDL_Event &ev)
 {
   int r;
-  if ( ev.type == SDL_MOUSEBUTTONDOWN  && ev.button.button == SDL_BUTTON_LEFT || is_anything_active() )
+  if ( (ev.type == SDL_MOUSEBUTTONDOWN  && ev.button.button == SDL_BUTTON_LEFT) || is_anything_active() )
   {
     if (check_left_click_activate(ev.button.x, ev.button.y, ev.button.button, &ev))
     {

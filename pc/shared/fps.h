@@ -15,8 +15,9 @@
  Created by Michael Bazzinotti on 5/23/20.
  Copyright © 2020 bazz. All rights reserved.
  
- 
- /* TODO: implement high performance counter version */
+ */
+
+ // TODO: implement high performance counter version 
 
 class FPS
 {

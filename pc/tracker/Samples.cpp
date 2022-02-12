@@ -221,7 +221,7 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
         if (nb_read_total != subchunksize)
         {
           DEBUGLOG("\t\tError Reading Sample %d!?\n", idx);
-          DEBUGLOG("\t\tnb_read_total = %llu, subchunksize = %llu\n", nb_read_total, subchunksize);
+          DEBUGLOG("\t\tnb_read_total = %lu, subchunksize = %d\n", nb_read_total, subchunksize);
           free(brr);
           break;
         }
@@ -239,7 +239,7 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
               instr_srcn = i; // mark for the instrument file loader :O
               // skip the rest of thos whole chunk and return
               SDL_RWseek(file, chunksize - maxread, RW_SEEK_CUR);
-              return;
+              return 0;
             }
           }
 
@@ -259,7 +259,7 @@ size_t SampleChunkLoader::load(SDL_RWops *file, size_t chunksize)
           {
             // skip the rest of thos whole chunk and return
             SDL_RWseek(file, chunksize - maxread, RW_SEEK_CUR);
-            return;
+            return 0;
           }
         }
 
