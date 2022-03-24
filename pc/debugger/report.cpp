@@ -10,7 +10,7 @@ void Sdl_Spc_Report::report(Spc_Report::Type type, unsigned addr, unsigned opcod
       int i;
       if ( (addr) != (unsigned)report::last_pc)
       {
-        for (i=0; i<5; i++)
+        for (i=0; i<opcode_lens[opcode]; i++)
         {
           idx = (((addr)+i)&0xff00)<<4; idx += (((addr)+i)%256)<<3;
           report::memsurface.data[idx]=0xff;
@@ -18,13 +18,8 @@ void Sdl_Spc_Report::report(Spc_Report::Type type, unsigned addr, unsigned opcod
           report::memsurface.data[idx+4]=0xff;
           report::memsurface.data[idx+4+2048]=0xff;
           report::used2[((addr)&0xff00)>>8]=1;
+          report::used[(addr)+i]=1;
         }
-        report::used[(addr)]=1;
-        report::used[(addr)+1]=1;
-        report::used[(addr)+2]=1;
-        report::used[(addr)+3]=1;
-        report::used[(addr)+4]=1;
-        report::used[(addr)+5]=1;
       }
       break;
     case Spc_Report::Read:
