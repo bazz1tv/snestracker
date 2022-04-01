@@ -1,0 +1,53 @@
+latest-notes.txt
+
+Github -> v0.2.1
+WIP    -> v0.2.4
+
+
+Pitch Modulation Feature
+-------------------------
+
+1) Instrument Editor Button
+
+ a) Acts as the Influencer part of PMOD (to the voice above).
+ b) Acts as the Influenced part of PMOD (from the voice below).
+
+2) FX Command
+
+ a) see 1a
+ b) see 1b
+
+
+HARDWARE Note: PMOD voice bit, causes that channel to be INFLUENCED by the activity
+on the channel below it.
+Pitch Mod does not work for voice 0
+
+
+
+How To Implement a New Feature
+------------------------------
+
+A new feature that's gonna use the 
+
+. ~~GUI~~
+. The APU Driver
+. ~~File loading & File Saving~~
+. ???
+
+- Instrument APU Ram
+TODO:
+File Loading / Saving
+
+To unlock the coolest uses of PMOD:
+1. Unlock lower levels of octaves
+2. Make playing notes at 00 volume allowable.
+    --> Make 0x80 the blank value for volume column (?)
+
+
+
+
+
+
+
+
+mov $f2, #$2d  -> set dsp address (F2) to PMON ($2d)
