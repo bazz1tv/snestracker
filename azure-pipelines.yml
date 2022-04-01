@@ -10,7 +10,7 @@ trigger:
 jobs:
 - job: macOS
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: 'macOS-latest'
   steps:
   - script: |
       brew update
@@ -36,7 +36,7 @@ jobs:
     displayName: 'make'
 - job: CrossWindows
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   steps:
   - script: |
       sudo apt-get install -y cmake mingw-w64 pkg-config
