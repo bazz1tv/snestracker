@@ -218,6 +218,7 @@ int Instrument_Panel::event_handler(const SDL_Event &ev)
   savebtn.check_event(ev);
   dupbtn.check_event(ev);
   zapbtn.check_event(ev);
+  return 0;
 }
 
 void Instrument_Panel::set_currow(int c)

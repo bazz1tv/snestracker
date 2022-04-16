@@ -550,6 +550,7 @@ int Instrument_Window::receive_event(SDL_Event &ev)
     default:
     break;
   }
+  return 0;
 }
 
 void Instrument_Window::set_voice(unsigned char v)

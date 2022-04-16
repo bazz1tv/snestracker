@@ -135,7 +135,7 @@ struct MouseCursors
 	void next();
 	void prev();
 
-  int handle_event(const SDL_Event &ev);
+  void handle_event(const SDL_Event &ev);
   void draw_aux();
 
 private:

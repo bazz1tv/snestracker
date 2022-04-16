@@ -16,6 +16,8 @@ int SdlNfd::init(SDL_Window *win)
     return -2; // already loaded*/
 
   _sdlWindow = win;
+
+  return 0;
 }
 
 /* rw: "r" or "rb" read

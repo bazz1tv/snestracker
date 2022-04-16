@@ -390,6 +390,7 @@ size_t PatternChunkLoader::load(SDL_RWops *file, size_t chunksize)
       maxread += subchunksize;
     }
   }
+  return maxread;
 }
 
 size_t PatternChunkLoader::save(SDL_RWops *file)
@@ -509,6 +510,7 @@ size_t PatternChunkLoader::save(SDL_RWops *file)
     SDL_RWwrite(file, &chunklen, 2, 1);
     SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
   }
+  return 0;
 }
 
 PatternSequencerChunkLoader::PatternSequencerChunkLoader(struct PatternSequencer *patseq) :
@@ -591,6 +593,7 @@ size_t PatternSequencerChunkLoader::load(SDL_RWops *file, size_t chunksize)
       maxread += subchunksize;
     }
   }
+  return 0;
 }
 
 size_t PatternSequencerChunkLoader::save(SDL_RWops *file)
@@ -624,6 +627,7 @@ size_t PatternSequencerChunkLoader::save(SDL_RWops *file)
   SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
   SDL_RWwrite(file, &chunklen, 2, 1);
   SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
+  return 0;
 }
 
 
@@ -968,6 +972,7 @@ int PatSeqPanel::event_handler(const SDL_Event &ev)
 	patlen_incbtn.check_event(ev);
 	patlen_decbtn.check_event(ev);
 
+  return 0;
 }
 
 void PatSeqPanel::one_time_draw(SDL_Surface *screen/*=::render->screen*/)
@@ -1349,6 +1354,7 @@ int PatSeqPanel::inc_patlen(void *bsaw)
 	//DEBUGLOG("inc_patlen; ");
 	::tracker->inc_patlen();
 	b->update_patlen();
+	return 0;
 }
 
 int PatSeqPanel::dec_patlen(void *bsaw)
@@ -1356,6 +1362,7 @@ int PatSeqPanel::dec_patlen(void *bsaw)
 	PatSeqPanel *b = (PatSeqPanel *)bsaw;
 	::tracker->dec_patlen();
 	b->update_patlen();
+	return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1996,6 +2003,7 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
     } break;
     default:break;
   }
+  return 0;
 }
 
 #define q(n) case SDLK_ ## n : \

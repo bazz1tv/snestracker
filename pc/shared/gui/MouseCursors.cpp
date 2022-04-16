@@ -492,7 +492,7 @@ void MouseCursors::prev()
   set_cursor(index);
 }
 
-int MouseCursors::handle_event(const SDL_Event &ev)
+void MouseCursors::handle_event(const SDL_Event &ev)
 {
   BmpCursorAni::handle_event(ev);
   MouseTextureAni::handle_event(ev);

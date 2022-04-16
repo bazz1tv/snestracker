@@ -232,6 +232,7 @@ size_t VersionChunkLoader::save(SDL_RWops *file)
   SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
   SDL_RWwrite(file, &chunklen, 2, 1);
   SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
+  return 0;
 }
 
 size_t VersionChunkLoader::load(SDL_RWops *file, size_t chunksize)
@@ -376,4 +377,5 @@ size_t VersionChunkLoader::load(SDL_RWops *file, size_t chunksize)
       maxread += subchunksize;
     }
   }
+  return 0;
 }

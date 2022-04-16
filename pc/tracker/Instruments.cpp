@@ -275,6 +275,7 @@ size_t InstrumentChunkLoader::load(SDL_RWops *file, size_t chunksize)
       maxread += subchunksize;
     }
   }
+  return maxread;
 }
 
 /* Write the chunk for particular instrument indexed by i */
@@ -346,6 +347,7 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file, int i)
   SDL_RWseek(file, chunksize_location, RW_SEEK_SET);
   SDL_RWwrite(file, &chunklen, 2, 1);
   SDL_RWseek(file, chunkend_location, RW_SEEK_SET);
+  return 0;
 }
 
 /* TODO: integrate chunklen (featured below) into the ChunkLoader class, and have
@@ -360,6 +362,7 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file)
     if (instruments[i] != ::Instrument()) // empty instrument
       save(file, i);
   }
+  return 0;
 }
 
 size_t InstrumentChunkLoader::save(SDL_RWops *file, struct Instrument *instr)
@@ -368,6 +371,7 @@ size_t InstrumentChunkLoader::save(SDL_RWops *file, struct Instrument *instr)
   instruments = instr;
   save(file, 0);
   instruments = backup;
+  return 0;
 }
 
 /////////////////// INSTRUMENT FILE LOADER //////////////////
@@ -403,6 +407,7 @@ size_t InstrumentFileLoader::save(SDL_RWops *file)
   vcl->save(file);  // version
   scl->save(file, 0);  // samples
   icl->save(file, 0);  // instruments
+  return 0;
 }
 
 InstrumentFileLoader::ret_t InstrumentFileLoader::load(SDL_RWops *file)
