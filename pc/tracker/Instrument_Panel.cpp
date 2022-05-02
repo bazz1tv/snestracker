@@ -39,7 +39,6 @@ Instrument_Panel::~Instrument_Panel()
 
 void Instrument_Panel::set_coords(int x, int y)
 {
-  int xx = x, yy = y;
   title.rect.x = x;
   title.rect.y = y;
 
@@ -83,7 +82,7 @@ void Instrument_Panel::set_coords(int x, int y)
 
     instr_indices[i].rect =
     {
-      xx,
+      x,
       y + (CHAR_HEIGHT * i),
       3 * CHAR_WIDTH,
       CHAR_HEIGHT};
@@ -341,8 +340,7 @@ static bool AskDeleteSample(Instrument_Panel *ip)
 int Instrument_Panel::load(void *ipanel)
 {
   Instrument_Panel *ip = (Instrument_Panel *)ipanel;
-  Instrument *instruments = ip->instruments;
-
+  
   fprintf(stderr, "LOAD\n");
 
   /* First, check if the current instrument slot is non-default data, and warn

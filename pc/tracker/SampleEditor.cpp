@@ -86,8 +86,6 @@ void SampleEditor :: set_coords(int x, int y)
    * Pan......80 +-
    * F.Tune +000 +-*/
 
-  int yy = y;
-
   this->x = x;
   this->y = y;
 

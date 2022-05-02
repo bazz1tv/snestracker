@@ -95,7 +95,7 @@ void SongSettings::dec_efb()
 }
 
 SongSettingsChunkLoader::SongSettingsChunkLoader(struct SongSettings *ss) :
-  songsettings(ss), ChunkLoader(ChunkID::SongSettings)
+  ChunkLoader(ChunkID::SongSettings), songsettings(ss)
 {}
 
 size_t SongSettingsChunkLoader::load(SDL_RWops *file, size_t chunksize)
@@ -334,7 +334,6 @@ void SongSettingsPanel::update_efb()
 
 void SongSettingsPanel :: set_coords(int x, int y)
 {
-  int yy = y;
   /* NOTE: I am using "Main Vol" string for all vars because it represents
    * the max length, the textual content is not important here; it was
    * easier to just copy/paste that one */

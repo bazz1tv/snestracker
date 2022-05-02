@@ -35,7 +35,6 @@ Sample_Panel::~Sample_Panel()
 
 void Sample_Panel::set_coords(int x, int y)
 {
-  int xx = x, yy = y;
   title.rect.x = x;
   title.rect.y = y;
 
@@ -76,7 +75,7 @@ void Sample_Panel::set_coords(int x, int y)
 
     sample_indices[i].rect =
     {
-      xx,
+      x,
       y + (CHAR_HEIGHT * i),
       3 * CHAR_WIDTH,
       CHAR_HEIGHT

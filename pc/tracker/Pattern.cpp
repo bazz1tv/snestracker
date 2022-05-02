@@ -33,7 +33,7 @@ PatternSequencer::PatternSequencer() : sequence(MAX_PATTERNS)
 }
 
 
-/* For private use by the PatternSequencerChunkLoader */
+// For private use by the PatternSequencerChunkLoader
 class TrackChunkLoader : public ChunkLoader
 {
 public:
@@ -93,7 +93,7 @@ size_t TrackChunkLoader::load(SDL_RWops *file, size_t chunksize)
         }
         else if (subchunksize > maximum_chunksize)
         {
-          DEBUGLOG("\t\t\t\tSubChunk %d is bigger than expected by %d bytes.\n",
+          DEBUGLOG("\t\t\t\tSubChunk %d is bigger than expected by %lu bytes.\n",
             subchunkid, subchunksize - maximum_chunksize);
         }
 
@@ -168,7 +168,7 @@ size_t TrackChunkLoader::load(SDL_RWops *file, size_t chunksize)
       break;
     }
 
-    /* Skip the unrecognized part of the chunk */
+    // Skip the unrecognized part of the chunk
     if (subchunksize)
     {
       DEBUGLOG("\t\t\tskipping past %d unknown bytes of chunk\n", subchunksize);
@@ -334,7 +334,7 @@ size_t PatternChunkLoader::load(SDL_RWops *file, size_t chunksize)
         }
         else if (subchunksize > maximum_chunksize)
         {
-          DEBUGLOG("\t\tSubChunk %d is bigger than expected by %d bytes.\n",
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected by %lu bytes.\n",
             subchunkid, subchunksize - maximum_chunksize);
         }
 
@@ -382,7 +382,7 @@ size_t PatternChunkLoader::load(SDL_RWops *file, size_t chunksize)
       break;
     }
 
-    /* Skip the unrecognized part of the chunk */
+    // Skip the unrecognized part of the chunk
     if (subchunksize)
     {
       DEBUGLOG("\tskipping past %d unknown bytes of chunk\n", subchunksize);
@@ -427,7 +427,7 @@ size_t PatternChunkLoader::save(SDL_RWops *file)
         continue;
     }
 
-    /* Begin writing chunk for the pattern */
+    // Begin writing chunk for the pattern
     uint8_t byte;
     uint16_t word;
     uint16_t chunklen = 0;
@@ -464,7 +464,7 @@ size_t PatternChunkLoader::save(SDL_RWops *file)
 
     for (int t=0; t < MAX_TRACKS; t++)
     {
-      /* Skip empty tracks */
+      // Skip empty tracks
       bool emptytrack = true;
       for (int tr=0; tr < pattern->len; tr++)
       {
@@ -518,8 +518,6 @@ PatternSequencerChunkLoader::PatternSequencerChunkLoader(struct PatternSequencer
 size_t PatternSequencerChunkLoader::load(SDL_RWops *file, size_t chunksize)
 {
   size_t maxread = 0;
-  uint8_t idx = 0;
-  bool idx_loaded = false;
 
   DEBUGLOG("PatternSequencerChunkLoader::load()\n");
 
@@ -565,7 +563,7 @@ size_t PatternSequencerChunkLoader::load(SDL_RWops *file, size_t chunksize)
         }
         else if (subchunksize > maximum_chunksize)
         {
-          DEBUGLOG("\t\tSubChunk %d is bigger than expected by %d bytes.\n",
+          DEBUGLOG("\t\tSubChunk %d is bigger than expected by %lu bytes.\n",
             subchunkid, subchunksize - maximum_chunksize);
         }
 
@@ -583,7 +581,7 @@ size_t PatternSequencerChunkLoader::load(SDL_RWops *file, size_t chunksize)
       break;
     }
 
-    /* Skip the unrecognized part of the chunk */
+    // Skip the unrecognized part of the chunk
     if (subchunksize)
     {
       DEBUGLOG("\tskipping past %d unknown bytes of chunk\n", subchunksize);
@@ -672,8 +670,6 @@ PatSeqPanel::~PatSeqPanel()
 
 void PatSeqPanel::set_coords(int x, int y)
 {
-  int xx = x, yy = y;
-
   rect.x = x - 2; /* All rect.* are creating the bounding rect to be drawn
                      around the instruments list (not the buttons or main label. Unfortunately the
                      assignments are spread throughout this function rather than all being in one place,
@@ -726,7 +722,7 @@ void PatSeqPanel::set_coords(int x, int y)
     conv_idx2ascii2(rows_scrolled + i, index_strings[i]);
     index_text[i].rect =
     {
-      xx,
+      x,
       y + (CHAR_HEIGHT * i),
       3 * CHAR_WIDTH, // eg 00|
       CHAR_HEIGHT
@@ -764,7 +760,7 @@ void PatSeqPanel::set_coords(int x, int y)
   zapbtn.rect.y = movePatDownbtn.rect.y + (CHAR_HEIGHT * 2);
 
 // PATTERN LENGTH PORTION:
-  patlen_title.rect.x = xx;
+  patlen_title.rect.x = x;
 	patlen_title.rect.y = rect_patTable.y + rect_patTable.h + (CHAR_HEIGHT * 2) + 1;// + (CHAR_HEIGHT / 2);
 	patlen_valtext.rect.x = patlen_title.rect.x + ((strlen(patlen_title.str) + 1) * CHAR_WIDTH);
 	patlen_valtext.rect.y = patlen_title.rect.y;
@@ -1509,8 +1505,6 @@ void note2ascii(uint8_t note, char *c)
 
 void PatternEditorPanel::set_coords(int x, int y)
 {
-  int xx = x, yy = y;
-
   rect.x = x - 2; /* All rect.* are creating the bounding rect to be drawn
                      around the instruments list (not the buttons or main label. Unfortunately the
                      assignments are spread throughout this function rather than all being in one place,
@@ -1525,7 +1519,7 @@ void PatternEditorPanel::set_coords(int x, int y)
 
   for (int t=0; t < MAX_TRACKS; t++)
   {
-    int tx = xx + (CHAR_WIDTH * 3)
+    int tx = x + (CHAR_WIDTH * 3)
             + (CHAR_WIDTH * 5);
     {
       TrackHeader *th = &trackheader[t];
@@ -1550,7 +1544,8 @@ void PatternEditorPanel::set_coords(int x, int y)
       };
 			// store the track# and callback function for muting and soling the
 			// voice via the track header
-			th->outline.data = (void*) t;
+      intptr_t param = t;
+			th->outline.data = (void*) param;
 			th->outline.action = Voice_Control::mute_solo_voice;
     }
   }
@@ -1568,7 +1563,7 @@ void PatternEditorPanel::set_coords(int x, int y)
   {
     index_text[i].str = index_strings[i];
     index_text[i].rect = {
-      xx,
+      x,
       y + (CHAR_HEIGHT * i) + 4,
       3 * CHAR_WIDTH, // eg 00|
       CHAR_HEIGHT
@@ -1986,7 +1981,7 @@ int PatternEditorPanel::event_handler(const SDL_Event &ev)
       {
         uintptr_t tmp = (uintptr_t)ev.user.data1;
         unsigned char pitch = (unsigned char)tmp;
-        DEBUGLOG("tmp=%d, pitch=%d\n", tmp, pitch);
+        DEBUGLOG("tmp=%lu, pitch=%d\n", tmp, pitch);
         notehelper(pitch - 12, true);
       }
       else if (ev.user.code == UserEvents::keyoff)
@@ -2037,8 +2032,6 @@ void moveback(Pattern *pattern, int track, int pos, const Instrument_Panel *ip)
   if (pos == 0)
     return;
   PatternRow *patrow = pattern->trackrows[track];
-	// decrement the row that will be erased's instr used if existent
-	PatternRow *prm1 = &patrow[pos - 1];
 
 	for (; pos < pattern->len; pos++)
     patrow[pos - 1] = patrow[pos];

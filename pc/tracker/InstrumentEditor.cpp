@@ -121,8 +121,6 @@ void AdsrPanel::one_time_draw(SDL_Surface *screen)
 
 void AdsrPanel::set_coords(int x, int y)
 {
-  int save_y = y;
-
   // Build graph below this. Just draw the bounding rect
   adsrgraph.bounds.y = y + (CHAR_HEIGHT*3);
   adsrgraph.bounds.x = x;

@@ -63,7 +63,6 @@ main_window(argc,argv, this)
 	// now?
 	/* APU EMU LOAD CODE */
 	char tb[260];
-	int len;
 	assert(::file_system);
 
 	strcpy(tb, ::file_system->data_path);
@@ -597,7 +596,7 @@ void Tracker::handle_events()
             if (::render->screen == NULL || render->sdlTexture == NULL)
             {
               DEBUGLOG("I couldn't allocate a screen or Texture : %s\n", SDL_GetError());
-              return -1;
+              return;
             }
           }
 					break;
@@ -609,7 +608,6 @@ void Tracker::handle_events()
       case SDL_KEYUP:
       {
         int scancode = ev.key.keysym.sym;
-        int mod = ev.key.keysym.mod;
         switch (scancode)
         {
           case SDLK_RETURN:
@@ -1434,6 +1432,7 @@ void Tracker::save_to_file(SDL_RWops *file)
 
 void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 {
+  intptr_t arg_data1 = arg;
 	//DEBUGLOG("SPC Tracker Report: Type: %d\n", type);
 	switch (type)
 	{
@@ -1457,7 +1456,7 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
           //DEBUGLOG("REPORT::TRACKER::SETROW");
 					SDL_Event uev;
 					uev.type = SDL_USEREVENT;
-					uev.user.data1 = (void *)arg;
+					uev.user.data1 = (void *)arg_data1;
 					uev.user.code = UserEvents::report_tracker_setrow;
 					SDL_PushEvent(&uev);
 					break;
@@ -1466,7 +1465,7 @@ void SpcReport::report(Spc_Report::Type type, unsigned cmd, unsigned arg)
 				{
 					SDL_Event uev;
 					uev.type = SDL_USEREVENT;
-					uev.user.data1 = (void *)arg;
+					uev.user.data1 = (void *)arg_data1;
 					uev.user.code = UserEvents::report_tracker_setpattern;
 					SDL_PushEvent(&uev);
 					break;
