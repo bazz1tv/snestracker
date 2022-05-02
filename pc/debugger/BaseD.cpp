@@ -3,7 +3,8 @@
 #include "Menu_Bar.h"
 #include "File_System.h"
 #include "Instrument_Window.h"
-
+#include <algorithm>
+using namespace std;
 char BaseD::tmpbuf[500];
 
 
